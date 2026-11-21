@@ -55,8 +55,20 @@ jobs:
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
       - name: Check released changelog sections
-        if: steps.release-tag.outputs.tag != ''
+        if: steps.release-tag.outputs.tag != '' && !startsWith(github.head_ref, 'release/')
         run: npm run check:released-changelogs
+
+      # D-44: the version PR dates `## [Unreleased]` in the changelogs, so the check above would fail it. For a
+      # `release/*` head the diff against the PR base may only swap that heading for `## [<version>] - <date>`.
+      # The checkout is shallow: unshallow it so the merge-base with the base branch exists.
+      - name: Check the version PR changelog diff
+        if: startsWith(github.head_ref, 'release/')
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ "$(git rev-parse --is-shallow-repository)" = true ]; then git fetch --no-tags --unshallow origin; fi
+          git fetch --no-tags origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"
+          python3 scripts/ci/release/release_changelog_diff.py --base "origin/$BASE_REF"
 
   # Tests are split across parallel jobs so the slowest suites do not run back to back.
   test:
