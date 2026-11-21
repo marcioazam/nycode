@@ -35,7 +35,7 @@ redirecionado para um servidor local falso (`fake_api.py`), que devolve um rotei
   servidor conectar; por isso o inventário tem a ferramenta `codemode` nos dois braços, com ou sem rede.
 - Os servidores `npx` sobem na partida do `pi`/`nycode`: sem rede eles só falham (o `pi -p` segue). Fora de um sandbox
   sem rede o `npx` baixa pacotes do npm; rode o verificador num sandbox de rede fechada quando isso importar.
-- Referência `ny-pi`: `import/ny-pi` não tem `bin/pi` desde F5. Aponte `BENCH_NYPI_SRC` para um checkout do ny-pi (ou um
+- Referência `ny-pi`: `import/ny-pi` não tem `bin/pi` (F5), `install.sh` nem `npm/` (F11). Aponte `BENCH_NYPI_SRC` para um checkout do ny-pi (ou um
   `git archive` extraído; sem `.git` ali, defina também `BENCH_STAGE`). Sem a variável o braço sai 2 com a causa.
 - Medição em rede fechada: monte o stage fora do sandbox (`BENCH_STAGE=<dir> bench/arms/<braço> --version`; o build
   precisa de npm) e rode o verificador dentro de um sandbox sem rede com o mesmo `BENCH_STAGE`. `BENCH_STAGE` que

@@ -5,12 +5,20 @@
 # The pi release is symlinked read-only in practice (its core patch is already applied upstream of the stage).
 set -euo pipefail
 here=$(dirname "$(readlink -f "$0")")
-# The ny-pi tree (install.sh, bin/pi, npm/, publish.list): BENCH_NYPI_SRC (a checkout or an extracted archive of
-# the ny-pi repository) when set, else import/ny-pi of this checkout. import/ny-pi no longer carries bin/pi (F5), so
-# the reference needs BENCH_NYPI_SRC to build its stage (a built stage runs without it). The stage name uses the git commit of that directory: without a .git there,
-# set BENCH_STAGE.
-src=${BENCH_NYPI_SRC:-$here/../../import/ny-pi}
-repo=$(cd "$src" && pwd)
+# The ny-pi tree (install.sh, bin/pi, npm/): BENCH_NYPI_SRC, a checkout or an extracted archive of the ny-pi
+# repository. It has no default: import/ny-pi lost install.sh and npm/ in F11 and never had bin/pi (F5). A stage that is
+# already built runs without the tree when BENCH_STAGE names it. The default stage name uses the git commit of that
+# directory: without a .git there, set BENCH_STAGE.
+src=${BENCH_NYPI_SRC:-}
+repo=
+need_src() {
+  [ -d "$src" ] || {
+    echo "bench: the ny-pi arm needs a ny-pi tree: set BENCH_NYPI_SRC to a ny-pi checkout (import/ny-pi has no install.sh or bin/pi and is no default)" >&2
+    exit 2
+  }
+  repo=$(cd "$src" && pwd)
+}
+[ -n "${BENCH_STAGE:-}" ] || need_src
 # shellcheck source=bench/arms/oauth-token.sh
 . "$here/oauth-token.sh"
 # shellcheck source=bench/arms/overlay-sha.sh
@@ -24,6 +32,7 @@ export MISE_STATE_DIR="${MISE_STATE_DIR:-$real/.local/state/mise}" MISE_CACHE_DI
 stage=${BENCH_STAGE:-${BENCH_STAGE_ROOT:-$real/.cache/bench}/${BENCH_STAGE_PREFIX:-bench-nypi}-$(git -C "$repo" rev-parse --short=12 HEAD)$(git -C "$repo" diff --quiet HEAD || echo -dirty)}
 if [ ! -f "$stage/.ready" ]; then
   # Only a build needs the tree: a stage that is already built runs without it.
+  need_src
   [ -f "$src/install.sh" ] && [ -f "$src/bin/pi" ] || {
     echo "bench: ny-pi tree has no install.sh and bin/pi at $src; set BENCH_NYPI_SRC to a ny-pi checkout" >&2
     exit 2

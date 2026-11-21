@@ -203,6 +203,25 @@ def test_ny_pi_arm_needs_a_tree_with_bin_pi(tmp_path: Path) -> None:
     assert not (tmp_path / "stage").exists()
 
 
+def test_ny_pi_arm_requires_bench_nypi_src(tmp_path: Path) -> None:
+    """import/ny-pi no longer carries install.sh (F11): without BENCH_NYPI_SRC the arm exits 2 and says what to set, for a
+    default stage and for a BENCH_STAGE that is not built; a missing directory fails the same way."""
+    base = {
+        "PATH": "/usr/bin:/bin",
+        "BENCH_REAL_HOME": str(tmp_path),
+        "BENCH_CC_CREDENTIALS": "/dev/null",
+    }
+    for extra in (
+        {},
+        {"BENCH_STAGE": str(tmp_path / "stage")},
+        {"BENCH_NYPI_SRC": str(tmp_path / "absent")},
+    ):
+        p = subprocess.run(["bash", str(BENCH / "arms/ny-pi")], env={**base, **extra}, capture_output=True, text=True, check=False)  # fmt: skip
+        assert p.returncode == 2, p.stderr
+        assert "set BENCH_NYPI_SRC" in p.stderr and "import/ny-pi" in p.stderr
+    assert not (tmp_path / "stage").exists()
+
+
 def test_ny_pi_arm_builds_its_stage_from_bench_nypi_src(tmp_path: Path) -> None:
     """With BENCH_NYPI_SRC the arm uses that tree's install.sh and npm/ (a fake tree records the call)."""
     src = fake_nypi_tree(tmp_path)
@@ -236,7 +255,7 @@ def test_ny_pi_arm_builds_its_stage_from_bench_nypi_src(tmp_path: Path) -> None:
 
 
 def test_ny_pi_arm_runs_a_built_stage_without_the_tree(tmp_path: Path) -> None:
-    """BENCH_NYPI_SRC is needed to build the stage only; a stage marked .ready runs with the default tree."""
+    """BENCH_NYPI_SRC is needed to build the stage only; a stage marked .ready runs without it."""
     stage = tmp_path / "stage"
     (stage / ".local/bin").mkdir(parents=True)
     script(stage / ".local/bin/pi", 'echo "ran:$*"')
