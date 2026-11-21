@@ -114,7 +114,7 @@ globais do [mega plano](00-mega-plano.md) cita 30 linhas e deve ser corrigido pa
 
 Notas por regra:
 
-- R13: os 13 tópicos do ny-pi mais `nycode` (limite de 20 do GitHub não reverificado); `pi-coding-agent` fica.
+- R13: os 13 tópicos do ny-pi mais `nycode`, menos `pi-coding-agent`: 13 tópicos. **Supera** "`pi-coding-agent` fica": o dono tirou o tópico ao trocar a descrição (D-30, D-31 c; [F4](evidencias/F4.md)).
 - R21: o JSON versionado no ny-pi **não** traz `require_extra_approval_for_unattributed_changes` nem
   `required_reviewers`, mas a API os devolve no ruleset ativo (comparação com `jq -S`, 2026-11-20). O JSON alvo
   traz os dois para o `diff` de conferência fechar. Aceitação dos dois no POST: não verificado.
@@ -661,7 +661,7 @@ chk R01-R08 "$(J '' '[.allow_squash_merge,.allow_merge_commit,.allow_rebase_merg
   "true true false true true true PR_TITLE PR_BODY"
 chk R09-R12 "$(J '' '[.has_issues,.has_discussions,.has_projects,.has_wiki,.web_commit_signoff_required,
   .visibility,.license.spdx_id]|join(" ")')" "true true true false false public MIT"
-chk R13 "$(J '' '.topics|length')" 14;  J '' .description                       # R14: texto de 4.4
+chk R13 "$(J '' '.topics|length')" 13;  J '' .description                       # R14: texto de 4.4
 ID=$(J /rulesets '.[]|select(.name=="main").id')                                # R15-R24, R42
 diff <(gh api repos/$R/rulesets/$ID | jq -S '{name,target,enforcement,bypass_actors,conditions,rules}') \
      <(jq -S . .github/rulesets/main.json) && echo "OK    R15-R24,R42"
