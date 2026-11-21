@@ -603,7 +603,9 @@ def pull(args: str, cwd: str, dest: str | None = None) -> tuple[str, Path]:
         if data is None or lines > int(data.get("lines") or 0):
             # Continuada no nycode (ou não é uma importação): nunca sobrescrever trabalho feito no nycode. A nova cópia
             # ganha um id derivado do estado da fonte, então repetir o /puxar não cria duplicatas.
-            nycode_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"claude-session:{sid}@{mtime}"))
+            nycode_id = str(
+                uuid.uuid5(uuid.NAMESPACE_URL, f"claude-session:{sid}@{mtime}")
+            )
             note = f" (a cópia {prev.name} já foi continuada no nycode e ficou intacta; esta é outra)"
             again = existing_copy(dest_dir, nycode_id)
             if again:
