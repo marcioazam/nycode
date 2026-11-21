@@ -194,6 +194,10 @@ porque a linha 3 junta `ruff check` e `ruff format`. A etapa 5 do ny-pi só olha
 `extensions/*.ts`; no nycode o `npm run check` cobre os `packages/*/src`, `packages/*/test` e exemplos (lista
 `files.includes` de `biome.json`).
 
+Os passos `criterio2` (D-41) e `residuo` (D-45) rodam depois de `core-scope`: `scripts/ci/lint/residuo/residuo.py` falha em
+linha do pi (`pi`, `pi-<x>`, `pi.dev`, `earendil`, `mariozechner`) sem cobertura e em exceção sem uso
+(`residuo-allow.txt`); pytest e mypy do diretório entram pelos passos `pytest + coverage` e `mypy --strict (changed)`.
+
 O `mutation` (`run-static.sh mutation`) é o outro modo do script: seção 5.3.
 
 ### 3.2 `scripts/ci/run-security.sh`
