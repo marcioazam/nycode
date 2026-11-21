@@ -17,6 +17,7 @@ from datetime import date
 from pathlib import Path, PurePosixPath
 
 UNRELEASED = "## [Unreleased]"
+MAX_REPORTED = 20  # a mass edit of a changelog must not flood the CI log
 DATED = re.compile(r"^## \[(?P<version>[^\]]+)\] - (?P<date>\d{4}-\d{2}-\d{2})$")
 SECTIONS = re.compile(r"^diff --git a/(?P<path>.+) b/(?P=path)$")
 
@@ -151,8 +152,13 @@ def main(argv: list[str]) -> int:
     except GitError as err:
         print(f"release-changelog-diff: {err}", file=sys.stderr)
         return 1
-    for problem in problems:
+    for problem in problems[:MAX_REPORTED]:
         print(f"release-changelog-diff: {problem}", file=sys.stderr)
+    if len(problems) > MAX_REPORTED:
+        print(
+            f"release-changelog-diff: ... and {len(problems) - MAX_REPORTED} more",
+            file=sys.stderr,
+        )
     print(f"release-changelog-diff: {'FAILED' if problems else 'ok'} (base {base[:9]})")
     return 1 if problems else 0
 

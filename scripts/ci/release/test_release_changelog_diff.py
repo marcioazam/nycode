@@ -213,3 +213,11 @@ def test_unrelated_histories_have_no_merge_base(
     git(repo, "commit", "-q", "-m", "orphan", "--allow-empty")
     code = release_changelog_diff.main(["--root", str(repo), "--base", "main"])
     assert code == 1 and "merge-base" in capsys.readouterr().err
+
+
+def test_report_is_capped(repo: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    swap(repo, "a")
+    p = repo / "packages/a/CHANGELOG.md"
+    p.write_text(p.read_text() + "".join(f"- extra {n}\n" for n in range(50)))
+    code, out = check(repo, capsys)
+    assert code == 1 and "extra 0" in out and "extra 49" not in out and "more" in out
