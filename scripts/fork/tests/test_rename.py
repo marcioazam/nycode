@@ -70,3 +70,71 @@ def test_dry_run_changes_nothing_and_counts_to_stdout(repo: Path) -> None:
     assert (repo / "pi.md").read_text() == TEXT
     assert "mv pi.md -> nycode.md" in out
     assert re.search(r"^ +\d+  \S", out, re.MULTILINE)  # the counted fragments
+
+
+@pytest.fixture
+def internals(tmp_path: Path) -> Path:
+    files = {
+        "src/a.ts": (
+            "const x = fold(pi); entry?.pi; // the ny-pi harness and pi-code, as pi 1.5.2 did\n"
+            "env PI_CODE_SUBAGENT PI_CODING_AGENT_DIR PI_HOME, dir .pi/skills, upstream pi\n"
+            "// Working contract (pi) vs (nycode)\n"
+            "`nycode migrate from-pi` reads docs/harness/pi-hooks.md\n"
+        ),
+        "packages/coding-agent/src/migrations/from-pi.ts": "const dir = '.pi';\n",
+        "bench/arms/ny-pi/run.sh": "pi-vanilla\n",
+        "import/ny-pi/a.sh": "pi\n",
+        "docs/specs/0001.md": "pi\n",
+        "docs/bench/r.md": "pi\n",
+        "README.md": "pi\n",
+        ".gitleaksignore": "pi\n",
+        "scripts/fork/x.sh": "pi\n",
+    }
+    for rel, text in files.items():
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / rel).write_text(text)
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run([*GIT, "-C", str(tmp_path), "add", "-A"], check=True)
+    return tmp_path
+
+
+def test_internals_are_renamed_but_legacy_names_stay(internals: Path) -> None:
+    run(internals)
+    assert (internals / "src/a.ts").read_text() == (
+        "const x = fold(nycode); entry?.nycode; // the ny-harness harness and nycode, as upstream 1.5.2 did\n"
+        "env PI_CODE_SUBAGENT PI_CODING_AGENT_DIR NYCODE_HOME, dir .pi/skills, upstream agent\n"
+        "// Working contract (pi) vs (nycode)\n"
+        "`nycode migrate from-pi` reads docs/harness/pi-hooks.md\n"
+    )
+
+
+def test_declared_paths_are_left_untouched(internals: Path) -> None:
+    run(internals)
+    for rel in [
+        "packages/coding-agent/src/migrations/from-pi.ts",
+        "bench/arms/ny-pi/run.sh",
+        "import/ny-pi/a.sh",
+        "docs/specs/0001.md",
+        "docs/bench/r.md",
+        "README.md",
+        ".gitleaksignore",
+        "scripts/fork/x.sh",
+    ]:
+        assert (internals / rel).exists(), rel
+        assert "nycode" not in (internals / rel).read_text(), rel
+
+
+def test_attribution_and_escaped_slash_names_stay(tmp_path: Path) -> None:
+    text = (
+        "// Adapted from earendil-works/pi (MIT)\n"
+        "const R = /github\\.com\\/(?:badlogic|earendil-works)\\/pi-mono(?=\\/|$)/;\n"
+        "match(/@earendil-works\\/pi-server\\/unix is not declared/);\n"
+        "see https://github.com/earendil-works/pi\n"
+    )
+    (tmp_path / "a.ts").write_text(text)
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run([*GIT, "-C", str(tmp_path), "add", "-A"], check=True)
+    run(tmp_path)
+    assert (tmp_path / "a.ts").read_text() == text.replace(
+        "github.com/earendil-works/pi", "github.com/marcioazam/nycode"
+    )
