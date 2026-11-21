@@ -5,9 +5,9 @@ title = "nycode"
 useDefault = true
 
 [[allowlists]]
-description = "Known fake AWS key in the atualizador unit test"
+description = "Known fake AWS key in the atualizador unit test (repository path and the copy inside the release binary archive)"
 condition = "AND"
-paths = ['''packages/coding-agent/resources/skills/atualizador/scripts/tests/test_core\.py$''']
+paths = ['''(^|/)resources/skills/atualizador/scripts/tests/test_core\.py$''']
 regexes = ['''AKIAQYLPMN5HHHFPZAM2''']
 
 [[allowlists]]
