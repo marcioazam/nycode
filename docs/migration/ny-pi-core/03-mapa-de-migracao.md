@@ -69,6 +69,7 @@ Dos 1312 "converter", 869 são `bench/` (784 deles são tarefas de teste em `ben
 | `extensions/no-web-search.ts`, `extensions/no-context-files-covers-claude-md.ts`, `scripts/compaction-400k.py` | Contornos de um acoplamento que acaba | D-10 |
 | `claude-home/bin/evals/plan_ab.py`, `plan_ab_cases.jsonl`, `test_plan_ab.py`, `claude-home/bin/evals/harbor/run.sh`, `harbor/README.md` | Nada em `bench/`, `scripts/` ou `packages/` os referencia. `run.sh` e o README descreviam a execução manual do braço `ny-pi` com as credenciais do dono (`~/.claude-2`); `bench/run.py` a substituiu. Os agentes de Harbor (`pi_harness_agent.py`, `pi_vanilla_api_agent.py`, o `bundle.sh` do ny-pi como `pi_bundle.sh`) e os dois testes foram convertidos para `bench/harbor/` e `bench/tests/harbor/`; `structure.py` e seu teste para `scripts/ci/lint/structure/` | — |
 | `third-party.json` | Terceiros embutidos ou pacotes opcionais | D-11 |
+| `pi-code-installed.SHA256SUMS` (`import/ny-pi/`) | Lista de checksums da cópia congelada do pi-code; a referência é o tarball de sha1 conferido. Sai junto com `import/` em C-F12-05 | D-02, D-47 |
 | `install.sh`, `publish.list`, `scripts/install-lib.sh`, `scripts/test_install.sh`, `npm/package.json`, `npm/package-lock.json` | Instalação e publicação do fork | — |
 
 Testes do ny-pi que o nycode não repete caso a caso (C-F10-07, detalhe em
