@@ -32,7 +32,7 @@ const CONTROL_RE = /\u001b\[[0-9;?]*[ -/]*[@-~]|[\u0000-\u001f\u007f]/g;
 export const toolCallScope = new AsyncLocalStorage<string>();
 
 let currentPlanStep: number | undefined;
-/** Fed by the `pi-code:plan-state` listener; undefined = no plan running. */
+/** Fed by the `nycode:plan-state` listener; undefined = no plan running. */
 export function setPlanStep(step: number | undefined): void {
 	currentPlanStep = step;
 }

@@ -324,7 +324,7 @@ function parseIsolationField(raw: unknown): "worktree" | undefined | null {
  * failed to connect is not silently dropped from a deny list. */
 export function expandMcpToolPatterns(
 	entries: string[],
-	aliases: ReadonlyArray<{ pi: string; claude: string }>,
+	aliases: ReadonlyArray<{ nycode: string; claude: string }>,
 ): string[] {
 	const fold = (name: string): string => name.toLowerCase().replaceAll("-", "_");
 	const expanded: string[] = [];
@@ -337,7 +337,7 @@ export function expandMcpToolPatterns(
 		const server = folded === "mcp__*" ? undefined : folded.replace(/__\*$/, "");
 		const matches = aliases
 			.filter((alias) => (server === undefined ? true : fold(alias.claude).startsWith(`${server}__`)))
-			.map((alias) => alias.pi);
+			.map((alias) => alias.nycode);
 		if (matches.length === 0) expanded.push(entry);
 		else expanded.push(...matches);
 	}

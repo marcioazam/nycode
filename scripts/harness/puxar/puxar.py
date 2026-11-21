@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """/puxar no nycode: importa a sessão mais recente (ou a N-ésima, ou uma por id) deste diretório de um perfil do
-Claude Code para o pi, convertida para o formato de sessão v3 do pi, pronta para /resume.
+Claude Code para o nycode, convertida para o formato de sessão v3 do nycode, pronta para /resume.
 
   puxar.py '<perfil> [N|session-id]' [cwd] [dir]   imprime o resultado; a última linha é NYCODE_SESSION_FILE=<arquivo>
-                                             dir: pasta de sessões do pi para o cwd (a extensão passa a da
+                                             dir: pasta de sessões do nycode para o cwd (a extensão passa a da
                                              sessão aberta, que respeita --session-dir e sessionDir)
                                              exit 1 em erro (mensagem no stderr)
 
-Porte do ~/.claude/bin/puxar.py (que copia entre perfis do Claude). No pi não há perfis: o destino é o
-diretório de sessões do pi (NYCODE_CODING_AGENT_SESSION_DIR, ou ~/.nycode/agent/sessions), e o arquivo precisa
-ser convertido, porque o pi não lê o JSONL do Claude Code. Quem chama é a extensão
+Porte do ~/.claude/bin/puxar.py (que copia entre perfis do Claude). No nycode não há perfis: o destino é o
+diretório de sessões do nycode (NYCODE_CODING_AGENT_SESSION_DIR, ou ~/.nycode/agent/sessions), e o arquivo precisa
+ser convertido, porque o nycode não lê o JSONL do Claude Code. Quem chama é a extensão
 a extensão import-claude-session, que depois abre a sessão importada. Testes: test_puxar.py.
 
 <perfil>: 1|claude = ~/.claude, N = ~/.claude-N, nome = ~/.claude-nome, ou caminho absoluto.
@@ -18,14 +18,14 @@ a extensão import-claude-session, que depois abre a sessão importada. Testes: 
 Conversão (ramo ativo, do último registro até a raiz, atravessando compactações):
 - user texto/imagem -> user; tool_result -> toolResult (com o nome da ferramenta da chamada);
 - assistant (linhas com o mesmo message.id viram uma mensagem) -> assistant com text/thinking/toolCall;
-  Bash/Read/Write/Edit/MultiEdit viram bash/read/write/edit com os argumentos do pi, o resto mantém o nome;
+  Bash/Read/Write/Edit/MultiEdit viram bash/read/write/edit com os argumentos do nycode, o resto mantém o nome;
 - mensagens isMeta (corpo de skill, lembretes) -> custom_message oculta, que entra no contexto;
-- compact_boundary + resumo -> entrada `compaction` do pi (o contexto continua só com o resumo + o depois);
+- compact_boundary + resumo -> entrada `compaction` do nycode (o contexto continua só com o resumo + o depois);
 - erros sintéticos de API, sidechains, anexos e metadados do Claude ficam de fora.
-As mensagens do assistente levam api "claude-code-import": o pi descarta o thinking assinado de outro
+As mensagens do assistente levam api "claude-code-import": o nycode descarta o thinking assinado de outro
 "modelo" ao reenviar (assinaturas do Claude Code não são reaproveitadas) e mantém texto e chamadas.
 
-Reimportar a mesma sessão substitui a cópia anterior, exceto se ela já foi continuada no pi: aí a nova
+Reimportar a mesma sessão substitui a cópia anterior, exceto se ela já foi continuada no nycode: aí a nova
 importação ganha outro id e a cópia continuada fica intacta.
 """
 
@@ -67,8 +67,8 @@ def claude_project_key(cwd: str) -> str:
     return re.sub(r"[^a-zA-Z0-9]", "-", cwd)
 
 
-def pi_sessions_dir(cwd: str) -> Path:
-    # pi: tira a barra inicial e troca / \ : por '-', entre '--' (docs/session-format.md).
+def nycode_sessions_dir(cwd: str) -> Path:
+    # nycode: tira a barra inicial e troca / \ : por '-', entre '--' (docs/session-format.md).
     base = Path(
         os.environ.get("NYCODE_CODING_AGENT_SESSION_DIR")
         or Path.home() / ".nycode" / "agent" / "sessions"
@@ -211,12 +211,12 @@ def result_blocks(content: Any) -> list[Json]:
 
 
 def map_tool(name: str, args: Any) -> tuple[str, Json]:
-    """As ferramentas de arquivo e shell do Claude no vocabulário do pi; as demais passam sem mudança."""
+    """As ferramentas de arquivo e shell do Claude no vocabulário do nycode; as demais passam sem mudança."""
     a = args if isinstance(args, dict) else {}
     if name == "Bash":
         out = {"command": a.get("command", "")}
         if isinstance(a.get("timeout"), (int, float)):
-            out["timeout"] = max(1, round(a["timeout"] / 1000))  # Claude: ms; pi: s
+            out["timeout"] = max(1, round(a["timeout"] / 1000))  # Claude: ms; nycode: s
         return "bash", out
     if name == "Read":
         out = {"path": a.get("file_path", "")}
@@ -250,7 +250,7 @@ def text_of(content: Any) -> str:
     return "\n".join(b["text"] for b in user_blocks(content) if b["type"] == "text")
 
 
-# ---------------------------------------------------------------- montagem da sessão do pi
+# ---------------------------------------------------------------- montagem da sessão do nycode
 
 
 class Builder:
@@ -310,7 +310,7 @@ def convert(
         first_ms,
     )
 
-    tool_names: dict[str, str] = {}  # id da chamada -> nome no pi
+    tool_names: dict[str, str] = {}  # id da chamada -> nome no nycode
     answered: set[str] = set()
     pending: Json | None = (
         None  # mensagem do assistente sendo montada (mesmo message.id)
@@ -518,7 +518,7 @@ def existing_copy(dest_dir: Path, sid: str) -> Path | None:
 
 
 def import_record(path: Path) -> tuple[Json | None, int]:
-    """Os dados de importação gravados na cópia do pi e o número de linhas que ela tem."""
+    """Os dados de importação gravados na cópia do nycode e o número de linhas que ela tem."""
     data, lines = None, 0
     with path.open(encoding="utf-8", errors="replace") as fh:
         for line in fh:
@@ -537,7 +537,7 @@ def import_record(path: Path) -> tuple[Json | None, int]:
 
 def write_session(
     dest_dir: Path,
-    pi_id: str,
+    nycode_id: str,
     cwd: str,
     entries: list[Json],
     start_ms: int,
@@ -545,11 +545,11 @@ def write_session(
 ) -> Path:
     dest_dir.mkdir(parents=True, exist_ok=True)
     stamp = iso(start_ms).replace(":", "-").replace(".", "-")
-    target = dest_dir / f"{stamp}_{pi_id}.jsonl"
+    target = dest_dir / f"{stamp}_{nycode_id}.jsonl"
     header = {
         "type": "session",
         "version": 3,
-        "id": pi_id,
+        "id": nycode_id,
         "timestamp": iso(start_ms),
         "cwd": cwd,
     }
@@ -593,19 +593,19 @@ def pull(args: str, cwd: str, dest: str | None = None) -> tuple[str, Path]:
         raise ValueError(f"perfil {src} não existe")
     source = pick_source(src, cwd, parts[1] if len(parts) > 1 else "1")
     sid, mtime = source.stem, source.stat().st_mtime
-    dest_dir = Path(dest) if dest else pi_sessions_dir(cwd)
+    dest_dir = Path(dest) if dest else nycode_sessions_dir(cwd)
     when = time.strftime("%d/%m %H:%M", time.localtime(mtime))
 
-    pi_id, note = sid, ""
+    nycode_id, note = sid, ""
     prev = existing_copy(dest_dir, sid) if dest_dir.is_dir() else None
     if prev:
         data, lines = import_record(prev)
         if data is None or lines > int(data.get("lines") or 0):
-            # Continuada no pi (ou não é uma importação): nunca sobrescrever trabalho feito no pi. A nova cópia
+            # Continuada no nycode (ou não é uma importação): nunca sobrescrever trabalho feito no nycode. A nova cópia
             # ganha um id derivado do estado da fonte, então repetir o /puxar não cria duplicatas.
-            pi_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"claude-session:{sid}@{mtime}"))
-            note = f" (a cópia {prev.name} já foi continuada no pi e ficou intacta; esta é outra)"
-            again = existing_copy(dest_dir, pi_id)
+            nycode_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"claude-session:{sid}@{mtime}"))
+            note = f" (a cópia {prev.name} já foi continuada no nycode e ficou intacta; esta é outra)"
+            again = existing_copy(dest_dir, nycode_id)
             if again:
                 return (
                     f"já atualizada: {sid} (última atividade {when}) de {src}{note}",
@@ -616,8 +616,8 @@ def pull(args: str, cwd: str, dest: str | None = None) -> tuple[str, Path]:
 
     entries, stats = convert(read_claude(source), source, cwd, sid)
     start_ms = iso_ms(entries[0]["timestamp"])
-    target = write_session(dest_dir, pi_id, cwd, entries, start_ms, mtime)
-    if prev and pi_id == sid and prev != target:
+    target = write_session(dest_dir, nycode_id, cwd, entries, start_ms, mtime)
+    if prev and nycode_id == sid and prev != target:
         prev.unlink()  # cópia antiga e não continuada da mesma sessão: substituída pela nova
     size = source.stat().st_size / 2**20
     msg = (

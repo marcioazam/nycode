@@ -1,5 +1,5 @@
 /**
- * nycode's own version. The package.json lookup of pi-code (two directories above the extension) has no
+ * nycode's own version. The package.json lookup of nycode (two directories above the extension) has no
  * meaning inside the core, where `VERSION` in src/config.ts already reads the package manifest.
  */
 

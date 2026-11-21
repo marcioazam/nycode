@@ -18,7 +18,7 @@ interface CallInternal extends ForegroundCall {
 
 // One slot on globalThis: the fleet source is memoised by the first module instance, so after
 // /reload a second instance of this file must see the same calls (Ctrl+B).
-const SLOT = Symbol.for("pi-code.fleet.detach");
+const SLOT = Symbol.for("nycode.fleet.detach");
 interface DetachState {
 	als: AsyncLocalStorage<ForegroundCall>;
 	inFlight: Set<CallInternal>;
@@ -61,7 +61,7 @@ interface AutoSlots {
 }
 function slots(): AutoSlots {
 	const holder = globalThis as Record<symbol, AutoSlots | undefined>;
-	const key = Symbol.for("pi-code.fleet.auto-batch-slots");
+	const key = Symbol.for("nycode.fleet.auto-batch-slots");
 	const state = holder[key] ?? { held: 0 };
 	holder[key] = state;
 	return state;

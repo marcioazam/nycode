@@ -60,7 +60,7 @@ import { FOOTER_BRIDGE_CHANNEL, hudFooterBridge, renderStatusRows, statusRows } 
 
 const COMMAND_TIMEOUT_MS = 5_000;
 const DEBOUNCE_MS = 300;
-const WIDGET_KEY = "pi-code-statusline";
+const WIDGET_KEY = "nycode-statusline";
 
 /** Whether cwd sits in a git worktree: `.git` is a file pointing at the main
  * checkout there, and a directory in an ordinary clone. */
@@ -224,7 +224,7 @@ export default function statusLine(nycode: ExtensionAPI) {
 		if (promote) {
 			promoted = true;
 			setRows(ctx, [text]);
-			ctx.ui.setStatus("pi-code-status", undefined);
+			ctx.ui.setStatus("nycode-status", undefined);
 			return;
 		}
 		if (promoted) {
@@ -233,7 +233,7 @@ export default function statusLine(nycode: ExtensionAPI) {
 		}
 		// The widget (2+ rows) carries the Status Line title itself; the footer-only path leads with it inline.
 		ctx.ui.setStatus(
-			"pi-code-status",
+			"nycode-status",
 			widgetShown
 				? text
 				: labelFooter(

@@ -4,7 +4,7 @@
  * Claude Code's /goal: a completion condition the session keeps working toward. After
  * each turn a separate model judges the condition against the conversation and returns
  * met, not yet met (its reason becomes the next turn's guidance), or impossible. Claude
- * implements it as a session-scoped prompt-based Stop hook; pi-code runs the same loop
+ * implements it as a session-scoped prompt-based Stop hook; nycode runs the same loop
  * on agent_end next to the hooks extension's Stop path:
  * - `/goal <condition>` sets (or replaces) the goal and starts a turn with Claude's
  *   kickoff directive; `/goal` shows status; `/goal clear` (stop/off/reset/none/cancel)
@@ -24,7 +24,7 @@
  *   bounds a stalled loop: that many not-met verdicts in a row on turns that used no tool
  *   pause the loop with a warning, goal still set, until the next user prompt.
  * - Evaluation is skipped while a subagent is still running (tracked from the subagent
- *   extension's bus events; pi has no other background work). A check-in turn is
+ *   extension's bus events; nycode has no other background work). A check-in turn is
  *   injected once the wait reaches CLAUDE_CODE_GOAL_CHECKIN_MINUTES (30, doubling up to
  *   four times the first interval, at most three idle check-ins between user prompts;
  *   0 turns check-ins off).
@@ -37,7 +37,7 @@
  *   is not restored.
  * - Gated as Claude documents: unavailable when hooks are restricted (disableAllHooks or
  *   allowManagedHooksOnly), with the reason shown. Unlike Claude there is no trust gate (C-F6-13).
- * - Headless (`pi -p "/goal ..."`), the command holds the process open until the goal
+ * - Headless (`nycode -p "/goal ..."`), the command holds the process open until the goal
  *   resolves or pauses, and warnings also go to stderr since there is no notify surface.
  *
  * Docs: https://code.claude.com/docs/en/goal.md
@@ -148,7 +148,7 @@ export default function goalExtension(nycode: ExtensionAPI) {
 	let goal: ActiveGoal | undefined;
 	/** The last goal achieved this session, for the status view after it clears. */
 	let achieved: GoalSummary | undefined;
-	/** The live context, for timer callbacks that fire outside any pi event. */
+	/** The live context, for timer callbacks that fire outside any nycode event. */
 	let sessionCtx: ExtensionContext | undefined;
 	/** Bumped whenever the goal is set, cleared, or the session changes, so an evaluation
 	 * that resolves after any of those is dropped instead of steering the wrong goal. */
@@ -157,7 +157,7 @@ export default function goalExtension(nycode: ExtensionAPI) {
 	let turnUsedTools = false;
 	/** Not-met verdicts in a row on turns that used no tool. */
 	let noProgressStreak = 0;
-	/** The error the last run ended on, judged once the run settles (past pi's retries). */
+	/** The error the last run ended on, judged once the run settles (past nycode's retries). */
 	let lastTurnError: string | undefined;
 	/** Subagents still running, by id, from the subagent extension's bus events. */
 	const running = new Map<string, string>();
@@ -619,8 +619,8 @@ export default function goalExtension(nycode: ExtensionAPI) {
 				{ kind: "set", condition },
 				ctx.isIdle() ? { triggerTurn: true } : { triggerTurn: true, deliverAs: "followUp" },
 			);
-			// A headless run (`pi -p "/goal ..."`) exits as soon as the command returns, before
-			// the kickoff turn runs. pi marks the run active synchronously on the send, and the
+			// A headless run (`nycode -p "/goal ..."`) exits as soon as the command returns, before
+			// the kickoff turn runs. nycode marks the run active synchronously on the send, and the
 			// continuations queued at agent_end extend that run, so waiting here holds the
 			// process open until the goal resolves, as Claude's -p mode does. The TUI's main
 			// loop returns to the editor on its own, so it must not block on the loop.
@@ -635,7 +635,7 @@ export default function goalExtension(nycode: ExtensionAPI) {
 	});
 
 	nycode.on("session_start", (_event, ctx) => {
-		// pi's CLI builds a fresh extension instance per session replacement; RPC mode can reuse
+		// nycode's CLI builds a fresh extension instance per session replacement; RPC mode can reuse
 		// one across sessions, so drop the previous session's goal and
 		// timers before reading this session's persisted state.
 		sessionCtx = ctx;

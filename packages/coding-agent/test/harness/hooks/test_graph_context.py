@@ -62,7 +62,7 @@ class TestGraphContext(unittest.TestCase):
         os.chmod(path, 0o755)
         return path
 
-    def test_non_git_cwd_gets_pi_workspace_line(self) -> None:
+    def test_non_git_cwd_gets_nycode_workspace_line(self) -> None:
         ctx = run("SessionStart", self.tmp, self.env)
         self.assertIn("Workspace:", ctx)
         self.assertIn("subagent has no isolation field", ctx)

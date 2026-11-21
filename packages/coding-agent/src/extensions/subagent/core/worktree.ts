@@ -59,7 +59,7 @@ export async function createAgentWorktree(
 	}
 	const suffix = randomUUID().slice(0, 8);
 	const safeName = agentName.replace(/[^A-Za-z0-9_-]+/g, "-");
-	const dir = path.join(os.tmpdir(), `pi-agent-worktree-${safeName}-${suffix}`);
+	const dir = path.join(os.tmpdir(), `nycode-agent-worktree-${safeName}-${suffix}`);
 	const branch = `agent/${safeName}-${suffix}`;
 	try {
 		await git(repoCwd, "worktree", "add", "-b", branch, dir, await defaultBranch(repoCwd));

@@ -24,7 +24,7 @@ export function renderStatusRows(rows: string[], width: number, trailers: Array<
 /** Extension statuses the HUD shows on its tools row instead of the footer (user request 2026-11-13). */
 const ABSORBED = ["plan-mode"];
 /** The footer-no-stats extension publishes its provider here once. */
-export const FOOTER_BRIDGE_CHANNEL = "pi-code:footer-bridge";
+export const FOOTER_BRIDGE_CHANNEL = "nycode:footer-bridge";
 interface FooterBridge {
 	footerData: { getExtensionStatuses(): ReadonlyMap<string, string> };
 	absorbed: Set<string>;

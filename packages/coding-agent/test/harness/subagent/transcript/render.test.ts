@@ -1,4 +1,4 @@
-// Ported from subagent-render/render.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from subagent-render/render.test.ts (nycode patch tests); same cases and expectations.
 // Testes do desenho do subagent no transcript (subagent/transcript/*.ts e o gancho em subagent/index.ts):
 // env -u NYCODE_SUBAGENT -u NYCODE_SUBAGENT_DEPTH -u NYCODE_FLEET_DIR -u NYCODE_FLEET_RUN_ID -u NYCODE_TEAMS npx vitest --run test/harness/subagent/transcript/render.test.ts
 import assert from "node:assert/strict";
@@ -58,7 +58,7 @@ const usage = (over: Record<string, number> = {}) => ({
 const res = (over: Record<string, unknown> = {}) => ({
 	agent: "swarm-worker",
 	agentSource: "user",
-	task: "Harden the pi PreToolUse guard. OWNED FILES: a, b",
+	task: "Harden the nycode PreToolUse guard. OWNED FILES: a, b",
 	exitCode: -1,
 	messages: [],
 	stderr: "",
@@ -111,7 +111,7 @@ const tasks = [
 // ---- format helpers ----
 
 test('taskTitle: first line, sentence cut only when >= 12 chars remain, word-boundary ellipsis, never at ":"', () => {
-	assert.equal(fmt.taskTitle("Harden the pi PreToolUse guard. OWNED FILES: x", "a"), "Harden the pi PreToolUse guard");
+	assert.equal(fmt.taskTitle("Harden the nycode PreToolUse guard. OWNED FILES: x", "a"), "Harden the nycode PreToolUse guard");
 	assert.equal(fmt.taskTitle("Run: sleep 15; echo hi", "a"), "Run: sleep 15; echo hi");
 	assert.equal(fmt.taskTitle("Do this:\nmore", "a"), "Do this:");
 	assert.equal(fmt.taskTitle("\n\n  Second line here  \nthird", "a"), "Second line here");
@@ -205,11 +205,11 @@ test("calls carry no state glyph: the call box cannot know the state", () => {
 	assert.deepEqual(
 		lines(
 			tr.renderSubagentCall(
-				{ agent: "swarm-worker", task: "Harden the pi PreToolUse guard. OWNED FILES: a", agentScope: "user" },
+				{ agent: "swarm-worker", task: "Harden the nycode PreToolUse guard. OWNED FILES: a", agentScope: "user" },
 				theme,
 			),
 		),
-		["swarm-worker  Harden the pi PreToolUse guard [user]"],
+		["swarm-worker  Harden the nycode PreToolUse guard [user]"],
 	);
 	assert.deepEqual(lines(tr.renderSubagentCall({}, theme)), ["…"]);
 	assert.deepEqual(lines(tr.renderSubagentCall({ agent: "Explore" }, theme)), ["Explore"]);
@@ -294,7 +294,7 @@ test("failure: the error text shows in full, wrapped, capped at 3 lines with an 
 test("parallel running: tree with latest tool per task and the aggregate glyph in the footer", () => {
 	const l = lines(view(wrap("parallel", [running, done])));
 	assert.deepEqual(l, [
-		"  ├─ ● swarm-worker  Harden the pi PreToolUse guard   2 tools · 23.4k tok",
+		"  ├─ ● swarm-worker  Harden the nycode PreToolUse guard   2 tools · 23.4k tok",
 		"  │  ⎿ Read ~/.nycode/agent/hooks/test_guard.py:80-219",
 		"  └─ ✓ swarm-worker  Three small harness hygiene changes: x, y   Done · 1 tool · 41.0k tok · $0.12 · 12s",
 		"     ⎿ Hecho con código",
@@ -458,10 +458,10 @@ test("expanded single keeps the glyph header, tool list, output and usage", () =
 test("expanded parallel and chain keep the tree: rows like collapsed plus the details", () => {
 	const l = lines(view(wrap("parallel", [running, done]), { expanded: true }));
 	const at = (re: RegExp): number => l.findIndex((x) => re.test(x));
-	assert.equal(l[0], "  ├─ ● swarm-worker  Harden the pi PreToolUse guard   2 tools · 23.4k tok");
+	assert.equal(l[0], "  ├─ ● swarm-worker  Harden the nycode PreToolUse guard   2 tools · 23.4k tok");
 	assert.equal(l[1], "  │  ⎿ Read ~/.nycode/agent/hooks/test_guard.py:80-219");
 	assert.ok(
-		l[2] === "  │  Task: Harden the pi PreToolUse guard. OWNED FILES: a, b" && l[3] === "  │  ⎿ Read /a",
+		l[2] === "  │  Task: Harden the nycode PreToolUse guard. OWNED FILES: a, b" && l[3] === "  │  ⎿ Read /a",
 		l.join("\n"),
 	);
 	const last = at(/^ {2}└─ ✓ swarm-worker/);
@@ -533,14 +533,14 @@ interface Tool {
 
 test("index.ts wires renderCall and renderResult (isPartial and args forwarded) to the transcript", async () => {
 	const tools: Tool[] = [];
-	const pi = {
+	const nycode = {
 		on: () => {},
 		registerTool: (d: Tool) => void tools.push(d),
 		registerCommand: () => {},
 		events: { emit: () => {}, on: () => () => {} },
 		getActiveTools: () => ["subagent"],
 	};
-	extension(pi as unknown as ExtensionAPI);
+	extension(nycode as unknown as ExtensionAPI);
 	const tool = tools.find((t) => t.name === "subagent") as Tool;
 	assert.deepEqual(lines(tool.renderCall({ tasks }, theme, {})), ["parallel · 2 agents"]);
 	const out = tool.renderResult(wrap("parallel", []), { expanded: false, isPartial: true }, theme, {

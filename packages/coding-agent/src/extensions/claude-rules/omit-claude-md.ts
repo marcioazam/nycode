@@ -1,6 +1,6 @@
 /**
  * When the user's CLAUDE.md and rules stay out of the context (parity with Claude Code). Ported from the removed
- * no-context-files-covers-claude-md extension (ex-ny-pi, 02 §3.2). Two cases switch CLAUDE_CODE_DISABLE_CLAUDE_MDS on:
+ * no-context-files-covers-claude-md extension (ex-ny-nycode, 02 §3.2). Two cases switch CLAUDE_CODE_DISABLE_CLAUDE_MDS on:
  * `--no-context-files` / `-nc`, and `omitClaudeMd: true` in the frontmatter of the agent a subagent child runs.
  * The child gets `--system-prompt <tmp>/prompt-<safeName>.md` (subagent/core/run.ts) and NYCODE_SUBAGENT=1.
  */

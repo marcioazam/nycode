@@ -1,12 +1,12 @@
 /**
  * Channel and payload for subagent lifecycle events the subagent extension publishes
- * on pi's shared extension event bus. Hooks bridge them to Claude's SubagentStart and
- * SubagentStop; pi loads extensions without a shared module cache, so state rides the bus.
+ * on nycode's shared extension event bus. Hooks bridge them to Claude's SubagentStart and
+ * SubagentStop; nycode loads extensions without a shared module cache, so state rides the bus.
  */
 
-export const SUBAGENT_CHANNEL = "pi-code:subagent";
+export const SUBAGENT_CHANNEL = "nycode:subagent";
 /** Published by plan-mode: `{executing: boolean, step?: number, done: number, total: number}`; `step` = the first open step. Read-only here. */
-export const PLAN_STATE_CHANNEL = "pi-code:plan-state";
+export const PLAN_STATE_CHANNEL = "nycode:plan-state";
 
 export interface SubagentPhaseEvent {
 	phase: "start" | "stop";

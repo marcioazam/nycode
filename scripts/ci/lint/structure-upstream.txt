@@ -1,4 +1,4 @@
-# Upstream (pi 1.6.0) source files above 800 lines at the migration base (origin/main eb92bd0a2).
+# Upstream (upstream 1.6.0) source files above 800 lines at the migration base (origin/main eb92bd0a2).
 # structure_changed.py exempts them from the line limit; the list only shrinks: split a file, then delete its line.
 # Do not add to it (AGENTS.md). Regenerate to verify (the second pathspec catches files directly under src/):
 #   git ls-files 'packages/*/src/*.ts' 'packages/*/src/**/*.ts' | xargs wc -l | awk '$1>800 && $2!="total"{print $2}' | sort

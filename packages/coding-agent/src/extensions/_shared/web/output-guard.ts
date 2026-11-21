@@ -1,7 +1,7 @@
 /**
  * Output Guard
  *
- * pi requires every tool to truncate its output, at 50KB or 2000 lines, whichever is hit
+ * nycode requires every tool to truncate its output, at 50KB or 2000 lines, whichever is hit
  * first (docs/extensions.md, "Tool output"). Each tool used to decide that for itself, so
  * the budgets and the truncation notices diverged and a byte-only cap let thousands of
  * short lines through. This is the single place that decision lives.
@@ -24,7 +24,7 @@ export function sliceBytes(text: string, maxBytes: number): string {
 	return new TextDecoder().decode(Buffer.from(text, "utf-8").subarray(0, Math.max(0, maxBytes)), { stream: true });
 }
 
-/** Trim `text` to pi's documented tool-output budget, noting what was dropped. */
+/** Trim `text` to nycode's documented tool-output budget, noting what was dropped. */
 export function capForContext(text: string): string {
 	const cut = truncateHead(text, { maxLines: DEFAULT_MAX_LINES, maxBytes: DEFAULT_MAX_BYTES });
 	if (!cut.truncated) return text;

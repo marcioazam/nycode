@@ -1,4 +1,4 @@
-// Port of patches/pi-code/zzzzzzzzzzzzzzzzzz-memory-notice (node:test).
+// Port of patches/nycode/zzzzzzzzzzzzzzzzzz-memory-notice (node:test).
 // Owner request (2026-11-14, variant C): "Memory: 11 memories loaded" becomes `◆ memória  11 notas · 7 projeto · … · /memory`.
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

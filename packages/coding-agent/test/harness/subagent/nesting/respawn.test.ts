@@ -99,13 +99,13 @@ test("espera: 20s e 60s; NYCODE_SUBAGENT_RESPAWN_DELAY_MS substitui", () => {
 
 test("args: --no-session vira sessão persistida; respawn só troca a tarefa", () => {
 	const args = ["--mode", "json", "-p", "--no-session", "--system-prompt", "/p.md", "Task: x"];
-	r.useSessionArgs(args, "/tmp/d", "pi-code-fg-abcd1234");
+	r.useSessionArgs(args, "/tmp/d", "nycode-fg-abcd1234");
 	assert.deepEqual(args, [
 		"--mode",
 		"json",
 		"-p",
 		"--session-id",
-		"pi-code-fg-abcd1234",
+		"nycode-fg-abcd1234",
 		"--session-dir",
 		"/tmp/d",
 		"--system-prompt",
@@ -124,7 +124,7 @@ test("args: --no-session vira sessão persistida; respawn só troca a tarefa", (
 
 test("sessão: diretório temporário criado; espera abortável", async () => {
 	const d = r.makeSessionDir();
-	assert.match(d ?? "", /pi-code-fg-session-/);
+	assert.match(d ?? "", /nycode-fg-session-/);
 	rmSync(d as string, { recursive: true });
 	assert.equal(await r.sleepAbortable(5), false);
 	const ac = new AbortController();

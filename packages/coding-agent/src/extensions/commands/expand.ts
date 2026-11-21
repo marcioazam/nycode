@@ -27,7 +27,7 @@ import type { ModelLike } from "./scope.ts";
  * default, which is what Claude runs these commands under. */
 const BASH_TIMEOUT_MS = 120_000;
 
-/** Context fields pi provides that Claude's ${CLAUDE_*} variables read from. */
+/** Context fields nycode provides that Claude's ${CLAUDE_*} variables read from. */
 export interface VarContext {
 	sessionManager?: { getSessionId?: () => string };
 	thinkingLevel?: string;
@@ -149,7 +149,7 @@ export function commandVars(
 	};
 }
 
-/** The exec seam expandCommand runs spans through; pi itself satisfies it. */
+/** The exec seam expandCommand runs spans through; nycode itself satisfies it. */
 interface SpanRunner {
 	exec(
 		command: string,
@@ -191,7 +191,7 @@ export async function expandCommand(
 		(options?.allowShell ?? true)
 			? async (script) => {
 					// Hooks get CLAUDE_PROJECT_DIR, and a command's shell span is the same kind of
-					// project-scoped script. pi.exec takes no env, so it is set in the script.
+					// project-scoped script. nycode.exec takes no env, so it is set in the script.
 					// stderr merges into stdout, as the Bash tool runs these for Claude. The
 					// resolver is passed by its imported binding so tests can stub the lookup.
 					const run = spanExec(parsed.shell, projectRoot, script, resolvePowershellBinary);

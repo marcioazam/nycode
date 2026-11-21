@@ -1,14 +1,14 @@
 /**
  * Claude Commands Extension
  *
- * Registers Claude Code's custom slash commands with pi directly, rather than
- * handing `.claude/commands` to pi's prompt-template loader. Owning registration
+ * Registers Claude Code's custom slash commands with nycode directly, rather than
+ * handing `.claude/commands` to nycode's prompt-template loader. Owning registration
  * is what makes the rest of Claude's command contract reachable: `$ARGUMENTS` and
  * positional substitution, `` !`cmd` `` bash output, `@file` inlining, subdirectory
  * commands (named by file name alone, as Claude documents; subdirectories only
  * organize the files), and the
  * `allowed-tools`, `argument-hint` and `model` frontmatter (`model` switches the
- * session model for the command's run via `pi.setModel`, restored on agent_end).
+ * session model for the command's run via `nycode.setModel`, restored on agent_end).
  * `shell: powershell` runs a command's injected spans through PowerShell when a
  * pwsh binary is installed, falling back to the default shell path so the command
  * still works without one: /bin/sh on POSIX, Git Bash on Windows.
@@ -16,14 +16,14 @@
  * Commands are also exposed to the model through a `slash_command` tool
  * (Claude's SlashCommand tool), listing every discovered command whose file
  * does not set `disable-model-invocation: true`. Only the command files this
- * extension discovers are listed: pi built-ins and pi-code's own UI commands
+ * extension discovers are listed: nycode built-ins and nycode's own UI commands
  * are user surfaces, not model surfaces. The model path is expansion only: the
  * expanded body comes back as the tool result (sendUserMessage would spawn a
  * second turn), `allowed-tools`/`disallowed-tools`/`model:` are not applied
  * (applying them from inside a tool call would narrow the running batch and
  * scope unrelated parallel tool calls, and the agent_end restore would lift
  * the grant before the next model step could rely on it), and `!` spans are
- * never executed on the model's demand: pi has no permission engine to gate
+ * never executed on the model's demand: nycode has no permission engine to gate
  * repo-authored shell, so each span is replaced with Claude's
  * "[shell command execution disabled by policy]" placeholder. The same
  * placeholder is applied on every path when the `disableSkillShellExecution`
@@ -145,7 +145,7 @@ function splitCommandLine(input: string): { name: string; args: string } {
 
 export default function commandsExtension(nycode: ExtensionAPI) {
 	const registered = new Set<string>();
-	/** Patch local (commands-print.patch): quem espera o próximo agent_settled (pi -p / --mode json). */
+	/** Patch local (commands-print.patch): quem espera o próximo agent_settled (nycode -p / --mode json). */
 	const settledWaiters: Array<() => void> = [];
 	/** Every command file discovered for the current session, by name, for the
 	 * slash_command tool to resolve against. Rebuilt on each session_start (a resume,
@@ -153,7 +153,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 	 * a command left over from a previous project's session. Kept fresh even for names
 	 * already registered. */
 	const discovered = new Map<string, DiscoveredCommand>();
-	/** pi has no unregister, so the slash_command tool registers once per process. */
+	/** nycode has no unregister, so the slash_command tool registers once per process. */
 	let toolRegistered = false;
 	/** The session_start approval decision, reused for per-invocation settings reads. */
 	let projectApproved = false;
@@ -170,7 +170,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 	let pendingAgentRules: string[] | undefined;
 	/** `Skill(...)` name-pattern scopes enforced the same way. */
 	let pendingSkillRules: string[] | undefined;
-	/** Read/Edit path scopes enforced the same way, per pi file tool. */
+	/** Read/Edit path scopes enforced the same way, per nycode file tool. */
 	let pendingPathRules: Partial<Record<PathRuleTool, string[]>> | undefined;
 	/** The session model to restore after a command's `model:` override drove its run,
 	 * captured once per turn so a second command restores the original session model. */
@@ -199,7 +199,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 	});
 
 	// Claude's contract is "the grant clears when you send your next message", and
-	// pi's turn_end fires after every assistant step: restoring there stripped a
+	// nycode's turn_end fires after every assistant step: restoring there stripped a
 	// multi-step command's tool and model scoping as soon as its first tool batch
 	// came back. agent_end is not the end either: it fires once per agent loop, ahead
 	// of an automatic retry, an auto-compaction-and-retry, or a Stop-hook continuation,
@@ -221,8 +221,8 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 		if (isPlanModeState(data) && !data.active) liftToolScope();
 	});
 
-	// agent_settled never fires when pi is quit mid-run (double Ctrl+C, Ctrl+D, a closed
-	// terminal, SIGTERM), and the switch is already in the transcript: `pi -c` resumed on the
+	// agent_settled never fires when nycode is quit mid-run (double Ctrl+C, Ctrl+D, a closed
+	// terminal, SIGTERM), and the switch is already in the transcript: `nycode -c` resumed on the
 	// command's override model at its raised level. A run that settled has nothing armed, so
 	// this restores nothing twice.
 	nycode.on("session_shutdown", async () => {
@@ -265,8 +265,8 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 			);
 		const rules = pendingPathRules?.[event.toolName as PathRuleTool];
 		if (!rules) return;
-		// The shared reader takes pi's `path` (or Claude's `file_path`) and normalises the
-		// value as pi resolves it. The paired guard in
+		// The shared reader takes nycode's `path` (or Claude's `file_path`) and normalises the
+		// value as nycode resolves it. The paired guard in
 		// hooks/matcher.ts judges the same paths against the same rules, so it normalises
 		// through the same helper rather than only aliasing the two keys.
 		const filePath = fileToolTarget(event) ?? "";
@@ -316,7 +316,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 	}
 
 	/** Apply a command's allowed-tools to the run it drives: intersect with the tools
-	 * pi actually has, keep the bash and path scopes for the tool_call guard, and let
+	 * nycode actually has, keep the bash and path scopes for the tool_call guard, and let
 	 * agent_settled restore the previous set. */
 	function applyAllowedTools(parsed: ParsedCommand, vars: Record<string, string | undefined>): void {
 		const allowed = parsed.allowedTools;
@@ -327,7 +327,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 		const original = captureRestorePoint();
 		const granted = allowed.filter((tool) => original.includes(tool));
 		// `allowed-tools: []` says no tools, and is honored. A non-empty list that
-		// intersects to nothing named only tools pi has none of: that restriction cannot
+		// intersects to nothing named only tools nycode has none of: that restriction cannot
 		// be expressed, and applying it as "no tools" is not what the command asked for.
 		if (granted.length > 0 || allowed.length === 0) nycode.setActiveTools(granted);
 		noteTakenAway();
@@ -397,7 +397,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 			// A failed injected command aborts the invocation; the model never sees a
 			// half-expanded body. The notify carries Claude's failure message format.
 			ctx.ui.notify(errorMessage(error), "error");
-			// Patch local (commands-print.patch): sem UI o notify some e o `pi -p` saía 0 sem dizer nada.
+			// Patch local (commands-print.patch): sem UI o notify some e o `nycode -p` saía 0 sem dizer nada.
 			if (!ctx.hasUI) {
 				process.stderr.write(`${path.basename(filePath, ".md")}: ${errorMessage(error)}\n`);
 				process.exitCode = 1;
@@ -412,7 +412,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 		// A command invoked while the agent is streaming must not narrow the in-flight run's
 		// tools or switch its model (that would corrupt a run it does not own), and a bare
 		// sendUserMessage throws mid-stream and would be silently dropped. Queue it as a
-		// follow-up through pi's own queue, which is abort-aware and shown to the user; its
+		// follow-up through nycode's own queue, which is abort-aware and shown to the user; its
 		// frontmatter scoping is not applied in that case, since it cannot land on a run that
 		// has not started yet.
 		if (!ctx.isIdle()) {
@@ -427,7 +427,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 			nycode.sendUserMessage(expanded);
 			return;
 		}
-		// Patch local (claude-home/patches/pi-code/commands-print.patch): no `pi -p` e no `--mode json` o
+		// Patch local (claude-home/patches/nycode/commands-print.patch): no `nycode -p` e no `--mode json` o
 		// session.prompt() volta quando este handler volta, e o print mode descartava o runtime antes de a execução
 		// iniciada pelo sendUserMessage começar ("turn_end could not resolve...", ctx stale). Sem UI, o handler
 		// espera essa execução assentar; se ela não começar em 60 s (o prompt falhou antes), segue.
@@ -444,7 +444,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 	}
 
 	function registerUserCommand(command: DiscoveredCommand, parsed: ParsedCommand): void {
-		// pi has no unregister, so a command already registered this process keeps its
+		// nycode has no unregister, so a command already registered this process keeps its
 		// original file binding; re-registering would only add a numbered duplicate.
 		if (registered.has(command.name)) return;
 		registered.add(command.name);
@@ -464,7 +464,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 	}
 
 	nycode.on("session_start", async (_event, ctx) => {
-		// pi's CLI builds a fresh extension instance per session replacement; only RPC mode can
+		// nycode's CLI builds a fresh extension instance per session replacement; only RPC mode can
 		// reuse one across sessions. A mid-turn /new there fires session_start on
 		// the same instance while a command's per-run scoping is still pending (its agent_settled
 		// never came). Carrying that into the next session would restore an unrelated tool set,
@@ -480,10 +480,10 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 		effortOverride.reset();
 		const trusted = await isProjectApproved(ctx);
 		projectApproved = trusted;
-		// A resume/fork/new session can switch projects in-process. pi cannot unregister a
+		// A resume/fork/new session can switch projects in-process. nycode cannot unregister a
 		// command or re-describe the slash_command tool, so a name registered in an earlier
 		// project keeps its user-path binding and the tool description stays frozen at the
-		// first session's list; that is a pi limitation. What must not persist is the map
+		// first session's list; that is a nycode limitation. What must not persist is the map
 		// the model resolves against, so it is rebuilt from scratch here: a stale command
 		// from a previous project resolves to "unknown" rather than being expanded.
 		discovered.clear();
@@ -536,7 +536,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 			}),
 			async execute(_toolCallId, params, _signal, _onUpdate, execCtx) {
 				const { name, args } = splitCommandLine(params.command);
-				// pi marks a tool result as an error only when execute() throws, so the
+				// nycode marks a tool result as an error only when execute() throws, so the
 				// failure paths below throw rather than return.
 				const command = discovered.get(name);
 				if (!name || !command)
@@ -563,7 +563,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 					allowShell: false,
 				});
 				// Cap the tool result: a command body can inline an arbitrarily large @file, and
-				// an uncapped tool result overflows the model's context (every other pi-code tool
+				// an uncapped tool result overflows the model's context (every other nycode tool
 				// routes its output through capForContext). The user-invoked path stays uncapped.
 				return {
 					content: [

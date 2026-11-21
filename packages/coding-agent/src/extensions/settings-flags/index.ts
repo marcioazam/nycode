@@ -2,15 +2,15 @@
  * Claude's `--settings` and `--setting-sources` CLI flags (docs/specs/settings-flags.md),
  * and its `--mcp-config` and `--strict-mcp-config` flags (docs/mcp.md).
  *
- * This extension owns the flags: pi answers `getFlag` only for the extension that
+ * This extension owns the flags: nycode answers `getFlag` only for the extension that
  * registered a flag, so the values are resolved here and shared with every consumer of
- * the settings chain through _shared/settings/cli-settings. pi parses flag values after every
+ * the settings chain through _shared/settings/cli-settings. nycode parses flag values after every
  * extension has loaded, so the reader resolves lazily and re-resolves when the raw
  * values change; a read at load time sees no flags, as documented in the spec.
  *
  * A refused value is reported the way Claude does ("Settings file not found: ...",
  * "Invalid setting source: ...") and the session ends: Claude exits 1 rather than run
- * with settings the caller did not ask for. In a terminal session that is pi's own
+ * with settings the caller did not ask for. In a terminal session that is nycode's own
  * shutdown, which restores the terminal. Elsewhere the process exits 1 itself: print
  * mode binds no shutdown handler (nycode print mode), and rpc mode only marks
  * the session to end after the first turn settles (nycode rpc mode).
@@ -26,19 +26,19 @@ import {
 
 const MCP_CONFIG = "--mcp-config";
 
-/** Every `--mcp-config` value, as Claude collects a repeated flag. pi keeps one value per
- * flag name, the last, so the earlier ones are read from the argv by pi's own rule (`=v`,
- * or the next token unless it starts with `-` or `@`). Unless the argv ends in pi's value,
- * pi's value alone stands: nothing pi did not parse is loaded. */
-function mcpConfigValues(piValue: unknown, argv: readonly string[]): string[] | undefined {
-	if (typeof piValue !== "string") return undefined;
+/** Every `--mcp-config` value, as Claude collects a repeated flag. nycode keeps one value per
+ * flag name, the last, so the earlier ones are read from the argv by nycode's own rule (`=v`,
+ * or the next token unless it starts with `-` or `@`). Unless the argv ends in nycode's value,
+ * nycode's value alone stands: nothing nycode did not parse is loaded. */
+function mcpConfigValues(nycodeValue: unknown, argv: readonly string[]): string[] | undefined {
+	if (typeof nycodeValue !== "string") return undefined;
 	const values: string[] = [];
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
 		if (arg.startsWith(`${MCP_CONFIG}=`)) values.push(arg.slice(MCP_CONFIG.length + 1));
 		else if (arg === MCP_CONFIG && argv[i + 1] !== undefined && !/^[-@]/.test(argv[i + 1])) values.push(argv[++i]);
 	}
-	return values.at(-1) === piValue ? values : [piValue];
+	return values.at(-1) === nycodeValue ? values : [nycodeValue];
 }
 
 export default function settingsFlagsExtension(nycode: ExtensionAPI) {

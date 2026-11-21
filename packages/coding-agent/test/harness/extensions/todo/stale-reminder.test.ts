@@ -174,7 +174,7 @@ test("a extensão todo liga o lembrete: NYCODE_TODO_SYNC=1 e lista aberta lembra
 		const entries = [
 			{
 				type: "custom",
-				customType: "pi-code:todo",
+				customType: "nycode:todo",
 				data: { todos: [{ id: 1, text: "a", status: "pending" }], nextId: 2 },
 			},
 		];

@@ -4,7 +4,7 @@
  * This extension:
  * - Registers a `todo` tool for the LLM (add, start, complete, delete, clear, list)
  * - Registers a `/todos` command for users to view the list
- * - Publishes the list on the `pi-code:todos` event; the Plan section draws it, the chat does not
+ * - Publishes the list on the `nycode:todos` event; the Plan section draws it, the chat does not
  *
  * Todos move through a status machine: pending -> in_progress -> completed.
  * Exactly one todo is in_progress at a time; `start` moves any other
@@ -71,7 +71,7 @@ const TodoParams = Type.Object({
 type TodoParamsType = Static<typeof TodoParams>;
 
 const TOOL_NAME = "todo";
-const STATE_ENTRY_TYPE = "pi-code:todo";
+const STATE_ENTRY_TYPE = "nycode:todo";
 
 export const normalizeTodo = (raw: LegacyTodo): Todo => {
 	if (raw.status) return { id: raw.id, text: raw.text, status: raw.status, activeForm: raw.activeForm };
@@ -218,7 +218,7 @@ export default function todoExtension(nycode: ExtensionAPI) {
 			status: t.status,
 		}));
 		setStaleItems(shown);
-		nycode.events.emit("pi-code:todos", shown);
+		nycode.events.emit("nycode:todos", shown);
 	};
 
 	/**

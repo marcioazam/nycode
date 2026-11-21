@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 <!-- Porte para o nycode (2026-11-11) do /claude-hud:configure (claude-hud 0.10.0): config do HUD do nycode em
 ~/.nycode/agent (separada da do Claude Code), AskUserQuestion -> `question`. As linhas de atividade funcionam
-porque o launcher do nycode traduz a sessão do nycode para o transcript do Claude (${NYCODE_RESOURCES}/statusline/claude-hud-pi-transcript.mjs). -->
+porque o launcher do nycode traduz a sessão do nycode para o transcript do Claude (${NYCODE_RESOURCES}/statusline/claude-hud-nycode-transcript.mjs). -->
 
 # Configurar o claude-hud do nycode
 

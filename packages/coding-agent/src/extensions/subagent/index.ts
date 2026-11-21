@@ -101,7 +101,7 @@ export {
 } from "./core/child.ts";
 export { mapWithConcurrencyLimit } from "./core/concurrency.ts";
 export { projectAgentGate } from "./core/modes.ts";
-export { getPiInvocation } from "./core/run.ts";
+export { getNycodeInvocation } from "./core/run.ts";
 export {
 	agentsListText,
 	backgroundCompletionText,
@@ -119,7 +119,7 @@ const DETACHED_TEXT =
 const AUTO_DETACHED_TEXT =
 	"This subagent call runs in the background so the user can keep using the main prompt. Its result arrives as a message when it finishes. Do not wait or poll for it: continue with other work or end your turn. Pass background: false to wait in the foreground.";
 
-const FLEET_SWEPT = Symbol.for("pi-code.fleet.swept");
+const FLEET_SWEPT = Symbol.for("nycode.fleet.swept");
 
 type CompletionSink = Parameters<typeof resumeResultText>[2];
 
@@ -283,7 +283,7 @@ export default function subagentExtension(nycode: ExtensionAPI) {
 	// Claude's mcp__<server> tool patterns translate against the parent's MCP roster,
 	// published by the mcp extension on the shared bus. Optional-chained so a minimal
 	// test stub without an event bus can still register the extension.
-	// Channel `pi-code:plan-state` ({executing, step?, done, total}, published by plan-mode): optional, absent = no planStep on the lanes.
+	// Channel `nycode:plan-state` ({executing, step?, done, total}, published by plan-mode): optional, absent = no planStep on the lanes.
 	nycode.events?.on(PLAN_STATE_CHANNEL, (data) => {
 		const state = data as { executing?: boolean; step?: unknown } | undefined;
 		setPlanStep(state?.executing && typeof state.step === "number" ? state.step : undefined);

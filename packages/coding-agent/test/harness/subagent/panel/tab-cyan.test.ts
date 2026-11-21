@@ -1,6 +1,6 @@
-// Ported from zzzzzzzzzzzzzzzzzzzzzzzzzzzzz-tab-cyan/tab-cyan.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from zzzzzzzzzzzzzzzzzzzzzzzzzzzzz-tab-cyan/tab-cyan.test.ts (nycode patch tests); same cases and expectations.
 // Dono, 2026-11-15: o ciano do sistema (`syntaxType`) marca onde está o foco. Com o foco no composer, a tab aberta fica ciana
-// (nome e `━`); com uma tab focada (↓ no editor vazio, ← →), o ciano vai para ela e a aberta mantém a cor do pi.
+// (nome e `━`); com uma tab focada (↓ no editor vazio, ← →), o ciano vai para ela e a aberta mantém a cor do nycode.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { tabBar } from "../../../../src/extensions/subagent/fleet-ui/style/chrome.ts";
@@ -17,7 +17,7 @@ test("foco no composer: a tab aberta fica ciana (nome e régua)", () => {
 	assert.ok(lines[1].includes("<dim>run</dim>"), lines[1]);
 });
 
-test("tab focada: o ciano vai para ela; a aberta mantém a cor do pi", () => {
+test("tab focada: o ciano vai para ela; a aberta mantém a cor do nycode", () => {
 	const { lines } = tabBar([tab("status", true, false), tab("run", false, true)], "", theme, 200);
 	assert.ok(lines[1].includes("<b><syntaxType>run</syntaxType></b>"), lines[1]);
 	assert.ok(lines[1].startsWith("<b><text>status</text></b>"), lines[1]);

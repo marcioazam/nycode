@@ -3,7 +3,7 @@ import type { ExtensionContext, ToolResultEvent, UserBashEventResult } from "../
 import { SettingsManager } from "../../core/settings-manager.ts";
 import { createLocalBashOperations } from "../../core/tools/bash.ts";
 import { contentText, parseNumericEnv } from "../_shared/util/values.ts";
-import { piToolOutput } from "./claude-tools.ts";
+import { nycodeToolOutput } from "./claude-tools.ts";
 import type { HookCommand } from "./config.ts";
 import { jsonBlockVerdict, tryParseJson } from "./decisions.ts";
 import { passesIfFilter } from "./matcher.ts";
@@ -45,7 +45,7 @@ export async function runNotifyHooks(
 	return await Promise.all(runnable.map((command) => runner(command, payload, timeoutMs(command))));
 }
 
-/** pi's lifecycle vocabularies differ from Claude's documented ones. The matcher is
+/** nycode's lifecycle vocabularies differ from Claude's documented ones. The matcher is
  * offered both spellings so existing configs keep firing either way, and the payload
  * reports the Claude value, which is what a Claude-written hook script parses. */
 export const SESSION_START_SOURCE: Record<string, string> = {
@@ -63,7 +63,7 @@ export const SESSION_END_REASON: Record<string, string> = {
 	fork: "other",
 };
 
-/** The raw pi value plus its Claude spelling, deduplicated, for matcher candidates. */
+/** The raw nycode value plus its Claude spelling, deduplicated, for matcher candidates. */
 export function claudeSpelling(map: Record<string, string>, raw: string): { names: string[]; value: string } {
 	const value = map[raw] ?? raw;
 	return { names: value === raw ? [raw] : [raw, value], value };
@@ -73,7 +73,7 @@ export function claudeSpelling(map: Record<string, string>, raw: string): { name
  * and you haven't typed since". */
 export const IDLE_PROMPT_DELAY_MS = 60_000;
 
-/** pi's model_select sources in Claude's PostModelSwitch vocabulary: an explicit
+/** nycode's model_select sources in Claude's PostModelSwitch vocabulary: an explicit
  * set is a command-style request, cycling is the picker, and restore is the model
  * Claude Code restores on resume. */
 export const MODEL_SELECT_SOURCE: Record<string, string> = { set: "command", cycle: "picker", restore: "resume" };
@@ -107,7 +107,7 @@ export function stopVerdict(
 	return { block: false, reason: "", stop: false };
 }
 
-/** Whether the turn ended in a user interrupt: pi marks the aborted turn's final
+/** Whether the turn ended in a user interrupt: nycode marks the aborted turn's final
  * assistant message stopReason "aborted". */
 export function endedByInterrupt(event: { messages?: Array<{ role: string; stopReason?: string }> }): boolean {
 	const turnMessages = event.messages ?? [];
@@ -123,7 +123,7 @@ export function continueFalseReason(results: HookRunResult[]): string | undefine
 	return postToolStop ? (postToolStop.stopReason ?? "Stopped by hook") : undefined;
 }
 
-/** The first completed result's updatedToolOutput, as the pi output text. An MCP tool
+/** The first completed result's updatedToolOutput, as the nycode output text. An MCP tool
  * also reads updatedMCPToolOutput. */
 export function updatedToolOutput(results: HookRunResult[], toolName: string, isMcp: boolean): string | undefined {
 	return results
@@ -131,7 +131,7 @@ export function updatedToolOutput(results: HookRunResult[], toolName: string, is
 		.map((result) => {
 			const parsed = tryParseJson(result.stdout);
 			const value = isMcp ? (parsed?.updatedMCPToolOutput ?? parsed?.updatedToolOutput) : parsed?.updatedToolOutput;
-			return value === undefined ? undefined : piToolOutput(toolName, value, isMcp);
+			return value === undefined ? undefined : nycodeToolOutput(toolName, value, isMcp);
 		})
 		.find((text) => text !== undefined);
 }
@@ -149,11 +149,11 @@ export function postToolContent(
 }
 
 /**
- * A PreToolUse `updatedInput` on a direct `!` command. pi runs the event's own command
+ * A PreToolUse `updatedInput` on a direct `!` command. nycode runs the event's own command
  * unless the handler returns operations, so a rewrite that only changed the payload ran the
- * typed command. The rewrite is honoured by running pi's local executor on the rewritten
- * command, with the shell pi itself would use (its settings, the project's only when pi
- * trusts the project) and the command prefix pi prepends kept. pi shows the typed command,
+ * typed command. The rewrite is honoured by running nycode's local executor on the rewritten
+ * command, with the shell nycode itself would use (its settings, the project's only when nycode
+ * trusts the project) and the command prefix nycode prepends kept. nycode shows the typed command,
  * so the user is told what actually runs.
  */
 export function rewrittenUserBash(

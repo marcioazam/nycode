@@ -1,4 +1,4 @@
-// Ported from zzzzzzzzzzzzzz-onda5/viewer.test.ts (pi-code patch tests). The "patch applies to the current stack and
+// Ported from zzzzzzzzzzzzzz-onda5/viewer.test.ts (nycode patch tests). The "patch applies to the current stack and
 // reverts" case has no counterpart (there is no patch any more); every other case and expectation is unchanged.
 import assert from "node:assert/strict";
 import { visibleWidth } from "@nycode/tui";

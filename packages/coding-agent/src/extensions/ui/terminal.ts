@@ -65,7 +65,7 @@ export default function (nycode: ExtensionAPI) {
 			if (f === undefined || f === focused) return;
 			focused = f;
 			if (f) done = false;
-			nycode.events.emit("pi-ui:terminal-focus", { focused: f });
+			nycode.events.emit("nycode-ui:terminal-focus", { focused: f });
 			apply();
 		};
 		const stopObserving = observeTerminalInput(onData);

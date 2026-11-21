@@ -1,7 +1,7 @@
 /**
- * Prompt additions made through the options pi builds the system prompt from. A
+ * Prompt additions made through the options nycode builds the system prompt from. A
  * before_agent_start handler that returns `systemPrompt` fixes the text for the rest of the
- * chain, so a section a later handler adds, such as pi's own `mcp_servers` listing, never
+ * chain, so a section a later handler adds, such as nycode's own `mcp_servers` listing, never
  * reaches the model. An option edit is re-rendered with everything after it.
  */
 
@@ -16,9 +16,9 @@ interface PromptEvent {
 }
 
 /** Apply `edit` (which returns its own undo) to the prompt options and say whether it reached
- * the prompt. pi re-renders event.systemPrompt from the options, so there it did. On a pi
+ * the prompt. nycode re-renders event.systemPrompt from the options, so there it did. On a nycode
  * without sections, or after an earlier handler forced a prompt, the edit is undone (an older
- * pi reuses the options object next turn) and the caller returns a systemPrompt instead. */
+ * nycode reuses the options object next turn) and the caller returns a systemPrompt instead. */
 function editOptions(
 	event: PromptEvent,
 	edit: (options: PromptOptions & { sections: Record<string, string> }) => () => void,
@@ -44,7 +44,7 @@ export function addPromptSection(event: PromptEvent, name: string, content: stri
 	});
 }
 
-/** Replace pi's default instructions (the preamble, tools, rules and docs sections) with
+/** Replace nycode's default instructions (the preamble, tools, rules and docs sections) with
  * `content`, keeping every section after them. A prompt already custom is left alone. */
 export function replaceDefaultInstructions(event: PromptEvent, content: string): boolean {
 	if (event.systemPromptOptions?.customPrompt) return false;

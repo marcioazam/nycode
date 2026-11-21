@@ -1,4 +1,4 @@
-"""Testes de pi_telemetry.py com uma sessão sintética. Rodar: python3 -m pytest scripts/harness/telemetry."""
+"""Testes de nycode_telemetry.py com uma sessão sintética. Rodar: python3 -m pytest scripts/harness/telemetry."""
 
 import json
 import tempfile
@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from typing import Any
 
-import pi_telemetry as t
+import nycode_telemetry as t
 
 
 def call(cid: str, name: str, args: dict[str, Any]) -> dict[str, Any]:

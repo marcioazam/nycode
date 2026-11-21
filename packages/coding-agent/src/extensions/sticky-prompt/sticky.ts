@@ -56,7 +56,7 @@ export interface StickyTheme {
 }
 
 // Estilo do tema ativo (selectedBg/text). Lido a cada chamada: o tema muda em runtime.
-// Cor vazia (tema mono, NO_COLOR) vira o reset padrão (39/49) no pi: sem cor própria, não emite SGR.
+// Cor vazia (tema mono, NO_COLOR) vira o reset padrão (39/49) no nycode: sem cor própria, não emite SGR.
 export function stickyStyle(theme: StickyTheme): (s: string) => string {
 	return (s) => {
 		const fg = theme.getFgAnsi("text"),

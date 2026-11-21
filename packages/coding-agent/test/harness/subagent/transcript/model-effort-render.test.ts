@@ -1,4 +1,4 @@
-// Ported from zzzzzzz-subagent-model-effort/render.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from zzzzzzz-subagent-model-effort/render.test.ts (nycode patch tests); same cases and expectations.
 // Modelo e esforço na lista e no viewer (docs/subagent-model-effort.md, AC1-AC3, AC6)
 import assert from "node:assert/strict";
 import { visibleWidth } from "@nycode/tui";

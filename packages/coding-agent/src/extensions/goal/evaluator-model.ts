@@ -9,7 +9,7 @@ const CHARS_PER_TOKEN = 4;
 const DEFAULT_CONTEXT_WINDOW = 200_000;
 
 /** Claude evaluates on its small fast model, ANTHROPIC_DEFAULT_HAIKU_MODEL overriding it;
- * pi has no such tier, so the session model stands in unless the override names one of
+ * nycode has no such tier, so the session model stands in unless the override names one of
  * the models this user can run. */
 export function evaluatorModel(ctx: ExtensionContext): ExtensionContext["model"] {
 	const override = process.env.NYCODE_GOAL_MODEL?.trim() || process.env.ANTHROPIC_DEFAULT_HAIKU_MODEL?.trim();

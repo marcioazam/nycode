@@ -1,4 +1,4 @@
-// Fiação do roteamento no ponto de entrada do subagente (docs/subagent-routing-2026-11-13.md, AC1-AC7), com pi e filho falsos (vitest port)
+// Fiação do roteamento no ponto de entrada do subagente (docs/subagent-routing-2026-11-13.md, AC1-AC7), com nycode e filho falsos (vitest port)
 import assert from "node:assert/strict";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -39,9 +39,9 @@ process.env.NYCODE_SUBAGENT_ROUTING_FILE = policyFile;
 for (const k of ["NYCODE_SUBAGENT", "NYCODE_SUBAGENT_DEPTH", "CLAUDE_CODE_SUBAGENT_MODEL"]) delete process.env[k];
 
 // O filho falso devolve o próprio argv (sem o prompt) e as variáveis de roteamento.
-const fakePi = join(tmp, "fake-pi-routing.mjs");
+const fakeNycode = join(tmp, "fake-nycode-routing.mjs");
 writeFileSync(
-	fakePi,
+	fakeNycode,
 	`const e = process.env
 const out = { args: process.argv.slice(2, -1), env: { parent: e.NYCODE_SUBAGENT_PARENT_MODEL, effort: e.NYCODE_SUBAGENT_PARENT_EFFORT, noSkills: e.NYCODE_SUBAGENT_NO_SKILLS, allowed: e.NYCODE_SUBAGENT_ALLOWED_AGENTS } }
 process.stdout.write(JSON.stringify({ type: 'message_end', message: { role: 'assistant', content: [{ type: 'text', text: JSON.stringify(out) }], stopReason: 'stop' } }) + '\\n')
@@ -70,7 +70,7 @@ function boot(opts: { hasUI?: boolean; custom?: (factory: OverlayFactory) => Pro
 	const commands = new Map<string, { handler: Handler }>();
 	const handlers = new Map<string, Handler[]>();
 	const notes: string[] = [];
-	const pi = {
+	const nycode = {
 		on: (event: string, h: Handler) => void handlers.set(event, [...(handlers.get(event) ?? []), h]),
 		registerTool: (def: ToolDef) => void tools.push(def),
 		registerCommand: (name: string, def: { handler: Handler }) => void commands.set(name, def),
@@ -94,8 +94,8 @@ function boot(opts: { hasUI?: boolean; custom?: (factory: OverlayFactory) => Pro
 		modelRegistry: { getAvailable: () => [model("haiku", 5), model("sonnet", 15), model("opus", 25)] },
 	};
 	const saved = process.argv[1];
-	process.argv[1] = fakePi;
-	subagentExtension(pi as never);
+	process.argv[1] = fakeNycode;
+	subagentExtension(nycode as never);
 	const tool = () => tools.filter((t) => t.name === "subagent").at(-1) as ToolDef;
 	const run = (params: Record<string, unknown>): Promise<ToolResult> =>
 		tool().execute("call", params, undefined, undefined, ctx);
@@ -396,8 +396,8 @@ test("resolveSpawn nunca lança: erro interno vira nota e agente intacto", () =>
 test("AC7: com NYCODE_SUBAGENT_NO_SKILLS o skills.ts não entrega paths por resources_discover", () => {
 	const handlers = new Map<string, Handler>();
 	const base: Record<PropertyKey, unknown> = { on: (e: string, h: Handler) => void handlers.set(e, h) };
-	const pi = new Proxy(base, { get: (t, k) => t[k] ?? (() => {}) });
-	skillsExtension(pi as never);
+	const nycode = new Proxy(base, { get: (t, k) => t[k] ?? (() => {}) });
+	skillsExtension(nycode as never);
 	const ctx = { cwd: tmp, hasUI: false, ui: {}, sessionManager: { getBranch: () => [] } };
 	const discover = handlers.get("resources_discover")!;
 	process.env.NYCODE_SUBAGENT_NO_SKILLS = "1";

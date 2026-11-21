@@ -7,7 +7,7 @@
  * project's .claude/settings.json plus settings.local.json, and the `--settings` flag
  * (internal/cli-settings).
  *
- * Two things run this. The factory body applies managed + user immediately (as pi
+ * Two things run this. The factory body applies managed + user immediately (as nycode
  * loads extensions), so those variables are present before the first turn; a session
  * that never approves a project still gets them. session_start refreshes and, only
  * when the project is approved, folds in the project scope. The project scope stays
@@ -206,7 +206,7 @@ export default function envSettingsExtension(nycode: ExtensionAPI) {
 
 	// Factory time: managed + user only. Approval needs the session ctx, so the project
 	// scope waits for session_start; running here means these vars land before the first
-	// turn. pi parses flags after loading, so the --settings level also waits.
+	// turn. nycode parses flags after loading, so the --settings level also waits.
 	// nycode's own `env` (the embedded default plus settings.json) is the floor below the user scope; settings.json
 	// is read once the session binds, so the factory applies the default alone.
 	apply(os.homedir(), process.cwd(), false, SETTINGS_DEFAULTS.env);
@@ -215,7 +215,7 @@ export default function envSettingsExtension(nycode: ExtensionAPI) {
 		const home = os.homedir();
 		const approved = isProjectApprovedSilently(ctx);
 		// The watcher's reapply closes over the cwd value, never ctx: the poll has no awaiter,
-		// and every getter of a replaced session's ctx throws, which would exit pi.
+		// and every getter of a replaced session's ctx throws, which would exit nycode.
 		const cwd = ctx.cwd;
 		// A reload asks again rather than reusing `approved`: see approvalRecheck.
 		const stillApproved = approvalRecheck(ctx);
@@ -234,7 +234,7 @@ export default function envSettingsExtension(nycode: ExtensionAPI) {
 	nycode.on("session_shutdown", () => {
 		disposeWatch();
 		disposeWatch = () => {};
-		// pi's CLI loads a fresh extension instance for every session replacement, and its
+		// nycode's CLI loads a fresh extension instance for every session replacement, and its
 		// empty `owned` cannot restore what this one set: everything is handed back here, and
 		// the next instance re-applies managed and user env at factory time, as at startup.
 		applyEnvSettings({}, process.env, owned);

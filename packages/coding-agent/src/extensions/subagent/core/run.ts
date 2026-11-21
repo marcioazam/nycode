@@ -51,7 +51,7 @@ export async function writePromptToTempFile(
 	agentName: string,
 	prompt: string,
 ): Promise<{ dir: string; filePath: string }> {
-	const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "pi-subagent-"));
+	const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nycode-subagent-"));
 	const safeName = agentName.replace(/[^\w.-]+/g, "_");
 	const filePath = path.join(tmpDir, `prompt-${safeName}.md`);
 	await withFileMutationQueue(filePath, async () => {
@@ -62,7 +62,7 @@ export async function writePromptToTempFile(
 
 /** Exported as a test seam: the fallbacks only fire in packaged distributions
  * (bun single-file, compiled binary), which no CI run reaches naturally. */
-export function getPiInvocation(args: string[]): { command: string; args: string[] } {
+export function getNycodeInvocation(args: string[]): { command: string; args: string[] } {
 	const currentScript = process.argv[1];
 	const isBunVirtualScript = currentScript?.startsWith("/$bunfs/root/");
 	if (currentScript && !isBunVirtualScript && fs.existsSync(currentScript)) {
@@ -403,7 +403,7 @@ async function runSingleAgentInner(options: RunAgentOptions): Promise<SingleResu
 
 		const runAttempt = (): Promise<number> =>
 			new Promise<number>((resolve) => {
-				const invocation = getPiInvocation(args);
+				const invocation = getNycodeInvocation(args);
 				const spawned = spawnChild(invocation.command, invocation.args, {
 					cwd: worktree?.dir ?? runCwd,
 					// The marker and depth let the child's subagent tool enforce the nesting cap.

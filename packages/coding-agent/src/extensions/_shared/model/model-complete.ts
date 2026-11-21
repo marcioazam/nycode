@@ -1,13 +1,13 @@
 /**
  * One-off, in-process model completions for extensions.
  *
- * pi exposes ModelRuntime.completeSimple(model, context, options), so an extension
+ * nycode exposes ModelRuntime.completeSimple(model, context, options), so an extension
  * can run a single tool-less prompt through a model without spawning a subprocess
  * (the way the subagent does) or standing up its own HTTP client. A caller with a
  * session passes its ctx.modelRegistry, which completes on the session's own runtime;
  * without one, a standalone runtime reading the same credential store is created once
  * and cached. This is the shared foundation for model-backed features that
- * Claude has and pi otherwise cannot express: WebFetch's prompt-over-page answer,
+ * Claude has and nycode otherwise cannot express: WebFetch's prompt-over-page answer,
  * a hook's `type: prompt` evaluation, and similar.
  *
  * Every consumer must treat a completion as best-effort: it costs a model call and
@@ -90,7 +90,7 @@ const ASCENDING_LEVELS: readonly ThinkingLevel[] = ["minimal", "low", "medium", 
 
 /**
  * The cheapest thinking level a model accepts, or undefined when thinking can be off.
- * Without a level, pi-ai asks for thinking off; a model whose thinkingLevelMap marks
+ * Without a level, nycode-ai asks for thinking off; a model whose thinkingLevelMap marks
  * `off: null` (Opus/Sonnet 5.5, Fable 5) cannot honor that and falls back to adaptive
  * thinking at effort "high", which shares maxTokens with the reply. With a small cap
  * the thinking used the whole budget and the call returned no text (stopReason
@@ -148,7 +148,7 @@ export async function completeToolCall(
 		messages: [{ role: "user", content: prompt, timestamp: Date.now() }],
 		tools: [{ ...tool, constrainedSampling: { type: "json_schema", strict: "prefer" } }],
 	};
-	// pi-ai types toolChoice as "auto" | "none", but the Anthropic adapter passes an object
+	// nycode-ai types toolChoice as "auto" | "none", but the Anthropic adapter passes an object
 	// through as tool_choice, which is how a single tool is forced.
 	const toolChoice = { type: "tool", name: tool.name } as unknown as ModelsSimpleStreamOptions["toolChoice"];
 	const streamOptions = {
@@ -172,7 +172,7 @@ export async function completeToolCall(
 /**
  * Run `prompt` through `model` as a single user turn and return the reply text plus
  * the call's usage. A tool that makes a nested LLM call must return that usage on
- * its tool result, or the call's tokens and cost vanish from pi's session totals.
+ * its tool result, or the call's tokens and cost vanish from nycode's session totals.
  * Throws on any failure so the caller can fall back; never returns a partial or a
  * tool call, only assistant text.
  */
@@ -194,7 +194,7 @@ export async function completeText(
 		options.registry && !backendOverridden
 			? await options.registry.streamSimple(model, context, streamOptions).result()
 			: await (await standaloneBackend())(model, context, streamOptions);
-	// pi-ai reports a provider failure or a fired signal by resolving, never rejecting: the
+	// nycode-ai reports a provider failure or a fired signal by resolving, never rejecting: the
 	// message then has no text, and returned as an answer it is indistinguishable from one.
 	if (message.stopReason === "error" || message.stopReason === "aborted")
 		throw new Error(message.errorMessage ?? `completion ${message.stopReason}`);

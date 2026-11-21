@@ -1,34 +1,34 @@
 /**
  * Claude Hooks Extension
  *
- * Runs Claude Code's `.claude/settings.json` hooks on pi's lifecycle events, so
- * a project's existing hooks work under pi:
- * - PreToolUse      -> pi `tool_call` (can block the tool or rewrite its input), plus
- *                      pi `user_bash` for a `!`/`!!` command the user runs directly (the
+ * Runs Claude Code's `.claude/settings.json` hooks on nycode's lifecycle events, so
+ * a project's existing hooks work under nycode:
+ * - PreToolUse      -> nycode `tool_call` (can block the tool or rewrite its input), plus
+ *                      nycode `user_bash` for a `!`/`!!` command the user runs directly (the
  *                      model never issues these, so a deny-list guard would otherwise miss
- *                      them). No pi tool call exists there, so the payload reports the
- *                      Claude name "Bash"; a deny hands pi a synthetic failed result so
+ *                      them). No nycode tool call exists there, so the payload reports the
+ *                      Claude name "Bash"; a deny hands nycode a synthetic failed result so
  *                      the command never runs. UserBashEvent carries no execution result
  *                      and fires only before the command runs, so it has no PostToolUse
- *                      counterpart (pi never delivers the output to observe).
- * - PostToolUse     -> pi `tool_result` (block reasons and additionalContext are
+ *                      counterpart (nycode never delivers the output to observe).
+ * - PostToolUse     -> nycode `tool_result` (block reasons and additionalContext are
  *                      appended next to the tool result, as Claude documents)
- * - SessionStart    -> pi `session_start` (stdout/additionalContext is injected as
+ * - SessionStart    -> nycode `session_start` (stdout/additionalContext is injected as
  *                      context before the first prompt via `before_agent_start`)
- * - UserPromptSubmit-> pi `input` (can block the prompt via `handled`, or inject
+ * - UserPromptSubmit-> nycode `input` (can block the prompt via `handled`, or inject
  *                      additional context by transforming the submitted text)
- * - Stop            -> pi `agent_end` (a block feeds its reason back as a new turn,
+ * - Stop            -> nycode `agent_end` (a block feeds its reason back as a new turn,
  *                      with stop_hook_active as the loop guard)
- * - PreCompact      -> pi `session_before_compact` (fire-and-forget)
- * - PostCompact     -> pi `session_compact` (fire-and-forget); the same event also
+ * - PreCompact      -> nycode `session_before_compact` (fire-and-forget)
+ * - PostCompact     -> nycode `session_compact` (fire-and-forget); the same event also
  *                      fires SessionStart with source "compact", as Claude does
  *                      when a session continues after compaction
- * - PostModelSwitch -> pi `model_select` (after the change, matched against the new
+ * - PostModelSwitch -> nycode `model_select` (after the change, matched against the new
  *                      model id; stdout context rides the next agent start;
- *                      PreModelSwitch stays unbridged, pi has no veto seam)
- * - PostToolUseFailure -> pi `tool_result` error branch (stderr/additionalContext
+ *                      PreModelSwitch stays unbridged, nycode has no veto seam)
+ * - PostToolUseFailure -> nycode `tool_result` error branch (stderr/additionalContext
  *                      appended to the failed result; it cannot block, the tool failed)
- * - SessionEnd      -> pi `session_shutdown` (fire-and-forget)
+ * - SessionEnd      -> nycode `session_shutdown` (fire-and-forget)
  * - InstructionsLoaded -> bridged from the shared instruction-events bus:
  *                      context-imports publishes session_start for the context
  *                      files that survived claudeMdExcludes (it owns exclusion,
@@ -37,21 +37,21 @@
  *                      path_glob_match. Strictly observational: exit codes and
  *                      JSON output, systemMessage included, are ignored.
  *
- * Every payload carries session_id, transcript_path (pi's session file), cwd,
+ * Every payload carries session_id, transcript_path (nycode's session file), cwd,
  * permission_mode (plan-mode state off the shared bus) and effort; tool events add
  * tool_use_id. The universal `systemMessage` output (a user-facing warning) is
  * honored on the decision-bearing events; the observational paths (Notification,
  * InstructionsLoaded) ignore it, as Claude documents for them.
- * `suppressOutput` is accepted and inert: pi never echoes hook stdout to the
+ * `suppressOutput` is accepted and inert: nycode never echoes hook stdout to the
  * transcript in the first place.
- * Payloads speak Claude's vocabulary for pi's built-in tools: tool_name Bash/Edit/
+ * Payloads speak Claude's vocabulary for nycode's built-in tools: tool_name Bash/Edit/
  * Write/Read/Grep/Glob, the documented tool_input shapes with absolute file_path,
  * and the documented Bash/Write tool_response shapes, with `updatedInput`
- * translated back to pi's shape (see claude-tools; an incomplete rewrite keeps
+ * translated back to nycode's shape (see claude-tools; an incomplete rewrite keeps
  * the original input). PreToolUse `additionalContext` lands next to the tool
  * result; `updatedToolOutput` replaces the output the model sees (schema-checked
  * for built-ins, unvalidated for MCP); `permissionDecision: "defer"` blocks the
- * call, since pi cannot resume a deferred one. The `if` permission-rule filter is
+ * call, since nycode cannot resume a deferred one. The `if` permission-rule filter is
  * honored on tool events, and a hook carrying it never runs elsewhere; Stop and
  * UserPromptSubmit ignore a stray matcher, and a Stop hook's `additionalContext`
  * continues the conversation under the same block cap.
@@ -88,7 +88,7 @@
  * resolved chain per event with each entry's source. Matchers follow Claude's rule:
  * `*`/empty match all, plain names are exact (with `|`/`,` list separators), and
  * anything with other regex characters is an unanchored regex. Claude matchers
- * are PascalCase (`Bash`); pi tool names are lowercase (`bash`), so comparison
+ * are PascalCase (`Bash`); nycode tool names are lowercase (`bash`), so comparison
  * is case-insensitive and folds `-` to `_`.
  *
  * Docs: https://code.claude.com/docs/en/hooks.md
@@ -183,7 +183,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 	/** Whether this process is a subagent's child. Claude runs settings hooks inside a
 	 * subagent for tool events, but Stop is the main agent's, a subagent completes with
 	 * SubagentStop, and a subagent run is neither a session (SessionStart, SessionEnd) nor
-	 * a prompt the user submitted (UserPromptSubmit). The child is a full pi process loading
+	 * a prompt the user submitted (UserPromptSubmit). The child is a full nycode process loading
 	 * the same settings, so without this every one of them fired in it. */
 	const inSubagentChild = (): boolean => process.env.NYCODE_SUBAGENT === "1";
 	/** Stops the settings watcher of the previous session. */
@@ -205,7 +205,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		};
 		const transcript = ctx.sessionManager.getSessionFile();
 		if (transcript) common.transcript_path = transcript;
-		// Claude vocabulary only: pi's minimal maps to low and off carries no effort.
+		// Claude vocabulary only: nycode's minimal maps to low and off carries no effort.
 		const effort = claudeEffortLevel(ctx.thinkingLevel);
 		if (effort) common.effort = { level: effort };
 		return common;
@@ -327,12 +327,12 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 	});
 
 	// Claude matchers name MCP tools mcp__<server>__<tool>; nycode registers them as
-	// <server>_<tool>. The mcp extension publishes the mapping on pi's shared bus.
+	// <server>_<tool>. The mcp extension publishes the mapping on nycode's shared bus.
 	const mcpAliases = new Map<string, string>();
 	nycode.events.on(MCP_TOOLS_CHANNEL, (data) => {
 		if (!isMcpToolAliases(data)) return;
 		mcpAliases.clear();
-		for (const entry of data) mcpAliases.set(entry.pi, entry.claude);
+		for (const entry of data) mcpAliases.set(entry.nycode, entry.claude);
 	});
 
 	const toolEvents = registerToolEvents(nycode, {
@@ -355,7 +355,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 			pendingSessionContext.push(...items);
 		},
 	});
-	// Claude's permission_mode: pi has no permission system, but nycode's plan mode is
+	// Claude's permission_mode: nycode has no permission system, but nycode's plan mode is
 	// the documented "plan" mode; its extension publishes the state on the shared bus.
 	let permissionMode = "default";
 	nycode.events.on(PLAN_MODE_CHANNEL, (data) => {
@@ -366,7 +366,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 	// dispatch is fire-and-forget on all paths. `nested_traversal` arrives from
 	// context-imports when a CLAUDE.md below cwd is attached on a file touch. The
 	// `compact` reason can never fire honestly and is a deliberate gap, not an
-	// approximation: pi does not re-load instruction files after compaction.
+	// approximation: nycode does not re-load instruction files after compaction.
 	const fireInstructionsLoaded = (payload: Record<string, unknown>): void => {
 		if (!sessionCtx) return;
 		const commands = matchingCommands(config.InstructionsLoaded, String(payload.load_reason));
@@ -389,7 +389,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		fireInstructionsLoaded({ ...data });
 	});
 
-	// Subagent lifecycle arrives over the bus without a pi context; the session context
+	// Subagent lifecycle arrives over the bus without a nycode context; the session context
 	// captured at session_start supplies the common payload fields.
 	nycode.events.on(SUBAGENT_CHANNEL, async (data) => {
 		// SubagentStart runs through the pre-spawn seam below (so its context can
@@ -521,7 +521,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 
 	nycode.on("session_start", async (event, ctx) => {
 		sessionCtx = ctx;
-		// pi's CLI builds a fresh extension instance per session replacement; only RPC mode can
+		// nycode's CLI builds a fresh extension instance per session replacement; only RPC mode can
 		// reuse one across sessions. A mid-turn /new there fires session_start on
 		// the same instance while a Stop-hook continuation streak is in flight; it must not
 		// carry into the next session, so reset before any early return (disableAllHooks below).
@@ -546,7 +546,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		resolveConfig(ctx.cwd, trusted);
 		// Claude picks up direct settings edits mid-session via a file watcher. The reload
 		// closes over the cwd value, never ctx: the poll has no awaiter, and every getter of
-		// a replaced session's ctx throws, which would exit pi as an uncaughtException.
+		// a replaced session's ctx throws, which would exit nycode as an uncaughtException.
 		const watchCwd = ctx.cwd;
 		// The reload asks again rather than reusing `trusted`: see approvalRecheck.
 		const stillApproved = approvalRecheck(ctx);
@@ -570,7 +570,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 	});
 
 	// Claude adds a SessionStart hook's additionalContext (or plain stdout) to the
-	// conversation before the first prompt; pi's seam for that is a message injected
+	// conversation before the first prompt; nycode's seam for that is a message injected
 	// on the next agent start. The session_start InstructionsLoaded events arrive
 	// over the bus from context-imports, which owns claudeMdExcludes; announcing
 	// the raw contextFiles here would fire for a file the exclusion removed.
@@ -599,7 +599,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 			hookSink(ctx, "UserPromptSubmit", true),
 		);
 		if (decision.block) {
-			// pi's input result has no reason channel, so surface why before consuming it.
+			// nycode's input result has no reason channel, so surface why before consuming it.
 			ctx.ui.notify(
 				hookAttention("UserPromptSubmit bloqueou", decision.reason ?? "Prompt blocked by hook"),
 				"warning",
@@ -609,8 +609,8 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		// "UserPromptSubmit: can't replace the prompt; it only injects additionalContext
 		// alongside it", as a system reminder with no visible transcript entry. So the context
 		// is a hidden message next to the prompt and the prompt text is left alone: prepended,
-		// it moved a `/skill:` or `/template` invocation off position 0 and pi stopped
-		// expanding it. pi appends a "nextTurn" message to this very prompt (after this handler
+		// it moved a `/skill:` or `/template` invocation off position 0 and nycode stopped
+		// expanding it. nycode appends a "nextTurn" message to this very prompt (after this handler
 		// runs); one typed mid-stream never reaches before_agent_start, so it is queued in the
 		// prompt's own mode. suppressOriginalPrompt scopes to the block message, which never
 		// carries the prompt here, so it needs nothing of its own.
@@ -623,7 +623,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 	});
 
 	nycode.on("session_shutdown", async (event, ctx) => {
-		// pi's CLI loads a fresh extension instance for every session replacement, so no later
+		// nycode's CLI loads a fresh extension instance for every session replacement, so no later
 		// session_start reaches this watcher: left armed, it polls for the life of the process.
 		disposeSettingsWatch();
 		disposeSettingsWatch = () => {};
@@ -660,7 +660,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		handler: async (
 			_args,
 			ctx,
-		) => /* NOSONAR typescript:S7503 - pi types a command handler as returning Promise<void> */ {
+		) => /* NOSONAR typescript:S7503 - nycode types a command handler as returning Promise<void> */ {
 			// With a settings-level disable, managed policy hooks stay active and the
 			// viewer still shows them; only a fully empty config reports disabled.
 			if (hooksDisabled && Object.keys(config).length === 0) {

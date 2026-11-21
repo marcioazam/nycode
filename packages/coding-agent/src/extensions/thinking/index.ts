@@ -12,10 +12,10 @@
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 import { createTurnOverride } from "../_shared/commands/turn-override.ts";
 
-// The pi ThinkingLevel union, taken from the setter's parameter so it tracks the SDK.
+// The nycode ThinkingLevel union, taken from the setter's parameter so it tracks the SDK.
 type ThinkingLevel = Parameters<ExtensionAPI["setThinkingLevel"]>[0];
 
-/** Lowest to highest, matching pi's ThinkingLevel union; rank is the index. */
+/** Lowest to highest, matching nycode's ThinkingLevel union; rank is the index. */
 const THINKING_ORDER: readonly ThinkingLevel[] = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 
 export function thinkingRank(level: ThinkingLevel): number {
@@ -33,9 +33,9 @@ export function thinkingRank(level: ThinkingLevel): number {
  * never trip it.
  *
  * Divergence: Claude adds an in-context instruction and leaves the API effort level
- * unchanged. pi has no separate in-context channel for this, and its thinking level IS
+ * unchanged. nycode has no separate in-context channel for this, and its thinking level IS
  * how deeper reasoning is requested, so the keyword raises the level for the turn and
- * restores it after. Same intent, the only mechanism pi has. */
+ * restores it after. Same intent, the only mechanism nycode has. */
 export function requestedThinkingLevel(text: string): ThinkingLevel | undefined {
 	return /\bultrathink\b/i.test(text) ? "max" : undefined;
 }
@@ -56,7 +56,7 @@ export default function thinkingExtension(nycode: ExtensionAPI) {
 	});
 
 	nycode.on("session_start", () => {
-		// pi's CLI builds a fresh extension instance per session replacement; only RPC mode can
+		// nycode's CLI builds a fresh extension instance per session replacement; only RPC mode can
 		// reuse one across sessions. A mid-turn /new there fires session_start on
 		// the same instance while an escalation is still pending (its agent_settled never came),
 		// and that stale restore must be dropped rather than fired into the next session, whose
@@ -84,7 +84,7 @@ export default function thinkingExtension(nycode: ExtensionAPI) {
 		const current = nycode.getThinkingLevel?.() ?? ctx.thinkingLevel ?? "off";
 		// A keyword only raises reasoning: leave a level already at or above the target.
 		if (thinkingRank(current) >= thinkingRank(target)) return;
-		// Armed with the level pi actually stored: it clamps to what the model supports, and
+		// Armed with the level nycode actually stored: it clamps to what the model supports, and
 		// an override armed with the level asked for never recognises its own escalation.
 		nycode.setThinkingLevel?.(target);
 		override.arm(current, nycode.getThinkingLevel?.() ?? target);
@@ -92,8 +92,8 @@ export default function thinkingExtension(nycode: ExtensionAPI) {
 		// the keyword in the prompt.
 	});
 
-	// agent_settled never fires when pi is quit mid-run, and the escalation is already in the
-	// transcript: `pi -c` would resume at the raised level for good.
+	// agent_settled never fires when nycode is quit mid-run, and the escalation is already in the
+	// transcript: `nycode -c` would resume at the raised level for good.
 	nycode.on("session_shutdown", async () => {
 		await override.settle();
 	});

@@ -1,4 +1,4 @@
-// Port of the todo-collapse patch tests (pi-code 1.7.0) to vitest against the embedded source. The widget and
+// Port of the todo-collapse patch tests (nycode 1.7.0) to vitest against the embedded source. The widget and
 // collapse cases are gone with the widget they tested (03 §2.3).
 import assert from "node:assert/strict";
 import { test } from "vitest";
@@ -28,7 +28,7 @@ function start(todos: object[]) {
 	todoExtension(nycode);
 	const widgets: any[] = [];
 	const ui = { setWidget: (key: string, factory: any) => widgets.push({ key, factory }) };
-	const entries = todos.length ? [{ type: "custom", customType: "pi-code:todo", data: { todos, nextId: 9 } }] : [];
+	const entries = todos.length ? [{ type: "custom", customType: "nycode:todo", data: { todos, nextId: 9 } }] : [];
 	const ctx: any = { hasUI: true, ui, sessionManager: { getBranch: () => entries } };
 	handlers.get("session_start")!({}, ctx);
 	return { shortcuts, widgets, emitted };
@@ -41,7 +41,7 @@ test("o chat não registra widget nem atalho de todos; a lista vai ao Plan por e
 	assert.equal(s.widgets.length, 0);
 	assert.equal(s.shortcuts.size, 0);
 	assert.deepEqual(s.emitted.at(-1), [
-		"pi-code:todos",
+		"nycode:todos",
 		[
 			{ id: 1, text: "a", status: "completed" },
 			{ id: 2, text: "Doing b", status: "in_progress" },
@@ -92,7 +92,7 @@ function boot(entries: any[] = [], ctxOver: any = {}) {
 		text: async (p: any) => (await tool.execute("id", p)).content[0].text,
 	};
 }
-const snap = (todos: object[], nextId = 5) => ({ type: "custom", customType: "pi-code:todo", data: { todos, nextId } });
+const snap = (todos: object[], nextId = 5) => ({ type: "custom", customType: "nycode:todo", data: { todos, nextId } });
 
 test("execute: add exige texto, atribui ids crescentes e persiste snapshot", async () => {
 	const b = boot();
@@ -104,7 +104,7 @@ test("execute: add exige texto, atribui ids crescentes e persiste snapshot", asy
 	assert.equal(await b.text({ action: "add", text: "two" }), "Added todo #2: two");
 	assert.equal(b.appended.length, 2);
 	assert.deepEqual(b.appended[1], {
-		type: "pi-code:todo",
+		type: "nycode:todo",
 		data: { todos: [todo(1, "pending", "one", "Doing one"), todo(2, "pending", "two", undefined)], nextId: 3 },
 	});
 });

@@ -53,7 +53,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "tool-search", factory: toolSearchExtension, replaceable: true, builtin: true },
 	{ name: "mcp", factory: mcpExtension, replaceable: true, builtin: true },
 	// nycode: K5 one registration line per embedded extension, alphabetical, below this marker
-	// Embedded pi-code extensions, in pi-code's load order (claude-rules first, then by name).
+	// Embedded nycode extensions, in nycode's load order (claude-rules first, then by name).
 	{ name: "claude-rules", factory: claudeRulesExtension, builtin: true },
 	{ name: "commands", factory: commandsExtension, builtin: true },
 	{ name: "context-imports", factory: contextImportsExtension, builtin: true },
@@ -77,9 +77,9 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "thinking", factory: thinkingExtension, builtin: true },
 	{ name: "todo", factory: todoExtension, builtin: true },
 	{ name: "web", factory: webExtension, builtin: true, enabledByDefault: false },
-	// Embedded pi-lsp: a settings package listed right after pi-code in ny-pi, so it loads before the ny-pi extensions.
+	// Embedded nycode-lsp: a settings package listed right after nycode in ny-harness, so it loads before the ny-harness extensions.
 	{ name: "lsp", factory: lspExtension, builtin: true },
-	// Embedded ny-pi extensions, in ny-pi's load order (after pi-code, by source file name).
+	// Embedded ny-harness extensions, in ny-harness's load order (after nycode, by source file name).
 	{ name: "auto-resume", factory: autoResumeExtension, builtin: true },
 	// nycode: K11 the logic lives with the permission engine in core/permissions/, this line only registers it.
 	{ name: "bypass-permissions", factory: bypassPermissionsExtension, builtin: true },

@@ -8,7 +8,7 @@ import { subagentDepth } from "../nesting/index.ts";
 import { appendAck, currentFleetDir, readInbox, validRunId } from "./store.ts";
 import { FLEET_ENV } from "./types.ts";
 
-const SLOT = Symbol.for("pi-code.fleet.inbox");
+const SLOT = Symbol.for("nycode.fleet.inbox");
 const POLL_MS = 1000;
 
 export interface InboxTarget {

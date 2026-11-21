@@ -1,11 +1,11 @@
-// Run: node --test packages/coding-agent/test/harness/statusline/claude-hud-pi-transcript.test.mjs
+// Run: node --test packages/coding-agent/test/harness/statusline/claude-hud-nycode-transcript.test.mjs
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { isPiSession, syncTranscript } from '../../../resources/statusline/claude-hud-pi-transcript.mjs';
+import { isNycodeSession, syncTranscript } from '../../../resources/statusline/claude-hud-nycode-transcript.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 let n = 0;
@@ -29,11 +29,11 @@ const toolUses = (file) => lines(file).flatMap((l) => (Array.isArray(l.message?.
 
 test('detects nycode sessions only', () => {
   const { source, dir } = setup([]);
-  assert.equal(isPiSession(source), true);
+  assert.equal(isNycodeSession(source), true);
   const claude = path.join(dir, 'claude.jsonl');
   fs.writeFileSync(claude, '{"type":"user","message":{"content":"x"}}\n');
-  assert.equal(isPiSession(claude), false);
-  assert.equal(isPiSession(path.join(dir, 'missing.jsonl')), false);
+  assert.equal(isNycodeSession(claude), false);
+  assert.equal(isNycodeSession(path.join(dir, 'missing.jsonl')), false);
 });
 
 test('maps nycode tools to the Claude names the HUD knows', () => {

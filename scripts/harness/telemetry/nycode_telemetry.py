@@ -13,7 +13,7 @@ Substitui, no nycode, os hooks de observação do Claude Code (decisão de custo
 - cost       custo das mensagens da sessão principal (usage.cost.total) e dos subagentes.
 Só metadados: nunca imprime prompts, saídas ou argumentos, exceto o alvo mascarado da auditoria.
 
-Uso: pi_telemetry.py [tools|subagents|audit|claims|plan-gate|cost|all] [--since DIAS] [--json] [--sessions DIR]
+Uso: nycode_telemetry.py [tools|subagents|audit|claims|plan-gate|cost|all] [--since DIAS] [--json] [--sessions DIR]
 """
 
 from __future__ import annotations

@@ -1,10 +1,10 @@
-// Port of the todo-active patch tests (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the todo-active patch tests (nycode 1.7.0) to vitest against the embedded source.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "vitest";
 import { activeStep, PlanTimes } from "../../../../src/extensions/plan-mode/table.ts";
 
-// Mesmo mapeamento de index.ts para os todos do evento pi-code:todos.
+// Mesmo mapeamento de index.ts para os todos do evento nycode:todos.
 const asItems = (todos: Array<{ id: number; status: string }>) =>
 	todos.map((t) => ({
 		step: t.id,

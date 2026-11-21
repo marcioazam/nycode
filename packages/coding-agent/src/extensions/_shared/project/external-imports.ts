@@ -6,7 +6,7 @@
  * shows an approval dialog listing the files. If you decline, the imports stay
  * disabled and the dialog doesn't appear again."
  *
- * The answer lives beside pi's own trust store rather than in the repository, so a
+ * The answer lives beside nycode's own trust store rather than in the repository, so a
  * clone cannot ship its own approval. It is keyed on the checkout: the resolved git
  * root, or the resolved working directory outside a repository.
  *
@@ -36,9 +36,9 @@ export function externalImportKey(cwd: string): string {
 	}
 }
 
-/** The store file, inside pi's agent directory (tests relocate that through NYCODE_CODING_AGENT_DIR). */
+/** The store file, inside nycode's agent directory (tests relocate that through NYCODE_CODING_AGENT_DIR). */
 export function externalImportStorePath(agentDir: string = getAgentDir()): string {
-	return path.join(agentDir, "pi-code-external-imports.json");
+	return path.join(agentDir, "nycode-external-imports.json");
 }
 
 function readStore(storePath: string): Record<string, unknown> {

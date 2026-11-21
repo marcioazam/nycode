@@ -1,9 +1,9 @@
-// Port of the plan-done-view patch tests (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the plan-done-view patch tests (nycode 1.7.0) to vitest against the embedded source.
 // Pedido do dono (2026-11-14): [DONE:6] cru no chat é vago; mostrar "etapa 6/8 · título" só na exibição. Sem ícone de estado desde 2026-11-15: "etapa 6 de 8 concluída · título", o estado só por nome e cor. O formato atual (bloco, barra, "a seguir") vem do plan-done-block patch, testado aqui.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { renderDoneTags } from "../../../../src/extensions/plan-mode/render/done-view.ts";
-import { fakeCtx, fakePi, fakeUi, type Loose, PLAN } from "../support.ts";
+import { fakeCtx, fakeNycode, fakeUi, type Loose, PLAN } from "../support.ts";
 
 const steps: Loose = [
 	{ step: 6, text: "Gate único (gate-runner)" },
@@ -49,7 +49,7 @@ test("streaming: prefixo incompleto some até a tag fechar", () => {
 });
 
 test("plan-mode registra o transformador e guarda os títulos após a última etapa", async () => {
-	const fake = fakePi({ transformer: true });
+	const fake = fakeNycode({ transformer: true });
 	const { on, cmds, tools } = fake;
 	const { transformer, options: opts } = fake.captured;
 	assert.deepEqual(opts.messageTypes, ["assistant"]);
@@ -84,7 +84,7 @@ test("bloco: linhas seguidas só de tags viram um bloco com barra e fecho", () =
 });
 
 test("após /reload os títulos voltam do último plano gravado na sessão", async () => {
-	const fake = fakePi({ transformer: true, active: ["read"] });
+	const fake = fakeNycode({ transformer: true, active: ["read"] });
 	const on = fake.handlers;
 	const transformer = fake.captured.transformer;
 	const todos = [

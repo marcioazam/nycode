@@ -13,7 +13,7 @@ import {
 	matchesDomainRules,
 	matchesSkillRules,
 } from "../_shared/rules/scope-rules.ts";
-import { asPiReadsIt } from "../_shared/rules/tool-target.ts";
+import { asNycodeReadsIt } from "../_shared/rules/tool-target.ts";
 import { errorMessage } from "../_shared/util/values.ts";
 import type { HookCommand, HookMatcher } from "./config.ts";
 
@@ -22,7 +22,7 @@ import type { HookCommand, HookMatcher } from "./config.ts";
 const EXACT_MATCHER = /^[\w\- ,|]*$/;
 
 /** Claude names are PascalCase and keep dashes (`Bash`, `mcp__brave-search__x`);
- * pi names are lowercase with underscores, so comparison folds both. */
+ * nycode names are lowercase with underscores, so comparison folds both. */
 function foldName(name: string): string {
 	return name.toLowerCase().replaceAll("-", "_");
 }
@@ -160,7 +160,7 @@ function collectCommands(matchers: HookMatcher[] | undefined, applies: (entry: H
 }
 
 /** Command specs whose matcher applies to any of the given tool/source names.
- * Multiple candidates let one event offer both the pi name and its Claude alias. */
+ * Multiple candidates let one event offer both the nycode name and its Claude alias. */
 export function matchingCommands(
 	matchers: HookMatcher[] | undefined,
 	names: string | readonly string[],
@@ -178,7 +178,7 @@ export function allCommands(matchers: HookMatcher[] | undefined): HookCommand[] 
 
 /** The tool call an `if` filter evaluates against; absent on non-tool events. */
 export interface IfFilterTarget {
-	piName: string;
+	nycodeName: string;
 	claudeName?: string;
 	input: unknown;
 	anchors: PathAnchors;
@@ -200,13 +200,13 @@ export function passesIfFilter(hook: HookCommand, target: IfFilterTarget | undef
 	const fold = (name: string): string => name.toLowerCase().replaceAll("-", "_");
 	const ruleTools = new Set(parsed[1].split("|").map(fold));
 	const toolMatches =
-		ruleTools.has(fold(target.piName)) || (target.claudeName !== undefined && ruleTools.has(fold(target.claudeName)));
+		ruleTools.has(fold(target.nycodeName)) || (target.claudeName !== undefined && ruleTools.has(fold(target.claudeName)));
 	if (!toolMatches) return false;
 	const pattern = parsed[2];
 	if (pattern === undefined) return true;
-	// Either spelling can arrive; normalize to the pi name the specifier engines take.
+	// Either spelling can arrive; normalize to the nycode name the specifier engines take.
 	const tool =
-		CLAUDE_TOOL_MAP[fold(target.piName)] ?? CLAUDE_TOOL_MAP[fold(target.claudeName ?? "")] ?? fold(target.piName);
+		CLAUDE_TOOL_MAP[fold(target.nycodeName)] ?? CLAUDE_TOOL_MAP[fold(target.claudeName ?? "")] ?? fold(target.nycodeName);
 	return matchesToolPattern(tool, target.input as Record<string, unknown> | null, pattern, target.anchors);
 }
 
@@ -224,13 +224,13 @@ export function passesIfFilter(hook: HookCommand, target: IfFilterTarget | undef
  * two lists that must agree, so a new scoped tool has to be added in both places; the
  * shared roster is ARG_RULE_TOOLS in internal/command-file.ts. */
 function matchesToolPattern(
-	piName: string,
+	nycodeName: string,
 	input: Record<string, unknown> | null,
 	pattern: string,
 	anchors: PathAnchors,
 ): boolean {
 	const str = (value: unknown): string => (typeof value === "string" ? value : "");
-	switch (piName) {
+	switch (nycodeName) {
 		case "bash":
 			return str(input?.command).length > 0 && matchesBashIfFilter(str(input?.command), pattern);
 		case "web_fetch":
@@ -240,13 +240,13 @@ function matchesToolPattern(
 		case "slash_command":
 			return matchesSkillRules(str(input?.command), [pattern]);
 		default: {
-			// Normalised as pi's file tools resolve it (~, a leading @, a file:// URL), because
+			// Normalised as nycode's file tools resolve it (~, a leading @, a file:// URL), because
 			// the rule side expands ~ against home too: comparing the raw string let an
 			// `if: Edit(~/.ssh/*)` guard miss the very call it names. The value is normalised
 			// rather than routed through fileToolTarget, which would drop every tool outside
 			// read/edit/write and so stop matching rules that match today.
 			const named = str(input?.path) || str(input?.file_path);
-			return named.length > 0 && matchesPathRules(asPiReadsIt(named), [pattern], anchors);
+			return named.length > 0 && matchesPathRules(asNycodeReadsIt(named), [pattern], anchors);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// K10: the built-in header drops its colors under NO_COLOR (it was the ui/a11y plainHeader wrapper in ny-pi).
+// K10: the built-in header drops its colors under NO_COLOR (it was the ui/a11y plainHeader wrapper in ny-harness).
 import { afterEach, describe, expect, it } from "vitest";
 import { BuiltInHeader } from "../../../../src/modes/interactive/interactive-mode.ts";
 

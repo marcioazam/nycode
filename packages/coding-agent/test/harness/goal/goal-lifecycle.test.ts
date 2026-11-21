@@ -1,4 +1,4 @@
-// Port of the goal-lifecycle patch tests (pi-code 1.7.0) to vitest against the embedded source: /goal with a fake
+// Port of the goal-lifecycle patch tests (nycode 1.7.0) to vitest against the embedded source: /goal with a fake
 // extension API (evaluator retries, failed-turn retry/pause). The original also applied the onda5-goal patch to a
 // copy of the package; the embedded source already contains it, so that step has no counterpart.
 import assert from "node:assert/strict";
@@ -71,7 +71,7 @@ function harness(hasUI = true) {
 	const notes: { text: string; level: string }[] = [];
 	const branch: Loose[] = [];
 	let command: Loose;
-	const pi: Loose = {
+	const nycode: Loose = {
 		registerCommand: (_name: string, def: Loose) => {
 			command = def;
 		},
@@ -86,7 +86,7 @@ function harness(hasUI = true) {
 		},
 		appendEntry: (customType: string, data: Loose) => branch.push({ type: "custom", customType, data }),
 	};
-	goalExtension(pi as ExtensionAPI);
+	goalExtension(nycode as ExtensionAPI);
 	const ctx: Loose = {
 		cwd: tmp,
 		hasUI,

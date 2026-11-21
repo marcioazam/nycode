@@ -1,6 +1,6 @@
 /**
  * Replace a file through a temp file and a rename, so a crash mid-write cannot leave the
- * target truncated. Used wherever pi-code rewrites a file the user owns and would have to
+ * target truncated. Used wherever nycode rewrites a file the user owns and would have to
  * repair by hand: settings and the memory index.
  */
 

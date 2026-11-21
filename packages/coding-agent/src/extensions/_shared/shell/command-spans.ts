@@ -38,7 +38,7 @@ export interface SpanExec {
 }
 
 /** The sh invocation for a span: CLAUDE_PROJECT_DIR and CLAUDECODE=1 exported in-script
- * (pi.exec takes no env; CLAUDECODE marks every subprocess Claude spawns), stderr merged
+ * (nycode.exec takes no env; CLAUDECODE marks every subprocess Claude spawns), stderr merged
  * with 2>&1. The group opens with a `:` null command: `{ }` around an empty or
  * comment-only span is a hard sh syntax error (exit 2) that aborted the whole
  * invocation, and `:` keeps such a span the harmless no-op it was on HEAD while the

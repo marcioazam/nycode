@@ -11,7 +11,7 @@
  * rings the bell, `notifications_disabled` stays silent, `iterm2_with_bell` does
  * both, anything else sends the desktop notification. Like Claude, a notification
  * fires only when you "appear to be away". With a real focus signal (the
- * `pi-ui:terminal-focus` event the ui extension emits from DEC 1004) that means the
+ * `nycode-ui:terminal-focus` event the ui extension emits from DEC 1004) that means the
  * terminal is unfocused; without one (no event yet) a turn is treated as away when
  * it ran at least AWAY_AFTER_MS, or when no prompt was submitted since session start.
  */
@@ -132,10 +132,10 @@ export default function notifyExtension(nycode: ExtensionAPI) {
 	// the user pressed Esc: they are at the keyboard by definition, whatever isAway's
 	// timer-based guess would otherwise say.
 	let lastAborted = false;
-	// Terminal focus from the 'pi-ui:terminal-focus' bus event; undefined until the first one.
+	// Terminal focus from the 'nycode-ui:terminal-focus' bus event; undefined until the first one.
 	// Optional-chained so a host or test stub without an event bus still loads.
 	let focused: boolean | undefined;
-	nycode.events?.on("pi-ui:terminal-focus", (data) => {
+	nycode.events?.on("nycode-ui:terminal-focus", (data) => {
 		focused = (data as { focused: boolean }).focused;
 	});
 
@@ -148,7 +148,7 @@ export default function notifyExtension(nycode: ExtensionAPI) {
 	// extensions/avisos announces itself at session_start as the one that notifies (its own title, body and
 	// OSC 99 id); without it this extension keeps the old behavior.
 	let ownedElsewhere = false;
-	nycode.events?.on("pi-harness:notify-owner", () => {
+	nycode.events?.on("nycode-harness:notify-owner", () => {
 		ownedElsewhere = true;
 	});
 

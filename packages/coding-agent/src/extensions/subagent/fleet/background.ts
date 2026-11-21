@@ -266,7 +266,7 @@ function withRebuiltPrompt(spawnSpec: BackgroundSpawn, agent: string): { args: s
 	const current = spawnSpec.args[flag + 1];
 	if (current && fs.existsSync(current)) return { args: spawnSpec.args };
 	try {
-		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-subagent-"));
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nycode-subagent-"));
 		const file = path.join(dir, "prompt.md");
 		fs.writeFileSync(file, spawnSpec.promptBody, { mode: 0o600 });
 		const rebuilt = [...spawnSpec.args];
@@ -310,8 +310,8 @@ export function startBackgroundRun(
 	// resume it instead of starting cold. It persists into a directory of its own: in the
 	// project's session dir it would be the newest session there, which `nycode -c` and /resume
 	// offer as the user's previous one. The same args serve the resume, so it finds the file.
-	const sessionId = `pi-code-${id}-${randomUUID().slice(0, 8)}`;
-	const sessionDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-code-bg-session-"));
+	const sessionId = `nycode-${id}-${randomUUID().slice(0, 8)}`;
+	const sessionDir = fs.mkdtempSync(path.join(os.tmpdir(), "nycode-bg-session-"));
 	const args = invocation.args.map((arg) => (arg === "--no-session" ? "--session-id" : arg));
 	const withSession = args.includes("--session-id")
 		? args.flatMap((arg) =>

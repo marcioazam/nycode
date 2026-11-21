@@ -1,4 +1,4 @@
-// Port of the plan-source-reset patch tests (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the plan-source-reset patch tests (nycode 1.7.0) to vitest against the embedded source.
 // Bug (2026-11-13): quando a execução de um plano terminava, a seção passava a mostrar a lista do `todo` sem
 // zerar relógio e gasto (um todo velho herdava 4.0M tok/$1.90 do plano) e o cabeçalho continuava "PLAN".
 import assert from "node:assert/strict";

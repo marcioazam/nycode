@@ -1,4 +1,4 @@
-// The built-in agents (Explore, Plan, general-purpose) ship as markdown next to the extension. In pi-code they were
+// The built-in agents (Explore, Plan, general-purpose) ship as markdown next to the extension. In nycode they were
 // found through import.meta.dirname; embedded, the directory resolves through getBuiltinAgentsDir and copy-assets
 // (copy-binary-assets for the standalone binary) puts it in dist. Project agents live under CONFIG_DIR_NAME.
 import * as fs from "node:fs";

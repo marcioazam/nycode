@@ -56,7 +56,7 @@ export function registerStopEvents(nycode: ExtensionAPI, deps: StopEventDeps): S
 	// handler on a UI dialog, which would starve the Stop hook and idle notification
 	// until the user answers it. agent_end can fire slightly early before a rare
 	// automatic retry or compaction; that is the better tradeoff.
-	/** Claude's Notification event, for the one type pi can honestly source: the agent
+	/** Claude's Notification event, for the one type nycode can honestly source: the agent
 	 * finished and is waiting for input. idle_prompt fires when the turn ended about 60
 	 * seconds ago and the user has not typed since, so it arms here and input or the next
 	 * turn cancels it. Observational only; exit codes and JSON output are ignored. */

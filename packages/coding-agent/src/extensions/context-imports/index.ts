@@ -1,39 +1,39 @@
 /**
  * Context Imports Extension
  *
- * pi loads CLAUDE.md / AGENTS.md context files natively but does not resolve
+ * nycode loads CLAUDE.md / AGENTS.md context files natively but does not resolve
  * Claude Code's `@path` imports inside them, and skips CLAUDE.local.md
  * entirely. This fills both gaps: on before_agent_start it reads the
  * already-loaded context files from systemPromptOptions, resolves any `@path`
  * imports (recursive, depth-capped, cycle-safe, budget-capped; ~ expands to
  * home, relative paths resolve against the importing file), and appends the
  * imported content plus the approval-gated CLAUDE.local.md body. The base
- * files pi already injected are never re-appended.
+ * files nycode already injected are never re-appended.
  *
- * It also loads the Claude Code memory locations pi's own loader misses, each
+ * It also loads the Claude Code memory locations nycode's own loader misses, each
  * through the same exclude/strip/announce/import pipeline: the user-scope
  * ~/.claude/CLAUDE.md (the user's own file, no approval gate, @imports at
  * user-config roots), the project-scope alternate ./.claude/CLAUDE.md (nearest at
- * or above cwd, approval-gated, deduped against pi's native blocks, @imports at
+ * or above cwd, approval-gated, deduped against nycode's native blocks, @imports at
  * project roots), and the enterprise managed CLAUDE.md file deployed beside
  * managed-settings.json.
  *
- * It also rewrites the context blocks pi assembled, by exact-substring
+ * It also rewrites the context blocks nycode assembled, by exact-substring
  * replacement of the wrapper reconstructed from each file's path+content (a
  * wrapper that is not found is skipped, never guessed at): the managed claudeMd
  * (the managed CLAUDE.md file first, then the managed-settings `claudeMd` key)
  * and the user CLAUDE.md are prepended at the top of <project_context> in Claude's
- * order (managed, user, then pi's native project blocks; managed is managed-source
+ * order (managed, user, then nycode's native project blocks; managed is managed-source
  * only and never excludable), files matching the merged `claudeMdExcludes` globs
  * are removed along with their imports, and block-level HTML comments are stripped
  * from every surviving body (see internal/strip-comments).
  *
- * Where the runtime builds the prompt from its options (pi 0.86 and later), the same
+ * Where the runtime builds the prompt from its options (upstream 0.86 and later), the same
  * memory is handed over as the options' context files instead, in Claude's order
  * and with each import after its importer, and nothing is returned: the prompt is
  * not forced, and a provider that rebuilds it from the options receives what a
  * rewrite of the rendered text cannot give it. The text rewrite above remains for
- * an older pi and for a prompt an earlier handler forced.
+ * an older nycode and for a prompt an earlier handler forced.
  *
  * Security: context files can come from an untrusted project, so imports are
  * confined (after resolving symlinks) to the working directory plus its
@@ -52,10 +52,10 @@
  * (approval-gated) CLAUDE.local.md are appended as extra project_instructions
  * blocks after the native context, their @imports resolved through the shared
  * budgeted resolver with the additional dir as an allowed root. Known gaps,
- * deliberate: pi's getFlag is single-value, so a repeated `--add-dir a --add-dir b`
- * cannot be expressed; the flag accepts a comma-separated value instead. pi has
+ * deliberate: nycode's getFlag is single-value, so a repeated `--add-dir a --add-dir b`
+ * cannot be expressed; the flag accepts a comma-separated value instead. nycode has
  * no `--setting-sources`. The permission half of Claude's --add-dir (widening
- * file access) is moot: pi has no path-based permission system to widen.
+ * file access) is moot: nycode has no path-based permission system to widen.
  *
  * Loads are also announced on the shared instruction-events bus for the
  * InstructionsLoaded hook: `include` for each resolved @import, `session_start`
@@ -65,7 +65,7 @@
  * owns exclusion, so it owns the announcements too: a file the exclusion removed
  * never announces, and the hooks extension only consumes the bus (emit is
  * synchronous, so extension order does not matter). The managed-settings `claudeMd`
- * key is not a file pi loaded, so like today it is inserted but not announced.
+ * key is not a file nycode loaded, so like today it is inserted but not announced.
  *
  * Docs: https://code.claude.com/docs/en/memory.md (imports)
  */
@@ -169,7 +169,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 	// file, so it needs no project approval; read once at session start like the
 	// locals, so a mid-session body edit applies next session, matching Claude.
 	let userContext: { path: string; content: string } | undefined;
-	// The project-scope alternate location ./.claude/CLAUDE.md. pi loads ./CLAUDE.md
+	// The project-scope alternate location ./.claude/CLAUDE.md. nycode loads ./CLAUDE.md
 	// natively but not this one; repo-controlled, so it is approval-gated like the
 	// locals and read once at session start.
 	let projectDotClaude: { path: string; content: string } | undefined;
@@ -252,7 +252,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 			const { extras, budget, imported } = importMemo;
 			return { extras, budget, imported };
 		}
-		// Seed with every loaded context file path, excluded ones included, so pi's own
+		// Seed with every loaded context file path, excluded ones included, so nycode's own
 		// files are never re-imported and an excluded file cannot return as an import.
 		// The user, project-.claude and managed-file additions join the seed too, so a
 		// context file's @import cannot pull any of them in a second time.
@@ -290,12 +290,12 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 		return { extras, budget, imported };
 	};
 
-	// Claude's --add-dir. Only the memory-loading half is meaningful here: pi has
+	// Claude's --add-dir. Only the memory-loading half is meaningful here: nycode has
 	// no path-based permission system, so there is no access grant to mirror.
 	// Optional-called so the extension still wires under stub hosts without flags.
 	nycode.registerFlag?.(ADD_DIR_FLAG, ADD_DIR_FLAG_OPTIONS);
 	setAddDirReader(() => {
-		// A replaced session's pi throws on every call; the next instance registers its own.
+		// A replaced session's nycode throws on every call; the next instance registers its own.
 		try {
 			return nycode.getFlag?.(ADD_DIR_FLAG);
 		} catch {
@@ -309,8 +309,8 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 	 * into context, including user, project, and auto memory files", so a disabled run
 	 * returns empty state and skips isProjectApproved's trust prompt entirely: there is
 	 * nothing left for it to gate. Extracted so session_start itself stays a thin
-	 * dispatcher; before_agent_start's own excluded() check covers pi's native files,
-	 * which this cannot reach since pi loads those itself. */
+	 * dispatcher; before_agent_start's own excluded() check covers nycode's native files,
+	 * which this cannot reach since nycode loads those itself. */
 	async function loadSessionMemory(ctx: ExtensionContext): Promise<{
 		userContext?: { path: string; content: string };
 		localContexts: Array<{ path: string; content: string }>;
@@ -331,7 +331,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 			localContexts: [],
 		};
 
-		// CLAUDE.local.md is Claude Code's personal sidecar of CLAUDE.md; pi's own loader
+		// CLAUDE.local.md is Claude Code's personal sidecar of CLAUDE.md; nycode's own loader
 		// skips it. A cloned repo can ship one, so it is gated like other project config.
 		// Claude loads local context from the whole hierarchy above the working
 		// directory, ordered root down to cwd; the walk is bounded at the repository
@@ -352,7 +352,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 	}
 
 	nycode.on("session_start", async (_event, ctx) => {
-		// pi's ctx.reload() rebuilds extension instances, so this set never survives
+		// nycode's ctx.reload() rebuilds extension instances, so this set never survives
 		// a reload anyway; a reload simply re-fires InstructionsLoaded once per file,
 		// which is fine, since a reload re-loads the instruction files.
 		announced.clear();
@@ -417,9 +417,9 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 		const native: Array<{ path: string; content: string }> = event.systemPromptOptions?.contextFiles ?? [];
 
 		const { managed, excludeGlobs, projectRoot } = environmentFor(cwd, home);
-		// CLAUDE_CODE_DISABLE_CLAUDE_MDS also covers pi's own auto-discovered native context
+		// CLAUDE_CODE_DISABLE_CLAUDE_MDS also covers nycode's own auto-discovered native context
 		// files ("including... auto memory files"), which session_start's gate cannot reach
-		// since pi loads them itself. Routing through the exclusion path already used for
+		// since nycode loads them itself. Routing through the exclusion path already used for
 		// claudeMdExcludes drops the block, strips the InstructionsLoaded event, and skips
 		// import expansion for it, exactly as an excluded file already does.
 		const excluded = (absPath: string): boolean =>
@@ -431,7 +431,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 		let prompt = rewrite.prompt;
 		let changed = rewrite.changed;
 		// Exclusion is owned here, so the session_start InstructionsLoaded events for
-		// pi's native context files are published here too, only for files that
+		// nycode's native context files are published here too, only for files that
 		// survived it: Claude fires no event for a file it never loaded. The hooks
 		// extension consumes them off the shared bus.
 		for (const file of rewrite.kept) {
@@ -449,7 +449,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 		const keptUser = keptMemoryFile(userContext, excluded);
 
 		// Prepend the managed and user memory blocks (managed file, managed key, user), the
-		// blocks Claude loads ahead of pi's native project context. managedFile comes back
+		// blocks Claude loads ahead of nycode's native project context. managedFile comes back
 		// because it also seeds the import memo key below.
 		const top = prependMemoryBlocks(prompt, changed, keptUser, managed, announce);
 		prompt = top.prompt;
@@ -462,7 +462,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 
 		// Repo-controlled text, so gated on the same approval as the locals and the
 		// ./.claude/CLAUDE.md; read here rather than at session start because only the
-		// turn's contextFiles say which file pi actually chose per directory.
+		// turn's contextFiles say which file nycode actually chose per directory.
 		const keptSiblings = (projectApproved ? siblingClaudeMdFiles(native) : [])
 			.filter((sibling) => !excluded(sibling.path))
 			.map((sibling) => ({ path: sibling.path, content: stripBlockComments(sibling.content) }));
@@ -509,7 +509,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 		// Claude's external-import dialog. Asked from the refusals the expansion just
 		// produced, so the files named are exactly the files the answer governs, and asked
 		// here rather than at session start because only this event knows which context
-		// files pi actually loaded. Once per project: the answer is remembered either way.
+		// files nycode actually loaded. Once per project: the answer is remembered either way.
 		const { extras, budget, imported } = await expandAskingAboutExternals(cwd, ctx, expandWith);
 		launchLoadedPaths = realRoots([...contextFiles.map((file) => file.path), ...imported.map((entry) => entry.path)]);
 
@@ -545,7 +545,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 
 	// Claude's nested traversal: CLAUDE.md and CLAUDE.local.md below the working
 	// directory are not loaded at launch but "are included when Claude reads files in
-	// those subdirectories" (memory.md). pi's loader stops at cwd, so the whole
+	// those subdirectories" (memory.md). nycode's loader stops at cwd, so the whole
 	// below-cwd range is missing; this attaches each one to the tool result that
 	// touched its directory, which is the same seam claude-rules uses for a scoped
 	// rule. Once per file per session, ordered shallowest first so the deepest

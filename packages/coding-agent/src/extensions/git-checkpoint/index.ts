@@ -123,10 +123,10 @@ export default function gitCheckpointExtension(nycode: ExtensionAPI) {
 				ctx.ui.notify(`Checkpoints desligados: ${init.stderr.trim() || "git init failed"}`, "warning");
 				return;
 			}
-			await nycode.exec("git", ["--git-dir", shadowDir, "config", "user.email", "checkpoint@pi-code"], {
+			await nycode.exec("git", ["--git-dir", shadowDir, "config", "user.email", "checkpoint@nycode"], {
 				cwd: ctx.cwd,
 			});
-			await nycode.exec("git", ["--git-dir", shadowDir, "config", "user.name", "pi-code-checkpoint"], {
+			await nycode.exec("git", ["--git-dir", shadowDir, "config", "user.name", "nycode-checkpoint"], {
 				cwd: ctx.cwd,
 			});
 		}

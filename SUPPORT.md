@@ -17,5 +17,5 @@ nycode is maintained by one person: replies are best effort, with no response-ti
 
 - Versions older than the latest release (before the first release, anything other than `main`), and checkouts with
   local changes to the shipped files.
-- Problems in a model provider or another third party, including the upstream pi project: report them upstream.
+- Problems in a model provider or another third party, including the upstream agent project: report them upstream.
 - Running with permission bypass on: the behaviour is documented, but a command approved there is your responsibility.

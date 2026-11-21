@@ -1,4 +1,4 @@
-// Ported from zzzzzz-subagent-send/send.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from zzzzzz-subagent-send/send.test.ts (nycode patch tests); same cases and expectations.
 // Testes do `send` do coordenador (D1-D8 de docs/pi-subagent-send-2026-11-13.md)
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -7,7 +7,7 @@ import { afterEach, test, vi } from "vitest";
 import { fleetTestEnv } from "../../support/fleet-env.ts";
 
 const { tmp } = fleetTestEnv("fleet-send-");
-// A descoberta de agentes lê o HOME e o diretório do pi: ambos apontam para um lar de mentira (depois do setup, que já fixou a origem).
+// A descoberta de agentes lê o HOME e o diretório do nycode: ambos apontam para um lar de mentira (depois do setup, que já fixou a origem).
 const home = join(tmp, "home");
 const agentDir = join(home, ".pi", "agent");
 mkdirSync(join(agentDir, "agents"), { recursive: true });
@@ -23,7 +23,7 @@ delete process.env.NYCODE_TEAMS;
 
 const id = (n = 1): string => `fg-${n.toString(16).padStart(8, "0")}`;
 const LEAD = "[message from lead (main session), not the user]: ";
-const SENT_SLOT = Symbol.for("pi-code.fleet.send-count");
+const SENT_SLOT = Symbol.for("nycode.fleet.send-count");
 const globals = globalThis as Record<symbol, unknown>;
 
 afterEach(() => {
@@ -81,10 +81,10 @@ const inboxTexts = (dir: string, rid: string): string[] =>
 // ---- filho: acks consumed e too-late ----
 
 type Handlers = Record<string, Array<() => void>>;
-function childPi() {
+function childNycode() {
 	const handlers: Handlers = {};
 	const sent: string[] = [];
-	const pi = {
+	const nycode = {
 		sendUserMessage: (text: string) => void sent.push(text),
 		on: (event: string, h: () => void) => {
 			handlers[event] ??= [];
@@ -94,11 +94,11 @@ function childPi() {
 	const fire = (event: string): void => {
 		for (const h of handlers[event] ?? []) h();
 	};
-	return { pi, sent, fire, handlers };
+	return { nycode, sent, fire, handlers };
 }
 
 // Sobe o vigia do filho `rid` num diretório da frota próprio, com o relógio simulado.
-function startChild(rid: string, pi: inbox.InboxTarget): string {
+function startChild(rid: string, nycode: inbox.InboxTarget): string {
 	const root = store.fleetRoot();
 	mkdirSync(root, { recursive: true, mode: 0o700 });
 	const dir = join(root, `${process.pid}-${rid.slice(3)}`);
@@ -107,7 +107,7 @@ function startChild(rid: string, pi: inbox.InboxTarget): string {
 	process.env.NYCODE_SUBAGENT_DEPTH = "1";
 	process.env.NYCODE_FLEET_DIR = dir;
 	process.env.NYCODE_FLEET_RUN_ID = rid;
-	inbox.startInboxWatcher(pi);
+	inbox.startInboxWatcher(nycode);
 	return dir;
 }
 
@@ -117,9 +117,9 @@ const outcomes = (dir: string, rid: string): string[] =>
 afterEach(() => vi.useRealTimers());
 
 test("AC3/AC8: a mensagem steered recebe a ack consumed no primeiro turn_start depois dela; a ack steered do painel segue igual", () => {
-	const c = childPi();
+	const c = childNycode();
 	const rid = id(0x101);
-	const dir = startChild(rid, c.pi);
+	const dir = startChild(rid, c.nycode);
 	store.appendInbox(dir, rid, { id: "m1", t: 1, text: "primeira" });
 	vi.advanceTimersByTime(1000);
 	assert.deepEqual(c.sent, ["primeira"]);
@@ -134,10 +134,10 @@ test("AC3/AC8: a mensagem steered recebe a ack consumed no primeiro turn_start d
 });
 
 test("AC3: um turno que começa dentro do próprio sendUserMessage (agente ocioso) também consome", () => {
-	const c = childPi();
+	const c = childNycode();
 	const rid = id(0x102);
-	const dir = startChild(rid, c.pi);
-	c.pi.sendUserMessage = (text: string) => {
+	const dir = startChild(rid, c.nycode);
+	c.nycode.sendUserMessage = (text: string) => {
 		c.sent.push(text);
 		c.fire("turn_start");
 	};
@@ -148,9 +148,9 @@ test("AC3: um turno que começa dentro do próprio sendUserMessage (agente ocios
 });
 
 test("AC3/AC4: no agent_settled, o steered sem turno e o que chegou depois do último poll viram too-late; o shutdown não repete", () => {
-	const c = childPi();
+	const c = childNycode();
 	const rid = id(0x103);
-	const dir = startChild(rid, c.pi);
+	const dir = startChild(rid, c.nycode);
 	store.appendInbox(dir, rid, { id: "m1", t: 1, text: "steered mas sem turno" });
 	vi.advanceTimersByTime(1000);
 	store.appendInbox(dir, rid, { id: "m2", t: 2, text: "chegou depois do último poll" });
@@ -163,9 +163,9 @@ test("AC3/AC4: no agent_settled, o steered sem turno e o que chegou depois do ú
 });
 
 test("AC3: mensagem depois do agent_settled: o poll a entrega, e o dreno do session_shutdown a marca too-late", () => {
-	const c = childPi();
+	const c = childNycode();
 	const rid = id(0x104);
-	const dir = startChild(rid, c.pi);
+	const dir = startChild(rid, c.nycode);
 	c.fire("agent_settled");
 	store.appendInbox(dir, rid, { id: "m3", t: 3, text: "tarde demais" });
 	vi.advanceTimersByTime(1000);
@@ -176,10 +176,10 @@ test("AC3: mensagem depois do agent_settled: o poll a entrega, e o dreno do sess
 });
 
 test("AC3: sendUserMessage que lança grava too-late e a mensagem não fica pendente para consumed", () => {
-	const c = childPi();
+	const c = childNycode();
 	const rid = id(0x105);
-	const dir = startChild(rid, c.pi);
-	c.pi.sendUserMessage = () => {
+	const dir = startChild(rid, c.nycode);
+	c.nycode.sendUserMessage = () => {
 		throw new Error("gone");
 	};
 	store.appendInbox(dir, rid, { id: "m1", t: 1, text: "x" });
@@ -189,11 +189,11 @@ test("AC3: sendUserMessage que lança grava too-late e a mensagem não fica pend
 	inbox.stopInboxWatcher();
 });
 
-test("o vigia ganha os ganchos uma vez por pi; sem pi.on funciona; reiniciar zera o pendente; sem vigia os ganchos não fazem nada", () => {
-	const c = childPi();
+test("o vigia ganha os ganchos uma vez por nycode; sem nycode.on funciona; reiniciar zera o pendente; sem vigia os ganchos não fazem nada", () => {
+	const c = childNycode();
 	const rid = id(0x106);
-	const dir = startChild(rid, c.pi);
-	inbox.startInboxWatcher(c.pi); // /reload no mesmo pi: sem gancho duplicado
+	const dir = startChild(rid, c.nycode);
+	inbox.startInboxWatcher(c.nycode); // /reload no mesmo nycode: sem gancho duplicado
 	assert.deepEqual(
 		Object.values(c.handlers).map((h) => h.length),
 		[1, 1, 1],
@@ -204,7 +204,7 @@ test("o vigia ganha os ganchos uma vez por pi; sem pi.on funciona; reiniciar zer
 	assert.equal(outcomes(dir, rid).filter((o) => o.endsWith(":consumed")).length, 1);
 	store.appendInbox(dir, rid, { id: "m2", t: 2, text: "y" });
 	vi.advanceTimersByTime(1000);
-	inbox.startInboxWatcher({ sendUserMessage: () => {} }); // pi sem `on` (stub mínimo): sem erro, e o pendente de m2 foi descartado
+	inbox.startInboxWatcher({ sendUserMessage: () => {} }); // nycode sem `on` (stub mínimo): sem erro, e o pendente de m2 foi descartado
 	c.fire("agent_settled");
 	assert.equal(
 		outcomes(dir, rid).some((o) => o === "m2:too-late"),
@@ -212,7 +212,7 @@ test("o vigia ganha os ganchos uma vez por pi; sem pi.on funciona; reiniciar zer
 		"o novo vigia reinicia do offset 0 e o dreno relê m2 como too-late",
 	);
 	process.env.NYCODE_SUBAGENT_DEPTH = "0";
-	inbox.startInboxWatcher(c.pi); // profundidade 0: nenhum vigia ativo
+	inbox.startInboxWatcher(c.nycode); // profundidade 0: nenhum vigia ativo
 	const before = outcomes(dir, rid).length;
 	c.fire("turn_start");
 	c.fire("agent_settled");
@@ -330,7 +330,7 @@ test("AC2: run de fundo depth 1 já terminado é retomado com o texto rotulado; 
 	assert.equal(calls.length, 1);
 	fakeResume(false);
 	assert.equal(sourceMod.sendFromLead(id(10), "continue"), "not-running", "a retomada recusada não vira resumed");
-	globals[Symbol.for("pi-code.fleet.source")] = undefined;
+	globals[Symbol.for("nycode.fleet.source")] = undefined;
 	assert.equal(sourceMod.sendFromLead(id(10), "continue"), "not-running", "sem fonte criada nada retoma");
 });
 
@@ -428,9 +428,9 @@ test("sendResultText: cada desfecho diz o que aconteceu e o que fazer", () => {
 
 // ---- ponto de entrada: o schema, a descrição e o execute ----
 
-const fakePi = join(tmp, "fake-pi-send.mjs");
+const fakeNycode = join(tmp, "fake-nycode-send.mjs");
 writeFileSync(
-	fakePi,
+	fakeNycode,
 	`import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 const task = (process.argv.at(-1).match(/Task: ([\\s\\S]*)$/) ?? [])[1] ?? ''
@@ -476,12 +476,12 @@ async function waitFor<T>(what: string, probe: () => T | undefined | false): Pro
 	}
 }
 
-// Um pi e um contexto falsos, sem UI: o `send` tem de criar a frota mesmo sem painel (evals em modo print/json).
+// Um nycode e um contexto falsos, sem UI: o `send` tem de criar a frota mesmo sem painel (evals em modo print/json).
 function boot() {
 	const handlers = new Map<string, Array<(...a: unknown[]) => unknown>>();
 	const tools: Tool[] = [];
 	const sent: Sent[] = [];
-	const pi = {
+	const nycode = {
 		on: (event: string, h: (...a: unknown[]) => unknown) =>
 			void handlers.set(event, [...(handlers.get(event) ?? []), h]),
 		registerTool: (def: Tool) => void tools.push(def),
@@ -505,8 +505,8 @@ function boot() {
 		modelRegistry: { getAvailable: () => [] },
 	};
 	const savedArgv = process.argv[1];
-	process.argv[1] = fakePi;
-	subagentExtension(pi as unknown as ExtensionAPI);
+	process.argv[1] = fakeNycode;
+	subagentExtension(nycode as unknown as ExtensionAPI);
 	const tool = tools.find((t) => t.name === "subagent") as Tool;
 	const fire = async (event: string, payload: unknown = {}): Promise<void> => {
 		for (const h of handlers.get(event) ?? []) await h(payload, ctx);

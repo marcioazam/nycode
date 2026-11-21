@@ -1,43 +1,43 @@
 /**
- * Claude-vocabulary translation for hook payloads on pi's built-in tools.
+ * Claude-vocabulary translation for hook payloads on nycode's built-in tools.
  *
  * Claude-written hook scripts branch on documented names ("Bash", "Edit") and read
- * documented input shapes (`tool_input.file_path`); pi's tools carry their own
+ * documented input shapes (`tool_input.file_path`); nycode's tools carry their own
  * names (`bash`, `edit`) and shapes (`path`, `edits[]`). Payloads report the
  * Claude form, exactly as MCP aliases and user_bash already do, and the decision
  * outputs that reference input/output shapes (`updatedInput`, `updatedToolOutput`)
- * are translated back. Mappings against pi's schemas in
+ * are translated back. Mappings against nycode's schemas in
  * packages/coding-agent/src/core/tools and Claude's hooks
  * reference (per-tool input tables, PostToolUse response shapes).
  *
  * NAMES and SHAPES cover different sets on purpose. Names come from
- * _shared/rules/claude-tool-names.ts and cover every pi tool the tools reference has a
+ * _shared/rules/claude-tool-names.ts and cover every nycode tool the tools reference has a
  * counterpart for, because a hook matcher written in Claude's vocabulary has to fire.
  * Shapes are translated only for the file and shell tools below, because those are
  * the only tools the hooks reference gives a per-tool input table for; for the rest
- * there is no documented Claude shape to conform to, so the pi input passes through
- * unchanged and a hook reads the fields pi's own schema defines.
+ * there is no documented Claude shape to conform to, so the nycode input passes through
+ * unchanged and a hook reads the fields nycode's own schema defines.
  *
  * Translation choices the shapes force, each documented on its function:
- * - pi's multi-entry `edits[]` maps to Claude's single Edit with the first entry in
+ * - nycode's multi-entry `edits[]` maps to Claude's single Edit with the first entry in
  *   `old_string`/`new_string` and the full array carried alongside as `edits`.
- * - Bash `timeout` converts between pi's seconds and Claude's milliseconds.
- * - pi's bash output is one combined stream, so the Bash response reports it all as
+ * - Bash `timeout` converts between nycode's seconds and Claude's milliseconds.
+ * - nycode's bash output is one combined stream, so the Bash response reports it all as
  *   `stdout` with an empty `stderr`.
  */
 
 import * as path from "node:path";
 import { claudeToolName } from "../_shared/rules/claude-tool-names.ts";
-import { asPiReadsIt } from "../_shared/rules/tool-target.ts";
+import { asNycodeReadsIt } from "../_shared/rules/tool-target.ts";
 
 export { claudeToolName };
 
-/** Claude file-tool paths are always absolute before hooks run, and resolved the way pi's
+/** Claude file-tool paths are always absolute before hooks run, and resolved the way nycode's
  * tools resolve them (a leading @ stripped, `~` expanded, a file:// URL decoded), so a
- * path guard judges the file pi opens rather than another spelling of it. */
+ * path guard judges the file nycode opens rather than another spelling of it. */
 function absolutePath(value: unknown, cwd: string): unknown {
 	if (typeof value !== "string" || value.length === 0) return value;
-	return path.resolve(cwd, asPiReadsIt(value));
+	return path.resolve(cwd, asNycodeReadsIt(value));
 }
 
 const record = (value: unknown): Record<string, unknown> | undefined =>
@@ -54,12 +54,12 @@ function pick(entries: Record<string, unknown>): Record<string, unknown> {
 type InputMapper = (raw: Record<string, unknown>, cwd: string) => Record<string, unknown>;
 
 const TO_CLAUDE_INPUT: Record<string, InputMapper> = {
-	// pi timeout is seconds, Claude's is milliseconds.
+	// nycode timeout is seconds, Claude's is milliseconds.
 	bash: (raw) =>
 		pick({ command: raw.command, timeout: typeof raw.timeout === "number" ? raw.timeout * 1000 : undefined }),
 	write: (raw, cwd) => ({ file_path: absolutePath(raw.path, cwd), content: raw.content }),
 	read: (raw, cwd) => pick({ file_path: absolutePath(raw.path, cwd), offset: raw.offset, limit: raw.limit }),
-	// Claude's Edit is a single replacement; pi's edit call carries one or more. The
+	// Claude's Edit is a single replacement; nycode's edit call carries one or more. The
 	// documented fields expose the first entry, and the full array rides along as
 	// `edits` so a hook auditing the whole call loses nothing.
 	edit: (raw, cwd) => {
@@ -84,25 +84,25 @@ const TO_CLAUDE_INPUT: Record<string, InputMapper> = {
 		pick({ pattern: raw.pattern, path: raw.path === undefined ? undefined : absolutePath(raw.path, cwd) }),
 };
 
-/** pi input -> Claude `tool_input` for the translated built-ins; undefined keeps the
- * pi shape (MCP and unknown tools). */
-export function claudeToolInput(piName: string, input: unknown, cwd: string): Record<string, unknown> | undefined {
+/** nycode input -> Claude `tool_input` for the translated built-ins; undefined keeps the
+ * nycode shape (MCP and unknown tools). */
+export function claudeToolInput(nycodeName: string, input: unknown, cwd: string): Record<string, unknown> | undefined {
 	const raw = record(input);
 	if (!raw) return undefined;
-	return TO_CLAUDE_INPUT[piName]?.(raw, cwd);
+	return TO_CLAUDE_INPUT[nycodeName]?.(raw, cwd);
 }
 
 /** The Claude name and `tool_input` a PreToolUse hook and the permission gate judge a call by. `run` with a `command`
  * (action `start`) executes `bash -lc <command>`, so it is judged as Bash with that command; every other call keeps
  * its own translation. */
 export function claudePreCall(
-	piName: string,
+	nycodeName: string,
 	input: unknown,
 	cwd: string,
 ): { name: string | undefined; input: Record<string, unknown> | undefined } {
 	const raw = record(input);
-	if (piName === "run" && typeof raw?.command === "string") return { name: "Bash", input: { command: raw.command } };
-	return { name: claudeToolName(piName), input: claudeToolInput(piName, input, cwd) };
+	if (nycodeName === "run" && typeof raw?.command === "string") return { name: "Bash", input: { command: raw.command } };
+	return { name: claudeToolName(nycodeName), input: claudeToolInput(nycodeName, input, cwd) };
 }
 
 type RewriteMapper = (updated: Record<string, unknown>) => Record<string, unknown> | undefined;
@@ -143,27 +143,27 @@ const FROM_CLAUDE_INPUT: Record<string, RewriteMapper> = {
 		typeof updated.pattern === "string" ? pick({ pattern: updated.pattern, path: updated.path }) : undefined,
 };
 
-/** Claude-shaped `updatedInput` back into pi's input shape for a translated tool.
+/** Claude-shaped `updatedInput` back into nycode's input shape for a translated tool.
  * Returns undefined when the rewrite is missing the tool's required fields, so the
- * caller keeps the ORIGINAL input rather than handing pi a corrupted one; for an
+ * caller keeps the ORIGINAL input rather than handing nycode a corrupted one; for an
  * untranslated tool the caller applies the rewrite verbatim. Claude's Edit
- * `replace_all` has no pi counterpart (pi requires a unique oldText) and is dropped. */
-export function piToolInput(piName: string, updated: Record<string, unknown>): Record<string, unknown> | undefined {
-	return FROM_CLAUDE_INPUT[piName]?.(updated);
+ * `replace_all` has no nycode counterpart (nycode requires a unique oldText) and is dropped. */
+export function nycodeToolInput(nycodeName: string, updated: Record<string, unknown>): Record<string, unknown> | undefined {
+	return FROM_CLAUDE_INPUT[nycodeName]?.(updated);
 }
 
-/** pi result -> Claude `tool_response` where the docs pin a shape: Bash's structured
- * object (pi's single combined stream reported as stdout) and Write's
- * `{filePath, success}`. Other tools keep pi's `{content, details, isError}`. */
+/** nycode result -> Claude `tool_response` where the docs pin a shape: Bash's structured
+ * object (nycode's single combined stream reported as stdout) and Write's
+ * `{filePath, success}`. Other tools keep nycode's `{content, details, isError}`. */
 export function claudeToolResponse(
-	piName: string,
+	nycodeName: string,
 	input: unknown,
 	text: string,
 	isError: boolean,
 	cwd: string,
 ): Record<string, unknown> | undefined {
 	const raw = record(input);
-	switch (piName) {
+	switch (nycodeName) {
 		case "bash":
 			return { stdout: text, stderr: "", interrupted: false, isImage: false };
 		case "write":
@@ -173,21 +173,21 @@ export function claudeToolResponse(
 	}
 }
 
-/** A hook's `updatedToolOutput` back into pi text content. Claude validates built-in
+/** A hook's `updatedToolOutput` back into nycode text content. Claude validates built-in
  * replacements against the tool's output schema and ignores mismatches (returns
  * undefined here, keeping the original); MCP output passes through unvalidated. */
-export function piToolOutput(piName: string, value: unknown, isMcp: boolean): string | undefined {
+export function nycodeToolOutput(nycodeName: string, value: unknown, isMcp: boolean): string | undefined {
 	if (isMcp) {
 		if (typeof value === "string") return value;
 		return value === undefined ? undefined : JSON.stringify(value);
 	}
-	if (piName === "bash") {
+	if (nycodeName === "bash") {
 		const raw = record(value);
 		if (!raw || typeof raw.stdout !== "string") return undefined;
 		const stderr = typeof raw.stderr === "string" && raw.stderr.length > 0 ? `\n${raw.stderr}` : "";
 		return `${raw.stdout}${stderr}`;
 	}
-	// pi's other tool outputs are text content, so a string replacement is
-	// shape-valid; a structured value has no pi counterpart and is ignored.
+	// nycode's other tool outputs are text content, so a string replacement is
+	// shape-valid; a structured value has no nycode counterpart and is ignored.
 	return typeof value === "string" ? value : undefined;
 }

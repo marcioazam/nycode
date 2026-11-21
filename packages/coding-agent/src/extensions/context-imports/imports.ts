@@ -248,7 +248,7 @@ export function collectImports(
  * repo's `CLAUDE.md` cannot read `~/.claude` (`.credentials.json`, global settings, every
  * project's transcripts) into the system prompt.
  *
- * "Under the user's config" is judged by the path pi reported as well as its realpath: a
+ * "Under the user's config" is judged by the path nycode reported as well as its realpath: a
  * dotfiles manager such as GNU stow links `~/.claude/CLAUDE.md` to a repository, so the
  * real path is outside `~/.claude` although the user put the link there.
  */
@@ -265,7 +265,7 @@ export function rootsForImporter(importer: string, home: string, cwd: string, ex
 	// A non-config file is bounded at the repository root: that covers an ancestor
 	// context file (a repo-root CLAUDE.md or CLAUDE.local.md in a subdirectory
 	// session, where cwd alone silently dropped its relative imports) without
-	// granting the importer's own directory. pi also loads home-level context
+	// granting the importer's own directory. nycode also loads home-level context
 	// files (~/AGENTS.md) that sit outside the config roots; their directory is
 	// $HOME, and allowing it would let @.ssh/... read into every session's prompt.
 	// The checkout the session runs in, and the main checkout too: in a worktree they are

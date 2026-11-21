@@ -1,4 +1,4 @@
-// Ported from the pi-code notify-focus patch test: a known terminal-focus state decides alone, otherwise the isAway heuristic.
+// Ported from the nycode notify-focus patch test: a known terminal-focus state decides alone, otherwise the isAway heuristic.
 import { describe, expect, it } from "vitest";
 import type { ExtensionAPI } from "../../../src/core/extensions/types.ts";
 import notifyExtension, { shouldNotify } from "../../../src/extensions/notify/index.ts";
@@ -54,26 +54,26 @@ describe("shouldNotify", () => {
 describe("notify extension", () => {
 	it("focused: does not notify, even without recent input", () => {
 		const h = harness();
-		h.bus.get("pi-ui:terminal-focus")?.({ focused: true });
+		h.bus.get("nycode-ui:terminal-focus")?.({ focused: true });
 		expect(h.run()).toBe(false);
 	});
 
 	it("unfocused: notifies even with recent input (short turn)", () => {
 		const h = harness();
-		h.bus.get("pi-ui:terminal-focus")?.({ focused: false });
+		h.bus.get("nycode-ui:terminal-focus")?.({ focused: false });
 		expect(h.run({ userInput: true })).toBe(true);
 	});
 
 	it("unfocused but aborted turn: does not notify", () => {
 		const h = harness();
-		h.bus.get("pi-ui:terminal-focus")?.({ focused: false });
+		h.bus.get("nycode-ui:terminal-focus")?.({ focused: false });
 		expect(h.run({ aborted: true })).toBe(false);
 	});
 
 	it("focus returns: the last event wins", () => {
 		const h = harness();
-		h.bus.get("pi-ui:terminal-focus")?.({ focused: false });
-		h.bus.get("pi-ui:terminal-focus")?.({ focused: true });
+		h.bus.get("nycode-ui:terminal-focus")?.({ focused: false });
+		h.bus.get("nycode-ui:terminal-focus")?.({ focused: true });
 		expect(h.run()).toBe(false);
 	});
 
@@ -83,7 +83,7 @@ describe("notify extension", () => {
 		expect(h.run({ userInput: true })).toBe(false); // short turn after input
 	});
 
-	it("a stub without pi.events loads and falls back to the heuristic", () => {
+	it("a stub without nycode.events loads and falls back to the heuristic", () => {
 		expect(harness(false).run()).toBe(true);
 	});
 });

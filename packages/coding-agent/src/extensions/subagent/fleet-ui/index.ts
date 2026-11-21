@@ -13,7 +13,7 @@ import { frameSubAgents, summaryLine, tabbed } from "./style/chrome.ts";
 import { hudTheme } from "./style/palette.ts";
 import { openTasksBrowser, openViewer, overlays } from "./viewer.ts";
 
-const WIDGET_KEY = "pi-code-fleet";
+const WIDGET_KEY = "nycode-fleet";
 const TICK_MS = 250; // spinner pace; idle ticks render once per second (IDLE_EVERY)
 const IDLE_EVERY = 4;
 const CONTEXT_TTL_MS = 1000;

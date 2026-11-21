@@ -1,17 +1,17 @@
-// Port of the plan-cache-keep patch test (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the plan-cache-keep patch test (nycode 1.7.0) to vitest against the embedded source.
 // Bug (2026-11-14): ao sair do modo plano um handler `context` removia as notas [PLAN MODE ACTIVE] do
-// histórico; o pi então reenviava prompt e ferramentas como cabeçalho novo e o cache de prompt era perdido
+// histórico; o nycode então reenviava prompt e ferramentas como cabeçalho novo e o cache de prompt era perdido
 // (0 de 35,7k tokens lidos). Agora nada é removido e a saída acrescenta uma nota [PLAN MODE ENDED].
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
-import { fakePi, type Loose } from "../support.ts";
+import { fakeNycode, type Loose } from "../support.ts";
 
 vi.hoisted(() => {
 	process.env.NO_COLOR = "1";
 });
 
 function load() {
-	const fake = fakePi({ active: ["read", "bash", "edit", "write"], flag: false });
+	const fake = fakeNycode({ active: ["read", "bash", "edit", "write"], flag: false });
 	const theme = { fg: (_c: string, t: string) => t, bold: (t: string) => t };
 	const ctx: Loose = {
 		hasUI: true,

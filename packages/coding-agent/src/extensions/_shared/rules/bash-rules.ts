@@ -1,7 +1,7 @@
 /**
  * Claude's `Bash(...)` argument scopes, enforced at tool_call time.
  *
- * A scope like `git add:*` narrows a bash grant to matching commands. pi's
+ * A scope like `git add:*` narrows a bash grant to matching commands. nycode's
  * active-tool set has no argument dimension, so commands.ts grants `bash` and
  * checks each call here instead. Matching follows Claude's documented forms:
  * a bare specifier is an exact match, `prefix:*` matches any command starting

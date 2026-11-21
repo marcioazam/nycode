@@ -9,7 +9,7 @@ interface ContextFile {
 	content: string;
 }
 
-/** The prompt options this extension edits. pi sets `forceSystemPrompt` from 0.86, where
+/** The prompt options this extension edits. nycode sets `forceSystemPrompt` from 0.86, where
  * a handler that returned a prompt forced it for the run. */
 interface PromptOptions {
 	contextFiles?: ContextFile[];
@@ -41,7 +41,7 @@ export function place(
 	return { file, depth: own ? 0 : directory.length, rank };
 }
 
-/** A file pi or another extension handed over, placed by the shape of its path. */
+/** A file nycode or another extension handed over, placed by the shape of its path. */
 function placeByPath(file: ContextFile, where: { config: string; cwd: string }): Placed {
 	const rules = file.path.lastIndexOf(`${path.sep}.claude${path.sep}rules${path.sep}`);
 	if (rules !== -1) return place(file, file.path.slice(0, rules), RANK.rule, where);
@@ -113,17 +113,17 @@ export function memoryEntries(memory: LoadedMemory, where: { config: string; cwd
 }
 
 /** What is said about the imports that did not load. Not a file, so it travels as
- * appended instructions, not as one of pi's custom prompt sections: a provider that
+ * appended instructions, not as one of nycode's custom prompt sections: a provider that
  * rebuilds the prompt forwards the appended instructions and drops those sections. */
 export function memoryNotices(budget: ImportBudget, refusedNotice: string): string {
 	return [budgetNotice(budget), refusedNotice.trim()].filter((notice) => notice.length > 0).join("\n\n");
 }
 
 /** Hand the memory over as the context files the prompt is built from, and say whether
- * that reached the prompt. pi >= 0.86 re-renders the prompt from the options, so there
+ * that reached the prompt. nycode >= 0.86 re-renders the prompt from the options, so there
  * the memory is in, in Claude's order, and a provider that rebuilds the prompt from the
  * options receives it too. A prompt an earlier handler forced stays fixed, but the options
- * are that run's own copy, so they keep the memory. An older pi reuses the options object
+ * are that run's own copy, so they keep the memory. An older nycode reuses the options object
  * next turn, so there they are left as found. */
 export function deliverThroughOptions(
 	event: { systemPrompt: string; systemPromptOptions?: PromptOptions },

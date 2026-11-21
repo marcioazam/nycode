@@ -276,16 +276,16 @@ test("feed digest: only edit/write/bash of others, capped at 600, once per 20 s,
 test("main inbox: all pending messages go out as one followUp; the offset moves on", () => {
 	const dir = fleet(rec(1, "a"), rec(2, "b"));
 	const sent: { text: string; opts: unknown }[] = [];
-	const pi = { sendUserMessage: (text: string, opts: unknown) => void sent.push({ text, opts }) };
-	assert.equal(teamIndex.pollMainInbox(pi, dir, 0), 0);
+	const nycode = { sendUserMessage: (text: string, opts: unknown) => void sent.push({ text, opts }) };
+	assert.equal(teamIndex.pollMainInbox(nycode, dir, 0), 0);
 	assert.equal(sent.length, 0);
 	sendMessage(dir, self(1, "a"), { to: "lead", kind: "question", text: "q1" });
 	sendMessage(dir, self(2, "b"), { to: "lead", kind: "info", text: "i2" });
-	const next = teamIndex.pollMainInbox(pi, dir, 0);
+	const next = teamIndex.pollMainInbox(nycode, dir, 0);
 	assert.equal(sent.length, 1);
 	assert.deepEqual(sent[0]!.opts, { deliverAs: "followUp" });
 	assert.ok(sent[0]!.text.includes("q1") && sent[0]!.text.includes("i2"));
-	assert.equal(teamIndex.pollMainInbox(pi, dir, next), next);
+	assert.equal(teamIndex.pollMainInbox(nycode, dir, next), next);
 	assert.equal(sent.length, 1);
 	const broken = {
 		sendUserMessage: () => {
@@ -300,10 +300,10 @@ test("feed poll steers once per due digest", () => {
 	const dir = fleet(rec(1, "me"), rec(2, "peer"));
 	store.appendTranscript(dir, rid(2), { t: 1, kind: "tool_call", tool: "edit", text: "f.ts" });
 	const sent: unknown[][] = [];
-	const pi = { sendUserMessage: (...a: unknown[]) => void sent.push(a) };
+	const nycode = { sendUserMessage: (...a: unknown[]) => void sent.push(a) };
 	const state = feed.newFeedState();
-	teamIndex.pollFeed(pi, dir, rid(1), state, 100_000);
-	teamIndex.pollFeed(pi, dir, rid(1), state, 100_500);
+	teamIndex.pollFeed(nycode, dir, rid(1), state, 100_000);
+	teamIndex.pollFeed(nycode, dir, rid(1), state, 100_500);
 	assert.equal(sent.length, 1);
 	assert.deepEqual(sent[0]![1], { deliverAs: "steer" });
 	store.appendTranscript(dir, rid(2), { t: 2, kind: "tool_call", tool: "edit", text: "g.ts" });
@@ -356,14 +356,14 @@ test("tool dispatch through the child identity (env), including roster and board
 	);
 });
 
-function fakePi() {
+function fakeNycode() {
 	const calls = {
 		tools: [] as { name: string; execute: (...a: unknown[]) => Promise<{ content: { text: string }[] }> }[],
 		commands: new Map<string, { handler: (a: string, c: unknown) => Promise<void> }>(),
 		handlers: new Map<string, (e: unknown) => unknown>(),
 		active: ["read", "subagent"],
 	};
-	const pi = {
+	const nycode = {
 		registerTool: (t: never) => void calls.tools.push(t),
 		registerCommand: (n: string, o: never) => void calls.commands.set(n, o),
 		on: (n: string, h: (e: unknown) => unknown) => void calls.handlers.set(n, h),
@@ -373,15 +373,15 @@ function fakePi() {
 		},
 		sendUserMessage: () => {},
 	};
-	return { pi, calls };
+	return { nycode, calls };
 }
 
 test("off mode registers no tool, no prompt section; /team on then registers and activates", async () => {
 	await withEnvAsync(
 		{ NYCODE_TEAMS: undefined, NYCODE_SUBAGENT_DEPTH: undefined, NYCODE_SUBAGENT: undefined },
 		async () => {
-			const { pi, calls } = fakePi();
-			teamIndex.registerTeam(pi as never);
+			const { nycode, calls } = fakeNycode();
+			teamIndex.registerTeam(nycode as never);
 			assert.equal(calls.tools.length, 0);
 			assert.equal(calls.handlers.get("before_agent_start")!({ systemPrompt: "S" }), undefined);
 			const notes: string[] = [];
@@ -412,8 +412,8 @@ test("off mode registers no tool, no prompt section; /team on then registers and
 
 test("NYCODE_TEAMS=1 registers the tool at load, in a child too, and the child gets no /team command", async () => {
 	await withEnvAsync({ NYCODE_TEAMS: "1", NYCODE_SUBAGENT_DEPTH: "1" }, async () => {
-		const { pi, calls } = fakePi();
-		teamIndex.registerTeam(pi as never);
+		const { nycode, calls } = fakeNycode();
+		teamIndex.registerTeam(nycode as never);
 		assert.deepEqual(
 			calls.tools.map((t) => t.name),
 			["team"],

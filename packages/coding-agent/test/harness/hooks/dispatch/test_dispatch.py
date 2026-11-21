@@ -109,7 +109,7 @@ class SessionStartTests(DispatchBase):
         note = self.context(self.start(cwd=str(self.tmp / "repo")))
         self.assertIn("repository context detected", note)
 
-    def test_missing_pi_launcher_note(self) -> None:
+    def test_missing_nycode_launcher_note(self) -> None:
         cfg = self.tmp / "mcp.json"
         ok = self.tmp / "ok-bin"
         ok.write_text("#!/bin/sh\n")

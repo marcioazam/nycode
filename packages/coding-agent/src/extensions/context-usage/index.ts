@@ -2,8 +2,8 @@
  * Context Usage Command
  *
  * Claude Code's `/context` reports how much of the model's context window the
- * current session occupies. This registers a `context` command that reads pi's
- * live ContextUsage and renders a concise breakdown through notify. pi exposes
+ * current session occupies. This registers a `context` command that reads nycode's
+ * live ContextUsage and renders a concise breakdown through notify. nycode exposes
  * three fields (tokens, contextWindow, percent); the used/window/free lines and
  * the percentage are built from exactly those, with the model's window as a
  * fallback when the usage snapshot does not carry one.
@@ -41,7 +41,7 @@ export default function contextUsageExtension(nycode: ExtensionAPI) {
 		handler: async (
 			_args,
 			ctx,
-		) => /* NOSONAR typescript:S7503 - pi types a command handler as returning Promise<void> */ {
+		) => /* NOSONAR typescript:S7503 - nycode types a command handler as returning Promise<void> */ {
 			ctx.ui.notify(formatContextUsage(ctx.getContextUsage(), ctx.model?.contextWindow), "info");
 		},
 	});

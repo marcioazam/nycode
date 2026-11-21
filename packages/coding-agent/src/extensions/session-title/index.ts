@@ -2,10 +2,10 @@
  * Session Auto-Title Extension
  *
  * Claude auto-names a new conversation from its first message; this does the same for
- * pi. After the first run of an unnamed session settles, it asks the current model for
+ * nycode. After the first run of an unnamed session settles, it asks the current model for
  * a short title based on the first user message and applies it with setSessionName, which
  * names the session in the selector and refreshes the terminal window/tab title natively
- * (pi changelog); a separate ctx.ui.setTitle call would only duplicate that, so there is none.
+ * (nycode changelog); a separate ctx.ui.setTitle call would only duplicate that, so there is none.
  *
  * It runs in every mode, not just the TUI: naming a session is cheap and harmless, and a
  * headless run that persists its session still benefits from a readable name later. The one
@@ -84,7 +84,7 @@ export function cleanTitle(raw: string): string {
 function titlingDisabled(): boolean {
 	// Claude: "Set to 1 to disable automatic terminal title updates based on conversation
 	// context. In Agent SDK and claude -p sessions, this also skips the background
-	// small/fast-model request that generates the session title." setSessionName is pi's
+	// small/fast-model request that generates the session title." setSessionName is nycode's
 	// only title sink, so skipping the call here skips both effects at once.
 	if (process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE === "1") return true;
 	// A subagent child's session (--no-session, or its own --session-dir once it persists
@@ -141,18 +141,18 @@ export default function sessionTitleExtension(nycode: ExtensionAPI) {
 	});
 
 	// Post-await ctx getters throw once the session is disposed, and an escaping rejection
-	// from this un-awaited settle can exit pi; apply the title best-effort. The name read
-	// belongs inside the guard too: pi's CLI never delivers the next session_start to this
+	// from this un-awaited settle can exit nycode; apply the title best-effort. The name read
+	// belongs inside the guard too: nycode's CLI never delivers the next session_start to this
 	// instance, so only that throw reveals a session replaced during the call.
 	function applyTitle(title: string, startedGeneration: number): void {
 		try {
 			// A /new during the await moved us to a different session, or a name has since been
 			// set; applying this title now would rename the wrong session, so drop it.
 			if (generation !== startedGeneration || nycode.getSessionName?.()) return;
-			// nycode.setSessionName refreshes the terminal/tab title natively (pi changelog), so a
+			// nycode.setSessionName refreshes the terminal/tab title natively (nycode changelog), so a
 			// separate ctx.ui.setTitle call would only duplicate that. The guard stays: a
 			// disposed session throws from setSessionName post-await, and an escaping rejection
-			// from this un-awaited settle can exit pi.
+			// from this un-awaited settle can exit nycode.
 			nycode.setSessionName(title);
 		} catch {
 			// disposed session or a setter failure: leave the session untitled.

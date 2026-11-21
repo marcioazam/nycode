@@ -1,4 +1,4 @@
-// Ported from subagent-panel/fleet.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from subagent-panel/fleet.test.ts (nycode patch tests); same cases and expectations.
 // Testes do plano de dados da frota (subagent/fleet/*)
 import assert from "node:assert/strict";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";

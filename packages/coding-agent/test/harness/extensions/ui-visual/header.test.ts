@@ -48,11 +48,11 @@ test("buildHeaderLines: campos opcionais ausentes somem", () => {
 	assert.ok(one.includes("~/proj"));
 });
 
-test("buildHeaderLines: o logo é o do nycode (core), sem o Pi do pi", () => {
+test("buildHeaderLines: o logo é o do nycode (core), sem o Nycode do nycode", () => {
 	const [top, bottom] = buildHeaderLines(parts, theme, 200).map(stripTerminalSequences);
 	assert.ok(top.includes("▀▀█"), "linha de cima do logo");
 	assert.ok(bottom.includes("█▀"), "linha de baixo do logo");
-	assert.equal(/\bPi\b/.test(top), false);
+	assert.equal(/\bNycode\b/.test(top), false);
 });
 
 test("buildHeaderLines: estilos passam pelo tema", () => {

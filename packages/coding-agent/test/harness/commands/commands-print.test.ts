@@ -1,4 +1,4 @@
-// Characterization of the print-mode behaviour pi-code 1.7.0 carried as the local patch `commands-print`
+// Characterization of the print-mode behaviour nycode 1.7.0 carried as the local patch `commands-print`
 // (D-32): with no UI a failed injected command reports on stderr and sets the exit code, and a successful one
 // holds the handler until the run it started settles (agent_settled), or gives up after 60 s when none starts.
 import * as fs from "node:fs";

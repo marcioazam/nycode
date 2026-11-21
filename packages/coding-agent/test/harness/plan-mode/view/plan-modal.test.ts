@@ -1,4 +1,4 @@
-// Port of the plan-modal patch tests (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the plan-modal patch tests (nycode 1.7.0) to vitest against the embedded source.
 // Pedido do dono (2026-11-14): botão `o abrir plano` no rodapé do Plan abre o plano numa modal com título e descrição por passo;
 // a descrição vem dos bullets do próprio plano (custo zero) e o lint exige ao menos um por tarefa. Registro: docs/pi-plan-modal-2026-11-14.md.
 import assert from "node:assert/strict";
@@ -8,7 +8,7 @@ import { drawerLines, validKeys } from "../../../../src/extensions/plan-mode/man
 import { PlanModal, planModalLines, planTitle } from "../../../../src/extensions/plan-mode/modal.ts";
 import { PlanSection } from "../../../../src/extensions/plan-mode/section.ts";
 import { lintPlan, planToTodos, restoredPlanState } from "../../../../src/extensions/plan-mode/utils.ts";
-import { fakeCtx, fakePi, fakeUi, type Loose, stripAnsi } from "../support.ts";
+import { fakeCtx, fakeNycode, fakeUi, type Loose, stripAnsi } from "../support.ts";
 
 const strip = stripAnsi;
 const theme = { fg: (_c: string, s: string) => s, bg: (_c: string, s: string) => s, bold: (s: string) => s };
@@ -256,7 +256,7 @@ test("host sem show: o abre o arquivo, como antes", async () => {
 });
 
 test("plan-mode: host.show abre overlay no terminal; sem terminal não abre nem falha; texto do modo plano cita a regra", async () => {
-	const fake = fakePi({ transformer: true });
+	const fake = fakeNycode({ transformer: true });
 	const { on, cmds, tools } = fake;
 	const tui: Loose = { terminal: { rows: 40 }, requestRender() {}, setFocus() {} };
 	let section: Loose;

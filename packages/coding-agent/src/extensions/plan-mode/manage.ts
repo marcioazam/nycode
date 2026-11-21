@@ -1,7 +1,7 @@
 /**
  * Plan management (UI): the user's own marks over the plan items (skip), the detail drawer of one step,
  * the keys that are valid for it, and opening the plan as a file. No I/O except `openPlanFile`.
- * Record: docs/pi-interactive-display-2026-11-13.md ("Plan: gestão interativa").
+ * Record: docs/nycode-interactive-display-2026-11-13.md ("Plan: gestão interativa").
  */
 import { spawn } from "node:child_process";
 import { truncateToWidth, wrapTextWithAnsi } from "@nycode/tui";

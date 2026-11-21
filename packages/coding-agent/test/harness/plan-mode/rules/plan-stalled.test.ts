@@ -1,13 +1,13 @@
-// Port of the plan-stalled patch test (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the plan-stalled patch test (nycode 1.7.0) to vitest against the embedded source.
 // Superado em parte em 2026-11-15 (plan-no-interrupt): sem encerramento por runs paradas.
 // Pedido do dono (2026-11-14): interromper um turno encerrava a execução do plano e a mensagem saía como [plan-complete].
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { assistant, fakeCtx, fakePi, type Loose, startExecution } from "../support.ts";
+import { assistant, fakeCtx, fakeNycode, type Loose, startExecution } from "../support.ts";
 
 /** Sobe a extensão e entra em execução de um plano de 2 etapas. */
 async function executing() {
-	const fake = fakePi();
+	const fake = fakeNycode();
 	const ctx = fakeCtx();
 	await startExecution(fake, ctx);
 	const ended = () =>

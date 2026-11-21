@@ -27,7 +27,7 @@ import {
 	type StopOutcome,
 } from "./types.ts";
 
-const SOURCE_SLOT = Symbol.for("pi-code.fleet.source");
+const SOURCE_SLOT = Symbol.for("nycode.fleet.source");
 const KILL_GRACE_MS = 5000;
 const POLL_MS = 1000;
 const DEBOUNCE_MS = 100;
@@ -111,7 +111,7 @@ export function sendEnabled(): boolean {
 const SEND_MAX_CHARS = 4000;
 const SEND_PER_RUN = 20;
 const SEND_PER_PROCESS = 60;
-const SENT_SLOT = Symbol.for("pi-code.fleet.send-count");
+const SENT_SLOT = Symbol.for("nycode.fleet.send-count");
 
 /** Who the child is told the text comes from: never the user. */
 function senderLabel(dir: string): string {

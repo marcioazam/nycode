@@ -1,10 +1,10 @@
 /**
- * Bounded nesting (local patch, claude-home/patches/pi-code/subagent-nesting.patch):
+ * Bounded nesting (local patch, claude-home/patches/nycode/subagent-nesting.patch):
  * the main session is depth 0, its children 1, grandchildren 2, and so on. A session
  * may spawn while its depth is below NYCODE_SUBAGENT_MAX_DEPTH (default 3: children,
  * grandchildren and great-grandchildren; the deepest level is a leaf). Steering, not a
  * sandbox. Each child of the main session roots its own tree (one lane); every run below it
- * shares the lane's budget: NYCODE_SUBAGENT_BUDGET runs (default 64, pi-subagents' per-tree
+ * shares the lane's budget: NYCODE_SUBAGENT_BUDGET runs (default 64, nycode-subagents' per-tree
  * default) and NYCODE_SUBAGENT_COST_BUDGET USD of finished descendants (default 20: p99 of
  * one subagent run here was 7.2 USD, 2026-11-11). The main session is never capped: the
  * user sees every call it makes. Decision record: claude-home/docs/pi-multi-agent-2026-11-11.md.
@@ -59,7 +59,7 @@ function treeId(env: Env): string {
 	return ownTree;
 }
 
-const treeDir = (env: Env, root: string): string => path.join(root, `pi-code-subagent-tree-${treeId(env)}`);
+const treeDir = (env: Env, root: string): string => path.join(root, `nycode-subagent-tree-${treeId(env)}`);
 
 /** Claim `count` spawns from the tree budget; an error string when it is spent. One file
  * per spawn (exclusive create) so concurrent processes in the tree never lose a count. */

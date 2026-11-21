@@ -1,4 +1,4 @@
-// Ported from subagent-panel/fleet-ui.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from subagent-panel/fleet-ui.test.ts (nycode patch tests); same cases and expectations.
 // Testes do viewer da frota (subagent/fleet-ui/viewer.ts): formatadores, render, rolagem, teclas e poll.
 import assert from "node:assert/strict";
 import { visibleWidth } from "@nycode/tui";

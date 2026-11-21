@@ -134,7 +134,7 @@ reaches only sessions that can still delegate.
   unfamiliar codebase starts at the session tier (main thread) or as a nesting lead; Sonnet and Haiku get the bounded
   ones. Mid-run escalation recovers under half the quality gap at a premium, cheap agents fall to ~17% of the strong
   one's pass rate on the hardest tasks, and a cheaper-per-token tier can cost more per task
-  (`docs/research/2026-11-11-pi-multiagent-sota.md` C7, C24, C25). Escalate only on a deterministic signal (failed
+  (`docs/research/2026-11-11-nycode-multiagent-sota.md` C7, C24, C25). Escalate only on a deterministic signal (failed
   gate, empty diff, `blocked`), never on a worker's self-assessment.
 
 - A `haiku` runner stops on difficulty or a check fails: one `swarm-worker` attempt with its summary and the failure

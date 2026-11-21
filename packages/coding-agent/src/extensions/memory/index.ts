@@ -619,7 +619,7 @@ export default function memoryExtension(nycode: ExtensionAPI): void {
 		handler: async (
 			args,
 			ctx,
-		) => /* NOSONAR typescript:S7503 - pi types a command handler as returning Promise<void> */ {
+		) => /* NOSONAR typescript:S7503 - nycode types a command handler as returning Promise<void> */ {
 			const home = os.homedir();
 			const arg = args.trim().toLowerCase();
 
@@ -701,10 +701,10 @@ function pickerEntry({ label, file }: { label: string; file: string }): string {
 
 /**
  * /memory edit: open a memory file in the user's editor, as Claude does. The editor gets the
- * terminal (pi's TUI stopped and restarted around it, as pi's own external editor does) and
- * writes the file itself. nycode never reads or rewrites the bytes: pi's in-TUI editor
+ * terminal (nycode's TUI stopped and restarted around it, as nycode's own external editor does) and
+ * writes the file itself. nycode never reads or rewrites the bytes: nycode's in-TUI editor
  * normalises CRLF and tabs and trims, and a read-then-write would overwrite a change made
- * meanwhile. The command is pi's own choice: its externalEditor setting, then VISUAL, EDITOR.
+ * meanwhile. The command is nycode's own choice: its externalEditor setting, then VISUAL, EDITOR.
  */
 async function editMemoryFile(ctx: ExtensionCommandContext, home: string): Promise<void> {
 	if (!ctx.hasUI) {

@@ -1,4 +1,4 @@
-// Ported from zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-fleet-sync/fleet-sync.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-fleet-sync/fleet-sync.test.ts (nycode patch tests); same cases and expectations.
 // Testes do zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-fleet-sync.patch (docs/sync-observabilidade.md, D8-D11 + custo do painel):
 //   env -u NYCODE_SUBAGENT npx vitest --run test/harness/subagent/fleet/sync/fleet-sync.test.ts
 import assert from "node:assert/strict";
@@ -23,11 +23,11 @@ const theme = {
 	italic: (t: string) => t,
 	underline: (t: string) => t,
 };
-function fakePi() {
+function fakeNycode() {
 	const handlers: Record<string, (...a: unknown[]) => unknown> = {};
 	return {
 		handlers,
-		pi: {
+		nycode: {
 			on: (n: string, h: (...a: unknown[]) => unknown) => {
 				handlers[n] = h;
 			},
@@ -64,8 +64,8 @@ const emptySource = {
 	onChange: () => () => {},
 } as unknown as FleetSource;
 function boot(calls: { n: number }) {
-	const { pi, handlers } = fakePi();
-	fleetUi.registerFleetUi(pi, () => emptySource);
+	const { nycode, handlers } = fakeNycode();
+	fleetUi.registerFleetUi(nycode, () => emptySource);
 	const widgets: Widget[] = [];
 	const tui = { requestRender() {}, terminal: { rows: 40 } };
 	const ctx = {
@@ -120,8 +120,8 @@ test("painel: N desenhos dentro de 1 s chamam getContextUsage uma vez; os evento
 	assert.equal(calls.n, before + 1, "passado 1 s, relê");
 });
 
-// D10/D8 pela fiação real do run.ts (pi falso que fala e fica vivo até o SIGTERM do teto).
-const fakeChild = join(tmp, "fake-pi.mjs");
+// D10/D8 pela fiação real do run.ts (nycode falso que fala e fica vivo até o SIGTERM do teto).
+const fakeChild = join(tmp, "fake-nycode.mjs");
 writeFileSync(
 	fakeChild,
 	`process.stdout.write(JSON.stringify({ type: 'message_end', message: { role: 'assistant', content: [{ type: 'text', text: 'fake done' }], stopReason: 'stop' } }) + '\\n')\nsetInterval(() => {}, 1000)\n`,

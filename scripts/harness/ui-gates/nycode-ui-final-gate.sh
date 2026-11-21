@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Final gate of the ui task (proof that nycode looks like ny-pi). Read-only outside mktemp. Exits 0 only if all pass.
-# Converted from the ny-pi gate (claude-home/bin/tests/pi-ui-final-gate.sh, 14 checks). Map in README.md. Gone:
+# Final gate of the ui task (proof that nycode looks like ny-harness). Read-only outside mktemp. Exits 0 only if all pass.
+# Converted from the ny-harness gate (claude-home/bin/tests/nycode-ui-final-gate.sh, 14 checks). Map in README.md. Gone:
 #  4 hud: claude-hud is the owner's external dependency; its tests move with F8 (R13/R14).
 #  6 hooks, 6 dispatch: python hook tests move with F8 (R10) and run in run-static's pytest.
-#  7 bash -n wrapper: bin/pi is absorbed by the core (K01); check 13 runs the built binary instead.
+#  7 bash -n wrapper: bin/nycode is absorbed by the core (K01); check 13 runs the built binary instead.
 #  9 check-instructions: moves with F8 (R15).
 #  10-12 patch stack: the code is now source in this repo (F5/F6); the proof is git itself.
 # Needs: npm ci, npm run build, @vitest/coverage-v8, jq, rg.
@@ -31,7 +31,7 @@ r=$(vcov ui-visual $H/extensions/ui-visual/header.test.ts $H/extensions/ui-visua
   $H/extensions/ui-visual/index.test.ts $H/extensions/ui-visual/tools.test.ts $H/extensions/ui-visual/working.test.ts)
 chk "1b ui-visual tests + cobertura>=80" "${r%%|*}" "${r#*|}"
 
-# 2: the three pi-code patches of the task (rewind-tree, todo-collapse, notify-focus) are core extensions now.
+# 2: the three nycode patches of the task (rewind-tree, todo-collapse, notify-focus) are core extensions now.
 r=$(vcov git-checkpoint $H/git-checkpoint/git-checkpoint.test.ts)
 chk "2 git-checkpoint (rewind-tree) + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov todo $H/todo/todo-collapse.test.ts $H/extensions/todo/stale-reminder.test.ts)
@@ -39,7 +39,7 @@ chk "2 todo (todo-collapse) + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov notify $H/notify/notify-focus.test.ts $H/extensions/notify/index.test.ts)
 chk "2 notify (notify-focus) + cobertura>=80" "${r%%|*}" "${r#*|}"
 
-# 3: every harness test of the package (was: every pi-code test).
+# 3: every harness test of the package (was: every nycode test).
 (cd "$CA" && env -u OPENROUTER_API_KEY timeout 900 npx vitest --run $H >"$W/all.log" 2>&1)
 chk "3 vitest test/harness (todos)" $? "$(rg '^ +(Test Files|Tests) ' "$W/all.log" | tr -s ' ' | tr '\n' ' ')"
 
