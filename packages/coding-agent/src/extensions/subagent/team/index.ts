@@ -17,7 +17,7 @@ import { addTask, appendBoard, claimTask, doneTask, listTasks, readBoard, roster
 import { BOARD_KINDS, KINDS, type Result, teamEnabled } from "./types.ts";
 
 const TICK_MS = 1000;
-const SLOT = Symbol.for("pi-code.team.state");
+const SLOT = Symbol.for("nycode.team.state");
 
 interface Slot {
 	timer?: ReturnType<typeof setInterval>;

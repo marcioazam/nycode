@@ -1,10 +1,10 @@
-// Port of the plan-done-rule patch test (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the plan-done-rule patch test (nycode 1.7.0) to vitest against the embedded source.
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { fakeCtx, fakePi, type Loose, PLAN } from "../support.ts";
+import { fakeCtx, fakeNycode, type Loose, PLAN } from "../support.ts";
 
 test("execução do plano: a mensagem inicial e o contexto de cada turno exigem a tag literal [DONE:n]", async () => {
-	const fake = fakePi({ active: ["read", "bash", "edit", "plan_mode_complete"] });
+	const fake = fakeNycode({ active: ["read", "bash", "edit", "plan_mode_complete"] });
 	const { cmds, tools, on, sent } = fake;
 	const ctx = fakeCtx();
 	await cmds.plan.handler("", ctx);

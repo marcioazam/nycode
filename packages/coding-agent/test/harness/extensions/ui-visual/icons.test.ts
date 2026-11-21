@@ -1,4 +1,4 @@
-// Ports import/ny-pi/extensions/ui-visual/test/icons.test.ts to vitest. The ny-pi env switches for the Nerd Font and the
+// Ports import/ny-pi/extensions/ui-visual/test/icons.test.ts to vitest. The ny-harness env switches for the Nerd Font and the
 // ASCII fallback became the terminal.nerdFont / terminal.asciiIcons keys (IconPrefs, resolved from env > settings > default).
 import assert from "node:assert/strict";
 import { test } from "vitest";
@@ -32,7 +32,7 @@ test("nerdFont: kitty ou nerdFont=true ligam; resto desliga", () => {
 	assert.equal(nerdFont({ KITTY_WINDOW_ID: "3" }, AUTO), true);
 	assert.equal(nerdFont({}, NERD), true);
 	assert.equal(nerdFont({}, OFF), false);
-	// paridade com o ny-pi: o valor explícito "desligado" é ignorado, o kitty mantém a Nerd Font
+	// paridade com o ny-harness: o valor explícito "desligado" é ignorado, o kitty mantém a Nerd Font
 	assert.equal(nerdFont({ TERM: "xterm-kitty" }, OFF), true);
 	assert.equal(nerdFont({ KITTY_WINDOW_ID: "3" }, OFF), true);
 });

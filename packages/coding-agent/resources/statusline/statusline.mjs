@@ -3,8 +3,8 @@
 // Diferença do original: o nycode não instala plugins do Claude Code, então a instalação mais nova do claude-hud é
 // procurada também nos caches dos perfis do Claude Code (~/.claude/plugins/cache e ~/.claude-*/plugins/cache).
 // A config do HUD continua em ~/.nycode/agent/plugins/claude-hud/config.json (a do nycode, separada da do Claude).
-// O transcript do nycode tem outro formato: antes de chamar o HUD, a sessão do nycode é traduzida (claude-hud-pi-transcript.mjs)
-// para um transcript no formato do Claude em plugins/claude-hud/pi-transcripts/, e o transcript_path do stdin aponta
+// O transcript do nycode tem outro formato: antes de chamar o HUD, a sessão do nycode é traduzida (claude-hud-nycode-transcript.mjs)
+// para um transcript no formato do Claude em plugins/claude-hud/nycode-transcripts/, e o transcript_path do stdin aponta
 // para ele. Assim as linhas de tools, agents, todos, skills e MCP funcionam no nycode.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -78,12 +78,12 @@ async function translatedStdin() {
     if (typeof source === 'string' && source) {
       // O tradutor fica ao lado deste arquivo; a cópia instalada em ~/.nycode/agent aponta para ${NYCODE_RESOURCES}/statusline.
       const here = path.dirname(fileURLToPath(import.meta.url));
-      const candidates = [path.join(here, 'claude-hud-pi-transcript.mjs'), path.join(resources, 'statusline', 'claude-hud-pi-transcript.mjs')];
+      const candidates = [path.join(here, 'claude-hud-nycode-transcript.mjs'), path.join(resources, 'statusline', 'claude-hud-nycode-transcript.mjs')];
       const translator = candidates.find((file) => fs.existsSync(file));
       if (translator) {
-        const { isPiSession, syncTranscript } = await import(pathToFileURL(translator).href);
-        if (isPiSession(source)) {
-          const out = path.join(configDir, 'plugins', 'claude-hud', 'pi-transcripts', path.basename(source));
+        const { isNycodeSession, syncTranscript } = await import(pathToFileURL(translator).href);
+        if (isNycodeSession(source)) {
+          const out = path.join(configDir, 'plugins', 'claude-hud', 'nycode-transcripts', path.basename(source));
           payload.transcript_path = syncTranscript(source, out);
         }
       }

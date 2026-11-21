@@ -1,4 +1,4 @@
-// Ported from subagent-panel/fleet-ui.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from subagent-panel/fleet-ui.test.ts (nycode patch tests); same cases and expectations.
 // Testes do painel/viewer da frota (subagent/fleet-ui)
 import assert from "node:assert/strict";
 import { visibleWidth } from "@nycode/tui";
@@ -512,11 +512,11 @@ test("TasksComponent: seleção limitada e timers soltos no dispose", () => {
 
 // ---- index ----
 
-function fakePi() {
+function fakeNycode() {
 	const handlers: Record<string, (...a: unknown[]) => unknown> = {};
 	return {
 		handlers,
-		pi: {
+		nycode: {
 			on: (e: string, h: (...a: unknown[]) => unknown) => {
 				handlers[e] = h;
 			},
@@ -563,9 +563,9 @@ function fakeUi(over: Record<string, unknown> = {}) {
 
 test("registerFleetUi: widget abaixo do editor, teclas, sem UI/filho não registra, shutdown limpa", async () => {
 	const src = fakeSource([rec("a", null, 1)]);
-	const { pi, handlers } = fakePi();
+	const { nycode, handlers } = fakeNycode();
 	let source: FakeSource | undefined;
-	const api = fleetUi.registerFleetUi(pi, () => source);
+	const api = fleetUi.registerFleetUi(nycode, () => source);
 	const { ctx, rec: r, tui } = fakeUi();
 
 	// sem UI e em processo filho: nada
@@ -576,7 +576,7 @@ test("registerFleetUi: widget abaixo do editor, teclas, sem UI/filho não regist
 	assert.equal(r.widgets.length, 0);
 
 	await handlers.session_start({}, ctx);
-	assert.equal(r.widgets[0].key, "pi-code-fleet");
+	assert.equal(r.widgets[0].key, "nycode-fleet");
 	assert.deepEqual(r.widgets[0].options, { placement: "belowEditor" });
 	const comp = r.widgets[0].content(tui, theme);
 	assert.deepEqual(comp.render(80), [], "sem source: nada");
@@ -614,7 +614,7 @@ test("registerFleetUi: widget abaixo do editor, teclas, sem UI/filho não regist
 
 	await handlers.session_shutdown();
 	assert.equal(r.inputs.length, 0);
-	assert.deepEqual(r.widgets.at(-1), { key: "pi-code-fleet", content: undefined, options: undefined });
+	assert.deepEqual(r.widgets.at(-1), { key: "nycode-fleet", content: undefined, options: undefined });
 	await handlers.session_shutdown(); // idempotente
 
 	const { ctx: c2, rec: r2 } = fakeUi();
@@ -629,10 +629,10 @@ test("registerFleetUi: widget abaixo do editor, teclas, sem UI/filho não regist
 
 test("registerFleetUi: o tick de 1 s assina um source que só aparece depois do session_start e repinta quando há linhas", async () => {
 	vi.useFakeTimers({ toFake: ["setInterval"] });
-	const { pi, handlers } = fakePi();
+	const { nycode, handlers } = fakeNycode();
 	const src = fakeSource([]);
 	let source: FakeSource | undefined;
-	fleetUi.registerFleetUi(pi, () => source);
+	fleetUi.registerFleetUi(nycode, () => source);
 	const { ctx, rec: r, tui } = fakeUi();
 	try {
 		await handlers.session_start({}, ctx);
@@ -656,9 +656,9 @@ test("registerFleetUi: o tick de 1 s assina um source que só aparece depois do 
 });
 
 test("registerFleetUi: o main desenha estado, tempo, contexto e custo da sessão (só visual)", async () => {
-	const { pi, handlers } = fakePi();
+	const { nycode, handlers } = fakeNycode();
 	const src = fakeSource([rec("a", null, 1)]);
-	fleetUi.registerFleetUi(pi, () => src);
+	fleetUi.registerFleetUi(nycode, () => src);
 	const branch = [
 		{ type: "message", message: { role: "user" } },
 		{ type: "message", message: { role: "assistant", usage: { cost: { total: 1.5 } } } },

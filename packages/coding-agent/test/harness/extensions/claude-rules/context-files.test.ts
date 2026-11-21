@@ -1,5 +1,5 @@
 // Converted from no-context-files.test.ts (the removed no-context-files-covers-claude-md extension, D-10). That extension
-// armed CLAUDE_CODE_DISABLE_CLAUDE_MDS so pi-code's own CLAUDE.md/rules injection stayed out of the context. The embedded
+// armed CLAUDE_CODE_DISABLE_CLAUDE_MDS so nycode's own CLAUDE.md/rules injection stayed out of the context. The embedded
 // claude-rules honors that switch where a rule would be delivered; these cases prove it against the built-in, and that
 // without the switch a rule reaches the prompt once, never duplicated. The original's three cases (-nc, omitClaudeMd,
 // the child's `--system-prompt` name lookup) are ported at the end, against omit-claude-md.ts.
@@ -134,7 +134,7 @@ describe("omitClaudeMd and --no-context-files (ex no-context-files-covers-claude
 		copyFileSync(join(src, "Explore.md"), join(agents, "Explore.md"));
 		copyFileSync(join(src, "worker.md"), join(agents, "worker.md"));
 		const savedSub = process.env.NYCODE_SUBAGENT;
-		const args = (n: string) => ["--mode", "json", "-p", "--system-prompt", `/tmp/pi-subagent-x/prompt-${n}.md`];
+		const args = (n: string) => ["--mode", "json", "-p", "--system-prompt", `/tmp/nycode-subagent-x/prompt-${n}.md`];
 		try {
 			process.env.NYCODE_SUBAGENT = "1";
 			expect(shouldOmitClaudeMd(args("Explore"))).toBe(true);

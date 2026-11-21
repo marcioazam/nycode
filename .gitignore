@@ -47,7 +47,7 @@ plans/
 collect.sh
 packages/agent/docs/extensions/nycode-server-artifact/index.md
 
-# Credentials and local state (from ny-pi); keep out of the repository
+# Credentials and local state (from ny-harness); keep out of the repository
 /auth*.json
 *.env
 .env*
@@ -63,4 +63,4 @@ claude-home/rules/personal.md
 __pycache__/
 *.pyc
 *.bak*
-pi-transcripts/
+nycode-transcripts/

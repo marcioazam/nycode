@@ -74,7 +74,7 @@ export const respawnDelayMs = (attempt: number, env: Env = process.env): number 
 /** Diretório de sessão do filho; undefined (= segue com --no-session, sem respawn) se não der para criar. */
 export function makeSessionDir(): string | undefined {
 	try {
-		return fs.mkdtempSync(path.join(os.tmpdir(), "pi-code-fg-session-"));
+		return fs.mkdtempSync(path.join(os.tmpdir(), "nycode-fg-session-"));
 	} catch {
 		return undefined;
 	}
@@ -84,7 +84,7 @@ export function makeSessionDir(): string | undefined {
 export function useSessionArgs(
 	args: string[],
 	sessionDir: string,
-	id = `pi-code-fg-${randomUUID().slice(0, 8)}`,
+	id = `nycode-fg-${randomUUID().slice(0, 8)}`,
 ): string[] {
 	const at = args.indexOf("--no-session");
 	if (at !== -1) args.splice(at, 1, "--session-id", id, "--session-dir", sessionDir);

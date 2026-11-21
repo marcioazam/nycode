@@ -1,4 +1,4 @@
-// Port of the todo-follow-active patch tests (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the todo-follow-active patch tests (nycode 1.7.0) to vitest against the embedded source.
 // Bug (2026-11-15): numa lista maior que a janela, a aba Todo ficava presa no topo e mostrava só linhas feitas
 // ("Todo 8/13", 6 linhas "feito"); o item em andamento e os pendentes ficavam fora da tela.
 import assert from "node:assert/strict";

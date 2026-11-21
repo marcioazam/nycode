@@ -7,7 +7,7 @@
 import type { ToolCallEventResult } from "../../core/extensions/types.ts";
 import type { PathAnchors } from "../_shared/rules/path-rules.ts";
 import { errorMessage, isRecord } from "../_shared/util/values.ts";
-import { claudePreCall, piToolInput } from "./claude-tools.ts";
+import { claudePreCall, nycodeToolInput } from "./claude-tools.ts";
 import type { HookCommand, HooksConfig } from "./config.ts";
 import { allCommands, matchingCommands, passesIfFilter } from "./matcher.ts";
 import { type HookRunner, type HookRunResult, timeoutMs } from "./runners.ts";
@@ -129,7 +129,7 @@ function jsonBlockingReason(parsed: ReturnType<typeof tryParseJson>): string | u
 
 /** A blocking verdict in any of the JSON spellings a hook can answer with: the
  * command-hook fields, and the prompt/agent reply schemas (`permissionDecision:
- * "deny"` from pi's prompt-hook system prompt, `ok: false` from Claude's documented
+ * "deny"` from nycode's prompt-hook system prompt, `ok: false` from Claude's documented
  * prompt-hook response). Undefined when the body renders no block. */
 export function jsonBlockVerdict(
 	parsed: ReturnType<typeof tryParseJson>,
@@ -175,7 +175,7 @@ function fieldDecision(parsed: ReturnType<typeof tryParseJson>): HookDecision {
 		};
 	if (specific?.permissionDecision === "deny")
 		return { block: true, reason: specific.permissionDecisionReason ?? "Blocked by hook" };
-	// Claude's "defer" exits gracefully so the tool can be resumed later; pi cannot
+	// Claude's "defer" exits gracefully so the tool can be resumed later; nycode cannot
 	// resume a deferred call, so running it now would invert the intent. The block
 	// carries its own explanation (the hook's reason is ignored for defer, as
 	// documented).
@@ -189,7 +189,7 @@ function fieldDecision(parsed: ReturnType<typeof tryParseJson>): HookDecision {
 	return { block: false };
 }
 
-/** Claude's updatedInput replaces the whole tool_input, and pi's tool_call contract is
+/** Claude's updatedInput replaces the whole tool_input, and nycode's tool_call contract is
  * in-place mutation, so the target object is emptied and refilled rather than reassigned. */
 function replaceRecord(target: Record<string, unknown>, next: Record<string, unknown>): void {
 	for (const key of Object.keys(target)) delete target[key];
@@ -230,12 +230,12 @@ export interface PreToolUseOutcome extends HookDecision {
 }
 
 /** Apply a hook's updatedInput rewrite in place, translating a built-in rewrite
- * back to the pi shape; an incomplete built-in rewrite keeps the original input
+ * back to the nycode shape; an incomplete built-in rewrite keeps the original input
  * rather than corrupting it. */
 function applyUpdatedInput(toolName: string, toolInput: unknown, translated: boolean, stdout: string): void {
 	const updated = tryParseJson(stdout)?.hookSpecificOutput?.updatedInput;
 	if (!isRecord(updated) || !isRecord(toolInput)) return;
-	const replacement = translated ? piToolInput(toolName, updated) : updated;
+	const replacement = translated ? nycodeToolInput(toolName, updated) : updated;
 	if (replacement) replaceRecord(toolInput, replacement);
 }
 
@@ -283,10 +283,10 @@ function preToolContexts(results: HookRunResult[]): string[] {
 
 /** Run PreToolUse hooks for a tool, in parallel as Claude does; the first blocking
  * verdict in config order wins. The payload reports the Claude vocabulary: the MCP
- * alias for MCP tools, and the documented name and tool_input shape for pi's
+ * alias for MCP tools, and the documented name and tool_input shape for nycode's
  * built-ins (see claude-tools). Every hook sees the original tool input;
  * hookSpecificOutput.updatedInput replaces the input in place as each hook
- * completes, translated back to the pi shape for a built-in (an incomplete rewrite
+ * completes, translated back to the nycode shape for a built-in (an incomplete rewrite
  * keeps the original input rather than corrupting it), so with several rewrites
  * the last to finish takes effect (the docs leave multi-rewrite ordering
  * unspecified). */
@@ -303,10 +303,10 @@ export async function runPreToolUse(
 	const call = claudePreCall(toolName, toolInput, cwd);
 	const translatedName = claudeName ?? call.name;
 	// A built-in's payload input is the translated Claude shape; MCP and unknown
-	// tools keep the pi shape (MCP input passes through untranslated in Claude too).
+	// tools keep the nycode shape (MCP input passes through untranslated in Claude too).
 	const translatedInput = claudeName === undefined ? call.input : undefined;
 	const names = translatedName ? [toolName, translatedName] : [toolName];
-	const target = anchors ? { piName: toolName, claudeName: translatedName, input: toolInput, anchors } : undefined;
+	const target = anchors ? { nycodeName: toolName, claudeName: translatedName, input: toolInput, anchors } : undefined;
 	const commands = matchingCommands(config.PreToolUse, names).filter((command) => passesIfFilter(command, target));
 	const payload = {
 		hook_event_name: "PreToolUse",
@@ -442,8 +442,8 @@ export function postToolFeedback(result: HookRunResult, eventName: string, isErr
 }
 
 /** A blocked tool_call verdict. Claude shows a deny's reason to the model, which goes on
- * working, so a plain block leaves pi's follow-up model call in place. `terminate` makes
- * pi skip that call once every tool in the batch agrees, ending the run: only for blocks
+ * working, so a plain block leaves nycode's follow-up model call in place. `terminate` makes
+ * nycode skip that call once every tool in the batch agrees, ending the run: only for blocks
  * Claude ends the turn on. */
 export function blockedToolCall(reason: string | undefined, terminate: boolean): ToolCallEventResult {
 	return terminate ? { block: true, reason, terminate: true } : { block: true, reason };

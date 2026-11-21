@@ -68,7 +68,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		persist: () => persistState(),
 		ask: async (title) => (await lastCtx?.ui.input(title, "")) ?? undefined,
 		open: async (markdown) => {
-			const file = planFile && existsSync(planFile) ? planFile : join(tmpdir(), `pi-plan-${process.pid}.md`);
+			const file = planFile && existsSync(planFile) ? planFile : join(tmpdir(), `nycode-plan-${process.pid}.md`);
 			if (file !== planFile) writeFileSync(file, markdown);
 			return (await openPlanFile(file)) ? undefined : `não consegui abrir: ${file}`;
 		},
@@ -148,8 +148,8 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 	);
 	let planFromTool = false;
 	let savedTools: string[] = [];
-	/** Every tool pi had registered when the set was saved, active or not: a tool outside it
-	 * was registered later, and pi activated it on top of whatever set was in force. */
+	/** Every tool nycode had registered when the set was saved, active or not: a tool outside it
+	 * was registered later, and nycode activated it on top of whatever set was in force. */
 	let toolsAtSave = new Set<string>();
 	/** Plan file of this session, fixed when plan mode is entered. */
 	let planFile = "";
@@ -172,7 +172,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		nycode.setActiveTools(PLAN_MODE_TOOLS.filter((t) => savedTools.includes(t)));
 	}
 
-	/** Put back the saved set, plus any tool registered since: pi activates a late one (an MCP
+	/** Put back the saved set, plus any tool registered since: nycode activates a late one (an MCP
 	 * server past its connect window) on top of the restricted set, and overwriting with the
 	 * snapshot dropped it for the rest of the session. A tool that was registered but not
 	 * active at entry is not late, and stays out. */
@@ -223,7 +223,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 	// Todos from the todo tool (todo.ts) share this list when no plan is executing: always in the Plan section, never in the chat.
 	let externalTodos: TodoItem[] = [];
 	let lastCtx: ExtensionContext | undefined;
-	nycode.events.on("pi-code:todos", (data) => {
+	nycode.events.on("nycode:todos", (data) => {
 		externalTodos = (data as Array<{ id: number; text: string; status: string }>).map((t) => ({
 			step: t.id,
 			text: t.text,
@@ -270,7 +270,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 			todos: todoItems,
 			executing: executionMode,
 			// The pre-plan tool set has to survive with the state that caused it to shrink.
-			// /reload rebuilds this extension with an empty snapshot while pi carries the
+			// /reload rebuilds this extension with an empty snapshot while nycode carries the
 			// restricted tools into the new runtime, so a restore has no way to work out
 			// what was active before plan mode unless it was written down here.
 			savedTools,
@@ -383,7 +383,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		handler: async (
 			args,
 			ctx,
-		) => /* NOSONAR typescript:S7503 - pi types a command handler as returning Promise<void> */ {
+		) => /* NOSONAR typescript:S7503 - nycode types a command handler as returning Promise<void> */ {
 			const task = args.trim();
 			if (!planModeEnabled) togglePlanMode(ctx);
 			// Claude's wording with no plan yet; with one, only the first sentence applies.
@@ -409,7 +409,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 			_signal,
 			_onUpdate,
 			ctx,
-		) /* NOSONAR typescript:S7503 - pi types a tool execute as returning a Promise */ {
+		) /* NOSONAR typescript:S7503 - nycode types a tool execute as returning a Promise */ {
 			if (!planModeEnabled) {
 				return { content: [{ type: "text", text: "Not in plan mode; tool ignored." }], details: {} };
 			}
@@ -473,7 +473,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		handler: async (
 			_args,
 			ctx,
-		) => /* NOSONAR typescript:S7503 - pi types a command handler as returning Promise<void> */ {
+		) => /* NOSONAR typescript:S7503 - nycode types a command handler as returning Promise<void> */ {
 			if (todoItems.length === 0) {
 				ctx.ui.notify("No todos. Create a plan first with /plan", "info");
 				return;
@@ -487,10 +487,10 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 
 	nycode.registerShortcut(Key.ctrlShift("p"), {
 		description: "Toggle plan mode",
-		handler: async (ctx) => togglePlanMode(ctx), // NOSONAR typescript:S7503 - pi catches only a rejected promise from a shortcut handler (Promise.resolve(handler()).catch)
+		handler: async (ctx) => togglePlanMode(ctx), // NOSONAR typescript:S7503 - nycode catches only a rejected promise from a shortcut handler (Promise.resolve(handler()).catch)
 	});
 
-	// Enforce plan mode at call time, not only through the active-tool set: pi
+	// Enforce plan mode at call time, not only through the active-tool set: nycode
 	// activates tools registered after the restriction was applied (an MCP server
 	// connecting during session_start, or a mid-session list_changed refresh), so the
 	// set alone leaks write-capable tools into plan mode.
@@ -614,7 +614,7 @@ ${CANCEL_RULE}`,
 
 	// Rebuilds the plan from the current branch: session start/resume (`fromFlag`: the --plan flag applies) and /tree or rewind (D6).
 	function restoreFromBranch(ctx: ExtensionContext, fromFlag: boolean): void {
-		// pi's CLI builds a fresh extension instance per session replacement; RPC mode can reuse
+		// nycode's CLI builds a fresh extension instance per session replacement; RPC mode can reuse
 		// one across sessions, so clear prior state first there too: a fresh
 		// session (/new, no plan entry) must not inherit the last session's plan or execution.
 		planModeEnabled = false;
@@ -674,10 +674,10 @@ ${CANCEL_RULE}`,
 		if (planModeEnabled) {
 			ensurePlanFile(ctx);
 			// Restoring into plan mode is the only case the recorded snapshot is for.
-			// Re-reading the active set here would capture the restriction pi carried
+			// Re-reading the active set here would capture the restriction nycode carried
 			// across /reload and cost the session edit and write for good; applying the
 			// snapshot when plan mode is off would instead push a stale set over whatever
-			// pi has registered since, so it stays scoped to this branch.
+			// nycode has registered since, so it stays scoped to this branch.
 			savedTools = restored.savedTools ?? nycode.getActiveTools();
 			toolsAtSave = registeredTools();
 			nycode.setActiveTools(PLAN_MODE_TOOLS.filter((t) => savedTools.includes(t)));
@@ -702,9 +702,9 @@ ${CANCEL_RULE}`,
 	nycode.on("session_start", (_event, ctx) => restoreFromBranch(ctx, true));
 	nycode.on("session_tree", (_event, ctx) => restoreFromBranch(ctx, false));
 
-	// pi-harness permission-control BEGIN
-	// Controle semântico para Shift+Tab e /permissions plan (claude-compat). Fonte: claude-home/patches/pi-code/permission-control.
-	const PLAN_CONTROLLER_SLOT = Symbol.for("pi-code.plan-controller");
+	// nycode-harness permission-control BEGIN
+	// Controle semântico para Shift+Tab e /permissions plan (claude-compat). Fonte: claude-home/patches/nycode/permission-control.
+	const PLAN_CONTROLLER_SLOT = Symbol.for("nycode.plan-controller");
 	let permissionCtx: ExtensionContext | undefined;
 	const planController = {
 		active: (): boolean => planModeEnabled === true,
@@ -729,7 +729,7 @@ ${CANCEL_RULE}`,
 		const g = globalThis as Record<symbol, unknown>;
 		if (g[PLAN_CONTROLLER_SLOT] === planController) delete g[PLAN_CONTROLLER_SLOT];
 	});
-	// pi-harness permission-control END
+	// nycode-harness permission-control END
 
 	nycode.on("session_shutdown", (_event, ctx) => planSection.shutdown(ctx));
 }

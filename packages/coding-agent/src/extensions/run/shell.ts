@@ -18,7 +18,7 @@ const POLL_MS = 500;
 const LIVENESS_EVERY = 4; // polls: 2 s
 const MAX_READ = 1 << 20;
 
-export const runsDir = (): string => process.env.NYCODE_RUNS_DIR ?? join(homedir(), ".local", "state", "pi-runs");
+export const runsDir = (): string => process.env.NYCODE_RUNS_DIR ?? join(homedir(), ".local", "state", "nycode-runs");
 
 /** Reads what the log grew by since the last call (bounded per call) into the ring buffer. */
 export function readNew(reg: RunRegistry, rec: RunRecord): void {

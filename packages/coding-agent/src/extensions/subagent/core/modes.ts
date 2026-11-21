@@ -42,7 +42,7 @@ import type {
 	ToolResult,
 } from "./params.ts";
 import {
-	getPiInvocation,
+	getNycodeInvocation,
 	type OnUpdateCallback,
 	removeTmpPrompt,
 	runSingleAgent,
@@ -271,7 +271,7 @@ export async function runBackgroundMode(params: SubagentParamsStatic, context: B
 	const presetId = `bg-${randomUUID().slice(0, 8)}`;
 	const startContexts = await runSubagentStartHooks(agent.name, presetId);
 	args.push(taskWithStartContext(task, startContexts));
-	const invocation = getPiInvocation(args);
+	const invocation = getNycodeInvocation(args);
 	// Checked here too, after the awaits above, with no await before the start: automatic batches may have taken the room meanwhile.
 	const id = backgroundCapReached()
 		? null

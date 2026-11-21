@@ -1,4 +1,4 @@
-// Port of the goal patch tests (pi-code 1.7.0) to vitest against the embedded source. The original also applied
+// Port of the goal patch tests (nycode 1.7.0) to vitest against the embedded source. The original also applied
 // the onda5-goal patch to a copy of the package first; the embedded source already contains it, so that step has no counterpart.
 import assert from "node:assert/strict";
 import { test } from "vitest";

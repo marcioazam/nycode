@@ -1,4 +1,4 @@
-"""puxar.py (pi) importa sessões do Claude Code para o formato de sessão v3 do pi.
+"""puxar.py (pi) importa sessões do Claude Code para o formato de sessão v3 do nycode.
 
 Run: python3 scripts/harness/puxar/test_puxar.py
 """
@@ -22,7 +22,7 @@ SPEC.loader.exec_module(puxar)
 
 CWD = "/src/my.app"
 ENC = "-src-my-app"
-PI_ENC = "--src-my.app--"
+NYCODE_ENC = "--src-my.app--"
 SID = "11111111-2222-3333-4444-555555555555"
 
 
@@ -88,12 +88,12 @@ def simple_session() -> list[dict[str, Any]]:
 class Base(unittest.TestCase):
     def setUp(self) -> None:
         self.home = Path(tempfile.mkdtemp())
-        self.pi_dir = self.home / "pi-sessions"
+        self.nycode_dir = self.home / "nycode-sessions"
         env = mock.patch.dict(
             os.environ,
             {
                 "HOME": str(self.home),
-                "NYCODE_CODING_AGENT_SESSION_DIR": str(self.pi_dir),
+                "NYCODE_CODING_AGENT_SESSION_DIR": str(self.nycode_dir),
             },
         )
         env.start()
@@ -130,7 +130,7 @@ class PickTest(Base):
         out, target = puxar.pull("2", CWD)
         self.assertIn("importada: mmm", out)
         self.assertTrue(target.name.endswith("_mmm.jsonl"), target)
-        self.assertEqual(target.parent, self.pi_dir / PI_ENC)
+        self.assertEqual(target.parent, self.nycode_dir / NYCODE_ENC)
         self.assertEqual(
             target.stat().st_mtime, 3000
         )  # /resume ordena pela atividade real
@@ -173,7 +173,7 @@ class PickTest(Base):
         dest = self.home / "outra" / "--src-my.app--"
         _, target = puxar.pull("1", CWD, str(dest))
         self.assertEqual(target.parent, dest)
-        self.assertFalse((self.pi_dir / PI_ENC).exists())
+        self.assertFalse((self.nycode_dir / NYCODE_ENC).exists())
 
     def test_main_prints_file_and_exit_codes(self) -> None:
         self.session(".claude", SID, 1000)
@@ -400,13 +400,13 @@ class RefreshTest(Base):
         os.utime(src, (2000, 2000))
         out, second = puxar.pull("1", CWD)
         self.assertTrue(out.startswith("importada"), out)
-        self.assertEqual(list((self.pi_dir / PI_ENC).glob("*.jsonl")), [second])
+        self.assertEqual(list((self.nycode_dir / NYCODE_ENC).glob("*.jsonl")), [second])
         self.assertIn("mais uma", second.read_text())
 
-    def test_copy_continued_in_pi_is_never_overwritten(self) -> None:
+    def test_copy_continued_in_nycode_is_never_overwritten(self) -> None:
         src = self.session(".claude", SID, 1000)
         _, first = puxar.pull("1", CWD)
-        with first.open("a") as fh:  # o usuário continuou a sessão no pi
+        with first.open("a") as fh:  # o usuário continuou a sessão no nycode
             fh.write(
                 json.dumps(
                     {
@@ -416,7 +416,7 @@ class RefreshTest(Base):
                         "timestamp": "x",
                         "message": {
                             "role": "user",
-                            "content": "trabalho no pi",
+                            "content": "trabalho no nycode",
                             "timestamp": 1,
                         },
                     }
@@ -432,7 +432,7 @@ class RefreshTest(Base):
         out2, other2 = puxar.pull("1", CWD)  # repetir não duplica
         self.assertTrue(out2.startswith("já atualizada"), out2)
         self.assertEqual(other2, other)
-        self.assertEqual(len(list((self.pi_dir / PI_ENC).glob("*.jsonl"))), 2)
+        self.assertEqual(len(list((self.nycode_dir / NYCODE_ENC).glob("*.jsonl"))), 2)
 
 
 if __name__ == "__main__":

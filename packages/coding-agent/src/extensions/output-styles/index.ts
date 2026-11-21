@@ -1,7 +1,7 @@
 /**
  * Output Styles Extension
  *
- * Bridges Claude Code's output styles into pi. It discovers `.claude/output-styles/*.md`
+ * Bridges Claude Code's output styles into nycode. It discovers `.claude/output-styles/*.md`
  * (user then project) plus styles shipped by enabled plugins (manifest `outputStyles`,
  * default `output-styles/`, ranked below the user's and project's own), honors the
  * active style recorded as `outputStyle` in
@@ -11,7 +11,7 @@
  * project's settings.local.json.
  *
  * Claude semantics: a style replaces the built-in coding instructions unless its
- * frontmatter sets `keep-coding-instructions: true`. The replacement excises pi's
+ * frontmatter sets `keep-coding-instructions: true`. The replacement excises nycode's
  * default coding prose up to a stable marker line and keeps everything after it
  * (append text, project context, skills, other extensions' additions); when the
  * marker is absent (custom SYSTEM.md), the style falls back to appending.
@@ -53,7 +53,7 @@ function field(frontmatter: Record<string, unknown>, key: string): string {
 	return "";
 }
 
-/** Parse an output-style markdown file into its name, description, and body. pi's
+/** Parse an output-style markdown file into its name, description, and body. nycode's
  * own YAML frontmatter parser, as the command loader uses: a line regex captured to
  * end of line, so `"Terse" # short` came back as `Terse" # short`. */
 export function parseStyle(content: string, fallbackName: string): OutputStyle {
@@ -80,14 +80,14 @@ export function forcedPluginStyle(styles: OutputStyle[]): OutputStyle | undefine
  * lowest-precedence source: a user or project style of the same name wins. */
 // The directory resolves per install kind (source, dist, bundle, Bun binary): getBuiltinStylesDir in config.ts.
 
-/** The last line of pi's default coding instructions. Everything after it (append
+/** The last line of nycode's default coding instructions. Everything after it (append
  * text, project context, skills, cwd, other extensions' additions) survives a style
- * replacement. Tracks pi's dist/core/system-prompt.js; a canary test pins it. */
+ * replacement. Tracks nycode's dist/core/system-prompt.js; a canary test pins it. */
 export const CODING_BASE_MARKER =
 	"- Before implementing harness changes, read the relevant docs and examples in full, following related cross-references.";
-/** The same line on hosts before pi 1.5, which peerDependencies still admit. */
+/** The same line on hosts before upstream 1.5, which peerDependencies still admit. */
 export const LEGACY_CODING_BASE_MARKER =
-	"- Always read pi .md files completely and follow links to related docs (e.g., tui.md for TUI API details)";
+	"- Always read nycode .md files completely and follow links to related docs (e.g., tui.md for TUI API details)";
 
 function styleText(style: OutputStyle): string {
 	return `## Output Style: ${style.name}\n\n${style.body}`;
@@ -137,7 +137,7 @@ export function pluginStyleDirs(home: string): string[] {
 }
 
 /** One style file, or undefined when it cannot be used. A directory named *.md or an
- * unreadable file is skipped silently. pi's frontmatter parser is strict YAML and throws:
+ * unreadable file is skipped silently. nycode's frontmatter parser is strict YAML and throws:
  * one unparseable file must cost that style, not every style of the session. */
 function readStyleFile(dir: string, entry: string): OutputStyle | undefined {
 	const file = path.join(dir, entry);
@@ -234,7 +234,7 @@ export default function outputStylesExtension(nycode: ExtensionAPI) {
 		const home = os.homedir();
 		// A project style body is injected verbatim into the system prompt, so only honor
 		// project styles / selection once the project is approved. isProjectTrusted alone
-		// is true for a repo pi never asked about; see project-approval.
+		// is true for a repo nycode never asked about; see project-approval.
 		const trusted = await isProjectApproved(ctx);
 		// Precedence low to high: builtin, plugin, then the user's and project's own
 		// dirs, so a same-named user or project style overrides a plugin's.

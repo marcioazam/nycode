@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Terminal-sota gate (u1..u4: prompt keys, /diff, sticky prompt, dev commands, tokyo-night). Read-only outside mktemp.
-# Exits 0 only if all pass. Converted from ny-pi's claude-home/bin/tests/terminal-sota/gate.sh (12 checks). Map in
+# Exits 0 only if all pass. Converted from ny-harness's claude-home/bin/tests/terminal-sota/gate.sh (12 checks). Map in
 # ../README.md. Gone:
 #  5 HUD colors: claude-hud is the owner's external dependency, not part of the product; F8 ports its tests.
-#  7 check-agents, 10 check-instructions, 8 pi_harness_check, 9 harness-audit pytest: harness checks of the owner's
+#  7 check-agents, 10 check-instructions, 8 nycode_harness_check, 9 harness-audit pytest: harness checks of the owner's
 #    install; check-agents/check-instructions move with F8 (R15), the audit ones stay with the owner.
 #  11 skill cua-driver: owner's skill in ~/.cua-driver, not a product command.
 #  12 ~/.agents/skills empty: a property of the owner's machine.

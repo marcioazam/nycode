@@ -144,14 +144,14 @@ export function childPromptBody(agent: AgentConfig, skillRoots: string[], memory
 /** The parent's MCP tool aliases, published by the mcp extension on the shared bus;
  * the module-level seam matches setMcpToolCaller's. Children read the same MCP config
  * files, so the parent's roster is the translation table for server-level patterns. */
-let knownMcpAliases: ReadonlyArray<{ pi: string; claude: string }> = [];
+let knownMcpAliases: ReadonlyArray<{ nycode: string; claude: string }> = [];
 
-export function setKnownMcpAliases(aliases: ReadonlyArray<{ pi: string; claude: string }>): void {
+export function setKnownMcpAliases(aliases: ReadonlyArray<{ nycode: string; claude: string }>): void {
 	knownMcpAliases = aliases;
 }
 
 /** nycode's built-in ToolName union (core/tools/index.d.ts; the package's export map
- * does not expose allToolNames, so this mirrors it) plus the tools pi-code's own
+ * does not expose allToolNames, so this mirrors it) plus the tools nycode's own
  * extensions register in a child. Claude's capitalized spellings fold onto these. */
 const CHILD_TOOL_NAMES = new Set([
 	"read",
@@ -177,7 +177,7 @@ const CHILD_TOOL_NAMES = new Set([
 export function unresolvedToolsError(agent: AgentConfig): string | undefined {
 	if (!agent.tools || agent.tools.length === 0) return undefined;
 	const fold = (name: string): string => name.toLowerCase().replaceAll("-", "_");
-	const known = new Set(knownMcpAliases.map((alias) => fold(alias.pi)));
+	const known = new Set(knownMcpAliases.map((alias) => fold(alias.nycode)));
 	const resolves = expandMcpToolPatterns(agent.tools, knownMcpAliases).some(
 		(entry) => CHILD_TOOL_NAMES.has(fold(entry)) || known.has(fold(entry)),
 	);

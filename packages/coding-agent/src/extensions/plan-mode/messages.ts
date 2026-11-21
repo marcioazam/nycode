@@ -6,7 +6,7 @@ import type { SessionEntry } from "../../core/session-manager.ts";
 import { CANCELLED, HOLD } from "./render/done-view.ts";
 
 /** Plan progress for other extensions (agents correlate their runs with the open step): {executing, step?, done, total}, `step` = first open step; published only when it changes. */
-export const PLAN_STATE_CHANNEL = "pi-code:plan-state";
+export const PLAN_STATE_CHANNEL = "nycode:plan-state";
 
 // Tools
 export const PLAN_MODE_TOOLS = [
@@ -69,7 +69,7 @@ export const isCancelled = (message: AssistantMessage | undefined): boolean =>
 		.some((line) => CANCELLED.test(line));
 
 /** Said once when plan mode is left. The earlier [PLAN MODE ACTIVE] notes stay in the transcript:
- * removing them changed the cached prefix and made pi replay the prompt and tools as a new head,
+ * removing them changed the cached prefix and made nycode replay the prompt and tools as a new head,
  * a full prompt-cache miss on every exit (measured 2026-11-14: 0 of 35.7k tokens read). */
 export const PLAN_ENDED_NOTE =
 	"[PLAN MODE ENDED] Full tool access is restored; earlier [PLAN MODE ACTIVE] notes no longer apply.";

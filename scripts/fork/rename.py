@@ -14,6 +14,27 @@ os.chdir(root)
 SKIP_NAMES = {"package-lock.json", "flake.lock", "LICENSE", "NOTICE"}
 SKIP_BASENAME_RE = re.compile(r"^CHANGELOG(\..*)?\.md$")
 SKIP_PATH_PARTS = ("/third-party/", "examples/extensions/doom-overlay/doom/")
+# Paths that name the pi on purpose (D-45): the plan, the measured arms, the rename machinery, the migration from pi.
+# Each one is also covered by scripts/ci/lint/residuo/residuo-allow.txt or by the gate's fixed exemptions.
+SKIP_PATH_PREFIXES = (
+    "import/",
+    "bench/",
+    "README.md",
+    ".gitleaksignore",
+    ".github/",
+    "docs/bench/",
+    "docs/fork/",
+    "docs/harness/",
+    "docs/migration/",
+    "docs/specs/",
+    "scripts/fork/",
+    "scripts/ci/lint/criterio2/",
+    "scripts/ci/lint/test_gerar_mapa.py",
+    "scripts/ci/lint/residuo/",
+    "packages/coding-agent/src/migrations/from-pi",
+    "packages/coding-agent/test/harness/migrations/from-pi",
+    "packages/coding-agent/test/harness/hooks/fixtures/",  # payloads captured from a real session
+)
 
 files = subprocess.check_output(["git", "ls-files", "-z"], text=True).split("\0")
 files = [f for f in files if not f.endswith(".jsonl")]
@@ -26,6 +47,22 @@ KEEP_SCOPE = (
 )
 
 masks = [
+    re.compile(r"import/ny-pi"),  # path of the tree F12 removes
+    re.compile(
+        r"ny-pi-(?:arquivo|core)"
+    ),  # directories of the plan under docs/migration
+    # records under docs/ keep their file names (docs/harness/pi-*.md, docs/research/*-pi-*.md)
+    re.compile(r"docs/(?:[\w.-]+/)*[\w.-]*?(?<![A-Za-z0-9])pi[-_][\w.-]+"),
+    # the contract title the headless-lean extension still accepts from the origin harness (`# Working contract (pi)`)
+    re.compile(r"(?<![\w)])\(pi\)|\(\?:pi\|nycode\)"),
+    re.compile(r"from-pi[\w-]*"),  # `nycode migrate from-pi` and the files that hold it
+    re.compile(
+        r"(?<![\w.?)\]])\.pi(?![\w-])"
+    ),  # the `.pi` directory: the legacy location tests assert is ignored (D-33)
+    re.compile(r"\bPI_CODING_AGENT_DIR\b"),
+    re.compile(
+        r"\bPI_CODE_\w*"
+    ),  # old pi-code variables that tests assert are no longer read (D-33)
     re.compile(r"@mariozechner/[\w./-]*"),
     re.compile(r"HazAT/pi-[\w-]+"),
     re.compile(r"badlogic/pi-observers"),
@@ -36,7 +73,15 @@ masks = [
     ),
     re.compile(r"(?:earendil-works|badlogic)/pi(?:-mono)?#\d+"),
     re.compile(r"(?<!@)earendil-works/pi-(?!mono)[\w-]+"),
-    re.compile(r"(?<=\(\?:badlogic\|earendil-works\)/)pi-mono"),
+    re.compile(
+        r"(?<=earendil-works\))\\?/pi-mono"
+    ),  # LEGACY_REPO_RE, with or without the escaped slash
+    re.compile(
+        r"(?<=from )earendil-works/pi(?![\w-])"
+    ),  # attribution comments name the upstream repository
+    re.compile(
+        r"@earendil-works\\/pi-(?:server|client|protocol|agent-old)"
+    ),  # KEEP_SCOPE with an escaped slash
     re.compile(r"npm:pi-[\w@.-]*"),
     re.compile(r"@oh-my-pi/[\w.-]+"),
     re.compile(r"[pP]\{Pi\}"),
@@ -52,7 +97,15 @@ masks = [
 ]
 
 REPO = r"(?:earendil-works|badlogic)/pi(?:-mono)?(?![\w-])"
-pre = [  # URLs do repo
+pre = [
+    # ny-pi (the origin harness) and pi-code (its extension pack) are not the pi: they get their own names
+    (re.compile(r"(?<![\w-])ny-pi(?![\w])"), "ny-harness"),
+    (re.compile(r"(?<![\w-])pi-code(?![A-Za-z0-9])"), "nycode"),
+    # statements about the upstream agent stay true: "pi 1.5.2" -> "upstream 1.5.2"
+    (re.compile(r"(?<![\w-])[pP]i(?= v?\d+\.\d)"), "upstream"),
+    (re.compile(r"(?<=[uU]pstream )[pP]i(?![\w-])"), "agent"),
+    (re.compile(r"(?<=Upstream \()pi (?=v?\d)"), ""),
+    # URLs do repo
     (
         re.compile(
             r"(?:(?<=github\.com/)|(?<=github:)|(?<=github\.com:)|(?<![\w@./:-]))"
@@ -117,6 +170,7 @@ def skipped(f: str) -> bool:
     return bool(
         os.path.basename(f) in SKIP_NAMES
         or SKIP_BASENAME_RE.match(os.path.basename(f))
+        or f.startswith(SKIP_PATH_PREFIXES)
         or any(p in "/" + f for p in SKIP_PATH_PARTS)
     )
 

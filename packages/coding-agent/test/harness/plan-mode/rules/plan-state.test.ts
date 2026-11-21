@@ -1,8 +1,8 @@
-// Port of the plan-state patch tests (pi-code 1.7.0, docs/sync-observabilidade.md D1 to D7 and the pi-code:plan-state channel) to vitest.
+// Port of the plan-state patch tests (nycode 1.7.0, docs/sync-observabilidade.md D1 to D7 and the nycode:plan-state channel) to vitest.
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
 import { renderDoneTags } from "../../../../src/extensions/plan-mode/render/done-view.ts";
-import { fakePi, type Loose } from "../support.ts";
+import { fakeNycode, type Loose } from "../support.ts";
 
 vi.hoisted(() => {
 	process.env.NO_COLOR = "1";
@@ -10,14 +10,14 @@ vi.hoisted(() => {
 
 const PLAN3 =
 	"Tier: T0 (teste)\n1. contar a.txt\n- wc -l a.txt\n2. contar b.txt\n- wc -l b.txt\n3. contar c.txt\n- wc -l c.txt";
-const STATE = "pi-code:plan-state";
+const STATE = "nycode:plan-state";
 const say = (text: string) => ({ role: "assistant", content: [{ type: "text", text }] });
 const strip = (s: string) => s.replace(/\x1b\[[0-9;]*m/g, "").replace(/\s+/g, " ");
 
-/** Uma instância da extensão com pi falso; `branch` é o que o gerenciador de sessão devolve (muda entre eventos). */
+/** Uma instância da extensão com nycode falso; `branch` é o que o gerenciador de sessão devolve (muda entre eventos). */
 function boot(branch: Loose[] = []) {
-	const fake = fakePi();
-	const { pi, handlers: on, bus, cmds, tools, shortcuts, entries, emitted } = fake;
+	const fake = fakeNycode();
+	const { nycode, handlers: on, bus, cmds, tools, shortcuts, entries, emitted } = fake;
 	let renders = 0;
 	let component: Loose;
 	const tui = { requestRender: () => void renders++, terminal: { rows: 40 } };
@@ -52,7 +52,7 @@ function boot(branch: Loose[] = []) {
 	const plan = () => entries.filter((e) => e.customType === "plan-mode");
 	const context = async () => JSON.stringify(await on.before_agent_start.at(-1)({}, ctx)) ?? "";
 	return {
-		pi,
+		nycode,
 		on,
 		bus,
 		cmds,
@@ -129,13 +129,13 @@ test("D4: durante a execução o rodapé mostra todo d/t e o item em andamento",
 	const t = boot();
 	await t.execute();
 	assert.doesNotMatch(t.rows(), /todo \d+\/\d+/);
-	t.pi.events.emit("pi-code:todos", [
+	t.nycode.events.emit("nycode:todos", [
 		{ id: 1, text: "a", status: "completed" },
 		{ id: 2, text: "Rodando o gate", status: "in_progress" },
 		{ id: 3, text: "c", status: "pending" },
 	]);
 	assert.match(t.rows(), /todo 1\/3 · Rodando o gate/);
-	t.pi.events.emit("pi-code:todos", []);
+	t.nycode.events.emit("nycode:todos", []);
 	assert.doesNotMatch(t.rows(), /todo \d+\/\d+/);
 });
 
@@ -178,7 +178,7 @@ test('D7: marca skipped e pausa sobrevivem a uma nova instância + session_start
 	assert.equal(t.plan().length, 0, "restaurar não regrava o que já está no ramo");
 });
 
-test("canal pi-code:plan-state: {executing, step, done, total}, só quando o estado muda", async () => {
+test("canal nycode:plan-state: {executing, step, done, total}, só quando o estado muda", async () => {
 	const t = boot();
 	await t.execute();
 	const states = () => t.emitted.filter(([c]) => c === STATE).map(([, d]) => d);
@@ -197,7 +197,7 @@ test("canal pi-code:plan-state: {executing, step, done, total}, só quando o est
 function fakeFleet(initial: Loose[]) {
 	let list = initial;
 	const subs = new Set<() => void>();
-	const slot = Symbol.for("pi-code.fleet.source");
+	const slot = Symbol.for("nycode.fleet.source");
 	(globalThis as Record<symbol, unknown>)[slot] = {
 		source: {
 			list: () => list,

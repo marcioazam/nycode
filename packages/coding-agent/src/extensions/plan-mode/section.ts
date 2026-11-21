@@ -1,11 +1,11 @@
 /**
- * Plan section below the status line (replaces the string[] `plan-todos` widget, which pi cut at 10 lines
+ * Plan section below the status line (replaces the string[] `plan-todos` widget, which nycode cut at 10 lines
  * above the editor). One persistent component: a blank spacing line, the PLAN chip with `done/total`, a rule, then a bounded scrolling body;
  * nothing at all while the plan has no items. Fullscreen mode (default) routes mouse events to `handleMouse`
  * with local coordinates; regular mode has no mouse, so ↓ on an empty editor reaches the same focus by keyboard.
- * Focus: a body click returns `focus:true` (pi gives Plan keyboard focus and blurs the editor); Esc, a click
+ * Focus: a body click returns `focus:true` (nycode gives Plan keyboard focus and blurs the editor); Esc, a click
  * elsewhere (the editor takes focus) or any other key returns to the editor, which keeps its draft.
- * Record: docs/pi-interactive-display-2026-11-13.md ("Plan section").
+ * Record: docs/nycode-interactive-display-2026-11-13.md ("Plan section").
  */
 
 import { matchesKey, truncateToWidth, visibleWidth } from "@nycode/tui";
@@ -107,7 +107,7 @@ export class PlanSection {
 	/** Clock the table reads; tests replace it. */
 	now: () => number = Date.now;
 
-	/** Set by pi's TUI when focus moves: losing it (a click elsewhere, an overlay) forgets the editor to return to. */
+	/** Set by nycode's TUI when focus moves: losing it (a click elsewhere, an overlay) forgets the editor to return to. */
 	get focused(): boolean {
 		return this.nativeFocus;
 	}
@@ -116,8 +116,8 @@ export class PlanSection {
 		if (!value) this.prev = undefined;
 	}
 
-	/** Native focus, from a click or from ↓: pi's fullscreen viewport would take PageUp/PageDown/Home/End for the transcript
-	 * unless the focused component says it captures them (pi-tui `capturesViewportInput`). */
+	/** Native focus, from a click or from ↓: nycode's fullscreen viewport would take PageUp/PageDown/Home/End for the transcript
+	 * unless the focused component says it captures them (nycode-tui `capturesViewportInput`). */
 	get capturesViewportInput(): boolean {
 		return this.nativeFocus;
 	}
@@ -597,7 +597,7 @@ export class PlanSection {
 		}
 		// The wheel belongs to Plan only while it is focused and has a body; otherwise it scrolls the chat.
 		if (event.type === "wheel" && this.focusedVisible() && !this.collapsed) {
-			const lines = event.wheelDelta ?? 0; // logical lines, negative = up (pi's wheel acceleration included)
+			const lines = event.wheelDelta ?? 0; // logical lines, negative = up (nycode's wheel acceleration included)
 			this.scrollBy(lines === 0 ? 0 : Math.trunc(lines) || Math.sign(lines));
 			return { handled: true, render: true };
 		}
@@ -639,7 +639,7 @@ export class PlanSection {
 		return true;
 	}
 
-	// ---- keys while pi gave Plan native focus (after a body click) ----
+	// ---- keys while nycode gave Plan native focus (after a body click) ----
 
 	handleInput(data: string): void {
 		if (this.navigate(data)) {

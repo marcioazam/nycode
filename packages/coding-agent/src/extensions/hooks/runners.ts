@@ -18,7 +18,7 @@ import { type HookCommand, httpUrlAllowed, isBackgroundHook } from "./config.ts"
 // Claude's defaults vary by type and event (600s for command/http/mcp_tool, 30s
 // for prompt, 60s for agent, lowered to 30s on UserPromptSubmit and to a shared
 // 1.5s budget on SessionEnd) and a timed-out hook proceeds; here one flat default
-// applies and a timed-out PreToolUse or UserPromptSubmit hook fails closed (pi
+// applies and a timed-out PreToolUse or UserPromptSubmit hook fails closed (nycode
 // has no permission prompt to fall back on), so ten minutes of default budget
 // would wedge the turn on a hung hook. Hooks that legitimately run long can
 // raise their own per-hook `timeout`.
@@ -160,7 +160,7 @@ function hookEnv(
 /** Um registro por execução no sink de diagnóstico do harness (ausente: não faz nada). Nunca lança. */
 function reportHook(command: string, payload: unknown, t0: number, r: HookRunResult): void {
 	try {
-		const sink = (globalThis as Record<symbol, unknown>)[Symbol.for("pi-harness:diag")];
+		const sink = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:diag")];
 		if (typeof sink !== "function") return;
 		const ev = (payload as { hook_event_name?: unknown } | null)?.hook_event_name;
 		const evento = typeof ev === "string" && ev ? ev : "hook";
@@ -373,7 +373,7 @@ const PROMPT_HOOK_SYSTEM = [
 
 /**
  * Claude's `type: "prompt"` hook: the prompt (with `$ARGUMENTS` replaced by the
- * event JSON) is evaluated by the model, which returns a JSON decision. pi runs it
+ * event JSON) is evaluated by the model, which returns a JSON decision. nycode runs it
  * in-process via completeText and returns the reply as stdout so the existing
  * decision parser handles it. No model (headless) or a provider error is
  * non-blocking; only an abort at the timeout fails closed, like the other hooks.
@@ -458,7 +458,7 @@ function substituteInputPaths(value: unknown, payload: unknown): unknown {
 
 /**
  * Claude's `type: "mcp_tool"` hook: call a tool on an already-connected MCP server
- * and treat its text output like command stdout. pi reaches the server through the
+ * and treat its text output like command stdout. nycode reaches the server through the
  * mcp-call seam the mcp extension registers. Like http, a missing server or a tool
  * error is non-blocking, and the deadline reports `timedOut`, so a gated event fails
  * closed on it.
@@ -502,7 +502,7 @@ export async function runMcpToolHook(hook: HookCommand, payload: unknown, timeou
 /**
  * Claude's experimental `type: "agent"` hook: spawn a subagent (Read/Grep/Glob) to
  * verify a condition, then return its final text as a JSON decision, parsed by the
- * same interpreter as a command hook. pi reaches the subagent through the agent-run
+ * same interpreter as a command hook. nycode reaches the subagent through the agent-run
  * seam the subagent extension registers. Like the prompt hook, only an abort at the
  * deadline fails closed; a missing runner or a crashed agent is non-blocking.
  */

@@ -1,6 +1,6 @@
 /**
  * Kill a detached child and everything it spawned. `sh -c 'a; b'` forks, and so does
- * a child pi running a build, so signalling the direct child alone leaves a grandchild
+ * a child nycode running a build, so signalling the direct child alone leaves a grandchild
  * alive holding stdout/stderr. One copy for hooks and both subagent runners: the three
  * private copies had drifted, and only the hooks one handled Windows, so a subagent
  * cancel there killed the direct child only.

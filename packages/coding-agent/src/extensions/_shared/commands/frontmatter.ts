@@ -2,7 +2,7 @@
  * Frontmatter of the markdown files Claude Code defines: agents, commands, skills and
  * output styles.
  *
- * pi's parser is strict YAML. Claude's is not: its own /agents generator and Anthropic's
+ * nycode's parser is strict YAML. Claude's is not: its own /agents generator and Anthropic's
  * plugins write `description: Use this agent when ... Examples: <example>Context: ...`,
  * and the command reference documents `argument-hint: [pr-number] [priority]`. Strict
  * YAML throws on ": " inside a plain scalar and on a second flow sequence, and a throw

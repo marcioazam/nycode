@@ -1,4 +1,4 @@
-// Ported from rewind-tree.test.ts (pi-code patch tests). The "patch applies to the original and reverts" case has no
+// Ported from rewind-tree.test.ts (nycode patch tests). The "patch applies to the original and reverts" case has no
 // counterpart (there is no patch any more); every other case and expectation is unchanged.
 import assert from "node:assert/strict";
 import { execFile, execFileSync } from "node:child_process";
@@ -35,14 +35,14 @@ const NO = "Não, manter os arquivos como estão";
 const ASK = "Restaurar os arquivos para este ponto? As mudanças feitas depois dele se perdem.";
 const MODE_TITLE = "Voltar para “p” · o que desfazer:";
 
-const CP = { entryId: "u1", ref: "refs/pi-code/checkpoints/1", prompt: "p", createdAt: "2026-01-01T00:00:00Z" };
+const CP = { entryId: "u1", ref: "refs/nycode/checkpoints/1", prompt: "p", createdAt: "2026-01-01T00:00:00Z" };
 
 /** Loads the extension, runs session_start with the given stored checkpoints. */
 async function setup(opts: { checkout?: number; stored?: object[] } = {}) {
 	const handlers = new Map<string, (...a: any[]) => any>();
 	const commands = new Map<string, any>();
 	const calls: string[][] = [];
-	const pi: any = {
+	const nycode: any = {
 		on: (n: string, h: any) => handlers.set(n, h),
 		registerCommand: (n: string, c: any) => commands.set(n, c),
 		appendEntry: () => {},
@@ -55,7 +55,7 @@ async function setup(opts: { checkout?: number; stored?: object[] } = {}) {
 			return { code: 0, stdout: "", stderr: "", killed: false, truncated: false };
 		},
 	};
-	gitCheckpointExtension(pi);
+	gitCheckpointExtension(nycode);
 	const notes: string[] = [];
 	const answers: (string | undefined)[] = [];
 	const selects: string[] = [];
@@ -145,7 +145,7 @@ test("/tree: exceção na restauração vira aviso", async () => {
 	assert.deepEqual(s.notes, ["Não foi possível restaurar o código: ui down"]);
 });
 
-/** /rewind drives navigateTree, which in pi fires session_before_tree: simulate it. */
+/** /rewind drives navigateTree, which in nycode fires session_before_tree: simulate it. */
 async function rewind(mode: string, navigated: { opts?: any }) {
 	const s = await setup();
 	s.answers.push(mode);
@@ -209,7 +209,7 @@ async function real(opts: Opts = {}) {
 	const commands = new Map<string, any>();
 	const appended: any[] = [];
 	const execs: string[][] = [];
-	const pi: any = {
+	const nycode: any = {
 		on: (n: string, h: any) => handlers.set(n, h),
 		registerCommand: (n: string, c: any) => commands.set(n, c),
 		appendEntry: (type: string, data: any) => appended.push({ type, data }),
@@ -242,7 +242,7 @@ async function real(opts: Opts = {}) {
 			});
 		},
 	};
-	gitCheckpointExtension(pi);
+	gitCheckpointExtension(nycode);
 	const sessionFile = opts.session === null ? undefined : join(tmp, opts.session ?? `sess-${id}.jsonl`);
 	const entries: any[] = (opts.stored ?? []).map((d: any) =>
 		d.type ? d : { type: "custom", customType: "git-checkpoint", data: d },
@@ -368,7 +368,7 @@ test('fluxo real: baseline do primeiro edit, snapshot por prompt e /rewind "Code
 	});
 	assert.equal(s.appended.length, 1);
 	assert.deepEqual(Object.keys(s.appended[0].data).sort(), ["createdAt", "entryId", "prompt", "ref"]);
-	assert.match(s.appended[0].data.ref, /^refs\/pi-code\/checkpoints\//);
+	assert.match(s.appended[0].data.ref, /^refs\/nycode\/checkpoints\//);
 	await s.run("u2", async () => {
 		await s.edit("b.txt", "b-new");
 		await s.edit("a.txt", "a3");
@@ -436,7 +436,7 @@ test("restauração: checkpoint sem ref e snapshot vazio deixam o código intact
 
 test("restauração: ref inexistente falha com aviso e não conclui o rewind nem navega", async () => {
 	const s = await real({
-		stored: [{ entryId: "e1", ref: "refs/pi-code/checkpoints/nope", prompt: "p", createdAt: "2026-01-01T00:00:00Z" }],
+		stored: [{ entryId: "e1", ref: "refs/nycode/checkpoints/nope", prompt: "p", createdAt: "2026-01-01T00:00:00Z" }],
 	});
 	let navigated = 0;
 	await s.doRewind(0, choice("code-and-conversation"), async () => {
@@ -657,7 +657,7 @@ test("session_before_fork: recusa, sem UI, sem ref, entrada desconhecida, snapsh
 	const s = await real({
 		stored: [
 			{ entryId: "noref", ref: "", prompt: "p", createdAt: "x" },
-			{ entryId: "bad", ref: "refs/pi-code/checkpoints/nope", prompt: "p", createdAt: "x" },
+			{ entryId: "bad", ref: "refs/nycode/checkpoints/nope", prompt: "p", createdAt: "x" },
 		],
 	});
 	writeFileSync(join(s.work, "a.txt"), "a1");

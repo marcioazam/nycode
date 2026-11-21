@@ -46,7 +46,7 @@ function mount(statuses: Map<string, string>, onBridge?: (bridge: Bridge) => voi
 describe("footer extension", () => {
 	it("publishes the provider on the footer bridge channel", () => {
 		const { channel, bridge } = mount(new Map());
-		expect(channel).toBe("pi-code:footer-bridge");
+		expect(channel).toBe("nycode:footer-bridge");
 		expect(bridge.absorbed.size).toBe(0);
 		expect(bridge.folded).toBe(false);
 	});
@@ -61,9 +61,9 @@ describe("footer extension", () => {
 		expect(footer.render(80)).toEqual(["first one · last"]);
 	});
 
-	it("hides pi-code-status, ponytail and the keys the HUD absorbed", () => {
+	it("hides nycode-status, ponytail and the keys the HUD absorbed", () => {
 		const statuses = new Map([
-			["pi-code-status", "turn 3 $0.10"],
+			["nycode-status", "turn 3 $0.10"],
 			["ponytail", "PONYTAIL"],
 			["plan-mode", "📋 3/8"],
 			["bypass", "BYPASS"],

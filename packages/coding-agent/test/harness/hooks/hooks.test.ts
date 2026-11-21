@@ -1,4 +1,4 @@
-// Ported from zzzzzzzzzzzzzz-onda5/hooks.test.ts (pi-code patch tests). The patch-apply and diff-of-removed-lines
+// Ported from zzzzzzzzzzzzzz-onda5/hooks.test.ts (nycode patch tests). The patch-apply and diff-of-removed-lines
 // cases have no counterpart: the code now lives in the tree, so the source checks read it directly.
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";

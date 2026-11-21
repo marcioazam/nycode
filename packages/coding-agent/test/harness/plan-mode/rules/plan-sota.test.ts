@@ -1,11 +1,11 @@
-// Port of the plan-sota patch test (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the plan-sota patch test (nycode 1.7.0) to vitest against the embedded source.
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, test } from "vitest";
 import * as utils from "../../../../src/extensions/plan-mode/utils.ts";
-import { fakeCtx, fakePi, type Loose } from "../support.ts";
+import { fakeCtx, fakeNycode, type Loose } from "../support.ts";
 
 const tmp = mkdtempSync(join(tmpdir(), "plan-sota-test-"));
 const plans = join(tmp, "plans");
@@ -24,7 +24,7 @@ afterAll(() => {
 const allowed = (tool: string, input: Loose = {}) => utils.isPlanModeToolAllowed(tool, input, plans);
 
 function setup() {
-	const fake = fakePi({ active: ["read", "bash", "edit", "write", "plan_mode_complete"] });
+	const fake = fakeNycode({ active: ["read", "bash", "edit", "write", "plan_mode_complete"] });
 	const ctx = fakeCtx({
 		sessionManager: { getEntries: () => [], getBranch: () => [], getSessionId: () => "abcdef12-3456" },
 	});

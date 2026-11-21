@@ -608,7 +608,7 @@ describe("SettingsManager", () => {
 			expect(manager.getShellCommandPrefix()).toBe("shopt -s expand_aliases");
 		});
 
-		it("should return the ny-pi default when shellCommandPrefix is not set", () => {
+		it("should return the ny-harness default when shellCommandPrefix is not set", () => {
 			const settingsPath = join(agentDir, "settings.json");
 			writeFileSync(settingsPath, JSON.stringify({ theme: "dark" }));
 

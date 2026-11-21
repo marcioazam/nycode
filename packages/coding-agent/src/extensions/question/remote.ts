@@ -13,7 +13,7 @@ import {
 } from "./types.ts";
 
 /** In-process, question-owned offer; arbitrary custom TUI components are not sent. */
-export const REMOTE_QUESTION_CHANNEL = "pi-code:question:v1";
+export const REMOTE_QUESTION_CHANNEL = "nycode:question:v1";
 export type RemoteQuestionOutcome =
 	| { action: "answer"; indices: number[] }
 	| { action: "text"; text: string }

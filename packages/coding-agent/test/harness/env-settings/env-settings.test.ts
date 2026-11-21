@@ -34,7 +34,7 @@ describe("sanitizeProjectEnv", () => {
 		]);
 	});
 
-	it("no longer treats the pi-code names as control variables", () => {
+	it("no longer treats the nycode names as control variables", () => {
 		const env = { PI_CODE_SUBAGENT: "1", PI_CODE_AGENT_HOOKS: "[]", PI_CODING_AGENT_DIR: "/tmp/x" };
 		expect(sanitizeProjectEnv(env, vi.fn())).toEqual(env);
 	});

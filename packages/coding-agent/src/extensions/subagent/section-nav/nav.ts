@@ -238,7 +238,7 @@ export class GroupNav {
 
 /** One instance per process: nycode loads each extension in its own module graph (moduleCache: false), so a plain
  * module-level instance would give status-line and each section its own bar (internal/shared-slot.ts). */
-const NAV_SLOT = Symbol.for("pi-code.group-nav");
+const NAV_SLOT = Symbol.for("nycode.group-nav");
 const navHolder = globalThis as Record<symbol, GroupNav | undefined>;
 const navInstance = navHolder[NAV_SLOT] ?? new GroupNav();
 navHolder[NAV_SLOT] = navInstance;

@@ -58,7 +58,7 @@ test("estilo usa selectedBg/text do tema e fecha as cores", () => {
 });
 
 test("tema mono (NO_COLOR) não emite SGR", () => {
-	// cor vazia no pi = reset padrão: nenhuma sequência de escape
+	// cor vazia no nycode = reset padrão: nenhuma sequência de escape
 	const mono = { getFgAnsi: () => "\x1b[39m", getBgAnsi: () => "\x1b[49m" };
 	assert.equal(stickyStyle(mono)("x"), "x");
 	assert.equal(stickyStyle({ getFgAnsi: () => "", getBgAnsi: () => "" })("x"), "x");

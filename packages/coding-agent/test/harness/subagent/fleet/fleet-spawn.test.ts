@@ -1,5 +1,5 @@
-// Ported from subagent-panel/fleet-spawn.test.ts (pi-code patch tests); same cases and expectations.
-// Integração dos ganchos de parada da frota atravessando um processo filho real (pi falso)
+// Ported from subagent-panel/fleet-spawn.test.ts (nycode patch tests); same cases and expectations.
+// Integração dos ganchos de parada da frota atravessando um processo filho real (nycode falso)
 import assert from "node:assert/strict";
 import { mkdirSync, rmdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -19,9 +19,9 @@ const { tmp } = fleetTestEnv("fleet-spawn-");
 
 // O filho falso: 'ok' emite uma mensagem do assistente sem '\n' final (o resto do buffer no close) e sai com 0;
 // 'alive' emite a mesma linha com '\n' e fica vivo até o SIGTERM.
-const fakePi = join(tmp, "fake-pi.mjs");
+const fakeNycode = join(tmp, "fake-nycode.mjs");
 writeFileSync(
-	fakePi,
+	fakeNycode,
 	`const msg = { type: 'message_end', message: { role: 'assistant', provider: 'anthropic', model: 'claude-sonnet-5-5', thinkingLevel: 'high', content: [{ type: 'text', text: 'fake done' }], stopReason: 'stop' } }
 if (process.env.FAKE_PI_MODE === 'ok') { process.stdout.write(JSON.stringify(msg)); process.exit(0) }
 process.stdout.write(JSON.stringify(msg) + '\\n')
@@ -79,7 +79,7 @@ async function withFleet(mode: string, body: (dir: string) => Promise<void>): Pr
 	delete process.env.NYCODE_SUBAGENT;
 	const dir = store.ensureFleetDir() as string;
 	const savedArgv = process.argv[1];
-	process.argv[1] = fakePi;
+	process.argv[1] = fakeNycode;
 	process.env.FAKE_PI_MODE = mode;
 	try {
 		await body(dir);
@@ -174,7 +174,7 @@ test("foreground: o modelo/esforço emitidos pelo filho chegam ao registro e ven
 
 test("background: o modelo/esforço emitidos pelo filho chegam ao registro; sem eles o configurado fica sem observed", async () => {
 	await withFleet("ok", async (dir) => {
-		const { id, finished } = startBg({ args: [fakePi, "--model", "cfg-model", "--thinking", "low"] });
+		const { id, finished } = startBg({ args: [fakeNycode, "--model", "cfg-model", "--thinking", "low"] });
 		await finished;
 		const rec = (await waitFor("done record", () =>
 			store.readRecord(dir, id)?.state === "done" ? store.readRecord(dir, id) : undefined,
@@ -232,7 +232,7 @@ for (const [name, stop, note, by] of [
 			const id = bgMod.startBackgroundRun(
 				"fake",
 				"go",
-				{ command: process.execPath, args: [fakePi], cwd: tmp },
+				{ command: process.execPath, args: [fakeNycode], cwd: tmp },
 				(run) => done(run),
 			);
 			assert.ok(id);
@@ -256,7 +256,7 @@ for (const [name, stop, note, by] of [
 }
 
 // O filho "rico": uso, modelo, erro, evento de ferramenta, ruído, stderr e saída com o código de FAKE_EXIT (3 por padrão).
-const fakeRich = join(tmp, "fake-pi-rich.mjs");
+const fakeRich = join(tmp, "fake-nycode-rich.mjs");
 writeFileSync(
 	fakeRich,
 	`const m = (o) => process.stdout.write(JSON.stringify(o) + '\\n')
@@ -446,24 +446,24 @@ function startForegroundWith(signal: AbortSignal): { id: () => string; result: P
 	return { id: () => id, result };
 }
 
-test("getPiInvocation: o script do processo, o runtime genérico (nycode no PATH) e o binário empacotado", () => {
+test("getNycodeInvocation: o script do processo, o runtime genérico (nycode no PATH) e o binário empacotado", () => {
 	const savedArgv = process.argv[1];
 	const savedExec = process.execPath;
 	try {
-		process.argv[1] = fakePi;
-		assert.deepEqual(runMod.getPiInvocation(["-p"]), { command: savedExec, args: [fakePi, "-p"] });
-		process.argv[1] = "/$bunfs/root/pi";
+		process.argv[1] = fakeNycode;
+		assert.deepEqual(runMod.getNycodeInvocation(["-p"]), { command: savedExec, args: [fakeNycode, "-p"] });
+		process.argv[1] = "/$bunfs/root/nycode";
 		assert.deepEqual(
-			runMod.getPiInvocation(["-p"]),
+			runMod.getNycodeInvocation(["-p"]),
 			{ command: APP_NAME, args: ["-p"] },
 			"script virtual do bun: cai no nycode do PATH",
 		);
 		process.argv[1] = join(tmp, "nao-existe.mjs");
-		assert.deepEqual(runMod.getPiInvocation(["-p"]), { command: APP_NAME, args: ["-p"] });
-		Object.defineProperty(process, "execPath", { value: "/opt/pi/pi-binario", configurable: true });
+		assert.deepEqual(runMod.getNycodeInvocation(["-p"]), { command: APP_NAME, args: ["-p"] });
+		Object.defineProperty(process, "execPath", { value: "/opt/nycode/nycode-binario", configurable: true });
 		assert.deepEqual(
-			runMod.getPiInvocation(["-p"]),
-			{ command: "/opt/pi/pi-binario", args: ["-p"] },
+			runMod.getNycodeInvocation(["-p"]),
+			{ command: "/opt/nycode/nycode-binario", args: ["-p"] },
 			"binário compilado: roda a si mesmo",
 		);
 	} finally {
@@ -515,7 +515,7 @@ test("background: saída não zero fica failed com stderr, turnos e texto; o avi
 
 test("background: maxTurns encerra no turno limite como done parcial e o aviso ensina a retomar", async () => {
 	await withFleet("alive", async () => {
-		const { id, finished } = startBg({ args: [fakePi], maxTurns: 1 });
+		const { id, finished } = startBg({ args: [fakeNycode], maxTurns: 1 });
 		const run = await finished;
 		assert.equal(run.state, "done");
 		assert.equal(run.exitCode, 0);
@@ -531,7 +531,7 @@ test("background: retomar (resume) reexecuta a sessão; unknown, still-running, 
 	await withFleet("ok", async (dir) => {
 		const sub = join(tmp, "sub-cwd");
 		mkdirSync(sub, { recursive: true });
-		const first = startBg({ args: [fakePi, "primeira"], cwd: sub }); // a tarefa é sempre o último argumento: é ela que o resume troca
+		const first = startBg({ args: [fakeNycode, "primeira"], cwd: sub }); // a tarefa é sempre o último argumento: é ela que o resume troca
 		await first.finished;
 		assert.equal(
 			bgMod.resumeBackgroundRun("bg-nope", "x", () => {}),
@@ -573,12 +573,17 @@ test("background: retomar (resume) reexecuta a sessão; unknown, still-running, 
 test("background: no teto de execuções simultâneas o início devolve null e retomar responde at-capacity; cancelAll sinaliza todas", async () => {
 	await withFleet("alive", async (dir) => {
 		process.env.FAKE_PI_MODE = "ok";
-		const done = startBg({ args: [fakePi] });
+		const done = startBg({ args: [fakeNycode] });
 		await done.finished;
 		process.env.FAKE_PI_MODE = "alive";
-		const live = Array.from({ length: bgMod.MAX_BACKGROUND_RUNS }, () => startBg({ args: [fakePi] }));
+		const live = Array.from({ length: bgMod.MAX_BACKGROUND_RUNS }, () => startBg({ args: [fakeNycode] }));
 		assert.equal(
-			bgMod.startBackgroundRun("fake", "extra", { command: process.execPath, args: [fakePi], cwd: tmp }, () => {}),
+			bgMod.startBackgroundRun(
+				"fake",
+				"extra",
+				{ command: process.execPath, args: [fakeNycode], cwd: tmp },
+				() => {},
+			),
 			null,
 		);
 		assert.equal(

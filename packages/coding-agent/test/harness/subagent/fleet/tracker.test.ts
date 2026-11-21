@@ -1,4 +1,4 @@
-// Ported from zzzzzzz-subagent-model-effort/tracker.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from zzzzzzz-subagent-model-effort/tracker.test.ts (nycode patch tests); same cases and expectations.
 // Modelo e esforço no registro da frota (docs/subagent-model-effort.md, AC3-AC6)
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -264,7 +264,7 @@ test('D8 run.ts abre a faixa antes do spawn: startTracking com activity "startin
 });
 
 // D11 (docs/sync-observabilidade.md): id comum chamada ↔ run ↔ etapa do plano no registro do fleet.
-test("D11 tracker: o registro leva toolCallId (da chamada em curso) e planStep (do canal pi-code:plan-state); ausentes ficam omitidos", () => {
+test("D11 tracker: o registro leva toolCallId (da chamada em curso) e planStep (do canal nycode:plan-state); ausentes ficam omitidos", () => {
 	const dir = mainFleet();
 	const readRec = (n: number) => JSON.parse(readFileSync(join(dir, `${id(n)}.json`), "utf8"));
 	trackerMod.setPlanStep(3);
@@ -297,5 +297,5 @@ test("D11 wiring: execute roda dentro do toolCallScope, o canal plan-state é li
 	assert.match(index, /nycode\.events\?\.on\(PLAN_STATE_CHANNEL/);
 	assert.match(index, /\.\.\.laneCorrelation\(\),\s*\.\.\.\(phase === "stop" \? laneOutcome\(agentId\)/);
 	assert.match(readFileSync(join(SRC, "core/modes.ts"), "utf8"), /\.\.\.laneOutcome\(run\.id\)/);
-	assert.match(readFileSync(join(SRC, "../_shared/events/subagent-events.ts"), "utf8"), /pi-code:plan-state/);
+	assert.match(readFileSync(join(SRC, "../_shared/events/subagent-events.ts"), "utf8"), /nycode:plan-state/);
 });

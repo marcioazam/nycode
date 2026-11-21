@@ -1,7 +1,7 @@
 /**
  * Parsing and discovery for Claude Code slash-command files.
  *
- * pi's own prompt-template loader reads only `description` and `argument-hint`
+ * nycode's own prompt-template loader reads only `description` and `argument-hint`
  * from one flat directory, so the rest of Claude's command contract lives here and is
  * applied by commands.ts when it registers each command itself: namespaced
  * subdirectories, `allowed-tools`, `model`, and the argument substitutions.
@@ -19,7 +19,7 @@ import { CLAUDE_TOOL_MAP } from "../rules/claude-tool-names.ts";
 import { escapeRegExp } from "../util/values.ts";
 import { parseClaudeFrontmatter } from "./frontmatter.ts";
 
-/** The pi file tools a Claude path rule can govern. */
+/** The nycode file tools a Claude path rule can govern. */
 export type PathRuleTool = "read" | "edit" | "write";
 
 export interface ParsedCommand {
@@ -34,7 +34,7 @@ export interface ParsedCommand {
 	agentRules?: string[];
 	/** Claude `Skill(...)` name patterns, on the same unscoped-wins rule. */
 	skillRules?: string[];
-	/** Claude path rules per pi file tool, from Read(...)/Edit(...)/Write(...) grants. */
+	/** Claude path rules per nycode file tool, from Read(...)/Edit(...)/Write(...) grants. */
 	pathRules?: Partial<Record<PathRuleTool, string[]>>;
 	/** Names from the `arguments:` frontmatter list, mapped to positions in order. */
 	argumentNames?: string[];
@@ -44,7 +44,7 @@ export interface ParsedCommand {
 	 * command's injected spans run (see spanExec). */
 	shell?: string;
 	model?: string;
-	/** `effort:` per-command thinking-level override, one of pi's ThinkingLevel values
+	/** `effort:` per-command thinking-level override, one of nycode's ThinkingLevel values
 	 * (off/minimal/low/medium/high/xhigh/max); undefined when absent or unrecognized. */
 	effort?: string;
 	/** `when_to_use:` extra trigger text appended to the slash_command tool listing only,
@@ -66,7 +66,7 @@ export interface DiscoveredCommand {
 }
 
 /**
- * The pi tool name for one grant entry, scope and all: `Bash(git add:*)` is `bash`.
+ * The nycode tool name for one grant entry, scope and all: `Bash(git add:*)` is `bash`.
  * Keeping the scope in the name matched nothing when the list was intersected with
  * the active tools, which left a command declaring only scoped grants running with
  * no tools at all. The scope itself is not dropped: parseToolGrants keeps bash
@@ -84,7 +84,7 @@ export function normalizeToolName(name: string): string {
  * comma-separated string, or a YAML list"), except a separator inside an argument
  * scope belongs to the scope: `Bash(cat, tail)` and `Bash(git add *)` are one grant
  * each. Splitting on every comma made the fragments between them top-level entries,
- * so a command naming only `Bash` came away with pi's `edit` tool active; splitting
+ * so a command naming only `Bash` came away with nycode's `edit` tool active; splitting
  * on no spaces mangled the docs' own space-separated examples into one garbage rule.
  *
  * Scanned rather than matched with a regex: the pattern form is quadratic on an input
@@ -109,7 +109,7 @@ function toolEntries(raw: string): string[] {
 }
 
 export interface ToolGrants {
-	/** pi tool names to grant, deduplicated in first-seen order. */
+	/** nycode tool names to grant, deduplicated in first-seen order. */
 	tools: string[];
 	/** Claude `Bash(...)` specifiers, present only when every bash grant is scoped:
 	 * an unscoped `Bash` entry is the wider grant and wins over its scoped siblings. */
@@ -122,7 +122,7 @@ export interface ToolGrants {
 	agentRules?: string[];
 	/** Claude `Skill(name)` / `Skill(name *)` specifiers, same unscoped-wins rule. */
 	skillRules?: string[];
-	/** Claude path rules per pi file tool, absent for a tool with an unscoped grant.
+	/** Claude path rules per nycode file tool, absent for a tool with an unscoped grant.
 	 * Edit scopes govern writes too, as Claude documents; Write scopes are honored
 	 * rather than Claude's accept-and-warn-then-ignore, which would fail open here. */
 	pathRules?: Partial<Record<PathRuleTool, string[]>>;
@@ -130,14 +130,14 @@ export interface ToolGrants {
 	scopedEntries: string[];
 }
 
-/** The pi file tools one Claude path-ruled entry governs. */
+/** The nycode file tools one Claude path-ruled entry governs. */
 const PATH_RULE_TOOLS: Record<string, Array<PathRuleTool>> = {
 	read: ["read"],
 	edit: ["edit", "write"],
 	write: ["write"],
 };
 
-/** pi tools whose Claude specifier is a scalar argument scope rather than a path
+/** nycode tools whose Claude specifier is a scalar argument scope rather than a path
  * rule: `Bash(cmd)`, `WebFetch(domain:host)` and `Agent(AgentName)`. One list, so a
  * tool cannot be granted a scope here and quietly miss the unscoped-wins rule. */
 const ARG_RULE_TOOLS = ["bash", "web_fetch", "subagent", "slash_command"] as const;
@@ -224,7 +224,7 @@ function buildPathRules(acc: GrantAccumulator): ToolGrants["pathRules"] {
  * comes back with an empty `tools` array rather than as undefined.
  *
  * Claude scopes a grant to arguments: `Bash(git add:*)` allows exactly those commands.
- * pi's active-tool list is per tool, with no argument dimension, so the base tool is
+ * nycode's active-tool list is per tool, with no argument dimension, so the base tool is
  * granted and the scope is kept for commands.ts to enforce at tool_call time. Every
  * specifier Claude documents for an allow rule is kept: `Bash(cmd)`, the Read/Edit
  * path rules, `WebFetch(domain:host)` and `Agent(AgentName)`. An agent's `tools:` uses
@@ -257,7 +257,7 @@ const text = (value: unknown): string => {
 
 /** YAML's affirmative boolean spellings. Claude documents `disable-model-invocation:
  * true`, but a command file is hand-written YAML where `yes`, `on`, and `1` are all
- * ordinary spellings of true, and pi's parser hands those back as the raw string or
+ * ordinary spellings of true, and nycode's parser hands those back as the raw string or
  * number rather than a boolean. A flag that gates a command off from the model has to
  * honor them, or a command the user marked off-limits is silently offered to it. */
 const YAML_TRUE = new Set(["true", "yes", "on", "y", "1"]);
@@ -269,7 +269,7 @@ export const isFlagEnabled = (value: unknown): boolean => value === true || YAML
 const YAML_FALSE = new Set(["false", "no", "off", "n", "0"]);
 const isFlagDisabled = (value: unknown): boolean => value === false || YAML_FALSE.has(text(value).toLowerCase());
 
-/** pi's ThinkingLevel union, the values a command's `effort:` override may name. */
+/** nycode's ThinkingLevel union, the values a command's `effort:` override may name. */
 const THINKING_LEVELS = new Set(["off", "minimal", "low", "medium", "high", "xhigh", "max"]);
 
 /** Claude writes `argument-hint: [pr]`, which YAML reads as a list; render it back. */
@@ -292,7 +292,7 @@ function parseArgumentNames(raw: unknown): string[] | undefined {
 const SHELLS = new Set(["bash", "powershell"]);
 
 export function parseCommandFile(content: string): ParsedCommand {
-	// pi's own parser, rather than a hand-rolled one: it reads the YAML shapes Claude
+	// nycode's own parser, rather than a hand-rolled one: it reads the YAML shapes Claude
 	// command files actually use (flow sequences, block lists, quoted and multi-line
 	// values), and a value this misreads is a restriction silently not applied.
 	const { frontmatter, body: raw } = parseClaudeFrontmatter(content);
@@ -376,7 +376,7 @@ export interface SubstitutedArgs {
 /**
  * Claude's substitutions, per the current skills docs: `$ARGUMENTS`,
  * `$ARGUMENTS[N]` and its `$N` shorthand (0-based: `$0` is the first argument),
- * `$name` for names declared in `arguments:` frontmatter, plus the pi extras `$@`
+ * `$name` for names declared in `arguments:` frontmatter, plus the nycode extras `$@`
  * and `${N:-default}`/`${ARGUMENTS:-default}`. An unfilled indexed placeholder
  * stays literal; a declared name with no argument becomes empty; `\$` escapes only
  * a real placeholder and a doubled backslash keeps both while still expanding.

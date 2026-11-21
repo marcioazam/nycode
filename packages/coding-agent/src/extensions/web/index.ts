@@ -20,7 +20,7 @@ import { capForContext } from "../_shared/web/output-guard.ts";
 import { httpFetch } from "../_shared/web/web-transport.ts";
 
 const SEARCH_ENDPOINT = "https://html.duckduckgo.com/html/?q=";
-const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) pi-code-web/0.1";
+const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) nycode-web/0.1";
 const MAX_FETCH_CHARS = 30_000;
 /** How much of a body is read, and what happens past that. */
 type BodyLimit = { maxBytes: number; overflow: "cut" | "refuse" };

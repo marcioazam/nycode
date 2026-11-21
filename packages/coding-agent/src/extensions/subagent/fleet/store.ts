@@ -18,13 +18,13 @@ import {
 } from "./types.ts";
 
 export const RUN_ID_RE = /^[a-z]{2}-[0-9a-f]{8}$/;
-const DIR_SLOT = Symbol.for("pi-code.fleet.dir");
+const DIR_SLOT = Symbol.for("nycode.fleet.dir");
 const TRANSCRIPT_CAP = 4 * 1024 * 1024;
 const TRUNCATED_NOTE = "[transcript truncated at 4 MB]";
 
 const slot = globalThis as Record<symbol, unknown>;
 
-export const fleetRoot = (): string => path.join(os.tmpdir(), `pi-code-fleet-${process.getuid?.() ?? "u"}`);
+export const fleetRoot = (): string => path.join(os.tmpdir(), `nycode-fleet-${process.getuid?.() ?? "u"}`);
 
 export const validRunId = (id: unknown): id is string => typeof id === "string" && RUN_ID_RE.test(id);
 

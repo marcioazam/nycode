@@ -48,14 +48,14 @@ const SOURCES = {
     cacheName: 'usage-cache.json', // formato histórico {at, rate_limits}: lido também pelo extensions/auto-resume
     url: 'https://api.anthropic.com/api/oauth/usage',
     parse: toRateLimits,
-    request: ({ access }) => ({ Authorization: `Bearer ${access}`, 'anthropic-beta': 'oauth-2025-04-20', 'User-Agent': 'claude-hud-pi' }),
+    request: ({ access }) => ({ Authorization: `Bearer ${access}`, 'anthropic-beta': 'oauth-2025-04-20', 'User-Agent': 'claude-hud-nycode' }),
   },
   'openai-codex': {
     cacheName: 'usage-cache.openai-codex.json',
     url: 'https://chatgpt.com/backend-api/wham/usage',
     parse: toCodexRateLimits,
     needsAccount: true, // o cache é atado à conta (hash), nunca ao token
-    request: ({ access, accountId }) => ({ Authorization: `Bearer ${access}`, 'ChatGPT-Account-Id': accountId, 'User-Agent': 'claude-hud-pi' }),
+    request: ({ access, accountId }) => ({ Authorization: `Bearer ${access}`, 'ChatGPT-Account-Id': accountId, 'User-Agent': 'claude-hud-nycode' }),
   },
 };
 

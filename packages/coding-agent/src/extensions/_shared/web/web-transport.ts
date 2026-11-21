@@ -58,7 +58,7 @@ export function httpFetch(url: URL, opts: TransportOptions): Promise<Response> {
 					// (204/205/304) and a RangeError for a status outside 200-599, which node's
 					// parser passes through for any three digits (600, 999). That throw fires here,
 					// off the Promise executor, so without this guard it escapes as an
-					// uncaughtException and pi exits. Null-body statuses get a null body; anything
+					// uncaughtException and nycode exits. Null-body statuses get a null body; anything
 					// else that throws rejects.
 					const body = NULL_BODY_STATUSES.has(status) ? null : (Readable.toWeb(res) as ReadableStream<Uint8Array>);
 					resolve(new Response(body, { status, headers }));

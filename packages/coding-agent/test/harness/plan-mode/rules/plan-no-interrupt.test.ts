@@ -1,12 +1,12 @@
-// Port of the plan-no-interrupt patch test (pi-code 1.7.0) to vitest against the embedded source.
+// Port of the plan-no-interrupt patch test (nycode 1.7.0) to vitest against the embedded source.
 // Contrato do dono (2026-11-15): só o fim do plano ou um pedido explícito ao LLM (PLAN CANCELLED) encerra o plan mode.
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { assistant, fakeCtx, fakePi, fakeUi, type Loose, PLAN } from "../support.ts";
+import { assistant, fakeCtx, fakeNycode, fakeUi, type Loose, PLAN } from "../support.ts";
 
 /** Sobe a extensão em plan mode; `select` registra cada abertura do menu. */
 async function setup(selectImpl?: () => Promise<string | undefined>) {
-	const fake = fakePi({ allTools: ["read", "bash", "edit", "plan_mode_complete"] });
+	const fake = fakeNycode({ allTools: ["read", "bash", "edit", "plan_mode_complete"] });
 	const { on, cmds, tools, sent, entries } = fake;
 	const selects: string[] = [];
 	const notes: string[] = [];

@@ -18,12 +18,12 @@
  *    deixa o payload como está. harness.headless.floor (NYCODE_HEADLESS_FLOOR=0) desliga só este item.
  *
  * 7. Na sessão headless de topo (mesmo critério do item 6), `subagent`, `memory` e `lsp_*` ficam inativas: 0 de 2.091
- *    chamadas em 263 sessões guardadas (2026-11-16) e 0 de 168 sessões `pi -p` de topo do Terminal-Bench (2026-11-18);
+ *    chamadas em 263 sessões guardadas (2026-11-16) e 0 de 168 sessões `nycode -p` de topo do Terminal-Bench (2026-11-18);
  *    o esquema de `subagent` sozinho pesa ~800 tokens do prefixo. Custo x benefício acima de tudo (dono, 2026-11-19)
  *    substitui a decisão de 2026-11-18 de manter `subagent`. harness.headless.tools=all (NYCODE_HEADLESS_TOOLS) mantém as três; subagentes (depth 1 ou mais) também rodam sem UI e ficam fora do corte.
  *
  * 8. Na sessão headless de topo, `todo` fica inativa e a seção `<docs>` (caminhos da documentação do nycode, "leia só se o
- *    usuário perguntar sobre o próprio harness") sai do prompt: 0 chamadas de `todo` em 168 sessões `pi -p` de topo
+ *    usuário perguntar sobre o próprio harness") sai do prompt: 0 chamadas de `todo` em 168 sessões `nycode -p` de topo
  *    (Terminal-Bench 2.0) e ninguém pergunta ao harness sem UI. harness.headless.trim=false (NYCODE_HEADLESS_TRIM=0) desliga só este item;
  *    harness.headless.tools=all também mantém `todo`.
  *
@@ -42,7 +42,7 @@ type Debug = (message: string) => void;
 const CWD = /<cwd>\n[^\n]*\n<\/cwd>\n\n?/;
 // o core monta cada contrato como <project_instructions path="..."> ...conteúdo... </project_instructions> e a lista de
 // skills como seção <skills> (introdução + <available_skills>); ver system-prompt.ts e skills.ts do core.
-// o título é `(pi)` no ny-pi e `(nycode)` no contrato embarcado; os dois valem
+// o título é `(pi)` no ny-harness e `(nycode)` no contrato embarcado; os dois valem
 const CONTRACT =
 	/(<project_instructions path="[^"]*">\n)# Working contract \((?:pi|nycode)\)\n[\s\S]*?(\n<\/project_instructions>)/;
 const SKILLS =
@@ -124,7 +124,7 @@ export function trimDocs(payload: unknown): unknown {
 }
 
 /**
- * Texto do contrato headless: `CLAUDE.headless.md` do diretório do agente, se existir (paridade com o ny-pi), senão
+ * Texto do contrato headless: `CLAUDE.headless.md` do diretório do agente, se existir (paridade com o ny-harness), senão
  * `instructions/headless.md` embarcado (K7). undefined, com motivo no debug, se faltar ou estiver vazio.
  */
 function floorContract(debug: Debug): string | undefined {

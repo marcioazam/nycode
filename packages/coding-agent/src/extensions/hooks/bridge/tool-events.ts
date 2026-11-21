@@ -86,11 +86,11 @@ export function registerToolEvents(nycode: ExtensionAPI, deps: ToolEventDeps): {
 			deferToolStop(event.toolCallId, decision);
 			return undefined;
 		}
-		// Stopping here would abort before pi records the block, and pi then reports
+		// Stopping here would abort before nycode records the block, and nycode then reports
 		// "Operation aborted" in place of the reason; tool_execution_end stops the run once
 		// the blocked result is in.
 		deferToolStop(event.toolCallId, decision);
-		// A continue false stop also terminates, or pi starts the next model request before
+		// A continue false stop also terminates, or nycode starts the next model request before
 		// the abort lands. A declined prompt keeps ending the run, with the user there to say
 		// what next.
 		return blockedToolCall(
@@ -100,7 +100,7 @@ export function registerToolEvents(nycode: ExtensionAPI, deps: ToolEventDeps): {
 	});
 
 	// A call these hooks allowed can still be blocked by a later extension (the first block
-	// wins), and a blocked call never reaches tool_result. pi emits tool_execution_end for
+	// wins), and a blocked call never reaches tool_result. nycode emits tool_execution_end for
 	// every call, after tool_result for one that ran, so a stop still pending here belongs
 	// to a call that never ran.
 	nycode.on("tool_execution_end", (event, ctx) => {
@@ -111,7 +111,7 @@ export function registerToolEvents(nycode: ExtensionAPI, deps: ToolEventDeps): {
 	});
 
 	/** The PostToolUse or PostToolUseFailure hooks that match this tool result, under
-	 * the pi name and its Claude spelling. */
+	 * the nycode name and its Claude spelling. */
 	const postToolCommands = (
 		event: ToolResultEvent,
 		ctx: ExtensionContext,
@@ -119,7 +119,7 @@ export function registerToolEvents(nycode: ExtensionAPI, deps: ToolEventDeps): {
 	): HookCommand[] => {
 		const names = translatedName ? [event.toolName, translatedName] : [event.toolName];
 		const anchors = { cwd: ctx.cwd, projectRoot: getProjectDir() || ctx.cwd, home: os.homedir() };
-		const target = { piName: event.toolName, claudeName: translatedName, input: event.input, anchors };
+		const target = { nycodeName: event.toolName, claudeName: translatedName, input: event.input, anchors };
 		return matchingCommands(event.isError ? getConfig().PostToolUseFailure : getConfig().PostToolUse, names).filter(
 			(command) => passesIfFilter(command, target),
 		);
@@ -141,7 +141,7 @@ export function registerToolEvents(nycode: ExtensionAPI, deps: ToolEventDeps): {
 		toolStartTimes.delete(event.toolCallId);
 		// Claude delivers a failure as top-level fields rather than a tool_response: "error
 		// information as top-level fields ... error ... is_interrupt". is_interrupt is false
-		// here because pi reports a cancelled tool through the result, not this event.
+		// here because nycode reports a cancelled tool through the result, not this event.
 		const failure = event.isError
 			? { error: contentText(event.content, "\n"), is_interrupt: false }
 			: { tool_response: response };
@@ -192,9 +192,9 @@ export function registerToolEvents(nycode: ExtensionAPI, deps: ToolEventDeps): {
 	});
 
 	// Claude's PreToolUse for Bash, extended to a command the user runs directly with the
-	// `!`/`!!` prefix. pi fires user_bash before executing it, and the model never sees it,
+	// `!`/`!!` prefix. nycode fires user_bash before executing it, and the model never sees it,
 	// so without this a guard that blocks `git push -f` from the model would not stop the
-	// same command typed by hand. There is no pi tool call, so the matcher sees both pi's
+	// same command typed by hand. There is no nycode tool call, so the matcher sees both nycode's
 	// "bash" and the Claude name "Bash" (exactly as an MCP alias is bridged) and the payload
 	// reports "Bash", the tool_name a Claude-written PreToolUse Bash hook expects. The
 	// payload carries no tool_use_id (no model tool call produced it). UserBashEventResult

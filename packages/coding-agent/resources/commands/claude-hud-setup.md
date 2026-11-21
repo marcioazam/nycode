@@ -8,7 +8,7 @@ disable-model-invocation: true
 ~/.nycode/agent/settings.json (${NYCODE_RESOURCES}), mas não instala plugins do Claude Code: o launcher do nycode
 (${NYCODE_RESOURCES}/statusline/claude-hud-statusline.mjs) acha o claude-hud nos caches de ~/.claude*. Testado em 2026-11-11: o HUD
 roda com o payload do nycode; com 2+ linhas o nycode as mostra acima do rodapé; o launcher traduz a sessão do nycode para o
-formato de transcript do Claude (${NYCODE_RESOURCES}/statusline/claude-hud-pi-transcript.mjs), então as linhas de atividade (tools,
+formato de transcript do Claude (${NYCODE_RESOURCES}/statusline/claude-hud-nycode-transcript.mjs), então as linhas de atividade (tools,
 agents, todos, skills, MCP) funcionam. -->
 
 Configure o claude-hud como status line do nycode. Nada aqui mexe no `~/.claude`: a config do nycode fica em

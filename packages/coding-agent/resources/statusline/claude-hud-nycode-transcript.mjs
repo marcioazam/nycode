@@ -8,7 +8,7 @@ import path from 'node:path';
 const SKILL_FILE = /\/skills\/([^/]+)\/SKILL\.md$/;
 
 /** true se o arquivo parece uma sessão do nycode (primeira linha `{"type":"session",...}` com versão). */
-export function isPiSession(file) {
+export function isNycodeSession(file) {
   let fd;
   try {
     fd = fs.openSync(file, 'r');

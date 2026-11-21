@@ -2,7 +2,7 @@
  * Claude's argument scopes for the two tools whose specifier is neither a bash
  * command nor a file path: `WebFetch(domain:host)` and `Agent(AgentName)`.
  *
- * pi's active-tool set has no argument dimension, so commands.ts grants the base
+ * nycode's active-tool set has no argument dimension, so commands.ts grants the base
  * tool and checks each call here, the way it already does for `Bash(...)` scopes.
  * Both matchers fail closed: a scope this module cannot interpret matches nothing
  * rather than reading as the unscoped grant the author did not write.
@@ -71,7 +71,7 @@ export function matchesDomainRules(url: string, rules: string[]): boolean {
  * Claude: "Permission syntax: `Skill(name)` for exact match, `Skill(name *)` for
  * prefix match with any arguments."
  *
- * The invocation is the skill name and its arguments as one string, the shape pi's
+ * The invocation is the skill name and its arguments as one string, the shape nycode's
  * `slash_command` tool takes; a leading `/` is optional there, so it is stripped
  * before matching. Only the two documented forms are interpreted. A rule spelled any
  * other way, `commit:*` included, matches nothing rather than widening the grant.

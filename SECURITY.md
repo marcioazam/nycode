@@ -76,7 +76,7 @@ Security issues in the following are in scope:
 - The CI workflows under `.github/workflows/`: injection, excessive permissions, unpinned actions, secret exposure.
 - How Nycode pins or embeds a third-party component.
 
-Infrastructure operated by the upstream pi project (including `pi.dev`) is out of scope: report it to its owners.
+Infrastructure operated by the upstream agent project (including `pi.dev`) is out of scope: report it to its owners.
 
 ## Out Of Scope
 
@@ -100,7 +100,7 @@ Infrastructure operated by the upstream pi project (including `pi.dev`) is out o
 - Reports about malicious model output.
 - Anything that needs bypass mode you turned on yourself: the "ask" list is auto-approved there by design; the
   always-deny list still applies.
-- Flaws in the upstream pi project, a model provider or another third party: report them to their owners.
+- Flaws in the upstream agent project, a model provider or another third party: report them to their owners.
 - Commands a user runs by hand, or content the model produces, outside what the always-deny list claims to block.
 - Findings that need an already compromised machine or account, and scanner output with no demonstrated impact.
 - User-approved or user-initiated local actions presented as vulnerabilities.

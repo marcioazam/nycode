@@ -2,7 +2,7 @@ import * as path from "node:path";
 import { type PathRuleTool, substituteVars } from "../_shared/commands/command-file.ts";
 import { findModel } from "../_shared/model/model-lookup.ts";
 
-/** Just enough of pi's Model to match and restore; getAvailable returns these. */
+/** Just enough of nycode's Model to match and restore; getAvailable returns these. */
 export interface ModelLike {
 	id: string;
 	name?: string;
@@ -10,7 +10,7 @@ export interface ModelLike {
 }
 
 /** Resolve a command's `model:` frontmatter to an available model. Claude accepts a
- * tier alias (sonnet/opus/haiku/fable), a concrete id, or `inherit`; pi matches by
+ * tier alias (sonnet/opus/haiku/fable), a concrete id, or `inherit`; nycode matches by
  * exact id first, then a substring of the id or name (the same fuzzy rule the
  * subagent uses). `inherit` and an unresolvable name leave the model unchanged. */
 export function resolveCommandModel(

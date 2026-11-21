@@ -9,14 +9,14 @@ import { contentText, errorMessage } from "../_shared/util/values.ts";
 
 export const CUSTOM_TYPE = "git-checkpoint";
 /** Sidecar inside the bare shadow repo recording the work tree it snapshots. */
-const WORK_TREE_FILE = "pi-work-tree";
+const WORK_TREE_FILE = "nycode-work-tree";
 /** nycode's tools that change a file. `read` is deliberately absent: checkpoint scope is
  * the set of files the session edited, and that set is what bounds the snapshot. */
 export const EDIT_TOOLS: ReadonlySet<string> = new Set(["edit", "write"]);
 /** A run's checkpoint commit is published under a ref rather than recorded as a raw
  * sha, so a file first edited in a later turn of the same run can still fold its
  * pre-edit baseline into that run's checkpoint by moving the ref. */
-export const CHECKPOINT_REF_PREFIX = "refs/pi-code/checkpoints";
+export const CHECKPOINT_REF_PREFIX = "refs/nycode/checkpoints";
 const PROMPT_SNIPPET_LENGTH = 60;
 
 /** The value the restore logic branches on; the label shown to the user is separate. */

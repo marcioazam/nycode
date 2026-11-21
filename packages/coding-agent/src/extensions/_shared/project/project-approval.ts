@@ -1,7 +1,7 @@
 /**
  * Project Approval
  *
- * `ctx.isProjectTrusted()` is not sufficient on its own. pi decides whether to ask for
+ * `ctx.isProjectTrusted()` is not sufficient on its own. nycode decides whether to ask for
  * trust in `hasTrustRequiringProjectResources`, which looks only under `cwd/.pi` and for
  * `.agents/skills`. A repository shipping just `.claude/` and `.mcp.json` matches neither,
  * so `resolveProjectTrusted` short-circuits to `true` before it ever emits `project_trust`:
@@ -10,10 +10,10 @@
  *     if (extensionsResult) { ...emitProjectTrustEvent... }
  *
  * A `project_trust` handler therefore cannot cover this case; the event only fires for
- * projects pi was already going to prompt about. The decision has to be made where the
+ * projects nycode was already going to prompt about. The decision has to be made where the
  * project config is consumed instead, which is what this module does.
  *
- * Answers are stored in pi's own trust store, so approving here also satisfies pi if the
+ * Answers are stored in nycode's own trust store, so approving here also satisfies nycode if the
  * project later grows `.pi` resources, and a decision recorded on a parent directory applies.
  */
 
@@ -59,7 +59,7 @@ function configurationHomes(home: string): string[] {
 
 /** Claude-shaped config anywhere between `cwd` and the repository root.
  *
- * The walk matters: agent discovery already searches upward, so starting pi in a
+ * The walk matters: agent discovery already searches upward, so starting nycode in a
  * subdirectory of a repository whose `.claude/agents` sits at the root found those
  * agents while a cwd-only check reported nothing to gate, and the short-circuit
  * approved the project without ever asking. The bound is the repository root and the
@@ -98,14 +98,14 @@ export interface ApprovalContext {
 
 export interface ApprovalDeps {
 	hasClaudeShaped: (cwd: string) => boolean;
-	piWouldAsk: (cwd: string) => boolean;
+	nycodeWouldAsk: (cwd: string) => boolean;
 	savedDecision: (cwd: string) => boolean | null;
 	remember: (cwd: string, trusted: boolean) => void;
 }
 
 const defaultDeps: ApprovalDeps = {
 	hasClaudeShaped: hasClaudeShapedConfig,
-	piWouldAsk: hasTrustRequiringProjectResources,
+	nycodeWouldAsk: hasTrustRequiringProjectResources,
 	savedDecision: (cwd) => new ProjectTrustStore(getAgentDir()).get(cwd),
 	remember: (cwd, trusted) => new ProjectTrustStore(getAgentDir()).set(cwd, trusted),
 };
@@ -123,7 +123,7 @@ export function isProjectApprovedSilently(
 	// A host without isProjectTrusted reads as untrusted.
 	if (ctx.isProjectTrusted?.() !== true) return false;
 	if (!deps.hasClaudeShaped(ctx.cwd)) return true;
-	if (deps.piWouldAsk(ctx.cwd)) return true;
+	if (deps.nycodeWouldAsk(ctx.cwd)) return true;
 	return deps.savedDecision(ctx.cwd) === true;
 }
 
@@ -142,15 +142,15 @@ export function approvalRecheck(
 	deps: ApprovalDeps = defaultDeps,
 ): () => boolean {
 	const cwd = ctx.cwd;
-	const piTrusted = ctx.isProjectTrusted?.() === true;
-	return () => isProjectApprovedSilently({ cwd, isProjectTrusted: () => piTrusted }, deps);
+	const nycodeTrusted = ctx.isProjectTrusted?.() === true;
+	return () => isProjectApprovedSilently({ cwd, isProjectTrusted: () => nycodeTrusted }, deps);
 }
 
 /**
  * The approval decision for a file that is itself the thing to gate.
  *
  * The silent check short-circuits to approved when the repository holds no
- * Claude-shaped config, meaning there is nothing here pi-code would act on. That is
+ * Claude-shaped config, meaning there is nothing here nycode would act on. That is
  * wrong for a file the CLAUDE_SHAPED walk cannot see: the walk only looks at or above
  * cwd, so a CLAUDE.local.md in a subdirectory would come in through the one door the
  * gate does not cover. Forcing the shaped answer makes such a file need a real
@@ -166,14 +166,14 @@ export function isGatedFileApproved(
 /**
  * Whether project-controlled config may be acted on.
  *
- * Refuses without a UI rather than deferring: pi reached this point without consulting
+ * Refuses without a UI rather than deferring: nycode reached this point without consulting
  * `defaultProjectTrust` at all, so there is no user preference to fall back on. A run
  * that cannot ask has not been approved.
  */
 export async function isProjectApproved(ctx: ApprovalContext, deps: ApprovalDeps = defaultDeps): Promise<boolean> {
 	if (ctx.isProjectTrusted?.() !== true) return false; // the host declined trust, or has no trust check
-	if (!deps.hasClaudeShaped(ctx.cwd)) return true; // nothing here pi's own check would miss
-	if (deps.piWouldAsk(ctx.cwd)) return true; // pi genuinely prompted for this project
+	if (!deps.hasClaudeShaped(ctx.cwd)) return true; // nothing here nycode's own check would miss
+	if (deps.nycodeWouldAsk(ctx.cwd)) return true; // nycode genuinely prompted for this project
 
 	const stored = deps.savedDecision(ctx.cwd);
 	if (stored !== null) return stored;

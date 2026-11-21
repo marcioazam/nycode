@@ -2,7 +2,7 @@
  * HTML to markdown conversion for web_fetch, mirroring Claude's WebFetch, which
  * converts pages to markdown before the model reads them.
  *
- * A regex pipeline, not a DOM: pi ships no HTML parser and the output is prose
+ * A regex pipeline, not a DOM: nycode ships no HTML parser and the output is prose
  * for a model, not a rendering. Every pattern bounds its tag matches with
  * [^<>]* so a failed match stops at the next tag instead of rescanning to the
  * end of input, keeping the pass linear on hostile pages. Bare tag removal is a

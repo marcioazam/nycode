@@ -17,5 +17,5 @@ When finished, report: what was done, what was verified (commands run and their 
 <!--
 Override of the built-in agent (src/extensions/subagent/agents/general-purpose.md, lowest precedence) on 2026-11-11:
 excludes memory/question/plan_mode_complete (no UI, no memory writes, same as the
-other writers; `subagent` stays: writers may nest under the depth cap, docs/harness/pi-multi-agent-2026-11-11.md) and adds the shared contract and scope rule. Pinned to Sonnet 5.5 (only the session model orchestrates).
+other writers; `subagent` stays: writers may nest under the depth cap, docs/harness/nycode-multi-agent-2026-11-11.md) and adds the shared contract and scope rule. Pinned to Sonnet 5.5 (only the session model orchestrates).
 -->

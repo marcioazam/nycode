@@ -1,4 +1,4 @@
-// Shared fake ExtensionAPI for the plan-mode tests (ported from the pi-code patch tests, which each inlined this fake).
+// Shared fake ExtensionAPI for the plan-mode tests (ported from the nycode patch tests, which each inlined this fake).
 import type { ExtensionAPI } from "../../../src/core/extensions/types.ts";
 import planMode from "../../../src/extensions/plan-mode/index.ts";
 
@@ -17,7 +17,7 @@ export interface FakeOptions {
 }
 
 /** Loads the plan-mode extension against a recording fake of the extension API. */
-export function fakePi(opts: FakeOptions = {}) {
+export function fakeNycode(opts: FakeOptions = {}) {
 	/** Last handler registered per event (the extension registers one per event unless a test says otherwise). */
 	const on: Record<string, Loose> = {};
 	/** Every handler registered per event, in order. */
@@ -31,7 +31,7 @@ export function fakePi(opts: FakeOptions = {}) {
 	const emitted: Array<[string, Loose]> = [];
 	const captured: { transformer?: Loose; options?: Loose } = {};
 	let active = opts.active ?? ["read", "bash", "edit", "plan_mode_complete"];
-	const pi: Loose = {
+	const nycode: Loose = {
 		on: (event: string, handler: Loose) => {
 			on[event] = handler;
 			handlers[event] = [...(handlers[event] ?? []), handler];
@@ -77,8 +77,8 @@ export function fakePi(opts: FakeOptions = {}) {
 		},
 		sendUserMessage() {},
 	};
-	planMode(pi as ExtensionAPI);
-	return { pi, on, handlers, bus, cmds, tools, shortcuts, entries, sent, emitted, captured, active: () => active };
+	planMode(nycode as ExtensionAPI);
+	return { nycode, on, handlers, bus, cmds, tools, shortcuts, entries, sent, emitted, captured, active: () => active };
 }
 
 export const PLAN = "Tier: T0 (teste)\n1. contar a.txt\n- wc -l a.txt\n2. contar b.txt\n- wc -l b.txt";
@@ -115,7 +115,7 @@ export function fakeCtx(extra: Loose = {}): Loose {
 }
 
 /** Enters plan mode, submits a two-step plan and lets the run end so execution starts. */
-export async function startExecution(fake: ReturnType<typeof fakePi>, ctx: Loose) {
+export async function startExecution(fake: ReturnType<typeof fakeNycode>, ctx: Loose) {
 	await fake.cmds.plan.handler("", ctx);
 	await fake.tools.plan_mode_complete.execute("id", { plan: PLAN });
 	await fake.on.agent_end({ messages: [] }, ctx);

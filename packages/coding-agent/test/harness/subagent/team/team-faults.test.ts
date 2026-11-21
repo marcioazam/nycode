@@ -62,10 +62,10 @@ const rec = (n: number, agent: string) => ({
 	cost: 0,
 	ownerPid: process.pid,
 });
-const fakePi = () => {
+const fakeNycode = () => {
 	const sent: { text: string; deliverAs?: string }[] = [];
 	const tools: { execute: (...a: unknown[]) => Promise<{ content: { text: string }[] }> }[] = [];
-	const pi = {
+	const nycode = {
 		registerTool: (t: never) => void tools.push(t),
 		registerCommand: () => {},
 		on: () => {},
@@ -73,7 +73,7 @@ const fakePi = () => {
 		setActiveTools: () => {},
 		sendUserMessage: (text: string, o?: { deliverAs?: string }) => void sent.push({ text, deliverAs: o?.deliverAs }),
 	};
-	return { pi, sent, tools };
+	return { nycode, sent, tools };
 };
 
 test("hudColors falls back to no colors when the HUD config is missing", () => {
@@ -116,8 +116,8 @@ test("the tool runs against a real fleet dir; the 1 s tick delivers the lead inb
 				const dir = store.ensureFleetDir()!;
 				store.writeRecord(dir, rec(1, "a") as never);
 				store.writeRecord(dir, rec(2, "b") as never);
-				const { pi, sent, tools } = fakePi();
-				teamIndex.registerTeam(pi as never);
+				const { nycode, sent, tools } = fakeNycode();
+				teamIndex.registerTeam(nycode as never);
 				assert.equal(
 					(await tools[0]!.execute("id", { action: "tasks", add: { title: "x" } })).content[0]!.text,
 					"added t1",

@@ -1,6 +1,6 @@
 /**
- * Claude's --add-dir flag. context-imports registers it; pi answers getFlag only for a flag
- * the asking extension registered (pi dist/core/extensions/loader), and a second
+ * Claude's --add-dir flag. context-imports registers it; nycode answers getFlag only for a flag
+ * the asking extension registered (nycode dist/core/extensions/loader), and a second
  * registration would list the flag twice in --help, so the value reaches other readers
  * (the status line) through a process-wide slot.
  */

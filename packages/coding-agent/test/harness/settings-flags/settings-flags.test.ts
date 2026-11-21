@@ -1,4 +1,4 @@
-// D-33: the session-end report is prefixed `nycode:` (pi-code printed `pi-code:`).
+// D-33: the session-end report is prefixed `nycode:` (nycode printed `nycode:`).
 import * as path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ExtensionAPI, ExtensionContext } from "../../../src/core/extensions/types.ts";

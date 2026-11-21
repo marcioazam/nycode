@@ -4,22 +4,22 @@ import { stripBlockComments } from "../_shared/shell/strip-comments.ts";
 import { type ImportBudget, type ImportedFile, MAX_IMPORT_BYTES, MAX_IMPORT_FILES } from "./imports.ts";
 import { MANAGED_CLAUDE_MD_PATH, managedClaudeMdPath, readManagedClaudeMdFile } from "./sources.ts";
 
-/** pi's exact per-file wrapper inside <project_context>, reconstructed from
+/** nycode's exact per-file wrapper inside <project_context>, reconstructed from
  * path+content for exact-substring rewriting. tests/context-imports.test.ts pins
- * this format against pi's own source so drift fails loudly instead of silently
+ * this format against nycode's own source so drift fails loudly instead of silently
  * turning every rewrite into a no-op. */
 export function instructionsBlock(filePath: string, content: string): string {
 	return `<project_instructions path="${filePath}">\n${content}\n</project_instructions>`;
 }
 
-/** pi's <project_context> opener, the anchor the managed block is inserted after. */
+/** nycode's <project_context> opener, the anchor the managed block is inserted after. */
 const CONTEXT_OPENER = "<project_context>\n\nProject-specific instructions and guidelines:\n\n";
 
-/** The opener as pi 0.86 and later renders it, which is the layout a forced prompt has
+/** The opener as upstream 0.86 and later renders it, which is the layout a forced prompt has
  * there: one newline after the tag. */
 const SECTION_OPENER = "<project_context>\nProject-specific instructions and guidelines:\n\n";
 
-/** Remove a context block, preferring the shape pi assembles (trailing blank line). */
+/** Remove a context block, preferring the shape nycode assembles (trailing blank line). */
 function removeBlock(prompt: string, wrapper: string): string | null {
 	for (const needle of [`${wrapper}\n\n`, wrapper]) {
 		const at = prompt.indexOf(needle);
@@ -36,9 +36,9 @@ function replaceBlock(prompt: string, wrapper: string, replacement: string): str
 	return prompt.slice(0, at) + replacement + prompt.slice(at + wrapper.length);
 }
 
-/** Insert a block at the top of <project_context>, before the files pi loaded;
- * when pi assembled no context block, add one in pi's shape. Used for the blocks
- * Claude loads ahead of pi's native project context: managed claudeMd (file then
+/** Insert a block at the top of <project_context>, before the files nycode loaded;
+ * when nycode assembled no context block, add one in nycode's shape. Used for the blocks
+ * Claude loads ahead of nycode's native project context: managed claudeMd (file then
  * key) and the user CLAUDE.md. Each call prepends, so the last block inserted ends
  * up highest, which is how the managed/user/native order is built (see caller). */
 function withTopBlock(prompt: string, block: string): string {
@@ -51,7 +51,7 @@ function withTopBlock(prompt: string, block: string): string {
 	return `${prompt}\n\n${CONTEXT_OPENER}${block}\n\n</project_context>\n`;
 }
 
-/** Apply claudeMdExcludes and comment-stripping to pi's native context blocks,
+/** Apply claudeMdExcludes and comment-stripping to nycode's native context blocks,
  * rewriting the assembled prompt by exact substring: an excluded file's block is
  * removed, a surviving file's block is replaced with its comment-stripped body. A
  * wrapper not found in the prompt is skipped rather than risk corrupting it.
@@ -86,7 +86,7 @@ export function rewriteNativeBlocks(
 	return { prompt, changed, kept };
 }
 
-/** The CLAUDE.md files pi passed over, appended as project_instructions blocks in the
+/** The CLAUDE.md files nycode passed over, appended as project_instructions blocks in the
  * ./CLAUDE.md slot, ahead of the ./.claude/CLAUDE.md alternate and the locals. */
 export function siblingClaudeMdAddition(
 	siblings: Array<{ path: string; content: string }>,
@@ -109,7 +109,7 @@ export function siblingClaudeMdAddition(
 
 /** The project-scope ./.claude/CLAUDE.md appended as a project_instructions block,
  * announced as it is added (only when non-empty, matching what reaches the prompt).
- * Claude reads project instructions from ./CLAUDE.md OR ./.claude/CLAUDE.md; pi loads
+ * Claude reads project instructions from ./CLAUDE.md OR ./.claude/CLAUDE.md; nycode loads
  * the former natively, so this fills the alternate location as an extra project block. */
 export function projectContextAddition(
 	kept: { path: string; content: string } | undefined,
@@ -205,7 +205,7 @@ export function importedAddition(
 	return `\n\n## Imported context (@)\n\n${section}${notice}`;
 }
 
-/** Prepend the managed and user memory blocks Claude loads ahead of pi's native project
+/** Prepend the managed and user memory blocks Claude loads ahead of nycode's native project
  * context, top to bottom: managed file, managed key, then the user CLAUDE.md. withTopBlock
  * prepends, so they are inserted bottom-up (user, then managed key, then managed file just
  * below) to land in that order. keptUser was already exclude-checked and comment-stripped by

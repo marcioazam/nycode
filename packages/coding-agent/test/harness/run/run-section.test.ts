@@ -1,5 +1,5 @@
 // Ported from zzzzzzzzzzzzzzz-run-section/run-section.test.ts (zzzzzzzzzzzzzzz-run-section.patch): registry, detection,
-// staged stop, wait, awaited notification and render. Offline, no spend. D-33: PI_RUNS_DIR is NYCODE_RUNS_DIR, the
+// staged stop, wait, awaited notification and render. Offline, no spend. D-33: NYCODE_RUNS_DIR is NYCODE_RUNS_DIR, the
 // subagent depth variables are NYCODE_SUBAGENT*, and the PID marker line is __NYCODE_RUN_PID=. Every env var is read
 // when a function runs (never at module load), so they are set in beforeAll; vi.stubEnv would be undone before each
 // test by the vitest config (unstubEnvs).

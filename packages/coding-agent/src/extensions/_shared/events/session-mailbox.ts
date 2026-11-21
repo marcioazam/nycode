@@ -1,20 +1,20 @@
 /**
  * Delivery for background work that can outlive the session that started it.
  *
- * pi runs a fresh extension instance per session and invalidates the old one on /new,
+ * nycode runs a fresh extension instance per session and invalidates the old one on /new,
  * /resume, /fork and /reload: every call on its `nycode` throws from then on. A background
  * subagent run or forked skill finishing after that would have nowhere to report, so its
  * result goes through a mailbox instead: the instance attached at session_start receives
  * it, and one finishing while no session is attached waits for the next session_start.
  * Each delivery runs exactly once, on whichever `nycode` is current when it runs.
  *
- * A delivery is told whether it may start a turn. pi 1.1.0 sends a turn that an extension
+ * A delivery is told whether it may start a turn. upstream 1.1.0 sends a turn that an extension
  * starts before the session's first prompt with no system prompt, and every later request
- * in that session goes without one too (measured with a bare extension, no pi-code). Until
+ * in that session goes without one too (measured with a bare extension, no nycode). Until
  * the session has had a turn, a delivery is recorded for the next prompt instead.
  *
  * State lives in a shared slot, so the mailbox survives /reload re-evaluating this module
- * and reaches across the module graphs pi loads each extension entry through.
+ * and reaches across the module graphs nycode loads each extension entry through.
  */
 import type { ExtensionAPI } from "../../../core/extensions/types.ts";
 import { sharedSlot } from "../seams/shared-slot.ts";

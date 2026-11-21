@@ -63,7 +63,7 @@ test("orçamento por lane: conta, recusa o excesso sem gastar, árvores separada
 	assert.equal(n.claimSpawns(2, env, root), undefined);
 	const err = n.claimSpawns(1, env, root);
 	assert.match(err ?? "", /5 of 5/);
-	assert.equal(readdirSync(join(root, "pi-code-subagent-tree-t1")).length, 5);
+	assert.equal(readdirSync(join(root, "nycode-subagent-tree-t1")).length, 5);
 	assert.equal(n.claimSpawns(1, { ...env, NYCODE_SUBAGENT_TREE: "t2" }, root), undefined);
 });
 

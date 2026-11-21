@@ -1,5 +1,5 @@
 /**
- * pi-ai's StringEnum typed for TypeBox. From pi 1.5 its published types return a pi-schema
+ * nycode-ai's StringEnum typed for TypeBox. From upstream 1.5 its published types return a nycode-schema
  * Schema, whose value TypeBox's Static reads as unknown. The emitted schema is unchanged.
  */
 

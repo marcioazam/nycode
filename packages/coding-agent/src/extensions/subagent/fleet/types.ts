@@ -1,5 +1,5 @@
 /**
- * Agent fleet contract (local patch, claude-home/patches/pi-code/subagent-panel.patch).
+ * Agent fleet contract (local patch, claude-home/patches/nycode/subagent-panel.patch).
  *
  * Every nycode process that spawns a subagent (the main session at depth 0 and any writer
  * child below it) records that run in one shared directory per main session, the fleet
@@ -7,7 +7,7 @@
  * the whole tree from disk, so runs at depth 2 and 3, which live in other processes, show
  * up the same way as its own children. Record: docs/pi-agent-fleet-2026-11-12.md.
  *
- * Files in the fleet dir (mode 0700, under os.tmpdir()/pi-code-fleet-<uid>/):
+ * Files in the fleet dir (mode 0700, under os.tmpdir()/nycode-fleet-<uid>/):
  *   <id>.json               RunRecord, rewritten atomically (tmp file + rename)
  *   <id>.transcript.jsonl   TranscriptItem per line, appended by the spawner, size-capped
  *   <id>.inbox.jsonl        InboxMessage per line, appended by the main session's panel
@@ -38,7 +38,7 @@ export interface RunTokens {
 
 export interface RunRecord {
 	v: 1;
-	/** pi-code's run id: `fg-xxxxxxxx` (foreground) or `bg-xxxxxxxx` (background). */
+	/** nycode's run id: `fg-xxxxxxxx` (foreground) or `bg-xxxxxxxx` (background). */
 	id: string;
 	/** Run id of the run whose process spawned this one; null when the main session did. */
 	parentId: string | null;
@@ -72,7 +72,7 @@ export interface RunRecord {
 	cost: number;
 	/** The `subagent` tool call that started this run (the same id as the diagnostics' `gen_ai.tool.call.id`). */
 	toolCallId?: string;
-	/** First open plan step when the run started (channel `pi-code:plan-state`). Heuristic: with steps worked in parallel it can name the neighbour. Absent without a running plan. */
+	/** First open plan step when the run started (channel `nycode:plan-state`). Heuristic: with steps worked in parallel it can name the neighbour. Absent without a running plan. */
 	planStep?: number;
 	/** The child's pid; it leads its own process group (spawned detached). */
 	pid?: number;
@@ -116,7 +116,7 @@ export interface InboxAck {
 
 export type StopOutcome = "stopping" | "not-running" | "unknown" | "refused";
 /** queued: written to a running run's inbox; resumed: a finished background run of the
- * main session continued with the message as its new task (pi-code's resume). */
+ * main session continued with the message as its new task (nycode's resume). */
 export type SendOutcome = "queued" | "resumed" | "not-running" | "unknown";
 /** The model's `send` (sendFromLead): the panel outcomes plus not-delivered (the run ended before it read the
  * message and nothing could resume it) and the refusals, none of which write to the inbox. */

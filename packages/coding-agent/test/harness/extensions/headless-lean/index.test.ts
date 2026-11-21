@@ -105,7 +105,7 @@ test("splitCwd com formato inesperado não faz nada e não lança", () => {
 
 test("headlessTools tira question sempre e plan_mode_complete fora do modo plano", () => {
 	const active = ["read", "question", "plan_mode_complete", "bash", "lsp_hover", "codemode"];
-	assert.deepEqual(headlessTools(active, ["node", "pi", "-p", "Planeje antes de implementar."]), [
+	assert.deepEqual(headlessTools(active, ["node", "nycode", "-p", "Planeje antes de implementar."]), [
 		"read",
 		"bash",
 		"lsp_hover",
@@ -176,7 +176,7 @@ function load(active: string[], env: Record<string, string | undefined> = {}) {
 	for (const [k, v] of Object.entries(env)) if (v !== undefined) process.env[k] = v;
 	const handlers: Record<string, Handler> = {};
 	const sets: string[][] = [];
-	const pi = {
+	const nycode = {
 		on: (name: string, h: Handler) => {
 			handlers[name] = h;
 		},
@@ -185,7 +185,7 @@ function load(active: string[], env: Record<string, string | undefined> = {}) {
 			sets.push(next);
 		},
 	};
-	ext(pi as never);
+	ext(nycode as never);
 	const restore = () => {
 		for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k];
 		Object.assign(process.env, saved);
@@ -310,7 +310,7 @@ test("NYCODE_HEADLESS_LEAN=0 não registra nada", () => {
 });
 
 // --- item 6: piso de prefixo (contrato curto e sem lista de skills) ---
-const FLOOR = "# Working contract (pi, headless)\n\n- Act by default.";
+const FLOOR = "# Working contract (nycode, headless)\n\n- Act by default.";
 const BIG = "# Working contract (pi)\n\n## Precedence\n- long rules\n- more";
 const SKILLS =
 	"<skills>\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nResolve relative paths against the skill's directory (parent of SKILL.md). Use absolute paths in tool calls.\n\n<available_skills>\n  <skill>\n    <name>a</name>\n  </skill>\n</available_skills>\n</skills>";
@@ -421,7 +421,7 @@ test("formato inesperado no handler: payload como está, sem lançar", () => {
 
 // --- item 8: sem `todo` e sem a seção <docs> na sessão headless de topo ---
 const DOCS =
-	"<docs>\nPi documentation (read only when the user asks about the harness itself):\n- Main: /x/README.md\n</docs>";
+	"<docs>\nNycode documentation (read only when the user asks about the harness itself):\n- Main: /x/README.md\n</docs>";
 const withDocs = () => floorPayload(`Intro\n\n<tools>\n- read\n</tools>\n\n${DOCS}\n\n<headless>\nx\n</headless>`);
 
 test("trimTools tira só todo", () => {

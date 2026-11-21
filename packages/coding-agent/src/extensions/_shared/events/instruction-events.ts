@@ -1,10 +1,10 @@
 /**
- * Channel and payload for instruction-file loads published on pi's shared extension
+ * Channel and payload for instruction-file loads published on nycode's shared extension
  * event bus. Producers are claude-rules (a scoped rule lazily attaching on a matching
  * file touch, load_reason `path_glob_match`) and context-imports (resolved `@imports`,
  * load_reason `include`, and CLAUDE.local.md loads, load_reason `session_start`).
  * Hooks bridge them to Claude's InstructionsLoaded event, which is strictly
- * observational. pi loads extensions without a shared module cache, so state rides
+ * observational. nycode loads extensions without a shared module cache, so state rides
  * the bus, mirroring subagent-events.
  */
 
@@ -12,7 +12,7 @@ import * as path from "node:path";
 
 import { claudeConfigDir } from "../settings/config-dir.ts";
 
-export const INSTRUCTIONS_CHANNEL = "pi-code:instructions";
+export const INSTRUCTIONS_CHANNEL = "nycode:instructions";
 
 /** Claude's memory_type vocabulary for InstructionsLoaded payloads. */
 export type InstructionMemoryType = "User" | "Project" | "Local" | "Managed";
@@ -72,7 +72,7 @@ export function memoryTypeForPath(filePath: string, home: string, projectRoot: s
 	return "Project";
 }
 
-/** The emit half of pi's EventBus; producers may run under stub hosts without one. */
+/** The emit half of nycode's EventBus; producers may run under stub hosts without one. */
 export interface InstructionBus {
 	emit(channel: string, data: unknown): void;
 }

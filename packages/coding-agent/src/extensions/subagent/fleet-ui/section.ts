@@ -2,7 +2,7 @@
  * Shared mechanics of the two collapsible sections under the editor (Sub Agents, Status Line and Plan): viewport size,
  * offset clamp, focus ownership test and the bridge the status line and the fleet panel use to reach the Plan
  * section. Pure apart from the `bridge` singleton, which the Plan section fills in. Record:
- * docs/pi-interactive-display-2026-11-13.md ("Plan section").
+ * docs/nycode-interactive-display-2026-11-13.md ("Plan section").
  */
 
 /** Plan body rows: at most 6, at least 3, fewer on short terminals. Never unbounded. */

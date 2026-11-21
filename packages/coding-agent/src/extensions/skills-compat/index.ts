@@ -1,19 +1,19 @@
 /**
  * Claude Skills Extension
  *
- * Bridges Claude Code's skills into pi. On resources_discover it hands pi the
+ * Bridges Claude Code's skills into nycode. On resources_discover it hands nycode the
  * existing `.claude/skills` directories (user then project) as skill paths, so
- * pi discovers Claude Code skills the same way it loads its own `.pi/skills`.
- * pi implements the Agent Skills standard, so `SKILL.md` directories work
+ * nycode discovers Claude Code skills the same way it loads its own `.pi/skills`.
+ * nycode implements the Agent Skills standard, so `SKILL.md` directories work
  * unchanged and register as `/skill:<name>`.
  *
  * Claude documents that a command file and a skill "work the same way", so a
  * SKILL.md body carries the dynamic features command bodies do: `` !`cmd` ``
  * spans, `@file` references, `$ARGUMENTS`/positional substitution and
- * `${CLAUDE_*}` variables. pi's loader delivers the raw text, so this extension
+ * `${CLAUDE_*}` variables. nycode's loader delivers the raw text, so this extension
  * intercepts `/skill:<name>` input for the skills it contributed, expands the body
- * through the shared command pipeline, and hands pi the already-expanded content
- * in pi's own skill-block format (pi emits the input event before its own
+ * through the shared command pipeline, and hands nycode the already-expanded content
+ * in nycode's own skill-block format (nycode emits the input event before its own
  * expansion, and skips text that no longer starts with `/`).
  *
  * Docs: https://code.claude.com/docs/en/skills.md, https://agentskills.io
@@ -46,7 +46,7 @@ function declaredSkillDirs(declared: unknown): string[] {
 }
 
 /** Existing `.claude/skills` directories, user first then project. The project
- * directory is included only for approved projects: pi's loader surfaces every skill's
+ * directory is included only for approved projects: nycode's loader surfaces every skill's
  * name and description to the model, so an untrusted repository would otherwise get
  * text into the prompt without the user ever agreeing to load its config. */
 export function skillDirs(cwd: string, home: string, trusted: boolean): string[] {
@@ -62,7 +62,7 @@ export function skillDirs(cwd: string, home: string, trusted: boolean): string[]
 			? []
 			: [path.join(path.dirname(managedSettingsFile()), ".claude", "skills")];
 	const candidates = [...enterprise, path.join(claudeConfigDir(home), "skills")];
-	// Enabled plugins contribute their skills directories. pi's loader names a
+	// Enabled plugins contribute their skills directories. nycode's loader names a
 	// skill by its directory, so a plugin skill registers without Claude's
 	// /plugin: prefix; a rename-free approximation, disclosed in the README.
 	for (const plugin of installedPlugins(home)) {
@@ -70,7 +70,7 @@ export function skillDirs(cwd: string, home: string, trusted: boolean): string[]
 		// scanned, and directories listed in `skills` are loaded alongside it." Treating the
 		// declaration as a replacement silently dropped every skill in the conventional
 		// location. (The reference's one exception, a marketplace entry whose source resolves
-		// to the marketplace root, is a marketplace shape pi-code does not model.)
+		// to the marketplace root, is a marketplace shape nycode does not model.)
 		const extra = declaredSkillDirs(plugin.manifest.skills);
 		const dirs = [...extra, "skills"];
 		candidates.push(
@@ -79,15 +79,15 @@ export function skillDirs(cwd: string, home: string, trusted: boolean): string[]
 				.filter((dir): dir is string => dir !== undefined),
 		);
 		// NOT SUPPORTED: Claude's single-skill layout, "a plugin that ships exactly one skill
-		// can place SKILL.md directly at the plugin root". skillPaths is handed to pi's own
+		// can place SKILL.md directly at the plugin root". skillPaths is handed to nycode's own
 		// loader, which owns the layout and looks for <dir>/<name>/SKILL.md; adding the plugin
 		// root here does not surface root/SKILL.md and does start scanning every sibling
 		// directory (hooks/, agents/, commands/) for skills. Supporting it needs a loader that
-		// accepts a directory that IS the skill, which is pi's call, not this extension's.
+		// accepts a directory that IS the skill, which is nycode's call, not this extension's.
 	}
 	// Claude loads skills from every .claude/skills between cwd and the repository
 	// root; the list goes nearest-first so findClaudeSkill's first match is the
-	// closest definition (pi's loader receives the same order).
+	// closest definition (nycode's loader receives the same order).
 	if (trusted) candidates.push(...ancestorDirs(cwd, path.join(".claude", "skills")));
 	// K6: the embedded skills come last, the lowest precedence of this first-match list.
 	const embedded = builtinResourceDir("skills");
@@ -104,7 +104,7 @@ interface FoundSkill {
 	baseDir: string;
 }
 
-/** The skill a directory entry holds, named as pi's loader names it (frontmatter
+/** The skill a directory entry holds, named as nycode's loader names it (frontmatter
  * `name`, else the directory name); undefined without a readable SKILL.md. */
 function skillAt(root: string, dirName: string): { name: string; filePath: string } | undefined {
 	const filePath = path.join(root, dirName, "SKILL.md");
@@ -119,12 +119,12 @@ function skillAt(root: string, dirName: string): { name: string; filePath: strin
 		const declared = parseClaudeFrontmatter<Record<string, unknown>>(content).frontmatter.name;
 		if (typeof declared === "string" && declared.trim()) name = declared.trim();
 	} catch {
-		// Malformed frontmatter: pi's loader falls back to the directory name too.
+		// Malformed frontmatter: nycode's loader falls back to the directory name too.
 	}
 	return { name, filePath };
 }
 
-/** A Claude-contributed skill by the name pi's loader gives it. One directory
+/** A Claude-contributed skill by the name nycode's loader gives it. One directory
  * level, the standard layout. */
 function findClaudeSkill(name: string, roots: string[]): FoundSkill | undefined {
 	for (const root of roots) {
@@ -135,7 +135,7 @@ function findClaudeSkill(name: string, roots: string[]): FoundSkill | undefined 
 			continue;
 		}
 		for (const entry of entries) {
-			// A link counts: pi's loader follows it, and skillAt already turns a link that
+			// A link counts: nycode's loader follows it, and skillAt already turns a link that
 			// leads to no SKILL.md (dangling, or to a plain file) into undefined.
 			if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
 			const skill = skillAt(root, entry.name);
@@ -151,7 +151,7 @@ export default function skillsExtension(nycode: ExtensionAPI) {
 	nycode.on("session_shutdown", () => forkResults.detach(nycode));
 
 	nycode.on("resources_discover", (_event, ctx) => {
-		// pi's --no-skills does not cover paths an extension hands over here; a routed subagent has no skill catalog.
+		// nycode's --no-skills does not cover paths an extension hands over here; a routed subagent has no skill catalog.
 		if (process.env.NYCODE_SUBAGENT_NO_SKILLS === "1") return undefined;
 		// resources_discover fires after session_start, so the approval is already
 		// resolved; reading it silently keeps a second trust dialog off the screen.
@@ -159,8 +159,8 @@ export default function skillsExtension(nycode: ExtensionAPI) {
 		return skillPaths.length > 0 ? { skillPaths } : undefined;
 	});
 
-	// The dynamic-content shim: only for skills this extension contributed; pi's own
-	// `.pi/skills` (or an unknown name) pass through to pi's plain expansion.
+	// The dynamic-content shim: only for skills this extension contributed; nycode's own
+	// `.pi/skills` (or an unknown name) pass through to nycode's plain expansion.
 	nycode.on("input", async (event, ctx) => {
 		if (event.source === "extension") return;
 		return expandSkillInvocation(nycode, event.text, ctx);
@@ -169,7 +169,7 @@ export default function skillsExtension(nycode: ExtensionAPI) {
 
 /** Claude's `skillOverrides` value for one skill from the settings chain, later
  * files winning: "off" hides the skill entirely, "name-only" trims its listing
- * (a pi-loader surface, noted in docs). */
+ * (a nycode-loader surface, noted in docs). */
 function skillOverrideFor(name: string, cwd: string, trusted: boolean): string | undefined {
 	let value: string | undefined;
 	for (const settings of readSettingsChain(claudeSettingsChain(cwd, os.homedir(), trusted))) {
@@ -202,12 +202,12 @@ function forkWaits(name: string, frontmatter: Record<string, unknown>, ctx: Exte
 }
 
 /** Where a forked skill's result goes: the session current when it completes, which after
- * a /new, /resume, /fork or /reload is not the one whose pi started it. */
+ * a /new, /resume, /fork or /reload is not the one whose nycode started it. */
 const forkResults = sessionMailbox("skill-fork-results");
 
 /** Start a forked skill in the background and hand its result to the conversation when it
  * completes. The promise has no awaiter, so the catch keeps a delivery that throws from
- * surfacing as an unhandled rejection, which exits pi. */
+ * surfacing as an unhandled rejection, which exits nycode. */
 function startForkedSkill(
 	ctx: ExtensionContext,
 	fork: { name: string; filePath: string; expanded: string; agentName: string | undefined },
@@ -255,13 +255,13 @@ async function runForkedSkill(
 }
 
 /** A `/skill:<name> args` invocation into its expanded skill block, or undefined to
- * pass the input through to pi untouched. The expanded body is wrapped in pi's
+ * pass the input through to nycode untouched. The expanded body is wrapped in nycode's
  * skill-block format so downstream behavior (the baseDir note for relative
  * references) matches an untouched invocation. */
-/** Whether pi resolved this skill name to another file: pi loads its own skill directories
+/** Whether nycode resolved this skill name to another file: nycode loads its own skill directories
  * ahead of the ones this extension adds and the first name wins, so its listing then
- * shows that skill, and the invocation is left to pi's own expansion of it. */
-function shadowedByPi(nycode: ExtensionAPI, name: string, filePath: string): boolean {
+ * shows that skill, and the invocation is left to nycode's own expansion of it. */
+function shadowedByNycode(nycode: ExtensionAPI, name: string, filePath: string): boolean {
 	const loaded = nycode
 		.getCommands?.()
 		.find((command) => command.source === "skill" && command.name === `skill:${name}`);
@@ -296,7 +296,7 @@ async function expandSkillInvocation(
 	const { name, args } = invocation;
 	const trusted = isProjectApprovedSilently(ctx);
 	const found = findClaudeSkill(name, skillDirs(ctx.cwd, os.homedir(), trusted));
-	if (!found || shadowedByPi(nycode, name, found.filePath)) return;
+	if (!found || shadowedByNycode(nycode, name, found.filePath)) return;
 	const refused = refusedByOverride(name, ctx, trusted);
 	if (refused) return refused;
 	let parsed: ReturnType<typeof parseCommandFile>;
@@ -305,7 +305,7 @@ async function expandSkillInvocation(
 		content = fs.readFileSync(found.filePath, "utf-8");
 		parsed = parseCommandFile(content);
 	} catch {
-		// Unreadable, or malformed frontmatter: pass through to pi's plain expansion
+		// Unreadable, or malformed frontmatter: pass through to nycode's plain expansion
 		// (the loader registered the skill and delivers the raw body), rather than
 		// failing the invocation over the dynamic features it cannot have.
 		return;
@@ -324,7 +324,7 @@ async function expandSkillInvocation(
 			allowShell: !shellExecutionDisabled(ctx.cwd, os.homedir(), trusted),
 		});
 	} catch (error) {
-		// A failed injected command aborts the invocation, as it does for a command: pi logs a
+		// A failed injected command aborts the invocation, as it does for a command: nycode logs a
 		// throwing input handler and continues with the raw text, which would send the body
 		// unexpanded. The notify carries the failure message.
 		ctx.ui.notify(errorMessage(error), "error");

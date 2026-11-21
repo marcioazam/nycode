@@ -1,4 +1,4 @@
-// Ported from zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-fleet-sync/reload.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-fleet-sync/reload.test.ts (nycode patch tests); same cases and expectations.
 // D15 (docs/sync-observabilidade.md): uma chamada `subagent {tasks}` auto-destacada sobrevive ao /reload: o resultado de cada faixa
 // chega pela instância atual, sem "stale". Rodar: env -u NYCODE_SUBAGENT node --experimental-strip-types --test <este arquivo>
 import assert from "node:assert/strict";
@@ -20,9 +20,9 @@ for (const k of ["NYCODE_SUBAGENT_ALLOWED_AGENTS", "NYCODE_FLEET_DIR", "NYCODE_F
 	delete process.env[k];
 
 // O filho só responde depois que `release-<tarefa>` existe.
-const fakePi = join(tmp, "fake-pi-reload.mjs");
+const fakeNycode = join(tmp, "fake-nycode-reload.mjs");
 writeFileSync(
-	fakePi,
+	fakeNycode,
 	`import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 const task = (process.argv.at(-1).match(/Task: ([\\s\\S]*)$/) ?? [])[1] ?? ''
@@ -47,7 +47,7 @@ process.env.FAKE_PI_DIR = tmp;
 const release = (task: string): void => writeFileSync(join(tmp, `release-${task}`), "");
 const STALE = "This extension ctx is stale after session replacement or reload.";
 
-/** Uma instância da extensão; `reload()` a deixa velha: todo acesso ao pi/ctx capturado lança, como o pi real. */
+/** Uma instância da extensão; `reload()` a deixa velha: todo acesso ao nycode/ctx capturado lança, como o nycode real. */
 function instance() {
 	const handlers = new Map<string, Array<(...a: unknown[]) => unknown>>();
 	const tools: Array<{ name: string; execute: (...a: unknown[]) => Promise<{ content: Array<{ text: string }> }> }> =
@@ -58,7 +58,7 @@ function instance() {
 		if (stale) throw new Error(STALE);
 		return v;
 	};
-	const pi = {
+	const nycode = {
 		on: (e: string, h: (...a: unknown[]) => unknown) => void handlers.set(e, [...(handlers.get(e) ?? []), h]),
 		registerTool: (d: (typeof tools)[number]) => void tools.push(d),
 		registerCommand() {},
@@ -93,8 +93,8 @@ function instance() {
 		},
 	};
 	const savedArgv = process.argv[1];
-	process.argv[1] = fakePi;
-	subagentExtension(pi as unknown as ExtensionAPI);
+	process.argv[1] = fakeNycode;
+	subagentExtension(nycode as unknown as ExtensionAPI);
 	const fire = async (e: string, p: unknown = {}) => {
 		for (const h of handlers.get(e) ?? []) await h(p, ctx);
 	};
@@ -165,9 +165,9 @@ test('D15: /reload com tasks:[2] em curso; as duas faixas terminam e o texto ent
 	}
 });
 
-test("D15: um onPhase que lança (pi velho) não troca o resultado da faixa nem derruba a chamada", async () => {
+test("D15: um onPhase que lança (nycode velho) não troca o resultado da faixa nem derruba a chamada", async () => {
 	const savedArgv = process.argv[1];
-	process.argv[1] = fakePi;
+	process.argv[1] = fakeNycode;
 	release("solo");
 	try {
 		const agent: AgentConfig = {

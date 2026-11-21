@@ -1,4 +1,4 @@
-// Ported from subagent-panel/fleet-ui-layout.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from subagent-panel/fleet-ui-layout.test.ts (nycode patch tests); same cases and expectations.
 // Testes de layout, paleta e larguras do painel da frota
 import assert from "node:assert/strict";
 import { visibleWidth } from "@nycode/tui";
@@ -293,10 +293,10 @@ test("palette: HUD colors from config, truecolor roles, fallback and NO_COLOR", 
 		assert.equal(t.fg("text", "x"), "\x1b[38;2;125;207;255mx\x1b[39m");
 		assert.equal(t.fg("task", "x"), "\x1b[38;2;122;162;247mx\x1b[39m");
 		assert.equal(t.fg("cost", "x"), "\x1b[38;2;255;158;100mx\x1b[39m");
-		assert.equal(t.fg("dim", "x"), "<dim>x</dim>", "invalid field falls back to the pi theme");
+		assert.equal(t.fg("dim", "x"), "<dim>x</dim>", "invalid field falls back to the nycode theme");
 		assert.equal(t.fg("borderMuted", "x"), "<borderMuted>x</borderMuted>");
 		const none = palette.hudTheme(tagTheme, {});
-		assert.equal(none.fg("task", "x"), "<accent>x</accent>", "new roles map to a pi token without a palette");
+		assert.equal(none.fg("task", "x"), "<accent>x</accent>", "new roles map to a nycode token without a palette");
 		assert.equal(none.fg("cost", "x"), "<dim>x</dim>");
 	});
 	withEnv({ NO_COLOR: "1" }, () => {

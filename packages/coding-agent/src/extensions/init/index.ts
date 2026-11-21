@@ -5,11 +5,11 @@
  * with build commands, test instructions, and the conventions it discovers; when
  * a context file already exists, suggest improvements instead of overwriting it.
  * The handler does no analysis itself. Claude drives /init through the main agent
- * with tools, and pi's equivalent is pi.sendUserMessage: the handler detects what
+ * with tools, and nycode's equivalent is nycode.sendUserMessage: the handler detects what
  * exists on disk (existing context file, cursor rules, copilot instructions),
  * builds one curated prompt, and sends it; the agent then explores the codebase
  * and writes the file with full tool access. A fresh file is AGENTS.md, the name
- * pi prefers over CLAUDE.md.
+ * nycode prefers over CLAUDE.md.
  *
  * Docs: https://code.claude.com/docs/en/memory.md
  */
@@ -87,7 +87,7 @@ export default function initExtension(nycode: ExtensionAPI) {
 		handler: async (
 			_args,
 			ctx,
-		) => /* NOSONAR typescript:S7503 - pi types a command handler as returning Promise<void> */ {
+		) => /* NOSONAR typescript:S7503 - nycode types a command handler as returning Promise<void> */ {
 			const root = checkoutRoot(ctx.cwd);
 			const existing = findExistingContextFile(root);
 			const cursorRules =

@@ -2,7 +2,7 @@
  * HUD palette for the agent panel, viewer and /tasks browser: reads `colors` from the claude-hud
  * config once and maps the UI's color roles to them with truecolor ANSI. Falls back to the nycode
  * theme when the file or a field is missing; NO_COLOR emits no color codes.
- * Record: docs/pi-agents-ui-teams-sota-2026-11-13.md (A4).
+ * Record: docs/nycode-agents-ui-teams-sota-2026-11-13.md (A4).
  */
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";

@@ -3,7 +3,7 @@
  * Times come from what the UI observes in this session (when a step became active or done), never from
  * the plan file: a step already done when first seen shows `--:--`. State beyond done/doing/todo
  * (`status`) renders when a producer sets it on the item; none does yet.
- * Record: docs/pi-interactive-display-2026-11-13.md ("Plan table").
+ * Record: docs/nycode-interactive-display-2026-11-13.md ("Plan table").
  */
 import { truncateToWidth, visibleWidth } from "@nycode/tui";
 
@@ -174,7 +174,7 @@ export function tableDetail(item: TodoItem, theme: UiTheme, width: number, activ
 	return truncateToWidth(indent + theme.fg(role, `↳ ${note}`), width, theme.fg(role, "…"));
 }
 
-/** Tokens and dollars the session spent since `since` (ms): assistant messages of the branch, as pi records them. */
+/** Tokens and dollars the session spent since `since` (ms): assistant messages of the branch, as nycode records them. */
 export function spendSince(
 	entries: readonly unknown[],
 	since: number,

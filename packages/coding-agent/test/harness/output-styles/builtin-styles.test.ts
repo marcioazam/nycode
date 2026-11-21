@@ -1,4 +1,4 @@
-// The four built-in output styles ship with nycode as the lowest-precedence source. In pi-code they sat next to the
+// The four built-in output styles ship with nycode as the lowest-precedence source. In nycode they sat next to the
 // extension; embedded, the directory resolves through getBuiltinStylesDir and copy-assets puts it in dist.
 import * as fs from "node:fs";
 import { describe, expect, it } from "vitest";

@@ -1,5 +1,5 @@
 /**
- * Agent team contract (local patch, claude-home/patches/pi-code/team.patch). Opt-in
+ * Agent team contract (local patch, claude-home/patches/nycode/team.patch). Opt-in
  * (NYCODE_TEAMS=1 or /team on): every run of the fleet tree can message any other run,
  * share a board and claim tasks, all through files under the fleet dir (fleet/types.ts):
  *   <id>.inbox.jsonl         team messages, delivered by the fleet inbox watcher (steer)
@@ -10,7 +10,7 @@
  *   team/claim-N.json        exclusive claim of task N (O_EXCL: one winner)
  *   team/done-N.json         completion of task N
  *   team/sends.<id|tree>     one byte per send: the file size is the budget counter
- * Record: docs/pi-agents-ui-teams-sota-2026-11-13.md (Time).
+ * Record: docs/nycode-agents-ui-teams-sota-2026-11-13.md (Time).
  */
 export const KINDS = ["question", "answer", "info", "blocker", "handoff"] as const;
 export type MessageKind = (typeof KINDS)[number];

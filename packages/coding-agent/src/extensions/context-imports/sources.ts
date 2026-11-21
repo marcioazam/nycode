@@ -30,7 +30,7 @@ export function additionalDirsClaudeMdEnabled(env: Record<string, string | undef
 	return value !== undefined && value !== "" && value !== "0" && value !== "false" && value !== "no";
 }
 
-/** Additional directories from the `add-dir` flag value. pi's getFlag is
+/** Additional directories from the `add-dir` flag value. nycode's getFlag is
  * single-value, so a repeated `--add-dir a --add-dir b` cannot be expressed;
  * a comma-separated value (`--add-dir a,b`) carries multiple dirs instead.
  * `~` expands to home and relative paths resolve against cwd. */
@@ -73,7 +73,7 @@ export function additionalDirContextFiles(
 	return files;
 }
 
-/** Path label given to the managed claudeMd settings-key block; not a file pi loaded. */
+/** Path label given to the managed claudeMd settings-key block; not a file nycode loaded. */
 export const MANAGED_CLAUDE_MD_PATH = "managed-settings.json (claudeMd)";
 
 let managedClaudeMdPathOverride: string | undefined;
@@ -101,7 +101,7 @@ export function readManagedClaudeMdFile(): string {
 	}
 }
 
-/** Claude's --add-dir memory files, minus any pi already loaded natively (added to
+/** Claude's --add-dir memory files, minus any nycode already loaded natively (added to
  * `seenSet` here so an @import cannot pull one in twice) and any the excludes drop
  * or that strip to nothing. Each survivor is comment-stripped and tagged with its
  * additional dir, so its relative imports can resolve from there. */
@@ -116,7 +116,7 @@ export function additionalDirExtras(
 		for (const file of additionalDirContextFiles(dir, includeLocal)) {
 			const [real] = realRoots([file.path]);
 			const key = real ?? file.path;
-			if (seenSet.has(key)) continue; // pi already loaded it natively
+			if (seenSet.has(key)) continue; // nycode already loaded it natively
 			seenSet.add(key);
 			if (excluded(file.path)) continue;
 			const stripped = stripBlockComments(file.content);
@@ -127,16 +127,16 @@ export function additionalDirExtras(
 	return extras;
 }
 
-/** The CLAUDE.md files pi passed over.
+/** The CLAUDE.md files nycode passed over.
  *
  * Claude Code reads CLAUDE.md and never AGENTS.md, and its documented recipe for a
  * repository that already has an AGENTS.md is a CLAUDE.md that imports it and adds
- * Claude-specific instructions below (memory.md, "AGENTS.md"). pi loads one context
+ * Claude-specific instructions below (memory.md, "AGENTS.md"). nycode loads one context
  * file per directory and prefers AGENTS.md, so on exactly that layout the
  * Claude-specific half never reaches the prompt. Each one found here is loaded like
  * any other project file: exclude-checked, comment-stripped, imports expanded.
  *
- * The `@AGENTS.md` the recipe opens with costs nothing: pi's own file paths already
+ * The `@AGENTS.md` the recipe opens with costs nothing: nycode's own file paths already
  * seed the import seen-set, so the body it names is not injected a second time. */
 export function siblingClaudeMdFiles(
 	native: Array<{ path: string; content: string }>,
@@ -145,7 +145,7 @@ export function siblingClaudeMdFiles(
 	const found: Array<{ path: string; content: string }> = [];
 	for (const file of native) {
 		if (!AGENTS_FILE_NAMES.has(path.basename(file.path))) continue;
-		// CLAUDE.md only: pi also answers to CLAUDE.MD, but Claude Code reads the one
+		// CLAUDE.md only: nycode also answers to CLAUDE.MD, but Claude Code reads the one
 		// spelling, and on a case-insensitive filesystem looking for both finds the same
 		// file twice under two names.
 		const candidate = path.join(path.dirname(file.path), "CLAUDE.md");
@@ -195,7 +195,7 @@ export function keptMemoryFile(
 		: undefined;
 }
 
-/** ./.claude/CLAUDE.md, deduped against pi's native context so that if pi ever loads it
+/** ./.claude/CLAUDE.md, deduped against nycode's native context so that if nycode ever loads it
  * too there is no double block, then exclude-checked and comment-stripped like the rest. */
 export function keptDotClaudeMd(
 	projectDotClaude: { path: string; content: string } | undefined,

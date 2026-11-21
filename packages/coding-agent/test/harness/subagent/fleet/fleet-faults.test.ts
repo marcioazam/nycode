@@ -1,4 +1,4 @@
-// Ported from subagent-panel/fleet-faults.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from subagent-panel/fleet-faults.test.ts (nycode patch tests); same cases and expectations.
 // Caminhos de falha da frota (subagent/fleet/*): erros de disco, watcher, listener e kill que os outros arquivos não alcançam
 import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";

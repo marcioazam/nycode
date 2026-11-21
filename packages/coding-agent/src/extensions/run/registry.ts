@@ -348,7 +348,7 @@ function agentRecord(f: FleetRecord, b: BackgroundRun | undefined, awaited: bool
 }
 
 let shared: RunRegistry | undefined;
-const KEY = Symbol.for("pi-code.run.registry");
+const KEY = Symbol.for("nycode.run.registry");
 /** One registry per process: /reload evaluates the modules again, the live shells must stay listed. */
 export function sharedRegistry(): RunRegistry {
 	const g = globalThis as unknown as Record<symbol, RunRegistry | undefined>;

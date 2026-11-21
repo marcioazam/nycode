@@ -1,7 +1,7 @@
 /**
  * Terminal chrome of the agent panel and the status line widget (local patch): section headings, the thin
  * rule between them, the model label colors and the duration clock. Pure; colors come from the UI roles
- * (Tokyo Night through palette.ts), never from literals. Record: docs/pi-interactive-display-2026-11-13.md.
+ * (Tokyo Night through palette.ts), never from literals. Record: docs/nycode-interactive-display-2026-11-13.md.
  */
 import { truncateToWidth, visibleWidth } from "@nycode/tui";
 import type { GroupId, TabBand, TabSpec } from "../../section-nav/nav.ts";
@@ -10,7 +10,7 @@ import type { UiTheme } from "../panel.ts";
 
 export const SUBAGENTS_TITLE = "Sub Agents";
 export const STATUSLINE_TITLE = "Status Line";
-/** U+25F7: a text glyph, one cell in pi-tui and no emoji presentation (the stopwatch emoji is two cells in some terminals). */
+/** U+25F7: a text glyph, one cell in nycode-tui and no emoji presentation (the stopwatch emoji is two cells in some terminals). */
 export const CLOCK = "◷";
 
 /** Themes in older hosts may lack `bold`: plain text then. */

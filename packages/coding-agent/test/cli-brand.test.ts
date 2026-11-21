@@ -32,14 +32,14 @@ function run(...args: string[]) {
 }
 
 describe("CLI brand with an empty HOME", () => {
-	it("--version exits cleanly with the package version and never the pi title", () => {
+	it("--version exits cleanly with the package version and never the nycode title", () => {
 		const { status, out } = run("--version");
 		expect(status).toBe(0);
 		expect(out.trim()).toBe(VERSION);
 		expect(out).not.toContain("π");
 	});
 
-	it("--help is titled nycode, never pi, and lists the four permission flags", () => {
+	it("--help is titled nycode, never nycode, and lists the four permission flags", () => {
 		const { status, out } = run("--help");
 		expect(status).toBe(0);
 		expect(out).toMatch(/^nycode - /);

@@ -127,12 +127,12 @@ describe("auto-resume", () => {
 		'429 {"type":"error","error":{"type":"rate_limit_error","message":"This request would exceed your account\'s rate limit. Please try again later."}}';
 	const NOW = Date.UTC(2026, 10, 13, 15, 0, 0);
 
-	it("markLimit: só o limite da conta vira não-retryável para o pi (quota exceeded), o resto fica igual", () => {
+	it("markLimit: só o limite da conta vira não-retryável para o nycode (quota exceeded), o resto fica igual", () => {
 		const m = markLimit(LIMIT)!;
 		assert.match(m, /quota exceeded/);
 		assert.ok(m.endsWith(LIMIT));
 		assert.equal(markLimit(m), undefined, "idempotente");
-		assert.equal(markLimit("429 Too Many Requests"), undefined, "throttle curto continua com o retry do pi");
+		assert.equal(markLimit("429 Too Many Requests"), undefined, "throttle curto continua com o retry do nycode");
 		assert.equal(markLimit("503 overloaded"), undefined);
 	});
 

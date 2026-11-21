@@ -23,7 +23,7 @@
  * the refusal and ends the session, so a refusal fails closed: no file source loads
  * in that window.
  *
- * The resolution is memoized process-wide by the raw flag values: pi loads fresh
+ * The resolution is memoized process-wide by the raw flag values: nycode loads fresh
  * extension instances on /new and /reload and hands them the same values, and a
  * fresh instance must reuse the copy rather than read the original again.
  *
@@ -34,7 +34,7 @@
  * is refused while a parseable managed-mcp.json is deployed, as Claude's managed-mcp
  * page documents. A refusal fails closed to the strict empty set until the session ends.
  *
- * The resolved value travels through a process-wide slot (see shared-slot): pi exposes
+ * The resolved value travels through a process-wide slot (see shared-slot): nycode exposes
  * a flag's value only to the extension that registered it, and every extension holds
  * its own copy of this module.
  */
@@ -58,7 +58,7 @@ export interface CliSettings {
 	settingsFile: string | undefined;
 	/** The file sources `--setting-sources` allows; all three without the flag or when it was refused. */
 	sources: ReadonlySet<SettingSource>;
-	/** The flags a child pi needs to read the same settings. */
+	/** The flags a child nycode needs to read the same settings. */
 	forwardArgs: string[];
 	/** Each refused flag's message, in Claude's wording. */
 	errors: string[];
@@ -72,7 +72,7 @@ export interface CliMcpConfig {
 	strict: boolean;
 }
 
-/** The flags as pi hands them over (a string when given with a value, true when given
+/** The flags as nycode hands them over (a string when given with a value, true when given
  * bare, undefined when absent); `mcpConfig` lists every `--mcp-config` value in order. */
 export interface CliFlags {
 	settings?: unknown;
@@ -206,7 +206,7 @@ function resolveMcpFlags(
 		Object.assign(servers, resolved.servers);
 	}
 	const forwardArgs = values.length > 0 ? ["--mcp-config", privateCopy(JSON.stringify({ mcpServers: servers }))] : [];
-	// The `=` form: pi's parser takes the token after a bare flag as its value, which
+	// The `=` form: nycode's parser takes the token after a bare flag as its value, which
 	// would swallow the child's task.
 	if (strict) forwardArgs.push("--strict-mcp-config=true");
 	return { mcp: { servers, strict }, forwardArgs, errors: [] };
@@ -218,7 +218,7 @@ const copiesSlot = sharedSlot<Set<string>>("cli-settings-copies");
 
 /** A private 0600 copy of the settings text, removed when the process exits. */
 function privateCopy(text: string): string {
-	const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-code-settings-"));
+	const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nycode-settings-"));
 	const file = path.join(dir, "settings.json");
 	fs.writeFileSync(file, text, { mode: 0o600 });
 	let copies = copiesSlot.get();
@@ -242,7 +242,7 @@ export function resolveSettingsFlag(raw: string, cwd: string): { file: string } 
 	return "error" in read ? read : { file: privateCopy(read.text) };
 }
 
-/** Every flag as pi hands it over. Any refusal fails closed: no file source, no
+/** Every flag as nycode hands it over. Any refusal fails closed: no file source, no
  * snapshot, nothing forwarded, no MCP server once an MCP flag was given, only the errors. */
 export function resolveCliSettings(
 	flags: CliFlags,

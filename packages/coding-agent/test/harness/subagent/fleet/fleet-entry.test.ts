@@ -1,5 +1,5 @@
-// Ported from subagent-panel/fleet-entry.test.ts (pi-code patch tests); same cases and expectations.
-// Integração do ponto de entrada do subagente (subagent/index.ts, a cola do painel) com um pi falso e um filho falso
+// Ported from subagent-panel/fleet-entry.test.ts (nycode patch tests); same cases and expectations.
+// Integração do ponto de entrada do subagente (subagent/index.ts, a cola do painel) com um nycode falso e um filho falso
 import assert from "node:assert/strict";
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
@@ -8,7 +8,7 @@ import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";
 import { fleetTestEnv } from "../support/fleet-env.ts";
 
 const { tmp } = fleetTestEnv("fleet-entry-");
-// A descoberta de agentes lê o HOME e o diretório do pi: ambos apontam para um lar de mentira (depois do setup, que já fixou a origem).
+// A descoberta de agentes lê o HOME e o diretório do nycode: ambos apontam para um lar de mentira (depois do setup, que já fixou a origem).
 const home = join(tmp, "home");
 const agentDir = join(home, ".pi", "agent");
 mkdirSync(join(agentDir, "agents"), { recursive: true });
@@ -22,9 +22,9 @@ delete process.env.NYCODE_SUBAGENT;
 delete process.env.NYCODE_SUBAGENT_DEPTH;
 
 // O filho falso só responde depois que `release-<tarefa>` existe em FAKE_PI_DIR; tarefas `hang-*` nunca respondem (servem a parada).
-const fakePi = join(tmp, "fake-pi-entry.mjs");
+const fakeNycode = join(tmp, "fake-nycode-entry.mjs");
 writeFileSync(
-	fakePi,
+	fakeNycode,
 	`import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 const task = (process.argv.at(-1).match(/Task: ([\\s\\S]*)$/) ?? [])[1] ?? ''
@@ -70,7 +70,7 @@ function gone(pid: number): boolean {
 	}
 }
 
-// O pi e o contexto falsos: registram tudo o que a extensão faz e guardam o gancho de teclas do painel.
+// O nycode e o contexto falsos: registram tudo o que a extensão faz e guardam o gancho de teclas do painel.
 type Handler = (...a: unknown[]) => unknown;
 // Resultado da ferramenta como o teste o lê (o fonte tipa o conteúdo como união de blocos).
 type ToolRes = { content: Array<{ text: string }>; isError?: boolean; details?: Record<string, unknown> };
@@ -88,7 +88,7 @@ function boot(opts: { hasUI?: boolean; sendThrows?: boolean } = {}) {
 	const widgets: unknown[] = [];
 	const steered: Array<[string, unknown]> = [];
 	const refused: Sent["msg"][] = [];
-	const pi = {
+	const nycode = {
 		on: (event: string, h: Handler) => void handlers.set(event, [...(handlers.get(event) ?? []), h]),
 		registerTool: (def: Tool) => void tools.push(def),
 		registerCommand: (name: string, def: Command) => void commands.set(name, def),
@@ -97,7 +97,7 @@ function boot(opts: { hasUI?: boolean; sendThrows?: boolean } = {}) {
 		sendMessage: (msg: Sent["msg"], o: Sent["opts"]) => {
 			if (opts.sendThrows) {
 				refused.push(msg);
-				throw new Error("session invalidated"); // a sessão trocou: toda chamada ao pi velho lança
+				throw new Error("session invalidated"); // a sessão trocou: toda chamada ao nycode velho lança
 			}
 			sent.push({ msg, opts: o });
 		},
@@ -120,8 +120,8 @@ function boot(opts: { hasUI?: boolean; sendThrows?: boolean } = {}) {
 		modelRegistry: { getAvailable: () => [] },
 	};
 	const savedArgv = process.argv[1];
-	process.argv[1] = fakePi;
-	subagentExtension(pi as unknown as ExtensionAPI);
+	process.argv[1] = fakeNycode;
+	subagentExtension(nycode as unknown as ExtensionAPI);
 	const fire = async (event: string, payload: unknown = {}): Promise<unknown[]> => {
 		const out: unknown[] = [];
 		for (const h of handlers.get(event) ?? []) out.push(await h(payload, ctx));
@@ -168,7 +168,7 @@ function boot(opts: { hasUI?: boolean; sendThrows?: boolean } = {}) {
 		notes,
 		widgets,
 		steered,
-		pi,
+		nycode,
 		ctx,
 		fire,
 		run,
@@ -364,7 +364,7 @@ test("sem UI no nível 0 não cria frota nem painel", async () => {
 test("nível 1: não cria frota própria, o vigia da caixa de entrada anda e para no shutdown", async () => {
 	const fleetDir = store.ensureFleetDir() as string;
 	const rid = "fg-0000abcd";
-	const slot = Symbol.for("pi-code.fleet.inbox");
+	const slot = Symbol.for("nycode.fleet.inbox");
 	const h = boot();
 	try {
 		Object.assign(process.env, {
@@ -401,7 +401,7 @@ test("/tasks: sem execuções avisa; com execuções abre o navegador; sem UI im
 	try {
 		// Sem fonte criada ainda (nenhuma sessão iniciou a frota): o painel não tem o que listar.
 		const holder = globalThis as Record<symbol, unknown>;
-		const slot = Symbol.for("pi-code.fleet.source");
+		const slot = Symbol.for("nycode.fleet.source");
 		const saved = holder[slot];
 		holder[slot] = undefined;
 		try {

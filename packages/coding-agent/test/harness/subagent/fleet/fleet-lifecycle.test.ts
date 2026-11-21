@@ -1,4 +1,4 @@
-// Ported from subagent-panel/fleet.test.ts (pi-code patch tests); same cases and expectations.
+// Ported from subagent-panel/fleet.test.ts (nycode patch tests); same cases and expectations.
 // Testes do plano de dados da frota (subagent/fleet/*): detach, raceDetach, status, inbox, onChange e regressões F1-F6.
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
@@ -196,14 +196,14 @@ test("D8 fleetStatusLines lists every lane of the tree (any depth, running + fin
 	);
 });
 
-test("inbox: pollInboxOnce steers each message and acks; a throwing pi acks too-late", () => {
+test("inbox: pollInboxOnce steers each message and acks; a throwing nycode acks too-late", () => {
 	const dir = tempDir();
 	const rid = id(80);
 	store.appendInbox(dir, rid, { id: "m1", t: 1, text: "first" });
 	store.appendInbox(dir, rid, { id: "m2", t: 2, text: "second" });
 	const sent: Array<[string, unknown]> = [];
-	const pi = { sendUserMessage: (text: string, opts: unknown) => void sent.push([text, opts]) };
-	let off = inbox.pollInboxOnce(pi, dir, rid, 0);
+	const nycode = { sendUserMessage: (text: string, opts: unknown) => void sent.push([text, opts]) };
+	let off = inbox.pollInboxOnce(nycode, dir, rid, 0);
 	assert.deepEqual(sent, [
 		["first", { deliverAs: "steer" }],
 		["second", { deliverAs: "steer" }],
@@ -227,7 +227,7 @@ test("inbox: pollInboxOnce steers each message and acks; a throwing pi acks too-
 		off,
 	);
 	assert.equal(must(store.readAcks(dir, rid, 0).items.at(-1)).outcome, "too-late");
-	assert.equal(inbox.pollInboxOnce(pi, dir, rid, off), off);
+	assert.equal(inbox.pollInboxOnce(nycode, dir, rid, off), off);
 	rmSync(dir, { recursive: true });
 });
 
@@ -237,20 +237,20 @@ test("inbox watcher: only depth >= 1 with a valid env; polls every second; stop 
 	const fleetDir = join(root, `${process.pid}-0badf00d`);
 	mkdirSync(fleetDir, { recursive: true });
 	const sent: string[] = [];
-	const pi = { sendUserMessage: (text: string) => void sent.push(text) };
+	const nycode = { sendUserMessage: (text: string) => void sent.push(text) };
 	vi.useFakeTimers({ toFake: ["setInterval"] });
-	const slotKey = Symbol.for("pi-code.fleet.inbox");
+	const slotKey = Symbol.for("nycode.fleet.inbox");
 	const slot = globalThis as Record<symbol, unknown>;
 	withEnv({ NYCODE_SUBAGENT_DEPTH: "0", NYCODE_FLEET_RUN_ID: id(90) }, () => {
-		inbox.startInboxWatcher(pi);
+		inbox.startInboxWatcher(nycode);
 		assert.equal(slot[slotKey], undefined);
 	});
 	withEnv({ NYCODE_SUBAGENT_DEPTH: "1", NYCODE_FLEET_DIR: fleetDir, NYCODE_FLEET_RUN_ID: "bad" }, () => {
-		inbox.startInboxWatcher(pi);
+		inbox.startInboxWatcher(nycode);
 		assert.equal(slot[slotKey], undefined);
 	});
 	withEnv({ NYCODE_SUBAGENT_DEPTH: "1", NYCODE_FLEET_DIR: fleetDir, NYCODE_FLEET_RUN_ID: id(90) }, () => {
-		inbox.startInboxWatcher(pi);
+		inbox.startInboxWatcher(nycode);
 		const first = slot[slotKey];
 		assert.ok(first);
 		store.appendInbox(fleetDir, id(90), { id: "a", t: 1, text: "hello" });
@@ -258,7 +258,7 @@ test("inbox watcher: only depth >= 1 with a valid env; polls every second; stop 
 		assert.deepEqual(sent, ["hello"]);
 		vi.advanceTimersByTime(1000);
 		assert.deepEqual(sent, ["hello"], "offset advanced, no redelivery");
-		inbox.startInboxWatcher(pi);
+		inbox.startInboxWatcher(nycode);
 		assert.notEqual(slot[slotKey], first);
 		inbox.stopInboxWatcher();
 		assert.equal(slot[slotKey], undefined);

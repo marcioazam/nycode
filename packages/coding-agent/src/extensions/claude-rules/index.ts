@@ -15,7 +15,7 @@
  *   Claude Code, which attaches a scoped rule when a matching file is touched
  *   rather than inlining it everywhere. Frontmatter is stripped from rule text.
  *
- * Adapted from the pi v0.74.2 claude-rules example.
+ * Adapted from the upstream v0.74.2 claude-rules example.
  */
 
 import * as fs from "node:fs";
@@ -217,7 +217,7 @@ interface ContextFile {
 	content: string;
 }
 
-/** The prompt options this extension edits. pi sets `forceSystemPrompt` from 0.86, where
+/** The prompt options this extension edits. nycode sets `forceSystemPrompt` from 0.86, where
  * a handler that returned a prompt forced it for the run. */
 interface PromptOptions {
 	contextFiles?: ContextFile[];
@@ -451,7 +451,7 @@ export default function claudeRulesExtension(nycode: ExtensionAPI) {
 	nycode.on("session_start", async (_event, ctx) => {
 		// Project rules are repository text landing in the system prompt, so they load
 		// only once the project is approved. isProjectTrusted alone is true for a repo
-		// pi never asked about; see project-approval.
+		// nycode never asked about; see project-approval.
 		const approved = await isProjectApproved(ctx);
 		// Claude's claudeMdExcludes covers rules files too (the docs' monorepo recipe
 		// excludes another team's .claude/rules/**), so the same merged glob list the
@@ -517,10 +517,10 @@ export default function claudeRulesExtension(nycode: ExtensionAPI) {
 		const before = event.systemPrompt;
 		if (options !== undefined && contextFiles !== undefined) {
 			const undo = addToOptions(options, contextFiles, rules);
-			// pi >= 0.86 re-renders event.systemPrompt from the options, and the rules are in.
+			// nycode >= 0.86 re-renders event.systemPrompt from the options, and the rules are in.
 			if (event.systemPrompt !== before) return;
 			// A prompt an earlier handler forced stays fixed, but the options are that run's own
-			// copy and still what a rebuilding provider reads, so they keep the rules. An older pi
+			// copy and still what a rebuilding provider reads, so they keep the rules. An older nycode
 			// reuses the options object next turn, so there the edit is undone.
 			if (options.forceSystemPrompt === undefined) undo();
 		}
