@@ -44,7 +44,8 @@ repositórios; **não verificado** é o que não pôde ser conferido nos arquivo
 - **ny-pi (local)**. Gatilhos: poll de 10 min na máquina do dono. Job: `bench-pr.sh`. Nome do check: `bench-pr`. O que
   roda: gate do benchmark (seções 3 e 5 de 09).
 - **nycode `ci.yml`**. Gatilhos: push em main, tags `v*.*.*`, PR em main. Job: `build-check`. Nome do check:
-  `build-check`. O que roda: `npm ci --ignore-scripts`, `build`, `check`, changelog.
+  `build-check`. O que roda: `npm ci --ignore-scripts`, `build`, `check`, changelog (`release/*`: o step `Check the version PR changelog diff`, D-44, no lugar do
+  check das seções lançadas).
 - **nycode `ci.yml`**. Gatilhos: idem. Job: `test` (matriz). Nome do check: `test (coding-agent)`, `(durable)`,
   `(chord)`, `(other)`. O que roda: `npm run test` por pacote.
 - **nycode `ci.yml`**. Gatilhos: idem. Job: `mcp-conformance`. Nome do check: `mcp-conformance`. O que roda: `npm run
@@ -59,7 +60,8 @@ vêm do [anexo D](anexos/D-regras-github-brutas.md) (seções 2 e 3). Observaç�
 - `concurrency` do ny-pi: grupo `<workflow>-${{ github.ref }}` e `cancel-in-progress` só em `pull_request`. No nycode:
   `ci-${{ github.ref }}` com cancelamento sempre, inclusive em push na main e em tag (`ci.yml`, bloco `concurrency:`).
 - O `build-check` do nycode só roda o check de changelog se houver uma tag `v*.*.*`; sem tag ele é pulado (P-6 pede a
-  tag `v1.6.0-base` em F0).
+  tag `v1.6.0-base` em F0). Para head `release/*` ele não roda: o step `Check the version PR changelog diff` aceita só a
+  troca de `## [Unreleased]` por `## [<versão>] - <data>` nos `CHANGELOG.md` (D-44, `scripts/ci/release/`).
 - O Node do `ci-static` do ny-pi é 24; o do nycode é 22, e o `package.json` do nycode declara `engines.node >=22.19.0`.
   A versão de Node do CI unificado fica **não verificada** (decidir em F3 com `npm run check` e `./test.sh`).
 - `npm run check` começa por `node scripts/biome-check.mjs --write` (`package.json:20`): em CI isso reescreve arquivos

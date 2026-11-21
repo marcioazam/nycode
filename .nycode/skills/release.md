@@ -54,7 +54,7 @@ The repository is the only channel: a GitHub Release of `marcioazam/nycode` with
 
    The script bumps all package versions, updates changelogs, regenerates release artifacts, runs `npm run check`, the tests and the packed install check, and stops at the commit `Release vX.Y.Z` on the current branch. Do not rerun it for the same version: if it failed, reset the branch to `origin/main` and start over.
 
-4. **Merge and tag**: open the PR from `release/vX.Y.Z`, wait for the required checks and squash-merge it. Create the tag on the commit the squash left on `main`, never on the branch commit:
+4. **Merge and tag**: open the PR from `release/vX.Y.Z`, wait for the required checks and squash-merge it (the version PR is checked by the narrow step `Check the version PR changelog diff`, which allows only the `## [Unreleased]` heading to become `## [X.Y.Z] - <date>`). Create the tag on the commit the squash left on `main`, never on the branch commit:
 
    ```bash
    git fetch origin main
