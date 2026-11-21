@@ -74,6 +74,6 @@ The repository is the only channel: a GitHub Release of `marcioazam/nycode` with
    gh attestation verify /tmp/nycode-release/nycode-linux-x64.tar.gz -R marcioazam/nycode
    ```
 
-   Then add the fresh `## [Unreleased]` section after `# Changelog` in each package CHANGELOG, commit `Add [Unreleased] section for next cycle` and open it as a second PR, after the tag.
+   Then add the fresh `## [Unreleased]` section after `# Changelog` in each package CHANGELOG, commit `Add [Unreleased] section for next cycle` and open it as a second PR, after the tag. Do not name its branch `release/*`: that prefix selects the version PR changelog check, which only accepts dating the `## [Unreleased]` heading.
 
 7. **If the workflow fails**: inspect the failed job and rerun it, or dispatch `publish.yml` again with the same tag; the draft Release is published only after every asset is uploaded. A published Release with a wrong asset is removed with `gh release delete vX.Y.Z --cleanup-tag -R marcioazam/nycode` and the fix ships as the next patch version. Never move or reuse a tag and never rerun the release script for the same version.
