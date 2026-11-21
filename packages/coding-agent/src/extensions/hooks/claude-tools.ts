@@ -101,7 +101,8 @@ export function claudePreCall(
 	cwd: string,
 ): { name: string | undefined; input: Record<string, unknown> | undefined } {
 	const raw = record(input);
-	if (nycodeName === "run" && typeof raw?.command === "string") return { name: "Bash", input: { command: raw.command } };
+	if (nycodeName === "run" && typeof raw?.command === "string")
+		return { name: "Bash", input: { command: raw.command } };
 	return { name: claudeToolName(nycodeName), input: claudeToolInput(nycodeName, input, cwd) };
 }
 
@@ -148,7 +149,10 @@ const FROM_CLAUDE_INPUT: Record<string, RewriteMapper> = {
  * caller keeps the ORIGINAL input rather than handing nycode a corrupted one; for an
  * untranslated tool the caller applies the rewrite verbatim. Claude's Edit
  * `replace_all` has no nycode counterpart (nycode requires a unique oldText) and is dropped. */
-export function nycodeToolInput(nycodeName: string, updated: Record<string, unknown>): Record<string, unknown> | undefined {
+export function nycodeToolInput(
+	nycodeName: string,
+	updated: Record<string, unknown>,
+): Record<string, unknown> | undefined {
 	return FROM_CLAUDE_INPUT[nycodeName]?.(updated);
 }
 

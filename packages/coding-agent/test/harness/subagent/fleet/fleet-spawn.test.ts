@@ -578,7 +578,12 @@ test("background: no teto de execuções simultâneas o início devolve null e r
 		process.env.FAKE_PI_MODE = "alive";
 		const live = Array.from({ length: bgMod.MAX_BACKGROUND_RUNS }, () => startBg({ args: [fakeNycode] }));
 		assert.equal(
-			bgMod.startBackgroundRun("fake", "extra", { command: process.execPath, args: [fakeNycode], cwd: tmp }, () => {}),
+			bgMod.startBackgroundRun(
+				"fake",
+				"extra",
+				{ command: process.execPath, args: [fakeNycode], cwd: tmp },
+				() => {},
+			),
 			null,
 		);
 		assert.equal(

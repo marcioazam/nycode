@@ -200,13 +200,16 @@ export function passesIfFilter(hook: HookCommand, target: IfFilterTarget | undef
 	const fold = (name: string): string => name.toLowerCase().replaceAll("-", "_");
 	const ruleTools = new Set(parsed[1].split("|").map(fold));
 	const toolMatches =
-		ruleTools.has(fold(target.nycodeName)) || (target.claudeName !== undefined && ruleTools.has(fold(target.claudeName)));
+		ruleTools.has(fold(target.nycodeName)) ||
+		(target.claudeName !== undefined && ruleTools.has(fold(target.claudeName)));
 	if (!toolMatches) return false;
 	const pattern = parsed[2];
 	if (pattern === undefined) return true;
 	// Either spelling can arrive; normalize to the nycode name the specifier engines take.
 	const tool =
-		CLAUDE_TOOL_MAP[fold(target.nycodeName)] ?? CLAUDE_TOOL_MAP[fold(target.claudeName ?? "")] ?? fold(target.nycodeName);
+		CLAUDE_TOOL_MAP[fold(target.nycodeName)] ??
+		CLAUDE_TOOL_MAP[fold(target.claudeName ?? "")] ??
+		fold(target.nycodeName);
 	return matchesToolPattern(tool, target.input as Record<string, unknown> | null, pattern, target.anchors);
 }
 

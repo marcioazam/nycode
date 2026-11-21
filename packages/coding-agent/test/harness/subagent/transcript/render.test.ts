@@ -111,7 +111,10 @@ const tasks = [
 // ---- format helpers ----
 
 test('taskTitle: first line, sentence cut only when >= 12 chars remain, word-boundary ellipsis, never at ":"', () => {
-	assert.equal(fmt.taskTitle("Harden the nycode PreToolUse guard. OWNED FILES: x", "a"), "Harden the nycode PreToolUse guard");
+	assert.equal(
+		fmt.taskTitle("Harden the nycode PreToolUse guard. OWNED FILES: x", "a"),
+		"Harden the nycode PreToolUse guard",
+	);
 	assert.equal(fmt.taskTitle("Run: sleep 15; echo hi", "a"), "Run: sleep 15; echo hi");
 	assert.equal(fmt.taskTitle("Do this:\nmore", "a"), "Do this:");
 	assert.equal(fmt.taskTitle("\n\n  Second line here  \nthird", "a"), "Second line here");
