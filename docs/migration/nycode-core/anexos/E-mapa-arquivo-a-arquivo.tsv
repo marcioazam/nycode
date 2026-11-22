@@ -979,7 +979,7 @@ claude-home/bin/tests/sound-notify.test.ts	packages/coding-agent/test/harness/ex
 claude-home/bin/tests/terminal-sota/e2e.sh	scripts/harness/ui-gates/terminal-sota/e2e.sh	converter	F7	E28
 claude-home/bin/tests/terminal-sota/gate.sh	scripts/harness/ui-gates/terminal-sota/gate.sh	converter	F7	E28
 claude-home/bin/checks/arg-expansion-check.test.mjs	packages/coding-agent/resources/bin/checks/arg-expansion-check.test.mjs	converter	F8	R08
-claude-home/bin/fonte-icones.py	packages/coding-agent/resources/bin/fonte-icones.py	converter	F8	R08
+claude-home/bin/fonte-icones.py	(ferramenta pessoal do dono para o kitty, fora do produto)	remover	F8	R08
 claude-home/bin/hud/calm-statusline.mjs	packages/coding-agent/resources/statusline/calm-statusline.mjs	converter	F8	R08
 claude-home/bin/hud/tests/calm-statusline.test.mjs	packages/coding-agent/test/harness/statusline/calm-statusline.test.mjs	converter	F8	R08
 claude-home/commands/cancel-ralph.md	packages/coding-agent/resources/commands/cancel-ralph.md	converter	F8	R08
