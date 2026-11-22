@@ -130,6 +130,7 @@ ganha a atribuição e o commit de origem.
 | `chat-margin` | `~/.pi/agent/extensions/chat-margin/` (camada local) | N2 | Todo bloco com fundo do chat respeita a margem do texto (`outputPad`); embrulha `render`/`handleMouse` dos componentes do chat; usa `isImageLine` do `@nycode/tui` (K15) (D-56) | F12 |
 | `travar-modelos` | `~/.pi/agent/extensions/travar-modelos/` (camada local) | N2 | `/travar-modelos`: obriga a sessão a usar só os modelos e esforços escolhidos; separada do roteamento de subagentes (só reaproveita o seletor `subagent/routing/setup-ui.ts`) (D-56) | F12 |
 | `code-blocks` | `~/.pi/agent/extensions/code-blocks/` (camada local) | N2 | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) | F12 |
+| `image-open` | `~/.pi/agent/extensions/image-open/` (camada local) | N2 | Clicar numa imagem do transcript a abre no visualizador do sistema (`/imagem` abre a última) e a imagem de resultado de tool ganha o fundo da tool (D-56) | F12 |
 | `hook-msgs` | `~/.pi/agent/extensions/hook-msgs/` (camada local) | N2 | Mensagens de hook, de gate, de subagente em segundo plano e de fim de run no ritmo das tools, com o fundo do estado (D-56) | F12 |
 | `claude-compat` (base) | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`) | N2 | Só a base de que `ui/editor.ts` depende; biblioteca sem fábrica, ainda não registrada (D-56, parte 1 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
@@ -210,6 +211,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_UI_STATE`, `PI_REDUCED_MOTION`, `PI_NERD_FONT`, `PI_ASCII_ICONS` | `terminal.{uiState,reducedMotion,nerdFont,asciiIcons}` | `NYCODE_*` iguais | conforme o nycode-harness |
 | `PI_FOLHA` | — (desliga a extensão `folha`) | `NYCODE_FOLHA` | ligado (`0` desliga; D-56) |
 | `PI_MODEL_LOCK` | — (a trava vive no ambiente do processo e dos filhos) | `NYCODE_MODEL_LOCK` | vazio, sem trava (D-56) |
+| `PI_IMAGE_OPENER` | — | `NYCODE_IMAGE_OPENER` | abridor de imagens (testes); padrão xdg-open/open (D-56) |
 | `PI_PERMISSION_MODE`, `PI_BYPASS_ELIGIBLE`, `PI_BYPASS_OPTIN` | — (estado do controlador de modos de permissão da extensão `claude-compat`) | `NYCODE_PERMISSION_MODE`, `NYCODE_BYPASS_ELIGIBLE`, `NYCODE_BYPASS_OPTIN` | vazio (D-56) |
 | `NO_COLOR`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | — | `NO_COLOR` (padrão externo), `NYCODE_DISABLE_TERMINAL_TITLE` | — |
 | `PI_KNOWLEDGE_VAULT`, `PI_GRAPHS_VAULT` | `knowledge.vault`, `knowledge.graphsVault` | `NYCODE_KNOWLEDGE_VAULT`, `NYCODE_GRAPHS_VAULT` | vazio |
