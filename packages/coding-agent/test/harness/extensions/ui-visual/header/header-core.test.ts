@@ -1,4 +1,4 @@
-// Ports import/ny-pi/extensions/ui-visual/test/header.test.ts to vitest.
+// Ports the pre-migration harness: extensions/ui-visual/test/header.test.ts to vitest.
 import assert from "node:assert/strict";
 import { homedir } from "node:os";
 import { join } from "node:path";

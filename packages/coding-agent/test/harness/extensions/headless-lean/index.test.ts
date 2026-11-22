@@ -1,4 +1,4 @@
-// Ported from import/ny-pi/extensions/headless-lean/index.test.ts (node:test -> vitest); env names are NYCODE_*.
+// Ported from the pre-migration harness: extensions/headless-lean/index.test.ts (node:test -> vitest); env names are NYCODE_*.
 // The floor contract file is read from getAgentDir() (NYCODE_CODING_AGENT_DIR here).
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";

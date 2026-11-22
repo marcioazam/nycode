@@ -1,4 +1,4 @@
-// Ported from import/ny-pi/extensions/effort-sandwich/index.test.ts (node:test -> vitest); env names are NYCODE_*.
+// Ported from the pre-migration harness: extensions/effort-sandwich/index.test.ts (node:test -> vitest); env names are NYCODE_*.
 import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";

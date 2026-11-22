@@ -1,4 +1,4 @@
-// Ports import/ny-pi/extensions/ui-visual/test/index.test.ts to vitest.
+// Ports the pre-migration harness: extensions/ui-visual/test/index.test.ts to vitest.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";

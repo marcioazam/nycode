@@ -70,7 +70,6 @@ def test_parse_allow_reports_bad_lines(row: str, needle: str) -> None:
         "docs/migration/nycode-core/00.md",
         "docs/harness/pi-x.md",
         "docs/fork/a.md",
-        "import/ny-pi/x.sh",
         "scripts/ci/lint/residuo/residuo.py",
     ],
 )
@@ -115,7 +114,7 @@ def test_a_hit_the_regex_cannot_see_stays_open() -> None:
 
 def test_search_skips_exempt_files(tmp_path: Path) -> None:
     put(tmp_path, "src/a.ts", "const x = pi;\n")
-    put(tmp_path, "import/ny-pi/b.sh", "pi\n")
+    put(tmp_path, "docs/fork/b.sh", "pi\n")
     put(tmp_path, "docs/migration/c.md", "earendil\n")
     put(tmp_path, "README.md", "pi\n")
     put(tmp_path, "clean.txt", "nothing, nycode, pizza, spice\n")

@@ -3,7 +3,7 @@
 
 The search (rg; git grep when rg is missing, said on stderr) is `-i -w` over PI_WORDS: `pi`, `pi-<x>`, `pi.dev`,
 `earendil` and `mariozechner`. Files the plan keeps on purpose are exempt (EXEMPT_*): LICENSE, NOTICE, every
-CHANGELOG.md, the root README.md (D-31), the migration from pi, docs/fork, docs/migration, docs/harness and import/.
+CHANGELOG.md, the root README.md (D-31), the migration from pi, docs/fork, docs/migration, docs/harness.
 Every other match must be covered by a line of residuo-allow.txt: `glob | regex | class | reason`.
 
 The glob uses fnmatch rules (`*` also crosses `/`): `**` and a leading wildcard are refused. The regex is a
@@ -39,7 +39,6 @@ CLASSES = (
     "migracao",  # `nycode migrate from-pi` and the trees it reads
     "ferramenta-fork",  # the fork's own rename and gate machinery
     "produto-externo",  # bench: the arms and records that measure the pi
-    "transicao",  # goes away with import/ (C-F12-05)
 )
 EXEMPT_BASENAMES = ("LICENSE", "NOTICE", "CHANGELOG.md")
 EXEMPT_PATHS = ("README.md",)
@@ -48,7 +47,6 @@ EXEMPT_GLOBS = (
     "docs/fork/*",
     "docs/migration/*",
     "docs/harness/*",
-    "import/*",
     "scripts/ci/lint/residuo/*",  # the gate spells the words by design
 )
 ALL = "*"

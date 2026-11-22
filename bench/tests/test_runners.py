@@ -225,9 +225,6 @@ def test_harbor_cmd_and_agents(monkeypatch: MP) -> None:
     assert "--agent-timeout-multiplier" not in rn.harbor_cmd(
         "ds", [], "j", Path("/o"), ["t"]
     )
-    om = rn.harbor_agent("omp", "m", Path("/hd"))
-    assert om[0][:2] == ["-a", "omp_agent:OmpAgent"] and "thinking=medium" in om[0]
-    assert om[1] == {"PYTHONPATH": "/hd"} and om[2] == "ANTHROPIC_OAUTH_TOKEN"
     monkeypatch.delenv("BENCH_HARBOR")
     monkeypatch.setattr(shutil, "which", lambda _: None)
     assert rn.harbor_bin()[0] == "uvx"

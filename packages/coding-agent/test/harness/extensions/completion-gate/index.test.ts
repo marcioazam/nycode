@@ -1,4 +1,4 @@
-// Ported from import/ny-pi/claude-home/bin/tests/gates/completion-gate.test.ts (14 cases; the kill-switch half
+// Ported from the pre-migration harness: claude-home/bin/tests/gates/completion-gate.test.ts (14 cases; the kill-switch half
 // of the plan-mode case now goes through the handler and `harness.completionGate` / NYCODE_COMPLETION_GATE).
 import { strict as assert } from "node:assert";
 import { afterEach, describe, it } from "vitest";

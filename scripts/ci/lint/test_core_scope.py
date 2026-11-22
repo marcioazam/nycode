@@ -214,23 +214,6 @@ def test_d50_skills_are_core_and_in_the_model_context() -> None:
         assert core_scope.HIDDEN_KEY not in skill.read_text(encoding="utf-8")
 
 
-def test_row_waiting_in_import_is_pending(tmp_path: Path) -> None:
-    touch(tmp_path / "packages/coding-agent/src/extensions/todo/index.ts")
-    touch(tmp_path / "import/ny-pi/extensions/bash-timeout/index.ts")
-    touch(tmp_path / "import/ny-pi/claude-home/skills/tdd/SKILL.md")
-    found = core_scope.discover(tmp_path)
-    pending = core_scope.discover(
-        tmp_path, core_scope.IMPORT_RESOURCES, core_scope.IMPORT_EXTENSIONS
-    )
-    rows = [
-        ("extension", "todo", "core"),
-        ("extension", "bash-timeout", "core"),
-        ("extension", "gone", "core"),
-    ]
-    assert pending == {("extension", "bash-timeout"), ("skill", "tdd")}
-    assert core_scope.compare(found, rows, pending) == ["stale: extension gone"]
-
-
 def optional_skill(root: Path, hidden: bool) -> None:
     fm = "disable-model-invocation: true\n" if hidden else ""
     p = root / "packages/coding-agent/resources/skills/s1/SKILL.md"

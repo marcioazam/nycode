@@ -1,4 +1,4 @@
-// Ported from import/ny-pi/claude-home/bin/tests/prefix-cache-1h.test.ts (3 cases): 1h only on tools and system,
+// Ported from the pre-migration harness: claude-home/bin/tests/prefix-cache-1h.test.ts (3 cases): 1h only on tools and system,
 // nothing to mark, and the on/off rules, now driven by `harness.prefixCache1h`; plus the handler wiring.
 import { afterEach, describe, expect, it } from "vitest";
 import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";
