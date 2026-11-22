@@ -19,7 +19,7 @@ Rode o `claude-tier-probe` (`~/.local/bin/claude-tier-probe`) e traga o veredito
 3. Qualquer outro caso gasta cota real (~6 min e ~US\$3,6 em preço de lista por conta; as contas rodam em paralelo; uma
    conta Standard termina antes). Antes de rodar, diga ao usuário em uma linha quanto vai custar e quanto vai demorar.
    Depois rode **uma única vez**, em primeiro plano, `claude-tier-probe <pastas>` na ferramenta `bash` com
-   `timeout: 3600` (o bash do nycode não tem execução em segundo plano; não use `&`, `nohup` nem subagente, e não repita a
+   `timeout: 600` (teto da sessão principal em extensions/bash-timeout; não use `&`, `nohup` nem subagente, e não repita a
    chamada se ela demorar). Se a conta já estiver em uso por outro trabalho, avise que a taxa medida só pode sair
    inflada.
 4. Se o bash estourar o timeout ou o probe sair com erro, mostre o fim da saída e pare: não rode de novo sem o usuário
