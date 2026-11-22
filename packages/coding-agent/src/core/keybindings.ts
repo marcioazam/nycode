@@ -72,6 +72,27 @@ const APP_KEYBINDINGS = {
 		defaultKeys: windowsKeybindings ? "alt+q" : "alt+up",
 		description: "Restore queued messages",
 	},
+	// nycode: K22 send-now and queue keys
+	"app.message.sendNow": {
+		defaultKeys: "ctrl+enter",
+		description: "Abort the active agent or tool and send now",
+	},
+	"app.message.sendNowChord": {
+		defaultKeys: "ctrl+s",
+		description: "Send now (second key after the copy prefix)",
+	},
+	"app.queue.drop": {
+		defaultKeys: "shift+backspace",
+		description: "Delete the chosen queued message (the last one by default)",
+	},
+	"app.queue.selectPrev": {
+		defaultKeys: "shift+up",
+		description: "Choose the previous queued message",
+	},
+	"app.queue.selectNext": {
+		defaultKeys: "shift+down",
+		description: "Choose the next queued message",
+	},
 	"app.clipboard.pasteImage": {
 		defaultKeys: windowsKeybindings ? ["alt+v", "ctrl+v"] : "ctrl+v",
 		description: "Paste files on macOS, images, or text from clipboard",
