@@ -215,15 +215,7 @@ for (let probe = 0; probe < 20; probe++)
 					spawnSync("tmux", ["display-message", "-p", "-t", S, "#{mouse_any_flag}"], {
 						encoding: "utf8",
 					}).stdout.trim() === "1";
-				// The first frame may still move (header, footer, model line): click only when the row has held still.
-				let still = 0;
-				let last = -1;
-				await wait(() => {
-					const now = imageRow();
-					still = now >= 0 && now === last && mouseOn() ? still + 1 : 0;
-					last = now;
-					return still >= 5;
-				}, 40000);
+				await wait(() => imageRow() >= 0 && mouseOn(), 40000);
 				const row = imageRow();
 				assert.ok(row >= 0, `sem linha de imagem\n${trace()}`);
 				assert.ok(mouseOn(), `o app não ligou o mouse\n${trace()}`);
