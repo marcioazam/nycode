@@ -139,6 +139,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
 | extension | claude-compat | core | Base de modos de permissão, vim e aliases do editor; biblioteca ainda sem fábrica (D-56, parte 1) |
 | extension | chat-margin | core | Margem do texto nos blocos com fundo do chat (D-56) |
+| extension | diagnostico | core | Registro de erros e avisos internos, trilha de spans (OTel) e `/doctor`; `/diagnostico` ou ctrl+e abre o modal e o rodapé mostra só a contagem (D-56) |
 | extension | commands | core | Comandos de barra do Claude Code |
 | extension | completion-gate | core | Verificação antes de encerrar |
 | extension | context-imports | core | Imports @ do CLAUDE.md |

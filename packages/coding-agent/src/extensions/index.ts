@@ -9,6 +9,7 @@ import completionGateExtension from "./completion-gate/index.ts";
 import contextImportsExtension from "./context-imports/index.ts";
 import contextUsageExtension from "./context-usage/index.ts";
 import devCommandsExtension from "./dev-commands/index.ts";
+import diagnosticoExtension from "./diagnostico/index.ts";
 import docsPointerExtension from "./docs-pointer/index.ts";
 import effortSandwichExtension from "./effort-sandwich/index.ts";
 import envSettingsExtension from "./env-settings/index.ts";
@@ -92,6 +93,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "chat-margin", factory: chatMarginExtension, builtin: true },
 	{ name: "completion-gate", factory: completionGateExtension, builtin: true },
 	{ name: "dev-commands", factory: devCommandsExtension, builtin: true },
+	{ name: "diagnostico", factory: diagnosticoExtension, builtin: true },
 	{ name: "effort-sandwich", factory: effortSandwichExtension, builtin: true },
 	{ name: "folha", factory: folhaExtension, builtin: true },
 	{ name: "footer", factory: footerExtension, builtin: true },
