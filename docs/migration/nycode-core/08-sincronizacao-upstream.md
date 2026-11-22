@@ -232,7 +232,7 @@ Para cada costura: como reduzir (arquivo novo e chamada única) e o teste que fa
   padrões numa tabela nova. Teste: padrões de `defaultProjectTrust`, `quietStartup` e `retry`. Temas (D-37): `theme.ts`
   chama uma função nova que acrescenta `tokyo-night` e `mono` aos embutidos, e `interactive-mode.ts` passa `tokyo-night` como `initialThemeSetting` quando não há tema escolhido;
   teste: tema padrão e `mono` disponível.
-- **K5.** Uma linha por extensão, em ordem alfabética, num bloco com marcador. Teste: lista as `builtin:` esperadas.
+- **K5.** Uma linha por extensão, em ordem alfabética, num bloco com marcador. Teste: `packages/coding-agent/test/harness/extensions/registry/builtin-extensions.test.ts` (lista as `builtin:` esperadas, uma vez cada, com fábrica e na ordem do bloco).
 - **K6.** Resolução do escopo `builtin` em arquivo novo; `resource-loader.ts` chama uma função. Teste: carregador com
   recurso embarcado de menor precedência.
 - **K7.** Montagem das instruções embarcadas em arquivo novo; `system-prompt.ts` recebe uma chamada (F8). Teste:
