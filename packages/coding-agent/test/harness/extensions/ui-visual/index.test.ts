@@ -4,12 +4,20 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { visibleWidth } from "@nycode/tui";
-import { test, vi } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __m1 from "../../../../src/extensions/ui-visual/index.ts";
 import * as __m3 from "../../../../src/extensions/ui-visual/index.ts";
 import * as __m4 from "../../../../src/extensions/ui-visual/index.ts";
 import * as __m5 from "../../../../src/extensions/ui-visual/index.ts";
 import * as __m2 from "../../../../src/extensions/ui-visual/motion/marcas.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 const tmp = mkdtempSync(join(tmpdir(), "ui-visual-index-"));
 const { default: index } = __m1;

@@ -1,7 +1,7 @@
 // node --experimental-strip-types --test ~/.nycode/agent/extensions/ui-visual/test/tools/estado.test.ts
 import assert from "node:assert/strict";
 import { visibleWidth as tuiWidth } from "@nycode/tui";
-import { test, vi } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __m1 from "../../../../../../src/extensions/ui-visual/icons.ts";
 import {
 	ansiTags,
@@ -19,7 +19,15 @@ import {
 	visibleWidth,
 } from "../base.ts";
 
-const { iconGap, nerdFont } = __m1;
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
+
+const { iconGap } = __m1;
 // Régua Run (dono, 2026-11-18): antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
 // Prefixos de icon('bash') e iconGap() da cópia tmp (base.ts fixa o terminal): independem de TERM.
 const G = iconGap();
@@ -426,6 +434,9 @@ test("run vivo: tempo corrente e barra enquanto o registro diz running; terminad
 	const KEY = Symbol.for("nycode.run.registry");
 	const g = globalThis as Record<symbol, unknown>;
 	const salvo = g[KEY];
+	// Fixed clocks: the lit cells of the sweep depend on the time phase (70 ms per cell), which made the bar flaky.
+	vi.useFakeTimers({ toFake: ["Date"], now: 1_700_000_000_000 });
+	const phase = vi.spyOn(performance, "now").mockReturnValue(1000);
 	const rec = { state: "running", startedAt: Date.now() - 72_000 };
 	g[KEY] = { get: (id: string) => (id === "rv1" ? rec : undefined) };
 	const amb = { NO_COLOR: process.env.NO_COLOR, NYCODE_REDUCED_MOTION: process.env.NYCODE_REDUCED_MOTION };
@@ -450,6 +461,8 @@ test("run vivo: tempo corrente e barra enquanto o registro diz running; terminad
 	} finally {
 		if (salvo === undefined) delete g[KEY];
 		else g[KEY] = salvo;
+		vi.useRealTimers();
+		phase.mockRestore();
 		for (const [k, v] of Object.entries(amb)) if (v !== undefined) process.env[k] = v;
 	}
 });

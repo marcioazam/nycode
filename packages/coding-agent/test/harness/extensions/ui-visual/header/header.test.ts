@@ -4,12 +4,20 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { visibleWidth } from "@nycode/tui";
-import { test } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import { VERSION } from "../../../../../src/config.ts";
 import * as __m1 from "../../../../../src/extensions/ui-visual/header.ts";
 import * as __m3 from "../../../../../src/extensions/ui-visual/header.ts";
 import * as __m4 from "../../../../../src/extensions/ui-visual/header.ts";
 import * as __m2 from "../../../../../src/extensions/ui-visual/motion/nycode.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 const _tmp = mkdtempSync(join(tmpdir(), "ui-visual-header-"));
 const { default: header, HINTS, buildHeaderLines, ABERTURA_MS, PASSO_MAX_MS, CALMA_QUADROS, ESPERA_MAX_MS } = __m1;

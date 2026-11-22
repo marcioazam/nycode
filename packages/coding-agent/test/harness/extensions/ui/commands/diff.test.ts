@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { onTestFinished, test } from "vitest";
+import { afterEach, beforeEach, onTestFinished, test, vi } from "vitest";
 
 const _tmp = mkdtempSync(join(tmpdir(), "ui-test-"));
 const theme = {
@@ -15,6 +15,14 @@ const theme = {
 import { execFileSync, spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import * as __typed1 from "../../../../../src/extensions/ui/diff.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 // The source tests exercise the modules with partial fakes, without types.
 const __l1: any = __typed1;

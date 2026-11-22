@@ -3,7 +3,7 @@
 // renderResult só entrega a saída ao estado. Execução 5 (barra indeterminada) e transição C (dissolver) só são testadas
 // no estado assentado: o laboratório de movimento mede a cadência; aqui nada depende de relógio ou de timer.
 import assert from "node:assert/strict";
-import { test } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __m4 from "../../../../../../src/extensions/ui-visual/icons.ts";
 import * as __m2 from "../../../../../../src/extensions/ui-visual/motion/motion.ts";
 import * as __m3 from "../../../../../../src/extensions/ui-visual/motion/shell.ts";
@@ -22,6 +22,14 @@ import {
 	visibleWidth,
 	wrapped,
 } from "../base.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 delete process.env.NO_COLOR; // anima() é falso com NO_COLOR; o teste da barra precisa dele ligado
 const vivo = __m1;
@@ -410,6 +418,9 @@ test("sem foco: a barra e o cursor continuam no cartão (1 passo por segundo), e
 test("tinta longa no comando chegando: letras novas nascem do fundo, as antigas secam no muted; o cursor respira", async () => {
 	// Tinta longa (/refino escrita 1, dono, 2026-11-18): antes o comando parcial vinha inteiro em muted e o cursor piscava a cada
 	// 400 ms (aceso ou apagado); agora cada letra ganha a cor em TINTA_MS e o cursor muda de intensidade aos poucos.
+	// Manual clock: the ink and the cursor phase follow performance.now, so real sleeps made this flaky under load.
+	let clock = 1000;
+	const clockSpy = vi.spyOn(performance, "now").mockImplementation(() => clock);
 	const RGB: Record<string, string> = {
 		customMessageBg: "30;30;40",
 		accent: "100;150;250",
@@ -430,7 +441,7 @@ test("tinta longa no comando chegando: letras novas nascem do fundo, as antigas 
 	const corDe = (l: string, ch: string) => new RegExp(`38;2;(\\d+);(\\d+);(\\d+)m${ch}`).exec(l)?.slice(1).map(Number);
 	const cedo = titulo();
 	assert.ok(corDe(cedo, "a")![0]! < 100, `letra recém-chegada ainda perto do fundo: ${corDe(cedo, "a")}`);
-	await new Promise((r) => setTimeout(r, 400));
+	clock += 400;
 	args.command = "abcd";
 	const depois = titulo();
 	assert.deepEqual(corDe(depois, "a"), undefined, "a letra antiga secou: volta à cor do tema (muted)");
@@ -438,8 +449,9 @@ test("tinta longa no comando chegando: letras novas nascem do fundo, as antigas 
 	const cursores = new Set<string>();
 	for (let i = 0; i < 6; i++) {
 		cursores.add(/38;2;(\d+;\d+;\d+)m▏/.exec(titulo())?.[1] ?? "-");
-		await new Promise((r) => setTimeout(r, 60));
+		clock += 60;
 	}
+	clockSpy.mockRestore();
 	assert.ok(cursores.size >= 3 && !cursores.has("-"), `cursor respira em vários tons, sem apagar: ${[...cursores]}`);
 });
 

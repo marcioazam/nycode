@@ -1,9 +1,17 @@
 // Mensagem [plan-mode-execute] em "Lista de etapas" + "Desliza" (dono, 2026-11-20, lab /execplano): plano/modelo.ts e plano/mensagem.ts.
 import assert from "node:assert/strict";
-import { test } from "vitest";
-import * as __m3 from "../../../../src/extensions/ui-visual/plano/bloco.ts";
-import * as __m2 from "../../../../src/extensions/ui-visual/plano/mensagem.ts";
-import * as __m1 from "../../../../src/extensions/ui-visual/plano/modelo.ts";
+import { afterEach, beforeEach, test, vi } from "vitest";
+import * as __m3 from "../../../../../src/extensions/ui-visual/plano/bloco.ts";
+import * as __m2 from "../../../../../src/extensions/ui-visual/plano/mensagem.ts";
+import * as __m1 from "../../../../../src/extensions/ui-visual/plano/modelo.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 const { planoDe, planoDoTexto } = __m1;
 const { planoLinhas, renderPlano, deslizar } = __m2;

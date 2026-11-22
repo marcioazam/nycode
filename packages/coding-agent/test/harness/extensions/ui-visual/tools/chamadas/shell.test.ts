@@ -3,7 +3,7 @@
 // renderResult só entrega a saída ao estado. Execução 5 (barra indeterminada) e transição C (dissolver) só são testadas
 // no estado assentado: o laboratório de movimento mede a cadência; aqui nada depende de relógio ou de timer.
 import assert from "node:assert/strict";
-import { test } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __m4 from "../../../../../../src/extensions/ui-visual/icons.ts";
 import * as __m3 from "../../../../../../src/extensions/ui-visual/motion/shell.ts";
 import * as __m1 from "../../../../../../src/extensions/ui-visual/motion/vivo.ts";
@@ -20,6 +20,14 @@ import {
 	visibleWidth,
 	wrapped,
 } from "../base.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 delete process.env.NO_COLOR; // anima() é falso com NO_COLOR; o teste da barra precisa dele ligado
 const vivo = __m1;

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, test, vi } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import { definirMovimento } from "../../../../../src/extensions/ui/a11y.ts";
 import { relogio } from "../../../../../src/extensions/ui-visual/motion/motion.ts";
 import working, {
@@ -18,6 +18,14 @@ import working, {
 	travaMistura,
 	truncate,
 } from "../../../../../src/extensions/ui-visual/working.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 // O relógio único lê a hora por `relogio.agora`; com os timers falsos do node:test a hora que anda é a do Date.
 relogio.agora = () => Date.now();
@@ -169,8 +177,7 @@ test("sem UI ou em subagente não faz nada", () => {
 	});
 });
 
-// Skipped: under vitest fake timers the 1 s frame timer lands one tick short of the asserted elapsed time (open, see the PR notes).
-test.skip("turno: fases, timer de 1s e restauração", () => {
+test("turno: fases, timer de 1s e restauração", () => {
 	withEnv({}, () => {
 		vi.useFakeTimers({ toFake: ["setInterval", "Date"] });
 		const { handlers, calls, ctx } = setup();
@@ -183,10 +190,11 @@ test.skip("turno: fases, timer de 1s e restauração", () => {
 		assert.deepEqual(msgs(), []);
 		handlers.agent_start({}, ctx);
 		assert.deepEqual(msgs(), ["pensando · 0s · esc interrompe"]);
-		vi.advanceTimersByTime(3000);
+		vi.advanceTimersByTime(3040); // one frame past 3 s: the frame timer ticks every 33 ms, so 3000 ms alone lands on 2.97 s
 		assert.equal(msgs().at(-1), "pensando · 3s · esc interrompe");
 		handlers.message_update({}, ctx);
 		handlers.message_update({}, ctx);
+		vi.advanceTimersByTime(40); // the next frame renders the new phase
 		assert.equal(msgs().at(-1), "escrevendo · 3s · esc interrompe");
 		handlers.tool_execution_start({ toolCallId: "a", toolName: "read", args: { path: "a.ts" } }, ctx);
 		assert.equal(msgs().at(-1), "read · a.ts · 3s · esc interrompe");
@@ -254,15 +262,17 @@ test("P10 tokensTexto: largura fixa, til enquanto estima, k com vírgula", () =>
 	assert.equal(tokensTexto(12_345, 0), "↓ 12,3k");
 });
 
-test.skip("P05, P09 e P10 no turno: tokens do stream, aviso de travamento, dica e volta ao normal", () => {
+test("P05, P09 e P10 no turno: tokens do stream, aviso de travamento, dica e volta ao normal", () => {
 	withEnv({}, () => {
 		vi.useFakeTimers({ toFake: ["setInterval", "Date"] });
 		const { handlers, calls, ctx } = setup();
 		const msgs = () => calls.filter((c) => c[0] === "message").map((c) => String(c[1]).replace(/<[a-zA-Z]+>/g, ""));
 		handlers.agent_start({}, ctx);
 		handlers.message_update({ assistantMessageEvent: { type: "text_delta", delta: "x".repeat(400) } }, ctx);
+		vi.advanceTimersByTime(40); // the next frame renders the new phase
 		assert.equal(msgs().at(-1), "escrevendo · 0s · ↓  ~100 · esc interrompe");
 		handlers.message_end({ message: { role: "assistant", usage: { output: 130 } } }, ctx);
+		vi.advanceTimersByTime(40);
 		assert.equal(
 			msgs().at(-1),
 			"escrevendo · 0s · ↓   130 · esc interrompe",

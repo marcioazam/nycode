@@ -1,12 +1,20 @@
 // node --experimental-strip-types --test ~/.nycode/agent/extensions/ui-visual/test/icons.test.ts
 import assert from "node:assert/strict";
-import { test } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import type { IconName } from "../../../../src/extensions/ui-visual/icons.ts";
 import * as __r1 from "../../../../src/extensions/ui-visual/icons.ts";
 import * as __r2 from "../../../../src/extensions/ui-visual/icons.ts";
 import * as __r3 from "../../../../src/extensions/ui-visual/icons.ts";
 import * as __r4 from "../../../../src/extensions/ui-visual/icons.ts";
 import { icon, iconGap, nerdFont } from "../../../../src/extensions/ui-visual/icons.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 const NAMES: IconName[] = [
 	"read",

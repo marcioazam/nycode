@@ -5,15 +5,12 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { getKeybindings, KeybindingsManager, setKeybindings, TUI_KEYBINDINGS } from "@nycode/tui";
-import { test as baseTest } from "vitest";
+import { test } from "vitest";
 import * as __m1 from "../../../../../src/extensions/ui/editor.ts";
 import { CASES, ESC } from "../../claude-compat/vim/cases.ts";
 
 const tmp = mkdtempSync(join(tmpdir(), "ui-editor-vim-test-"));
 // history.ts importa a folha (teclas) e os ícones: sem eles a cópia não carrega e nenhum teste deste arquivo roda.
-// The Vim engine drives the editor through runEditorAction/withUndoGroup (the editor-actions patch of the old harness), which the
-// core editor does not have yet (claude-compat part 5 adds that seam): the cases are skipped until then.
-const test = baseTest.skip;
 const m = __m1;
 
 const theme = { borderColor: (s: string) => s, selectList: {} };
@@ -232,14 +229,14 @@ test("loadRemaps: settings.json do nycode vence (mesmo inválido/vazio); ui-stat
 	assert.deepEqual(m.loadRemaps(settings, ui), [], "chave presente e inválida não cai no legado");
 	writeFileSync(settings, "{corrompido");
 	assert.deepEqual(m.loadRemaps(settings, ui), ["kk"]);
-	const old = process.env.PI_CODING_AGENT_DIR;
-	process.env.PI_CODING_AGENT_DIR = dir;
+	const old = process.env.NYCODE_CODING_AGENT_DIR;
+	process.env.NYCODE_CODING_AGENT_DIR = dir;
 	try {
 		writeFileSync(settings, JSON.stringify({ vimInsertModeRemaps: { ab: "<Esc>" } }));
-		assert.deepEqual(m.loadRemaps(undefined, ui), ["ab"], "padrão = PI_CODING_AGENT_DIR/settings.json");
+		assert.deepEqual(m.loadRemaps(undefined, ui), ["ab"], "padrão = NYCODE_CODING_AGENT_DIR/settings.json");
 	} finally {
-		if (old === undefined) delete process.env.PI_CODING_AGENT_DIR;
-		else process.env.PI_CODING_AGENT_DIR = old;
+		if (old === undefined) delete process.env.NYCODE_CODING_AGENT_DIR;
+		else process.env.NYCODE_CODING_AGENT_DIR = old;
 	}
 });
 

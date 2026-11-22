@@ -52,3 +52,10 @@ test("sem argumentos usa process.env e as preferências do processo", () => {
 	assert.equal(typeof icon("bash"), "string");
 	assert.equal(typeof nerdFont(), "boolean");
 });
+
+test("nerdFont: asciiIcons vence o kitty e o nerdFont explícito; NO_COLOR só tira cor", () => {
+	const kitty = { TERM: "xterm-kitty" };
+	assert.equal(nerdFont(kitty, { nerdFont: "auto", asciiIcons: true }), false);
+	assert.equal(nerdFont({}, { nerdFont: true, asciiIcons: true }), false);
+	assert.equal(nerdFont({ ...kitty, NO_COLOR: "1" }, { nerdFont: "auto", asciiIcons: false }), true);
+});

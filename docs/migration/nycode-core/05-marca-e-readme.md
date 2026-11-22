@@ -189,11 +189,11 @@ F4 por causa do motor de permissão (K3). "Contributing" (98) perde o link de RF
 
 - `config.ts:605` (K14): `APP_TITLE = nycodeConfigName ? APP_NAME : "π"`. Proposta: o ramo `"π"` só vale sem nome de
   configuração; K14 decide o título. Fase: F4.
-- Logo da TUI: `rg -l 'pi-logo|PiLogo' packages apps` vazio; o componente real é `components/nycode-logo.ts` (40
+- Logo da TUI: `rg -l 'pi-logo|PiLogo' packages apps` vazio; o componente real é `components/nycode-logo.ts` (40 A D-56 traz para o header a marca "nycode" desenhada pelo dono em 2026-11-18 (`ui-visual/motion/nycode.ts`, animada); o `nycodeLogoLines` fica no core para o cabeçalho nativo, usado quando a extensão `ui-visual` não instala o seu.
   linhas: `nycodeLogoLines`, `supportsNycodeLogo`, `nycodeWordmark`), usado em `interactive-mode.ts:168`. Proposta:
   manter; `CORAL`, `BLUE`, `YELLOW` são a marca da TUI. Defeito: `nycodeWordmark()` devolve `"P"` e `"i"`, resíduo do
   pi; corrigir é escopo de F7. Fase: F7.
-- `ui-visual/header.ts` (nycode-harness): linha 18: "Logo oficial do pi (cópia de pi-coding-agent components/pi-logo.js)";
+- `ui-visual/header.ts` (nycode-harness): linha 18: "Logo oficial do pi (cópia de pi-coding-agent components/pi-logo.js)"; Na D-56 o header passa a desenhar a marca "nycode" do dono (`motion/nycode.ts`) em vez do logo do core; o título do terminal fica sem o prefixo `APP_TITLE`, por paridade com a versão ativa.
   linha 53 mostra `pi` e a versão; linhas 6-8 importam `@earendil-works/*`. Proposta: ao migrar, **não** copiar o
   logo: usar `nycodeLogoLines()`, trocar `pi` por `nycode` e os imports por `@nycode/*`. Fase: F7.
 - `nycode-wordmark-ansi.txt` no cabeçalho: 53 176 bytes de texto ANSI truecolor. Proposta: **proposta**: exibir só em

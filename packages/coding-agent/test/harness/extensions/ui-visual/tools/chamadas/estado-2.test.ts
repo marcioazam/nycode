@@ -1,6 +1,6 @@
 // node --experimental-strip-types --test ~/.nycode/agent/extensions/ui-visual/test/tools/estado.test.ts
 import assert from "node:assert/strict";
-import { test } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __m1 from "../../../../../../src/extensions/ui-visual/icons.ts";
 import {
 	base,
@@ -15,6 +15,14 @@ import {
 	toolIcon,
 	visibleWidth,
 } from "../base.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 const { iconGap, nerdFont } = __m1;
 // Régua Run (dono, 2026-11-18): antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.

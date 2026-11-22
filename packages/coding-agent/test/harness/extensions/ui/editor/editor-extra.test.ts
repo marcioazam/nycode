@@ -3,8 +3,16 @@ import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { test } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __typed1 from "../../../../../src/extensions/ui/editor.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 // The source tests exercise the modules with partial fakes, without types.
 const __m1: any = __typed1;
@@ -30,8 +38,6 @@ function editor(vim: { enabled: boolean }, name?: string) {
 	e.onSubmit = (t: string) => submitted.push(t);
 	return { e, submitted };
 }
-
-// Skipped until the editor-actions seam (runEditorAction/withUndoGroup) exists in the core editor (claude-compat part 5).
 
 function setup(opts: { hasUI?: boolean; other?: boolean } = {}) {
 	const handlers: Record<string, any> = {};
@@ -506,7 +512,7 @@ test("cápsula: respira no trabalho, âmbar sem resposta, cor de sempre ocioso",
 });
 
 // U7: o getter borderColor roda várias vezes por quadro; o texto (join de todas as linhas) e o respiro valem uma vez por render().
-test.skip("U7: render lê o texto e calcula o respiro uma vez por quadro; saída igual", () => {
+test("U7: render lê o texto e calcula o respiro uma vez por quadro; saída igual", () => {
 	const FOCO = Symbol.for("nycode-harness:foco");
 	const g = globalThis as Record<symbol, unknown>;
 	const salvo = g[FOCO];
@@ -534,7 +540,7 @@ test.skip("U7: render lê o texto e calcula o respiro uma vez por quadro; saída
 		assert.deepEqual(
 			saida,
 			JSON.parse(
-				String.raw`["\u001b[38;2;1;199;199m╭──────────────────────────────────────────────────\u001b[39m nome \u001b[38;2;1;199;199m──╮\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m ❯ um                                                     \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   dois                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   !xum                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   dois                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   !xum                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   dois                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   !x\u001b_pi:fc\u0007 \u001b_pi:/fc\u0007                                                    \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m╰───────────────────────────────────────\u001b[39m ⏎ entra na fila \u001b[38;2;1;199;199m──╯\u001b[39m"]`,
+				String.raw`["\u001b[38;2;1;199;199m╭──────────────────────────────────────────────────\u001b[39m nome \u001b[38;2;1;199;199m──╮\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m ❯ um                                                     \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   dois                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   !xum                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   dois                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   !xum                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   dois                                                   \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m│\u001b[39m   !x\u001b_nycode:fc\u0007 \u001b_nycode:/fc\u0007                                                    \u001b[38;2;1;199;199m│\u001b[39m","\u001b[38;2;1;199;199m╰───────────────────────────────────────\u001b[39m ⏎ entra na fila \u001b[38;2;1;199;199m──╯\u001b[39m"]`,
 			),
 		);
 		assert.ok(leituras <= 3, `getText por quadro: ${leituras}`);

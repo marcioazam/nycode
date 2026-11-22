@@ -27,14 +27,14 @@ r=$(vcov sticky-prompt $H/sticky-prompt/sticky.test.ts $H/sticky-prompt/index.te
 chk "3 sticky-prompt (U3) + cobertura>=80" "${r%%|*}" "${r#*|}"
 
 TH=$CA/src/modes/interactive/theme
-# 4: theme (tokyo-night.json and mono.json live beside the core themes, D-37) valid in the core schema with the official tokyonight.nvim colors (core loader, the one nycode runs).
+# 4: theme (tokyo-night.json and mono.json live beside the core themes, D-37) valid in the core schema with the tokyonight.nvim colors (syntaxKeyword lightened for contrast in the D-56 theme; core loader, the one nycode runs).
 cat >"$W/theme.mts" <<MJS
 import { loadThemeFromPath, setThemeJsonValidator } from "$CA/src/modes/interactive/theme/theme.ts";
 import { validateThemeJson } from "$CA/src/modes/interactive/theme/theme-schema.ts";
 setThemeJsonValidator(validateThemeJson);
 loadThemeFromPath("$TH/mono.json", "truecolor");
 const t = loadThemeFromPath("$TH/tokyo-night.json", "truecolor");
-const want = { syntaxKeyword: "157;124;216", syntaxOperator: "137;221;255", mdLink: "26;188;156", mdListBullet: "137;221;255", mdCode: "158;206;106" };
+const want = { syntaxKeyword: "198;179;232", syntaxOperator: "137;221;255", mdLink: "26;188;156", mdListBullet: "137;221;255", mdCode: "158;206;106" };
 const bad = Object.entries(want).filter(([k, rgb]) => !t.getFgAnsi(k as never).includes(rgb)).map(([k]) => k);
 console.log(bad.length ? "divergem: " + bad.join(" ") : "ok " + Object.keys(want).join(","));
 process.exit(bad.length ? 1 : 0);

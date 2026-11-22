@@ -120,13 +120,14 @@ const themes = readdirSync(DIR)
 	.filter(
 		(f) =>
 			f.endsWith(".json") &&
-			["nycode-claro", "nycode-escuro", "nycode-noite", "mono"].includes(f.replace(".json", "")),
+			["nycode-claro", "nycode-escuro", "nycode-noite", "tokyo-night", "mono"].includes(f.replace(".json", "")),
 	)
 	.map((f) => JSON.parse(readFileSync(new URL(f, DIR), "utf8")) as Theme);
 
 test("há temas e o par claro/escuro existe", () => {
 	const names = themes.map((t) => t.name);
-	for (const n of ["nycode-claro", "nycode-escuro", "nycode-noite", "mono"]) assert.ok(names.includes(n), n);
+	for (const n of ["nycode-claro", "nycode-escuro", "nycode-noite", "tokyo-night", "mono"])
+		assert.ok(names.includes(n), n);
 });
 
 for (const t of themes) {
