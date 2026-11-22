@@ -1,18 +1,18 @@
-# Mega plano: migrar o nycode-harness para o core do nycode (fork do pi)
+# Mega plano: migrar o harness Nycode para o core do Nycode (fork do pi)
 
 Estado: **plano, nada implementado**. Este conjunto de documentos é o único entregável desta etapa.
 Levantamento feito em 2026-11-20 sobre `marcioazam/ny-pi@e4f8729` (origem) e `marcioazam/nycode@fb05db936` (destino).
 
 ## 1. Objetivo
 
-Levar tudo o que hoje é o harness **nycode-harness** (montado por fora do pi, com wrapper, patches aplicados no boot,
-extensões, hooks, agentes, skills, regras, benchmark e instalador) para **dentro do core do nycode**, o fork de
+Levar tudo o que hoje é o harness **harness Nycode** (montado por fora do pi, com wrapper, patches aplicados no boot,
+extensões, hooks, agentes, skills, regras, benchmark e instalador) para **dentro do core do Nycode**, o fork de
 `earendil-works/pi@073b0ba` que já vive em `marcioazam/nycode`. Ao final:
 
-1. O binário `nycode` entrega, sem wrapper e sem patch em tempo de boot, o mesmo comportamento medido do nycode-harness.
-2. Todas as regras de repositório do `marcioazam/ny-pi` valem no nycode (configuração do GitHub e arquivos versionados).
-3. O README do nycode mostra o logo do nycode (recuperado do histórico git), sem o logo do pi.
-4. O repositório `marcioazam/ny-pi` fica arquivado, apontando para o nycode.
+1. O binário `nycode` entrega, sem wrapper e sem patch em tempo de boot, o mesmo comportamento medido do harness Nycode.
+2. Todas as regras de repositório do `marcioazam/ny-pi` valem no Nycode (configuração do GitHub e arquivos versionados).
+3. O README do Nycode mostra o logo do Nycode (recuperado do histórico git), sem o logo do pi.
+4. O repositório `marcioazam/ny-pi` fica arquivado, apontando para o Nycode.
 5. O fork continua recebendo o upstream com custo de conflito controlado.
 
 ## 2. Fora do escopo
@@ -27,7 +27,7 @@ extensões, hooks, agentes, skills, regras, benchmark e instalador) para **dentr
 
 ## 3. Ponto de partida (fatos verificados)
 
-| Item | nycode-harness (origem) | nycode (destino) |
+| Item | harness Nycode (origem) | Nycode (destino) |
 |---|---|---|
 | Natureza | Harness por fora do pi: wrapper `bin/pi`, 19 patches de pi-code, 2 patches de dist do pi, 23 extensões próprias, `claude-home/` | Fork do pi com histórico, renomeado (`@nycode/*`, binário `nycode`, `~/.nycode/agent`, `NYCODE_*`) |
 | Base do pi | pi **1.5.2** instalado de `pi.dev` | pi **1.6.0** (`073b0ba`) como código-fonte |
@@ -43,15 +43,15 @@ Detalhe completo: [01-inventario-origem.md](01-inventario-origem.md) e anexos [A
 
 ## 4. Princípios
 
-1. **Paridade antes de melhoria.** Cada fase prova que o nycode faz o que o nycode-harness fazia (testes portados, replay com a
+1. **Paridade antes de melhoria.** Cada fase prova que o Nycode faz o que o harness Nycode fazia (testes portados, replay com a
    API falsa de `bench/contract`, gate do benchmark). Nada muda de comportamento na mesma mudança que move código.
-2. **Estrangulamento por peça** (strangler fig): o nycode-harness segue utilizável até o corte; cada peça migra, é provada e só
+2. **Estrangulamento por peça** (strangler fig): o harness Nycode segue utilizável até o corte; cada peça migra, é provada e só
    então a antiga é desligada.
 3. **Menor superfície de conflito com o upstream.** Código novo entra em arquivos e diretórios novos. Arquivos do
    upstream só recebem edição em pontos de costura pequenos e listados ([08](08-sincronizacao-upstream.md)).
 4. **Sem patch em tempo de execução.** Todo patch vira código-fonte com teste. `patch -p1` e `sed -i` no boot acabam.
 5. **Um PR por unidade, verde e reversível.** Squash, com o teste da unidade no mesmo PR.
-6. **Custo × benefício acima de tudo.** Peça `core`, `ui` ou `optional` segue a especificação 0005 do nycode-harness, que migra
+6. **Custo × benefício acima de tudo.** Peça `core`, `ui` ou `optional` segue a especificação 0005 do harness Nycode, que migra
    junto. Peça opcional não entra no contexto do modelo por padrão.
 7. **Segurança da cadeia de suprimento não regride.** Actions por SHA, dependências exatas, `--ignore-scripts`,
    verificação de vazamento, publicação com atestação de proveniência (`actions/attest`, D-17).
@@ -62,7 +62,7 @@ Detalhe completo: [01-inventario-origem.md](01-inventario-origem.md) e anexos [A
 
 Detalhe em [02-arquitetura-alvo.md](02-arquitetura-alvo.md).
 
-| Peça do nycode-harness | Destino no nycode | Forma |
+| Peça do harness Nycode | Destino no Nycode | Forma |
 |---|---|---|
 | `bin/pi` (wrapper) | `packages/coding-agent/src/cli/args.ts`, `settings-schema.ts`, `settings-defaults.ts` | Flags e padrões nativos; o wrapper deixa de existir |
 | 2 patches de dist do pi | `packages/coding-agent/src/core/sdk.ts:370`, `packages/mcp/src/transports/stdio.ts:10` | Edição direta do fonte, com teste |
@@ -86,8 +86,8 @@ Cada fase tem critérios de entrada e de saída verificáveis. O passo a passo c
 
 | Fase | Nome | Entrega | Tamanho | Depende de |
 |---|---|---|---|---|
-| F0 | Preparação e congelamento | Decisões assinadas, linha de base medida, nycode-harness congelado, limpeza do repositório destino | P | — |
-| F1 | Importação do histórico | Histórico do nycode-harness dentro do nycode em `import/ny-pi/` | P | F0 |
+| F0 | Preparação e congelamento | Decisões assinadas, linha de base medida, harness Nycode congelado, limpeza do repositório destino | P | — |
+| F1 | Importação do histórico | Histórico do harness Nycode dentro do Nycode em `import/ny-pi/` | P | F0 |
 | F2 | Governança versionada e marca | Arquivos de regra, comunidade, logo e README | P | F1 |
 | F3 | CI unificado, gates e benchmark | Workflows, scripts de CI, `bench/` operante, ruleset ativo | G | F2 |
 | F4 | Core nativo | Flags do wrapper, configuração tipada, 2 patches de core, migração de dados do usuário | M | F3 |
@@ -108,10 +108,10 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
 - Entrada: este plano revisado pelo dono.
 - Trabalho:
   1. Fechar as decisões marcadas "aguarda o dono" em [11](11-decisoes-e-pendencias.md).
-  2. Congelar o nycode-harness: só correção de segurança entra em `marcioazam/ny-pi` `main` até F12; registrar o SHA de congelamento.
+  2. Congelar o harness Nycode: só correção de segurança entra em `marcioazam/ny-pi` `main` até F12; registrar o SHA de congelamento.
   3. Medir a linha de base do destino: `npm ci --ignore-scripts`, `npm run build`, `npm run check`, `./test.sh` no
      `nycode@main`; guardar a saída.
-  4. Limpar o destino: 213 ramos remotos herdados do antigo nycode em Rust (`dependabot/cargo/*`, `backup/*`,
+  4. Limpar o destino: 213 ramos remotos herdados do antigo Nycode em Rust (`dependabot/cargo/*`, `backup/*`,
      `feat/sota-v140-*`), rótulo `rust`, CodeQL "default setup" preso em `actions, rust`, ambiente `copilot`.
      Apagar ramos exige autorização do dono ([D-15](11-decisoes-e-pendencias.md)).
   5. Triar os 8 alertas abertos de secret scanning do destino (credenciais OAuth de cliente instalado herdadas do
@@ -122,7 +122,7 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
 
 ### F1. Importação do histórico do `marcioazam/ny-pi`
 
-- Trabalho: reescrever um clone do `marcioazam/ny-pi` para o subdiretório `import/ny-pi/` e fundir no nycode com histórias não
+- Trabalho: reescrever um clone do `marcioazam/ny-pi` para o subdiretório `import/ny-pi/` e fundir no Nycode com histórias não
   relacionadas, em **um PR com merge commit** (o método squash perderia o histórico). Precisa ocorrer **antes** de o
   ruleset do `marcioazam/ny-pi` (só squash) ser ativado em F3. Comandos em [06](06-guia-de-execucao.md#f1).
 - Saída: `git log --follow import/ny-pi/extensions/plan-gate.ts` mostra os commits originais; nenhum arquivo fora de
@@ -131,7 +131,7 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
 
 ### F2. Governança versionada e marca
 
-- Trabalho: trazer os arquivos de regra do nycode-harness, reconciliar com os do fork e trocar a marca. Guia completo em
+- Trabalho: trazer os arquivos de regra do harness Nycode, reconciliar com os do fork e trocar a marca. Guia completo em
   [04-regras-do-repositorio.md](04-regras-do-repositorio.md) e [05-marca-e-readme.md](05-marca-e-readme.md).
 - Saída: `CODEOWNERS`, `dependabot.yml`, modelos de issue e de PR, `CODE_OF_CONDUCT.md`, `SUPPORT.md`,
   `.editorconfig`, `.pre-commit-config.yaml`, `.gitleaks.toml`, `zizmor.yml`, `release.yml` presentes; `AGENTS.md` e
@@ -215,7 +215,7 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
 
 - Trabalho: migrar os dados do dono (`nycode migrate from-pi`), trocar o `pi` do dia a dia por `nycode`, manter os
   dois lado a lado por um período de observação, arquivar `marcioazam/ny-pi` com aviso no README.
-- Saída: `marcioazam/ny-pi` arquivado; `import/ny-pi/` removido do nycode (o histórico continua no git); checklist mestre 100%.
+- Saída: `marcioazam/ny-pi` arquivado; `import/ny-pi/` removido do Nycode (o histórico continua no git); checklist mestre 100%.
 
 ## 7. Grafo de dependências e paralelismo
 
@@ -241,7 +241,7 @@ F0 → F1 → F2 → F3 → F4 → F5 ─┬→ F6 ─┬→ F8 ─┐
    fora de `import/`, `docs/`, do comando de migração e das exceções declaradas em
    `scripts/ci/lint/criterio2/criterio2-allow.txt`, cada uma com classe e motivo; o passo `criterio2` do ci-static
    falha em linha nova ([D-41](11-decisoes-e-pendencias.md)).
-3. Todos os testes do nycode-harness têm um equivalente verde no nycode, ou uma linha em
+3. Todos os testes do harness Nycode têm um equivalente verde no Nycode, ou uma linha em
    [03](03-mapa-de-migracao.md) que justifica a remoção.
 4. Gate do benchmark: braço `nycode` não inferior à referência do nycode-harness em acerto, custo por tarefa não pior além da
    margem definida em [09](09-paridade-e-benchmark.md).

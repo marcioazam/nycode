@@ -1,7 +1,7 @@
 # Prompt de `/goal` para executar a migração
 
 Condição pronta para colar depois de `/goal`. O limite do comando é de 4000 caracteres; esta tem menos de 3000.
-Rodar a partir de um worktree do nycode, com o PR #196 já na `main`. O detalhe de cada passo está nos documentos
+Rodar a partir de um worktree do Nycode, com o PR #196 já na `main`. O detalhe de cada passo está nos documentos
 citados; o prompt só fixa a ordem, os limites e a condição de parada.
 
 ```text

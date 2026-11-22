@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/nycode-pixel.svg" alt="nycode" width="480">
+  <img src="docs/assets/nycode-pixel.svg" alt="Nycode" width="480">
 </p>
 
 # Nycode

@@ -1,20 +1,20 @@
 # Paridade e benchmark
 
-Como o plano prova que o nycode se comporta como o nycode-harness: testes portados, contrato com a API falsa, diferenciais e
+Como o plano prova que o Nycode se comporta como o harness Nycode: testes portados, contrato com a API falsa, diferenciais e
 benchmark; o critério numérico de paridade; a migração do `bench/`; a sequência e o custo das medições.
 Decisões D-nn e pendências P-n: [11](11-decisoes-e-pendencias.md). Caminhos de destino: seção 2 de
 [02](02-arquitetura-alvo.md). Gates de CI e o check `bench-pr` como obrigatório: [07](07-ci-qualidade-seguranca.md).
 
-Convenções: fatos do nycode-harness vêm de `origin/main` de `marcioazam/ny-pi` (`e4f8729`, levantamento de 2026-11-20) e fatos
-do nycode do worktree de migração. **Proposta** é o que não existe em nenhum dos dois; **não verificado** é o que não
+Convenções: fatos do harness Nycode vêm de `origin/main` de `marcioazam/ny-pi` (`e4f8729`, levantamento de 2026-11-20) e fatos
+do Nycode do worktree de migração. **Proposta** é o que não existe em nenhum dos dois; **não verificado** é o que não
 foi conferido nos arquivos; **sem medida** é a dimensão ou o critério sem número hoje. Nada aqui foi executado: nenhum
 benchmark, teste ou build rodou, e nenhuma ação de escrita foi feita no GitHub.
 
 ## 1. As quatro camadas de prova
 
-- **1. Testes portados**. O que prova: Cada peça migrada mantém o comportamento que o teste do nycode-harness fixava. Custo: zero
+- **1. Testes portados**. O que prova: Cada peça migrada mantém o comportamento que o teste do harness Nycode fixava. Custo: zero
   (sem modelo). Onde roda: CI, `test (coding-agent)`.
-- **2. Contrato com a API falsa**. O que prova: O que o nycode envia ao modelo: ferramentas, system prompt, prefixo em
+- **2. Contrato com a API falsa**. O que prova: O que o Nycode envia ao modelo: ferramentas, system prompt, prefixo em
   cache. Custo: zero. Onde roda: CI ou local.
 - **3. Diferenciais**. O que prova: Dois motores dão o mesmo veredito (`guard.py` contra o motor nativo, D-08). Custo:
   zero. Onde roda: CI.
@@ -25,19 +25,19 @@ As camadas 1 a 3 não gastam modelo e entram nos checks obrigatórios; a 4 só r
 
 ### 1.1 Camada 1: testes portados
 
-Regra do critério global 3 de [00](00-mega-plano.md): todo teste do nycode-harness tem um equivalente verde no nycode ou uma
+Regra do critério global 3 de [00](00-mega-plano.md): todo teste do harness Nycode tem um equivalente verde no Nycode ou uma
 linha em [03](03-mapa-de-migracao.md) que justifica a remoção. Contagem em `origin/main` (padrão
 `.test.ts|.test.mjs|test_*.py|test_*.sh|_test.py|conftest.py`, via `git ls-tree`): `extensions` 22,
 `claude-home/patches` 25, `claude-home/bin` 22, `claude-home/hooks` 6, `claude-home/skills` 13, `scripts` 5, `bench`
 (fora de `suites`) 25.
-O formato dos testes do nycode é vitest (`packages/coding-agent/package.json:77`, 4.1.12); os testes `.test.ts` do nycode-harness
+O formato dos testes do Nycode é vitest (`packages/coding-agent/package.json:77`, 4.1.12); os testes `.test.ts` do harness Nycode
 usam o executor nativo do Node, então a porta troca o executor e os imports de teste para o `vitest`, com as asserções
 preservadas (os imports atuais não foram lidos).
 
 **Extensões (22 arquivos, `extensions/`).** Destino: `packages/coding-agent/test/harness/<extensão>/` (02, seção 2) ou
 junto da extensão se o código ficar perto de `src/extensions/<nome>/`.
 
-| Grupo no nycode-harness | Arquivos | Extensão embutida de destino |
+| Grupo no harness Nycode | Arquivos | Extensão embutida de destino |
 |---|---|---|
 | `auto-resume` | 1 | `auto-resume` |
 | `bash-timeout` | 1 | ferramenta `bash` do core (K8) |
@@ -68,7 +68,7 @@ teste acompanha a extensão que absorveu o patch (02, seção 3.1).
 - **Total**. Arquivos: 25.
 
 O patch `cache-warm-identity` (K1) tem teste em `claude-home/bin/tests/cache-warm-identity.test.ts`, contado na linha
-de `claude-home/bin` abaixo; o `ci-static` do nycode-harness o excluía porque exige o pi-code remendado pelo wrapper. No nycode
+de `claude-home/bin` abaixo; o `ci-static` do harness Nycode o excluía porque exige o pi-code remendado pelo wrapper. No Nycode
 a costura K1 é código do core: o teste passa a rodar sem o wrapper e **deixa de ser excluído**.
 
 **`claude-home/bin` (22 arquivos, mais 3 scripts `.sh` de gate).**
@@ -106,7 +106,7 @@ tem vermelho possível (uma asserção sobre texto fixo copiado), isso entra em 
 
 ### 1.2 Camada 2: contrato com a API falsa
 
-Já existe no nycode-harness, sem modelo e sem rede: `bench/contract/check.py`, `contract_rules.py`, `fake_api.py` e `speed.py`.
+Já existe no harness Nycode, sem modelo e sem rede: `bench/contract/check.py`, `contract_rules.py`, `fake_api.py` e `speed.py`.
 Roda o `pi -p` do braço num estágio descartável contra uma API Anthropic falsa que responde por roteiro e captura cada
 corpo de requisição (nunca os cabeçalhos). Verificações atuais: inventário de ferramentas e tamanho do system, regras
 (`plan_mode_complete` e `question` fora de `-p`), ferramentas básicas (`read`, `write`, `edit`, `bash`, `todo`), plano,
@@ -125,7 +125,7 @@ Para a paridade, três saídas do replay são o contrato (comparadas entre o bra
 
 O contrato roda sobre `<stage>/.pi/agent` e `PI_OFFLINE=1`, com `SESSION_PREFIXES = ("PI_", "CLAUDE_", "ANTHROPIC_")`
 retirados do ambiente (`check.py`). O braço `nycode` precisa montar `<stage>/.nycode/agent` e usar as variáveis
-`NYCODE_*`; o nome da variável equivalente a `PI_OFFLINE` no nycode **não foi verificado**.
+`NYCODE_*`; o nome da variável equivalente a `PI_OFFLINE` no Nycode **não foi verificado**.
 
 A diferença esperada entre braços é de texto (marca, caminhos), nunca de estrutura; um diff do inventário de
 ferramentas e do prefixo reprova, o do texto do system exige leitura (seção 8: não comparar por string exata).
@@ -187,7 +187,7 @@ O nycode não tem instalador, patch nem wrapper; o braço passa a construir o mo
 
 1. Estágio `bench-nycode-<sha12>[-dirty]` com `HOME` descartável e `NYCODE_CODING_AGENT_DIR=<estágio>/.nycode/agent`
    (a variável já existe: 02, seção 5).
-2. `npm ci --ignore-scripts` e `npm run build` na raiz do checkout (o `ci.yml` do nycode roda esses dois comandos; o
+2. `npm ci --ignore-scripts` e `npm run build` na raiz do checkout (o `ci.yml` do Nycode roda esses dois comandos; o
    comando que gera o executável `nycode` a partir de `build-binaries.sh` ou `build-coding-agent-bundle.mjs` e o caminho
    de saída **não foram verificados**).
 3. Camada do dono: `settings.json` e `AGENTS.md` de `~/.nycode/agent` (substitui `settings.json`, `local.env` e
@@ -196,7 +196,7 @@ O nycode não tem instalador, patch nem wrapper; o braço passa a construir o mo
 4. Aquecimento: `nycode --version` com o `HOME` do estágio.
 5. Saída com `exec` para o executável, com as flags de avaliação do runner. As flags `--settings`, `--mcp-config`,
    `--setting-sources`, `--add-dir` e `--strict-mcp-config` hoje são entendidas só pelo pi-code (o braço `pi-vanilla`
-   as descarta); no nycode dependem da extensão `settings-flags` (F5). **Não verificado** se o conjunto é o mesmo.
+   as descarta); no Nycode dependem da extensão `settings-flags` (F5). **Não verificado** se o conjunto é o mesmo.
 
 **Decidido em F3** (o que ficou diferente da proposta acima):
 
@@ -209,7 +209,7 @@ O nycode não tem instalador, patch nem wrapper; o braço passa a construir o mo
 - Estágio `bench-nycode-<sha12>[-dirty]` (campo `stage_prefix` do `arms.toml`); `meta.json` leva `overlay_sha` como nos braços nycode-harness.
 - As flags só do pi-code (`--settings`, `--mcp-config`, `--setting-sources`, `--add-dir`, `--strict-mcp-config`) são descartadas
   pelo braço até a extensão `settings-flags` (F5), como no `pi-vanilla`. Continua **não verificado** se o conjunto é o mesmo.
-- Agente Harbor do nycode (S2, S3, S6): **implementado** em `bench/harbor/nycode_agent.py` (`NycodeAgent`) e `bench/harbor/bundle.sh`
+- Agente Harbor do Nycode (S2, S3, S6): **implementado** em `bench/harbor/nycode_agent.py` (`NycodeAgent`) e `bench/harbor/bundle.sh`
   (detalhe abaixo); `_harbor_step` deixou de parar o braço. Substitui a decisão anterior de parar com erro explícito.
 - Runner do `pi` (decisão do dono em F3): mantida a skill `pelo-em-ovo`, localizada por `BENCH_PELO_RUN_PI`; nada é copiado
   para `bench/`. A saída da skill de `claude-home` em F8 obriga a apontar a variável para a nova origem (ou copiar o
@@ -222,10 +222,10 @@ binário em `PELO_PI_BIN`. Decisão do dono em F3: copiar o `run_pi.py` para `be
 `pelo-em-ovo` sai de `claude-home` em F8). Por enquanto, **não verificado** o que o `run_pi.py` assume sobre o
 diretório de configuração do `pi`.
 
-O Harbor (S2, S3, S6) usa um agente dentro do contêiner. O do nycode-harness é `claude-home/bin/evals/harbor/pi_harness_agent.py`, que
+O Harbor (S2, S3, S6) usa um agente dentro do contêiner. O do harness Nycode é `claude-home/bin/evals/harbor/pi_harness_agent.py`, que
 instala `~/.pi/agent` e o wrapper a partir de um `bundle.sh`. O do `nycode` é o agente irmão `bench/harbor/nycode_agent.py`
-(`-a nycode_agent:NycodeAgent`, `PYTHONPATH=bench/harbor`), subclasse do agente `Pi` do Harbor como o do nycode-harness (flags
-`--print --mode json --session-dir`, trajetória e custo herdados; o nycode mantém esse contrato):
+(`-a nycode_agent:NycodeAgent`, `PYTHONPATH=bench/harbor`), subclasse do agente `Pi` do Harbor como o do harness Nycode (flags
+`--print --mode json --session-dir`, trajetória e custo herdados; o Nycode mantém esse contrato):
 
 - **Pacote** (`bench/harbor/bundle.sh`, `HOME=<estágio do braço>`, saída por rodada em `<rodada>/nycode-harness-bundle.tgz`, variável
   `NYCODE_HARNESS_BUNDLE`): a camada do dono do estágio (só os arquivos de `bench/arms/overlay-nycode.list`, nunca `auth.json` nem
@@ -236,19 +236,19 @@ instala `~/.pi/agent` e o wrapper a partir de um `bundle.sh`. O do `nycode` é o
   bundle de 6,8 MB): `node .local/lib/nycode/dist/bundle/cli.js --version` imprime `1.6.0` e `--list-models` roda, sem nenhum
   `node_modules` acima do pacote. O script falha sem `dist/bundle/cli.js` ou sem os dois pacotes e confere que nenhum caminho de
   credencial entrou.
-- **Contêiner**: `install()` garante `curl` e `tar` (root; o nycode não precisa de `python3` nem `patch`), extrai o pacote em
-  `/opt/nycode-home`, instala o Node com `nvm` (o mesmo trecho com tentativas do agente do nycode-harness) e roda `--version` e `--help` (aquece o cache de compilação).
+- **Contêiner**: `install()` garante `curl` e `tar` (root; o Nycode não precisa de `python3` nem `patch`), extrai o pacote em
+  `/opt/nycode-home`, instala o Node com `nvm` (o mesmo trecho com tentativas do agente do harness Nycode) e roda `--version` e `--help` (aquece o cache de compilação).
   A execução é `node /opt/nycode-home/.local/lib/nycode/dist/bundle/cli.js --print --mode json ...` com
   `HOME=/opt/nycode-home`, `NYCODE_CODING_AGENT_DIR=/opt/nycode-home/.nycode/agent` e `NYCODE_SKIP_VERSION_CHECK=1` (as variáveis do
   braço local). Token: `ANTHROPIC_OAUTH_TOKEN`; no modo de chave de API, `ANTHROPIC_WORKSPACE_ID` entra em `models.json`.
 - **Diferença para o braço local**: o local usa `--no-session` e lê o stdout; o Harbor precisa do `--session-dir` para a trajetória, como no nycode-harness.
 - **Não verificado**: uma tarefa real do Terminal-Bench no contêiner (nenhuma rodada foi feita, nenhum custo); o `harbor run --dry-run`
-  só valida a carga do agente. Se o nycode troca o formato de sessão do pi, o custo e os turnos do S2 saem vazios (o
+  só valida a carga do agente. Se o Nycode troca o formato de sessão do pi, o custo e os turnos do S2 saem vazios (o
   `parse_harbor_job` marca isso como erro de infraestrutura).
 
 ### 2.3 Braço temporário `nycode-harness@1.6.0` (D-25)
 
-D-25: antes de migrar código, medir o nycode-harness **por fora** sobre o pi 1.6.0 para separar o efeito da base do efeito da
+D-25: antes de migrar código, medir o harness Nycode **por fora** sobre o pi 1.6.0 para separar o efeito da base do efeito da
 migração. É o mesmo `bench/arms/nycode-harness` com a versão do `pi` trocada; `arm_version` passa de `1.5.2` para `1.6.0`.
 Entradas, todas **propostas**:
 
@@ -264,7 +264,7 @@ uma instalação gerenciada do pi 1.6.0 (ver o relatório da unidade). A simula�
 
 A referência guardada atual (`baseline-main`) foi medida com `arm_version 1.5.2` e `overlay_sha c06e62526c0540fe`
 (`docs/bench/baseline-main/meta.json`); por D-14 ela vale como histórico, mas **não** como referência de paridade do
-nycode, que é pi 1.6.x.
+Nycode, que é pi 1.6.x.
 
 ### 2.4 Comparabilidade entre braços (lacuna)
 
@@ -290,7 +290,7 @@ camadas diferem em arquivos).
 - **Cache do CI local**. De: `~/.cache/ny-pi-ci`. Para: `~/.cache/nycode-ci` (07, seção 7).
 - **Overlay**. De: `bench/arms/overlay.list`. Para: nova lista (seção 2.2); `overlay-sha.sh` não muda (recebe o
   diretório e a lista).
-- **Estado e cache**. De: `~/.local/state/bench`, `~/.cache/bench`. Para: iguais (não citam o nycode-harness).
+- **Estado e cache**. De: `~/.local/state/bench`, `~/.cache/bench`. Para: iguais (não citam o harness Nycode).
 
 Variáveis `BENCH_*`, que continuam com o mesmo nome (02, seção 5: "iguais"): `BENCH_REPO`, `BENCH_CC_CREDENTIALS`,
 `BENCH_BASELINE_MAIN`, `BENCH_STATE`, `BENCH_API_KEY_FILE`, `BENCH_ANTHROPIC_WORKSPACE_ID`, `BENCH_OVERLAY_DIR`,
@@ -316,12 +316,12 @@ o nycode: `BENCH_REPO`, `--arm nycode` no lugar de `--arm nycode-harness` e a or
 
 **D-21** (`bench-pr` em mudança não funcional): o verificador publica `success` com a descrição "não funcional, sem
 rodada". A classificação é `bench/classify/affects.py`, que falha fechada (qualquer caminho não provado não funcional
-conta como funcional). Hoje ela lê a lista de caminhos do nycode-harness e o `publish.list`, que some (02, seção 8). Os caminhos
+conta como funcional). Hoje ela lê a lista de caminhos do harness Nycode e o `publish.list`, que some (02, seção 8). Os caminhos
 que ela já trata como não funcionais: `docs/*`, `.github/*`, `.githooks/*`, `scripts/ci/*`, `scripts/check-*`,
 `bench/*`, `claude-home/bin/evals/*` (menos `bundle.sh`), licença e dotfiles, testes (`*.test.ts`, `test_*.py` etc.) e
 os de UI pura (`themes/*`, `extensions/ui/*`, `extensions/ui-visual/*`, `claude-home/bin/hud/*`, outros).
 
-**Lista proposta de caminhos não funcionais no nycode** (nada disto existe no código; a regra continua fechando para
+**Lista proposta de caminhos não funcionais no Nycode** (nada disto existe no código; a regra continua fechando para
 funcional o que não consta):
 
 | Grupo | Padrões (proposta) |
@@ -346,11 +346,11 @@ Ficam funcionais, de propósito: `packages/*/src/**` (menos os de UI pura acima)
 `bench/suites/check_oracles.py` (sem a solução o teste falha; com o oráculo passa). Contam por suíte: `plan` 12 casos,
 `multi` 10 e `hard` 12 (diretórios de primeiro nível).
 
-Estado atual no nycode-harness (`run-static.sh`): o regex `^bench/suites/[^/]+/[^/]+/(repo|hidden|oracle)/` tira os arquivos de
+Estado atual no harness Nycode (`run-static.sh`): o regex `^bench/suites/[^/]+/[^/]+/(repo|hidden|oracle)/` tira os arquivos de
 tipagem (`mypy`), cobertura e mutação, mas o `ruff` ainda os lint; o `structure_changed.py` não tem exclusão nas
 linhas lidas (1 a 100), então só o fato de o legado nunca bloquear os poupava.
 
-**Proposta** no nycode (D-06 inclui `bench/` na lista de código próprio, então sem exclusão a importação de 788 arquivos
+**Proposta** no Nycode (D-06 inclui `bench/` na lista de código próprio, então sem exclusão a importação de 788 arquivos
 estouraria os limites de 800 linhas e de 7 arquivos por diretório): excluir o regex acima do `structure_changed.py` e do
 `ruff`, do `markdownlint` e do `diff-cover`, e manter `check_oracles.py` (e seu teste) como validação compensatória,
 no `ci-static`. Os 4 arquivos soltos seguem as regras normais. O Biome do fork não os alcança, porque `biome.json`
@@ -467,7 +467,7 @@ que `bench/metrics` e `bench/faults` calculam hoje.
 
 ### 5.4 Dimensão 11 e o modo interativo
 
-O bench inteiro roda sem interface: `arm_cmd` monta `-p --output-format stream-json`. O nycode-harness tem scripts de gate
+O bench inteiro roda sem interface: `arm_cmd` monta `-p --output-format stream-json`. O harness Nycode tem scripts de gate
 interativo que o bench não chama: `claude-home/bin/tests/pi-ui-final-gate.sh` e `terminal-sota/{e2e,gate}.sh`
 (cobertura de 80% por linha nos arquivos listados). Não foram executados nem lidos por inteiro. **Proposta:** a
 dimensão 11 entra em F10 com esses gates portados como verificação por lista (sim/não), não como pontuação.
@@ -482,7 +482,7 @@ tarefas
 do nycode-harness e do `cc-vanilla` (k aproximado de 1,8):
 
 - Modelo B (prior de cada braço por máxima verossimilhança): o ganho alcançável é +4,7 pp (o alvo de +8 pp é
-  inalcançável: o nycode-harness já acerta quase tudo). Com n = 73 e k = 3, poder de 0,97 (P >= 0,80) e 0,85 (IC90 > 0); o menor
+  inalcançável: o harness Nycode já acerta quase tudo). Com n = 73 e k = 3, poder de 0,97 (P >= 0,80) e 0,85 (IC90 > 0); o menor
   desenho com os dois critérios >= 0,80 é n = 100, k = 1.
 - Modelo anterior (Beta fixo): +8 pp com n = 73, k = 3 dá 0,87 e 0,65 (os dois critérios juntos **não** chegam a 80%); o
   menor desenho com os dois >= 0,80 é n = 150, k = 2.
@@ -502,7 +502,7 @@ Fila única na conta `claude`: o `flock` em `$STATE/lock` do `bench-pr.sh` tamb�
 merge do anterior" (2026-11-18) evita `base_moved`. Modelo padrão `claude-sonnet-5-5`.
 
 Custo estimado = soma de `est_cost_usd` de `suites.toml` por execução (s1 0,09; s2 0,30; s3 1,50; s4 0,12; s5 0,12;
-s6 3,00; s8 0,60), na calibração de 2026-11-14 (média do piloto do nycode-harness mais 25% de folga; o S3 e o S6 não foram
+s6 3,00; s8 0,60), na calibração de 2026-11-14 (média do piloto do harness Nycode mais 25% de folga; o S3 e o S6 não foram
 pilotados). Só entra no `bench run --dry-run` e na checagem de orçamento. Não inclui as sobreposições `reps` por caso
 (`suites.toml`, não lidas); por isso é uma estimativa e não um orçamento.
 
@@ -647,7 +647,7 @@ F3:
 
 F10:
 
-- Camadas 1 a 3 verdes: cada teste do nycode-harness com equivalente verde ou linha justificada em [03](03-mapa-de-migracao.md);
+- Camadas 1 a 3 verdes: cada teste do harness Nycode com equivalente verde ou linha justificada em [03](03-mapa-de-migracao.md);
   contrato sem diferença de estrutura; diferencial do `guard` em 100% do corpus e do fuzz.
 - Camada 4: regra da seção 5.1 em PASS no `full`, as 11 dimensões fechadas, `vanilla` re-medidos uma vez.
 - `docs/bench/baseline-main/` regravado por PR e `evidencias/F10-paridade.md` assinado pelo dono.
@@ -656,8 +656,8 @@ F10:
 
 - Conteúdo de `bench/arms/claude-vanilla` e `omp` (o `omp` não migra), `bench/classify/affects.py` além das primeiras
   70 linhas, `capabilities.toml`, os `reps` por caso de `suites.toml` e o texto completo do RUNBOOK.
-- O comando e o caminho de saída do binário `nycode`; as flags de avaliação no nycode; o equivalente de `PI_OFFLINE`.
+- O comando e o caminho de saída do binário `nycode`; as flags de avaliação no Nycode; o equivalente de `PI_OFFLINE`.
 - Se `bench-nightly.service` e `vanilla-retest.sh` usam o mesmo env file; as demais variáveis do env file do RUNBOOK.
 - Número de casos dentro de `test_guard.py`, semente e iterações do fuzz oficial.
 - O registro do dono com as 11 dimensões e o texto de "Demystifying evals" (a data de 2026-01-09 vem da instrução).
-- Tempo de parede de qualquer rodada no nycode e custo real de F3 a F10.
+- Tempo de parede de qualquer rodada no Nycode e custo real de F3 a F10.

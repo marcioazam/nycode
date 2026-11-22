@@ -1,68 +1,68 @@
 # CI, qualidade e segurança
 
-Como os gates de CI do `marcioazam/ny-pi` e os do nycode viram um conjunto só em F3
+Como os gates de CI do `marcioazam/ny-pi` e os do Nycode viram um conjunto só em F3
 ([00](00-mega-plano.md#f3-ci-unificado-gates-e-benchmark)).
 Decisões citadas como D-nn e pendências P-n: [11](11-decisoes-e-pendencias.md). Caminhos de destino: seção 2 de
 [02](02-arquitetura-alvo.md). Benchmark e o check `bench-pr`: [09](09-paridade-e-benchmark.md).
 
 Convenções: "ny-pi" são fatos de `origin/main` de `marcioazam/ny-pi` (levantamento de 2026-11-20, `e4f8729`);
-"nycode" são fatos do worktree de migração (`fb05db936`). Texto marcado **proposta** não existe em nenhum dos dois
+"Nycode" são fatos do worktree de migração (`fb05db936`). Texto marcado **proposta** não existe em nenhum dos dois
 repositórios; **não verificado** é o que não pôde ser conferido nos arquivos. Nada deste documento foi executado.
 
 ## 1. Quadro atual lado a lado
 
 ### 1.1 Workflows
 
-- **Arquivos em `.github/workflows/`**. nycode-harness: `ci-static`, `ci-security`, `instruction-budget`, `codeql`, `scorecard`.
-  nycode: `ci.yml`, `npm-audit.yml`.
-- **Outros arquivos de regra**. nycode-harness: `zizmor.yml`, `dependabot.yml`, `CODEOWNERS`, `rulesets/main.json`,
-  `release.yml`. nycode: nenhum.
-- **Check de benchmark**. nycode-harness: `bench-pr`: commit status publicado por um poster local, sem workflow. nycode: não
+- **Arquivos em `.github/workflows/`**. harness Nycode: `ci-static`, `ci-security`, `instruction-budget`, `codeql`, `scorecard`.
+  Nycode: `ci.yml`, `npm-audit.yml`.
+- **Outros arquivos de regra**. harness Nycode: `zizmor.yml`, `dependabot.yml`, `CODEOWNERS`, `rulesets/main.json`,
+  `release.yml`. Nycode: nenhum.
+- **Check de benchmark**. harness Nycode: `bench-pr`: commit status publicado por um poster local, sem workflow. Nycode: não
   existe.
-- **`merge_group`**. nycode-harness: sim, em `ci-static`, `ci-security` e `instruction-budget`. nycode: não (`ci.yml`, bloco
+- **`merge_group`**. harness Nycode: sim, em `ci-static`, `ci-security` e `instruction-budget`. Nycode: não (`ci.yml`, bloco
   `on:`).
-- **`permissions` de topo**. nycode-harness: `permissions: {}` em todos (a política de `run-security.sh` exige). nycode: ausente
+- **`permissions` de topo**. harness Nycode: `permissions: {}` em todos (a política de `run-security.sh` exige). Nycode: ausente
   em `ci.yml`; `contents: read` em `npm-audit.yml`.
-- **Runner**. nycode-harness: `ubuntu-24.04`. nycode: `ubuntu-latest`.
-- **`harden-runner`**. nycode-harness: sim, com `egress-policy: block` e lista de destinos. nycode: não.
-- **Ações fixadas por SHA**. nycode-harness: sim. nycode: sim (checkout `3d3c42e`, setup-node `8207627`).
+- **Runner**. harness Nycode: `ubuntu-24.04`. Nycode: `ubuntu-latest`.
+- **`harden-runner`**. harness Nycode: sim, com `egress-policy: block` e lista de destinos. Nycode: não.
+- **Ações fixadas por SHA**. harness Nycode: sim. Nycode: sim (checkout `3d3c42e`, setup-node `8207627`).
 
 ### 1.2 Jobs e checks
 
-- **nycode-harness `ci-static`**. Gatilhos: `pull_request`, `merge_group`, push em main. Job: `ci-static` (30 min). Nome do
+- **harness Nycode `ci-static`**. Gatilhos: `pull_request`, `merge_group`, push em main. Job: `ci-static` (30 min). Nome do
   check: `ci-static`. O que roda: `run-static.sh`.
-- **nycode-harness `ci-static`**. Gatilhos: idem. Job: `mutation` (45 min). Nome do check: `ci-mutation`. O que roda:
+- **harness Nycode `ci-static`**. Gatilhos: idem. Job: `mutation` (45 min). Nome do check: `ci-mutation`. O que roda:
   `run-static.sh mutation`.
-- **nycode-harness `ci-security`**. Gatilhos: idem. Job: `ci-security` (30 min). Nome do check: `ci-security`. O que roda:
+- **harness Nycode `ci-security`**. Gatilhos: idem. Job: `ci-security` (30 min). Nome do check: `ci-security`. O que roda:
   `run-security.sh`.
-- **nycode-harness `instruction-budget`**. Gatilhos: PR (`labeled`, `unlabeled` incluídos), `merge_group`, push. Job:
+- **harness Nycode `instruction-budget`**. Gatilhos: PR (`labeled`, `unlabeled` incluídos), `merge_group`, push. Job:
   `instruction-budget` (5 min). Nome do check: `instruction-budget`. O que roda: `instruction_budget.py check`.
-- **nycode-harness `codeql`**. Gatilhos: push e PR em main, cron `41 6 * * 3`, manual. Job: `analyze` (30 min). Nome do check:
+- **harness Nycode `codeql`**. Gatilhos: push e PR em main, cron `41 6 * * 3`, manual. Job: `analyze` (30 min). Nome do check:
   `Analyze (python)`, `(javascript-typescript)`, `(actions)`. O que roda: CodeQL, `build-mode: none`.
-- **nycode-harness `scorecard`**. Gatilhos: push em main, cron `23 9 * * 1`, manual. Job: `analysis` (15 min). Nome do check:
+- **harness Nycode `scorecard`**. Gatilhos: push em main, cron `23 9 * * 1`, manual. Job: `analysis` (15 min). Nome do check:
   `Scorecard analysis`. O que roda: `ossf/scorecard-action` e envio do SARIF.
-- **nycode-harness (local)**. Gatilhos: poll de 10 min na máquina do dono. Job: `bench-pr.sh`. Nome do check: `bench-pr`. O que
+- **harness Nycode (local)**. Gatilhos: poll de 10 min na máquina do dono. Job: `bench-pr.sh`. Nome do check: `bench-pr`. O que
   roda: gate do benchmark (seções 3 e 5 de 09).
-- **nycode `ci.yml`**. Gatilhos: push em main, tags `v*.*.*`, PR em main. Job: `build-check`. Nome do check:
+- **Nycode `ci.yml`**. Gatilhos: push em main, tags `v*.*.*`, PR em main. Job: `build-check`. Nome do check:
   `build-check`. O que roda: `npm ci --ignore-scripts`, `build`, `check`, changelog (`release/*`: o step `Check the version PR changelog diff`, D-44, no lugar do
   check das seções lançadas).
-- **nycode `ci.yml`**. Gatilhos: idem. Job: `test` (matriz). Nome do check: `test (coding-agent)`, `(durable)`,
+- **Nycode `ci.yml`**. Gatilhos: idem. Job: `test` (matriz). Nome do check: `test (coding-agent)`, `(durable)`,
   `(chord)`, `(other)`. O que roda: `npm run test` por pacote.
-- **nycode `ci.yml`**. Gatilhos: idem. Job: `mcp-conformance`. Nome do check: `mcp-conformance`. O que roda: `npm run
+- **Nycode `ci.yml`**. Gatilhos: idem. Job: `mcp-conformance`. Nome do check: `mcp-conformance`. O que roda: `npm run
   test:mcp-conformance`.
-- **nycode `npm-audit.yml`**. Gatilhos: cron `37 7 * * *`, manual. Job: `audit`. Nome do check: `audit`. O que roda:
+- **Nycode `npm-audit.yml`**. Gatilhos: cron `37 7 * * *`, manual. Job: `audit`. Nome do check: `audit`. O que roda:
   `scripts/npm-audit.mjs` e `npm audit signatures`.
 
-Fontes: `.github/workflows/*.yml` nos dois repositórios; os 6 contextos obrigatórios do nycode e os 4 do nycode-harness
+Fontes: `.github/workflows/*.yml` nos dois repositórios; os 6 contextos obrigatórios do Nycode e os 4 do harness Nycode
 vêm do [anexo D](anexos/D-regras-github-brutas.md) (seções 2 e 3). Observações verificadas:
 
-- O `ci-mutation` do nycode-harness é o segundo job de `ci-static.yml`, não um workflow à parte; não é check obrigatório.
-- `concurrency` do nycode-harness: grupo `<workflow>-${{ github.ref }}` e `cancel-in-progress` só em `pull_request`. No nycode:
+- O `ci-mutation` do harness Nycode é o segundo job de `ci-static.yml`, não um workflow à parte; não é check obrigatório.
+- `concurrency` do harness Nycode: grupo `<workflow>-${{ github.ref }}` e `cancel-in-progress` só em `pull_request`. No Nycode:
   `ci-${{ github.ref }}` com cancelamento sempre, inclusive em push na main e em tag (`ci.yml`, bloco `concurrency:`).
-- O `build-check` do nycode só roda o check de changelog se houver uma tag `v*.*.*`; sem tag ele é pulado (P-6 pede a
+- O `build-check` do Nycode só roda o check de changelog se houver uma tag `v*.*.*`; sem tag ele é pulado (P-6 pede a
   tag `v1.6.0-base` em F0). Para head `release/*` ele não roda: o step `Check the version PR changelog diff` aceita só a
   troca de `## [Unreleased]` por `## [<versão>] - <data>` nos `CHANGELOG.md` (D-44, `scripts/ci/release/`).
-- O Node do `ci-static` do nycode-harness é 24; o do nycode é 22, e o `package.json` do nycode declara `engines.node >=22.19.0`.
+- O Node do `ci-static` do harness Nycode é 24; o do Nycode é 22, e o `package.json` do Nycode declara `engines.node >=22.19.0`.
   A versão de Node do CI unificado fica **não verificada** (decidir em F3 com `npm run check` e `./test.sh`).
 - `npm run check` começa por `node scripts/biome-check.mjs --write` (`package.json:20`): em CI isso reescreve arquivos
   em vez de reprovar formatação. **Proposta:** o job `build-check` roda uma variante sem `--write`; o `check` local
@@ -72,24 +72,24 @@ vêm do [anexo D](anexos/D-regras-github-brutas.md) (seções 2 e 3). Observaç�
 
 ### 2.1 Checks obrigatórios (D-05)
 
-União dos dois conjuntos: 10 contextos no ruleset `main` do nycode (substituem os 6 da proteção clássica e os 4 do
+União dos dois conjuntos: 10 contextos no ruleset `main` do Nycode (substituem os 6 da proteção clássica e os 4 do
 ruleset do `marcioazam/ny-pi`). Todos rodam também em `merge_group`.
 
 | # | Contexto | Origem | Workflow alvo |
 |---|---|---|---|
-| 1 | `build-check` | nycode | `ci.yml` |
-| 2 | `test (coding-agent)` | nycode | `ci.yml` |
-| 3 | `test (durable)` | nycode | `ci.yml` |
-| 4 | `test (chord)` | nycode | `ci.yml` |
-| 5 | `test (other)` | nycode | `ci.yml` |
-| 6 | `mcp-conformance` | nycode | `ci.yml` |
-| 7 | `ci-static` | nycode-harness | `ci-static.yml` |
-| 8 | `ci-security` | nycode-harness | `ci-security.yml` |
-| 9 | `instruction-budget` | nycode-harness | `instruction-budget.yml` |
-| 10 | `bench-pr` | nycode-harness | status local (D-21 decide quando ele pula) |
+| 1 | `build-check` | Nycode | `ci.yml` |
+| 2 | `test (coding-agent)` | Nycode | `ci.yml` |
+| 3 | `test (durable)` | Nycode | `ci.yml` |
+| 4 | `test (chord)` | Nycode | `ci.yml` |
+| 5 | `test (other)` | Nycode | `ci.yml` |
+| 6 | `mcp-conformance` | Nycode | `ci.yml` |
+| 7 | `ci-static` | harness Nycode | `ci-static.yml` |
+| 8 | `ci-security` | harness Nycode | `ci-security.yml` |
+| 9 | `instruction-budget` | harness Nycode | `instruction-budget.yml` |
+| 10 | `bench-pr` | harness Nycode | status local (D-21 decide quando ele pula) |
 
 O ruleset também mantém `strict_required_status_checks_policy: true` (ramo atualizado antes do merge), como no
-`rulesets/main.json` do nycode-harness. O contexto `bench-pr` não leva `integration_id`, porque o status vem de `gh api` e não
+`rulesets/main.json` do harness Nycode. O contexto `bench-pr` não leva `integration_id`, porque o status vem de `gh api` e não
 de um app (RUNBOOK, "Tornar `bench-pr` obrigatório"). Um check obrigatório que nunca é publicado trava o PR: nenhum dos
 workflows acima pode usar filtro de caminho (`paths:`).
 
@@ -106,16 +106,16 @@ workflows acima pode usar filtro de caminho (`paths:`).
 
 ### 2.3 Gatilhos, permissões e concorrência por workflow
 
-Regra única (o `run-security.sh` do nycode-harness já a impõe em `check_workflow_policy`): `permissions: {}` no topo de todo
+Regra única (o `run-security.sh` do harness Nycode já a impõe em `check_workflow_policy`): `permissions: {}` no topo de todo
 workflow, permissões declaradas por job, nenhum `pull_request_target` nem `workflow_run`.
 
 - **`ci.yml`**. Gatilhos alvo: `pull_request`, `merge_group`, push em main, tag `v*.*.*`. Permissões por job: `contents:
   read`. Concorrência: `ci-${{ github.ref }}`, cancela só em PR.
 - **`ci-static.yml`**. Gatilhos alvo: `pull_request`, `merge_group`, push em main. Permissões por job: `contents: read`.
-  Concorrência: igual ao nycode-harness.
-- **`ci-security.yml`**. Gatilhos alvo: idem. Permissões por job: `contents: read`. Concorrência: igual ao nycode-harness.
+  Concorrência: igual ao harness Nycode.
+- **`ci-security.yml`**. Gatilhos alvo: idem. Permissões por job: `contents: read`. Concorrência: igual ao harness Nycode.
 - **`instruction-budget.yml`**. Gatilhos alvo: PR com `labeled`/`unlabeled`, `merge_group`, push. Permissões por job:
-  `contents: read`. Concorrência: igual ao nycode-harness.
+  `contents: read`. Concorrência: igual ao harness Nycode.
 - **`codeql.yml`**. Gatilhos alvo: push, PR, cron, manual. Permissões por job: `contents: read`, `actions: read`,
   `security-events: write`. Concorrência: `cancel-in-progress: false`.
 - **`scorecard.yml`**. Gatilhos alvo: push em main, cron, manual. Permissões por job: acima, mais `id-token: write`.
@@ -126,7 +126,7 @@ workflow, permissões declaradas por job, nenhum `pull_request_target` nem `work
 - **publicação (F11)**. Gatilhos alvo: tag `v*.*.*`. Permissões por job: `contents: read`, `id-token: write` (seção
   6.5). Concorrência: sem cancelamento.
 
-Pontos que o nycode precisa mudar em `ci.yml` e `npm-audit.yml` para passar na política acima: adicionar
+Pontos que o Nycode precisa mudar em `ci.yml` e `npm-audit.yml` para passar na política acima: adicionar
 `permissions: {}` no topo e por job, adicionar `merge_group`, trocar `cancel-in-progress: true` por
 `${{ github.event_name == 'pull_request' }}` (um push em main ou uma tag não deve ser cancelado por outro) e fixar o
 runner em `ubuntu-24.04`. Os `harden-runner` com lista de destinos entram por job; a lista do `build-check` e do `test`
@@ -140,7 +140,7 @@ Os jobs são independentes e rodam em paralelo no GitHub; "ordem" vale para trê
    tudo, porque um checador quebrado não pode atestar o repositório) e as etapas rodam todas, acumulando falhas.
 2. No `local.sh` (seção 7): hoje roda `ci-static` (46 s), `ci-security` (14 s) e `instruction-budget` (menos de 1 s),
    tempos medidos em 2026-11-15 (`docs/ci-local.md`). **Proposta:** a ordem passa a ser `instruction-budget`,
-   `ci-security`, `ci-static`, `build-check`, `test`, para falhar cedo. Tempos do nycode **não verificados**.
+   `ci-security`, `ci-static`, `build-check`, `test`, para falhar cedo. Tempos do Nycode **não verificados**.
 3. No `bench-pr`: **proposta**, o poster só inicia uma rodada depois de `ci-static`, `ci-security` e `build-check`
    estarem verdes no head. Hoje o `bench-pr.sh` não consulta os outros checks (`bench/tools/bench-pr.sh`), então um PR
    que reprova em segundos ainda gasta US$ da rodada.
@@ -165,7 +165,7 @@ Legenda: **igual** (sem mudança além de nome), **caminho** (muda de→para), *
   `bench/`, `scripts/` e `resources/hooks/`; `apps/` fora (D-23).
 - **4**. Etapa (nome no script): `mypy --strict` (alterados). Destino: igual. O que muda: nenhuma.
 - **5**. Etapa (nome no script): `biome (changed extensions ts)`. Destino: absorvida. O que muda: o Biome do fork
-  (tabulação, 120) em `npm run check`; o do nycode-harness some (D-06).
+  (tabulação, 120) em `npm run check`; o do harness Nycode some (D-06).
 - **6**. Etapa (nome no script): `shellcheck -x` (alterados). Destino: igual. O que muda: nenhuma.
 - **7**. Etapa (nome no script): `shfmt -i 2 -d` (alterados). Destino: igual. O que muda: nenhuma. Os passos 6 e 7 pulam
   os `.sh` do upstream que têm costura `ativa` em `scripts/fork/seams.txt` (lista em `scripts/ci/seams/seam-files.sh`) e
@@ -190,8 +190,8 @@ Legenda: **igual** (sem mudança além de nome), **caminho** (muda de→para), *
   o `pi` instalado; **proposta:** não portar.
 
 A tabela tem 19 linhas (0 a 18): o autoteste inicial, que não usa `step`, e 18 linhas para as 19 chamadas a `step`,
-porque a linha 3 junta `ruff check` e `ruff format`. A etapa 5 do nycode-harness só olhava
-`extensions/*.ts`; no nycode o `npm run check` cobre os `packages/*/src`, `packages/*/test` e exemplos (lista
+porque a linha 3 junta `ruff check` e `ruff format`. A etapa 5 do harness Nycode só olhava
+`extensions/*.ts`; no Nycode o `npm run check` cobre os `packages/*/src`, `packages/*/test` e exemplos (lista
 `files.includes` de `biome.json`).
 
 Os passos `criterio2` (D-41) e `residuo` (D-45) rodam depois de `core-scope`: `scripts/ci/lint/residuo/residuo.py` falha em
@@ -210,15 +210,15 @@ O `mutation` (`run-static.sh mutation`) é o outro modo do script: seção 5.3.
   `hash-pin`) vai junto.
 - **5**. Etapa: `gitleaks + trufflehog (check-leaks)`. Destino: caminho. O que muda: seção 3.7.
 - **6**. Etapa: `trufflehog history --only-verified`. Destino: caminho. O que muda: `--exclude-paths` cita
-  `atualizador/...`, que não existe no nycode; trocar pelo mapa de fixtures.
+  `atualizador/...`, que não existe no Nycode; trocar pelo mapa de fixtures.
 - **7**. Etapa: `semgrep --error`. Destino: igual. O que muda: imagem por digest (seção 6.2); `--exclude
   scripts/fixtures/leak`.
-- **8**. Etapa: `osv-scanner`. Destino: caminho. O que muda: lockfiles do nycode (seção 6.3);
+- **8**. Etapa: `osv-scanner`. Destino: caminho. O que muda: lockfiles do Nycode (seção 6.3);
   `scripts/ci/osv-scanner.toml`.
 
 São 8 chamadas a `step`; a primeira é o autoteste (também acessível por `--selftest`). Em CI o `PI_HARNESS_IDENTIFIERS`
 aponta para um arquivo
-vazio (`run-security.sh`, função `leaks`); no nycode a variável vira `NYCODE_HARNESS_IDENTIFIERS` (D-09 proíbe ler
+vazio (`run-security.sh`, função `leaks`); no Nycode a variável vira `NYCODE_HARNESS_IDENTIFIERS` (D-09 proíbe ler
 `PI_*` em tempo de execução, mas o script é ferramenta do repositório, como `BENCH_*`; decisão de nome **proposta**).
 
 ### 3.3 `scripts/ci/lint/core_scope.py` e `skill_lint.py`
@@ -234,30 +234,30 @@ vazio (`run-security.sh`, função `leaks`); no nycode a variável vira `NYCODE_
 
 ### 3.4 `instruction_budget.py` e a linha de base
 
-- **Fontes contadas**. nycode-harness: `claude-home/CLAUDE.md`, `claude-home/rules/*.md`, `name` e `description` de cada
-  `SKILL.md` e agente. nycode alvo: `resources/instructions/*.md`, `resources/rules/*.md` e o frontmatter de
+- **Fontes contadas**. harness Nycode: `claude-home/CLAUDE.md`, `claude-home/rules/*.md`, `name` e `description` de cada
+  `SKILL.md` e agente. Nycode alvo: `resources/instructions/*.md`, `resources/rules/*.md` e o frontmatter de
   `resources/skills` e `resources/agents` (02, seção 6).
-- **Estimador**. nycode-harness: `ceil(bytes_utf8/3.5)`. nycode alvo: igual.
-- **Falha**. nycode-harness: total acima do baseline, exit 1; rótulo `budget-increase` libera; exit 2 entrada inválida. nycode
+- **Estimador**. harness Nycode: `ceil(bytes_utf8/3.5)`. Nycode alvo: igual.
+- **Falha**. harness Nycode: total acima do baseline, exit 1; rótulo `budget-increase` libera; exit 2 entrada inválida. Nycode
   alvo: igual.
-- **Linha de base**. nycode-harness: `scripts/ci/instruction_budget.baseline.json` (versão 1). nycode alvo: mesmo caminho,
+- **Linha de base**. harness Nycode: `scripts/ci/instruction_budget.baseline.json` (versão 1). Nycode alvo: mesmo caminho,
   **regravada** com `update` depois do corte de F8.
 
 02 (seção 6) torna o orçamento obrigatório e diz que o texto sempre carregado não pode crescer com a mudança de lugar.
 Como as instruções passam a vir de `contract.md`, `headless.md` e `lite.md` (e não de `CLAUDE.md`), o primeiro baseline
-do nycode **só vale depois** da cópia byte a byte das instruções: o total do baseline atual do nycode-harness **não foi lido**.
+do Nycode **só vale depois** da cópia byte a byte das instruções: o total do baseline atual do harness Nycode **não foi lido**.
 O rótulo `budget-increase` é lido de `GITHUB_EVENT_PATH`, por isso o workflow escuta `labeled` e `unlabeled`.
 
 ### 3.5 `structure_changed.py` e a lista de base do upstream (D-06)
 
 O script falha em PR quando um arquivo de código alterado passa de 800 linhas ou um diretório com arquivo alterado
-passa de 7 arquivos de código; o legado não alterado nunca bloqueia. Para o nycode:
+passa de 7 arquivos de código; o legado não alterado nunca bloqueia. Para o Nycode:
 
 - **Fonte da lista de sufixos de código**. De: `claude-home/bin/structure/structure.py`. Para:
   `packages/coding-agent/resources/bin/structure/structure.py` (D-53 **supera** `scripts/ci/lint/structure/`; anexo E, regra C09; F10 converteu; a proposta de `scripts/harness/` caiu: as instruções
   embarcadas já citavam este caminho). `structure_changed.py` carrega a lista daí e mantém `DEFAULT_SUFFIXES` como cópia,
   fixada por teste.
-- **Alcance do limite (D-06)**. De: todo arquivo alterado. Para: só arquivos criados pelo nycode (lista em 02, seção 9).
+- **Alcance do limite (D-06)**. De: todo arquivo alterado. Para: só arquivos criados pelo Nycode (lista em 02, seção 9).
 - **Lista de base do upstream**. De: não existe. Para: `scripts/ci/lint/structure-upstream.txt`: arquivo do upstream
   alterado fica isento.
 - **Código importado acima do limite**. De: n/a. Para: entra na lista de base no commit de cópia, sai ao ser dividido
@@ -279,26 +279,26 @@ existe, se a linha é marcada `(optional)`, ou se está em `scripts/refs-allow.t
   `docs/specs/`, `resources/hooks/fixtures/`; a terceira some (patches viram fonte).
 - **Marcador de caminho**. De: `$CLAUDE_CONFIG_DIR/...`, `~/.pi/agent/claude-home/...`. Para: `${NYCODE_RESOURCES}` (02,
   seção 6); a validação do marcador é **proposta**.
-- **`scripts/refs-allow.txt`**. De: entradas do nycode-harness. Para: revisar uma a uma; conteúdo **não lido**.
+- **`scripts/refs-allow.txt`**. De: entradas do harness Nycode. Para: revisar uma a uma; conteúdo **não lido**.
 
-Local: o script mora em `scripts/check-refs.py` no nycode-harness; em `run-static.sh` é chamado como `scripts/check-refs.py`.
+Local: o script mora em `scripts/check-refs.py` no harness Nycode; em `run-static.sh` é chamado como `scripts/check-refs.py`.
 Destino sugerido: `scripts/ci/check-refs.py` (**proposta**, junto dos demais verificadores; atualiza o `run-static.sh`).
 
 ### 3.7 `check-leaks.sh` e o gancho de commit
 
-- **Modos**. nycode-harness: `--tree` (padrão), `--staged FILES...`, `--history`, `--selftest`. nycode alvo: iguais.
-- **Configuração gitleaks**. nycode-harness: `.gitleaks.toml` e `.leak-allow`. nycode alvo: o nycode usa `.gitleaksignore`
+- **Modos**. harness Nycode: `--tree` (padrão), `--staged FILES...`, `--history`, `--selftest`. Nycode alvo: iguais.
+- **Configuração gitleaks**. harness Nycode: `.gitleaks.toml` e `.leak-allow`. Nycode alvo: o Nycode usa `.gitleaksignore`
   (fingerprints, 3 linhas lidas); os dois mecanismos coexistem até F2 (**proposta:** manter `.gitleaks.toml` e converter
   as 3 entradas).
-- **trufflehog**. nycode-harness: 3.99.9, sha256 verificado em `install_trufflehog`. nycode alvo: igual; vem de
+- **trufflehog**. harness Nycode: 3.99.9, sha256 verificado em `install_trufflehog`. Nycode alvo: igual; vem de
   `install-tools.sh`.
-- **Gancho**. nycode-harness: `.githooks/pre-commit` mais `.pre-commit-config.yaml`. nycode alvo: `.husky/pre-commit` do fork
+- **Gancho**. harness Nycode: `.githooks/pre-commit` mais `.pre-commit-config.yaml`. Nycode alvo: `.husky/pre-commit` do fork
   chama `check-leaks.sh --staged` (02, seção 8).
-- **Identificadores pessoais**. nycode-harness: `PI_HARNESS_IDENTIFIERS` (vazio em CI). nycode alvo: variável renomeada (seção
+- **Identificadores pessoais**. harness Nycode: `PI_HARNESS_IDENTIFIERS` (vazio em CI). Nycode alvo: variável renomeada (seção
   3.2).
 
-O `.husky/pre-commit` do nycode hoje roda `node scripts/check-lockfile-commit.mjs`, `npm run check` e, se existir
-`apps/p2`, `npm --prefix apps/p2 run check`. Os 8 alertas de secret scanning do nycode (D-16) são decisão do dono em F0;
+O `.husky/pre-commit` do Nycode hoje roda `node scripts/check-lockfile-commit.mjs`, `npm run check` e, se existir
+`apps/p2`, `npm --prefix apps/p2 run check`. Os 8 alertas de secret scanning do Nycode (D-16) são decisão do dono em F0;
 `plan.md` aparece no `.gitleaksignore` com fingerprint `generic-api-key`.
 
 ## 4. Quadro dos scripts que não mudam de papel
@@ -306,7 +306,7 @@ O `.husky/pre-commit` do nycode hoje roda `node scripts/check-lockfile-commit.mj
 - **`scripts/ci/changed-files.sh`**. Papel: lista de arquivos alterados contra `BASE_SHA`. Observação: Base: PR base,
   `merge_group.base_sha` ou `event.before`; sem isso, merge-base com `origin/main`.
 - **`scripts/ci/install-tools.sh`**. Papel: instala binários por sha256. Observação: Lista no `ci-static`: shellcheck,
-  shfmt, biome, rg; no `ci-security`: actionlint, gitleaks, trufflehog, osv-scanner, shellcheck, rg. O `biome` do nycode-harness
+  shfmt, biome, rg; no `ci-security`: actionlint, gitleaks, trufflehog, osv-scanner, shellcheck, rg. O `biome` do harness Nycode
   sai (D-06).
 - **`scripts/ci/requirements-ci.in` e `.txt`**. Papel: pins Python com hash. Observação: `ruff==0.17.5`, `mypy==2.4.1`,
   `zizmor==1.32.0`, `diff-cover==11.0.1`, `mutmut==3.8.1`, `coverage`, `pytest`, `pyyaml`.
@@ -334,27 +334,27 @@ Um gate local mede cobertura de Node: `claude-home/bin/tests/terminal-sota/gate.
 Destino Python: os caminhos de `pytest` passam a `scripts packages/coding-agent/resources/hooks scripts/harness bench` (D-53 acrescenta `packages/coding-agent/resources/bin`).
 `diff-cover` continua com as exclusões de `bench/suites`.
 
-### 5.2 TypeScript no nycode
+### 5.2 TypeScript no Nycode
 
 Fato: `vitest` `4.1.12` está em `packages/coding-agent/package.json:77`; a raiz tem `vitest.base.ts`. Nenhum
 `package.json` de raiz nem de `packages/*`, `vitest.base.ts` ou `vitest*.ts` de pacote cita `coverage`. Se
 `@vitest/coverage-*` está instalado em algum pacote: **não verificado** (a busca cobriu esses arquivos, não o
-`package-lock.json`). Hoje, portanto, o nycode não mede cobertura.
+`package-lock.json`). Hoje, portanto, o Nycode não mede cobertura.
 
 **Proposta** (D-24 aplicado a TypeScript):
 
-1. Cada pacote que recebe código do nycode-harness roda `vitest run --coverage` com o provedor `v8`, dependência de
+1. Cada pacote que recebe código do harness Nycode roda `vitest run --coverage` com o provedor `v8`, dependência de
    desenvolvimento em versão exata (o `check:pinned-deps` exige).
 2. O relatório sai em formato que o `diff-cover` leia (Cobertura XML é a aposta; a lista de formatos de `diff-cover`
    11.0.1 e o relatório `cobertura` do vitest **não foram verificados**: conferir na primeira unidade de F3).
 3. `diff-cover --fail-under 80 --compare-branch=$BASE_SHA` sobre as linhas alteradas, com escopo só nos arquivos criados
-   pelo nycode da seção 9 de 02 (`src/extensions/**`, `src/core/permissions/`, `src/migrations/`). Arquivos do upstream
+   pelo Nycode da seção 9 de 02 (`src/extensions/**`, `src/core/permissions/`, `src/migrations/`). Arquivos do upstream
    ficam de fora, como na lista de base de estrutura.
 4. O vitest completo nunca roda direto no repositório: o `AGENTS.md:52` do fork manda usar `./test.sh`, porque a suíte
    inclui e2e que se ativam com variáveis de ambiente. O comando de cobertura passa pelo mesmo `test.sh`.
 5. Onde o relatório roda: um check dentro de `test (coding-agent)`, não um check novo (D-05 não cresce).
 
-Até a primeira medição, a cobertura TypeScript do nycode é "sem medida".
+Até a primeira medição, a cobertura TypeScript do Nycode é "sem medida".
 
 ### 5.3 O que o `ci-mutation` roda
 
@@ -366,7 +366,7 @@ Até a primeira medição, a cobertura TypeScript do nycode é "sem medida".
 - O arquivo `mutmut-baseline.json` não aparece na listagem de `scripts/ci/` de `origin/main`, então hoje nenhum
   arquivo tem linha de base e o job só informa; o script tolera a ausência (`jq ... || true`).
 - Quando o mutmut não mapeia os testes aos mutantes, o job avisa e só reprova se o arquivo constar da linha de base.
-- Não há mutação para TypeScript no nycode-harness nem no nycode: **sem medida**.
+- Não há mutação para TypeScript no harness Nycode nem no Nycode: **sem medida**.
 
 O job continua não obrigatório (45 min de teto) e roda em PR e `merge_group`; `local.sh --mutation` o reproduz.
 
@@ -376,7 +376,7 @@ O job continua não obrigatório (45 min de teto) e roda em PR e `merge_group`; 
 
 - Toda `uses:` por SHA de 40 hex (ou `docker://...@sha256:`), com o número da versão em comentário. O
   `run-security.sh` reprova pin ausente (`check_pins`, linhas 27-39). Os SHAs atuais: checkout `3d3c42e`, setup-python
-  `6d4fd22`, setup-node `949feb2` no nycode-harness e `8207627` no nycode (versões distintas do mesmo action: unificar em F3),
+  `6d4fd22`, setup-node `949feb2` no harness Nycode e `8207627` no Nycode (versões distintas do mesmo action: unificar em F3),
   codeql-action `33d7b85` (v4.39.3), scorecard-action `fa7117d` (v2.5.0).
 - `step-security/harden-runner` `1d88384` (v2.22.4), `egress-policy: block`, destinos por job.
 - `actionlint` e `zizmor` (política `hash-pin` em `.github/zizmor.yml`) validam os workflows.
@@ -393,23 +393,23 @@ O job continua não obrigatório (45 min de teto) e roda em PR e `merge_group`; 
 
 ### 6.3 Dependências
 
-- **Instalação**. nycode-harness: `npm ci --ignore-scripts` no `install.sh` e no CI. nycode: `npm ci --ignore-scripts`
+- **Instalação**. harness Nycode: `npm ci --ignore-scripts` no `install.sh` e no CI. Nycode: `npm ci --ignore-scripts`
   (`ci.yml`). Alvo: igual; `.npmrc` com `save-exact=true`.
-- **Versões exatas**. nycode-harness: pins no `npm/package.json`. nycode: `scripts/check-pinned-deps.mjs` em `npm run check`.
+- **Versões exatas**. harness Nycode: pins no `npm/package.json`. Nycode: `scripts/check-pinned-deps.mjs` em `npm run check`.
   Alvo: mantém; vale também para as dependências novas das extensões.
-- **Idade mínima**. nycode-harness: cooldown de 7 dias no Dependabot. nycode: `.npmrc`: `min-release-age=2`, exceção
+- **Idade mínima**. harness Nycode: cooldown de 7 dias no Dependabot. Nycode: `.npmrc`: `min-release-age=2`, exceção
   `@earendil-works/*`. Alvo: os dois (o `.npmrc` vale para instalação; o cooldown, para o PR do Dependabot).
-- **Lockfile**. nycode-harness: n/a. nycode: `.husky/pre-commit` chama `check-lockfile-commit.mjs`;
+- **Lockfile**. harness Nycode: n/a. Nycode: `.husky/pre-commit` chama `check-lockfile-commit.mjs`;
   `NYCODE_ALLOW_LOCKFILE_CHANGE=1` libera. Alvo: mantém; só local (o CI falha por `npm ci` fora de sincronia).
-- **Auditoria PR**. nycode-harness: `osv-scanner` (CVSS >= 7 ou sem nota = falha), exceções com dono e prazo em
-  `osv-scanner.toml`. nycode: nenhuma em PR. Alvo: `osv-scanner` sobre os 5 `package-lock.json`.
-- **Auditoria diária**. nycode-harness: n/a. nycode: `npm-audit.yml`: `scripts/npm-audit.mjs` (nível `moderate`, só produção,
+- **Auditoria PR**. harness Nycode: `osv-scanner` (CVSS >= 7 ou sem nota = falha), exceções com dono e prazo em
+  `osv-scanner.toml`. Nycode: nenhuma em PR. Alvo: `osv-scanner` sobre os 5 `package-lock.json`.
+- **Auditoria diária**. harness Nycode: n/a. Nycode: `npm-audit.yml`: `scripts/npm-audit.mjs` (nível `moderate`, só produção,
   exceções em `acceptedAdvisories`, hoje `{}`) e `npm audit signatures --omit=dev`. Alvo: mantém.
-- **Dependabot**. nycode-harness: `github-actions` em `/` e `npm` em `/npm`, semanal, espera de 7 dias, agrupado. nycode: não
+- **Dependabot**. harness Nycode: `github-actions` em `/` e `npm` em `/npm`, semanal, espera de 7 dias, agrupado. Nycode: não
   existe. Alvo: `github-actions` em `/` e `npm` nos diretórios dos 5 lockfiles (**proposta**); mesma espera e
   agrupamento.
 
-Lockfiles do nycode (`git ls-files`): raiz, três de `packages/coding-agent/examples/extensions/*` e
+Lockfiles do Nycode (`git ls-files`): raiz, três de `packages/coding-agent/examples/extensions/*` e
 `packages/coding-agent/install-lock/`.
 
 **Unificar `osv-scanner` e `npm-audit.mjs`** (**proposta**): os dois limites divergem (CVSS >= 7 contra `moderate`).
@@ -419,15 +419,15 @@ listas separadas. A implementação (o `.mjs` ler o `.toml`) não foi desenhada 
 
 ### 6.4 CodeQL (D-20) e Scorecard
 
-- O nycode tem o "default setup" configurado para `actions` e `rust`, semanal ([anexo
+- O Nycode tem o "default setup" configurado para `actions` e `rust`, semanal ([anexo
   D](anexos/D-regras-github-brutas.md),
-  seção 5). Em F3: levar `codeql.yml` do nycode-harness (matriz `javascript-typescript`, `python`, `actions`,
+  seção 5). Em F3: levar `codeql.yml` do harness Nycode (matriz `javascript-typescript`, `python`, `actions`,
   `build-mode: none`, `fail-fast: false`) e desligar o default setup, que ficaria preso em `rust`. Como desligar
   (interface
   ou API do GitHub) **não foi verificado**; é uma ação de escrita no repositório do dono, de responsabilidade do
   executor de F3.
-- `python` continua na matriz porque o `bench/` e os `scripts/` do nycode-harness entram (D-23 deixa `apps/` de fora dos gates).
-- Scorecard: o workflow roda só em push na main, cron e manual; precisa de `id-token: write` para publicar. O nycode-harness tem
+- `python` continua na matriz porque o `bench/` e os `scripts/` do harness Nycode entram (D-23 deixa `apps/` de fora dos gates).
+- Scorecard: o workflow roda só em push na main, cron e manual; precisa de `id-token: write` para publicar. O harness Nycode tem
   2 alertas abertos de Scorecard (SAST e CII-Best-Practices, anexo D, seção 5); o critério 8 de [00](00-mega-plano.md)
   pede nenhum alerta que o código possa fechar.
 
@@ -449,12 +449,12 @@ listas separadas. A implementação (o `.mjs` ler o `.toml`) não foi desenhada 
 
 ## 7. CI local (`docs/ci-local.md`, `scripts/ci/local.sh`)
 
-O `local.sh` do nycode-harness roda `ci-static`, `ci-security` e `instruction-budget` com os mesmos scripts, binários fixados e
+O `local.sh` do harness Nycode roda `ci-static`, `ci-security` e `instruction-budget` com os mesmos scripts, binários fixados e
 pacotes Python com hash, num `HOME` descartável (`--mutation` acrescenta `ci-mutation`). Limite de 900 s para o conjunto
 (`CI_LOCAL_MAX_S`), cache em `~/.cache/ny-pi-ci`, base em `BASE_SHA` (padrão `origin/main`), saída 0/1/124. `--post`
 publica cada gate como commit status no HEAD, exigindo árvore limpa e HEAD já publicado (exit 2 se não).
 
-No nycode o script ganha dois gates:
+No Nycode o script ganha dois gates:
 
 - **`build-check`**. Comando: `npm ci --ignore-scripts && npm run build && npm run check`. Observação: O `check` local
   mantém `--write`.
@@ -466,14 +466,14 @@ contextos de `--post` seguem os do CI (`test (coding-agent)` etc.) só se o scri
 local publica um único `test` e o ruleset aceita o contexto local só em contingência (ver abaixo).
 
 Mudanças de nome: cache `~/.cache/nycode-ci` (**proposta**), `BENCH_REPO` do `--post` aponta para o nycode. O limite de
-900 s pode não caber build mais testes do nycode: **não medido**.
+900 s pode não caber build mais testes do Nycode: **não medido**.
 
 ### 7.1 Regra "verificar uma vez antes do commit"
 
 Do contrato de trabalho (`claude-home/CLAUDE.md`, seção Verification): durante o trabalho só se lê e edita; checks que
 não compilam nada e terminam em segundos (formatador nos arquivos editados, `lsp_diagnostics`) são livres. Antes do
 commit roda-se a verificação completa **uma vez**: build, gates do repositório, cobertura e toda suíte que os workflows
-rodam. Falhou, corrige, repete só o que falhou e fecha com o gate final no head exato. No nycode isto se traduz, de
+rodam. Falhou, corrige, repete só o que falhou e fecha com o gate final no head exato. No Nycode isto se traduz, de
 acordo com `AGENTS.md:44-52`:
 
 1. `npm run check` (saída completa; não roda testes) depois de mudar código.
@@ -484,10 +484,10 @@ O local não prova o CI remoto, nem o `bench-pr`, nem estado de produção.
 
 ### 7.2 Contingência sem CI remoto
 
-`docs/ci-local.md` do nycode-harness (decisão de 2026-11-15) descreve usar `local.sh --mutation --post` quando o remoto não
+`docs/ci-local.md` do harness Nycode (decisão de 2026-11-15) descreve usar `local.sh --mutation --post` quando o remoto não
 roda por cobrança. Ela vale só com a autorização permanente que o dono registrou; um check remoto vermelho não é coberto
 por status local verde, e o caminho de desligar workflows **não foi exercitado** com falha real. O doc migra para
-`docs/ci-local.md` do nycode com os nomes novos. Nunca `--admin` nem desligar a proteção.
+`docs/ci-local.md` do Nycode com os nomes novos. Nunca `--admin` nem desligar a proteção.
 
 ## 8. Job `merge-policy` (D-07)
 
@@ -549,17 +549,17 @@ Pontos em aberto (nenhum resolvido aqui):
   foi lido.
 - O job não pode impedir o merge (roda depois); é auditoria. O ruleset continua com PR obrigatório, sem exclusão de
   ramo e sem push forçado (D-07).
-- `allow_merge_commit` hoje é `true` no nycode e `false` no nycode-harness; o conjunto de métodos fica em 04.
+- `allow_merge_commit` hoje é `true` no Nycode e `false` no harness Nycode; o conjunto de métodos fica em 04.
 
 ## 9. Ordem de ativação em F3, aceite e riscos
 
 ### 9.1 Ordem
 
-1. Levar os workflows e `scripts/ci/` para o nycode com os caminhos da seção 3, **sem** torná-los obrigatórios; ajustar
+1. Levar os workflows e `scripts/ci/` para o Nycode com os caminhos da seção 3, **sem** torná-los obrigatórios; ajustar
    `ci.yml` e `npm-audit.yml` (seção 2.3). Rodar `local.sh` no head.
 2. Instalar o poster local: `bench-pr.sh`, `bench-nightly.sh` e `vanilla-retest.sh` em `~/.local/bin`, units em
    `~/.config/systemd/user`, env em `~/.config/nycode/bench.env` (modo 0600; detalhe em 09, seção 3).
-3. Medir a referência do nycode-harness sobre o pi 1.6.0 (D-25) e regravar `docs/bench/baseline-main` por PR (09, seções 6 e 7).
+3. Medir a referência do harness Nycode sobre o pi 1.6.0 (D-25) e regravar `docs/bench/baseline-main` por PR (09, seções 6 e 7).
 4. Levar `codeql.yml` e desligar o default setup (D-20); levar `scorecard.yml` e `merge-policy.yml`.
 5. Abrir o PR de teste (seção 9.2). Só com o primeiro `bench-pr` verde e a baseline commitada, ativar o ruleset `main`
    com os 10 contextos e a política de métodos de D-07 e remover a proteção clássica. Ativar antes travaria todo PR
@@ -580,9 +580,9 @@ Pontos em aberto (nenhum resolvido aqui):
 
 ### 9.3 Riscos
 
-- **Tempo de CI maior (build, vitest, CodeQL, Docker do semgrep)**. Efeito: Fila de PR lenta; o nycode-harness mede 46 s e 14 s
-  só nos gates Python. Contenção: Medir os jobs do nycode no PR de teste; cache de npm já existe (`cache: npm`); tempos
-  do nycode **não medidos**.
+- **Tempo de CI maior (build, vitest, CodeQL, Docker do semgrep)**. Efeito: Fila de PR lenta; o harness Nycode mede 46 s e 14 s
+  só nos gates Python. Contenção: Medir os jobs do Nycode no PR de teste; cache de npm já existe (`cache: npm`); tempos
+  do Nycode **não medidos**.
 - **Custo do `bench-pr`**. Efeito: Cada PR funcional gasta estimados US$ 6,72 no olhar 1 (09, seção 6), até US$ 18 com a
   extensão. Contenção: Poster só depois de `ci-static`, `ci-security` e `build-check` (proposta 2.4); D-21 pula o que
   não é funcional.
@@ -606,5 +606,5 @@ lido.
 PR aberto mais antigo estiver sem `bench-pr` há mais de 2 h; (2) procedimento: conferir `list-timers`, ler o
 `journalctl`, conferir o token OAuth (o braço recusa quando faltam menos de 30 min de validade,
 `bench/arms/oauth-token.sh`), conferir espaço livre (`BENCH_MIN_FREE_GB`, padrão 30) e rodar `bench-pr.sh --pr N` à
-mão; (3) se a máquina ficar indisponível por mais que o aceitável, a contingência é do dono; o nycode-harness não definiu
+mão; (3) se a máquina ficar indisponível por mais que o aceitável, a contingência é do dono; o harness Nycode não definiu
 tempo máximo. Contornar o ruleset nunca é saída.

@@ -26,7 +26,7 @@ item 3 e a rede do item 1, que valem para toda sessão.
 | 2 | Sem interface, `question` não fica ativa. Rede: o erro de UI vira "escreva as perguntas, cada uma terminada em `?`, na resposta final e encerre o turno sem alterar arquivos". | `session_start`, `tool_result` |
 | 3 | Pedido Anthropic: a seção `<cwd>` sai do bloco de sistema em cache e vai para um bloco final sem `cache_control`. O bloco em cache fica byte-idêntico entre diretórios; nenhum ponto de cache é criado e os demais blocos mantêm a ordem. Payload em outro formato segue intacto (`PI_HEADLESS_LEAN_DEBUG=1` escreve o motivo no stderr). | `before_provider_request` |
 | 4 | Sem interface, o título de sessão não é gerado (`CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1`, salvo valor já definido). | `session_start` |
-| 7 | Na sessão headless de topo (critério do item 6), `subagent`, `memory` e `lsp_*` não ficam ativas: 0 de 2.091 chamadas em 263 sessões guardadas do nycode-harness (Terminal-Bench e gates, 2026-11-16) e 0 chamadas de `subagent` em 168 sessões `pi -p` de topo do Terminal-Bench (2026-11-18); os esquemas pesam no prefixo fixo (`subagent` ~800 tokens). A decisão de 2026-11-18 de manter `subagent` foi substituída em 2026-11-19 (dono: custo x benefício acima de tudo). `PI_HEADLESS_TOOLS=all` mantém as três; subagentes (depth 1 ou mais, também sem interface) ficam fora do corte. Efeito em acerto, custo e tokens da 1ª requisição: a medir no gate de benchmark. | `session_start` |
+| 7 | Na sessão headless de topo (critério do item 6), `subagent`, `memory` e `lsp_*` não ficam ativas: 0 de 2.091 chamadas em 263 sessões guardadas do harness Nycode (Terminal-Bench e gates, 2026-11-16) e 0 chamadas de `subagent` em 168 sessões `pi -p` de topo do Terminal-Bench (2026-11-18); os esquemas pesam no prefixo fixo (`subagent` ~800 tokens). A decisão de 2026-11-18 de manter `subagent` foi substituída em 2026-11-19 (dono: custo x benefício acima de tudo). `PI_HEADLESS_TOOLS=all` mantém as três; subagentes (depth 1 ou mais, também sem interface) ficam fora do corte. Efeito em acerto, custo e tokens da 1ª requisição: a medir no gate de benchmark. | `session_start` |
 | 8 | Na sessão headless de topo, `todo` não fica ativa e a seção `<docs>` (caminhos da documentação do pi) sai do prompt; `PI_HEADLESS_TRIM=0` desliga, `PI_HEADLESS_TOOLS=all` mantém `todo`. | `packages/coding-agent/src/extensions/headless-lean`, `session_start`, `before_provider_request` |
 | 5 | Contrato: fora do modo plano, "planeje antes" é plano curto e implementação no mesmo turno, salvo pedido contraditório ou com escolha em aberto; sem interface, as perguntas vão na resposta final. | `packages/coding-agent/resources/instructions/contract.md`, Delivery |
 
@@ -123,7 +123,7 @@ corte e do produto: `personal.md` (~2.500 tok) é do overlay do dono; reduzi-lo 
 
 ## Testes
 
-- `packages/coding-agent/test/harness/extensions/headless-lean/index.test.ts` (no nycode-harness: `node --experimental-strip-types --test extensions/headless-lean/index.test.ts`; o executor no nycode é definido na conversão do teste, F7)
+- `packages/coding-agent/test/harness/extensions/headless-lean/index.test.ts` (no harness Nycode: `node --experimental-strip-types --test extensions/headless-lean/index.test.ts`; o executor no Nycode é definido na conversão do teste, F7)
 
 ## Reverter
 

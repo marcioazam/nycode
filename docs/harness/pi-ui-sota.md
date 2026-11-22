@@ -1,4 +1,4 @@
-# UI SOTA no nycode (2026-11-12)
+# UI SOTA no Nycode (2026-11-12)
 
 Origem: auditoria deep-search `/tmp/deep-search/01a1d1e7-8117-7169-9fd0-3639dc291e2b-cli-harness-ui/REPORT.md`
 (ledger `LEDGER.json`). Decisões do usuário: sem paleta de comandos (o `/` já lista), som de fim de turno
@@ -83,7 +83,7 @@ Remover `extensions/ui/`, restaurar `rename.ts`, reverter os três patches (`pat
   `subagent-nesting.patch` visto nesta etapa era falso positivo do wrapper (resolvido na rodada final).
 - `structure.py` em `extensions/`: a raiz tinha 9 arquivos de código (limite 7, preexistente); a remoção do
   `rename.ts` e a mudança de `bypass-permissions.ts` para `bypass-permissions/index.ts` (só o caminho; comentário
-  em `hooks/guard.py:31` atualizado) a deixam com 7: `findings: []`. O nycode carrega `bypass-permissions` (visto no tmux).
+  em `hooks/guard.py:31` atualizado) a deixam com 7: `findings: []`. O Nycode carrega `bypass-permissions` (visto no tmux).
 - Gate intermediário desta etapa: contagens superadas; o estado vale só pela seção "Estado final verificado".
 - `mono.json`: as 56 cores do `dark.json` embutido, todas `""`.
 - Ao vivo (tmux, `nycode --no-session`, repo git descartável em `/tmp/uit`): `?` abriu o painel de atalhos (com
@@ -144,7 +144,7 @@ Arquivos em `patches/pi-code/` (`*.patch`, `orig/`, `*.test.ts`); esquema do `go
   falha mantém o código e nunca cancela a navegação. O `/rewind` marca uma flag em volta do `navigateTree`, para
   não perguntar duas vezes. Modo novo "Summarize from here": `navigateTree(id, { summarize: true })`, código intacto.
   Para o Esc Esc abrir o `/tree`: `doubleEscapeAction: "tree"` em settings.json (já é o que o plano prevê).
-- **todo-collapse** (`todo.ts`): `ctrl+shift+t` (livre: nenhum default do nycode 1.5.2 em docs/dist, nenhum `registerShortcut`
+- **todo-collapse** (`todo.ts`): `ctrl+shift+t` (livre: nenhum default do Nycode 1.5.2 em docs/dist, nenhum `registerShortcut`
   do pi-code ou de `~/.nycode/agent/extensions`; `alt+shift+t` é só a árvore de sessões) alterna lista ↔
   `Todos 3/7 · ◐ atual`. Estado por processo; sem todos, não faz nada.
 - **notify-focus** (`notify.ts`): `nycode.events?.on('pi-ui:terminal-focus')`; foco `true` não notifica, `false` notifica
@@ -163,8 +163,8 @@ PageUp, clique leva ao prompt, some quando o prompt está visível. Custo: zero 
 
 ## Correção 2026-11-12: NO_COLOR gravava o tema mono para sempre
 
-- **Sintoma**: o nycode inteiro perdeu as cores; `settings.json` tinha `"theme": "mono"`.
-- **Causa**: `ui/a11y.ts` chamava `ctx.ui.setTheme('mono')`. Por nome, o nycode 1.5.2 também grava o tema
+- **Sintoma**: o Nycode inteiro perdeu as cores; `settings.json` tinha `"theme": "mono"`.
+- **Causa**: `ui/a11y.ts` chamava `ctx.ui.setTheme('mono')`. Por nome, o Nycode 1.5.2 também grava o tema
   (`interactive-mode.js`: `setThemeName` e depois `settingsManager.setTheme`). O E2E `NO_COLOR=1 nycode --no-session`
   da validação acima rodou uma vez e deixou o mono salvo para todas as sessões seguintes.
 - **Conserto**: `ctx.ui.getTheme('mono')` e `ctx.ui.setTheme(<objeto Theme>)` (`setThemeInstance`, não grava).
