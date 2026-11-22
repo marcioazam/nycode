@@ -657,106 +657,116 @@ function random(seed: number): { int(below: number): number; chance(p: number): 
 	return { int: (below) => Math.floor(next() * below), chance: (p) => next() < p };
 }
 
+/**
+ * One seed is CPU-bound (about 0.2 to 1.0 s idle on a 24-thread machine, 4.6 s with 24 busy loops sharing it), so the 5 s
+ * default fails on a loaded 4-vCPU CI runner; this is 6x the loaded measurement.
+ */
+const SEED_TIMEOUT_MS = 30_000;
+
 describe("the invariant, with two owners and commit groups", () => {
 	for (const seed of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]) {
-		it(`after every adoption the value is a gapless prefix of the true order, row by row (seed ${seed})`, async () => {
-			const first = 2 + (seed % 2);
-			const { sessions, club, filler, screen, probe, grouped, close } = await hosted(first, 9);
-			const r = random(seed);
-			const rows = new Map<string, Row>(
-				Array.from({ length: 9 }, (_, index) => {
-					const id = `s${index + 1}`;
-					return [id, { id, title: `old ${id}`, touched: index + 1 }];
-				}),
-			);
-			const team = new Set(rows.keys());
-			let clock = 100;
-			let made = 9;
-			/** The true order: the team's sessions that exist, newest touch first, ties by id (the key's order). */
-			const order = (): Row[] =>
-				[...team]
-					.flatMap((id) => (rows.has(id) ? [rows.get(id)!] : []))
-					.sort((a, b) => b.touched - a.touched || (a.id < b.id ? 1 : -1));
-			let step = "start";
-			let checks = 0;
-			const check = (): void => {
-				const { rows: shownRows, moreAfter } = screen.list.value;
-				const expected = order();
-				checks++;
-				expect(shownRows, `${step}: a prefix`).toEqual(expected.slice(0, shownRows.length));
-				if (!moreAfter) expect(shownRows.length, `${step}: the whole order`).toBe(expected.length);
-			};
-			// After every commit's adoption: the frame it published is checked against the truth as of that commit.
-			probe.adopted = check;
-			/** A session to write: mostly one the list shows now (a stale page shows there), else any that exists. */
-			const pick = (): string => {
-				const shownIds = screen.list.value.rows.map((row) => row.id);
-				const from = shownIds.length > 0 && r.chance(0.8) ? shownIds : [...rows.keys()];
-				return from[r.int(from.length)] ?? "s1";
-			};
-			/** One owner's commit; what it wrote reaches the truth when its commit is adopted. */
-			const sessionsWrite = (): Promise<unknown> => {
-				const kind = r.int(8);
-				const id = pick();
-				if (kind < 2) {
-					const touched = r.chance(0.7) ? ++clock : r.int(50);
-					probe.pending.push(() => rows.has(id) && rows.set(id, { ...rows.get(id)!, touched }));
-					return sessions.write({ touch: [{ id, touched }] }, context);
+		it(
+			`after every adoption the value is a gapless prefix of the true order, row by row (seed ${seed})`,
+			async () => {
+				const first = 2 + (seed % 2);
+				const { sessions, club, filler, screen, probe, grouped, close } = await hosted(first, 9);
+				const r = random(seed);
+				const rows = new Map<string, Row>(
+					Array.from({ length: 9 }, (_, index) => {
+						const id = `s${index + 1}`;
+						return [id, { id, title: `old ${id}`, touched: index + 1 }];
+					}),
+				);
+				const team = new Set(rows.keys());
+				let clock = 100;
+				let made = 9;
+				/** The true order: the team's sessions that exist, newest touch first, ties by id (the key's order). */
+				const order = (): Row[] =>
+					[...team]
+						.flatMap((id) => (rows.has(id) ? [rows.get(id)!] : []))
+						.sort((a, b) => b.touched - a.touched || (a.id < b.id ? 1 : -1));
+				let step = "start";
+				let checks = 0;
+				const check = (): void => {
+					const { rows: shownRows, moreAfter } = screen.list.value;
+					const expected = order();
+					checks++;
+					expect(shownRows, `${step}: a prefix`).toEqual(expected.slice(0, shownRows.length));
+					if (!moreAfter) expect(shownRows.length, `${step}: the whole order`).toBe(expected.length);
+				};
+				// After every commit's adoption: the frame it published is checked against the truth as of that commit.
+				probe.adopted = check;
+				/** A session to write: mostly one the list shows now (a stale page shows there), else any that exists. */
+				const pick = (): string => {
+					const shownIds = screen.list.value.rows.map((row) => row.id);
+					const from = shownIds.length > 0 && r.chance(0.8) ? shownIds : [...rows.keys()];
+					return from[r.int(from.length)] ?? "s1";
+				};
+				/** One owner's commit; what it wrote reaches the truth when its commit is adopted. */
+				const sessionsWrite = (): Promise<unknown> => {
+					const kind = r.int(8);
+					const id = pick();
+					if (kind < 2) {
+						const touched = r.chance(0.7) ? ++clock : r.int(50);
+						probe.pending.push(() => rows.has(id) && rows.set(id, { ...rows.get(id)!, touched }));
+						return sessions.write({ touch: [{ id, touched }] }, context);
+					}
+					if (kind < 5) {
+						const title = `t${++clock}`;
+						probe.pending.push(() => rows.has(id) && rows.set(id, { ...rows.get(id)!, title }));
+						return sessions.write({ rename: [{ id, title }] }, context);
+					}
+					if (kind < 7) {
+						probe.pending.push(() => rows.delete(id));
+						return sessions.write({ drop: [id] }, context);
+					}
+					const fresh = Array.from({ length: 1 + r.int(4 * first) }, () => {
+						const row = { id: `s${++made}`, title: `new ${made}`, touched: r.chance(0.5) ? ++clock : r.int(50) };
+						return row;
+					});
+					probe.pending.push(() => {
+						for (const row of fresh) rows.set(row.id, row);
+					});
+					return sessions.write({ put: fresh }, context);
+				};
+				const clubWrite = (): Promise<unknown> => {
+					// Sessions leave the team (mostly shown ones: pages empty and merge) and others join, also many at once
+					// (a run cut by its limit) and ones that do not exist yet; often both in one commit.
+					const leaving = r.chance(0.6) ? Array.from({ length: 1 + r.int(3) }, pick) : [];
+					const joining =
+						leaving.length === 0 || r.chance(0.5)
+							? Array.from({ length: 1 + r.int(4 * first) }, () => `s${1 + r.int(made + 2)}`)
+							: [];
+					probe.pending.push(() => {
+						for (const session of leaving) team.delete(session);
+						for (const session of joining) team.add(session);
+					});
+					const membership = (session: string) => ({ team: "t", session });
+					// The transaction removes, then adds: a session in both stays in the team.
+					return club.write({ remove: leaving.map(membership), add: joining.map(membership) }, context);
+				};
+				for (let index = 0; index < 400; index++) {
+					step = `seed ${seed}, step ${index}`;
+					const kind = r.int(10);
+					if (kind < 3) {
+						// A real group: the filler's commit runs alone, the two owners' commits behind it in one transaction.
+						probe.pending.push(() => {});
+						const fill = filler.write(index, context);
+						const [a, b] = r.chance(0.5) ? [sessionsWrite(), clubWrite()] : [clubWrite(), sessionsWrite()];
+						await Promise.all([fill, a, b]);
+					} else if (kind < 6) await sessionsWrite();
+					else if (kind < 9) await clubWrite();
+					else await screen.more(context);
+					await flushed();
+					check();
 				}
-				if (kind < 5) {
-					const title = `t${++clock}`;
-					probe.pending.push(() => rows.has(id) && rows.set(id, { ...rows.get(id)!, title }));
-					return sessions.write({ rename: [{ id, title }] }, context);
-				}
-				if (kind < 7) {
-					probe.pending.push(() => rows.delete(id));
-					return sessions.write({ drop: [id] }, context);
-				}
-				const fresh = Array.from({ length: 1 + r.int(4 * first) }, () => {
-					const row = { id: `s${++made}`, title: `new ${made}`, touched: r.chance(0.5) ? ++clock : r.int(50) };
-					return row;
-				});
-				probe.pending.push(() => {
-					for (const row of fresh) rows.set(row.id, row);
-				});
-				return sessions.write({ put: fresh }, context);
-			};
-			const clubWrite = (): Promise<unknown> => {
-				// Sessions leave the team (mostly shown ones: pages empty and merge) and others join, also many at once
-				// (a run cut by its limit) and ones that do not exist yet; often both in one commit.
-				const leaving = r.chance(0.6) ? Array.from({ length: 1 + r.int(3) }, pick) : [];
-				const joining =
-					leaving.length === 0 || r.chance(0.5)
-						? Array.from({ length: 1 + r.int(4 * first) }, () => `s${1 + r.int(made + 2)}`)
-						: [];
-				probe.pending.push(() => {
-					for (const session of leaving) team.delete(session);
-					for (const session of joining) team.add(session);
-				});
-				const membership = (session: string) => ({ team: "t", session });
-				// The transaction removes, then adds: a session in both stays in the team.
-				return club.write({ remove: leaving.map(membership), add: joining.map(membership) }, context);
-			};
-			for (let index = 0; index < 400; index++) {
-				step = `seed ${seed}, step ${index}`;
-				const kind = r.int(10);
-				if (kind < 3) {
-					// A real group: the filler's commit runs alone, the two owners' commits behind it in one transaction.
-					probe.pending.push(() => {});
-					const fill = filler.write(index, context);
-					const [a, b] = r.chance(0.5) ? [sessionsWrite(), clubWrite()] : [clubWrite(), sessionsWrite()];
-					await Promise.all([fill, a, b]);
-				} else if (kind < 6) await sessionsWrite();
-				else if (kind < 9) await clubWrite();
-				else await screen.more(context);
-				await flushed();
-				check();
-			}
-			expect(grouped()).toBeGreaterThan(50);
-			expect(checks).toBeGreaterThan(600);
-			for (let page = 0; page < 200 && screen.list.value.moreAfter; page++) await screen.more(context);
-			expect(screen.list.value.rows).toEqual(order());
-			await close();
-		});
+				expect(grouped()).toBeGreaterThan(50);
+				expect(checks).toBeGreaterThan(600);
+				for (let page = 0; page < 200 && screen.list.value.moreAfter; page++) await screen.more(context);
+				expect(screen.list.value.rows).toEqual(order());
+				await close();
+			},
+			SEED_TIMEOUT_MS,
+		);
 	}
 });
