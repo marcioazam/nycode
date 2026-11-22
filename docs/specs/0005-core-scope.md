@@ -139,6 +139,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
 | extension | claude-compat | core | Base de modos de permissão, vim e aliases do editor; biblioteca ainda sem fábrica (D-56, parte 1) |
 | extension | chat-margin | core | Margem do texto nos blocos com fundo do chat (D-56) |
+| extension | image-open | core | Clicar numa imagem do transcript a abre no visualizador do sistema (`/imagem` abre a última) e a imagem de resultado de tool ganha o fundo da tool (D-56) |
 | extension | commands | core | Comandos de barra do Claude Code |
 | extension | completion-gate | core | Verificação antes de encerrar |
 | extension | context-imports | core | Imports @ do CLAUDE.md |

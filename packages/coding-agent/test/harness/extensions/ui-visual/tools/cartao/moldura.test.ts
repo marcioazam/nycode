@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { setCapabilities } from "@nycode/tui";
 import { test } from "vitest";
+import * as __m3 from "../../../../../../src/extensions/image-open/fundo.ts";
 import * as __m1 from "../../../../../../src/extensions/ui-visual/moldura/quadro.ts";
 import * as __m2 from "../../../../../../src/extensions/ui-visual/motion/vivo.ts";
 import { ctx, plain, result, visibleWidth, wrapped } from "../base.ts";
@@ -182,7 +183,33 @@ test("nasce do fundo: o corpo chegou agora sobe em 450 ms; histórico e moviment
 });
 
 // Alinhamento das bordas (dono, 2026-11-20): cabeçalho + corpo + caixa da miniatura (fundo.ts) em largura `w`, sem ANSI nem APC kitty.
+const { instalarFundo } = __m3;
 const semAnsi = (l: string) => plain(l.replace(/\x1b_G.*?\x1b\\/g, ""));
+const KSEQ = "\x1b_Ga=T,f=100,q=2,C=1,c=16,r=3;AAAA\x1b\\";
+function imagemRows(w: number) {
+	const a = montar("read", { path: "a.png" }, imgR);
+	const proto = { render: (_w: number) => [...a.corpo.render(w), "", KSEQ, "", ""] };
+	instalarFundo(proto, () => th as never);
+	const tool = {
+		toolName: "read",
+		args: { path: "a.png" },
+		imageComponents: [
+			{
+				render: () => [KSEQ, "", ""],
+				options: { maxWidthCells: 16 },
+				mimeType: "image/png",
+				base64Data: "AAAA",
+				dimensions: { widthPx: 10, heightPx: 3 },
+			},
+		],
+		imageSpacers: [{ render: () => [""] }],
+		outputPad: 0,
+	};
+	return [
+		plain(a.w0.renderCall({ path: "a.png" }, th, a.shared).render(w)[0] as string),
+		...proto.render.call(tool, w).map(semAnsi),
+	];
+}
 const confere = (rows: string[], w: number, nome: string) => {
 	const [cab, ...resto] = rows;
 	assert.equal(visibleWidth(cab!), w, `${nome}: cabeçalho na largura`);
@@ -197,6 +224,22 @@ const confere = (rows: string[], w: number, nome: string) => {
 		assert.equal([...l].at(-1), d, `${nome} linha ${i}: borda direita alinhada ao ╮`);
 	});
 };
+
+test("Read de imagem (kitty): ╮, │ de cada linha da caixa, ╰ e ╯ nas mesmas colunas em 80, 110 e 180", () => {
+	kitty(true);
+	try {
+		for (const w of [80, 110, 180]) {
+			const rows = imagemRows(w);
+			assert.ok(
+				rows.some((l) => l.includes("╭")) && rows.some((l) => l.includes("clique abre")),
+				`${w}: miniatura e ficha`,
+			);
+			confere(rows, w, `imagem ${w}`);
+		}
+	} finally {
+		kitty(false);
+	}
+});
 
 test("Read de texto aberto e Read com erro: as bordas ficam nas mesmas colunas do ╮ em 80, 110 e 180", () => {
 	for (const w of [80, 110, 180]) {
