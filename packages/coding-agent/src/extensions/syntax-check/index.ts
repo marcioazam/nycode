@@ -143,7 +143,9 @@ export default function syntaxCheckExtension(nycode: ExtensionAPI) {
 			const err = await firstError(source, lang);
 			if (!err) return undefined;
 			if (old !== null && (await firstError(old, lang))) return undefined;
-			return { content: [...event.content, { type: "text" as const, text: message(err, old === null) }] };
+			// `details.sintaxe`: a caixa do edit/write mostra a linha com o trecho sublinhado (ui-visual, Onda 10 P12).
+			const details = { ...((event.details as Record<string, unknown> | undefined) ?? {}), sintaxe: err };
+			return { content: [...event.content, { type: "text" as const, text: message(err, old === null) }], details };
 		} catch {
 			return undefined;
 		}

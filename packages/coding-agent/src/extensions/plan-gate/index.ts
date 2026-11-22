@@ -9,14 +9,17 @@
  * - edições: chamadas `edit`/`write` depois da aprovação (como o ledger do Claude, `bash` não conta);
  * - libera sem bloquear: `PLAN CANCELLED` (encerra), `PLAN BLOCKED:`, `PLAN WAITING:` (ou `PLANO ...`) na resposta
  *   final, e plan mode ligado;
+ * - parada abortada pelo usuário (Esc, Enviar agora): libera (`user_interrupt`) sem contar;
  * - desiste (com aviso) depois de 3 paradas sem progresso ou 30 bloqueios.
  * Bloquear = `agent_before_settle` acrescenta uma mensagem `plan-gate` e pede continuação. Cada decisão grava uma
  * entrada `custom` `plan-gate` (estado, contadores, assinatura), que também é o log. `NYCODE_PLAN_GATE=0` (ou `plan.gate: false`) desliga.
  * Falha aberta: qualquer exceção libera. Testes: test/harness/extensions/plan-gate/index.test.ts.
  */
 
-import type { ExtensionAPI, SessionBoundaryDraft } from "../../core/extensions/types.ts";
+import type { Component } from "@nycode/tui";
+import type { ExtensionAPI, MessageRenderOptions, SessionBoundaryDraft } from "../../core/extensions/types.ts";
 import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
+import { estadoBg } from "../ui-visual/icons.ts";
 
 type Entry = Record<string, any>;
 export interface GateRecord {
@@ -94,11 +97,13 @@ export function decidePlanGate(entries: Entry[], enabled = true): GateDecision {
 	let lastAssistant = "";
 	let review: { at: number; verdict: string; gaps: string } | undefined;
 	let progress = 0;
+	let lastAborted = false;
 	const reviewerCalls = new Map<string, number>();
 	for (let i = approved + 1; i < entries.length; i++) {
 		const e = entries[i];
 		if (e.type === "custom" && e.customType === "plan-gate") lastRecord = e.data as GateRecord;
 		if (e.type === "custom" && e.customType === "plan-mode") planMode = e.data?.enabled === true;
+		if (role(e)) lastAborted = role(e) === "assistant" && e.message?.stopReason === "aborted";
 		if (role(e) === "assistant") {
 			const text = textOf(e);
 			if (text.trim()) lastAssistant = text;
@@ -143,6 +148,8 @@ export function decidePlanGate(entries: Entry[], enabled = true): GateDecision {
 		...prev,
 		...extra,
 	});
+	// Esc ou Enviar agora do usuário: o plano segue ativo, sem cobrança nem contagem (contrato 2026-11-15).
+	if (lastAborted) return { action: "allow", why: "user_interrupt", record: keep("allowed", "user_interrupt") };
 	if (planMode) return { action: "allow", why: "plan_mode", record: keep("allowed", "plan_mode") };
 	if (CANCELLED.test(lastAssistant))
 		return { action: "allow", why: "marker_cancelled", record: keep("cancelled", "marker_cancelled") };
@@ -170,6 +177,14 @@ export function decidePlanGate(entries: Entry[], enabled = true): GateDecision {
 	const why = !review ? "no_review" : review.verdict !== "complete" ? "review_incomplete" : "edit_after_review";
 	let head = `Plan gate: ${STATES[why]}.`;
 	if (why === "review_incomplete" && review?.gaps) head += ` Gaps: ${review.gaps}`;
+	// D5: o rastreador só lê a tag [DONE:n]; lembrar os passos abertos no bloqueio que já ia acontecer (zero turno extra).
+	// Com D1 o plan-mode só grava quando muda: a última entrada pode vir antes da aprovação, então o ramo todo é lido.
+	const tracker = entries.findLast((e) => e.type === "custom" && e.customType === "plan-mode")?.data?.todos;
+	const open = (Array.isArray(tracker) ? tracker : [])
+		.filter((t: any) => t && t.completed !== true && Number.isFinite(t.step))
+		.map((t: any) => t.step);
+	if (open.length > 0)
+		head += ` Open plan steps: ${open.join(", ")}; write [DONE:n] in your final reply (the message without a tool call) for each one already finished.`;
 	return {
 		action: "block",
 		why,
@@ -178,19 +193,109 @@ export function decidePlanGate(entries: Entry[], enabled = true): GateDecision {
 	};
 }
 
+/** Aviso final (só tela): o texto em inglês de `decision.message` continua no GateDecision. */
+export const giveUpNotice = (noProgress: number, blocks = 0): string =>
+	`▲ Plano  parou de cobrar após ${noProgress >= MAX_NO_PROGRESS ? `${noProgress} avisos sem avanço` : `${blocks} avisos`} · rode o plan-reviewer antes de concluir`;
+
+const wrap = (text: string, width: number): string[] => {
+	const out: string[] = [];
+	let line = "";
+	for (const word of text.split(/\s+/).filter(Boolean)) {
+		for (let w = word; w; w = w.slice(width)) {
+			const piece = w.slice(0, width);
+			if (line && line.length + 1 + piece.length <= width) line += ` ${piece}`;
+			else {
+				if (line) out.push(line);
+				line = piece;
+			}
+			if (w.length <= width) break;
+		}
+	}
+	return line ? [...out, line] : out;
+};
+
+/** Renderer do bloco `plan-gate` (só tela: `content` vai ao modelo sem mudança). Sem import de @nycode/tui: componente mínimo. */
+/** The slice of the theme the gate line uses (methods: bivariant, so the core Theme fits). */
+interface GateTheme {
+	fg(c: string, s: string): string;
+	bg?(c: string, s: string): string;
+}
+
+export function gateComponent(
+	message: { content?: unknown; timestamp?: number; details?: { blocks?: number } },
+	options: MessageRenderOptions,
+	theme: GateTheme,
+): Component & { handleMouse(e: { type: string; button: string }): { handled: boolean } | undefined } {
+	const n = Number(message?.details?.blocks) || 1;
+	const head = "▲ Plano  falta a revisão final (plan-reviewer) · o agente foi avisado";
+	let virado = false; // clique esquerdo abre e fecha só este bloco (pedido do dono, 2026-11-14)
+	return {
+		invalidate() {},
+		handleMouse(e: { type: string; button: string }) {
+			if (e?.type !== "click" || e.button !== "left") return undefined;
+			virado = !virado;
+			return { handled: true };
+		},
+		render(width: number): string[] {
+			const w = Math.max(1, width);
+			const basePad = options?.outputPad ?? 1;
+			const pad = Math.min(basePad + (w - 2 * (basePad + 2) >= 20 ? 2 : 0), Math.max(0, Math.floor((w - 1) / 2)));
+			const iw = Math.max(1, w - 2 * pad);
+			const side = " ".repeat(pad);
+			// ▲ = aviso: com cor de fundo no tema, a faixa ganha o fundo de aviso na largura toda, padding simétrico e respiro vertical.
+			const faixa = theme?.bg
+				? (l: string, len: number) => estadoBg("warn", theme)(side + l + " ".repeat(Math.max(0, iw - len)) + side)
+				: (l: string) => side + l;
+			const frame = (rows: string[]) => (theme?.bg ? [faixa("", 0), ...rows, faixa("", 0)] : rows);
+			if (!!options?.expanded !== virado) {
+				const body = wrap(String(message?.content ?? ""), Math.max(1, iw - 2)).map((l) =>
+					faixa(theme.fg("dim", `  ${l}`), l.length + 2),
+				);
+				return frame([faixa(theme.fg("warning", head.slice(0, iw)), Math.min(head.length, iw)), ...body]);
+			}
+			const key = String(options?.keyText?.("app.tools.expand") ?? "ctrl+o");
+			const ts = Number(message?.timestamp); // ausente ou 0: sem hora
+			const hora = ts > 0 ? new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "";
+			const tail = ` · ${n > 1 ? `${n}ª vez · ` : ""}${key} abre`;
+			const line = (head + tail).slice(0, iw);
+			// Hora sozinha no canto direito, separada do atalho; sem espaço, some.
+			const gap = iw - line.length - hora.length;
+			const fim = hora && gap >= 2 ? " ".repeat(gap) + hora : "";
+			// Tecla no azul do tema (`accent`) quando coube inteira; o resto do rabo segue em dim.
+			const rabo = line.slice(head.length);
+			const k = rabo.lastIndexOf(`${key} abre`);
+			const rabic =
+				k >= 0
+					? theme.fg("dim", rabo.slice(0, k)) +
+						theme.fg("accent", key) +
+						theme.fg("dim", rabo.slice(k + key.length) + fim)
+					: theme.fg("dim", rabo + fim);
+			return frame([faixa(theme.fg("warning", line.slice(0, head.length)) + rabic, line.length + fim.length)]);
+		},
+	};
+}
+
 export default function planGateExtension(nycode: ExtensionAPI) {
 	if (process.env.NYCODE_SUBAGENT === "1") return; // o gate vale para a sessão principal, não para os workers
+	nycode.registerMessageRenderer?.("plan-gate", gateComponent); // sem a API o gate continua valendo, só sem a linha curta
 	nycode.on("agent_before_settle", (event, ctx) => {
 		try {
 			const enabled = resolveNycodeSettings(nycode.getSettings(), process.env).plan.gate;
 			const decision = decidePlanGate(ctx.sessionManager.getBranch() as Entry[], enabled);
 			if (decision.action === "none" || !decision.record) return;
+			const branch = ctx.sessionManager.getBranch() as Entry[];
+			const prev = branch.findLast((e) => e.type === "custom" && e.customType === "plan-gate")?.data as
+				| GateRecord
+				| undefined;
+			// Liberação repetida (mesmo state e why da última entrada) não cresce a sessão a cada parada.
+			if (decision.action === "allow" && prev?.state === decision.record.state && prev.why === decision.record.why)
+				return;
 			const entries: SessionBoundaryDraft[] = [
 				...event.entries,
 				{ type: "custom", customType: "plan-gate", data: decision.record },
 			];
 			if (decision.action === "give_up") {
-				ctx.ui.notify(decision.message ?? "", "warning");
+				ctx.ui.notify(giveUpNotice(decision.record.noProgress, decision.record.blocks), "warning");
 				return { entries };
 			}
 			if (decision.action !== "block") return { entries };
@@ -199,6 +304,7 @@ export default function planGateExtension(nycode: ExtensionAPI) {
 				customType: "plan-gate",
 				content: decision.message ?? "",
 				display: true,
+				details: { blocks: decision.record.blocks },
 			});
 			return { entries, continue: true };
 		} catch {

@@ -2,9 +2,17 @@
 // The two scroll hooks of the public @nycode/tui API (K10) are replaced by typed fakes: the real ones only answer
 // for a fullscreen TUI instance.
 import type * as Tui from "@nycode/tui";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExtensionAPI, ExtensionContext } from "../../../../src/core/extensions/types.ts";
 import stickyPromptExtension from "../../../../src/extensions/sticky-prompt/index.ts";
+
+// The rendering reads TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 const hooks = vi.hoisted(() => ({
 	snapshot: vi.fn(),
@@ -61,12 +69,15 @@ function setup(opts: { hasUI?: boolean; users?: string[] } = {}) {
 			],
 		},
 	} as unknown as ExtensionContext;
-	const theme = { getFgAnsi: () => "", getBgAnsi: () => "" };
+	const theme = { fg: (_c: string, t: string) => t, getFgAnsi: () => "", getBgAnsi: () => "" };
 	return { handlers, ctx, overlay, hide, requestRender, mount: () => widget?.(tui, theme), getWidget: () => widget };
 }
 
 function extension(handlers: Map<string, Handler>) {
-	stickyPromptExtension({ on: (name: string, fn: Handler) => handlers.set(name, fn) } as unknown as ExtensionAPI);
+	stickyPromptExtension({
+		on: (name: string, fn: Handler) => handlers.set(name, fn),
+		getSettings: () => ({}),
+	} as unknown as ExtensionAPI);
 }
 
 describe("sticky-prompt extension", () => {
@@ -99,8 +110,8 @@ describe("sticky-prompt extension", () => {
 		});
 		const o = s.overlay.options as Overlay;
 		expect(o.visible?.()).toBe(true);
-		expect([o.row, o.col, o.width]).toEqual([3, 2, 39]);
-		expect(s.overlay.component?.render(30)[0]).toContain("pedido antigo");
+		expect([o.row, o.col, o.width]).toEqual([3, 3, 37]); // inside the chat margin (outputPad 1), scrollbar column free
+		expect(s.overlay.component?.render(30)[1]).toContain("pedido antigo"); // line 0 is the `▎ você` label; line 1 the strip
 	});
 
 	it("is hidden while a selection press is active, outside fullscreen and with no prompt above", () => {
@@ -188,7 +199,7 @@ describe("sticky-prompt extension", () => {
 		});
 		const o = s.overlay.options as Overlay;
 		expect(o.visible?.()).toBe(false);
-		s.handlers.get("message_end")?.({}, withParts);
+		s.handlers.get("message_end")?.({ message: { role: "user" } }, withParts);
 		expect(o.visible?.()).toBe(true);
 		s.handlers.get("session_tree")?.({}, s.ctx);
 		expect(o.visible?.()).toBe(false);
