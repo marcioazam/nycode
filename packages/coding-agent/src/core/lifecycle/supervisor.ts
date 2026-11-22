@@ -6,6 +6,7 @@ import { type ChildProcess, spawn } from "node:child_process";
 import { closeSync, lstatSync, mkdtempSync, openSync, readSync, rmdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { isatty } from "node:tty";
 import { type LaunchState, readRequest, relaunchArgs } from "./request.ts";
 
 const HEADLESS_FLAGS = new Set([
@@ -97,7 +98,8 @@ export const defaultDeps: SupervisorDeps = {
 	env: process.env,
 	pid: process.pid,
 	uid: process.getuid?.(),
-	isTty: () => Boolean(process.stdin.isTTY && process.stdout.isTTY),
+	// isatty, not process.stdin.isTTY: the getter opens a stdin stream in the supervisor, which shares the terminal with the child.
+	isTty: () => isatty(0) && isatty(1),
 	command: selfCommand,
 	spawnChild: (file, args, env) => spawn(file, args, { stdio: "inherit", env }),
 	confirmBypass: askOnTerminal,
