@@ -31,6 +31,12 @@ export function assistantTexts(branch: unknown[]): string[] {
 	return out;
 }
 
+/** Closing fence: up to 3 spaces, a run of the opening character at least as long, then only whitespace. */
+const fechaCerca = (line: string, ch: string, len: number): boolean => {
+	const run = /^ {0,3}(`+|~+)\s*$/.exec(line)?.[1];
+	return run !== undefined && run[0] === ch && run.length >= len;
+};
+
 export function blocksOf(text: string): Block[] {
 	const blocks: Block[] = [];
 	let open: { ch: string; len: number; lang: string; lines: string[] } | undefined;
@@ -38,7 +44,7 @@ export function blocksOf(text: string): Block[] {
 		if (!open) {
 			const m = /^ {0,3}(`{3,}|~{3,})\s*([^\s`]*)/.exec(line);
 			if (m) open = { ch: m[1]![0]!, len: m[1]!.length, lang: m[2] ?? "", lines: [] };
-		} else if (new RegExp(`^ {0,3}\\${open.ch}{${open.len},}\\s*$`).test(line)) {
+		} else if (fechaCerca(line, open.ch, open.len)) {
 			blocks.push({ lang: open.lang, code: open.lines.join("\n") });
 			open = undefined;
 		} else open.lines.push(line);

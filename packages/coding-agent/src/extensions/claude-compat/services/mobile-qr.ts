@@ -60,6 +60,7 @@ export function qrLines(): string[] {
 /** Preto sobre branco, independente do tema do terminal. */
 export const styledQrLines = (): string[] => qrLines().map((l) => `\x1b[30;47m${l}\x1b[0m`);
 
+// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- w is a number (chunk width)
 const chunk = (s: string, w: number): string[] => (s ? (s.match(new RegExp(`.{1,${w}}`, "gu")) ?? []) : []);
 
 /** Texto do aviso/headless: QR + link. */
