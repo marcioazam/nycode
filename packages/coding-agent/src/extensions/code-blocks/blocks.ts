@@ -76,7 +76,7 @@ export function detectLang(code: string): string | undefined {
 		return "diff";
 	if (/^<(!doctype|html|div|span|\?xml|svg|[a-z]+[ >])/i.test(s)) return /^<\?xml|^<svg/i.test(s) ? "xml" : "html";
 	if (
-		/^\s*(def |class \w+.*:|from [\w.]+ import |import \w+$|if __name__ ==|print\()/m.test(s) &&
+		/^\s*(def |class \w.*:|from [\w.]+ import |import \w+$|if __name__ ==|print\()/m.test(s) &&
 		!/[;{}]\s*$/m.test(s)
 	)
 		return "python";
