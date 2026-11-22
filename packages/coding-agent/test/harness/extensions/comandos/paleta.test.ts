@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, test, vi } from "vitest";
@@ -127,15 +127,16 @@ test("F19: gravarRecente troca o arquivo por rename (nunca truncado no lugar) e 
 	assert.deepEqual(JSON.parse(readFileSync(f, "utf8")), { outra: 1, recentCommands: ["diff"] });
 });
 
-test("F20: lerRecentes memoiza por mtime/tamanho (sem reler a cada tecla) e relê quando o arquivo muda", async () => {
-	const { utimesSync, statSync, writeFileSync: wf } = await import("node:fs");
+test("F20: lerRecentes memoiza por mtime/tamanho (sem reler a cada tecla) e relê quando o arquivo muda", () => {
 	const f = join(mkdtempSync(join(tmpdir(), "rec-mt-")), "ui-state.json");
-	wf(f, JSON.stringify({ recentCommands: ["diff"] }));
+	// Whole-second mtime set on both writes: restoring a sub-millisecond mtime is not exact on every filesystem.
+	const T = 1_700_000_000;
+	writeFileSync(f, JSON.stringify({ recentCommands: ["diff"] }));
+	utimesSync(f, T, T);
 	assert.deepEqual(p.lerRecentes(f), ["diff"]);
-	const { mtimeMs } = statSync(f);
-	wf(f, JSON.stringify({ recentCommands: ["plan"] })); // mesmo tamanho
-	utimesSync(f, mtimeMs / 1000, mtimeMs / 1000);
+	writeFileSync(f, JSON.stringify({ recentCommands: ["plan"] })); // mesmo tamanho
+	utimesSync(f, T, T);
 	assert.deepEqual(p.lerRecentes(f), ["diff"], "mesma assinatura: veio do cache");
-	wf(f, JSON.stringify({ recentCommands: ["model", "plan"] }));
+	writeFileSync(f, JSON.stringify({ recentCommands: ["model", "plan"] }));
 	assert.deepEqual(p.lerRecentes(f), ["model", "plan"], "assinatura nova: relê");
 });

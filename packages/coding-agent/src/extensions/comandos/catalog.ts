@@ -28,6 +28,7 @@ Conversa|new|clear reset||Começa uma sessão nova, sem turno do modelo
 Conversa|compact|||Compacta o contexto da sessão
 Conversa|copy||app.message.copy|Copia a última resposta do agente
 Conversa|copy-code|||Copia um bloco de código da última resposta
+Conversa|imagem|||Abre a última imagem do transcript no visualizador
 Conversa|claude-copy|||Copia a N-ésima resposta, só o texto ou um bloco escolhido
 Conversa|btw|||Pergunta lateral, sem gravar na sessão
 Conversa|fork|||Nova ramificação a partir de uma mensagem anterior
