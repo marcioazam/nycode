@@ -132,11 +132,12 @@ ganha a atribuição e o commit de origem.
 | `bash-main-guard` | `~/.pi/agent/extensions/bash-main-guard/` (camada local) | N2 | Na sessão principal interativa o bash não prende o turno: padrão de 120 s, teto de 600 s, sleep longo e laço de consulta recusados, `run wait` limitado a 30 s (D-57) (D-56) | F12 |
 | `avisos` | `~/.pi/agent/extensions/avisos/` (camada local) | N2 | Dono dos sinais de fim de turno: notificação, som, progresso na aba do terminal e o painel `/avisos` (D-56) | F12 |
 | `comandos` | `~/.pi/agent/extensions/comandos/` (camada local) | N2 | Paleta do `/` em pt-BR, painel `?` e `/atalhos` (ver, buscar e mudar atalhos); a ponte `__nycodeHarnessComandos` serve o editor (D-56) | F12 |
+| `contexto` | `~/.pi/agent/extensions/contexto/` (camada local) | N2 | Limite de compactação por sessão (`/contexto 400k`, restaurado ao retomar) e resumo anterior condensado quando passa de `NYCODE_COMPACT_SUMMARY_MAX` caracteres (D-57, D-58) (D-56) | F12 |
 | `diagnostico` | `~/.pi/agent/extensions/diagnostico/` (camada local) | N2 | Registro de erros e avisos internos, trilha de spans (OTel) e `/doctor`; `/diagnostico` ou ctrl+e abre o modal e o rodapé mostra só a contagem (D-56) | F12 |
 | `code-blocks` | `~/.pi/agent/extensions/code-blocks/` (camada local) | N2 | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) | F12 |
 | `image-open` | `~/.pi/agent/extensions/image-open/` (camada local) | N2 | Clicar numa imagem do transcript a abre no visualizador do sistema (`/imagem` abre a última) e a imagem de resultado de tool ganha o fundo da tool (D-56) | F12 |
 | `hook-msgs` | `~/.pi/agent/extensions/hook-msgs/` (camada local) | N2 | Mensagens de hook, de gate, de subagente em segundo plano e de fim de run no ritmo das tools, com o fundo do estado (D-56) | F12 |
-| `claude-compat` | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`, `commands/*`, `services/*`, `runbooks/*`, `matrix`, `index`) | N2 | Fábrica registrada: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz; faltam `directory`, `interface` e `lifecycle` (partes 3 a 5); `background` fica fora (D-56, parte 2 de 5) | F12 |
+| `claude-compat` | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`, `commands/*`, `services/*`, `runbooks/*`, `lifecycle/*`, `interface/*`, `directory/*`, `matrix`, `index`) | N2 | Fábrica registrada: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz; `lifecycle` na parte 3; `interface/*` na parte 4 (K19); `directory/*` (`/cd`) na parte 5 (K23); `background` fica fora (D-56, partes 2 a 5 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
 | `context-files` | `extensions/no-context-files-covers-claude-md.ts` | — | **Some**: existia para contornar a injeção de `CLAUDE.md` pelo pi-code; com `claude-rules` embutida a regra é escrita direto nela | F7 |
@@ -186,6 +187,12 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K15 | `packages/tui/src/index.ts` | Exporta `isImageLine` na API pública do `@nycode/tui` | `chat-margin` | F12 |
 | K16 | `packages/tui/src/components/editor.ts` | `runEditorAction` e `withUndoGroup` no `Editor` (ações semânticas e grupo de desfazer) | `ui/editor`, `claude-compat/vim` | F12 |
 | K17 | `interactive-mode.ts`, `components/status-indicator.ts`, `components/assistant-message.ts`, `components/compaction-summary-message.ts` (em `modes/interactive`) | Uma chamada ao módulo `modes/interactive/avisos` por ponto de gancho (avisos em pt-BR); `NYCODE_AVISOS=0` devolve os textos do upstream | `avisos` | F12 |
+| K18 | `packages/coding-agent/src/core/settings-manager.ts` | `getCompactionReserveTokens` aplica o limite de compactação por sessão (`/contexto`, módulo `core/compaction/session-limit.ts`) | `compact-at-400k.ts`, patch `contexto-reserve` (D-58) | F12 |
+| K19 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | `updateEditorBorderColor()` instala os controles de interface (`/focus`, `/color`; módulo `modes/interactive/ui-controls`) | `claude-compat/interface`, patch `ui-controls` (D-58) | F12 |
+| K20 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | O `handleResumeSession` mostra o divisor da sessão retomada (módulo `modes/interactive/retomada`) no lugar do `showStatus` | patch `retomada` (D-58) | F12 |
+| K21 | `packages/tui/src/layout.ts` | A célula da barra de rolagem é pintada em linha de imagem kitty (módulo `scrollbar-image.ts`) | patch `scrollbar-imagem` (D-58) | F12 |
+| K22 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` `packages/coding-agent/src/core/keybindings.ts` | Enviar agora (`Ctrl+Enter`, `Ctrl+X Ctrl+S`) e as teclas da fila (módulo `modes/interactive/send-now`): duas chamadas em `interactive-mode.ts`, uma linha na ajuda e cinco atalhos em `DEFAULT_APP_KEYBINDINGS` | patch `send-now` (D-58) | F12 |
+| K23 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` `packages/coding-agent/src/core/session-manager.ts` | Transição de cwd na mesma sessão (`/cd`; módulo `core/cwd-switch`): `handleResumeSession` desvia quando existe `options.piSessionCwd` e o `SessionManager` ganha os buscadores pelo cwd do cabeçalho | patch `session-cwd` (D-58) | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 
@@ -218,6 +225,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_MODEL_LOCK` | — (a trava vive no ambiente do processo e dos filhos) | `NYCODE_MODEL_LOCK` | vazio, sem trava (D-56) |
 | `PI_TERM_PROGRESS` | — | `NYCODE_TERM_PROGRESS` | `0` desliga e `1` força o progresso na aba do terminal (D-56) |
 | `PI_COMANDOS` | — | `NYCODE_COMANDOS` | `0` desliga a extensão (D-56) |
+| `PI_COMPACT_SUMMARY_MAX` | — | `NYCODE_COMPACT_SUMMARY_MAX` | caracteres do resumo anterior acima dos quais a compactação o condensa (D-56) |
 | `PI_DIAG` | — | `NYCODE_DIAG` | `0` desliga a extensão (D-56) |
 | `PI_DIAG_INBOX` | — | `NYCODE_DIAG_INBOX` | caixa de entrada TSV do pai para os avisos dos subagentes (D-56) |
 | `PI_DIAG_HOOK_LENTO_MS` | — | `NYCODE_DIAG_HOOK_LENTO_MS` | limite do detector de hook lento (ms; `0` desliga) (D-56) |
@@ -227,6 +235,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_DOCTOR_NODE` | — | `NYCODE_DOCTOR_NODE` | versão do Node que o /doctor confere (testes) (D-56) |
 | `PI_VERSION` | — | `NYCODE_VERSION` | versão informada pelo wrapper ao /doctor (D-56) |
 | `PI_IMAGE_OPENER` | — | `NYCODE_IMAGE_OPENER` | abridor de imagens (testes); padrão xdg-open/open (D-56) |
+| `PI_RESTART_WRAPPER_PID`, `PI_RESTART_REQUEST_FILE`, `PI_LIFECYCLE_ROOT_PID` | — | `NYCODE_RESTART_WRAPPER_PID`, `NYCODE_RESTART_REQUEST_FILE`, `NYCODE_LIFECYCLE_ROOT_PID` | definidos pelo supervisor do wrapper para `/restart`; sem ele o comando recusa (D-56) |
 | `PI_PERMISSION_MODE`, `PI_BYPASS_ELIGIBLE`, `PI_BYPASS_OPTIN` | — (estado do controlador de modos de permissão da extensão `claude-compat`) | `NYCODE_PERMISSION_MODE`, `NYCODE_BYPASS_ELIGIBLE`, `NYCODE_BYPASS_OPTIN` | vazio (D-56) |
 | `NO_COLOR`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | — | `NO_COLOR` (padrão externo), `NYCODE_DISABLE_TERMINAL_TITLE` | — |
 | `PI_KNOWLEDGE_VAULT`, `PI_GRAPHS_VAULT` | `knowledge.vault`, `knowledge.graphsVault` | `NYCODE_KNOWLEDGE_VAULT`, `NYCODE_GRAPHS_VAULT` | vazio |

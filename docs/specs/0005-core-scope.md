@@ -142,6 +142,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | bash-main-guard | core | Na sessão principal interativa o bash não prende o turno: padrão de 120 s, teto de 600 s, sleep longo e laço de consulta recusados, `run wait` limitado a 30 s (D-57) (D-56) |
 | extension | avisos | core | Dono dos sinais de fim de turno: notificação, som, progresso na aba do terminal e o painel `/avisos` (D-56) |
 | extension | comandos | core | Paleta do `/` em pt-BR, painel `?` e `/atalhos` (ver, buscar e mudar atalhos); a ponte `__nycodeHarnessComandos` serve o editor (D-56) |
+| extension | contexto | core | Limite de compactação por sessão (`/contexto 400k`, restaurado ao retomar) e resumo anterior condensado quando passa de `NYCODE_COMPACT_SUMMARY_MAX` caracteres (D-57, D-58) (D-56) |
 | extension | diagnostico | core | Registro de erros e avisos internos, trilha de spans (OTel) e `/doctor`; `/diagnostico` ou ctrl+e abre o modal e o rodapé mostra só a contagem (D-56) |
 | extension | code-blocks | core | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) |
 | extension | image-open | core | Clicar numa imagem do transcript a abre no visualizador do sistema (`/imagem` abre a última) e a imagem de resultado de tool ganha o fundo da tool (D-56) |

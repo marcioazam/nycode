@@ -286,6 +286,11 @@ app.editor.external|Editor externo
 app.message.copy|Copiar seleção ou última resposta
 app.message.followUp|Enfileirar mensagem
 app.message.dequeue|Restaurar mensagens da fila
+app.message.sendNow|Interromper e enviar agora
+app.message.sendNowChord|Enviar agora (depois do prefixo de copiar)
+app.queue.drop|Excluir mensagem da fila
+app.queue.selectPrev|Escolher mensagem anterior da fila
+app.queue.selectNext|Escolher próxima mensagem da fila
 app.clipboard.pasteImage|Colar imagem
 app.session.new|Nova sessão
 app.session.tree|Abrir a árvore da sessão

@@ -1,6 +1,7 @@
 import type { ScrollView } from "./components/scroll-view.ts";
 import { allocateStackSizes, visibleStackEntries } from "./components/stack.ts";
 import { getLayoutNode } from "./layout-node.ts";
+import { paintScrollbarOnImageLine } from "./scrollbar-image.ts";
 import { cropKittyImageLine, getKittyImageMetadata, getMaxKittyImageRows, isImageLine } from "./terminal-image.ts";
 import { type Component, CURSOR_MARKER, compositeTuiLine } from "./tui.ts";
 import {
@@ -260,7 +261,15 @@ function replaceScrollbarCell(
 	replacement: string,
 	preserveTargetBackground: boolean,
 ): string {
-	if (isImageLine(line)) return line;
+	if (isImageLine(line))
+		return paintScrollbarOnImageLine(
+			line,
+			column,
+			totalWidth,
+			replacement,
+			preserveTargetBackground,
+			replaceScrollbarCell,
+		); // nycode: K21
 
 	const graphemeRange = getGraphemeCellRange(line, column);
 	const start = graphemeRange?.start ?? column;

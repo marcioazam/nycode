@@ -8,6 +8,7 @@ import lockfile from "proper-lockfile";
 import { CONFIG_DIR_NAME, getAgentDir } from "../config.ts";
 import { normalizePath, resolvePath } from "../utils/paths.ts";
 import { stripBom } from "../utils/text.ts";
+import { reserveWithSessionLimit } from "./compaction/session-limit.ts";
 import { DEFAULT_HTTP_IDLE_TIMEOUT_MS, parseHttpIdleTimeoutMs } from "./http-dispatcher.ts";
 import { SETTINGS_DEFAULTS } from "./settings-defaults.ts";
 import {
@@ -880,8 +881,9 @@ export class SettingsManager {
 		return override ?? ordinary ?? DEFAULT_COMPACTION_TOKEN_SETTINGS[field];
 	}
 
-	getCompactionReserveTokens(model?: Pick<Model<string>, "provider" | "id">): number {
-		return this.getCompactionTokenSetting("reserveTokens", model);
+	getCompactionReserveTokens(model?: Pick<Model<string>, "provider" | "id"> & { contextWindow?: number }): number {
+		// nycode: K18 per-session compaction limit (/contexto) moves the native threshold
+		return reserveWithSessionLimit(this.getCompactionTokenSetting("reserveTokens", model), model?.contextWindow);
 	}
 
 	getCompactionKeepRecentTokens(model?: Pick<Model<string>, "provider" | "id">): number {
@@ -889,7 +891,7 @@ export class SettingsManager {
 	}
 
 	/** Resolve each token setting through model override, ordinary setting, then built-in default. */
-	getCompactionSettings(model?: Pick<Model<string>, "provider" | "id">): {
+	getCompactionSettings(model?: Pick<Model<string>, "provider" | "id"> & { contextWindow?: number }): {
 		enabled: boolean;
 		reserveTokens: number;
 		keepRecentTokens: number;
