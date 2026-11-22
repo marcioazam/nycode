@@ -8,8 +8,14 @@ set -euo pipefail
 # diag_inbox TIPO MSG: one warning line for the diagnostics inbox ($NYCODE_DIAG_INBOX, when set); never fails.
 diag_inbox() { [ -z "${NYCODE_DIAG_INBOX:-}" ] || printf '13\thook-dispatch\t%s\t%s\n' "$1" "$2" >>"$NYCODE_DIAG_INBOX" 2>/dev/null || true; }
 # launcher_rc EXIT: a timeout (124) of the launcher check goes to the inbox; the check still counts as "nothing broken".
-launcher_rc() { [ "$1" -ne 124 ] || diag_inbox timeout "verificação dos launchers de MCP expirou (3 s)"; return 0; }
-command -v jq >/dev/null 2>&1 || { diag_inbox sem-jq "jq ausente: hook-dispatch não rodou"; exit 0; }
+launcher_rc() {
+  [ "$1" -ne 124 ] || diag_inbox timeout "verificação dos launchers de MCP expirou (3 s)"
+  return 0
+}
+command -v jq >/dev/null 2>&1 || {
+  diag_inbox sem-jq "jq ausente: hook-dispatch não rodou"
+  exit 0
+}
 # nycode (Node 'pipe') hands hooks a Unix socket as stdin: `$(</dev/stdin)` reopens it and fails with ENXIO, so
 # the builtin read takes fd 0 as is (no fork). It returns 1 at EOF with the text read; nothing read means {}.
 IFS= read -r -d '' payload || true
