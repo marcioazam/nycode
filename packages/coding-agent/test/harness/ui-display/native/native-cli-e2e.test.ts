@@ -41,23 +41,23 @@ function resolveTmux(): string {
 			if (statSync(c).isFile()) return realpathSync(c);
 		} catch {}
 	}
-	return assert.fail("tmux não encontrado no PATH (pré-requisito do E2E)");
+	return assert.fail("tmux not found on PATH (prerequisite of the e2e)");
 }
 const BIN = resolveNativeCli();
 const TMUX = resolveTmux();
 const NODE = process.execPath;
-const root = mkdtempSync(join("/tmp", "nye-")); // mkdtemp: modo 0700, dono único
+const root = mkdtempSync(join("/tmp", "nye-")); // mkdtemp: mode 0700, single owner
 const SOCK = join(root, "tmux.sock");
 const SAFE_PATH = "/usr/local/bin:/usr/bin:/bin";
 let failed = false;
 const tmuxCalls: string[][] = [];
 after(() => {
-	spawnSync(TMUX, tmuxArgs(["kill-server"]), { env: cleanEnv(root), stdio: "ignore" }); // só o servidor do socket PRIVADO
+	spawnSync(TMUX, tmuxArgs(["kill-server"]), { env: cleanEnv(root), stdio: "ignore" }); // only the server of the PRIVATE socket
 	if (failed) console.error(`nycode-send-now-e2e: failed; recibos mantidos em ${root}`);
 	else rmSync(root, { recursive: true });
 });
 
-// Ambiente em lista branca: nada do ambiente do chamador (credenciais, XDG, MCP, TMUX, SSH…) é repassado.
+// Allowlisted environment: nothing from the caller's environment (credentials, XDG, MCP, TMUX, SSH...) is passed on.
 function cleanEnv(dir: string, extra: Record<string, string> = {}): Record<string, string> {
 	return {
 		PATH: SAFE_PATH,
@@ -87,16 +87,16 @@ async function waitFor<T>(what: string, probe: () => T | undefined | false, ms =
 	}
 }
 
-// Servidor: 1ª requisição → tool call bash `command`; as seguintes → texto. Guarda os corpos para inspeção.
+// Server: the 1st request answers with a bash tool call `command`, the following ones with text. Keeps the bodies for inspection.
 function fakeProvider(command: string) {
-	const bodies: any[] = [];
+	const bodies: RequestBody[] = [];
 	const server = createServer((req: IncomingMessage, res) => {
 		let raw = "";
 		req.on("data", (c) => {
 			raw += c;
 		});
 		req.on("end", () => {
-			bodies.push(JSON.parse(raw || "{}"));
+			bodies.push(JSON.parse(raw || "{}") as RequestBody);
 			const chunk = (delta: object, finish: string | null) =>
 				`data: ${JSON.stringify({ id: "c", object: "chat.completion.chunk", created: 0, model: "m1", choices: [{ index: 0, delta, finish_reason: finish }] })}\n\n`;
 			res.writeHead(200, { "content-type": "text/event-stream" });
@@ -133,15 +133,22 @@ const queuedRow = (pane: string): string | undefined => {
 	const row = pane.split("\n").find((l) => l.startsWith("▎ 1 "));
 	return row?.slice(4).split("  ")[0]?.trim();
 };
-const alive = (marker: string) => spawnSync("pgrep", ["-f", marker]).status === 0;
-const userTexts = (bodies: any[]) => JSON.stringify(bodies.slice(1));
+/** The part of a chat-completions request body the tests read (trust boundary: the JSON the app sent to the fake provider). */
+interface RequestBody {
+	messages: { role: string; content: string | { type: string; text?: string }[] }[];
+}
 
-async function session(
-	name: string,
-	command: string,
-	drive: (s: { pane(): string; keys(...k: string[]): void; lit(t: string): void; bodies: any[] }) => Promise<void>,
-	withExt = false,
-) {
+interface Driver {
+	pane(): string;
+	keys(...k: string[]): void;
+	lit(t: string): void;
+	bodies: RequestBody[];
+}
+
+const alive = (marker: string) => spawnSync("pgrep", ["-f", marker]).status === 0;
+const userTexts = (bodies: RequestBody[]) => JSON.stringify(bodies.slice(1));
+
+async function session(name: string, command: string, drive: (s: Driver) => Promise<void>, withExt = false) {
 	const dir = join(root, name);
 	mkdirSync(join(dir, "agent"), { recursive: true });
 	mkdirSync(join(dir, "work"));
@@ -166,7 +173,7 @@ async function session(
 		}),
 	);
 	if (withExt) {
-		// extensão global isolada: enfileira uma mensagem custom (como a conclusão de um subagente) quando a tool começa
+		// isolated global extension: queues a custom message (like a subagent completion) when the tool starts
 		mkdirSync(join(dir, "agent", "extensions"));
 		writeFileSync(
 			join(dir, "agent", "extensions", "custom-completion.ts"),
@@ -205,55 +212,55 @@ async function session(
 async function startTool(s: Parameters<Parameters<typeof session>[2]>[0], marker: string) {
 	s.lit("rode o comando");
 	s.keys("Enter");
-	await waitFor("a tool bash em execução", () => alive(marker));
+	await waitFor("the bash tool running", () => alive(marker));
 }
 
 for (const [label, send] of [
-	["Ctrl+Enter", (s: any) => s.lit("\x1b[13;5u")],
-	["Ctrl+X Ctrl+S", (s: any) => s.keys("C-x", "C-s")],
+	["Ctrl+Enter", (s: Driver) => s.lit("\x1b[13;5u")],
+	["Ctrl+X Ctrl+S", (s: Driver) => s.keys("C-x", "C-s")],
 ] as const) {
-	test(`E2E nativo: ${label} durante uma tool cancela a tool e envia o rascunho ao modelo`, async () => {
+	test(`native e2e: ${label} during a tool cancels the tool and sends the draft to the model`, async () => {
 		const marker = `sleep 25; : nye${process.pid}1`;
 		await session(`tool-${label.length}`, marker, async (s) => {
 			await startTool(s, marker);
-			s.lit("RASCUNHO-ENVIADO-AGORA");
+			s.lit("DRAFT-SENT-NOW");
 			await sleep(300);
 			send(s);
-			await waitFor("o rascunho chegou ao modelo", () => userTexts(s.bodies).includes("RASCUNHO-ENVIADO-AGORA"));
-			await waitFor("a tool foi cancelada", () => !alive(marker), 10000);
+			await waitFor("the draft reached the model", () => userTexts(s.bodies).includes("DRAFT-SENT-NOW"));
+			await waitFor("the tool was cancelled", () => !alive(marker), 10000);
 			assert.ok(s.bodies.length >= 2);
 		});
 	});
 }
 
-test("E2E nativo: Ctrl+Enter durante um !bash do usuário cancela o bash e envia o rascunho", async () => {
+test("native e2e: Ctrl+Enter during a user !bash cancels the bash and sends the draft", async () => {
 	const marker = `sleep 25; : nye${process.pid}2`;
 	await session("bang", "true", async (s) => {
 		s.lit(`!${marker}`);
 		s.keys("Enter");
-		await waitFor("o !bash em execução", () => alive(marker));
-		s.lit("DEPOIS-DO-BASH");
+		await waitFor("the !bash running", () => alive(marker));
+		s.lit("AFTER-BASH");
 		await sleep(300);
 		s.lit("\x1b[13;5u");
-		await waitFor("o bash foi cancelado", () => !alive(marker), 10000);
-		await waitFor("o rascunho chegou ao modelo", () => userTexts(s.bodies).includes("DEPOIS-DO-BASH"));
+		await waitFor("the bash was cancelled", () => !alive(marker), 10000);
+		await waitFor("the draft reached the model", () => userTexts(s.bodies).includes("AFTER-BASH"));
 	});
 });
 
-test("E2E nativo: Enter simples durante a tool só enfileira (não cancela nem envia agora)", async () => {
+test("native e2e: a plain Enter during the tool only queues (neither cancels nor sends now)", async () => {
 	const marker = `sleep 25; : nye${process.pid}3`;
 	await session("enter", marker, async (s) => {
 		await startTool(s, marker);
 		s.lit("SO-ENFILEIRA");
 		s.keys("Enter");
-		await sleep(2500); // janela negativa: nada deve acontecer
-		assert.ok(alive(marker), "a tool segue viva");
+		await sleep(2500); // negative window: nothing should happen
+		assert.ok(alive(marker), "the tool stays alive");
 		assert.equal(s.bodies.length, 1);
 		spawnSync("pkill", ["-f", marker]);
 	});
 });
 
-test("E2E nativo: Ctrl+Enter com editor vazio e tool ativa é no-op (a tool segue viva)", async () => {
+test("native e2e: Ctrl+Enter with an empty editor and an active tool is a no-op (the tool stays alive)", async () => {
 	const marker = `sleep 25; : nye${process.pid}4`;
 	await session("empty", marker, async (s) => {
 		await startTool(s, marker);
@@ -265,25 +272,25 @@ test("E2E nativo: Ctrl+Enter com editor vazio e tool ativa é no-op (a tool segu
 	});
 });
 
-// F1: o clearAllQueues nativo apaga mensagens custom enfileiradas; o enviar-agora não pode perder a conclusão de um subagente.
-test("E2E nativo F1: Ctrl+Enter com rascunho durante a tool entrega ao modelo o rascunho E a mensagem custom enfileirada", async () => {
+// F1: the native clearAllQueues drops queued custom messages; send-now must not lose a subagent completion.
+test("native e2e F1: Ctrl+Enter with a draft during the tool delivers the draft AND the queued custom message to the model", async () => {
 	const marker = `sleep 25; : nye${process.pid}5`;
 	await session(
 		"f1-draft",
 		marker,
 		async (s) => {
 			await startTool(s, marker);
-			s.lit("RASCUNHO-F1");
+			s.lit("DRAFT-F1");
 			await sleep(300);
 			s.lit("\x1b[13;5u");
-			await waitFor("rascunho no modelo", () => userTexts(s.bodies).includes("RASCUNHO-F1"));
-			await waitFor("a mensagem custom também", () => userTexts(s.bodies).includes("CUSTOM_COMPLETION_TOKEN"));
+			await waitFor("the draft at the model", () => userTexts(s.bodies).includes("DRAFT-F1"));
+			await waitFor("the custom message too", () => userTexts(s.bodies).includes("CUSTOM_COMPLETION_TOKEN"));
 		},
 		true,
 	);
 });
 
-test("E2E nativo F1: Ctrl+Enter com editor vazio não apaga a mensagem custom: ela chega ao modelo quando a tool termina", async () => {
+test("native e2e F1: Ctrl+Enter with an empty editor keeps the custom message: it reaches the model when the tool ends", async () => {
 	const marker = `sleep 25; : nye${process.pid}6`;
 	await session(
 		"f1-empty",
@@ -291,11 +298,11 @@ test("E2E nativo F1: Ctrl+Enter com editor vazio não apaga a mensagem custom: e
 		async (s) => {
 			await startTool(s, marker);
 			s.lit("\x1b[13;5u");
-			await sleep(1500); // janela negativa: continua tudo parado
-			assert.ok(alive(marker), "no-op: a tool segue viva");
+			await sleep(1500); // negative window: everything stays still
+			assert.ok(alive(marker), "no-op: the tool stays alive");
 			assert.equal(s.bodies.length, 1);
-			spawnSync("pkill", ["-f", marker]); // encerra só a tool deste teste (marcador único com o PID do runner)
-			await waitFor("a custom chegou ao modelo após a tool", () =>
+			spawnSync("pkill", ["-f", marker]); // ends only this test's tool (unique marker with the runner PID)
+			await waitFor("the custom message reached the model after the tool", () =>
 				userTexts(s.bodies).includes("CUSTOM_COMPLETION_TOKEN"),
 			);
 		},
@@ -303,57 +310,61 @@ test("E2E nativo F1: Ctrl+Enter com editor vazio não apaga a mensagem custom: e
 	);
 });
 
-test("E2E nativo: Shift+↑ devolve a fila para editar sem abortar; Ctrl+U continua edição de linha", async () => {
+test("native e2e: Shift+Left returns the queue for editing without aborting; Ctrl+U still edits the line", async () => {
 	const marker = `sleep 25; : nye${process.pid}7`;
 	await session("dequeue", marker, async (s) => {
 		await startTool(s, marker);
 		s.lit("QUEUED-MSG");
 		s.keys("Enter");
-		await waitFor("mensagem na fila", () => queuedRow(s.pane()) === "QUEUED-MSG");
-		s.lit("rascunho temporario");
+		await waitFor("message in the queue", () => queuedRow(s.pane()) === "QUEUED-MSG");
+		s.lit("temporary draft");
 		s.keys("C-u");
 		await waitFor(
-			"Ctrl+U limpa só a linha",
-			() => !s.pane().includes("rascunho temporario") && queuedRow(s.pane()) === "QUEUED-MSG",
+			"Ctrl+U clears only the line",
+			() => !s.pane().includes("temporary draft") && queuedRow(s.pane()) === "QUEUED-MSG",
 		);
 		s.keys("S-Left");
 		await waitFor(
-			"fila devolvida ao editor",
+			"the queue returned to the editor",
 			() => queuedRow(s.pane()) === undefined && s.pane().includes("QUEUED-MSG"),
 		);
-		assert.ok(alive(marker), "editar a fila não aborta a tool");
+		assert.ok(alive(marker), "editing the queue does not abort the tool");
 		assert.equal(s.bodies.length, 1);
 		s.lit("-EDITED");
 		s.keys("Enter");
-		await waitFor("mensagem editada na fila", () => queuedRow(s.pane()) === "QUEUED-MSG-EDITED");
+		await waitFor("edited message in the queue", () => queuedRow(s.pane()) === "QUEUED-MSG-EDITED");
 		spawnSync("pkill", ["-f", marker]);
-		await waitFor("mensagem editada no modelo", () => userTexts(s.bodies).includes("QUEUED-MSG-EDITED"));
+		await waitFor("edited message at the model", () => userTexts(s.bodies).includes("QUEUED-MSG-EDITED"));
 		// The agent turn, not the session-title request nycode sends to the same provider.
-		const turn = s.bodies.filter((b: any) => JSON.stringify(b).includes("QUEUED-MSG-EDITED")).at(-1);
+		const turn = s.bodies.filter((b) => JSON.stringify(b).includes("QUEUED-MSG-EDITED")).at(-1);
+		assert.ok(turn, "a request carries the edited message");
 		const texts = turn.messages
-			.filter((m: any) => m.role === "user")
-			.map((m: any) =>
+			.filter((m) => m.role === "user")
+			.map((m) =>
 				typeof m.content === "string"
 					? m.content
 					: m.content
-							.filter((c: any) => c.type === "text")
-							.map((c: any) => c.text)
+							.filter((c) => c.type === "text")
+							.map((c) => c.text)
 							.join(""),
 			);
 		assert.ok(texts.includes("QUEUED-MSG-EDITED"));
-		assert.ok(!texts.includes("QUEUED-MSG"), "o texto antigo não foi entregue também");
+		assert.ok(!texts.includes("QUEUED-MSG"), "the old text was not delivered too");
 	});
 });
 
-test("E2E nativo: isolamento — CLI nativo via Node, tmux privado, ambiente em lista branca", () => {
-	assert.ok(BIN.endsWith(".js") && !BIN.includes(`${REAL_HOME}/.local/bin`), "CLI nativo JS, nunca o wrapper global");
+test("native e2e: isolation - CLI run by Node, private tmux, allowlisted environment", () => {
+	assert.ok(
+		BIN.endsWith(".js") && !BIN.includes(`${REAL_HOME}/.local/bin`),
+		"the CLI is JS, never the global wrapper",
+	);
 	assert.ok(
 		!readFileSync(BIN, "utf8").startsWith("#!/bin/bash") && !readFileSync(BIN, "utf8").startsWith("#!/bin/sh"),
-		"não é wrapper shell",
+		"not a shell wrapper",
 	);
 	assert.ok(SOCK.startsWith(root) && root.startsWith("/tmp"));
-	assert.equal(statSync(root).mode & 0o077, 0, "raiz privada (0700)");
-	// sentinelas FALSAS no ambiente do "chamador": nenhuma deve atravessar o ambiente reduzido
+	assert.equal(statSync(root).mode & 0o077, 0, "private root (0700)");
+	// FAKE sentinels in the "caller" environment: none may cross the reduced environment
 	const hostile: Record<string, string> = {
 		ANTHROPIC_API_KEY: "SENTINEL-KEY",
 		OPENAI_API_KEY: "SENTINEL-KEY",
@@ -380,9 +391,9 @@ test("E2E nativo: isolamento — CLI nativo via Node, tmux privado, ambiente em 
 	assert.deepEqual(Object.keys(seen).sort(), ["HOME", "LANG", "PATH", "TERM", "TMPDIR"]);
 	assert.ok(seen.HOME.startsWith(root));
 	assert.ok(!JSON.stringify(seen).includes("SENTINEL") && !JSON.stringify(seen).includes("/sentinel/"));
-	// toda chamada tmux feita pelo harness usa socket privado e -f /dev/null
+	// every tmux call of the harness uses the private socket and -f /dev/null
 	assert.deepEqual(tmuxArgs(["ls"]), ["-S", SOCK, "-f", "/dev/null", "ls"]);
 	const v = tmux(["-V"], dir, { encoding: "utf8" });
-	assert.equal(v.status, 0, "tmux executável");
+	assert.equal(v.status, 0, "tmux executable");
 	assert.ok(tmuxCalls.every((a) => a[0] === "-S" && a[1] === SOCK && a[2] === "-f" && a[3] === "/dev/null"));
 });

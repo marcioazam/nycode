@@ -4,7 +4,7 @@
 // the raw input the app received, and the pane. NYCODE_E2E_CLI overrides the CLI. Not a test file; tmux missing fails.
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -184,7 +184,6 @@ export async function scenario(name: string, cfg: Cfg, fn: (s: S) => Promise<voi
 		throw error;
 	} finally {
 		const n = await s.close();
-		appendFileSync("/dev/null", "");
 		assert.equal(n, 0, `fake provider received requests: ${s.requests.join(", ")}`);
 	}
 }
