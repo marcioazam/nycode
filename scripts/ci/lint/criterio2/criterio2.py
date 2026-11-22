@@ -32,8 +32,8 @@ PATTERNS = (
 # `-F` literals joined by newlines would also work; one ERE keeps rg and git grep in step with the plan text.
 REGEX = r"patch -p1|sed -i|CLAUDE_CONFIG_DIR|node_modules/pi-code|\.pi/agent"
 CLASSES = ("produto-externo", "upstream", "ferramenta-fork", "migracao")
-# import/ goes away in F12; docs/ is the plan; the linter's own directory spells the patterns by design.
-EXCLUDED = ("import", "docs", "scripts/ci/lint/criterio2")
+# docs/ is the plan; the linter's own directory spells the patterns by design.
+EXCLUDED = ("docs", "scripts/ci/lint/criterio2")
 ALLOW_FILE = Path(__file__).with_name("criterio2-allow.txt")
 SHOW = 140
 

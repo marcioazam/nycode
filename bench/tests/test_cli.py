@@ -473,27 +473,6 @@ def test_harbor_step_skips_done_units(tmp_path: Path, monkeypatch: MP) -> None:
     assert not rec.exists()  # nothing left: no `harbor run` over the whole dataset
 
 
-def test_harbor_step_omp_fetches_release_first(tmp_path: Path, monkeypatch: MP) -> None:
-    rec = tmp_path / "argv"
-    monkeypatch.setenv(
-        "BENCH_HARBOR", str(script(tmp_path / "h", f'echo "$@" >> {rec}\n'))
-    )
-    monkeypatch.setattr(rb, "oauth_token", lambda: "tok")
-    hd = tmp_path / "hd"
-    hd.mkdir()
-    (hd / "omp-release.sh").write_text(f"echo fetched >> {rec}\n")
-    monkeypatch.setattr(rb, "OMP_DIR", hd)
-    s: rb.Step = {
-        "suite": "s2", "k": 1, "st": {}, "tasks": ["a"],
-        "cfg": {"dataset": "ds", "seed": 1, "heldout_pct": 10},
-    }  # fmt: skip
-    s["cfg"]["agent_timeout_multiplier"] = 0.125
-    rb._harbor_step(s, "omp", "m", tmp_path / "o", 5.0)
-    lines = rec.read_text().splitlines()
-    assert lines[0] == "fetched" and "omp_agent:OmpAgent" in lines[1]
-    assert "--agent-timeout-multiplier 0.125" in lines[1]
-
-
 def test_main_run_refuses_low_disk(monkeypatch: MP, capsys: CF) -> None:
     monkeypatch.setenv("BENCH_MIN_FREE_GB", "30")
     monkeypatch.setattr(

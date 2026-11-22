@@ -1,4 +1,4 @@
-// Ported from import/ny-pi/claude-home/bin/tests/sound-notify.test.ts (1 case), plus the settled handler gated by
+// Ported from the pre-migration harness: claude-home/bin/tests/sound-notify.test.ts (1 case), plus the settled handler gated by
 // `notify.sound` / NYCODE_SOUND_NOTIFY.
 import * as fs from "node:fs";
 import * as os from "node:os";

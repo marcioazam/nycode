@@ -1,4 +1,4 @@
-// Ports import/ny-pi/extensions/ui/test/editor.test.ts to vitest.
+// Ports the pre-migration harness: extensions/ui/test/editor.test.ts to vitest.
 import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";

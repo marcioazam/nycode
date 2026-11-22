@@ -195,7 +195,7 @@ def fake_harness_tree(tmp: Path) -> Path:
 
 
 def test_nycode_harness_arm_needs_a_tree_with_bin_pi(tmp_path: Path) -> None:
-    """import/nycode-harness has no bin/pi since F5: the arm says so and names BENCH_NYCODE_HARNESS_SRC instead of exiting 127 later."""
+    """A tree without bin/pi: the arm says so and names BENCH_NYCODE_HARNESS_SRC instead of exiting 127 later."""
     (tmp_path / "bare").mkdir()
     for extra in ({}, {"BENCH_NYCODE_HARNESS_SRC": str(tmp_path / "bare")}):
         p = subprocess.run(
@@ -208,7 +208,7 @@ def test_nycode_harness_arm_needs_a_tree_with_bin_pi(tmp_path: Path) -> None:
 
 
 def test_nycode_harness_arm_requires_bench_nycode_harness_src(tmp_path: Path) -> None:
-    """import/nycode-harness no longer carries install.sh (F11): without BENCH_NYCODE_HARNESS_SRC the arm exits 2 and says what to set, for a
+    """There is no default tree: without BENCH_NYCODE_HARNESS_SRC the arm exits 2 and says what to set, for a
     default stage and for a BENCH_STAGE that is not built; a missing directory fails the same way."""
     base = {
         "PATH": "/usr/bin:/bin",
@@ -222,10 +222,7 @@ def test_nycode_harness_arm_requires_bench_nycode_harness_src(tmp_path: Path) ->
     ):
         p = subprocess.run(["bash", str(BENCH / "arms/nycode-harness")], env={**base, **extra}, capture_output=True, text=True, check=False)  # fmt: skip
         assert p.returncode == 2, p.stderr
-        assert (
-            "set BENCH_NYCODE_HARNESS_SRC" in p.stderr
-            and "import/nycode-harness" in p.stderr
-        )
+        assert "set BENCH_NYCODE_HARNESS_SRC" in p.stderr
     assert not (tmp_path / "stage").exists()
 
 

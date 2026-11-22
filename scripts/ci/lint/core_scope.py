@@ -3,8 +3,7 @@
 hook, command and plugin has exactly one table row with a valid class, and no row is stale.
 
 A type with no shipped piece yet is not compared for stale rows: the pieces arrive in F5-F8 and
-their rows already exist. The first piece of a type turns the stale check on for that type; a
-row whose piece still waits in import/ny-pi (extensions/, claude-home/) is pending, not stale.
+their rows already exist. The first piece of a type turns the stale check on for that type.
 A piece without a row is always a finding. Every `optional` skill must carry
 `disable-model-invocation: true` (D-39: it stays out of the model context, `/skill:<name>` still works).
 D-51 moved the six skills that carried it to `core`; the check stays for any skill classed `optional`.
@@ -26,9 +25,6 @@ TYPES = ("skill", "agent", "extension", "hook", "command", "plugin")
 CLASSES = ("core", "ui", "optional", "remove")
 RESOURCES = Path("packages/coding-agent/resources")
 EXTENSIONS = Path("packages/coding-agent/src/extensions")
-# The nycode-harness copy waiting to move (removed in F12): same layout, resources under claude-home/.
-IMPORT_RESOURCES = Path("import/ny-pi/claude-home")
-IMPORT_EXTENSIONS = Path("import/ny-pi/extensions")
 EXT_SKIP = {"test", "tests", "node_modules"}
 # Extensions and the registry the fork had before the harness: not pieces of the 0005 table.
 EXT_NATIVE = {"index", "codemode", "llama", "mcp", "tool-search"}
@@ -160,9 +156,7 @@ def main(argv: list[str] | None = None) -> int:
     except SpecError as e:
         print(f"core-scope: {e}", file=sys.stderr)
         return 2
-    findings = compare(
-        discover(root), rows, discover(root, IMPORT_RESOURCES, IMPORT_EXTENSIONS)
-    )
+    findings = compare(discover(root), rows)
     findings = sorted(findings + unhidden_optional_skills(root, rows))
     if findings:
         print("\n".join(findings), file=sys.stderr)

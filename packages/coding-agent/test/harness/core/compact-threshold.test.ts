@@ -1,4 +1,4 @@
-// Ports import/ny-pi/claude-home/bin/tests/compact-at-400k.test.ts to the core rule (K9) and adds the settled-session cases.
+// Ports the pre-migration harness: claude-home/bin/tests/compact-at-400k.test.ts to the core rule (K9) and adds the settled-session cases.
 import { describe, expect, it, vi } from "vitest";
 import {
 	type CompactThresholdContext,

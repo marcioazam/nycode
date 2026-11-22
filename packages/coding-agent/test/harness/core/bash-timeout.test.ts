@@ -1,4 +1,4 @@
-// Replaces import/ny-pi/extensions/bash-timeout/index.test.ts (K8): the 600 s default, the 1800 s cap, the timeout
+// Replaces the pre-migration harness: extensions/bash-timeout/index.test.ts (K8): the 600 s default, the 1800 s cap, the timeout
 // hint and the background mode, now inside the core bash tool (src/core/tools/bash-timeout.ts, called by bash.ts).
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
