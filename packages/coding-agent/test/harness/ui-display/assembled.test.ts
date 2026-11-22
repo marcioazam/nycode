@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { visibleWidth } from "@nycode/tui";
-import { afterAll as after, test } from "vitest";
+import { afterAll as after, test, vi } from "vitest";
 import statusLine from "../../../src/extensions/status-line/index.ts";
 import { registerFleetUi } from "../../../src/extensions/subagent/fleet-ui/index.ts";
 import { nav } from "../../../src/extensions/subagent/section-nav/nav.ts";
@@ -19,6 +19,9 @@ process.env.HOME = home;
 delete process.env.NYCODE_SUBAGENT;
 process.env.NO_COLOR = ""; // palette keeps color codes: ANSI correctness is part of the check
 
+// The running mark depends on the wall clock (palette.ts spinnerAt): keep it still.
+vi.useFakeTimers({ toFake: ["Date"] });
+vi.setSystemTime(1_800_000_000_000);
 const NOW = Date.now();
 const strip = (s: string): string => s.replace(/\x1b\[[0-9;]*m/g, "");
 const theme = {
