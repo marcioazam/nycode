@@ -1,9 +1,9 @@
 # Inventário da origem e do destino
 
 Resumo do que existe hoje, com as contagens que o resto do plano usa. O levantamento bruto, com caminho e linha,
-está nos anexos [A](anexos/A-inventario-nycode-harness.md) (nycode-harness) e [B](anexos/B-mapa-core-nycode.md) (nycode).
+está nos anexos [A](anexos/A-inventario-nycode-harness.md) (harness Nycode) e [B](anexos/B-mapa-core-nycode.md) (Nycode).
 
-## 1. Como o nycode-harness funciona hoje
+## 1. Como o harness Nycode funciona hoje
 
 ```text
 usuário digita `pi`
@@ -27,7 +27,7 @@ pi-code lê CLAUDE_CONFIG_DIR: CLAUDE.md, rules/, agents/, skills/, commands/, s
 sessão
 ```
 
-Nada disso é um binário único: são quatro camadas instaladas em momentos diferentes (pi, pi-code, terceiros, nycode-harness),
+Nada disso é um binário único: são quatro camadas instaladas em momentos diferentes (pi, pi-code, terceiros, harness Nycode),
 unidas por um script de shell que reaplica patches a cada início.
 
 ## 2. Contagens da origem (`marcioazam/ny-pi@e4f8729`)
@@ -72,7 +72,7 @@ unidas por um script de shell que reaplica patches a cada início.
 | Aplicativos | `apps/p2`, `apps/p3`, `apps/p2-mac` |
 | `packages/coding-agent/src` | 266 arquivos `.ts` (core 103, modes 71, utils 39, extensions 25, cli 15, bun 5) |
 | Extensões embutidas | 4: `llama.cpp`, `codemode`, `tool-search`, `mcp` |
-| Eventos da `ExtensionAPI` | cerca de 40, incluindo todos os que as extensões do nycode-harness usam (`agent_before_settle`, `agent_settled`, `before_provider_request`, `tool_call`, `tool_result`, `session_start` e outros) |
+| Eventos da `ExtensionAPI` | cerca de 40, incluindo todos os que as extensões do harness Nycode usam (`agent_before_settle`, `agent_settled`, `before_provider_request`, `tool_call`, `tool_result`, `session_start` e outros) |
 | Subagentes, modo de plano, objetivo, hooks, tarefas | Não existem no core |
 | Arquivos de fonte acima de 800 linhas | 50 de 939 em `packages/*/src` |
 | Workflows | `ci.yml` (`build-check`, `test` em 4 grupos, `mcp-conformance`), `npm-audit.yml` |
@@ -98,5 +98,5 @@ unidas por um script de shell que reaplica patches a cada início.
 - Os patches grandes (`subagent-panel`, 2547 linhas; `goal`, 872) foram descritos por nome, alvo e documentação, não
   lidos linha a linha (pendência P-2).
 - As 227 peças de skill foram contadas, não lidas uma a uma; a classe de cada uma vem da especificação 0005 (P-1).
-- Não foi verificado se o repositório de origem do pi-code tem testes próprios além dos que o nycode-harness escreveu.
-- O levantamento do nycode não usou índice de código; foi leitura e busca literal.
+- Não foi verificado se o repositório de origem do pi-code tem testes próprios além dos que o harness Nycode escreveu.
+- O levantamento do Nycode não usou índice de código; foi leitura e busca literal.

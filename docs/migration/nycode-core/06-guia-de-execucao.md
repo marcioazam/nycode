@@ -1,4 +1,4 @@
-# Guia de execução da migração nycode-harness para o core do nycode
+# Guia de execução da migração harness Nycode para o core do Nycode
 
 Estado: **plano, nada executado**. Os comandos são para um executor futuro; ao escrever só se rodaram leituras (`rg`,
 `git show`, `git ls-tree`, `npm view`, versões). Identificadores (F0 a F12, D-01 a D-25, K1 a K14, P-1 a P-8) vêm de
@@ -80,7 +80,7 @@ De F2 em diante, para arquivo já em `import/ny-pi/` (a cópia do pi-code, em F5
 
 ## F0. Preparação e congelamento
 
-**Objetivo:** fechar as decisões, medir a linha de base do destino, congelar o nycode-harness e limpar o destino.
+**Objetivo:** fechar as decisões, medir a linha de base do destino, congelar o harness Nycode e limpar o destino.
 
 **Pré-condições:** `git -C "$DEST" status --porcelain | wc -l` devolve 0;
 `gh pr list -R "$UP" --state open --json number --jq length` devolve 0 (anexo D §6).
@@ -99,7 +99,7 @@ De F2 em diante, para arquivo já em `import/ny-pi/` (a cópia do pi-code, em F5
    ./test.sh 2>&1 | tee /tmp/f0-test.log | tail -20
    ```
 
-3. **Congelar o nycode-harness:** `git -C "$ORIG" fetch origin && git -C "$ORIG" rev-parse origin/main` (hoje
+3. **Congelar o harness Nycode:** `git -C "$ORIG" fetch origin && git -C "$ORIG" rev-parse origin/main` (hoje
    `e4f8729bfab57e9e2b222f020710c85d0a578c8d`). Esse é o "SHA de congelamento": até F12 só correção de segurança entra
    em `marcioazam/ny-pi` `main`; o resto se vê com `git -C "$ORIG" log <sha>..origin/main --oneline`.
 4. **Ramos remotos e PRs abertos** (leitura): `git ls-remote --heads origin | sed 's#.*refs/heads/##' | sort >
@@ -123,7 +123,7 @@ De F2 em diante, para arquivo já em `import/ny-pi/` (a cópia do pi-code, em F5
 7. **D-17, escopo npm:** `npm view @nycode/coding-agent 2>&1 | head -3` (hoje `E404`). Criar a organização `@nycode` é
    ação do dono em npmjs.com (procedimento: não verificado); indisponível, plano B `@marcioazam` com prefixo `nycode-`.
 8. **Etiqueta (P-6) [AUTORIZAÇÃO, push de tag]:**
-   `git tag -a v1.6.0-base fb05db936 -m "nycode: base from earendil-works/pi@073b0ba (1.6.0)" && git push origin
+   `git tag -a v1.6.0-base fb05db936 -m "Nycode: base from earendil-works/pi@073b0ba (1.6.0)" && git push origin
    v1.6.0-base`. O `ci.yml:42-43` já pula o check de changelog sem tag (P-6 pode estar mitigado); o push dispara o CI
    (`ci.yml:7`). Efeito sobre `scripts/release.mjs`: não verificado.
 9. **Versionar o script de renome**, que vive em `/tmp/nycode-rename/{rename.py,post.sh}` (citado em
@@ -167,7 +167,7 @@ D-15, D-16, D-17 e D-22, `npm view`, SHA da etiqueta. **Reversão:** F0 não alt
    Achado real (segredo, identificador pessoal) **bloqueia**: tratar com o dono e reescrever o clone
    (`git filter-repo --replace-text`). `.gitleaks.toml` e `.leak-allow` ficam em `import/ny-pi/`: comparar os achados
    com elas.
-3. **Fundir no destino**, em worktree limpo da `main` (`--no-tags` não traz as etiquetas do nycode-harness):
+3. **Fundir no destino**, em worktree limpo da `main` (`--no-tags` não traz as etiquetas do harness Nycode):
 
    ```bash
    cd "$DEST" && git remote add ny-pi-import /tmp/ny-pi-import && git fetch --no-tags ny-pi-import \
@@ -213,7 +213,7 @@ saída do `git log --follow`, os quatro arquivos editados. **Reversão:** `git r
 **Passos:** conteúdo e reconciliação em [04](04-regras-do-repositorio.md) (30 linhas de regra) e
 [05](05-marca-e-readme.md). Ordem dos PRs (`git mv` de `import/ny-pi/...` quando o arquivo existe lá):
 
-1. `docs: add CODEOWNERS, dependabot, release and zizmor config` (o `dependabot.yml` do nycode-harness cobre `/` e `/npm`:
+1. `docs: add CODEOWNERS, dependabot, release and zizmor config` (o `dependabot.yml` do harness Nycode cobre `/` e `/npm`:
    ajustar aos diretórios do destino).
 2. `docs: add PR and discussion templates` (mantém os modelos de issue).
 3. `docs: add CODE_OF_CONDUCT and SUPPORT` (perfil de comunidade de 71% a 100%).
@@ -262,12 +262,12 @@ com 1 ocorrência; `gh api repos/$UP/community/profile --jq .health_percentage` 
    `actionlint .github/workflows/*.yml` e `zizmor --min-severity medium .github/workflows`.
 3. **`bench/`:** `git mv import/ny-pi/bench bench` e `git mv import/ny-pi/docs/bench docs/bench` (o destino não tem
    `bench/`). A mudança de raiz quebra `bench/arms/nycode-harness:12` (`repo=$(cd "$here/../.." && pwd)`, que usa `install.sh`,
-   `npm/package.json` e `publish.list` da raiz do nycode-harness, só em `import/ny-pi/`): apontar `repo` para
+   `npm/package.json` e `publish.list` da raiz do harness Nycode, só em `import/ny-pi/`): apontar `repo` para
    `<raiz>/import/ny-pi` enquanto ele existir; idem `bench/arms/overlay-sha.sh` e `bench/tools/bench-pr.sh` (não lidos
    linha a linha: não verificado). O poller é a unidade systemd `bench/tools/systemd/bench-pr.{service,timer}`
    com `~/.config/ny-pi/bench.env` (`BENCH_REPO=$UP`): etapa manual do dono, fora do repositório.
 4. **Braço `nycode-harness@1.6.0` (D-14, D-25):** em `bench/arms.toml`, braço `nycode-harness-pi160` (mesmo `bin` de `arms/nycode-harness`, base pi
-   1.6.0). O `bin/pi` do nycode-harness usa `PI_HARNESS_PI_VERSION:-1.5.2` e os 2 patches de `dist` só aplicam nessa versão
+   1.6.0). O `bin/pi` do harness Nycode usa `PI_HARNESS_PI_VERSION:-1.5.2` e os 2 patches de `dist` só aplicam nessa versão
    (anexo A §1 item 10): o braço mede "ny-pi sem os 2 patches de core sobre o pi 1.6.0", e isso entra no resultado. O
    instalador confere sha256 dos artefatos de 1.5.2 (`scripts/install-lib.sh:6-9`); os de 1.6.0 vêm de
    `https://pi.dev/api/installer/releases/1.6.0/` e o executor os confere (não verificado). Simulação sem custo:
@@ -284,7 +284,7 @@ com 1 ocorrência; `gh api repos/$UP/community/profile --jq .health_percentage` 
    `gh api repos/$UP/rulesets --jq '.[] | [.name, .enforcement] | @tsv'` (esperado `main  active`).
 7. **Remover a proteção clássica [AUTORIZAÇÃO]**, com o ruleset ativo (guardar antes a saída de
    `gh api repos/$UP/branches/main/protection`): `gh api -X DELETE repos/$UP/branches/main/protection` (depois, a
-   mesma leitura devolve 404). Alinhar ao nycode-harness (anexo D §1): `delete_branch_on_merge`, `allow_auto_merge`,
+   mesma leitura devolve 404). Alinhar ao harness Nycode (anexo D §1): `delete_branch_on_merge`, `allow_auto_merge`,
    `allow_update_branch` em `true` (`gh api -X PATCH repos/$UP -F ...`; nomes dos campos: não verificado);
    `allow_merge_commit` fica `true` (D-07).
 
@@ -304,7 +304,7 @@ resultado ou pendência da rodada `nycode-harness-pi160`, decisão sobre `smoke`
 
 **Pré-condições:** `gh api repos/$UP/rulesets --jq length` devolve 1 (F3); linha de base de F0 sem falha nova.
 
-Um PR por costura. Linhas conferidas com `rg` em `fb05db936`; reconferir antes de editar. O teste do nycode-harness vira o teste
+Um PR por costura. Linhas conferidas com `rg` em `fb05db936`; reconferir antes de editar. O teste do harness Nycode vira o teste
 da costura, reescrito em vitest em `packages/coding-agent/test/harness/` (K2: `packages/mcp/test/`).
 
 ### K1. `piSameContextMessage` em `core/sdk.ts`
@@ -338,7 +338,7 @@ da costura, reescrito em vitest em `packages/coding-agent/test/harness/` (K2: `p
 - `core/settings-schema.ts:206` (`SettingsSchema`; `quietStartup` `:265`, `defaultProjectTrust` `:271`) e
   `core/settings-defaults.ts:18` (`retry`), `:29` (`quietStartup: false`), `:30` (`defaultProjectTrust: "ask"`).
 - Mudanças: `defaultProjectTrust` padrão `"never"`; `quietStartup` padrão `"header"` (o tipo atual é boolean: ampliar
-  o tipo ou manter boolean e registrar o desvio); `retry` do nycode-harness (`enabled`, `maxRetries 10`, `baseDelayMs 2000`,
+  o tipo ou manter boolean e registrar o desvio); `retry` do harness Nycode (`enabled`, `maxRetries 10`, `baseDelayMs 2000`,
   `maxAgentDelayMs 60000`); blocos `permissions` e `harness` e as chaves da tabela de 02 §5, cada uma com sua `NYCODE_*`
   (documentar em `packages/coding-agent/docs/environment-variables.md`); chave `hooks` (ausente do schema:
   `rg -n "hooks" packages/coding-agent/src/core/settings-schema.ts`). Regenerar `packages/coding-agent/schemas`.
@@ -365,7 +365,7 @@ da costura, reescrito em vitest em `packages/coding-agent/test/harness/` (K2: `p
 ### K14. Título de reserva em `config.ts`
 
 - `packages/coding-agent/src/config.ts:605`: `export const APP_TITLE: string = nycodeConfigName ? APP_NAME : "π";`; o
-  literal `"π"` vira `"nycode"`. Entra em F2 pela marca; o teste (`--help` com `HOME` vazio mostra "nycode";
+  literal `"π"` vira `"nycode"`. Entra em F2 pela marca; o teste (`--help` com `HOME` vazio mostra "Nycode";
   `--version` imprime só a versão, sem "π", como no upstream, que faz `console.log(VERSION)`) fecha em F4. Sem teste
   de origem; teste novo em `packages/coding-agent/test/`.
 
@@ -507,7 +507,7 @@ e das rodadas reais, desvios de ordem. **Reversão:** `git revert` do PR do item
 
 ## F7. Extensões próprias
 
-**Objetivo:** migrar as 23 unidades de `extensions/` do nycode-harness conforme [02](02-arquitetura-alvo.md) §3.2.
+**Objetivo:** migrar as 23 unidades de `extensions/` do harness Nycode conforme [02](02-arquitetura-alvo.md) §3.2.
 
 **Pré-condições:** F5 concluída (para `plan-gate`, também F6). Lista real de testes:
 `git -C "$ORIG" ls-tree -r --name-only origin/main extensions claude-home/bin/tests | grep test` devolve 22 `.test.ts`
@@ -650,7 +650,7 @@ linha de base é um PR; reverter o PR restaura a anterior.
 
 ## F11. Distribuição
 
-**Objetivo:** publicar o nycode `2.0.0` (D-13) pelo repositório público `marcioazam/nycode`: etiqueta `v2.0.0`, GitHub
+**Objetivo:** publicar o Nycode `2.0.0` (D-13) pelo repositório público `marcioazam/nycode`: etiqueta `v2.0.0`, GitHub
 Release com binários autocontidos e atestação de proveniência (D-17, D-42). Sem organização, sem registro e sem token de
 longa duração: `@nycode/*` não vai ao npm (`npm whoami` devolve 401 e as dependências `@nycode/*` não existem lá).
 
@@ -669,7 +669,7 @@ em `~/.local/bin` antes do passo 7); Docker (`docker version`, servidor 29.1.3 e
   `Download from: https://github.com/marcioazam/nycode/releases/latest` (`config.ts:371`). É o comportamento certo para o
   canal escolhido.
 - Instalação "gerenciada" (`package-manager-cli.ts:229-239`): sem `NYCODE_INSTALLER_API_BASE` falha e aponta para
-  `RELEASES_URL`; nenhum canal do nycode grava o marcador `nycode-managed-install`, então o ramo fica inerte (não mexer:
+  `RELEASES_URL`; nenhum canal do Nycode grava o marcador `nycode-managed-install`, então o ramo fica inerte (não mexer:
   é código do upstream).
 - Instalações por `npm`, `pnpm`, `yarn` ou `bun` (`config.ts:121-170`) montam `<gerenciador> install -g @nycode/coding-agent@<v>`,
   que dá E404 sem registro. Nenhum canal de F11 produz essas instalações; o passo 5 troca o texto que ainda as sugere.
@@ -760,7 +760,7 @@ Verificação: `gh attestation verify <artefato> -R marcioazam/nycode`. Fonte:
    ```
 
 9. **Limpeza de `import/` (C-F11-10):** `git rm import/ny-pi/install.sh import/ny-pi/publish.list` e `git rm -r
-   import/ny-pi/npm`, em PR próprio (o `install.sh` instalava o pi por symlinks; o fluxo do nycode é o do Release).
+   import/ny-pi/npm`, em PR próprio (o `install.sh` instalava o pi por symlinks; o fluxo do Nycode é o do Release).
 
 **Verificação de saída:** `gh release view v2.0.0 -R marcioazam/nycode --json assets,isDraft,isPrerelease --jq
 '{draft:.isDraft,pre:.isPrerelease,assets:[.assets[].name]}'` lista os 6 arquivos, o código-fonte, `SHA256SUMS` e
@@ -793,7 +793,7 @@ serviço, não verificado). A remoção do Nix e o `release.mjs` novo revertem p
 
    Compatibilidade dos arquivos de sessão do pi 1.5.2 com o 1.6.0: não verificado (abrir uma sessão antiga).
 2. **Convivência:** trocar o `pi` do dia a dia por `nycode`, mantendo o wrapper `~/.local/bin/pi` por um período de
-   observação do dono (sugestão: 2 semanas, **proposta**); falhas vão a `evidencias/F12.md`. O nycode-harness segue congelado.
+   observação do dono (sugestão: 2 semanas, **proposta**); falhas vão a `evidencias/F12.md`. O harness Nycode segue congelado.
 3. **[AUTORIZAÇÃO] D-22, arquivar `marcioazam/ny-pi` (não apagar).** Antes, um PR no `marcioazam/ny-pi` (exceção ao congelamento) com o
    aviso abaixo no topo do `README.md`. O ruleset do `marcioazam/ny-pi` exige `ci-static`, `ci-security`, `instruction-budget` e
    `bench-pr` (anexo A §6); `bench-pr` é postado localmente, então o poller fica ligado até o merge.

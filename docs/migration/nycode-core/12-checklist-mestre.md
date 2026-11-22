@@ -6,7 +6,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 ## F0. Preparação e congelamento
 
 - [x] C-F0-01 Decisões D-01 a D-28 lidas pelo dono; as "aguarda o dono" (D-15, D-16, D-17, D-22) respondidas. Prova: registro datado em `evidencias/F0.md`.
-- [x] C-F0-02 SHA de congelamento do nycode-harness registrado. Prova: `git -C ny-pi rev-parse origin/main`.
+- [x] C-F0-02 SHA de congelamento do harness Nycode registrado. Prova: `git -C ny-pi rev-parse origin/main`.
 - [x] C-F0-03 Linha de base do destino: `npm ci --ignore-scripts`, `npm run build`, `npm run check` com saída 0. Prova: códigos de saída.
 - [x] C-F0-04 `./test.sh` no destino; falhas conhecidas listadas (hoje: `@nycode/env`, falta `cargo`). Prova: resumo do teste.
 - [x] C-F0-05 Anexos A, B, C, D regerados se algum commit novo entrou. Prova: SHAs no cabeçalho dos anexos.
@@ -23,7 +23,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 
 ## F1. Importação do histórico
 
-- [x] C-F1-01 Clone novo do nycode-harness filtrado para `import/ny-pi/`. Prova: `git ls-files | grep -vc '^import/ny-pi/'` devolve 0 no clone.
+- [x] C-F1-01 Clone novo do harness Nycode filtrado para `import/ny-pi/`. Prova: `git ls-files | grep -vc '^import/ny-pi/'` devolve 0 no clone.
 - [x] C-F1-02 Verificação de vazamento no histórico do clone filtrado. Prova: saída 0 de `check-leaks.sh --history`.
 - [x] C-F1-03 Fusão com `--allow-unrelated-histories` num PR com método merge. Prova: commit com dois pais em `main`.
 - [x] C-F1-04 1485 arquivos sob `import/ny-pi/`. Prova: `git ls-files import/ny-pi | wc -l`.
@@ -36,7 +36,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F2-01 `docs/assets/nycode-pixel.svg` restaurado. Prova: sha256 `7269f242f8f7c6dca765f8a780cf72f3a0d471a40e41e2524fc7f705328a9dd2`.
 - [x] C-F2-02 `docs/assets/nycode-wordmark-ansi.txt` restaurado. Prova: sha256 `22201bcbda73ca8176350bc818ebea4fc70400f3572c507383decf19e836613f`.
 - [x] C-F2-03 README sem o logo do pi. Prova: `rg -n "pi.dev/logo" README.md` vazio.
-- [x] C-F2-04 README com o logo do nycode no topo. Prova: `rg -n "docs/assets/nycode-pixel.svg" README.md`.
+- [x] C-F2-04 README com o logo do Nycode no topo. Prova: `rg -n "docs/assets/nycode-pixel.svg" README.md`.
 - [x] C-F2-05 README não manda instalar por `pi.dev/install.sh`. Prova: busca vazia.
 - [x] C-F2-06 Cada ocorrência de `pi.dev` e `earendil` no README tratada conforme [05](05-marca-e-readme.md). Prova: tabela de 05 marcada.
 - [x] C-F2-07 Título de reserva "π" trocado (K14). Prova: `rg -n '"π"' packages/coding-agent/src/config.ts` vazio.
@@ -48,7 +48,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F2-13 `.editorconfig`, `.gitattributes`, `.gitignore` fundidos; `.gitleaks.toml`, `.leak-allow` presentes; `.gitleaksignore` reconciliado.
 - [x] C-F2-14 `.husky/pre-commit` roda a verificação de vazamento nos arquivos preparados.
 - [x] C-F2-15 `AGENTS.md` e `CONTRIBUTING.md` reconciliados segundo a tabela de [04](04-regras-do-repositorio.md).
-- [x] C-F2-16 `NOTICE` cita nycode-harness e pi-code com licença e commit.
+- [x] C-F2-16 `NOTICE` cita harness Nycode e pi-code com licença e commit.
 - [x] C-F2-17 Especificações 0001 a 0009 em `docs/specs/`, com caminhos atualizados.
 - [x] C-F2-18 Configuração de merge do repositório aplicada. Prova: `gh api repos/marcioazam/nycode` mostra os 8 campos alvo.
 - [x] C-F2-19 14 rótulos criados. Prova: `gh api .../labels` com 26 ou mais.
@@ -65,7 +65,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F3-07 `bench/` no destino; testes do bench passam; `bench/suites` fora dos lints.
 - [x] C-F3-08 Tier `smoke` criado (D-27) e modo de paridade (D-28); braço `nycode` definido em `bench/arms.toml`; `bench run --arm nycode --tier smoke` roda.
 - [x] C-F3-09 Braço temporário `nycode-harness@1.6.0` medido (D-25). Prova: `runs.jsonl` e veredito guardados. Feito sob a D-39, sem modelo: contrato 25 ok/2 falhas/4 pulados, caso a caso igual ao `nycode-harness` sobre o pi 1.5.2; 7 de 7 cenários de falha; velocidade e plano `--dry-run`. Sem `runs.jsonl` nem veredito de gate (exigem modelo, D-29), ver [F10-paridade](evidencias/F10-paridade.md).
-- [x] C-F3-10 Verificador `bench-pr` apontado para o nycode; classifica mudança não funcional (D-21). Prova: status em um PR de documentação. Feito sob a D-39: `bench/run.py affects` classifica o PR #285 (`f2e5fb7b5`, só `docs/`) como `non-functional` e o status que seria publicado (`success`, "não funcional, sem rodada") foi mostrado em `--dry-run`; **nenhum status foi publicado** (o poster é da máquina do dono, P-16), ver [F10-paridade](evidencias/F10-paridade.md).
+- [x] C-F3-10 Verificador `bench-pr` apontado para o Nycode; classifica mudança não funcional (D-21). Prova: status em um PR de documentação. Feito sob a D-39: `bench/run.py affects` classifica o PR #285 (`f2e5fb7b5`, só `docs/`) como `non-functional` e o status que seria publicado (`success`, "não funcional, sem rodada") foi mostrado em `--dry-run`; **nenhum status foi publicado** (o poster é da máquina do dono, P-16), ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F3-11 PR de teste com os 10 checks obrigatórios verdes. Prova: `gh pr checks`.
 - [x] C-F3-12 Ruleset `main` criado e ativo; JSON versionado em `.github/rulesets/main.json` igual ao aplicado. Prova: comparação.
 - [x] C-F3-13 Proteção clássica removida depois do ruleset. Prova: API devolve 404 "Branch not protected".
@@ -76,7 +76,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F4-01 K1 no fonte; teste portado verde.
 - [x] C-F4-02 K2 no fonte; teste portado verde.
 - [x] C-F4-03 K3: quatro flags aceitas; `nycode --help` as lista.
-- [x] C-F4-04 K4: chaves novas no esquema; esquema JSON regenerado; padrões do nycode-harness (`defaultProjectTrust`, `quietStartup`, `retry`, `shellCommandPrefix`).
+- [x] C-F4-04 K4: chaves novas no esquema; esquema JSON regenerado; padrões do harness Nycode (`defaultProjectTrust`, `quietStartup`, `retry`, `shellCommandPrefix`).
 - [x] C-F4-05 Cada linha da tabela de variáveis de [02, seção 5](02-arquitetura-alvo.md#5-configuracao-e-variaveis-de-ambiente) com teste de leitura da variável e da chave.
 - [x] C-F4-06 K12: `nycode migrate from-pi` em modo de simulação por padrão; nunca apaga a origem; credenciais só com confirmação. Prova: teste com `HOME` descartável.
 - [x] C-F4-07 Exemplos `mcp`, `models`, `lsp` em `examples/config/`; teste do exemplo de modelos verde.
@@ -117,7 +117,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F7-24 K8, K9 no core com teste (K7 vai a F8, D-36).
 - [x] C-F7-25 K10: API pública no `@nycode/tui`; nenhuma extensão embutida lê campo privado. Prova: busca por acesso a propriedade privada vazia.
 - [x] C-F7-26 Temas `tokyo-night` e `mono` embarcados; `tokyo-night` é o padrão; `NO_COLOR` troca para `mono`. (D-56: entram também `nycode-claro`, `nycode-escuro` e `nycode-noite`.)
-- [x] C-F7-27 Nenhuma diferença visual em relação ao nycode-harness. Prova: portões `pi-ui-final-gate.sh` e `terminal-sota` verdes.
+- [x] C-F7-27 Nenhuma diferença visual em relação ao harness Nycode. Prova: portões `pi-ui-final-gate.sh` e `terminal-sota` verdes.
 - [x] C-F7-28 22 arquivos de teste de `extensions/` com equivalente verde.
 
 ## F8. Recursos embarcados e permissões
@@ -125,7 +125,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F8-01 K6 e K13: `resources/` carregado com a menor precedência e incluído no pacote.
 - [x] C-F8-02 Instruções (`contract`, `headless`, `lite`) embarcadas; orçamento de instruções não cresce. Prova: `instruction_budget.py check`.
 - [x] C-F8-03 Regras (`safety.md`, 4 de referência) embarcadas.
-- [x] C-F8-04 30 skills embarcadas com a classe da 0005; as `optional` fora do contexto do modelo. Prova: `skill_lint.py`, `core_scope.py`. Feito sob a D-39: as 6 `optional` com `disable-model-invocation: true` e o guarda em `core_scope.py`; medição sem modelo: −6 skills e −2.202 caracteres na seção `<skills>` quando ela é listada (`-p` de topo já não lista skills). **Superado pela D-51** (2026-11-21): as 6 skills voltam ao contexto do modelo como no nycode-harness, ficam `core` e perdem `disable-model-invocation: true`; o guarda de `core_scope.py` segue valendo para o que ficar `optional`.
+- [x] C-F8-04 30 skills embarcadas com a classe da 0005; as `optional` fora do contexto do modelo. Prova: `skill_lint.py`, `core_scope.py`. Feito sob a D-39: as 6 `optional` com `disable-model-invocation: true` e o guarda em `core_scope.py`; medição sem modelo: −6 skills e −2.202 caracteres na seção `<skills>` quando ela é listada (`-p` de topo já não lista skills). **Superado pela D-51** (2026-11-21): as 6 skills voltam ao contexto do modelo como no harness Nycode, ficam `core` e perdem `disable-model-invocation: true`; o guarda de `core_scope.py` segue valendo para o que ficar `optional`.
 - [x] C-F8-05 17 comandos embarcados.
 - [x] C-F8-06 17 agentes embarcados; `check-agents.py` verde.
 - [x] C-F8-07 Nenhum texto embarcado cita `~/.pi`, `$CLAUDE_CONFIG_DIR` ou `claude-home`. Prova: `check-refs.py` e busca.
@@ -155,7 +155,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F10-04 Relatório de paridade em `evidencias/F10-paridade.md`, perdas ao lado dos ganhos. Feito sob a D-39: o relatório, sem modelo; falta a assinatura do dono (F10).
 - [x] C-F10-05 `docs/bench/baseline-main/` regravado por PR (linha sem modelo, D-39). Feito sob a D-39: contrato e falhas do `nycode` e do `nycode-harness` em `docs/bench/baseline-main/sem-modelo/`; `runs.jsonl`, `verdict.json` e `meta.json` intactos, ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F10-06 Segunda sincronização com o upstream feita e medida (critério global 7). Fecha em F12 (D-43): o upstream não publicou commit novo desde `780bf31fc`. Feita em 2026-11-22: `9c4652688`, PR #313, merge `75e0842d7`, `merge-policy` verde ([sync-2026-11-22](evidencias/sync-2026-11-22.md)).
-- [x] C-F10-07 Todos os testes do nycode-harness com equivalente verde ou justificativa no mapa (critério global 3). Feito: 280 de 280, ver [F10-testes](evidencias/F10-testes.md) (#289).
+- [x] C-F10-07 Todos os testes do harness Nycode com equivalente verde ou justificativa no mapa (critério global 3). Feito: 280 de 280, ver [F10-testes](evidencias/F10-testes.md) (#289).
 - [x] C-F10-08 Busca do critério global 2 vazia fora de `import/`, `docs/`, do comando de migração e das exceções declaradas em `scripts/ci/lint/criterio2/criterio2-allow.txt`, cada uma com classe e motivo; o passo `criterio2` do ci-static falha em linha nova (D-41). Prova: `python3 scripts/ci/lint/criterio2/criterio2.py` termina em `criterio2 OK: 223 lines covered by 21 exceptions` (produto-externo 16 exceções e 91 linhas, upstream 3 e 121, ferramenta-fork 1 e 10, migracao 1 e 1); sobre a `main` anterior (239 linhas) a mesma lista falha com 16 linhas sem cobertura, os 16 defeitos corrigidos (comentários, dados de teste e `delete process.env.CLAUDE_CONFIG_DIR` morto em 6 testes).
 
 ## F11. Distribuição
@@ -175,10 +175,10 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 
 - [x] C-F12-01 `nycode migrate from-pi` executado na máquina do dono; cópia de segurança guardada.
 - [x] C-F12-02 Período de convivência cumprido pelo critério de [10](10-riscos-e-rollback.md). Dispensado pelo dono em 2026-11-22 (D-49), com 0 sessões reais registradas.
-- [x] C-F12-03 Unidades systemd do benchmark apontam para o nycode.
+- [x] C-F12-03 Unidades systemd do benchmark apontam para o Nycode.
 - [x] C-F12-04 `marcioazam/ny-pi` com aviso no README e arquivado (D-22, com autorização). Feito em 2026-11-22: aviso no README (`marcioazam/ny-pi#67`, `3981d9d`), `archived: true` ([F12](evidencias/F12.md)).
 - [ ] C-F12-05 `import/ny-pi/` vazio e removido.
-- [ ] C-F12-06 `rg -n "ny-pi|pi-harness"` no nycode só em `docs/`, `NOTICE` e registros de mudança. Gate de resíduo do pi (D-30, P-17 R1) verde: nenhum `pi`, `pi.dev`, `earendil` ou `mariozechner` fora das exceções de [05](05-marca-e-readme.md) §6, que incluem `README.md` e `docs/harness/` (D-31).
+- [ ] C-F12-06 `rg -n "ny-pi|pi-harness"` no Nycode só em `docs/`, `NOTICE` e registros de mudança. Gate de resíduo do pi (D-30, P-17 R1) verde: nenhum `pi`, `pi.dev`, `earendil` ou `mariozechner` fora das exceções de [05](05-marca-e-readme.md) §6, que incluem `README.md` e `docs/harness/` (D-31).
 - [ ] C-F12-07 Os 8 critérios globais de aceite do [mega plano](00-mega-plano.md#8-criterios-globais-de-aceite) conferidos.
 - [ ] C-F12-08 Conhecimento reutilizável capturado; memória do agente atualizada (o `pi` do dia a dia passa a ser `nycode`).
 

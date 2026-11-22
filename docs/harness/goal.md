@@ -1,4 +1,4 @@
-# /goal no nycode (pi-code 1.7.0 + patch local)
+# /goal no Nycode (pi-code 1.7.0 + patch local)
 
 `/goal <condição>` mantém a sessão trabalhando até um avaliador separado confirmar a condição.
 Base: [docs do Claude Code](https://code.claude.com/docs/en/goal.md) (lido em 2026-11-11, inclui o
@@ -19,7 +19,7 @@ off quando o modelo aceita, senão o menor nível aceito (`low` no Opus 5.5). Re
 
 ## Comportamento atual
 
-| Aspecto | Claude Code | nycode (com patch) |
+| Aspecto | Claude Code | Nycode (com patch) |
 |:-|:-|:-|
 | Avaliador | modelo pequeno (Haiku); `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `NYCODE_GOAL_MODEL` > `ANTHROPIC_DEFAULT_HAIKU_MODEL` > Haiku mais novo do provedor da sessão (hoje `claude-haiku-5-5`) > modelo da sessão |
 | Thinking do avaliador | desligado | off, ou o menor nível quando o modelo não desliga |

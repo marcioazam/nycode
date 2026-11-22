@@ -4,13 +4,13 @@ Estado: regra e checagem de classificação adotadas (2026-11-16). A mudança da
 do modelo é outro pull request, medido no gate (K3c), porque mexe em custo e acerto.
 
 **Supera, em parte (D-51, 2026-11-21):** as 6 skills que eram `optional` (`agent-systems`, `atualizador`, `codegraph`,
-`deep-search`, `perplexity-urls`, `soteiros`) voltam ao contexto do modelo como no nycode-harness: ficam `core` e perdem
+`deep-search`, `perplexity-urls`, `soteiros`) voltam ao contexto do modelo como no harness Nycode: ficam `core` e perdem
 `disable-model-invocation: true`. É mudança de contrato registrada, não afrouxamento: a checagem de `core_scope.py`
 continua exigindo a chave em toda skill que ficar `optional`.
 
 ## Pergunta
 
-O nycode-harness deve trazer só peças generalistas, como um harness "vanilla", e deixar as de domínio, de serviço ou de gosto
+O harness Nycode deve trazer só peças generalistas, como um harness "vanilla", e deixar as de domínio, de serviço ou de gosto
 pessoal como opção?
 
 ## Evidência (fontes primárias lidas em 2026-11-16)
@@ -41,12 +41,12 @@ Custo de peças a mais no contexto do modelo:
 - Carregar todas as definições custa caro: 58 ferramentas consomem cerca de 55 mil tokens. Com busca de ferramentas, a
   escolha certa sobe de 49% para 74% no Opus 4. As falhas mais comuns são ferramenta errada e nomes parecidos
   ([Anthropic, advanced tool use](https://www.anthropic.com/engineering/advanced-tool-use)).
-- No nycode-harness: 26 skills visíveis custam cerca de 3,5 mil tokens por turno, e houve 0 leituras de `SKILL.md` em 265 sessões
+- No harness Nycode: 26 skills visíveis custam cerca de 3,5 mil tokens por turno, e houve 0 leituras de `SKILL.md` em 265 sessões
   de benchmark (K3c, registro do follow-up A).
 
 ## Conclusão
 
-Sim, núcleo generalista, mas não "virgem". O nycode-harness segue o padrão comum: ferramentas e subagentes genéricos e um
+Sim, núcleo generalista, mas não "virgem". O harness Nycode segue o padrão comum: ferramentas e subagentes genéricos e um
 conjunto pequeno de skills de engenharia que valem para qualquer linguagem e projeto. Ficam fora do núcleo as peças de
 domínio, as que exigem um serviço, conta ou MCP específico e as de gosto pessoal. Essas peças ficam como opção ou nem
 entram no repositório. Uma skill de marketing não entra nem como opção.
@@ -75,7 +75,7 @@ entram no repositório. Uma skill de marketing não entra nem como opção.
 
 Tipos: `skill` (`packages/coding-agent/resources/skills/<nome>/`), `agent` (`packages/coding-agent/resources/agents/<nome>.md`), `extension`
 (`packages/coding-agent/src/extensions/<nome>/`), `hook` (`packages/coding-agent/resources/hooks/<nome>`, fora testes e `fixtures`),
-`command` (`packages/coding-agent/resources/commands/<nome>.md`) e `plugin` (`claude-home/plugins/<nome>/` no nycode-harness; no nycode a linha de status
+`command` (`packages/coding-agent/resources/commands/<nome>.md`) e `plugin` (`claude-home/plugins/<nome>/` no harness Nycode; no Nycode a linha de status
 vai para `packages/coding-agent/resources/statusline/`). Os caminhos são os de destino do mapa de migração (`docs/migration/nycode-core/`); as peças
 chegam por fase e o `core_scope.py` é convertido em F3.
 
@@ -83,12 +83,12 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | Tipo | Nome | Classe | Motivo |
 |---|---|---|---|
 | skill | agent-routing | core | Escolha entre agentes e ferramentas, qualquer projeto |
-| skill | agent-systems | core | Domínio: projetar agentes e prompts de LLM; no contexto do modelo como no nycode-harness (D-51) |
-| skill | atualizador | core | Fluxo de entrega do dono; `git-workflow` cobre o geral; no contexto do modelo como no nycode-harness (D-51) |
+| skill | agent-systems | core | Domínio: projetar agentes e prompts de LLM; no contexto do modelo como no harness Nycode (D-51) |
+| skill | atualizador | core | Fluxo de entrega do dono; `git-workflow` cobre o geral; no contexto do modelo como no harness Nycode (D-51) |
 | skill | code-simplification | core | Refatoração geral |
-| skill | codegraph | core | Exige o MCP codegraph; no contexto do modelo como no nycode-harness (D-51) |
+| skill | codegraph | core | Exige o MCP codegraph; no contexto do modelo como no harness Nycode (D-51) |
 | skill | context-economy | core | Custo de contexto, qualquer sessão |
-| skill | deep-search | core | Exige MCPs de busca; no contexto do modelo como no nycode-harness (D-51) |
+| skill | deep-search | core | Exige MCPs de busca; no contexto do modelo como no harness Nycode (D-51) |
 | skill | diagnose | core | Depuração geral |
 | skill | differential-review | core | Revisão de segurança de diff, geral |
 | skill | doces-ou-travessuras | core | Detecta teste maquiado, geral |
@@ -98,7 +98,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | skill | insecure-defaults | core | Auditoria de padrões inseguros, oculta |
 | skill | lane-integration | core | Integração de lanes paralelas |
 | skill | loop-engineering | core | Laços com parada verificável |
-| skill | perplexity-urls | core | Exige o MCP Perplexity; no contexto do modelo como no nycode-harness (D-51) |
+| skill | perplexity-urls | core | Exige o MCP Perplexity; no contexto do modelo como no harness Nycode (D-51) |
 | skill | plan-workflow | core | Modo plano, oculta |
 | skill | ponytail | core | Regras do ponytail, ligadas por padrão (D-54); oculta |
 | skill | ponytail-audit | core | Auditoria do ponytail (D-54); oculta |
@@ -113,7 +113,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | skill | sdd-workflow | core | Especificação antes de mudança grande |
 | skill | security-audit | core | Auditoria de segurança geral |
 | skill | sharp-edges | core | APIs perigosas, geral |
-| skill | soteiros | core | Auditoria de atualidade sob pedido, nicho; no contexto do modelo como no nycode-harness (D-51) |
+| skill | soteiros | core | Auditoria de atualidade sob pedido, nicho; no contexto do modelo como no harness Nycode (D-51) |
 | skill | swarm-orchestration | core | Delegação em lanes |
 | skill | tdd | core | Teste antes, geral |
 | skill | to-questionnaire | core | Perguntas para terceiros, oculta |
@@ -161,7 +161,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | goal | core | Objetivo de sessão (/goal) |
 | extension | headless-lean | core | Custo sem interface |
 | extension | hooks | core | Hooks no formato do Claude Code |
-| extension | import-claude-session | core | Importa sessão de outro perfil (`/puxar`), ligado por padrão como no nycode-harness (D-52; era `optional`) |
+| extension | import-claude-session | core | Importa sessão de outro perfil (`/puxar`), ligado por padrão como no harness Nycode (D-52; era `optional`) |
 | extension | init | core | `/init` |
 | extension | lsp | core | Diagnósticos e navegação por servidor de linguagem, para qualquer linguagem |
 | extension | memory | core | Memória do projeto |
@@ -187,7 +187,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | ui | ui | Editor, acessibilidade, `/diff` |
 | extension | ui-visual | ui | Cabeçalho e ícones |
 | extension | up-dequeue | ui | Fila de mensagens em português (Variante C: editar, excluir, enviar agora); a seta para cima fica só com o histórico |
-| extension | web | core | `web_fetch` ligado por padrão como no nycode-harness; `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1` (D-52; era `optional`, desligada, e o `no-web-search` do nycode-harness, que a 03 listava como `core`, foi removido pela D-10 e substituído por essa regra) |
+| extension | web | core | `web_fetch` ligado por padrão como no harness Nycode; `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1` (D-52; era `optional`, desligada, e o `no-web-search` do harness Nycode, que a 03 listava como `core`, foi removido pela D-10 e substituído por essa regra) |
 | hook | claims | core | Afirmação sem evidência |
 | hook | dispatch | core | Despachante dos hooks |
 | hook | diag.py | core | Relato de falhas dos hooks para a caixa de diagnóstico |

@@ -1,11 +1,11 @@
 # Arquitetura alvo
 
-Onde cada peça do nycode-harness passa a morar no nycode e por quê. Fatos de origem: [anexo A](anexos/A-inventario-nycode-harness.md).
+Onde cada peça do harness Nycode passa a morar no Nycode e por quê. Fatos de origem: [anexo A](anexos/A-inventario-nycode-harness.md).
 Fatos de destino: [anexo B](anexos/B-mapa-core-nycode.md). Decisões citadas como D-nn: [11](11-decisoes-e-pendencias.md).
 
 ## 1. Três níveis de integração
 
-O nycode já tem três lugares para código, e cada peça do nycode-harness vai para o mais externo que ainda a deixe funcionar
+O Nycode já tem três lugares para código, e cada peça do harness Nycode vai para o mais externo que ainda a deixe funcionar
 sem pacote de fora:
 
 | Nível | Onde | Quando usar | Custo com o upstream |
@@ -16,7 +16,7 @@ sem pacote de fora:
 
 O mecanismo N2 já existe no fork: `src/extensions/index.ts:8-13` registra `llama.cpp`, `codemode`, `tool-search` e
 `mcp`; o `resource-loader.ts:766-778` resolve caminhos `builtin:<nome>`; `nycode config` liga e desliga cada uma em
-"Built-in extensions". É por isso que quase todo o nycode-harness vira N2 e não uma reescrita do core.
+"Built-in extensions". É por isso que quase todo o harness Nycode vira N2 e não uma reescrita do core.
 
 Regra de decisão: comece em N3; suba para N2 se houver código; suba para N1 só com uma das três justificativas da
 tabela, e registre a costura em [08](08-sincronizacao-upstream.md#costuras).
@@ -100,7 +100,7 @@ Nome do diretório e do registro `builtin:<nome>`. "Padrão" é o estado numa in
 
 Não migram do pi-code:
 
-- `mcp/` (2548 linhas): o nycode-harness já a excluía (`!extensions/mcp/**`); o nycode tem MCP próprio no core.
+- `mcp/` (2548 linhas): o harness Nycode já a excluía (`!extensions/mcp/**`); o Nycode tem MCP próprio no core.
 - `version-floor.ts` (30 linhas): confere a versão mínima do pi hospedeiro; sem sentido dentro do core.
 
 Regra de importação (F5 e F6): o primeiro commit de cada extensão é a cópia **byte a byte** da árvore instalada e
@@ -109,12 +109,12 @@ contra uma aplicação limpa dos patches sobre o tarball `pi-code@1.7.0`
 (sha1 `8ba1f814773da6897f6708c62c7c517cee2baf4e`). O segundo commit troca os imports e o nome da variável `pi` por
 `nycode`. O terceiro reformata com o Biome do fork. Assim a revisão de cada passo é mecânica.
 
-Licença: pi-code é MIT (`Copyright (c) 2025 Mario Zechner`, `Copyright (c) 2026 ilovepixelart`). O `NOTICE` do nycode
+Licença: pi-code é MIT (`Copyright (c) 2025 Mario Zechner`, `Copyright (c) 2026 ilovepixelart`). O `NOTICE` do Nycode
 ganha a atribuição e o commit de origem.
 
 <a id="32-vindas-de-extensions-do-nycode-harness"></a>
 
-### 3.2 Vindas de `extensions/` do nycode-harness
+### 3.2 Vindas de `extensions/` do harness Nycode
 
 | Extensão embutida | Origem | Nível | Observação | Fase |
 |---|---|---|---|---|
@@ -142,7 +142,7 @@ ganha a atribuição e o commit de origem.
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
 | `context-files` | `extensions/no-context-files-covers-claude-md.ts` | — | **Some**: existia para contornar a injeção de `CLAUDE.md` pelo pi-code; com `claude-rules` embutida a regra é escrita direto nela | F7 |
 | `no-web-search` | `extensions/no-web-search.ts` | — | **Some**: `web` nasce desligada (**superada por D-52**: nasce ligada, sem `web_search`) | F5 |
-| `docs-pointer` | `extensions/pi-docs/` | N2 | A seção `docs` do prompt de sistema passa a ser uma linha por padrão; extensão que sobrescreve `sections.docs`, como no nycode-harness (D-36) | F7 |
+| `docs-pointer` | `extensions/pi-docs/` | N2 | A seção `docs` do prompt de sistema passa a ser uma linha por padrão; extensão que sobrescreve `sections.docs`, como no harness Nycode (D-36) | F7 |
 | `plan-gate` | `extensions/plan-gate.ts` | N2 | Depende de `plan-mode` e do agente `plan-reviewer` | F7 |
 | `prefix-cache-1h` | `extensions/prefix-cache-1h/` | N2 | Só sessão interativa | F7 |
 | `import-claude-session` | `extensions/puxar.ts` | N2 | Opcional; chama `resources/bin/puxar/puxar.py` (D-53; **supera** `scripts/harness/puxar/`) | F7 |
@@ -151,7 +151,7 @@ ganha a atribuição e o commit de origem.
 | `syntax-check` | `extensions/syntax-check/` | N2 | `@vscode/tree-sitter-wasm` 0.3.1 vira dependência exata do `coding-agent` | F7 |
 | `todo-sync` | `extensions/todo-sync/` | N2 → fundida | Funde em `todo` | F7 |
 | `ui` | `extensions/ui/` | N2 + N1 | `/btw`, `/diff`, `/rename`, `/vim`, histórico; `a11y` passa a usar API pública do cabeçalho | F7 |
-| `ui-visual` | `extensions/ui-visual/` | N2 + N1 | O logo do cabeçalho deixa de ser cópia de `pi-logo` e usa o componente exportado, com a marca nycode | F7 |
+| `ui-visual` | `extensions/ui-visual/` | N2 + N1 | O logo do cabeçalho deixa de ser cópia de `pi-logo` e usa o componente exportado, com a marca Nycode | F7 |
 | `up-dequeue` | `extensions/up-dequeue/` | N2 | Fila de mensagens em português; a seta para cima fica exclusiva do histórico (D-57) | F7 |
 
 ### 3.3 Vinda de terceiros
@@ -168,12 +168,12 @@ ganha a atribuição e o commit de origem.
 
 Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincronizacao-upstream.md#costuras).
 
-| # | Arquivo do fork | Mudança | Origem no nycode-harness | Fase |
+| # | Arquivo do fork | Mudança | Origem no harness Nycode | Fase |
 |---|---|---|---|---|
 | K1 | `packages/coding-agent/src/core/sdk.ts:370` | `messages.every((m, i) => current[i] === m)` passa a comparar por identidade de conteúdo (`piSameContextMessage`) | `claude-home/patches/pi-core/cache-warm-identity.mjs` | F4 |
 | K2 | `packages/mcp/src/transports/stdio.ts:10` | `STDIN_CLOSE_GRACE_MS` de 500 para 100 | `mcp-close-grace.mjs`, especificação 0003 | F4 |
 | K3 | `packages/coding-agent/src/cli/args.ts` | Flags `--bypass`, `--dangerously-skip-permissions`, `--safe`, `--no-bypass` | `bin/pi` | F4 |
-| K4 | `packages/coding-agent/src/core/settings-schema.ts`, `settings-defaults.ts`, `src/modes/interactive/theme/theme.ts`, `src/modes/interactive/interactive-mode.ts` | Bloco `harness` e `permissions` (seção 5); `defaultProjectTrust` padrão `never`; `quietStartup` padrão `header`; `retry` padrão do nycode-harness; temas `tokyo-night` e `mono` embutidos, `tokyo-night` padrão (D-37) | `bin/pi`, `settings.json.example`, `local.env.example` | F4 |
+| K4 | `packages/coding-agent/src/core/settings-schema.ts`, `settings-defaults.ts`, `src/modes/interactive/theme/theme.ts`, `src/modes/interactive/interactive-mode.ts` | Bloco `harness` e `permissions` (seção 5); `defaultProjectTrust` padrão `never`; `quietStartup` padrão `header`; `retry` padrão do harness Nycode; temas `tokyo-night` e `mono` embutidos, `tokyo-night` padrão (D-37) | `bin/pi`, `settings.json.example`, `local.env.example` | F4 |
 | K5 | `packages/coding-agent/src/extensions/index.ts` | Uma linha de registro por extensão embutida | — | F5 a F9 |
 | K6 | `packages/coding-agent/src/core/resource-loader.ts` | Escopo `builtin` para agentes, skills, comandos, regras e instruções em `resources/`, com a menor precedência | `CLAUDE_CONFIG_DIR`, `publish.list` | F8 |
 | K7 | `packages/coding-agent/src/core/system-prompt.ts` | Inclusão das instruções embarcadas (a seção `docs` em uma linha ficou na extensão `docs-pointer`, D-36) | `claude-home/CLAUDE.md` | F8 |
@@ -183,7 +183,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K11 | `packages/coding-agent/src/core/permissions/` (novo) + gancho em `tool_call` | Motor nativo de permissão | `claude-home/hooks/guard.py` | F8 |
 | K12 | `packages/coding-agent/src/main.ts` (chamada) + `src/migrations/from-pi.ts` (novo) | `nycode migrate from-pi` | `install.sh --link/--restore` | F4 |
 | K13 | `packages/coding-agent/package.json` (`files`) | Inclui `resources/` | `publish.list` | F8 |
-| K14 | `packages/coding-agent/src/config.ts:605` | Título de reserva "π" vira "nycode" | — | F2 |
+| K14 | `packages/coding-agent/src/config.ts:605` | Título de reserva "π" vira "Nycode" | — | F2 |
 | K15 | `packages/tui/src/index.ts` | Exporta `isImageLine` na API pública do `@nycode/tui` | `chat-margin` | F12 |
 | K16 | `packages/tui/src/components/editor.ts` | `runEditorAction` e `withUndoGroup` no `Editor` (ações semânticas e grupo de desfazer) | `ui/editor`, `claude-compat/vim` | F12 |
 | K17 | `interactive-mode.ts`, `components/status-indicator.ts`, `components/assistant-message.ts`, `components/compaction-summary-message.ts` (em `modes/interactive`) | Uma chamada ao módulo `modes/interactive/avisos` por ponto de gancho (avisos em pt-BR); `NYCODE_AVISOS=0` devolve os textos do upstream | `avisos` | F12 |
@@ -203,7 +203,7 @@ Regra: toda variável vira chave tipada em `settings.json`; a variável `NYCODE_
 para automação. `PI_*` e `CLAUDE_CONFIG_DIR` **não** são lidas em tempo de execução (o `AGENTS.md` do fork proíbe
 retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode migrate from-pi` (D-09).
 
-| Hoje (nycode-harness) | Chave em `settings.json` | Variável | Padrão |
+| Hoje (harness Nycode) | Chave em `settings.json` | Variável | Padrão |
 |---|---|---|---|
 | `PI_BYPASS_PERMISSIONS`, `--bypass`, `--safe` | `permissions.bypass` | `NYCODE_BYPASS_PERMISSIONS` | `false` |
 | (novo, K11) escolha do motor de permissão | `permissions.engine` | — (sem variável) | `"script"` (`guard.py`); `"native"` liga o motor TypeScript. valor desconhecido nega. **Só global** (`~/.nycode/agent/settings.json`; o do projeto é ignorado, como em `permissions.bypass`; C-F8-13). O padrão só muda após `security-reviewer` e benchmark (D-29) |
@@ -211,7 +211,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `--exclude-tools web_search` | extensão `web` desligada (**superada por D-52**) | `NYCODE_KEEP_WEB_SEARCH=1` mantém `web_search` | `web_fetch` ligado, `web_search` ausente |
 | `PI_COMPACT_AT` | `compaction.maxContextTokens` | `NYCODE_COMPACT_AT` | `250000` |
 | `PI_EFFORT_SANDWICH`, `PI_EFFORT_SANDWICH_TURNS` | `harness.effortSandwich.{enabled,turns}` | `NYCODE_EFFORT_SANDWICH[_TURNS]` | desligado |
-| `PI_SUBAGENT_RESPAWN` | `subagent.respawn` | `NYCODE_SUBAGENT_RESPAWN` | conforme o nycode-harness |
+| `PI_SUBAGENT_RESPAWN` | `subagent.respawn` | `NYCODE_SUBAGENT_RESPAWN` | conforme o harness Nycode |
 | `PI_CODE_SUBAGENT`, `PI_CODE_SUBAGENT_DEPTH` | interno (marca de processo filho) | `NYCODE_SUBAGENT`, `NYCODE_SUBAGENT_DEPTH` | — |
 | `PI_HEADLESS_LEAN`, `_TRIM`, `_TOOLS`, `_FLOOR` | `harness.headless.{lean,trim,tools,floor}` | `NYCODE_HEADLESS_*` | conforme a 0002 |
 | `PI_BASH_TIMEOUT_BG` | `tools.bash.backgroundOnTimeout` | `NYCODE_BASH_TIMEOUT_BG` | desligado |
@@ -220,8 +220,8 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_AUTO_RESUME` | `harness.autoResume` | `NYCODE_AUTO_RESUME` | ligado |
 | `PI_PLAN_GATE` | `plan.gate` | `NYCODE_PLAN_GATE` | ligado |
 | `PI_COMPLETION_GATE` | `harness.completionGate` | `NYCODE_COMPLETION_GATE` | ligado |
-| `PI_SOUND_NOTIFY` | `notify.sound` | `NYCODE_SOUND_NOTIFY` | ligado (o nycode-harness só desligava com `PI_SOUND_NOTIFY=0`) |
-| `PI_UI_STATE`, `PI_REDUCED_MOTION`, `PI_NERD_FONT`, `PI_ASCII_ICONS` | `terminal.{uiState,reducedMotion,nerdFont,asciiIcons}` | `NYCODE_*` iguais | conforme o nycode-harness |
+| `PI_SOUND_NOTIFY` | `notify.sound` | `NYCODE_SOUND_NOTIFY` | ligado (o harness Nycode só desligava com `PI_SOUND_NOTIFY=0`) |
+| `PI_UI_STATE`, `PI_REDUCED_MOTION`, `PI_NERD_FONT`, `PI_ASCII_ICONS` | `terminal.{uiState,reducedMotion,nerdFont,asciiIcons}` | `NYCODE_*` iguais | conforme o harness Nycode |
 | `PI_FOLHA` | — (desliga a extensão `folha`) | `NYCODE_FOLHA` | ligado (`0` desliga; D-56) |
 | `PI_MODEL_LOCK` | — (a trava vive no ambiente do processo e dos filhos) | `NYCODE_MODEL_LOCK` | vazio, sem trava (D-56) |
 | `PI_TERM_PROGRESS` | — | `NYCODE_TERM_PROGRESS` | `0` desliga e `1` força o progresso na aba do terminal (D-56) |
@@ -249,7 +249,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_LOCAL_ENV` + `local.env` (9 chaves, modo 0600) | ~~**some**: as 9 chaves são chaves de `settings.json`~~ (**superada por D-52**: o carregador volta, `core/local-env.ts`; as 9 chaves seguem também em `settings.json`) | `NYCODE_LOCAL_ENV` (arquivo) | `~/.nycode/agent/local.env` |
 | `PI_HARNESS_*` (instalador, pins) | **some** com o instalador por fora | — | — |
 | `BENCH_*` | iguais (ferramenta do repositório) | `BENCH_*` | — |
-| `hooks`, `statusLine`, `env` de `claude-home/settings.json` | `hooks`, `statusLine`, `env` em `settings.json` do nycode (lidos pela extensão `hooks`) | — | hooks embarcados da seção 6 |
+| `hooks`, `statusLine`, `env` de `claude-home/settings.json` | `hooks`, `statusLine`, `env` em `settings.json` do Nycode (lidos pela extensão `hooks`) | — | hooks embarcados da seção 6 |
 
 O esquema JSON publicado (`packages/coding-agent/schemas`) é regenerado; `docs/settings.md` do pacote documenta as
 chaves novas.
@@ -280,7 +280,7 @@ execução: `python3` e `jq` na máquina. Fase B (F8): `guard.py` ganha equivale
 ## 7. Pacotes opcionais
 
 Peças classificadas como `optional` pela 0005, ou de terceiros sem necessidade de mudança local, não entram no
-pacote `@nycode/coding-agent`. Ficam como pacotes nycode instaláveis (`nycode install <fonte>`):
+pacote `@nycode/coding-agent`. Ficam como pacotes Nycode instaláveis (`nycode install <fonte>`):
 
 | Pacote | Origem | Mudança local hoje | Destino |
 |---|---|---|---|
@@ -305,17 +305,17 @@ pacote `@nycode/coding-agent`. Ficam como pacotes nycode instaláveis (`nycode i
 
 ## 9. Regras de estrutura no destino
 
-O nycode-harness limita arquivo próprio a 800 linhas e diretório a 7 arquivos de código. O fork tem 50 arquivos de fonte
-acima de 800 linhas herdados do upstream (por exemplo `core/extensions/types.ts`, 2358). Regra no nycode (D-06):
+O harness Nycode limita arquivo próprio a 800 linhas e diretório a 7 arquivos de código. O fork tem 50 arquivos de fonte
+acima de 800 linhas herdados do upstream (por exemplo `core/extensions/types.ts`, 2358). Regra no Nycode (D-06):
 
-- O limite vale para **arquivos criados pelo nycode**: `packages/coding-agent/src/extensions/<nomes da seção 3>`,
+- O limite vale para **arquivos criados pelo Nycode**: `packages/coding-agent/src/extensions/<nomes da seção 3>`,
   `src/core/permissions/`, `src/migrations/`, `resources/`, `scripts/ci/`, `scripts/harness/`, `bench/`.
-- Arquivos do upstream ficam numa lista de base (`scripts/ci/lint/structure-upstream.txt`), como o "legado" do nycode-harness.
+- Arquivos do upstream ficam numa lista de base (`scripts/ci/lint/structure-upstream.txt`), como o "legado" do harness Nycode.
   Dividi-los só aumentaria o conflito.
 - Código importado do pi-code que passa do limite (por exemplo `context-imports.ts`, 1392) entra na lista de base no
   commit de cópia e sai dela quando for dividido, depois do corte.
-- Formatação TypeScript: a do fork (Biome com tabulação, linha de 120). O `biome.json` do nycode-harness (2 espaços, aspas
-  simples) não migra. Python (`ruff`, `mypy --strict`) e shell (`shellcheck`, `shfmt`) mantêm a configuração do nycode-harness.
+- Formatação TypeScript: a do fork (Biome com tabulação, linha de 120). O `biome.json` do harness Nycode (2 espaços, aspas
+  simples) não migra. Python (`ruff`, `mypy --strict`) e shell (`shellcheck`, `shfmt`) mantêm a configuração do harness Nycode.
 - Regras do `AGENTS.md` do fork valem para o código migrado: sem `any`, sem import dinâmico, só sintaxe TypeScript
   apagável, ativos resolvidos por `src/config.ts`. A conversão é parte do terceiro commit de cada extensão.
 
@@ -323,7 +323,7 @@ acima de 800 linhas herdados do upstream (por exemplo `core/extensions/types.ts`
 
 | Item | Valor alvo | Motivo |
 |---|---|---|
-| Node | `>= 22.19.0` no `engines` (do fork); CI em 22 e 24 | O nycode-harness roda em 24; o fork exige 22.19 |
+| Node | `>= 22.19.0` no `engines` (do fork); CI em 22 e 24 | O harness Nycode roda em 24; o fork exige 22.19 |
 | Python | 3.12 | Hooks, bench e gates |
 | Versão dos pacotes | Continua em sincronia (`lockstep`) a partir de 1.6.0; a primeira versão com o harness é a `2.0.0` (D-13) | Mudança incompatível de padrões |
 | TypeScript, Biome | Os do fork (7.0.2, 2.3.5) | Um só conjunto |

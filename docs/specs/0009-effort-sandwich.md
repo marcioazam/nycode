@@ -21,7 +21,7 @@ Na sessão headless de topo (sem UI e `PI_CODE_SUBAGENT_DEPTH` ausente ou 0, o `
 
 Sem `PI_EFFORT_SANDWICH=1` nenhum handler é registrado. TUI, RPC e subagentes não mudam. O pi envia o nível como
 marcador de esforço na conversa (o `output_config` do topo fica fixo para o cache); conferido no payload pela API falsa
-de `bench/contract`. As duas chaves são aceitas na configuração de ambiente do nycode (no nycode-harness: `local.env` lido por `bin/pi`; destino: `settings-defaults.ts`, K4).
+de `bench/contract`. As duas chaves são aceitas na configuração de ambiente do Nycode (no harness Nycode: `local.env` lido por `bin/pi`; destino: `settings-defaults.ts`, K4).
 
 ## Medição (Terminal-Bench 2.0, 13 tarefas que a main não satura, k=3, conta do plano, Sonnet 5.5, nível medium)
 
@@ -52,4 +52,4 @@ decisão do dono, não deste PR.
 ## Reverter
 
 Tirar `PI_EFFORT_SANDWICH=1` da configuração de ambiente, ou apagar `packages/coding-agent/src/extensions/effort-sandwich/`, a linha em
-`docs/specs/0005-core-scope.md` e as chaves em `settings-defaults.ts` (no nycode-harness: também as duas linhas em `publish.list` e as chaves em `bin/pi`).
+`docs/specs/0005-core-scope.md` e as chaves em `settings-defaults.ts` (no harness Nycode: também as duas linhas em `publish.list` e as chaves em `bin/pi`).

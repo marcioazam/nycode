@@ -1,5 +1,5 @@
-> Nota nycode (F2): registro histórico do repositório `marcioazam/ny-pi`; os caminhos (`~/.pi/agent`, `install.sh`, `publish.list`,
-> `claude-home/`, `third-party.json`) são os daquele repositório e ficam como foram. No nycode o instalador e a lista de
+> Nota Nycode (F2): registro histórico do repositório `marcioazam/ny-pi`; os caminhos (`~/.pi/agent`, `install.sh`, `publish.list`,
+> `claude-home/`, `third-party.json`) são os daquele repositório e ficam como foram. No Nycode o instalador e a lista de
 > publicação são removidos em F11 (`docs/migration/nycode-core/03-mapa-de-migracao.md`) e `claude-home/` vira
 > `packages/coding-agent/resources/` em F8.
 

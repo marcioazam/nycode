@@ -61,7 +61,7 @@ Trocar OAuth por API muda o pedido do pi (sem a identidade do Claude Code no sys
 4. Fila única (2026-11-18): integre a main e rode o gate de um PR só depois do merge do anterior. Mesclar outro
    PR no meio faz o merge recusar (`base_moved`) e o gate precisa rodar de novo no head integrado.
 5. Rodar um PR à mão: `bench-pr.sh --pr N` (ignora o status final e reroda).
-6. Contrato mudou em 2026-11-17 por decisão do dono e foi reescrito para o nycode em F3 (D-21): o benchmark só roda quando
+6. Contrato mudou em 2026-11-17 por decisão do dono e foi reescrito para o Nycode em F3 (D-21): o benchmark só roda quando
    o PR muda o comportamento funcional do produto. Antes do `pending`, `bench run affects` (`bench/classify/affects.py`)
    lê `git diff base...head`. É não funcional: documentação (`docs/**`, `*.md`, `packages/*/docs/**`), ferramental do
    repositório (`.github`, `.husky`, `scripts/ci`, `scripts/check-*`, `bench/**`, licença e dotfiles), testes,
