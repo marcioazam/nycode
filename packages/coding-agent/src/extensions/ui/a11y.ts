@@ -17,7 +17,8 @@ type Env = Record<string, string | undefined>;
 
 export const noColor = (env: Env = process.env): boolean => (env.NO_COLOR ?? "") !== "";
 
-const SEQ_TERMINAL = /\u001b(?:\][\s\S]*?(?:\u0007|\u001b\\)|[P^_][\s\S]*?\u001b\\|\[[0-9:;<=>?]*[ -/]*[@-~])/g;
+const SEQ_TERMINAL =
+	/\u001b(?:\][^\u0007\u001b]*(?:\u0007|\u001b\\)|[P^_][^\u001b]*\u001b\\|\[[0-9:;<=>?]*[ -/]*[@-~])/g;
 /** Texto de fora da tela: tira OSC, DCS e C0/C1. SGR (`\\x1b[…m`) fica, porque o realce de código já é nosso. */
 export const sanitizarExibicao = (texto: string): string =>
 	String(texto)

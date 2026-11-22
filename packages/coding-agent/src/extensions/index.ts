@@ -4,12 +4,15 @@ import autoResumeExtension from "./auto-resume/index.ts";
 import avisosExtension from "./avisos/index.ts";
 import chatMarginExtension from "./chat-margin/index.ts";
 import claudeRulesExtension from "./claude-rules/index.ts";
+import codeBlocksExtension from "./code-blocks/index.ts";
 import codemodeExtension from "./codemode/index.ts";
+import comandosExtension from "./comandos/index.ts";
 import commandsExtension from "./commands/index.ts";
 import completionGateExtension from "./completion-gate/index.ts";
 import contextImportsExtension from "./context-imports/index.ts";
 import contextUsageExtension from "./context-usage/index.ts";
 import devCommandsExtension from "./dev-commands/index.ts";
+import diagnosticoExtension from "./diagnostico/index.ts";
 import docsPointerExtension from "./docs-pointer/index.ts";
 import effortSandwichExtension from "./effort-sandwich/index.ts";
 import envSettingsExtension from "./env-settings/index.ts";
@@ -94,8 +97,11 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "bypass-permissions", factory: bypassPermissionsExtension, builtin: true },
 	{ name: "chat-margin", factory: chatMarginExtension, builtin: true },
 	{ name: "avisos", factory: avisosExtension, builtin: true },
+	{ name: "comandos", factory: comandosExtension, builtin: true },
+	{ name: "code-blocks", factory: codeBlocksExtension, builtin: true },
 	{ name: "completion-gate", factory: completionGateExtension, builtin: true },
 	{ name: "dev-commands", factory: devCommandsExtension, builtin: true },
+	{ name: "diagnostico", factory: diagnosticoExtension, builtin: true },
 	{ name: "effort-sandwich", factory: effortSandwichExtension, builtin: true },
 	{ name: "folha", factory: folhaExtension, builtin: true },
 	{ name: "footer", factory: footerExtension, builtin: true },
