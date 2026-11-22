@@ -129,6 +129,10 @@ ganha a atribuição e o commit de origem.
 | `folha` | `~/.pi/agent/extensions/folha/` (camada local) | N2 | Confirmações seguras em português, saídas `/context /memory /agents /hooks` em folha e `/painel`; depende de `ui/a11y.ts` (`movimento`) (D-56) | F12 |
 | `chat-margin` | `~/.pi/agent/extensions/chat-margin/` (camada local) | N2 | Todo bloco com fundo do chat respeita a margem do texto (`outputPad`); embrulha `render`/`handleMouse` dos componentes do chat; usa `isImageLine` do `@nycode/tui` (K15) (D-56) | F12 |
 | `travar-modelos` | `~/.pi/agent/extensions/travar-modelos/` (camada local) | N2 | `/travar-modelos`: obriga a sessão a usar só os modelos e esforços escolhidos; separada do roteamento de subagentes (só reaproveita o seletor `subagent/routing/setup-ui.ts`) (D-56) | F12 |
+| `bash-main-guard` | `~/.pi/agent/extensions/bash-main-guard/` (camada local) | N2 | Na sessão principal interativa o bash não prende o turno: padrão de 120 s, teto de 600 s, sleep longo e laço de consulta recusados, `run wait` limitado a 30 s (D-57) (D-56) | F12 |
+| `avisos` | `~/.pi/agent/extensions/avisos/` (camada local) | N2 | Dono dos sinais de fim de turno: notificação, som, progresso na aba do terminal e o painel `/avisos` (D-56) | F12 |
+| `comandos` | `~/.pi/agent/extensions/comandos/` (camada local) | N2 | Paleta do `/` em pt-BR, painel `?` e `/atalhos` (ver, buscar e mudar atalhos); a ponte `__nycodeHarnessComandos` serve o editor (D-56) | F12 |
+| `diagnostico` | `~/.pi/agent/extensions/diagnostico/` (camada local) | N2 | Registro de erros e avisos internos, trilha de spans (OTel) e `/doctor`; `/diagnostico` ou ctrl+e abre o modal e o rodapé mostra só a contagem (D-56) | F12 |
 | `code-blocks` | `~/.pi/agent/extensions/code-blocks/` (camada local) | N2 | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) | F12 |
 | `image-open` | `~/.pi/agent/extensions/image-open/` (camada local) | N2 | Clicar numa imagem do transcript a abre no visualizador do sistema (`/imagem` abre a última) e a imagem de resultado de tool ganha o fundo da tool (D-56) | F12 |
 | `hook-msgs` | `~/.pi/agent/extensions/hook-msgs/` (camada local) | N2 | Mensagens de hook, de gate, de subagente em segundo plano e de fim de run no ritmo das tools, com o fundo do estado (D-56) | F12 |
@@ -181,6 +185,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K14 | `packages/coding-agent/src/config.ts:605` | Título de reserva "π" vira "nycode" | — | F2 |
 | K15 | `packages/tui/src/index.ts` | Exporta `isImageLine` na API pública do `@nycode/tui` | `chat-margin` | F12 |
 | K16 | `packages/tui/src/components/editor.ts` | `runEditorAction` e `withUndoGroup` no `Editor` (ações semânticas e grupo de desfazer) | `ui/editor`, `claude-compat/vim` | F12 |
+| K17 | `interactive-mode.ts`, `components/status-indicator.ts`, `components/assistant-message.ts`, `components/compaction-summary-message.ts` (em `modes/interactive`) | Uma chamada ao módulo `modes/interactive/avisos` por ponto de gancho (avisos em pt-BR); `NYCODE_AVISOS=0` devolve os textos do upstream | `avisos` | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 
@@ -211,6 +216,16 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_UI_STATE`, `PI_REDUCED_MOTION`, `PI_NERD_FONT`, `PI_ASCII_ICONS` | `terminal.{uiState,reducedMotion,nerdFont,asciiIcons}` | `NYCODE_*` iguais | conforme o nycode-harness |
 | `PI_FOLHA` | — (desliga a extensão `folha`) | `NYCODE_FOLHA` | ligado (`0` desliga; D-56) |
 | `PI_MODEL_LOCK` | — (a trava vive no ambiente do processo e dos filhos) | `NYCODE_MODEL_LOCK` | vazio, sem trava (D-56) |
+| `PI_TERM_PROGRESS` | — | `NYCODE_TERM_PROGRESS` | `0` desliga e `1` força o progresso na aba do terminal (D-56) |
+| `PI_COMANDOS` | — | `NYCODE_COMANDOS` | `0` desliga a extensão (D-56) |
+| `PI_DIAG` | — | `NYCODE_DIAG` | `0` desliga a extensão (D-56) |
+| `PI_DIAG_INBOX` | — | `NYCODE_DIAG_INBOX` | caixa de entrada TSV do pai para os avisos dos subagentes (D-56) |
+| `PI_DIAG_HOOK_LENTO_MS` | — | `NYCODE_DIAG_HOOK_LENTO_MS` | limite do detector de hook lento (ms; `0` desliga) (D-56) |
+| `PI_DIAG_MODELO_LENTO_MS` | — | `NYCODE_DIAG_MODELO_LENTO_MS` | limite do detector de modelo lento (ms; `0` desliga) (D-56) |
+| `PI_DIAG_TOOL_TRAVADA_MS` | — | `NYCODE_DIAG_TOOL_TRAVADA_MS` | limite do detector de tool travada (ms; `0` desliga) (D-56) |
+| `PI_DIAG_TOOL_LACO_BLOQUEIO` | — | `NYCODE_DIAG_TOOL_LACO_BLOQUEIO` | chamadas idênticas seguidas que bloqueiam a próxima (`0` desliga) (D-56) |
+| `PI_DOCTOR_NODE` | — | `NYCODE_DOCTOR_NODE` | versão do Node que o /doctor confere (testes) (D-56) |
+| `PI_VERSION` | — | `NYCODE_VERSION` | versão informada pelo wrapper ao /doctor (D-56) |
 | `PI_IMAGE_OPENER` | — | `NYCODE_IMAGE_OPENER` | abridor de imagens (testes); padrão xdg-open/open (D-56) |
 | `PI_PERMISSION_MODE`, `PI_BYPASS_ELIGIBLE`, `PI_BYPASS_OPTIN` | — (estado do controlador de modos de permissão da extensão `claude-compat`) | `NYCODE_PERMISSION_MODE`, `NYCODE_BYPASS_ELIGIBLE`, `NYCODE_BYPASS_OPTIN` | vazio (D-56) |
 | `NO_COLOR`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | — | `NO_COLOR` (padrão externo), `NYCODE_DISABLE_TERMINAL_TITLE` | — |

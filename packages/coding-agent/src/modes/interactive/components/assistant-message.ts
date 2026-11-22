@@ -1,6 +1,7 @@
 import type { AssistantMessage } from "@nycode/ai";
 import { type Component, Container, Markdown, type MarkdownTheme, MouseRegion, Spacer, Text } from "@nycode/tui";
 import type { MarkdownTransformer } from "../../../core/extensions/types.ts";
+import * as avisos from "../avisos/index.ts";
 import { getMarkdownTheme, theme } from "../theme/theme.ts";
 import { createMarkdownTransform } from "./markdown-transform.ts";
 
@@ -245,10 +246,12 @@ export class AssistantMessageComponent extends Container {
 					message.errorMessage && message.errorMessage !== "Request was aborted"
 						? message.errorMessage
 						: "Operation aborted";
+				if (avisos.interrompido(this.contentContainer, abortMessage, this.outputPad)) return; // nycode: K17
 				this.contentContainer.addChild(new Spacer(1));
 				this.contentContainer.addChild(new Text(theme.fg("error", abortMessage), this.outputPad, 0));
 			} else if (message.stopReason === "error") {
 				const errorMsg = message.errorMessage || "Unknown error";
+				if (avisos.erro(this.contentContainer, errorMsg, this.outputPad)) return; // nycode: K17
 				this.contentContainer.addChild(new Spacer(1));
 				this.contentContainer.addChild(new Text(theme.fg("error", `Error: ${errorMsg}`), this.outputPad, 0));
 			}
