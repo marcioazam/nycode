@@ -11,7 +11,7 @@ An approved plan runs to the end: after `plan_mode_complete` approval, keep work
 ## Polling and scheduling
 
 - Background subagents (`subagent` with `background: true`) notify on completion: never poll them (`{status: true}` only to list runs on request).
-- nycode has no background Bash, `/loop`, ScheduleWakeup or cron. Long commands run with `nohup cmd > /tmp/x.log 2>&1 &` and a bounded check of the log; external state (CI, deploys) is polled with a deadline and an interval paced to how fast that state changes, e.g. `gh run watch <id> --exit-status` or `timeout 900 bash -c 'until <check>; do sleep 30; done'`.
+- nycode has no `/loop`, ScheduleWakeup or cron. Long commands run with `run start {command, await: true}` (a notification arrives when it ends; no polling); external state (CI, deploys) is polled with a deadline and an interval paced to how fast that state changes, e.g. `gh run watch <id> --exit-status` or `timeout 900 bash -c 'until <check>; do sleep 30; done'`.
 
 ## Reward hacking inside loops
 
