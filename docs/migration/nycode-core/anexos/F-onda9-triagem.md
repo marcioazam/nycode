@@ -69,4 +69,4 @@ mudanças não commitadas), em `/tmp/pi-harness-snap-20261122` com `MANIFEST.sha
 
 - O motor TypeScript de permissão cobria menos que o `guard.py` até o #362 (modos, reanálise recursiva, baixar-e-executar, `$X` como comando, `/dev/*`, credenciais, `Grep`, `.env.*`, 256 KB, falha fechada); a paridade está no diferencial, e o padrão `native` ainda não vale (parte 2 da D-60).
 - Testes intermitentes sob carga: o de SIGTERM do `subagent-extension` (a fixture grava o pid antes da mensagem), o de `agent-session-mcp` e o clique nativo do `image-open` (corrigido no #361).
-- Os destinos do E que ficaram obsoletos por renomeação (`pi-*` para `nycode-*`) foram corrigidos nesta mudança; os outros destinos "não encontrados" são ações `absorver` ou movimentos de testes para subpastas.
+- Destinos do E: resolvido. O gerador voltou a ser a única fonte do TSV (lista da onda 9 em `--onda9`, regras R18 a R20 e exceções para renomeações e subpastas), e `test_gerar_mapa.py` falha se uma linha for editada à mão ou se um destino não existir.

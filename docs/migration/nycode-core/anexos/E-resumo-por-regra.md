@@ -1,7 +1,7 @@
-<!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main e4f8729 (1485 arquivos). Não editar à mão. -->
+<!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main 3981d9d (1485 arquivos) e da lista da onda 9 (44 arquivos). Não editar à mão. -->
 # Anexo E: resumo do mapa por regra
 
-Total de arquivos rastreados no nycode-harness: **1485**. Arquivos sem regra: **0**.
+Total de arquivos no mapa: **1529** (1485 do nycode-harness e 44 da onda 9). Arquivos sem regra: **0**.
 Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arquivo-a-arquivo.tsv).
 
 | Regra | Arquivos | Padrão de origem | Destino | Ação | Fase |
@@ -25,9 +25,9 @@ Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arq
 | C03 | 5 | `^\.github/workflows/(.+)$` | `.github/workflows/$1` | converter | F3 |
 | C04 | 1 | `^scripts/ci/biome\.json$` | `biome.json do destino (D-06)` | remover | F3 |
 | C05 | 19 | `^scripts/ci/(.+)$` | `scripts/ci/$1` | converter | F3 |
-| C06 | 1 | `^scripts/check-leaks\.sh$` | `scripts/ci/check-leaks.sh` | mover | F3 |
-| C07 | 3 | `^scripts/(check-refs\.py\|refs-allow\.txt\|test_check_refs\.py)$` | `scripts/ci/lint/$1` | converter | F3 |
-| C08 | 1 | `^scripts/fixtures/leak/(.+)$` | `scripts/ci/fixtures/leak/$1` | mover | F3 |
+| C06 | 1 | `^scripts/check-leaks\.sh$` | `scripts/check-leaks.sh` | mover | F3 |
+| C07 | 3 | `^scripts/(check-refs\.py\|refs-allow\.txt\|test_check_refs\.py)$` | `scripts/$1` | converter | F3 |
+| C08 | 1 | `^scripts/fixtures/leak/(.+)$` | `scripts/fixtures/leak/$1` | mover | F3 |
 | C09 | 2 | `^claude-home/bin/structure/(.+)$` | `packages/coding-agent/resources/bin/structure/$1` | converter | F3 |
 | C10 | 1 | `^docs/ci-local\.md$` | `docs/ci-local.md` | converter | F3 |
 | B01 | 1 | `^bench/arms/omp$` | `(braço omp fora das medições, D-26)` | remover | F3 |
@@ -95,18 +95,21 @@ Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arq
 | R05 | 1 | `^claude-home/settings\.json\.example$` | `packages/coding-agent/src/core/settings-defaults.ts (hooks, statusLine, env)` | absorver | F8 |
 | R06 | 1 | `^claude-home/rules/(.+)$` | `packages/coding-agent/resources/rules/$1` | converter | F8 |
 | R07 | 4 | `^claude-home/rules-ref/(.+)$` | `packages/coding-agent/resources/rules/ref/$1` | converter | F8 |
-| R08 | 261 | `^claude-home/(agents\|commands\|skills)/(.+)$` | `packages/coding-agent/resources/$1/$2` | converter | F8 |
+| R08 | 268 | `^claude-home/(agents\|commands\|skills)/(.+)$` | `packages/coding-agent/resources/$1/$2` | converter | F8 |
 | R09 | 9 | `^claude-home/hooks/fixtures/pi-code-1\.7\.0/(.+)$` | `packages/coding-agent/test/harness/hooks/fixtures/$1` | mover | F8 |
-| R10 | 6 | `^claude-home/hooks/((?:.+/)?test_[^/]+\.py)$` | `packages/coding-agent/test/harness/hooks/$1` | converter | F8 |
-| R11 | 6 | `^claude-home/hooks/(.+)$` | `packages/coding-agent/resources/hooks/$1` | converter | F8 |
+| R18 | 4 | `^claude-home/hooks/permissions/tests/(test_[^/]+\.py)$` | `packages/coding-agent/test/harness/hooks/permissions/$1` | converter | F8 |
+| R10 | 7 | `^claude-home/hooks/((?:.+/)?test_[^/]+\.py)$` | `packages/coding-agent/test/harness/hooks/$1` | converter | F8 |
+| R11 | 14 | `^claude-home/hooks/(.+)$` | `packages/coding-agent/resources/hooks/$1` | converter | F8 |
 | R12 | 1 | `^claude-home/plugins/claude-hud/statusline\.mjs$` | `packages/coding-agent/resources/statusline/statusline.mjs` | converter | F8 |
-| R13 | 4 | `^claude-home/bin/hud/tests/(.+)$` | `packages/coding-agent/test/harness/statusline/$1` | converter | F8 |
-| R14 | 4 | `^claude-home/bin/hud/(.+)$` | `packages/coding-agent/resources/statusline/$1` | converter | F8 |
-| R16 | 13 | `^claude-home/bin/(checks\|doctor\|telemetry)/(.+)$` | `packages/coding-agent/resources/bin/$1/$2` | converter | F8 |
+| R13 | 5 | `^claude-home/bin/hud/tests/(.+)$` | `packages/coding-agent/test/harness/statusline/$1` | converter | F8 |
+| R14 | 5 | `^claude-home/bin/hud/(.+)$` | `packages/coding-agent/resources/statusline/$1` | converter | F8 |
+| R16 | 14 | `^claude-home/bin/(checks\|doctor\|telemetry)/(.+)$` | `packages/coding-agent/resources/bin/$1/$2` | converter | F8 |
 | R17 | 3 | `^claude-home/bin/(git-deliver\|mcp-header\.sh\|pi-image\.mjs)$` | `packages/coding-agent/resources/bin/$1` | converter | F8 |
-| R15 | 2 | `^claude-home/bin/(.+)$` | `scripts/harness/$1` | converter | F8 |
+| R19 | 11 | `^claude-home/bin/(session-transport/.+)$` | `packages/coding-agent/resources/bin/$1` | converter | F8 |
+| R20 | 4 | `^claude-home/bin/tests/interactive-display/(.+\.test\.ts)$` | `packages/coding-agent/test/harness/ui-display/$1` | converter | F8 |
+| R15 | 8 | `^claude-home/bin/(.+)$` | `scripts/harness/$1` | converter | F8 |
 | T01 | 1 | `^patches/third-party/pi-lsp\.patch$` | `packages/coding-agent/src/extensions/lsp/` | absorver | F9 |
-| T02 | 2 | `^patches/third-party/(ponytail\|ralph-loop)\.patch$` | `fork próprio de $1 (D-11)` | converter | F9 |
+| T02 | 2 | `^patches/third-party/(ponytail\|ralph-loop)\.patch$` | `embutido no core a partir do fork marcioazam/$1 (D-11, D-54)` | absorver | F9 |
 | T03 | 1 | `^third-party\.json$` | `NOTICE + pacotes opcionais (D-11)` | remover | F9 |
 | D01 | 7 | `^docs/specs/(.+)$` | `docs/specs/$1` | converter | F2 |
 | D02 | 29 | `^claude-home/docs/(.+)$` | `docs/harness/$1` | converter | F8 |
@@ -123,7 +126,7 @@ Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arq
 | F5 | 0 | 5 | 0 | 6 | 13 | 24 |
 | F6 | 0 | 19 | 0 | 13 | 2 | 34 |
 | F7 | 33 | 31 | 1 | 4 | 7 | 76 |
-| F8 | 9 | 338 | 0 | 2 | 0 | 349 |
-| F9 | 0 | 2 | 0 | 1 | 1 | 4 |
+| F8 | 9 | 381 | 0 | 2 | 1 | 393 |
+| F9 | 0 | 0 | 0 | 3 | 1 | 4 |
 | F11 | 0 | 0 | 0 | 0 | 6 | 6 |
-| **Total** | 90 | 1312 | 11 | 32 | 40 | **1485** |
+| **Total** | 90 | 1353 | 11 | 34 | 41 | **1529** |

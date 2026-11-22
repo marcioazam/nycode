@@ -5,7 +5,7 @@ origem	destino	acao	fase	regra
 .github/CODEOWNERS	.github/CODEOWNERS	mover	F2	G10
 .github/DISCUSSION_TEMPLATE/ideas.yml	.github/DISCUSSION_TEMPLATE/ideas.yml	mover	F2	G11
 .github/DISCUSSION_TEMPLATE/q-a.yml	.github/DISCUSSION_TEMPLATE/q-a.yml	mover	F2	G11
-.github/ISSUE_TEMPLATE/bug_report.yml	.github/ISSUE_TEMPLATE/bug_report.yml	fundir	F2	G12
+.github/ISSUE_TEMPLATE/bug_report.yml	.github/ISSUE_TEMPLATE/bug.yml	fundir	F2	G12
 .github/ISSUE_TEMPLATE/config.yml	.github/ISSUE_TEMPLATE/config.yml	fundir	F2	G12
 .github/ISSUE_TEMPLATE/feature_request.yml	.github/ISSUE_TEMPLATE/feature_request.yml	fundir	F2	G12
 .github/PULL_REQUEST_TEMPLATE.md	.github/PULL_REQUEST_TEMPLATE.md	mover	F2	G10
@@ -972,36 +972,12 @@ claude-home/bin/tests/compact-at-400k.test.ts	packages/coding-agent/test/harness
 claude-home/bin/tests/config/models-example.test.ts	packages/coding-agent/test/harness/core/models-example.test.ts	converter	F4	K09
 claude-home/bin/tests/gates/completion-gate.test.ts	packages/coding-agent/test/harness/extensions/completion-gate/index.test.ts	converter	F7	E16
 claude-home/bin/tests/no-context-files.test.ts	packages/coding-agent/test/harness/extensions/claude-rules/context-files.test.ts	converter	F7	E03
-claude-home/bin/tests/pi-ui-final-gate.sh	scripts/harness/ui-gates/pi-ui-final-gate.sh	converter	F7	E28
+claude-home/bin/tests/pi-ui-final-gate.sh	scripts/harness/ui-gates/nycode-ui-final-gate.sh	converter	F7	E28
 claude-home/bin/tests/plan-gate.test.ts	packages/coding-agent/test/harness/extensions/plan-gate/index.test.ts	converter	F7	E18
 claude-home/bin/tests/prefix-cache-1h.test.ts	packages/coding-agent/test/harness/extensions/prefix-cache-1h/index.test.ts	converter	F7	E22
 claude-home/bin/tests/sound-notify.test.ts	packages/coding-agent/test/harness/extensions/sound-notify/index.test.ts	converter	F7	E22
 claude-home/bin/tests/terminal-sota/e2e.sh	scripts/harness/ui-gates/terminal-sota/e2e.sh	converter	F7	E28
 claude-home/bin/tests/terminal-sota/gate.sh	scripts/harness/ui-gates/terminal-sota/gate.sh	converter	F7	E28
-claude-home/bin/checks/arg-expansion-check.test.mjs	packages/coding-agent/test/harness/statusline/arg-expansion-check.test.mjs	converter	F8	R08
-claude-home/bin/fonte-icones.py	(ferramenta pessoal do dono para o kitty, fora do produto)	remover	F8	R08
-claude-home/bin/hud/calm-statusline.mjs	packages/coding-agent/resources/statusline/calm-statusline.mjs	converter	F8	R08
-claude-home/bin/hud/tests/calm-statusline.test.mjs	packages/coding-agent/test/harness/statusline/calm-statusline.test.mjs	converter	F8	R08
-claude-home/bin/pi-session	packages/coding-agent/resources/bin/nycode-session	converter	F8	R08
-claude-home/bin/session-transport/bootstrap.py	packages/coding-agent/resources/bin/session-transport/bootstrap.py	converter	F8	R08
-claude-home/bin/session-transport/cli.py	packages/coding-agent/resources/bin/session-transport/cli.py	converter	F8	R08
-claude-home/bin/session-transport/contract.json	packages/coding-agent/resources/bin/session-transport/contract.json	converter	F8	R08
-claude-home/bin/session-transport/tests/support.py	packages/coding-agent/resources/bin/session-transport/tests/support.py	converter	F8	R08
-claude-home/bin/session-transport/tests/test_bootstrap.py	packages/coding-agent/resources/bin/session-transport/tests/test_bootstrap.py	converter	F8	R08
-claude-home/bin/session-transport/tests/test_cli.py	packages/coding-agent/resources/bin/session-transport/tests/test_cli.py	converter	F8	R08
-claude-home/bin/session-transport/tests/test_integration_fix.py	packages/coding-agent/resources/bin/session-transport/tests/test_integration_fix.py	converter	F8	R08
-claude-home/bin/session-transport/tests/test_state.py	packages/coding-agent/resources/bin/session-transport/tests/test_state.py	converter	F8	R08
-claude-home/bin/session-transport/tests/test_tmux_flow.py	packages/coding-agent/resources/bin/session-transport/tests/test_tmux_flow.py	converter	F8	R08
-claude-home/bin/session-transport/transport_state.py	packages/coding-agent/resources/bin/session-transport/transport_state.py	converter	F8	R08
-claude-home/bin/session-transport/transport_tmux.py	packages/coding-agent/resources/bin/session-transport/transport_tmux.py	converter	F8	R08
-claude-home/bin/tests/lifecycle/mcp-header.test.sh	packages/coding-agent/resources/bin/test_mcp_header.py	converter	F8	R08
-claude-home/bin/tests/interactive-display/assembled.test.ts	packages/coding-agent/test/harness/ui-display/assembled.test.ts	converter	F8	R08
-claude-home/bin/tests/interactive-display/display.test.ts	packages/coding-agent/test/harness/ui-display/display.test.ts	converter	F8	R08
-claude-home/bin/tests/interactive-display/plan-section.test.ts	packages/coding-agent/test/harness/ui-display/plan-section.test.ts	converter	F8	R08
-claude-home/bin/tests/interactive-display/plan-table.test.ts	packages/coding-agent/test/harness/ui-display/plan-table.test.ts	converter	F8	R08
-claude-home/bin/tests/interactive-input/async-default-routing.test.ts	packages/coding-agent/test/harness/subagent/detach/async-default-routing.test.ts	converter	F8	R08
-claude-home/bin/tests/interactive-input/detach-capacity.test.ts	packages/coding-agent/test/harness/subagent/detach/detach-capacity.test.ts	converter	F8	R08
-claude-home/bin/tests/interactive-input/root-routing-integration.test.ts	packages/coding-agent/test/harness/subagent/routing/root-routing.test.ts	converter	F8	R08
 claude-home/commands/cancel-ralph.md	packages/coding-agent/resources/commands/cancel-ralph.md	converter	F8	R08
 claude-home/commands/claude-hud-configure.md	packages/coding-agent/resources/commands/claude-hud-configure.md	converter	F8	R08
 claude-home/commands/claude-hud-setup.md	packages/coding-agent/resources/commands/claude-hud-setup.md	converter	F8	R08
@@ -1019,13 +995,6 @@ claude-home/commands/review-pr.md	packages/coding-agent/resources/commands/revie
 claude-home/commands/revise-claude-md.md	packages/coding-agent/resources/commands/revise-claude-md.md	converter	F8	R08
 claude-home/commands/skill-gen.md	packages/coding-agent/resources/commands/skill-gen.md	converter	F8	R08
 claude-home/commands/swarm.md	packages/coding-agent/resources/commands/swarm.md	converter	F8	R08
-claude-home/commands/batch.md	packages/coding-agent/resources/commands/batch.md	converter	F8	R08
-claude-home/commands/run.md	packages/coding-agent/resources/commands/run.md	converter	F8	R08
-claude-home/commands/run-skill-generator.md	packages/coding-agent/resources/commands/run-skill-generator.md	converter	F8	R08
-claude-home/commands/statusline.md	packages/coding-agent/resources/commands/statusline.md	converter	F8	R08
-claude-home/commands/team-onboarding.md	packages/coding-agent/resources/commands/team-onboarding.md	converter	F8	R08
-claude-home/commands/update-config.md	packages/coding-agent/resources/commands/update-config.md	converter	F8	R08
-claude-home/commands/verify.md	packages/coding-agent/resources/commands/verify.md	converter	F8	R08
 claude-home/docs/agent-contract.md	docs/harness/agent-contract.md	converter	F8	D02
 claude-home/docs/context-economy-extensions-2026-11-12.md	docs/harness/context-economy-extensions-2026-11-12.md	converter	F8	D02
 claude-home/docs/external-eval-terminal-bench-2026-11-13.md	docs/harness/external-eval-terminal-bench-2026-11-13.md	converter	F8	D02
@@ -1057,8 +1026,6 @@ claude-home/docs/third-party/mattpocock-skills/LICENSE	docs/harness/third-party/
 claude-home/docs/third-party/obra-superpowers/LICENSE	docs/harness/third-party/obra-superpowers/LICENSE	converter	F8	D02
 claude-home/hooks/claims/claims.py	packages/coding-agent/resources/hooks/claims/claims.py	converter	F8	R11
 claude-home/hooks/claims/patterns.ere	packages/coding-agent/resources/hooks/claims/patterns.ere	converter	F8	R11
-claude-home/hooks/claims/test_claims.py	packages/coding-agent/test/harness/hooks/claims/test_claims.py	converter	F8	R11
-claude-home/hooks/diag.py	packages/coding-agent/resources/hooks/diag.py	converter	F8	R11
 claude-home/hooks/dispatch/hook-dispatch.sh	packages/coding-agent/resources/hooks/dispatch/hook-dispatch.sh	converter	F8	R11
 claude-home/hooks/dispatch/test_dispatch.py	packages/coding-agent/test/harness/hooks/dispatch/test_dispatch.py	converter	F8	R10
 claude-home/hooks/fixtures/pi-code-1.7.0/PostToolUse-Agent.json	packages/coding-agent/test/harness/hooks/fixtures/PostToolUse-Agent.json	mover	F8	R09
@@ -1078,17 +1045,6 @@ claude-home/hooks/test_graph_context.py	packages/coding-agent/test/harness/hooks
 claude-home/hooks/test_guard.py	packages/coding-agent/test/harness/hooks/test_guard.py	converter	F8	R10
 claude-home/hooks/test_hook_budget.py	packages/coding-agent/test/harness/hooks/test_hook_budget.py	converter	F8	R10
 claude-home/hooks/test_impeccable_gate.py	packages/coding-agent/test/harness/hooks/test_impeccable_gate.py	converter	F8	R10
-claude-home/hooks/permissions/__init__.py	packages/coding-agent/resources/hooks/permissions/__init__.py	converter	F8	R11
-claude-home/hooks/permissions/decide.py	packages/coding-agent/resources/hooks/permissions/decide.py	converter	F8	R11
-claude-home/hooks/permissions/modes.py	packages/coding-agent/resources/hooks/permissions/modes.py	converter	F8	R11
-claude-home/hooks/permissions/parse.py	packages/coding-agent/resources/hooks/permissions/parse.py	converter	F8	R11
-claude-home/hooks/permissions/paths.py	packages/coding-agent/resources/hooks/permissions/paths.py	converter	F8	R11
-claude-home/hooks/permissions/rules.py	packages/coding-agent/resources/hooks/permissions/rules.py	converter	F8	R11
-claude-home/hooks/permissions/shell.py	packages/coding-agent/resources/hooks/permissions/shell.py	converter	F8	R11
-claude-home/hooks/permissions/tests/test_guard_bypass.py	packages/coding-agent/test/harness/hooks/permissions/test_guard_bypass.py	converter	F8	R11
-claude-home/hooks/permissions/tests/test_guard_modes.py	packages/coding-agent/test/harness/hooks/permissions/test_guard_modes.py	converter	F8	R11
-claude-home/hooks/permissions/tests/test_hardening.py	packages/coding-agent/test/harness/hooks/permissions/test_hardening.py	converter	F8	R11
-claude-home/hooks/permissions/tests/test_units.py	packages/coding-agent/test/harness/hooks/permissions/test_units.py	converter	F8	R11
 claude-home/lite/APPEND.md	packages/coding-agent/resources/instructions/lite.md	converter	F8	R03
 claude-home/lite/settings.json	packages/coding-agent/resources/instructions/lite.settings.json	converter	F8	R04
 claude-home/patches/pi-code/commands-print.patch	packages/coding-agent/src/extensions/commands/	absorver	F5	P02
@@ -1123,7 +1079,7 @@ claude-home/patches/pi-code/subagent-panel/fleet-spawn.test.ts	packages/coding-a
 claude-home/patches/pi-code/subagent-panel/fleet-ui-layout.test.ts	packages/coding-agent/test/harness/subagent/panel/fleet-ui-layout.test.ts	converter	F6	P15
 claude-home/patches/pi-code/subagent-panel/fleet-ui.test.ts	packages/coding-agent/test/harness/subagent/panel/fleet-ui.test.ts	converter	F6	P15
 claude-home/patches/pi-code/subagent-panel/fleet.test.ts	packages/coding-agent/test/harness/subagent/fleet/fleet.test.ts	converter	F6	P15
-claude-home/patches/pi-code/subagent-panel/setup.ts	packages/coding-agent/test/harness/extensions/subagent/subagent-panel/setup.ts	converter	F6	P15
+claude-home/patches/pi-code/subagent-panel/setup.ts	packages/coding-agent/test/harness/subagent/fleet-env.ts	converter	F6	P15
 claude-home/patches/pi-code/subagent-render.patch	packages/coding-agent/src/extensions/subagent/	absorver	F6	P13
 claude-home/patches/pi-code/subagent-render/render.test.ts	packages/coding-agent/test/harness/subagent/transcript/render.test.ts	converter	F6	P15
 claude-home/patches/pi-code/team.patch	packages/coding-agent/src/extensions/subagent/	absorver	F6	P13
@@ -1462,11 +1418,11 @@ extensions/todo-sync/index.ts	packages/coding-agent/src/extensions/todo/stale-re
 extensions/ui-visual/header.ts	packages/coding-agent/src/extensions/ui-visual/header.ts	mover	F7	E26
 extensions/ui-visual/icons.ts	packages/coding-agent/src/extensions/ui-visual/icons.ts	mover	F7	E26
 extensions/ui-visual/index.ts	packages/coding-agent/src/extensions/ui-visual/index.ts	mover	F7	E26
-extensions/ui-visual/test/header.test.ts	packages/coding-agent/test/harness/extensions/ui-visual/header.test.ts	converter	F7	E24
+extensions/ui-visual/test/header.test.ts	packages/coding-agent/test/harness/extensions/ui-visual/header/header.test.ts	converter	F7	E24
 extensions/ui-visual/test/icons.test.ts	packages/coding-agent/test/harness/extensions/ui-visual/icons.test.ts	converter	F7	E24
 extensions/ui-visual/test/index.test.ts	packages/coding-agent/test/harness/extensions/ui-visual/index.test.ts	converter	F7	E24
-extensions/ui-visual/test/tools.test.ts	packages/coding-agent/test/harness/extensions/ui-visual/tools.test.ts	converter	F7	E24
-extensions/ui-visual/test/working.test.ts	packages/coding-agent/test/harness/extensions/ui-visual/working.test.ts	converter	F7	E24
+extensions/ui-visual/test/tools.test.ts	packages/coding-agent/test/harness/extensions/ui-visual/tools/tools.test.ts	converter	F7	E24
+extensions/ui-visual/test/working.test.ts	packages/coding-agent/test/harness/extensions/ui-visual/estado/working.test.ts	converter	F7	E24
 extensions/ui-visual/tools.ts	packages/coding-agent/src/extensions/ui-visual/tools.ts	mover	F7	E26
 extensions/ui-visual/working.ts	packages/coding-agent/src/extensions/ui-visual/working.ts	mover	F7	E26
 extensions/ui/a11y.ts	packages/coding-agent/src/extensions/ui/a11y.ts	mover	F7	E26
@@ -1477,9 +1433,9 @@ extensions/ui/history.ts	packages/coding-agent/src/extensions/ui/history.ts	move
 extensions/ui/index.ts	packages/coding-agent/src/extensions/ui/index.ts	mover	F7	E26
 extensions/ui/terminal.ts	packages/coding-agent/src/extensions/ui/terminal.ts	mover	F7	E26
 extensions/ui/test/a11y.test.ts	packages/coding-agent/test/harness/extensions/ui/a11y.test.ts	converter	F7	E24
-extensions/ui/test/btw.test.ts	packages/coding-agent/test/harness/extensions/ui/btw.test.ts	converter	F7	E24
-extensions/ui/test/diff.test.ts	packages/coding-agent/test/harness/extensions/ui/diff.test.ts	converter	F7	E24
-extensions/ui/test/editor.test.ts	packages/coding-agent/test/harness/extensions/ui/editor.test.ts	converter	F7	E24
+extensions/ui/test/btw.test.ts	packages/coding-agent/test/harness/extensions/ui/commands/btw.test.ts	converter	F7	E24
+extensions/ui/test/diff.test.ts	packages/coding-agent/test/harness/extensions/ui/commands/diff.test.ts	converter	F7	E24
+extensions/ui/test/editor.test.ts	packages/coding-agent/test/harness/extensions/ui/editor/editor.test.ts	converter	F7	E24
 extensions/ui/test/history.test.ts	packages/coding-agent/test/harness/extensions/ui/history.test.ts	converter	F7	E24
 extensions/ui/test/terminal.test.ts	packages/coding-agent/test/harness/extensions/ui/terminal.test.ts	converter	F7	E24
 extensions/up-dequeue/index.test.ts	packages/coding-agent/test/harness/extensions/up-dequeue/index.test.ts	converter	F7	E25
@@ -1492,12 +1448,12 @@ models.json.example	packages/coding-agent/examples/config/models.json	mover	F4	K
 npm/package-lock.json	(pi-code é fonte do repositório)	remover	F11	I02
 npm/package.json	(pi-code é fonte do repositório)	remover	F11	I02
 patches/third-party/pi-lsp.patch	packages/coding-agent/src/extensions/lsp/	absorver	F9	T01
-patches/third-party/ponytail.patch	pacote opcional marcioazam/ponytail@a75382e (fork, D-11)	remover	F9	T02
-patches/third-party/ralph-loop.patch	pacote opcional marcioazam/ralph-loop@9e7f895 (fork, D-11)	remover	F9	T02
+patches/third-party/ponytail.patch	packages/coding-agent/src/extensions/ponytail/ (D-54)	absorver	F9	T02
+patches/third-party/ralph-loop.patch	packages/coding-agent/resources/ralph-loop/ (D-54)	absorver	F9	T02
 publish.list	instalador e campo files do pacote	remover	F11	I01
-scripts/check-leaks.sh	scripts/ci/check-leaks.sh	mover	F3	C06
+scripts/check-leaks.sh	scripts/check-leaks.sh	mover	F3	C06
 scripts/check-patch-stack.sh	(sem pilha de patches)	remover	F6	P16
-scripts/check-refs.py	scripts/ci/lint/check-refs.py	converter	F3	C07
+scripts/check-refs.py	scripts/check-refs.py	converter	F3	C07
 scripts/ci/biome.json	biome.json do destino (D-06)	remover	F3	C04
 scripts/ci/changed-files.sh	scripts/ci/changed-files.sh	converter	F3	C05
 scripts/ci/install-tools.sh	scripts/ci/install-tools.sh	converter	F3	C05
@@ -1519,12 +1475,56 @@ scripts/ci/run-security.sh	scripts/ci/run-security.sh	converter	F3	C05
 scripts/ci/run-static.sh	scripts/ci/run-static.sh	converter	F3	C05
 scripts/ci/test_instruction_budget.py	scripts/ci/test_instruction_budget.py	converter	F3	C05
 scripts/compaction-400k.py	(K9)	remover	F7	E09
-scripts/fixtures/leak/clean.txt	scripts/ci/fixtures/leak/clean.txt	mover	F3	C08
+scripts/fixtures/leak/clean.txt	scripts/fixtures/leak/clean.txt	mover	F3	C08
 scripts/install-lib.sh	instalador e campo files do pacote	remover	F11	I01
-scripts/refs-allow.txt	scripts/ci/lint/refs-allow.txt	converter	F3	C07
+scripts/refs-allow.txt	scripts/refs-allow.txt	converter	F3	C07
 scripts/test_check_refs.py	scripts/test_check_refs.py	converter	F3	C07
 scripts/test_install.sh	instalador e campo files do pacote	remover	F11	I01
 settings.json.example	packages/coding-agent/src/core/settings-defaults.ts + docs/settings.md (K4)	absorver	F4	K03
 themes/mono.json	packages/coding-agent/src/modes/interactive/theme/mono.json (D-37)	mover	F7	E27
 themes/tokyo-night.json	packages/coding-agent/src/modes/interactive/theme/tokyo-night.json (D-37)	mover	F7	E27
 third-party.json	NOTICE + pacotes opcionais (D-11)	remover	F9	T03
+claude-home/bin/checks/arg-expansion-check.test.mjs	packages/coding-agent/test/harness/statusline/arg-expansion-check.test.mjs	converter	F8	R16
+claude-home/bin/fonte-icones.py	(ferramenta pessoal do dono para o kitty, fora do produto)	remover	F8	R15
+claude-home/bin/hud/calm-statusline.mjs	packages/coding-agent/resources/statusline/calm-statusline.mjs	converter	F8	R14
+claude-home/bin/hud/tests/calm-statusline.test.mjs	packages/coding-agent/test/harness/statusline/calm-statusline.test.mjs	converter	F8	R13
+claude-home/bin/pi-session	packages/coding-agent/resources/bin/nycode-session	converter	F8	R15
+claude-home/bin/session-transport/bootstrap.py	packages/coding-agent/resources/bin/session-transport/bootstrap.py	converter	F8	R19
+claude-home/bin/session-transport/cli.py	packages/coding-agent/resources/bin/session-transport/cli.py	converter	F8	R19
+claude-home/bin/session-transport/contract.json	packages/coding-agent/resources/bin/session-transport/contract.json	converter	F8	R19
+claude-home/bin/session-transport/tests/support.py	packages/coding-agent/resources/bin/session-transport/tests/transport_support.py	converter	F8	R19
+claude-home/bin/session-transport/tests/test_bootstrap.py	packages/coding-agent/resources/bin/session-transport/tests/test_bootstrap.py	converter	F8	R19
+claude-home/bin/session-transport/tests/test_cli.py	packages/coding-agent/resources/bin/session-transport/tests/test_cli.py	converter	F8	R19
+claude-home/bin/session-transport/tests/test_integration_fix.py	packages/coding-agent/resources/bin/session-transport/tests/test_integration_fix.py	converter	F8	R19
+claude-home/bin/session-transport/tests/test_state.py	packages/coding-agent/resources/bin/session-transport/tests/test_state.py	converter	F8	R19
+claude-home/bin/session-transport/tests/test_tmux_flow.py	packages/coding-agent/resources/bin/session-transport/tests/test_tmux_flow.py	converter	F8	R19
+claude-home/bin/session-transport/transport_state.py	packages/coding-agent/resources/bin/session-transport/transport_state.py	converter	F8	R19
+claude-home/bin/session-transport/transport_tmux.py	packages/coding-agent/resources/bin/session-transport/transport_tmux.py	converter	F8	R19
+claude-home/bin/tests/interactive-display/assembled.test.ts	packages/coding-agent/test/harness/ui-display/assembled.test.ts	converter	F8	R20
+claude-home/bin/tests/interactive-display/display.test.ts	packages/coding-agent/test/harness/ui-display/display.test.ts	converter	F8	R20
+claude-home/bin/tests/interactive-display/plan-section.test.ts	packages/coding-agent/test/harness/ui-display/plan-section.test.ts	converter	F8	R20
+claude-home/bin/tests/interactive-display/plan-table.test.ts	packages/coding-agent/test/harness/ui-display/plan-table.test.ts	converter	F8	R20
+claude-home/bin/tests/interactive-input/async-default-routing.test.ts	packages/coding-agent/test/harness/subagent/detach/async-default-routing.test.ts	converter	F8	R15
+claude-home/bin/tests/interactive-input/detach-capacity.test.ts	packages/coding-agent/test/harness/subagent/detach/detach-capacity.test.ts	converter	F8	R15
+claude-home/bin/tests/interactive-input/root-routing-integration.test.ts	packages/coding-agent/test/harness/subagent/routing/root-routing.test.ts	converter	F8	R15
+claude-home/bin/tests/lifecycle/mcp-header.test.sh	packages/coding-agent/resources/bin/test_mcp_header.py	converter	F8	R15
+claude-home/commands/batch.md	packages/coding-agent/resources/commands/batch.md	converter	F8	R08
+claude-home/commands/run.md	packages/coding-agent/resources/commands/run.md	converter	F8	R08
+claude-home/commands/run-skill-generator.md	packages/coding-agent/resources/commands/run-skill-generator.md	converter	F8	R08
+claude-home/commands/statusline.md	packages/coding-agent/resources/commands/statusline.md	converter	F8	R08
+claude-home/commands/team-onboarding.md	packages/coding-agent/resources/commands/team-onboarding.md	converter	F8	R08
+claude-home/commands/update-config.md	packages/coding-agent/resources/commands/update-config.md	converter	F8	R08
+claude-home/commands/verify.md	packages/coding-agent/resources/commands/verify.md	converter	F8	R08
+claude-home/hooks/claims/test_claims.py	packages/coding-agent/test/harness/hooks/claims/test_claims.py	converter	F8	R10
+claude-home/hooks/diag.py	packages/coding-agent/resources/hooks/diag.py	converter	F8	R11
+claude-home/hooks/permissions/decide.py	packages/coding-agent/resources/hooks/permissions/decide.py	converter	F8	R11
+claude-home/hooks/permissions/__init__.py	packages/coding-agent/resources/hooks/permissions/__init__.py	converter	F8	R11
+claude-home/hooks/permissions/modes.py	packages/coding-agent/resources/hooks/permissions/modes.py	converter	F8	R11
+claude-home/hooks/permissions/parse.py	packages/coding-agent/resources/hooks/permissions/parse.py	converter	F8	R11
+claude-home/hooks/permissions/paths.py	packages/coding-agent/resources/hooks/permissions/paths.py	converter	F8	R11
+claude-home/hooks/permissions/rules.py	packages/coding-agent/resources/hooks/permissions/rules.py	converter	F8	R11
+claude-home/hooks/permissions/shell.py	packages/coding-agent/resources/hooks/permissions/shell.py	converter	F8	R11
+claude-home/hooks/permissions/tests/test_guard_bypass.py	packages/coding-agent/test/harness/hooks/permissions/test_guard_bypass.py	converter	F8	R18
+claude-home/hooks/permissions/tests/test_guard_modes.py	packages/coding-agent/test/harness/hooks/permissions/test_guard_modes.py	converter	F8	R18
+claude-home/hooks/permissions/tests/test_hardening.py	packages/coding-agent/test/harness/hooks/permissions/test_hardening.py	converter	F8	R18
+claude-home/hooks/permissions/tests/test_units.py	packages/coding-agent/test/harness/hooks/permissions/test_units.py	converter	F8	R18
