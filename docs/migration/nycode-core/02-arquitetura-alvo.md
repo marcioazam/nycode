@@ -147,7 +147,7 @@ ganha a atribuição e o commit de origem.
 | `todo-sync` | `extensions/todo-sync/` | N2 → fundida | Funde em `todo` | F7 |
 | `ui` | `extensions/ui/` | N2 + N1 | `/btw`, `/diff`, `/rename`, `/vim`, histórico; `a11y` passa a usar API pública do cabeçalho | F7 |
 | `ui-visual` | `extensions/ui-visual/` | N2 + N1 | O logo do cabeçalho deixa de ser cópia de `pi-logo` e usa o componente exportado, com a marca nycode | F7 |
-| `up-dequeue` | `extensions/up-dequeue/` | N2 | — | F7 |
+| `up-dequeue` | `extensions/up-dequeue/` | N2 | Fila de mensagens em português; a seta para cima fica exclusiva do histórico (D-57) | F7 |
 
 ### 3.3 Vinda de terceiros
 

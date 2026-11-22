@@ -109,9 +109,9 @@ describe("/docs-pointer command", () => {
 		await command()?.handler("bogus", ctx);
 		await command()?.handler("", ctx);
 		expect(notes).toEqual([
-			"docs-pointer: on (full docs section)",
-			"Usage: /docs-pointer on|off|auto",
-			"docs-pointer: on (full docs section)",
+			"docs-pointer: on (seção completa de docs)",
+			"Uso: /docs-pointer on|off|auto",
+			"docs-pointer: on (seção completa de docs)",
 		]);
 	});
 });
