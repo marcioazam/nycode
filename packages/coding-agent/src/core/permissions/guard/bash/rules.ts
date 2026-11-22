@@ -1,201 +1,215 @@
-// Bash rules of the guard: what each command and shell construct asks or denies. Port of `check_segment` and
-// `check_bash` of guard.py; rule text and order are the oracle's.
-import { basename, expanduser, PY_SPACE } from "../py-path.ts";
-import { checkGit } from "./git.ts";
-import {
-	DEEP,
-	FETCHERS,
-	type Finding,
-	HARD_DEPTH,
-	longMatch,
-	MAX_DEPTH,
-	maskHeredocs,
-	nestedCommands,
-	normPath,
-	SHELLS,
-	segments,
-	shortFlags,
-	stripPrefixes,
-	substitutions,
-	targetDirs,
-	tokenize,
-} from "./parse.ts";
+// The Bash rules of the guard: the text is cut into segments, each segment is judged by the command table (commands.ts),
+// and what runs another command (`bash -c`, `eval`, `xargs`, `find -exec`, `$( )`) is judged again, to a depth.
+// Port of `check_bash`, `check_segment` and `check_indirection` of guard.py.
+
+import { forkBomb, maskHeredocs } from "../lex/heredoc.ts";
+import { SEPARATORS, segments } from "../lex/segments.ts";
+import { extractSubstitutions, FETCH_SUBST, PLAIN_SUBST } from "../lex/substitutions.ts";
+import { type Finding, joinContinuations, tokenize } from "../lex/tokens.ts";
+import { fetches, fetchTag, isInterpreter, readsStdin, SHELLS, stripPrefixes } from "../lex/wrappers.ts";
+import { basename } from "../py-path.ts";
+import { devBlocked } from "../rules/read.ts";
+import { catastrophicRmTarget, commandFindings } from "./commands.ts";
 import { checkSelfKill, fullMatchPattern, matchesSelf, selfKillMessage } from "./self-kill.ts";
 
-const DISK_RE =
-	/^\/dev\/(sd[a-z]|nvme\p{Nd}|hd[a-z]|vd[a-z]|xvd[a-z]|mmcblk\p{Nd}|disk\p{Nd}|disk\/|dm-\p{Nd}|mapper\/|loop\p{Nd}|md\p{Nd})/u;
-const SAFE_DEV_RE = /^\/dev\/(null|stdout|stderr|tty|shm\/|fd\/)/;
-const POWER_CMDS = new Set(["shutdown", "reboot", "poweroff", "halt"]);
-const SYSTEMCTL_POWER = new Set(["poweroff", "reboot", "halt", "kexec"]);
-const SFDISK_READ_FLAGS = new Set([
-	...["-l", "--list", "-s", "--show-size", "-d", "--dump", "-J", "--json", "-F", "--list-free"],
-	...["-V", "--verify", "-h", "--help"],
+/** Above MAX_DEPTH: ask, but the analysis goes on (a deny still wins) up to HARD_DEPTH. */
+export const MAX_DEPTH = 3;
+const HARD_DEPTH = 24;
+/** Above this size the guard asks instead of analysing (never a silent allow). */
+export const MAX_CMD = 262_144;
+const FIND_EXEC = new Set(["-exec", "-execdir", "-ok", "-okdir"]);
+const XARGS_VALUE_OPTS = new Set([
+	"-I",
+	"-L",
+	"-n",
+	"-P",
+	"-s",
+	"-d",
+	"-E",
+	"-a",
+	"--max-args",
+	"--max-lines",
+	"--max-procs",
+	"--max-chars",
+	"--delimiter",
+	"--arg-file",
+	"--process-slot-var",
 ]);
-const S = `[${PY_SPACE}]`;
-const FORK_BOMB_RE = new RegExp(`([^${PY_SPACE}]+)${S}*\\(\\)${S}*\\{${S}*\\1${S}*\\|${S}*\\1${S}*&${S}*\\}`, "u");
+const EXPANSION_WORD_RE = /^(\$[\p{L}\p{N}_]+|\$\{[^}]*\}|__SUBST__|__FETCHSUBST__)\n?$/u;
+const IFS_RE = /\$\{IFS[^}]*\}|\$IFS(?![\p{L}\p{N}_])/gu;
+const SHELL_C_RE = /^[-+][A-Za-z]*c[A-Za-z]*\n?$/;
+const OPTION_SHAPED_RE = /^[-+][\p{L}\p{N}_=-]*$/u;
+const HEREDOC_MARK_RE = /<<-?[ \t]*['"]?[\p{L}\p{N}_]+['"]?/gu;
+const SSH_AGENT_EVAL_RE = /(?:^|[;&|]\s*)eval\s+"?(?:\$\(ssh-agent(?: -s)?\)|`ssh-agent(?: -s)?`)"?\s*(?:\n?$|[;&|])/;
+const deepAsk: Finding = ["ask", `shell aninhado além de ${MAX_DEPTH} níveis`];
+
+/** The text a shell executes: the argument of `-c` (`-lc` too) or the here-string (`<<< text`). */
+function shellScript(args: string[]): string | undefined {
+	const here = args.indexOf("<<<");
+	if (here >= 0) return here + 1 < args.length ? args[here + 1] : undefined;
+	for (let k = 0; k < args.length; k++) {
+		if (!SHELL_C_RE.test(args[k])) continue;
+		let i = k + 1;
+		while (i < args.length) {
+			const b = args[i];
+			if ((b === "-o" || b === "+o") && i + 1 < args.length) {
+				i += 2;
+				continue;
+			}
+			if (OPTION_SHAPED_RE.test(b)) {
+				i++;
+				continue;
+			}
+			return b;
+		}
+		return undefined;
+	}
+	return undefined;
+}
+
+function xargsCommand(args: string[]): string[] {
+	let i = 0;
+	while (i < args.length && args[i].startsWith("-")) {
+		const a = args[i];
+		i++;
+		if (a === "--") break;
+		if (XARGS_VALUE_OPTS.has(a) && i < args.length) i++;
+	}
+	return args.slice(i);
+}
+
+function execFindings(tokens: string[], top: string, cwd: string, depth: number): Finding[] {
+	const cmdv: string[] = [];
+	for (const [k, t] of tokens.entries()) {
+		if (FIND_EXEC.has(t) || t === ";" || (t === "+" && k > 0 && tokens[k - 1] === "{}")) break;
+		cmdv.push(t);
+	}
+	return cmdv.length > 0 ? checkSegment(cmdv, false, new Set(), top, cwd, depth)[0] : [];
+}
+
+function checkFind(args: string[], top: string, cwd: string, depth: number): Finding[] {
+	const found: Finding[] = [];
+	const roots: string[] = [];
+	for (const a of args) {
+		if (a.startsWith("-") || a === "(" || a === "!") break;
+		roots.push(a);
+	}
+	if (args.includes("-delete") && roots.some(catastrophicRmTarget))
+		found.push(["deny", "find -delete em diretório raiz, home ou sistema"]);
+	for (const [k, a] of args.entries())
+		if (FIND_EXEC.has(a)) found.push(...execFindings(args.slice(k + 1), top, cwd, depth));
+	return found;
+}
+
+function checkIndirection(name: string, args: string[], top: string, cwd: string, depth: number): Finding[] {
+	const found: Finding[] = [];
+	const pos = args.filter((a) => !a.startsWith("-"));
+	if (SHELLS.has(name)) {
+		const script = shellScript(args);
+		if (script !== undefined) {
+			found.push(...checkBash(script, cwd, depth + 1, top));
+			if (script.includes("<<")) found.push(...checkBash(script.replace(HEREDOC_MARK_RE, ""), cwd, depth + 1, top));
+		}
+	} else if (name === "eval") {
+		if (!(args.length === 1 && args[0] === PLAIN_SUBST && SSH_AGENT_EVAL_RE.test(top))) {
+			found.push(...checkBash(args.join(" "), cwd, depth + 1, top));
+			if (args.some((a) => a.includes(PLAIN_SUBST))) found.push(["ask", "eval de texto montado por substituição"]);
+		}
+	} else if (name === "xargs") {
+		const inner = xargsCommand(args);
+		if (inner.length > 0) found.push(...checkSegment(inner, false, new Set(), top, cwd, depth)[0]);
+	} else if (name === "find") {
+		found.push(...checkFind(args, top, cwd, depth));
+	}
+	const runsText =
+		(isInterpreter(name) && pos.length > 0 && pos[0].includes(FETCH_SUBST)) ||
+		((name === "eval" || name === "source" || name === ".") && args.some((a) => a.includes(FETCH_SUBST)));
+	if (runsText) found.push(["deny", "executa texto baixado ou decodificado (curl/wget/base64 -d via $( ) ou <( ))"]);
+	return found;
+}
+
 const REDIRECTS = new Set([">", ">>", ">|", "&>", ">&", "&>>"]);
 
-const has = (flags: Set<string>, ...names: string[]): boolean => names.some((n) => flags.has(n));
-
-function catastrophicRmTargets(): Set<string> {
-	const home = expanduser("~");
-	const system = [
-		"/home",
-		"/usr",
-		"/etc",
-		"/bin",
-		"/sbin",
-		"/lib",
-		"/lib64",
-		"/boot",
-		"/var",
-		"/opt",
-		"/root",
-		"/srv",
-	];
-	// biome-ignore lint/suspicious/noTemplateCurlyInString: the literal text a shell command contains
-	return new Set(["", "~", "$HOME", "${HOME}", home, ...system]);
-}
-
-function catastrophicRmTarget(target: string): boolean {
-	if (target === "" || !"/~$".includes(target[0])) return false;
-	return catastrophicRmTargets().has(normPath(target).replace(/(\/\*?)+$/, ""));
-}
-
-/** Targets of `kill` without the signal specification (-9, -KILL, -s X, -n X, --). */
-function killTargets(args: string[]): Set<string> {
-	let i = 0;
-	if (args.length > 0 && (args[0] === "-s" || args[0] === "-n" || args[0] === "--signal")) i = 2;
-	else if (args.length > 0 && args[0].startsWith("-") && args[0] !== "--") i = 1;
-	if (i < args.length && args[i] === "--") i++;
-	return new Set(args.slice(i));
-}
-
-/** Findings of one command segment, and its command name (undefined when it has none). */
-function checkSegment(
+/** Findings of one segment and the command name (for the pipe-from-download rule). */
+export function checkSegment(
 	argv: string[],
 	piped: boolean,
 	prevNames: Set<string>,
-	cmd: string,
-	depth: number,
+	top: string,
 	cwd: string,
+	depth: number,
 ): [Finding[], string | undefined] {
-	if (depth > HARD_DEPTH) return [[DEEP], undefined];
-	const found: Finding[] = depth > MAX_DEPTH ? [DEEP] : [];
+	const found: Finding[] = [];
 	const [real, priv] = stripPrefixes(argv);
 	if (priv) found.push(["ask", "comando com privilégio (sudo/su/doas)"]);
 	if (real.length === 0) return [found, undefined];
+	if (FIND_EXEC.has(real[0])) return [[...found, ...execFindings(real.slice(1), top, cwd, depth)], undefined];
+	if (EXPANSION_WORD_RE.test(real[0])) {
+		for (const f of checkSegment(["rm", ...real.slice(1)], false, new Set(), top, cwd, depth)[0])
+			if (f[0] === "deny") found.push(f);
+		found.push(["ask", "palavra de comando vem de expansão ($VAR, $( ), $IFS)"]);
+		return [found, undefined];
+	}
 	const name = basename(real[0]);
 	const args = real.slice(1);
-	const flags = shortFlags(args);
-	const positional = args.filter((a) => !a.startsWith("-"));
-
-	if (piped && SHELLS.has(name) && [...prevNames].some((p) => FETCHERS.has(p))) {
+	if (piped && prevNames.has("<fetch>") && (SHELLS.has(name) || (isInterpreter(name) && readsStdin(args))))
 		found.push(["deny", "download com pipe direto para shell"]);
-	}
-	argv.forEach((t, i) => {
-		if (REDIRECTS.has(t) && i + 1 < argv.length && DISK_RE.test(normPath(argv[i + 1]))) {
+	if (fetchTag(real)) prevNames.add("<fetch>");
+	found.push(...checkIndirection(name, args, top, cwd, depth));
+	for (const [i, t] of argv.entries()) {
+		if (REDIRECTS.has(t) && i + 1 < argv.length && devBlocked(argv[i + 1]))
 			found.push(["deny", `escrita direta em disco ${argv[i + 1]}`]);
-		}
-	});
-	const [scripts, argvs] = nestedCommands(name, args);
-	for (const script of scripts) found.push(...checkBash(script, cwd, depth + 1, cmd));
-	for (const sub of argvs) found.push(...checkSegment(sub, false, new Set(), cmd, depth + 1, cwd)[0]);
-
-	if (name === "rm") {
-		const rec = has(flags, "-r", "-R", "--recursive") || longMatch(flags, "--recursive");
-		const force = has(flags, "-f", "--force") || longMatch(flags, "--force");
-		if (rec && force) found.push(["deny", "rm recursivo forçado"]);
-		else if (rec) found.push(["ask", "rm recursivo"]);
-		if (rec && positional.some(catastrophicRmTarget)) {
-			found.push(["deny", "rm recursivo em diretório raiz, home ou sistema"]);
-		}
-	} else if (name.startsWith("mkfs")) {
-		found.push(["deny", "formatação de sistema de arquivos"]);
-	} else if (
-		name === "dd" &&
-		args.some(
-			(a) =>
-				a.startsWith("of=/") && normPath(a.slice(3)).startsWith("/dev/") && !SAFE_DEV_RE.test(normPath(a.slice(3))),
-		)
-	) {
-		found.push(["deny", "dd escrevendo em dispositivo"]);
-	} else if (name === "tee" && positional.some((a) => DISK_RE.test(normPath(a)))) {
-		found.push(["deny", "tee escrevendo em dispositivo de bloco"]);
-	} else if (
-		(name === "cp" || name === "mv") &&
-		[...positional.slice(-1), ...targetDirs(args)].some((t) => DISK_RE.test(normPath(t)))
-	) {
-		found.push(["deny", `${name} escrevendo em dispositivo de bloco`]);
-	} else if (name === "wipefs" && has(flags, "-a", "--all", "-o", "--offset")) {
-		found.push(["deny", "wipefs apagando assinaturas"]);
-	} else if (name === "cryptsetup" && positional.some((a) => ["luksFormat", "erase", "luksErase"].includes(a))) {
-		found.push(["deny", "cryptsetup destruindo cabeçalho LUKS"]);
-	} else if (name === "blkdiscard") {
-		found.push(["deny", "blkdiscard apaga o dispositivo"]);
-	} else if (name === "sgdisk" && has(flags, "-Z", "-z", "--zap-all", "--zap")) {
-		found.push(["deny", "sgdisk apagando tabela de partições"]);
-	} else if (name === "parted" && positional.some((a) => a === "mklabel" || a === "mktable")) {
-		found.push(["deny", "parted mklabel apaga a tabela de partições"]);
-	} else if (
-		name === "sfdisk" &&
-		positional.some((a) => a.startsWith("/dev/")) &&
-		![...flags].some((f) => SFDISK_READ_FLAGS.has(f))
-	) {
-		found.push(["deny", "sfdisk reescrevendo tabela de partições"]);
-	} else if (POWER_CMDS.has(name) && !flags.has("-c")) {
-		found.push(["deny", `${name} desliga/reinicia a máquina`]);
-	} else if (name === "systemctl" && positional.some((a) => SYSTEMCTL_POWER.has(a))) {
-		found.push(["deny", "systemctl desliga/reinicia a máquina"]);
-	} else if ((name === "init" || name === "telinit") && positional.length > 0 && ["0", "6"].includes(positional[0])) {
-		found.push(["deny", `${name} desliga/reinicia a máquina`]);
-	} else if (name === "chmod" || name === "chown" || name === "chgrp") {
-		const rec = has(flags, "-R", "--recursive");
-		if (rec && positional.some((a) => normPath(a) === "/")) found.push(["deny", `${name} recursivo na raiz`]);
-		else if (rec) found.push(["ask", `${name} recursivo`]);
-	} else if (name === "shred") {
-		found.push(["ask", "shred"]);
-	} else if (name === "kill" || name === "pkill" || name === "killall") {
-		if (
-			args.some((a) => a === "-9" || a === "-KILL" || a === "-SIGKILL") ||
-			(args.includes("-s") && args.some((a) => a === "KILL" || a === "9"))
-		) {
-			found.push(["ask", "kill -9"]);
-		}
-		if (name === "kill") {
-			const targets = killTargets(args);
-			if (targets.has("-1") || targets.has("1")) found.push(["deny", "kill em todos os processos ou no PID 1"]);
-		}
-		const pattern = name === "pkill" ? fullMatchPattern(args) : undefined;
-		if (pattern && matchesSelf(pattern, cmd)) found.push(["deny", selfKillMessage("pkill")]);
-	} else if (name === "docker" || name === "podman") {
-		if (args.some((a) => a === "rm" || a === "rmi" || a === "prune"))
-			found.push(["ask", `${name} removendo recursos`]);
-	} else if (["npm", "pnpm", "yarn", "bun"].includes(name) && positional.includes("publish")) {
-		found.push(["ask", `${name} publish`]);
-	} else if (name === "git") {
-		found.push(...checkGit(args, cwd));
 	}
+	found.push(...commandFindings(name, args, top, cwd));
 	return [found, name];
 }
 
-/** Findings of a whole shell command line. `root` is the outermost line, the one a self-matching kill pattern meets. */
-export function checkBash(cmdInput: string, cwd = "", depth = 0, root?: string): Finding[] {
-	if (depth > HARD_DEPTH) return [DEEP];
-	const top = root ?? cmdInput;
-	const cmd = cmdInput.replaceAll("\\\n", ""); // line continuation
-	const found: Finding[] = depth > MAX_DEPTH ? [DEEP] : [];
-	const bodyFree = maskHeredocs(cmd); // a heredoc body that no shell reads is text, not commands
-	if (depth === 0) {
-		if (FORK_BOMB_RE.test(bodyFree)) found.push(["deny", "fork bomb"]);
-		found.push(...checkSelfKill(cmd));
+/** `pkill -f` whose pattern matches the shell's own line, judged on pieces cut only at real separators. */
+function pkillSelfMatch(tokens: string[], top: string): Finding[] {
+	const found: Finding[] = [];
+	let piece: string[] = [];
+	for (const t of [...tokens, ";"]) {
+		if (!SEPARATORS.has(t)) {
+			piece.push(t);
+			continue;
+		}
+		const [real] = stripPrefixes(piece);
+		piece = [];
+		if (real.length > 0 && real[0] === "pkill") {
+			const pattern = fullMatchPattern(real.slice(1));
+			if (pattern && matchesSelf(pattern, top)) found.push(["deny", selfKillMessage("pkill")]);
+		}
 	}
-	for (const sub of substitutions(bodyFree)) found.push(...checkBash(sub, cwd, depth + 1, top));
+	return found;
+}
+
+/** Findings of a Bash command line; `top` is the outermost line (self-kill rules look at it) and `cwd` the repository. */
+export function checkBash(cmd: string, cwd = "", depth = 0, topInput?: string): Finding[] {
+	const top = topInput ?? cmd;
+	if (depth > HARD_DEPTH) return [deepAsk];
+	if (cmd.length > MAX_CMD) return [["ask", `comando maior que ${MAX_CMD / 1024} KB: não analisado`]];
+	const found: Finding[] = depth > MAX_DEPTH ? [deepAsk] : [];
+	let text = maskHeredocs(joinContinuations(cmd));
+	if (forkBomb(text)) found.push(["deny", "fork bomb"]);
+	found.push(...checkSelfKill(cmd, top));
+	if (new RegExp(IFS_RE.source, "u").test(text)) {
+		found.push(["ask", "uso de $IFS: o comando pode se montar na execução"]);
+		text = text.replace(IFS_RE, " ");
+	}
+	const [outer, inners] = extractSubstitutions(text, (s) => fetches(s));
+	text = outer;
+	for (const inner of inners) {
+		found.push(...checkBash(inner, cwd, depth + 1, top));
+		if (inner.includes("<<") && maskHeredocs(text) === text)
+			found.push(...checkBash(inner.replace(HEREDOC_MARK_RE, ""), cwd, depth + 1, top));
+	}
+	const tokens = tokenize(text);
+	found.push(...pkillSelfMatch(tokens, top));
 	let prevNames = new Set<string>();
-	for (const [argv, piped] of segments(tokenize(bodyFree))) {
+	for (const [argv, piped] of segments(tokens)) {
 		if (!piped) prevNames = new Set();
-		const [findings, name] = checkSegment(argv, piped, prevNames, top, depth, cwd);
-		found.push(...findings);
+		const [f, name] = checkSegment(argv, piped, prevNames, top, cwd, depth);
+		found.push(...f);
 		if (name) prevNames.add(name);
 	}
 	return found;

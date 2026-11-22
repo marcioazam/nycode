@@ -12,8 +12,8 @@ import { isBypassOn } from "./bypass-state.ts";
 import { engineOf, globalPermissionsEngine } from "./global-settings.ts";
 import { decide } from "./guard/decide.ts";
 
-/** The tools the embedded guard judges: its hook matcher in settings-defaults.ts is `Bash|Edit|Write|Read`. */
-const GUARDED_TOOLS = new Set(["Bash", "Edit", "Write", "Read"]);
+/** The tools the embedded guard judges: its hook matcher in settings-defaults.ts is `Bash|run|Edit|Write|Read|Grep`. */
+const GUARDED_TOOLS = new Set(["Bash", "run", "Edit", "Write", "Read", "Grep"]);
 
 /** What the gate needs from the session: a way to reach the UI. The engine comes from the global settings.json only. */
 export interface GateHost {
@@ -35,11 +35,14 @@ function engineUnavailable(engine: string): string | undefined {
 /** The native engine's outcome for one call; throws when the engine does, and the caller denies the call. */
 function nativeOutcome(toolName: string, input: unknown, cwd: string): NativeOutcome {
 	const call = claudePreCall(toolName, input, cwd);
-	const tool = call.name;
+	const tool = call.name ?? (toolName === "run" ? "run" : undefined);
 	if (tool === undefined || !GUARDED_TOOLS.has(tool)) return { kind: "pass" };
+	const rawInput = input !== null && typeof input === "object" ? (input as Record<string, unknown>) : {};
 	const verdict = decide({
 		tool,
-		input: call.input ?? {},
+		// `run` is judged by its own action (a `start` with a command already came as Bash)
+		input: tool === "run" ? rawInput : (call.input ?? {}),
+		mode: process.env.NYCODE_PERMISSION_MODE,
 		cwd,
 		project: checkoutRoot(cwd),
 		bypass: isBypassOn(),
@@ -48,6 +51,9 @@ function nativeOutcome(toolName: string, input: unknown, cwd: string): NativeOut
 		? { kind: "pass" }
 		: { kind: verdict.kind === "ask" ? "ask" : "block", reason: verdict.reason };
 }
+
+/** NYCODE_GUARD_FAIL_OPEN=1, set by whoever launches nycode, lets calls through when the engine itself fails. */
+const failOpen = (): boolean => process.env.NYCODE_GUARD_FAIL_OPEN === "1";
 
 const failure = (error: unknown): string =>
 	`The permission engine failed, call denied: ${error instanceof Error ? error.message : String(error)}`;
@@ -76,6 +82,7 @@ export async function gateToolCall(
 			? { block: true, reason: outcome.reason, terminate: true }
 			: { block: true, reason: outcome.reason };
 	} catch (error) {
+		if (failOpen()) return undefined;
 		return { block: true, reason: failure(error) };
 	}
 }

@@ -1,9 +1,10 @@
 // `pkill -f` / `pgrep -f` whose pattern matches the command line of the shell that runs it (the `bash -c` kills itself,
 // exit 143/144). Port of the self-kill rules of guard.py.
 import { runInNewContext } from "node:vm";
+import { maskText } from "../lex/heredoc.ts";
+import { type Finding, shortFlags } from "../lex/tokens.ts";
 import { PY_SPACE, PY_WORD, pySplit } from "../py-path.ts";
 import { ShlexError, shlexSplit } from "../shlex.ts";
-import { type Finding, maskText, shortFlags } from "./parse.ts";
 
 // Options of pkill/pgrep that consume the next argument (procps-ng).
 const PGREP_VALUE_OPTS = new Set([
@@ -69,7 +70,7 @@ export function matchesSelf(pattern: string, cmd: string): boolean {
 }
 
 /** `pgrep -f` piped into kill (`| xargs kill`, `kill $(...)`, backticks) that matches the shell's own line. */
-export function checkSelfKill(cmd: string): Finding[] {
+export function checkSelfKill(cmd: string, top: string): Finding[] {
 	const found: Finding[] = [];
 	const masked = maskText(cmd);
 	for (const m of masked.matchAll(PGREP_KILL_RE)) {
@@ -87,7 +88,7 @@ export function checkSelfKill(cmd: string): Finding[] {
 			args = pySplit(raw);
 		}
 		const pattern = fullMatchPattern(args);
-		if (pattern && matchesSelf(pattern, cmd)) found.push(["deny", selfKillMessage("pgrep")]);
+		if (pattern && matchesSelf(pattern, top)) found.push(["deny", selfKillMessage("pgrep")]);
 	}
 	return found;
 }
