@@ -67,5 +67,9 @@ export const nerdFont = (env: Env = process.env, p: IconPrefs = prefs): boolean 
 	return p.nerdFont === true || env.TERM === "xterm-kitty" || set(env.KITTY_WINDOW_ID);
 };
 
+/** ASCII glyphs: terminal.asciiIcons, or TERM=dumb|linux (the contract of the active ui-visual icons module). */
+export const ascii = (env: Env = process.env, p: IconPrefs = prefs): boolean =>
+	p.asciiIcons || env.TERM === "dumb" || env.TERM === "linux";
+
 export const icon = (name: IconName, env: Env = process.env, p: IconPrefs = prefs): string =>
 	nerdFont(env, p) ? NERD[name] : UNICODE[name];
