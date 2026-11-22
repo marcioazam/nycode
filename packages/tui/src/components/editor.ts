@@ -1162,8 +1162,6 @@ export class Editor implements Component, Focusable {
 				if (this.undoGroupDepth > 0) throw new Error("runEditorAction(undo) is unavailable inside withUndoGroup");
 				this.undo();
 				return;
-			default:
-				throw new Error(`unknown editor action: ${String(action)}`);
 		}
 	}
 
@@ -1172,7 +1170,6 @@ export class Editor implements Component, Focusable {
 	 * key, is refused inside the group. A failing callback keeps its edits as one undoable group and rethrows.
 	 */
 	withUndoGroup<T>(edit: () => T): T {
-		if (typeof edit !== "function") throw new TypeError("withUndoGroup requires a synchronous callback");
 		if (edit.constructor?.name === "AsyncFunction") throw new TypeError("withUndoGroup rejects async callbacks");
 		const thenable = (r: unknown): boolean =>
 			r !== null &&
