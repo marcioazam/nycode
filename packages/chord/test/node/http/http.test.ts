@@ -406,11 +406,13 @@ describe("routes and wraps failing", () => {
 describe("reloads and close", () => {
 	it("a reload swapping a route leaves a running request on the old router; the next uses the new one", async () => {
 		const gate = Promise.withResolvers<void>();
+		const entered = Promise.withResolvers<void>();
 		const old = contributing({
 			routes: {
 				"GET /v": {
 					public: true,
 					handler: async () => {
+						entered.resolve();
 						await gate.promise;
 						return { kind: "html", body: "old" };
 					},
@@ -419,7 +421,8 @@ describe("reloads and close", () => {
 		});
 		const server = await served({ "@app/v": old });
 		const running = send(server.port, "GET", "/v");
-		await new Promise((resolve) => setTimeout(resolve, 50));
+		// The request is inside the old router when the reload starts: under load it could otherwise still be on its way.
+		await entered.promise;
 		const next = contributing({
 			routes: { "GET /v": { public: true, handler: async () => ({ kind: "html", body: "new" }) } },
 		});
