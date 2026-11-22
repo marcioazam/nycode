@@ -1,5 +1,6 @@
 """Unidades de permissions/: modes, paths, shell, decide. Caminhos temporários; nada é executado."""
 
+import importlib
 import os
 import sys
 import tempfile
@@ -19,9 +20,13 @@ sys.path.insert(
     ),
 )
 
-from permissions import modes, paths
-from permissions.decide import decide_mode
-from permissions.shell import analyze, split_segments, tokens
+modes: Any = importlib.import_module("permissions.modes")
+paths: Any = importlib.import_module("permissions.paths")
+decide_mode: Any = importlib.import_module("permissions.decide").decide_mode
+_shell: Any = importlib.import_module("permissions.shell")
+analyze: Any = _shell.analyze
+split_segments: Any = _shell.split_segments
+tokens: Any = _shell.tokens
 
 
 class ModesTest(unittest.TestCase):

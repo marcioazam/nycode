@@ -2,9 +2,9 @@
 
 from typing import Any
 
-from permissions import modes
-from permissions.paths import scope_roots, scoped_target
-from permissions.shell import analyze
+from permissions import modes  # type: ignore[import-not-found,unused-ignore]
+from permissions.paths import scope_roots, scoped_target  # type: ignore[import-not-found,unused-ignore]
+from permissions.shell import analyze  # type: ignore[import-not-found,unused-ignore]
 
 RM_RECURSIVE_REASON = "rm recursivo"  # mesmo texto de guard.check_segment; o teste do guard mantém os dois alinhados
 EDIT_TOOLS = ("Edit", "Write", "MultiEdit")

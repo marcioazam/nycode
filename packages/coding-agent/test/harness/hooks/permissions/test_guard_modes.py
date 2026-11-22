@@ -86,6 +86,7 @@ class Base(unittest.TestCase):
             text=True,
             env=env,
             timeout=10,
+            check=False,
         )
         self.assertEqual(p.returncode, 0, p.stderr)
         out = p.stdout.strip()
@@ -388,7 +389,7 @@ class FailClosed(unittest.TestCase):
         spec.loader.exec_module(guard)
         sys.path.insert(0, HOOKS)
         try:
-            import permissions.decide as dec
+            dec = importlib.import_module("permissions.decide")
 
             with (
                 mock.patch.dict(os.environ, {"NYCODE_PERMISSION_MODE": "acceptEdits"}),

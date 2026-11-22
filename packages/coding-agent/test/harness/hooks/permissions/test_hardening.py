@@ -1,5 +1,6 @@
 """Endurecimento da classificação de Bash: git, leitura recursiva, cp/mv e rm -r. Só arquivos temporários; nada é executado."""
 
+import importlib
 import os
 import sys
 import tempfile
@@ -20,8 +21,8 @@ sys.path.insert(
     ),
 )
 
-from permissions import paths
-from permissions.shell import analyze
+paths: Any = importlib.import_module("permissions.paths")
+analyze: Any = importlib.import_module("permissions.shell").analyze
 
 
 class Base(unittest.TestCase):

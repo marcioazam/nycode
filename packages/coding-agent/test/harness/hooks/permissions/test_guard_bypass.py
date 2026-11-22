@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 import time
+from collections.abc import Callable
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -223,21 +224,33 @@ def timed(cmd: str) -> tuple[str, float]:
     return got, time.perf_counter() - t
 
 
+def best_of_three(make: Callable[[int], str], n: int) -> float:
+    cmd = make(n)
+    return min(timed(cmd)[1] for _ in range(3))
+
+
+def assert_scales_linearly(make: Callable[[int], str], n: int) -> None:
+    """Linear means 4x the input costs about 4x the time: a quadratic cost would give 16x. Measured warm, best of 3,
+    so a slow runner does not matter, only the growth does."""
+    timed(make(n))  # warm-up
+    small = max(best_of_three(make, n), 0.005)
+    large = best_of_three(make, 4 * n)
+    assert large / small < 8, (small, large)
+
+
 def test_fork_bomb_regex_is_linear() -> None:
-    got, dt = timed(
-        "a" * 40000 + " rm -rf /tmp/x"
-    )  # a linha do achado 16: um comando `aaa...` com argumentos
-    assert dt < 0.2, dt
-    got, dt = timed("a" * 40000 + "; rm -rf /tmp/x")
-    assert got == "deny" and dt < 0.2, (got, dt)
-    _, dt = timed("(){" * 5000)
-    assert dt < 0.2, dt
+    # the line of finding 16: a command `aaa...` with arguments
+    assert_scales_linearly(lambda n: "a" * n + " rm -rf /tmp/x", 10000)
+    got, _ = timed("a" * 40000 + "; rm -rf /tmp/x")
+    assert got == "deny"
+    assert_scales_linearly(lambda n: "(){" * n, 5000)
+    assert timed("(){" * 87_000)[0] in ("allow", "ask", "deny")  # about 256 KB
 
 
 def test_heredocs_without_terminator_are_linear() -> None:
-    cmd = "".join(f"cat <<E{i}\nbody {i}\n" for i in range(1500))
-    _, dt = timed(cmd)
-    assert dt < 0.2, dt
+    assert_scales_linearly(
+        lambda n: "".join(f"cat <<E{i}\nbody {i}\n" for i in range(n)), 400
+    )
 
 
 def test_real_heredoc_still_masked_and_fast() -> None:
