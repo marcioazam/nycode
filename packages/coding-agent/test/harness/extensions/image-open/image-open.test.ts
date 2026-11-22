@@ -149,10 +149,11 @@ test("segurança 12: diretório recusado não derruba o clique nem abre nada", a
 
 // Nativo: o nycode construído (dist/bundle) em tmux (env -i, CLI direto, provedor falso 127.0.0.1 sem requests, fullscreen). Prova que o Image da extensão
 // é o mesmo do bundle e que o clique SGR no transcript chega ao handleMouse.
-// Waits up to 70 s; the CI terminal may render the image as the text fallback (pending): two retries meanwhile.
+// The child runs under `env -i` (TERM=xterm-256color, no KITTY_*/TERM_PROGRAM), so the image always renders as its text
+// fallback line; that line is what the click targets. Budget: up to 40 s to settle, 30 s for the opener, plus startup.
 test(
 	"nativo: clique SGR na imagem do transcript abre o arquivo no abridor falso, 0 requests",
-	{ timeout: 120_000, retry: 2 },
+	{ timeout: 100_000 },
 	async () => {
 		assert.equal(spawnSync("tmux", ["-V"]).status, 0, "tmux é necessário (blocked, não skip)");
 		const cli =
@@ -209,7 +210,15 @@ test(
 				spawnSync("tmux", ["display-message", "-p", "-t", S, "#{mouse_any_flag}"], {
 					encoding: "utf8",
 				}).stdout.trim() === "1";
-			await wait(() => imageRow() >= 0 && mouseOn(), 40000);
+			// The first frame may still move (header, footer, model line): click only when the row has held still.
+			let still = 0;
+			let last = -1;
+			await wait(() => {
+				const now = imageRow();
+				still = now >= 0 && now === last && mouseOn() ? still + 1 : 0;
+				last = now;
+				return still >= 5;
+			}, 40000);
 			const row = imageRow();
 			assert.ok(row >= 0, `sem linha de imagem\n${pane()}`);
 			assert.ok(mouseOn(), `o app não ligou o mouse\n${pane()}`);
