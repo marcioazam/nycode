@@ -8,11 +8,11 @@ O kitty desenha o ícone no tamanho natural e só reduz o que passa de 2 célula
 
 import sys
 
-from fontTools import subset
-from fontTools.pens.boundsPen import BoundsPen
-from fontTools.pens.transformPen import TransformPen
-from fontTools.pens.ttGlyphPen import TTGlyphPen
-from fontTools.ttLib import TTFont
+from fontTools import subset  # type: ignore[import-not-found,unused-ignore]
+from fontTools.pens.boundsPen import BoundsPen  # type: ignore[import-not-found,unused-ignore]
+from fontTools.pens.transformPen import TransformPen  # type: ignore[import-not-found,unused-ignore]
+from fontTools.pens.ttGlyphPen import TTGlyphPen  # type: ignore[import-not-found,unused-ignore]
+from fontTools.ttLib import TTFont  # type: ignore[import-not-found,unused-ignore]
 
 src, out, fator_arg, nome = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 # "caixa:0.9" amplia cada ícone até ocupar 90% da caixa que o kitty dá a ele (2 células × 1 linha); um número escala todos igual.

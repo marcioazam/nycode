@@ -89,8 +89,8 @@ function parseGit(out) {
   const [head = '', ...rest] = out.split('\n').filter(Boolean);
   const branch = /^## (?:No commits yet on )?(.+?)(?:\.\.\.|$| \[)/.exec(head)?.[1];
   if (!branch) return undefined;
-  const n = (k) => Number(new RegExp(`${k} (\\d+)`).exec(head)?.[1] ?? 0);
-  return { branch: branch.startsWith('HEAD') ? 'HEAD' : branch, dirty: rest.length > 0, ahead: n('ahead'), behind: n('behind') };
+  const n = (re) => Number(re.exec(head)?.[1] ?? 0);
+  return { branch: branch.startsWith('HEAD') ? 'HEAD' : branch, dirty: rest.length > 0, ahead: n(/ahead (\d+)/), behind: n(/behind (\d+)/) };
 }
 /** `git diff HEAD --shortstat` → linhas +/−; sem commits (HEAD inválido) fica zero. */
 function parseDiff(diff, cwd) {

@@ -436,7 +436,7 @@ class RefreshTest(Base):
 
 
 class WriteSessionTest(Base):
-    def entries(self) -> None:
+    def entries(self) -> list[dict[str, object]]:
         return [
             {"type": "custom", "customType": puxar.IMPORT_TYPE, "data": {}},
             {"type": "message"},
@@ -457,13 +457,14 @@ class WriteSessionTest(Base):
 
     def test_s9_two_writes_to_the_same_target_use_distinct_temps(self) -> None:
         dest = self.nycode_dir / "d"
-        seen = []
+        seen: list[str] = []
         real = os.replace
-        with mock.patch.object(
-            puxar.os,
-            "replace",
-            side_effect=lambda a, b: (seen.append(str(a)), real(a, b))[1],
-        ):
+
+        def record(a: str, b: str) -> None:
+            seen.append(str(a))
+            real(a, b)
+
+        with mock.patch.object(puxar.os, "replace", side_effect=record):
             puxar.write_session(
                 dest, "id1", "/x", self.entries(), 1_700_000_000_000, 1000.0
             )

@@ -9,7 +9,7 @@ import * as os from 'node:os'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const real = path.join(path.dirname(fileURLToPath(import.meta.url)), 'arg-expansion-check.mjs')
+const real = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'resources', 'bin', 'checks', 'arg-expansion-check.mjs')
 
 test('CLI via symlink produz o mesmo JSON do caminho real, com hit não vazio', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'argexp-'))

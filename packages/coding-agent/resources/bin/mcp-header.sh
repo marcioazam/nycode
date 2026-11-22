@@ -3,10 +3,16 @@
 # Lê ~/.config/claude-secrets/<servidor>: "Bearer <key>" sai inteiro; "Nome: valor" sai só o valor.
 # $1 vem do mcp.json: só um nome simples dentro de claude-secrets (sem "/", "..", ponto ou hífen no início).
 case "${1:-}" in
-  ''|*/*|*..*|.*|-*) echo "mcp-header: nome de servidor inválido" >&2; exit 2 ;;
+'' | */* | *..* | .* | -*)
+  echo "mcp-header: nome de servidor inválido" >&2
+  exit 2
+  ;;
 esac
 f="${HOME}/.config/claude-secrets/$1"
-[ -r "$f" ] || { echo "missing $f" >&2; exit 1; }
+[ -r "$f" ] || {
+  echo "missing $f" >&2
+  exit 1
+}
 s=$(head -n 1 "$f" | tr -d '\r')
 case "$s" in
 [A-Za-z]*:\ *) printf '%s' "${s#*: }" ;;
