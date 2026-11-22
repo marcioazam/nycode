@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """Gera o anexo E: destino de cada arquivo rastreado do nycode-harness.
 
-Uso: git -C <clone de marcioazam/ny-pi> ls-tree -r --name-only origin/main | python3 gerar-mapa.py > E-mapa-arquivo-a-arquivo.tsv
-     git -C <clone de marcioazam/ny-pi> ls-tree -r --name-only origin/main | python3 gerar-mapa.py --resumo e4f8729 > E-resumo-por-regra.md
+Uso: git -C <clone de marcioazam/ny-pi> ls-tree -r --name-only origin/main \
+       | python3 gerar-mapa.py --onda9 E-onda9-caminhos.txt > E-mapa-arquivo-a-arquivo.tsv
+     git -C <clone de marcioazam/ny-pi> ls-tree -r --name-only origin/main \
+       | python3 gerar-mapa.py --onda9 E-onda9-caminhos.txt --resumo 3981d9d > E-resumo-por-regra.md
+A entrada padrão traz os arquivos do ny-pi; `--onda9` acrescenta os da onda 9 (D-57, D-58), que só existem na foto do
+pi-harness e não no ny-pi.
 Um caminho de OVERRIDES vence as regras; depois a primeira regra que casa vence. Sai com código 1 se algum caminho
 não casar com regra nenhuma. O TSV e o resumo são saídas deste script: corrija aqui e gere de novo, nunca à mão.
 """
@@ -11,6 +15,7 @@ import argparse
 import re
 import sys
 from collections import Counter
+from pathlib import Path
 
 CA = "packages/coding-agent"
 EXT = f"{CA}/src/extensions"
@@ -89,18 +94,18 @@ RULES: list[tuple[str, str, str, str, str]] = [
         "F3",
     ),
     ("C05", r"^scripts/ci/(.+)$", r"scripts/ci/\1", "converter", "F3"),
-    ("C06", r"^scripts/check-leaks\.sh$", "scripts/ci/check-leaks.sh", "mover", "F3"),
+    ("C06", r"^scripts/check-leaks\.sh$", "scripts/check-leaks.sh", "mover", "F3"),
     (
         "C07",
         r"^scripts/(check-refs\.py|refs-allow\.txt|test_check_refs\.py)$",
-        r"scripts/ci/lint/\1",
+        r"scripts/\1",
         "converter",
         "F3",
     ),
     (
         "C08",
         r"^scripts/fixtures/leak/(.+)$",
-        r"scripts/ci/fixtures/leak/\1",
+        r"scripts/fixtures/leak/\1",
         "mover",
         "F3",
     ),
@@ -529,6 +534,14 @@ RULES: list[tuple[str, str, str, str, str]] = [
         "mover",
         "F8",
     ),
+    # Onda 9 (D-58): os testes do pacote permissions ficam ao lado dos outros testes de hooks, sem a pasta tests/.
+    (
+        "R18",
+        r"^claude-home/hooks/permissions/tests/(test_[^/]+\.py)$",
+        rf"{TEST}/hooks/permissions/\1",
+        "converter",
+        "F8",
+    ),
     (
         "R10",
         r"^claude-home/hooks/((?:.+/)?test_[^/]+\.py)$",
@@ -567,14 +580,29 @@ RULES: list[tuple[str, str, str, str, str]] = [
         "converter",
         "F8",
     ),
+    # Onda 9 (D-58): o session-transport vai no pacote com os outros scripts (D-53); os testes de exibição, no vitest.
+    (
+        "R19",
+        r"^claude-home/bin/(session-transport/.+)$",
+        rf"{RES}/bin/\1",
+        "converter",
+        "F8",
+    ),
+    (
+        "R20",
+        r"^claude-home/bin/tests/interactive-display/(.+\.test\.ts)$",
+        rf"{TEST}/ui-display/\1",
+        "converter",
+        "F8",
+    ),
     ("R15", r"^claude-home/bin/(.+)$", r"scripts/harness/\1", "converter", "F8"),
     # Terceiros (F9)
     ("T01", r"^patches/third-party/pi-lsp\.patch$", f"{EXT}/lsp/", "absorver", "F9"),
     (
         "T02",
         r"^patches/third-party/(ponytail|ralph-loop)\.patch$",
-        r"fork próprio de \1 (D-11)",
-        "converter",
+        r"embutido no core a partir do fork marcioazam/\1 (D-11, D-54)",
+        "absorver",
         "F9",
     ),
     (
@@ -598,20 +626,43 @@ RULES: list[tuple[str, str, str, str, str]] = [
     ("I02", r"^npm/.+$", "(pi-code é fonte do repositório)", "remover", "F11"),
 ]
 
-# Caminhos cujo destino foi corrigido à mão no anexo E antes de o script conhecer a exceção: a pasta de testes de
-# F5/F6 foi reorganizada (F10), `replay.test.ts` não tem o que testar sem a pilha de patches (03 §2.3), e
-# `docs-pointer` e os temas embutidos mudaram de lugar (D-36, D-37). Colunas: origem | destino | ação | fase | regra.
+# Caminhos cujo destino não segue a regra que casaria: a pasta de testes de F5/F6 foi reorganizada (F10),
+# `replay.test.ts` não tem o que testar sem a pilha de patches (03 §2.3), `docs-pointer` e os temas embutidos mudaram
+# de lugar (D-36, D-37), nomes `pi-*` viraram `nycode-*` (D-61), o `graph_context` virou hook interno em TS (D-60), os
+# testes de UI ganharam subpastas, e arquivos da onda 9 (D-57, D-58) foram para onde o núcleo já tinha o equivalente.
+# Colunas: origem | destino | ação | fase | regra.
 OVERRIDES_TEXT = """
 claude-home/bin/evals/harbor/bundle.sh | bench/harbor/pi_bundle.sh | converter | F3 | B05
 claude-home/bin/evals/harbor/pi_harness_agent.py | bench/harbor/pi_harness_agent.py | converter | F3 | B05
 claude-home/bin/evals/harbor/pi_vanilla_api_agent.py | bench/harbor/pi_vanilla_api_agent.py | converter | F3 | B05
 claude-home/bin/evals/harbor/tests/test_pi_harness_agent.py | bench/tests/harbor/test_pi_harness_agent.py | converter | F3 | B05
 claude-home/bin/evals/harbor/tests/test_pi_vanilla_api_agent.py | bench/tests/harbor/test_pi_vanilla_api_agent.py | converter | F3 | B05
+.github/ISSUE_TEMPLATE/bug_report.yml | .github/ISSUE_TEMPLATE/bug.yml | fundir | F2 | G12
+bench/arms/ny-pi | bench/arms/nycode-harness | converter | F3 | B02
+claude-home/bin/checks/arg-expansion-check.test.mjs | packages/coding-agent/test/harness/statusline/arg-expansion-check.test.mjs | converter | F8 | R16
+claude-home/bin/doctor/pi-doctor | packages/coding-agent/resources/bin/doctor/nycode-doctor | converter | F8 | R16
+claude-home/bin/doctor/pi-typecheck | packages/coding-agent/resources/bin/doctor/nycode-typecheck | converter | F8 | R16
+claude-home/bin/fonte-icones.py | (ferramenta pessoal do dono para o kitty, fora do produto) | remover | F8 | R15
+claude-home/bin/hud/claude-hud-pi-transcript.mjs | packages/coding-agent/resources/statusline/claude-hud-nycode-transcript.mjs | converter | F8 | R14
+claude-home/bin/hud/tests/claude-hud-pi-transcript.test.mjs | packages/coding-agent/test/harness/statusline/claude-hud-nycode-transcript.test.mjs | converter | F8 | R13
+claude-home/bin/pi-image.mjs | packages/coding-agent/resources/bin/nycode-image.mjs | converter | F8 | R17
+claude-home/bin/pi-session | packages/coding-agent/resources/bin/nycode-session | converter | F8 | R15
+claude-home/bin/session-transport/tests/support.py | packages/coding-agent/resources/bin/session-transport/tests/transport_support.py | converter | F8 | R19
+claude-home/bin/telemetry/pi_telemetry.py | packages/coding-agent/resources/bin/telemetry/nycode_telemetry.py | converter | F8 | R16
+claude-home/bin/telemetry/test_pi_telemetry.py | packages/coding-agent/resources/bin/telemetry/test_nycode_telemetry.py | converter | F8 | R16
+claude-home/bin/tests/interactive-input/async-default-routing.test.ts | packages/coding-agent/test/harness/subagent/detach/async-default-routing.test.ts | converter | F8 | R15
+claude-home/bin/tests/interactive-input/detach-capacity.test.ts | packages/coding-agent/test/harness/subagent/detach/detach-capacity.test.ts | converter | F8 | R15
+claude-home/bin/tests/interactive-input/root-routing-integration.test.ts | packages/coding-agent/test/harness/subagent/routing/root-routing.test.ts | converter | F8 | R15
+claude-home/bin/tests/lifecycle/mcp-header.test.sh | packages/coding-agent/resources/bin/test_mcp_header.py | converter | F8 | R15
+claude-home/bin/tests/pi-ui-final-gate.sh | scripts/harness/ui-gates/nycode-ui-final-gate.sh | converter | F7 | E28
+claude-home/hooks/graph_context.py | packages/coding-agent/src/extensions/hooks/internal/graph-context.ts | converter | F8 | R11
+claude-home/hooks/test_graph_context.py | packages/coding-agent/test/harness/hooks/internal/graph-context.test.ts | converter | F8 | R10
 claude-home/patches/pi-code/goal-lifecycle.test.ts | packages/coding-agent/test/harness/goal/goal-lifecycle.test.ts | converter | F6 | P10
 claude-home/patches/pi-code/goal.test.ts | packages/coding-agent/test/harness/goal/goal.test.ts | converter | F6 | P10
 claude-home/patches/pi-code/notify-focus.test.ts | packages/coding-agent/test/harness/notify/notify-focus.test.ts | converter | F5 | P07
 claude-home/patches/pi-code/rewind-tree.test.ts | packages/coding-agent/test/harness/git-checkpoint/git-checkpoint.test.ts | converter | F5 | P07
 claude-home/patches/pi-code/statusline-multiline.test.ts | packages/coding-agent/test/harness/status-line/statusline-multiline.test.ts | converter | F5 | P07
+claude-home/patches/pi-code/subagent-panel/setup.ts | packages/coding-agent/test/harness/subagent/fleet-env.ts | converter | F6 | P15
 claude-home/patches/pi-code/subagent-nesting.test.ts | packages/coding-agent/test/harness/subagent/nesting/subagent-nesting.test.ts | converter | F6 | P14
 claude-home/patches/pi-code/subagent-panel/fleet-entry.test.ts | packages/coding-agent/test/harness/subagent/fleet/fleet-entry.test.ts | converter | F6 | P15
 claude-home/patches/pi-code/subagent-panel/fleet-faults.test.ts | packages/coding-agent/test/harness/subagent/fleet/fleet-faults.test.ts | converter | F6 | P15
@@ -633,7 +684,14 @@ claude-home/patches/pi-code/zzzzzzz-subagent-model-effort/tracker.test.ts | pack
 claude-home/patches/pi-code/zzzzzzzz-statusline-provider/provider.test.ts | packages/coding-agent/test/harness/status-line/provider.test.ts | converter | F5 | P08
 extensions/pi-docs/index.test.ts | packages/coding-agent/test/harness/extensions/docs-pointer/index.test.ts | converter | F7 | E11
 extensions/pi-docs/index.ts | packages/coding-agent/src/extensions/docs-pointer/index.ts (D-36) | mover | F7 | E10
-scripts/test_check_refs.py | scripts/test_check_refs.py | converter | F3 | C07
+extensions/ui-visual/test/header.test.ts | packages/coding-agent/test/harness/extensions/ui-visual/header/header.test.ts | converter | F7 | E24
+extensions/ui-visual/test/tools.test.ts | packages/coding-agent/test/harness/extensions/ui-visual/tools/tools.test.ts | converter | F7 | E24
+extensions/ui-visual/test/working.test.ts | packages/coding-agent/test/harness/extensions/ui-visual/estado/working.test.ts | converter | F7 | E24
+extensions/ui/test/btw.test.ts | packages/coding-agent/test/harness/extensions/ui/commands/btw.test.ts | converter | F7 | E24
+extensions/ui/test/diff.test.ts | packages/coding-agent/test/harness/extensions/ui/commands/diff.test.ts | converter | F7 | E24
+extensions/ui/test/editor.test.ts | packages/coding-agent/test/harness/extensions/ui/editor/editor.test.ts | converter | F7 | E24
+patches/third-party/ponytail.patch | packages/coding-agent/src/extensions/ponytail/ (D-54) | absorver | F9 | T02
+patches/third-party/ralph-loop.patch | packages/coding-agent/resources/ralph-loop/ (D-54) | absorver | F9 | T02
 themes/mono.json | packages/coding-agent/src/modes/interactive/theme/mono.json (D-37) | mover | F7 | E27
 themes/tokyo-night.json | packages/coding-agent/src/modes/interactive/theme/tokyo-night.json (D-37) | mover | F7 | E27
 """
@@ -658,15 +716,23 @@ def classify(
     return None
 
 
-def resumo(rows: list[tuple[str, str, str, str]], base: str, total: int) -> str:
-    """The per-rule and per-phase summary, counted from the rows the TSV holds."""
+def resumo(
+    rows: list[tuple[str, str, str, str]], base: str, total: int, onda9: int
+) -> str:
+    """The per-rule and per-phase summary, counted from the rows the TSV holds (`onda9` of them from `--onda9`)."""
     per_rule = Counter(row[3] for row in rows)
     per_phase = Counter((row[2], row[1]) for row in rows)
     out = [
-        f"<!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main {base} ({total} arquivos). Não editar à mão. -->",
+        (
+            f"<!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main {base} ({total - onda9} arquivos)"
+            f" e da lista da onda 9 ({onda9} arquivos). Não editar à mão. -->"
+        ),
         "# Anexo E: resumo do mapa por regra",
         "",
-        f"Total de arquivos rastreados no nycode-harness: **{total}**. Arquivos sem regra: **0**.",
+        (
+            f"Total de arquivos no mapa: **{total}** ({total - onda9} do nycode-harness e {onda9} da onda 9)."
+            " Arquivos sem regra: **0**."
+        ),
         "Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arquivo-a-arquivo.tsv).",
         "",
         "| Regra | Arquivos | Padrão de origem | Destino | Ação | Fase |",
@@ -706,14 +772,22 @@ def main() -> int:
         metavar="SHA",
         help="imprime o resumo por regra (base do nycode-harness) em vez do TSV",
     )
+    parser.add_argument(
+        "--onda9",
+        metavar="ARQUIVO",
+        help="lista de caminhos da onda 9 (D-57, D-58), um por linha, acrescentada depois da entrada padrão",
+    )
     args = parser.parse_args()
+    extra = (
+        Path(args.onda9).read_text(encoding="utf-8").splitlines() if args.onda9 else []
+    )
     compiled = [
         (rid, re.compile(rx), dest, act, ph) for rid, rx, dest, act, ph in RULES
     ]
     missing: list[str] = []
     paths: list[str] = []
     rows: list[tuple[str, str, str, str]] = []
-    for line in sys.stdin:
+    for line in [*sys.stdin, *extra]:
         path = line.rstrip("\n")
         if not path:
             continue
@@ -724,7 +798,9 @@ def main() -> int:
             paths.append(path)
             rows.append(row)
     if args.resumo:
-        sys.stdout.write(resumo(rows, args.resumo, len(paths)))
+        sys.stdout.write(
+            resumo(rows, args.resumo, len(paths), sum(1 for p in extra if p))
+        )
     else:
         print("origem\tdestino\tacao\tfase\tregra")
         for path, (dest, act, ph, rid) in zip(paths, rows, strict=True):
