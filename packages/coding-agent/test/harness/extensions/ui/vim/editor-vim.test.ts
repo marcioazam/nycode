@@ -31,8 +31,9 @@ function make(
 	if (opts.notify) e.compat = { notify: opts.notify };
 	const submitted: string[] = [];
 	e.onSubmit = (t: string) => submitted.push(t);
-	const i = Math.max(0, spec.indexOf("|"));
-	const text = spec.replace("|", "");
+	const at = spec.indexOf("|");
+	const i = Math.max(0, at);
+	const text = at < 0 ? spec : spec.slice(0, at) + spec.slice(at + 1);
 	e.setText(text);
 	for (let n = [...seg.segment(text.slice(i))].length; n > 0; n--) e.handleInput(LEFT);
 	e.mode = "normal";

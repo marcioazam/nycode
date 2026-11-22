@@ -31,7 +31,7 @@ const theme: any = {
 	getBgAnsi: (c: string) => `${ESC}${BG[c]}m`,
 };
 // Remove só as marcas do tema falso (mantém ESC para os testes de ênfase).
-const unmark = (s: string) => s.replace(/<\/?[a-zA-Z:]*>/g, "");
+const unmark = (s: string) => s.split(/<\/?[a-zA-Z:]*>/g).join("");
 const plain = (s: string) => unmark(s).replace(/\x1b\[[0-9;]*m/g, "");
 // Medidas falsas (ignoram as marcas do tema); o teste de corte usa fitLine/visibleWidth reais.
 const base = { fitLine: (t: string) => t, visibleWidth: (s: string) => [...plain(s)].length };

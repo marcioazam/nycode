@@ -114,7 +114,7 @@ test("refinada: comando longo cortado em 22 colunas; sem atalho à direita", () 
 		400,
 		{ hora: "15:59", dica: "abre", tecla: "alt+o" },
 	) as string;
-	const p = l.replace(/<\/?[a-zA-Z]*>/g, "");
+	const p = l.split(/<\/?[a-zA-Z]*>/g).join("");
 	assert.match(p, / testes {2}concluído · 2:14 · shell · 148 linhas · npm test -- --covera … {2,}r7 · 15:59 $/);
 	assert.ok(!p.includes("alt+o") && l.includes("<dim>npm test -- --covera …</c>"), l);
 });

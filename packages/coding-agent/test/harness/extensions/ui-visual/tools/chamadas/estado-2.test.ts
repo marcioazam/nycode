@@ -408,10 +408,10 @@ test("subagente: status lista os runs (registro e lanes) com estado colorido; te
 		cab,
 	);
 	const col = plain(cab)
-		.replace(/<[^>]*>/g, "")
+		.split(/<[^>]*>/g).join("")
 		.indexOf("Subagent");
 	assert.deepEqual(
-		corpo.map((l: string) => l.replace(/<[^>]*>/g, "").trimEnd()),
+		corpo.map((l: string) => l.split(/<[^>]*>/g).join("").trimEnd()),
 		[
 			`${" ".repeat(col)}├ swarm-worker · executando · bg-1 · Handback in pt-BR`,
 			`${" ".repeat(col)}├ plan-reviewer · concluído · 14 turnos · bg-2 · revisar`,

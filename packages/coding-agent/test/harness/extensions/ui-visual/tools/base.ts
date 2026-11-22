@@ -24,7 +24,7 @@ export const ansiPlain = {
 // truncateToWidth fecha com \x1b[0m; não ocupa coluna, então sai antes da medida.
 export const plain = (s: string) =>
 	s
-		.replace(/<\/?[a-zA-Z]*>/g, "")
+		.split(/<\/?[a-zA-Z]*>/g).join("")
 		.replace(/[\u0001\u0002]/g, "")
 		.replace(/\x1b\[[0-9;]*m/g, "");
 export const ctx = (o: Record<string, unknown> = {}) => ({
