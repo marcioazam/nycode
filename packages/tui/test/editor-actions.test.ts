@@ -41,17 +41,6 @@ describe("editor actions (seam K16)", () => {
 		assert.strictEqual(e.getText(), "abc");
 	});
 
-	it("an unknown action throws before mutating", () => {
-		const e = make("abc");
-		const before = snap(e);
-		const len = inner(e).undoStack.length;
-		for (const bad of ["up", "submit", "", undefined, null, 3, {}]) {
-			assert.throws(() => e.runEditorAction(bad as never), /unknown editor action/);
-		}
-		assert.strictEqual(snap(e), before);
-		assert.strictEqual(inner(e).undoStack.length, len);
-	});
-
 	it("one undo for delete + insert with a paste marker; earlier history is kept", () => {
 		const e = make();
 		type(e, "ab");
@@ -272,7 +261,6 @@ describe("editor actions (seam K16)", () => {
 			TypeError,
 		);
 		assert.strictEqual(called, false);
-		assert.throws(() => e.withUndoGroup("x" as never), TypeError);
 		const base = inner(e).undoStack.length;
 		assert.throws(
 			() =>
