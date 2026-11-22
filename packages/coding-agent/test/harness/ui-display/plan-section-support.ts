@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterAll as after } from "vitest";
+import { afterAll as after, vi } from "vitest";
 import { PlanSection } from "../../../src/extensions/plan-mode/section.ts";
 import statusLine from "../../../src/extensions/status-line/index.ts";
 import { registerFleetUi } from "../../../src/extensions/subagent/fleet-ui/index.ts";
@@ -168,6 +168,10 @@ export const withStatusTab = (): (() => void) => {
 // ---- ordering with the real status-line and fleet extensions ----
 export const MULTI = `printf '[m ◐ medium] ⏱️  1h 10m\\nContext 10%%\\n'`;
 export const SINGLE = `printf '[m ◐ medium] ⏱️  1h 10m\\n'`;
+// The running mark of a fleet row is a function of the wall clock (fleet-ui/style/palette.ts spinnerAt); the clock stands
+// still, so no frame of it changes between two renders of one test.
+vi.useFakeTimers({ toFake: ["Date"] });
+vi.setSystemTime(1_800_000_000_000);
 export const NOW = Date.now();
 export const rec = () =>
 	({
