@@ -138,6 +138,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | auto-resume | core | Retoma após erro transitório do provedor |
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
 | extension | claude-compat | core | Base de modos de permissão, vim e aliases do editor; biblioteca ainda sem fábrica (D-56, parte 1) |
+| extension | chat-margin | core | Margem do texto nos blocos com fundo do chat (D-56) |
 | extension | commands | core | Comandos de barra do Claude Code |
 | extension | completion-gate | core | Verificação antes de encerrar |
 | extension | context-imports | core | Imports @ do CLAUDE.md |
@@ -174,6 +175,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | syntax-check | core | Erro de sintaxe após edição |
 | extension | thinking | ui | Nível de raciocínio |
 | extension | todo | core | Ferramenta de lista de tarefas |
+| extension | travar-modelos | core | Trava global de modelos e esforços (D-56) |
 | extension | ui | ui | Editor, acessibilidade, `/diff` |
 | extension | ui-visual | ui | Cabeçalho e ícones |
 | extension | up-dequeue | ui | Seta para cima restaura a fila |

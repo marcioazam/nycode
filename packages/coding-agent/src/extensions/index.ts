@@ -1,6 +1,7 @@
 import type { InlineExtension } from "../core/extensions/types.ts";
 import bypassPermissionsExtension from "../core/permissions/bypass-command.ts";
 import autoResumeExtension from "./auto-resume/index.ts";
+import chatMarginExtension from "./chat-margin/index.ts";
 import claudeRulesExtension from "./claude-rules/index.ts";
 import codemodeExtension from "./codemode/index.ts";
 import commandsExtension from "./commands/index.ts";
@@ -42,6 +43,7 @@ import syntaxCheckExtension from "./syntax-check/index.ts";
 import thinkingExtension from "./thinking/index.ts";
 import todoExtension from "./todo/index.ts";
 import toolSearchExtension from "./tool-search/index.ts";
+import travarModelosExtension from "./travar-modelos/index.ts";
 import uiExtension from "./ui/index.ts";
 import uiVisualExtension from "./ui-visual/index.ts";
 import upDequeueExtension from "./up-dequeue/index.ts";
@@ -87,6 +89,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "auto-resume", factory: autoResumeExtension, builtin: true },
 	// nycode: K11 the logic lives with the permission engine in core/permissions/, this line only registers it.
 	{ name: "bypass-permissions", factory: bypassPermissionsExtension, builtin: true },
+	{ name: "chat-margin", factory: chatMarginExtension, builtin: true },
 	{ name: "completion-gate", factory: completionGateExtension, builtin: true },
 	{ name: "dev-commands", factory: devCommandsExtension, builtin: true },
 	{ name: "effort-sandwich", factory: effortSandwichExtension, builtin: true },
@@ -100,6 +103,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "sound-notify", factory: soundNotifyExtension, builtin: true },
 	{ name: "sticky-prompt", factory: stickyPromptExtension, builtin: true },
 	{ name: "syntax-check", factory: syntaxCheckExtension, builtin: true },
+	{ name: "travar-modelos", factory: travarModelosExtension, builtin: true },
 	{ name: "ui", factory: uiExtension, builtin: true },
 	{ name: "ui-visual", factory: uiVisualExtension, builtin: true },
 	{ name: "up-dequeue", factory: upDequeueExtension, builtin: true },
