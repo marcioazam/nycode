@@ -365,7 +365,7 @@ da costura, reescrito em vitest em `packages/coding-agent/test/harness/` (K2: `p
 ### K14. Título de reserva em `config.ts`
 
 - `packages/coding-agent/src/config.ts:605`: `export const APP_TITLE: string = nycodeConfigName ? APP_NAME : "π";`; o
-  literal `"π"` vira `"nycode"`. Entra em F2 pela marca; o teste (`--help` com `HOME` vazio mostra "Nycode";
+  literal `"π"` vira `"nycode"`. Entra em F2 pela marca; o teste (`--help` com `HOME` vazio mostra "nycode";
   `--version` imprime só a versão, sem "π", como no upstream, que faz `console.log(VERSION)`) fecha em F4. Sem teste
   de origem; teste novo em `packages/coding-agent/test/`.
 

@@ -166,7 +166,7 @@ Abreviação: `CA` = `packages/coding-agent/src`; `core/` e `cli/` abaixo são d
 | K11 | `core/permissions/` (novo) + gancho `tool_call` | Arquivo novo, 1 chamada | novo | indef. | médio |
 | K12 | `CA/main.ts` (ramo `migrate`; o importador mora em `CA/migrations/from-pi.ts`) | Uma chamada ao importador e uma ao carregador de `local.env` (D-52) | n. med. | n. med. | baixo |
 | K13 | `packages/coding-agent/package.json` (`files`) | Inclui `resources/` | 50 / 11 | 0 | médio |
-| K14 | `CA/config.ts:605` | "π" de reserva vira "Nycode" | 12 / 2 | 0 (`APP_TITLE`) | baixo |
+| K14 | `CA/config.ts:605` | "π" de reserva vira "nycode" | 12 / 2 | 0 (`APP_TITLE`) | baixo |
 | K15 | `packages/tui/src/index.ts` | Uma linha de exportação (`isImageLine`) | 13 / 2 | 0 (`terminal-image`) | baixo |
 | K16 | `packages/tui/src/components/editor.ts` | Dois métodos novos no `Editor` (`runEditorAction`, `withUndoGroup`) | 8 / 3 | 0 (região: 0) | médio |
 | K17 | `interactive-mode.ts`, `status-indicator.ts`, `assistant-message.ts`, `compaction-summary-message.ts` (em `packages/coding-agent/src/modes/interactive`) | 18 chamadas ao módulo `avisos`, cada uma com `?? <original>` ou `if (...) return`, mais um parâmetro opcional no `RetryStatusIndicator` | 91 / 25, 3 / 0, 4 / 4, 3 / 1 (na ordem dos arquivos) | 3, 0, 0, 0 (na ordem dos arquivos) | alto no `interactive-mode.ts` |
