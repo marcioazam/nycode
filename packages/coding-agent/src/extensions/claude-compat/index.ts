@@ -6,6 +6,7 @@
 import type { ExtensionAPI, ExtensionCommandContext } from "../../core/extensions/types.ts";
 import { ALIASES } from "./aliases.ts";
 import registerLocalCommands from "./commands/index.ts";
+import registerInterfaceCommands from "./interface/index.ts";
 import registerLifecycle from "./lifecycle/index.ts";
 import { COMMANDS } from "./matrix.ts";
 import { registerPublicServices } from "./services/public.ts";
@@ -97,6 +98,7 @@ export default function (nycode: ExtensionAPI) {
 	registerLocalCommands(nycode);
 	registerPublicServices(nycode);
 	registerLifecycle(nycode);
+	registerInterfaceCommands(nycode);
 	for (const name of ["clear", "reset"]) {
 		nycode.registerCommand(name, {
 			description: "Inicia uma sessão nova como /new, sem turno de modelo [nome da sessão anterior]",

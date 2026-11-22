@@ -137,7 +137,7 @@ ganha a atribuição e o commit de origem.
 | `code-blocks` | `~/.pi/agent/extensions/code-blocks/` (camada local) | N2 | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) | F12 |
 | `image-open` | `~/.pi/agent/extensions/image-open/` (camada local) | N2 | Clicar numa imagem do transcript a abre no visualizador do sistema (`/imagem` abre a última) e a imagem de resultado de tool ganha o fundo da tool (D-56) | F12 |
 | `hook-msgs` | `~/.pi/agent/extensions/hook-msgs/` (camada local) | N2 | Mensagens de hook, de gate, de subagente em segundo plano e de fim de run no ritmo das tools, com o fundo do estado (D-56) | F12 |
-| `claude-compat` | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`, `commands/*`, `services/*`, `runbooks/*`, `lifecycle/*`, `matrix`, `index`) | N2 | Fábrica registrada: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz; `lifecycle` na parte 3; faltam `directory` e `interface` (partes 4 e 5); `background` fica fora (D-56, partes 2 e 3 de 5) | F12 |
+| `claude-compat` | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`, `commands/*`, `services/*`, `runbooks/*`, `lifecycle/*`, `interface/*`, `matrix`, `index`) | N2 | Fábrica registrada: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz; `lifecycle` na parte 3; `interface/*` na parte 4 (K19); falta `directory` (parte 5); `background` fica fora (D-56, partes 2 a 4 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
 | `context-files` | `extensions/no-context-files-covers-claude-md.ts` | — | **Some**: existia para contornar a injeção de `CLAUDE.md` pelo pi-code; com `claude-rules` embutida a regra é escrita direto nela | F7 |
@@ -188,6 +188,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K16 | `packages/tui/src/components/editor.ts` | `runEditorAction` e `withUndoGroup` no `Editor` (ações semânticas e grupo de desfazer) | `ui/editor`, `claude-compat/vim` | F12 |
 | K17 | `interactive-mode.ts`, `components/status-indicator.ts`, `components/assistant-message.ts`, `components/compaction-summary-message.ts` (em `modes/interactive`) | Uma chamada ao módulo `modes/interactive/avisos` por ponto de gancho (avisos em pt-BR); `NYCODE_AVISOS=0` devolve os textos do upstream | `avisos` | F12 |
 | K18 | `packages/coding-agent/src/core/settings-manager.ts` | `getCompactionReserveTokens` aplica o limite de compactação por sessão (`/contexto`, módulo `core/compaction/session-limit.ts`) | `compact-at-400k.ts`, patch `contexto-reserve` (D-58) | F12 |
+| K19 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | `updateEditorBorderColor()` instala os controles de interface (`/focus`, `/color`; módulo `modes/interactive/ui-controls`) | `claude-compat/interface`, patch `ui-controls` (D-58) | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 
