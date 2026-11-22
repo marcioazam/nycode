@@ -1,7 +1,6 @@
 ---
 name: deep-search
 description: "Multi-agent deep research across all search MCPs with parallel scouts, challenged theses and verified citations. Use for multi-angle, report-length research. Not for a single fact (perplexity-urls)."
-disable-model-invocation: true
 ---
 
 # Deep search
