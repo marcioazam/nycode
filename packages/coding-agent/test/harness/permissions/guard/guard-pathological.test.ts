@@ -1,7 +1,7 @@
 // The permission engine reads text the model wrote: no input of the size limit may make it slow (no polynomial regular
 // expression, no quadratic loop). Each pathological 256 KB shape must be judged in a few seconds, in every mode.
 import { describe, expect, it } from "vitest";
-import { decide } from "../../../src/core/permissions/guard/decide.ts";
+import { decide } from "../../../../src/core/permissions/guard/decide.ts";
 
 const SIZE = 262_144;
 const fill = (unit: string, tail = ""): string => unit.repeat(Math.ceil(SIZE / unit.length)).slice(0, SIZE) + tail;
