@@ -16,6 +16,7 @@ import {
 import { asNycodeReadsIt } from "../_shared/rules/tool-target.ts";
 import { errorMessage } from "../_shared/util/values.ts";
 import type { HookCommand, HookMatcher } from "./config.ts";
+import { internalHook } from "./internal/registry.ts";
 
 /** Claude's rule: a matcher of only letters, digits, `_`, `-`, spaces, `,` and `|`
  * is a list of exact names; anything else is an unanchored regex. */
@@ -103,6 +104,7 @@ function isRunnableHook(hook: HookCommand): boolean {
 	if (hook.type === "prompt" || hook.type === "agent")
 		return typeof hook.prompt === "string" && hook.prompt.length > 0;
 	if (hook.type === "mcp_tool") return typeof hook.server === "string" && typeof hook.tool === "string";
+	if (hook.type === "internal") return internalHook(hook.name) !== undefined;
 	// A command hook needs a non-empty command, and exec-form args must all be strings:
 	// spawn('') throws ERR_INVALID_ARG_VALUE and a number has no replaceAll for argument
 	// substitution, both inside the runner's Promise executor, so the event's handler
@@ -120,6 +122,7 @@ function syntheticCommand(hook: HookCommand): string | undefined {
 	if (hook.type === "http") return hook.url;
 	if (hook.type === "prompt" || hook.type === "agent") return hook.prompt;
 	if (hook.type === "mcp_tool") return `${hook.server}:${hook.tool}`;
+	if (hook.type === "internal") return `internal:${hook.name}`;
 	return undefined;
 }
 
