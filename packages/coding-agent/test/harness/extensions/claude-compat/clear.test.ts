@@ -143,7 +143,7 @@ test("registra clear, reset, help, skills, claude-help e os comandos locais; nun
 			"focus",
 			"color",
 			"transcript",
-			// cd (directory) and
+			"cd",
 			// background, bg come with the later claude-compat parts.
 		].sort(),
 	);

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Checks the nycode seams listed in scripts/fork/seams.txt (08 section 4): every active (ativa) seam keeps its
-# `nycode: K<n>` marker in its files and its test exists; a pending seam has no marker yet. Prints "seams N/22".
+# `nycode: K<n>` marker in its files and its test exists; a pending seam has no marker yet. Prints "seams N/23".
 # Exit 1 when an active seam lost its marker or test, or a pending (pendente) one already has the marker. --strict also exits 1
-# unless all 22 are ativa and have a test (the acceptance criterion of 08 section 10.1, item 4).
+# unless all 23 are ativa and have a test (the acceptance criterion of 08 section 10.1, item 4).
 # Usage: check-seams.sh [--strict]
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 2
@@ -55,9 +55,9 @@ done <"$list"
 echo "seams $ok/$total"
 [ "${#pending[@]}" -eq 0 ] || printf 'pendente: %s\n' "${pending[@]}"
 [ "${#untested[@]}" -eq 0 ] || echo "no test yet: ${untested[*]}"
-[ "$total" -eq 22 ] || {
-  echo "$list must list exactly 22 seams (found $total)" >&2
+[ "$total" -eq 23 ] || {
+  echo "$list must list exactly 23 seams (found $total)" >&2
   bad=1
 }
-if [ "$strict" = 1 ] && { [ "$ok" -ne 22 ] || [ "${#untested[@]}" -gt 0 ]; }; then bad=1; fi
+if [ "$strict" = 1 ] && { [ "$ok" -ne 23 ] || [ "${#untested[@]}" -gt 0 ]; }; then bad=1; fi
 exit "$bad"
