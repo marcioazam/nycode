@@ -149,6 +149,7 @@ import {
 	runAgentHook,
 	runHookCommand,
 	runHttpHook,
+	runInternalHook,
 	runMcpToolHook,
 	runPromptHook,
 	sessionEndTimeoutMs,
@@ -259,6 +260,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 			return runPromptHook(hook, merged, resolveHookModel(ctx, hook.model), ms, ctx.modelRegistry);
 		if (hook.type === "agent") return runAgentHook(hook, merged, ms, (ctx.model as { id?: string } | undefined)?.id);
 		if (hook.type === "mcp_tool") return runMcpToolHook(hook, merged, ms);
+		if (hook.type === "internal") return runInternalHook(hook, merged, ms);
 		return runHookCommand(hook.command, merged, ms, {
 			projectDir,
 			args: hook.args,

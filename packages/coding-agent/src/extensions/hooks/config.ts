@@ -11,6 +11,7 @@ import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { type InstalledPlugin, pluginComponentPath, substitutePluginVars } from "../_shared/settings/plugins.ts";
 import { claudeSettingsChain, readSettingsChain } from "../_shared/settings/settings-chain.ts";
 import { errorMessage, escapeRegExp, isRecord } from "../_shared/util/values.ts";
+import { internalHook, internalHookNames } from "./internal/registry.ts";
 
 export interface HookCommand {
 	type?: string;
@@ -48,6 +49,8 @@ export interface HookCommand {
 	allowedEnvVars?: string[];
 	/** prompt entries: the prompt sent to the model (`$ARGUMENTS` = the event JSON). */
 	prompt?: string;
+	/** internal entries: the name of the core's in-process hook (see internal/registry.ts). */
+	name?: string;
 	/** mcp_tool entries: the connected server and tool to call, with optional input. */
 	server?: string;
 	tool?: string;
@@ -418,6 +421,11 @@ function isUsableMatcher(entry: unknown, file: string, event: string): entry is 
 			);
 		candidate.hooks = objects as HookCommand[];
 		for (const hook of candidate.hooks) {
+			if (hook.type === "internal" && internalHook(hook.name) === undefined) {
+				console.warn(
+					`nycode-hooks: ignoring an internal hook in a ${event} entry in ${file}: "${String(hook.name)}" is not a core hook (known: ${internalHookNames().join(", ")})`,
+				);
+			}
 			if (hook.onFailure !== undefined && hook.onFailure !== "continue" && hook.onFailure !== "block") {
 				console.warn(
 					`nycode-hooks: ignoring onFailure in a ${event} hook in ${file}: must be "continue" or "block"`,
@@ -446,6 +454,7 @@ function hookIdentity(hook: HookCommand | null | undefined): string {
 	if (type === "http") return `http: ${record.url ?? record.command ?? "(missing url)"}`;
 	if (type === "prompt" || type === "agent")
 		return `${type}: ${record.prompt ?? record.command ?? "(missing prompt)"}`;
+	if (type === "internal") return `internal: ${record.name ?? "(missing name)"}`;
 	if (type === "mcp_tool")
 		return `mcp_tool: ${record.server ?? "(missing server)"}:${record.tool ?? "(missing tool)"}`;
 	return `command: ${record.command ?? "(missing command)"}`;

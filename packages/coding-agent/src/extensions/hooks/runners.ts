@@ -14,6 +14,7 @@ import { killProcessTree } from "../_shared/shell/process-tree.ts";
 import { resolveShell } from "../_shared/shell/shell-resolve.ts";
 import { errorMessage } from "../_shared/util/values.ts";
 import { type HookCommand, httpUrlAllowed, isBackgroundHook } from "./config.ts";
+import { internalHook } from "./internal/registry.ts";
 
 // Claude's defaults vary by type and event (600s for command/http/mcp_tool, 30s
 // for prompt, 60s for agent, lowered to 30s on UserPromptSubmit and to a shared
@@ -524,5 +525,36 @@ export async function runAgentHook(
 		return { code: 0, stdout: answer, stderr: "", timedOut: false };
 	} catch (error) {
 		return abortAwareFailure(signal, error);
+	}
+}
+
+/**
+ * `type: "internal"`: run the core's in-process hook of that name. It reports like a command hook (exit code, stdout,
+ * stderr); the deadline reports `timedOut`, so a gated event fails closed on it, and a throw is a failed hook (exit 1).
+ */
+export async function runInternalHook(hook: HookCommand, payload: unknown, timeoutMs: number): Promise<HookRunResult> {
+	const run = internalHook(hook.name);
+	if (!run)
+		return { code: 1, stderr: `internal hook ${String(hook.name)} is not registered`, stdout: "", timedOut: false };
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	const deadline = new Promise<HookRunResult>((resolve) => {
+		timer = setTimeout(
+			() =>
+				resolve({
+					code: 1,
+					stdout: "",
+					stderr: `internal hook ${hook.name} timed out after ${timeoutMs}ms`,
+					timedOut: true,
+				}),
+			timeoutMs,
+		);
+	});
+	const call = run(payload as Record<string, unknown>)
+		.then((result): HookRunResult => ({ ...result, timedOut: false }))
+		.catch((error): HookRunResult => ({ code: 1, stdout: "", stderr: errorMessage(error), timedOut: false }));
+	try {
+		return await Promise.race([call, deadline]);
+	} finally {
+		clearTimeout(timer);
 	}
 }
