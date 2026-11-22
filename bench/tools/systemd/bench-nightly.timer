@@ -1,5 +1,5 @@
 [Unit]
-Description=Nightly ny-pi full benchmark
+Description=Nightly nycode-harness full benchmark
 
 [Timer]
 OnCalendar=*-*-* 03:30:00

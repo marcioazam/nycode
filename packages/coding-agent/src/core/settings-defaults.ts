@@ -1,6 +1,6 @@
 import { DEFAULT_MAX_AGENT_RETRY_DELAY_MS } from "@nycode/ai/utils/retry";
 
-// nycode: K4 embedded hooks, status line and env defaults (docs/migration/ny-pi-core/02-arquitetura-alvo.md sections 5 and 6)
+// nycode: K4 embedded hooks, status line and env defaults (docs/migration/nycode-core/02-arquitetura-alvo.md sections 5 and 6)
 // The embedded resources root as the shell sees it: the `claude-rules` and `hooks` extensions export NYCODE_RESOURCES
 // (core/builtin-resources.ts), so the commands below expand when they run. Quoted in the commands: the root may have spaces.
 // biome-ignore lint/suspicious/noTemplateCurlyInString: shell variable, expanded when the hook runs
@@ -85,7 +85,7 @@ export const SETTINGS_DEFAULTS = {
 	fullscreenScrollbar: "auto",
 	fullscreenCopyOnSelect: true,
 	fullscreenWheelScrollLines: "auto",
-	// nycode keys (docs/migration/ny-pi-core/02-arquitetura-alvo.md section 5); read by the extensions that own them.
+	// nycode keys (docs/migration/nycode-core/02-arquitetura-alvo.md section 5); read by the extensions that own them.
 	permissions: { bypass: false, engine: "script" },
 	harness: {
 		effortSandwich: { enabled: false, turns: 1 },

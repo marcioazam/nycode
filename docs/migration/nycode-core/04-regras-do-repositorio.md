@@ -193,7 +193,7 @@ Ordem: 4.0 registrar o estado; 4.1 arquivos por PR; 4.2 `PATCH` do repo; 4.3 ró
 ### 4.0 Registrar o estado antes (leitura)
 
 ```bash
-E=docs/migration/ny-pi-core/evidencias; mkdir -p $E; R=marcioazam/nycode
+E=docs/migration/nycode-core/evidencias; mkdir -p $E; R=marcioazam/nycode
 gh api repos/$R > $E/F2-repo-antes.json; gh api repos/$R/branches/main/protection > $E/F3-classica-antes.json
 ```
 

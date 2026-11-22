@@ -1,4 +1,4 @@
-"""Arms `nycode` (09 §2.2) and `ny-pi-pi160` (D-25): definition, dry-run, stage lookup and the arm scripts. No
+"""Arms `nycode` (09 §2.2) and `nycode-harness-pi160` (D-25): definition, dry-run, stage lookup and the arm scripts. No
 network, no spend: the stage is pre-built (`.ready`) and the binary is a fake."""
 
 import hashlib
@@ -29,13 +29,13 @@ def test_nycode_arm_definition() -> None:
     assert (BENCH / "arms/nycode").stat().st_mode & 0o111
 
 
-def test_pi160_arm_is_the_ny_pi_bin_on_pi_1_6_0() -> None:
-    a, base = arms()["ny-pi-pi160"], arms()["ny-pi"]
+def test_pi160_arm_is_the_nycode_harness_bin_on_pi_1_6_0() -> None:
+    a, base = arms()["nycode-harness-pi160"], arms()["nycode-harness"]
     assert a["bin"] == base["bin"] and a["runner"] == base["runner"]
     assert a["version"] == "1.6.0"
     assert a["env"] == {"BENCH_PI_VERSION": "1.6.0"}
     assert (
-        a["stage_prefix"] == "bench-nypi160"
+        a["stage_prefix"] == "bench-nycode-harness160"
     )  # never shares a stage with the 1.5.2 arm
 
 
@@ -45,14 +45,14 @@ def test_dry_run_nycode_smoke_and_pi160_pr(monkeypatch: MP, capsys: CF) -> None:
     assert rb.main(RA("nycode", "--dry-run", tier="smoke", budget="12")) == 0
     out = capsys.readouterr().out
     assert "arm=nycode tier=pr" in out and "nothing was executed" in out
-    assert rb.main(RA("ny-pi-pi160", "--dry-run", tier="pr", budget="12")) == 0
+    assert rb.main(RA("nycode-harness-pi160", "--dry-run", tier="pr", budget="12")) == 0
     out = capsys.readouterr().out
-    assert "arm=ny-pi-pi160 tier=pr" in out and "nothing was executed" in out
+    assert "arm=nycode-harness-pi160 tier=pr" in out and "nothing was executed" in out
     # the arm's env table reaches the arm script and its children
     import os
 
     assert os.environ["BENCH_PI_VERSION"] == "1.6.0"
-    assert os.environ["BENCH_STAGE_PREFIX"] == "bench-nypi160"
+    assert os.environ["BENCH_STAGE_PREFIX"] == "bench-nycode-harness160"
 
 
 def test_arm_meta_reads_overlay_sha_of_the_nycode_stage(
@@ -60,7 +60,7 @@ def test_arm_meta_reads_overlay_sha_of_the_nycode_stage(
 ) -> None:
     for name, sha in (
         ("bench-nycode-abc123def456", "n1"),
-        ("bench-nypi-abc123def456-dirty", "p1"),
+        ("bench-nycode-harness-abc123def456-dirty", "p1"),
     ):
         d = tmp_path / name
         d.mkdir()
@@ -72,7 +72,9 @@ def test_arm_meta_reads_overlay_sha_of_the_nycode_stage(
     meta = rb.arm_meta("nycode", arms(), "pi", Path("/x/bin"), "m", 1.0)
     assert meta["overlay_sha"] == "n1"
     assert (
-        rb.arm_meta("ny-pi", arms(), "pi", Path("/x/bin"), "m", 1.0)["overlay_sha"]
+        rb.arm_meta("nycode-harness", arms(), "pi", Path("/x/bin"), "m", 1.0)[
+            "overlay_sha"
+        ]
         == "p1"
     )
 
@@ -132,19 +134,21 @@ def test_arm_api_key_mode(tmp_path: Path) -> None:
     assert "wrk_1" in models
 
 
-# sha256 of mcp.json.example of ny-pi at e4f8729, the file its install.sh copies into the stage as mcp.json.
-NYPI_MCP_EXAMPLE_SHA = (
+# sha256 of mcp.json.example of nycode-harness at e4f8729, the file its install.sh copies into the stage as mcp.json.
+HARNESS_MCP_EXAMPLE_SHA = (
     "faf18e46c15a45b05b525859a4572ca446820dd070d5d2a72fe548bcfc826cc4"
 )
 
 
-def test_arm_writes_the_same_mcp_json_as_the_ny_pi_stage(tmp_path: Path) -> None:
+def test_arm_writes_the_same_mcp_json_as_the_nycode_harness_stage(
+    tmp_path: Path,
+) -> None:
     """D-40: both arms are measured with the same mcp.json (6 servers, none with `exposure` or `enabled`)."""
     assert run_arm(tmp_path, "-p", "x", ANTHROPIC_API_KEY="leak").returncode == 0
     written = tmp_path / "stage/.nycode/agent/mcp.json"
     example = BENCH.parent / "packages/coding-agent/examples/config/mcp.json"
     assert written.read_bytes() == example.read_bytes()
-    assert hashlib.sha256(written.read_bytes()).hexdigest() == NYPI_MCP_EXAMPLE_SHA
+    assert hashlib.sha256(written.read_bytes()).hexdigest() == HARNESS_MCP_EXAMPLE_SHA
     servers = json.loads(written.read_text())["mcpServers"]
     assert len(servers) == 6
     assert all("exposure" not in s and "enabled" not in s for s in servers.values())
@@ -167,12 +171,12 @@ def test_pi160_stage_needs_a_pi_1_6_0_install(tmp_path: Path) -> None:
     rh = tmp_path / "rh/.pi/agent/install"
     rh.mkdir(parents=True)
     (rh / "current-version").write_text("1.5.2\n")
-    src = fake_nypi_tree(tmp_path)
+    src = fake_harness_tree(tmp_path)
     p = subprocess.run(
-        ["bash", str(BENCH / "arms/ny-pi")],
+        ["bash", str(BENCH / "arms/nycode-harness")],
         env={
             "PATH": "/usr/bin:/bin", "BENCH_PI_VERSION": "1.6.0", "BENCH_STAGE": str(tmp_path / "stage"),
-            "BENCH_NYPI_SRC": str(src),
+            "BENCH_NYCODE_HARNESS_SRC": str(src),
             "BENCH_REAL_HOME": str(tmp_path / "rh"), "BENCH_CC_CREDENTIALS": "/dev/null",
         },
         capture_output=True, text=True, check=False,
@@ -181,30 +185,30 @@ def test_pi160_stage_needs_a_pi_1_6_0_install(tmp_path: Path) -> None:
     assert not (tmp_path / "stage/.ready").exists()
 
 
-def fake_nypi_tree(tmp: Path) -> Path:
-    """An external ny-pi tree reduced to what the arm checks before it builds: install.sh and bin/pi."""
-    src = tmp / "nypi-src"
+def fake_harness_tree(tmp: Path) -> Path:
+    """An external nycode-harness tree reduced to what the arm checks before it builds: install.sh and bin/pi."""
+    src = tmp / "harness-src"
     (src / "bin").mkdir(parents=True)
     (src / "install.sh").write_text("#!/bin/sh\n")
     (src / "bin/pi").write_text("#!/bin/sh\n")
     return src
 
 
-def test_ny_pi_arm_needs_a_tree_with_bin_pi(tmp_path: Path) -> None:
-    """import/ny-pi has no bin/pi since F5: the arm says so and names BENCH_NYPI_SRC instead of exiting 127 later."""
+def test_nycode_harness_arm_needs_a_tree_with_bin_pi(tmp_path: Path) -> None:
+    """import/nycode-harness has no bin/pi since F5: the arm says so and names BENCH_NYCODE_HARNESS_SRC instead of exiting 127 later."""
     (tmp_path / "bare").mkdir()
-    for extra in ({}, {"BENCH_NYPI_SRC": str(tmp_path / "bare")}):
+    for extra in ({}, {"BENCH_NYCODE_HARNESS_SRC": str(tmp_path / "bare")}):
         p = subprocess.run(
-            ["bash", str(BENCH / "arms/ny-pi")],
+            ["bash", str(BENCH / "arms/nycode-harness")],
             env={"PATH": "/usr/bin:/bin", "BENCH_STAGE": str(tmp_path / "stage"), "BENCH_REAL_HOME": str(tmp_path), "BENCH_CC_CREDENTIALS": "/dev/null", **extra},
             capture_output=True, text=True, check=False,
         )  # fmt: skip
-        assert p.returncode == 2 and "BENCH_NYPI_SRC" in p.stderr
+        assert p.returncode == 2 and "BENCH_NYCODE_HARNESS_SRC" in p.stderr
     assert not (tmp_path / "stage").exists()
 
 
-def test_ny_pi_arm_requires_bench_nypi_src(tmp_path: Path) -> None:
-    """import/ny-pi no longer carries install.sh (F11): without BENCH_NYPI_SRC the arm exits 2 and says what to set, for a
+def test_nycode_harness_arm_requires_bench_nycode_harness_src(tmp_path: Path) -> None:
+    """import/nycode-harness no longer carries install.sh (F11): without BENCH_NYCODE_HARNESS_SRC the arm exits 2 and says what to set, for a
     default stage and for a BENCH_STAGE that is not built; a missing directory fails the same way."""
     base = {
         "PATH": "/usr/bin:/bin",
@@ -214,17 +218,22 @@ def test_ny_pi_arm_requires_bench_nypi_src(tmp_path: Path) -> None:
     for extra in (
         {},
         {"BENCH_STAGE": str(tmp_path / "stage")},
-        {"BENCH_NYPI_SRC": str(tmp_path / "absent")},
+        {"BENCH_NYCODE_HARNESS_SRC": str(tmp_path / "absent")},
     ):
-        p = subprocess.run(["bash", str(BENCH / "arms/ny-pi")], env={**base, **extra}, capture_output=True, text=True, check=False)  # fmt: skip
+        p = subprocess.run(["bash", str(BENCH / "arms/nycode-harness")], env={**base, **extra}, capture_output=True, text=True, check=False)  # fmt: skip
         assert p.returncode == 2, p.stderr
-        assert "set BENCH_NYPI_SRC" in p.stderr and "import/ny-pi" in p.stderr
+        assert (
+            "set BENCH_NYCODE_HARNESS_SRC" in p.stderr
+            and "import/nycode-harness" in p.stderr
+        )
     assert not (tmp_path / "stage").exists()
 
 
-def test_ny_pi_arm_builds_its_stage_from_bench_nypi_src(tmp_path: Path) -> None:
-    """With BENCH_NYPI_SRC the arm uses that tree's install.sh and npm/ (a fake tree records the call)."""
-    src = fake_nypi_tree(tmp_path)
+def test_nycode_harness_arm_builds_its_stage_from_bench_nycode_harness_src(
+    tmp_path: Path,
+) -> None:
+    """With BENCH_NYCODE_HARNESS_SRC the arm uses that tree's install.sh and npm/ (a fake tree records the call)."""
+    src = fake_harness_tree(tmp_path)
     (src / "npm").mkdir()
     (src / "npm/package.json").write_text("{}")
     (src / "npm/package-lock.json").write_text("{}")
@@ -240,9 +249,9 @@ def test_ny_pi_arm_builds_its_stage_from_bench_nypi_src(tmp_path: Path) -> None:
         '{"claudeAiOauth":{"accessToken":"oauth-fake","expiresAt":99999999999999}}'
     )
     p = subprocess.run(
-        ["bash", str(BENCH / "arms/ny-pi")],
+        ["bash", str(BENCH / "arms/nycode-harness")],
         env={
-            "PATH": f"{fakebin}:/usr/bin:/bin", "BENCH_NYPI_SRC": str(src), "BENCH_STAGE": str(tmp_path / "stage"),
+            "PATH": f"{fakebin}:/usr/bin:/bin", "BENCH_NYCODE_HARNESS_SRC": str(src), "BENCH_STAGE": str(tmp_path / "stage"),
             "BENCH_REAL_HOME": str(rh), "BENCH_CC_CREDENTIALS": str(creds), "BENCH_OVERLAY_DIR": str(tmp_path),
         },
         capture_output=True, text=True, check=False,
@@ -254,8 +263,8 @@ def test_ny_pi_arm_builds_its_stage_from_bench_nypi_src(tmp_path: Path) -> None:
     assert (tmp_path / "stage/.ready").exists()
 
 
-def test_ny_pi_arm_runs_a_built_stage_without_the_tree(tmp_path: Path) -> None:
-    """BENCH_NYPI_SRC is needed to build the stage only; a stage marked .ready runs without it."""
+def test_nycode_harness_arm_runs_a_built_stage_without_the_tree(tmp_path: Path) -> None:
+    """BENCH_NYCODE_HARNESS_SRC is needed to build the stage only; a stage marked .ready runs without it."""
     stage = tmp_path / "stage"
     (stage / ".local/bin").mkdir(parents=True)
     script(stage / ".local/bin/pi", 'echo "ran:$*"')
@@ -265,7 +274,7 @@ def test_ny_pi_arm_runs_a_built_stage_without_the_tree(tmp_path: Path) -> None:
         '{"claudeAiOauth":{"accessToken":"oauth-fake","expiresAt":99999999999999}}'
     )
     p = subprocess.run(
-        ["bash", str(BENCH / "arms/ny-pi"), "-p", "x"],
+        ["bash", str(BENCH / "arms/nycode-harness"), "-p", "x"],
         env={"PATH": "/usr/bin:/bin", "BENCH_STAGE": str(stage), "BENCH_REAL_HOME": str(tmp_path), "BENCH_CC_CREDENTIALS": str(creds)},
         capture_output=True, text=True, check=False,
     )  # fmt: skip

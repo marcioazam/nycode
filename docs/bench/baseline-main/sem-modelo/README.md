@@ -3,7 +3,7 @@
 Contrato com a API falsa e falhas injetadas, do braço `nycode` e da referência `ny-pi`, medidos sem modelo nem provedor
 real (rodada final da D-40: mesmo `mcp.json` nos dois braços, commit do bench `d594d675753f`, 2026-11-21). Resultado:
 contrato 28 ok, 1 falha (`basicas/todo`, nos dois) e 4 pulados em cada braço; falhas injetadas 6 de 7 recuperadas e
-`malformed-sse` falha nos dois. Leitura caso a caso: [F10-paridade](../../../migration/ny-pi-core/evidencias/F10-paridade.md).
+`malformed-sse` falha nos dois. Leitura caso a caso: [F10-paridade](../../../migration/nycode-core/evidencias/F10-paridade.md).
 
 Este diretório **não** alimenta o `bench-pr`: o gate lê só `../runs.jsonl` e `../meta.json` (com modelo). Nada aqui
 substitui nem enfraquece essa base.

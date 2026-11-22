@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Arm ny-pi: the harness of THIS checkout (PR head or main) in a throwaway HOME, so a run never reads or
+# Arm nycode-harness: the harness of THIS checkout (PR head or main) in a throwaway HOME, so a run never reads or
 # patches the live ~/.pi. Stage = install.sh --link --apply from this tree + the owner's overlay
 # (settings.json, local.env, rules/personal.md) + a pristine pi-code npm tree (bin/pi patches it in place).
 # The pi release is symlinked read-only in practice (its core patch is already applied upstream of the stage).
 set -euo pipefail
 here=$(dirname "$(readlink -f "$0")")
-# The ny-pi tree (install.sh, bin/pi, npm/): BENCH_NYPI_SRC, a checkout or an extracted archive of the ny-pi
-# repository. It has no default: import/ny-pi lost install.sh and npm/ in F11 and never had bin/pi (F5). A stage that is
+# The nycode-harness tree (install.sh, bin/pi, npm/): BENCH_NYCODE_HARNESS_SRC, a checkout or an extracted archive of the nycode-harness
+# repository. It has no default: import/nycode-harness lost install.sh and npm/ in F11 and never had bin/pi (F5). A stage that is
 # already built runs without the tree when BENCH_STAGE names it. The default stage name uses the git commit of that
 # directory: without a .git there, set BENCH_STAGE.
-src=${BENCH_NYPI_SRC:-}
+src=${BENCH_NYCODE_HARNESS_SRC:-}
 repo=
 need_src() {
   [ -d "$src" ] || {
-    echo "bench: the ny-pi arm needs a ny-pi tree: set BENCH_NYPI_SRC to a ny-pi checkout (import/ny-pi has no install.sh or bin/pi and is no default)" >&2
+    echo "bench: the nycode-harness arm needs a nycode-harness tree: set BENCH_NYCODE_HARNESS_SRC to a nycode-harness checkout (import/nycode-harness has no install.sh or bin/pi and is no default)" >&2
     exit 2
   }
   repo=$(cd "$src" && pwd)
@@ -29,16 +29,16 @@ real=${BENCH_REAL_HOME:-$HOME}
 # 2026-11-15. Pinned to the real HOME, every tool resolves as it does outside the stage. Unused without mise.
 export MISE_CONFIG_DIR="${MISE_CONFIG_DIR:-$real/.config/mise}" MISE_DATA_DIR="${MISE_DATA_DIR:-$real/.local/share/mise}"
 export MISE_STATE_DIR="${MISE_STATE_DIR:-$real/.local/state/mise}" MISE_CACHE_DIR="${MISE_CACHE_DIR:-$real/.cache/mise}"
-stage=${BENCH_STAGE:-${BENCH_STAGE_ROOT:-$real/.cache/bench}/${BENCH_STAGE_PREFIX:-bench-nypi}-$(git -C "$repo" rev-parse --short=12 HEAD)$(git -C "$repo" diff --quiet HEAD || echo -dirty)}
+stage=${BENCH_STAGE:-${BENCH_STAGE_ROOT:-$real/.cache/bench}/${BENCH_STAGE_PREFIX:-bench-nycode-harness}-$(git -C "$repo" rev-parse --short=12 HEAD)$(git -C "$repo" diff --quiet HEAD || echo -dirty)}
 if [ ! -f "$stage/.ready" ]; then
   # Only a build needs the tree: a stage that is already built runs without it.
   need_src
   [ -f "$src/install.sh" ] && [ -f "$src/bin/pi" ] || {
-    echo "bench: ny-pi tree has no install.sh and bin/pi at $src; set BENCH_NYPI_SRC to a ny-pi checkout" >&2
+    echo "bench: nycode-harness tree has no install.sh and bin/pi at $src; set BENCH_NYCODE_HARNESS_SRC to a nycode-harness checkout" >&2
     exit 2
   }
   mkdir -p "$(dirname "$stage")"
-  # ny-pi-pi160 (D-25) sets BENCH_PI_VERSION=1.6.0 and needs a managed pi install of that version at
+  # nycode-harness-pi160 (D-25) sets BENCH_PI_VERSION=1.6.0 and needs a managed pi install of that version at
   # BENCH_PI_INSTALL_DIR; the owner's ~/.pi/agent/install is 1.5.2 and must not stand in for it.
   pi_install=${BENCH_PI_INSTALL_DIR:-$real/.pi/agent/install}
   if [ -n "${BENCH_PI_VERSION:-}" ] && [ "$(cat "$pi_install/current-version" 2>/dev/null)" != "$BENCH_PI_VERSION" ]; then

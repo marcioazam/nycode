@@ -4,7 +4,7 @@ Evaluation beyond pass rate, cost and speed, computed from transcripts a round a
 container. Spec: "Full evaluation" of the follow-up record, rows with layer L1.
 
 ```bash
-python3 bench/run.py metrics --rounds <round-dir>... [--focus ny-pi] [--json out.json]
+python3 bench/run.py metrics --rounds <round-dir>... [--focus nycode-harness] [--json out.json]
 ```
 
 Prints one Markdown table per dimension and arm, then a paired table: each `--focus` arm against every other arm,

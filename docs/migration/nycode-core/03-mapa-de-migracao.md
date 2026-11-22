@@ -24,8 +24,8 @@ Para regerar depois de um novo commit no ny-pi:
 
 ```bash
 git -C ~/source/ny-pi ls-tree -r --name-only origin/main \
-  | python3 docs/migration/ny-pi-core/anexos/gerar-mapa.py \
-  > docs/migration/ny-pi-core/anexos/E-mapa-arquivo-a-arquivo.tsv
+  | python3 docs/migration/nycode-core/anexos/gerar-mapa.py \
+  > docs/migration/nycode-core/anexos/E-mapa-arquivo-a-arquivo.tsv
 ```
 
 ### 2.1 Ações
@@ -339,7 +339,7 @@ Cada contagem do [anexo A](anexos/A-inventario-ny-pi.md) tem de fechar com o map
 A conferência é reexecutável:
 
 ```bash
-cut -f1,5 docs/migration/ny-pi-core/anexos/E-mapa-arquivo-a-arquivo.tsv \
+cut -f1,5 docs/migration/nycode-core/anexos/E-mapa-arquivo-a-arquivo.tsv \
   | awk -F'\t' 'NR>1 { split($1, p, "/"); k = (p[1]=="claude-home" ? p[1]"/"p[2] : p[1]); c[k]++ } END { for (k in c) print c[k], k }' \
   | sort -k2
 ```

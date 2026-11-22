@@ -1,6 +1,6 @@
 <!--
 Corpo do PR de sincronização com o upstream (`earendil-works/pi`): `gh pr create --body-file docs/fork/sync-pr-template.md`.
-Política e procedimento: docs/migration/ny-pi-core/08-sincronizacao-upstream.md. Método de fusão: merge (nunca squash
+Política e procedimento: docs/migration/nycode-core/08-sincronizacao-upstream.md. Método de fusão: merge (nunca squash
 nem rebase). Preencha todos os campos; campo sem valor medido leva "não medido" e o motivo. Título do PR:
 `chore(sync): upstream <U12>`.
 -->

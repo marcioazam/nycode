@@ -23,7 +23,7 @@ redirecionado para um servidor local falso (`fake_api.py`), que devolve um rotei
 
 | Braço | Diretório de agente no stage | Comandos, skills e agentes lidos de |
 |---|---|---|
-| `ny-pi` (e demais com `pi`) | `<stage>/.pi/agent` | o stage (`claude-home/`, extensões do `pi-code`) |
+| `nycode-harness` (e demais com `pi`) | `<stage>/.pi/agent` | o stage (`claude-home/`, extensões do `pi-code`) |
 | `nycode` | `<stage>/.nycode/agent` | o checkout: `packages/coding-agent/src/extensions` e `packages/coding-agent/resources` |
 
 - O mapa está em `LAYOUTS` (`check.py`). O braço `nycode` recebe `NYCODE_OFFLINE=1` (os demais, `PI_OFFLINE=1`); o
@@ -35,7 +35,7 @@ redirecionado para um servidor local falso (`fake_api.py`), que devolve um rotei
   servidor conectar; por isso o inventário tem a ferramenta `codemode` nos dois braços, com ou sem rede.
 - Os servidores `npx` sobem na partida do `pi`/`nycode`: sem rede eles só falham (o `pi -p` segue). Fora de um sandbox
   sem rede o `npx` baixa pacotes do npm; rode o verificador num sandbox de rede fechada quando isso importar.
-- Referência `ny-pi`: `import/ny-pi` não tem `bin/pi` (F5), `install.sh` nem `npm/` (F11). Aponte `BENCH_NYPI_SRC` para um checkout do ny-pi (ou um
+- Referência `nycode-harness`: `import/ny-pi` não tem `bin/pi` (F5), `install.sh` nem `npm/` (F11). Aponte `BENCH_NYCODE_HARNESS_SRC` para um checkout do ny-pi (ou um
   `git archive` extraído; sem `.git` ali, defina também `BENCH_STAGE`). Sem a variável o braço sai 2 com a causa.
 - Medição em rede fechada: monte o stage fora do sandbox (`BENCH_STAGE=<dir> bench/arms/<braço> --version`; o build
   precisa de npm) e rode o verificador dentro de um sandbox sem rede com o mesmo `BENCH_STAGE`. `BENCH_STAGE` que
@@ -45,8 +45,8 @@ redirecionado para um servidor local falso (`fake_api.py`), que devolve um rotei
 
 ```sh
 BENCH_CC_CREDENTIALS=<arquivo de credenciais> BENCH_REPO=x/y \
-  python3 bench/contract/check.py --arm ny-pi --json /tmp/contract.json
-python3 bench/contract/check.py --arm ny-pi --only regras
+  python3 bench/contract/check.py --arm nycode-harness --json /tmp/contract.json
+python3 bench/contract/check.py --arm nycode-harness --only regras
 ```
 
 - Exit `0`: contrato íntegro. Exit `1`: algum caso em `falha`. Exit `2`: ambiente indisponível (motivo no stderr).
@@ -85,11 +85,11 @@ python3 bench/contract/check.py --arm ny-pi --only regras
 Mede a sobrecarga do harness sem modelo e sem depender da API (o tempo de parede do gate varia com a API).
 Cada braço roda `pi -p` no servidor falso (resposta instantânea) com um roteiro fixo de 3 turnos: `bash`
 (`echo ok`), `read` de um arquivo pequeno do diretório de trabalho e texto final. Os braços se intercalam a cada
-repetição (ny-pi, pi-vanilla, ny-pi, ...), com relógio monotônico.
+repetição (nycode-harness, pi-vanilla, nycode-harness, ...), com relógio monotônico.
 
 ```sh
-python3 bench/contract/speed.py --arms ny-pi,pi-vanilla --reps 7 --json /tmp/speed.json
-python3 bench/contract/speed.py --arms ny-pi,pi-vanilla --reps 5 --cold
+python3 bench/contract/speed.py --arms nycode-harness,pi-vanilla --reps 7 --json /tmp/speed.json
+python3 bench/contract/speed.py --arms nycode-harness,pi-vanilla --reps 5 --cold
 ```
 
 - `boot_s`: início do processo até a 1ª requisição. `turn_gap_s`: mediana por execução do intervalo entre o fim

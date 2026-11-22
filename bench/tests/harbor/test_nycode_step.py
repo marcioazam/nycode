@@ -1,4 +1,4 @@
-"""Harbor step for the nycode arm (S2): agent flags, per-round bundle of the checkout stage, no fall-through to ny-pi."""
+"""Harbor step for the nycode arm (S2): agent flags, per-round bundle of the checkout stage, no fall-through to nycode-harness."""
 
 from pathlib import Path
 
@@ -34,7 +34,7 @@ def test_nycode_harbor_dir_is_bench_harbor_and_holds_the_agent() -> None:
     assert (rb.HARBOR_DIR / "bundle.sh").stat().st_mode & 0o111
 
 
-def test_harbor_dir_holds_the_ny_pi_agents_and_their_bundle_script() -> None:
+def test_harbor_dir_holds_the_nycode_harness_agents_and_their_bundle_script() -> None:
     for name in ("pi_harness_agent.py", "pi_vanilla_api_agent.py", "pi_bundle.sh"):
         assert (rb.HARBOR_DIR / name).is_file()
 
@@ -66,7 +66,9 @@ def test_nycode_step_bundles_the_stage_and_runs_the_nycode_agent(
     assert len(calls) == len(steps[0]["tasks"])  # one harbor run per task
     for argv, env in calls:
         assert "-a nycode_agent:NycodeAgent" in argv and "pi_harness_agent" not in argv
-        assert env == f"{bundle}|{hd}|tok|"  # the ny-pi bundle variable stays unset
+        assert (
+            env == f"{bundle}|{hd}|tok|"
+        )  # the nycode-harness bundle variable stays unset
 
 
 def test_nycode_step_refuses_without_stage(tmp_path: Path, monkeypatch: MP) -> None:

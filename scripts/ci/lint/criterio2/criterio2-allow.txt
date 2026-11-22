@@ -1,4 +1,4 @@
-# Exceptions to global acceptance criterion 2 (docs/migration/ny-pi-core/00-mega-plano.md, section 8).
+# Exceptions to global acceptance criterion 2 (docs/migration/nycode-core/00-mega-plano.md, section 8).
 # Format, one per line: glob | pattern[,pattern] | class | reason
 # The glob is fnmatch (`*` also crosses `/`): one line per file or directory, never `**`, never a leading wildcard.
 # Classes: produto-externo (text naming a product really measured or integrated), upstream (file we must not edit),

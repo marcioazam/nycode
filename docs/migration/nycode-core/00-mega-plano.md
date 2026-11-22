@@ -55,7 +55,7 @@ Detalhe completo: [01-inventario-origem.md](01-inventario-origem.md) e anexos [A
    junto. Peça opcional não entra no contexto do modelo por padrão.
 7. **Segurança da cadeia de suprimento não regride.** Actions por SHA, dependências exatas, `--ignore-scripts`,
    verificação de vazamento, publicação com atestação de proveniência (`actions/attest`, D-17).
-8. **Evidência registrada.** Cada fase fecha com um registro em `docs/migration/ny-pi-core/evidencias/` (comandos,
+8. **Evidência registrada.** Cada fase fecha com um registro em `docs/migration/nycode-core/evidencias/` (comandos,
    SHAs, saídas).
 
 ## 5. Arquitetura alvo em uma página

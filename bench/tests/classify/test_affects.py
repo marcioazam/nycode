@@ -1,5 +1,5 @@
 """bench-pr gate for the nycode monorepo: only PRs that change functional behavior spend a benchmark round (fail
-closed). Non-functional list: docs/migration/ny-pi-core/09 §3.2 (D-21)."""
+closed). Non-functional list: docs/migration/nycode-core/09 §3.2 (D-21)."""
 
 import json
 import subprocess
@@ -53,7 +53,7 @@ def test_non_functional(files: tuple[str, ...]) -> None:
         ("docs/a.md", "packages/coding-agent/src/core/x.ts"),
         ("packages/tui/src/a.ts",),
         ("packages/coding-agent/src/extensions/mcp/a.ts",),  # not a UI extension
-        # ny-pi listed these as UI; the nycode list is deliberately narrower (09 §3.2, D-21), so they fail closed
+        # nycode-harness listed these as UI; the nycode list is deliberately narrower (09 §3.2, D-21), so they fail closed
         ("packages/coding-agent/src/extensions/sound-notify/a.ts",),
         ("packages/coding-agent/src/extensions/dev-commands/a.ts",),
         ("packages/coding-agent/src/extensions/up-dequeue/a.ts",),

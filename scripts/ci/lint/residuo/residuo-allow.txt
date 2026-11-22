@@ -11,7 +11,7 @@ scripts/fork/* | * | ferramenta-fork | rename.py, its tests, post scripts and se
 scripts/ci/lint/criterio2/* | * | ferramenta-fork | the criterio2 gate lists the pi paths it bans and the migration it allows
 scripts/ci/lint/core_scope.py | import/ny-pi | transicao | the pieces still waiting in import/ny-pi (C-F12-05)
 scripts/ci/lint/test_core_scope.py | import/ny-pi | transicao | fixture tree that mirrors import/ny-pi
-scripts/ci/lint/test_gerar_mapa.py | * | ferramenta-fork | tests of the migration map generator (docs/migration/ny-pi-core)
+scripts/ci/lint/test_gerar_mapa.py | * | ferramenta-fork | tests of the migration map generator (docs/migration/nycode-core)
 
 # records written about the ny-harness origin, kept as written.
 docs/specs/* | * | migracao | specs 0001-0009 describe the port from the ny-harness, written before the rename
@@ -40,8 +40,6 @@ scripts/release-notes.mjs | earendil-works\)\\/pi-mono | upstream | legacy repos
 
 # references to the trees the migration keeps: the origin harness under import/ (C-F12-05) and the migration records.
 packages/coding-agent/* | import/ny-pi | transicao | tests and comments that port a piece still read from import/ny-pi
-packages/coding-agent/* | ny-pi-(core|arquivo) | migracao | pointers to the migration records
-scripts/* | ny-pi-(core|arquivo) | migracao | gate configs that name the migration records
 packages/coding-agent/* | (claude-home/)?docs/pi-[\w.-]+\.md | migracao | pointers to records written about the origin harness
 
 # packages, hosts and repositories owned by someone else, named as they are. The workspace names `@earendil-works/pi-<x>`

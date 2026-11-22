@@ -1,4 +1,4 @@
-// Resolution of the nycode settings keys (docs/migration/ny-pi-core/02-arquitetura-alvo.md section 5).
+// Resolution of the nycode settings keys (docs/migration/nycode-core/02-arquitetura-alvo.md section 5).
 // Precedence: environment variable, then settings.json, then default. A malformed value in either source is skipped,
 // never thrown: settings files are not schema-validated at load time.
 import { join } from "node:path";

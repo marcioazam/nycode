@@ -67,7 +67,7 @@ def test_parse_allow_reports_bad_lines(row: str, needle: str) -> None:
         "packages/tui/CHANGELOG.md",
         "README.md",
         "packages/coding-agent/src/migrations/from-pi-plan.ts",
-        "docs/migration/ny-pi-core/00.md",
+        "docs/migration/nycode-core/00.md",
         "docs/harness/pi-x.md",
         "docs/fork/a.md",
         "import/ny-pi/x.sh",

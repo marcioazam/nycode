@@ -221,7 +221,7 @@ D-31, para nomear a referência do benchmark:
 - `CHANGELOG.md` dos pacotes: histórico imutável (`AGENTS.md`, seção Changelog).
 - `docs/fork` e `docs/migration`: registro do fork e da migração.
 - `nycode migrate from-pi` (`src/migrations/from-pi*`): lê a configuração antiga do usuário (D-09).
-- `docs/harness/`: cópia de `claude-home/docs` do ny-pi, trazida por outro PR (D-31 b); `docs/migration/ny-pi-arquivo` já
+- `docs/harness/`: cópia de `claude-home/docs` do ny-pi, trazida por outro PR (D-31 b); `docs/migration/nycode-arquivo` já
   cabe em `docs/migration`.
 - `README.md`: "Pi Vanilla" (pi 1.5.2 sem harness) só nas seções de proposta e de benchmark, para dizer contra o que
   os números foram medidos; o nome ny-pi onde o README explica de onde vem o harness e os números (D-31 a). O gate

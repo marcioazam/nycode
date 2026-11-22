@@ -110,7 +110,7 @@ Já existe no ny-pi, sem modelo e sem rede: `bench/contract/check.py`, `contract
 Roda o `pi -p` do braço num estágio descartável contra uma API Anthropic falsa que responde por roteiro e captura cada
 corpo de requisição (nunca os cabeçalhos). Verificações atuais: inventário de ferramentas e tamanho do system, regras
 (`plan_mode_complete` e `question` fora de `-p`), ferramentas básicas (`read`, `write`, `edit`, `bash`, `todo`), plano,
-comandos (`/goal`, `/plan`, `/subagents`), skills e MCP. Uso: `python3 bench/contract/check.py --arm ny-pi [--only
+comandos (`/goal`, `/plan`, `/subagents`), skills e MCP. Uso: `python3 bench/contract/check.py --arm nycode-harness [--only
 regras] [--json]`; exit 0 íntegro, 1 falha, 2 ambiente indisponível; `BENCH_STAGE` reaproveita um estágio.
 
 Para a paridade, três saídas do replay são o contrato (comparadas entre o braço de referência e o `nycode`):
@@ -163,12 +163,12 @@ funcional (tier `pr`), nightly e F10 (tier `full`), e o re-teste vanilla (tier `
 |---|---|---|---|
 | `cc-vanilla` | `run.py` | claude-code 2.1.323 | binário `arms/claude-vanilla`, esforço médio |
 | `pi-vanilla` | `run_pi.py` | pi 1.5.2 | `arms/pi-vanilla`: `PI_CODING_AGENT_DIR` vazio, `--thinking medium` |
-| `ny-pi` | `run_pi.py` | pi 1.5.2 + pi-code 1.7.0 + este checkout | `arms/ny-pi`: estágio com `HOME` descartável |
+| `nycode-harness` | `run_pi.py` | pi 1.5.2 + pi-code 1.7.0 + este checkout | `arms/nycode-harness`: estágio com `HOME` descartável |
 | `omp` | `run_pi.py` | omp 18.20.0 | **não migra** (D-26) |
 
-### 2.1 Como o braço `ny-pi` instala hoje
+### 2.1 Como o braço `nycode-harness` instala hoje
 
-`bench/arms/ny-pi` monta um estágio em `${BENCH_STAGE_ROOT:-~/.cache/bench}/bench-nypi-<sha12>[-dirty]`:
+`bench/arms/nycode-harness` monta um estágio em `${BENCH_STAGE_ROOT:-~/.cache/bench}/bench-nycode-harness-<sha12>[-dirty]`:
 
 1. `ln -s` de `~/.pi/agent/install` e `~/.pi/agent/bin` do dono para o estágio.
 2. `npm ci --ignore-scripts` de `npm/package.json` e `package-lock.json` do checkout (pi-code "limpo", nunca a cópia
@@ -249,16 +249,16 @@ instala `~/.pi/agent` e o wrapper a partir de um `bundle.sh`. O do `nycode` é o
 ### 2.3 Braço temporário `ny-pi@1.6.0` (D-25)
 
 D-25: antes de migrar código, medir o ny-pi **por fora** sobre o pi 1.6.0 para separar o efeito da base do efeito da
-migração. É o mesmo `bench/arms/ny-pi` com a versão do `pi` trocada; `arm_version` passa de `1.5.2` para `1.6.0`.
+migração. É o mesmo `bench/arms/nycode-harness` com a versão do `pi` trocada; `arm_version` passa de `1.5.2` para `1.6.0`.
 Entradas, todas **propostas**:
 
-- A origem do pi 1.6.0 no estágio (o `arms/ny-pi` aponta o `~/.pi/agent/install` do dono, que hoje é 1.5.2).
+- A origem do pi 1.6.0 no estágio (o `arms/nycode-harness` aponta o `~/.pi/agent/install` do dono, que hoje é 1.5.2).
 - O `meta.json` da rodada leva `arm: ny-pi`, `arm_version: 1.6.0`; o nome do diretório da rodada distingue (por
   exemplo `ny-pi-1.6.0`), para não ser confundido com a baseline guardada em `docs/bench/baseline-main/`.
 - O braço some quando F10 fecha; `docs/bench/baseline-main/` passa a ser do braço `nycode`.
 
-**Implementado em F3** (`ny-pi-pi160` em `bench/arms.toml`): o mesmo `bin` `arms/ny-pi`, com `BENCH_PI_VERSION=1.6.0` (tabela
-`env`) e estágio próprio `bench-nypi160-<sha12>`; o `meta.json` leva `arm: ny-pi-pi160`. O script se recusa a montar o estágio
+**Implementado em F3** (`nycode-harness-pi160` em `bench/arms.toml`): o mesmo `bin` `arms/nycode-harness`, com `BENCH_PI_VERSION=1.6.0` (tabela
+`env`) e estágio próprio `bench-nycode-harness160-<sha12>`; o `meta.json` leva `arm: nycode-harness-pi160`. O script se recusa a montar o estágio
 se o `current-version` de `BENCH_PI_INSTALL_DIR` (padrão `~/.pi/agent/install`) não for 1.6.0. Falta, para a rodada real,
 uma instalação gerenciada do pi 1.6.0 (ver o relatório da unidade). A simulação sem custo roda; a rodada não foi feita.
 
@@ -312,7 +312,7 @@ Units (`bench/tools/systemd/`): `bench-pr.timer` (`OnBootSec=2min`, `OnUnitActiv
 `BUDGET` 12 e `EXT_BUDGET` 6; trava `flock` em `$STATE/lock`; repositório bare em `$STATE/repo`; árvore descartável do
 head do PR; status `pending`, depois `success`, `failure` ou `error` por `bench/run.py post-status`; falha fechada.
 Só entram PRs abertos do mesmo repositório e do dono, e heads sem `bench-pr` final (RUNBOOK, "Fluxo do PR"). Muda para
-o nycode: `BENCH_REPO`, `--arm nycode` no lugar de `--arm ny-pi` e a ordem de gatilho de 07 (seção 2.4, proposta).
+o nycode: `BENCH_REPO`, `--arm nycode` no lugar de `--arm nycode-harness` e a ordem de gatilho de 07 (seção 2.4, proposta).
 
 **D-21** (`bench-pr` em mudança não funcional): o verificador publica `success` com a descrição "não funcional, sem
 rodada". A classificação é `bench/classify/affects.py`, que falha fechada (qualquer caminho não provado não funcional
