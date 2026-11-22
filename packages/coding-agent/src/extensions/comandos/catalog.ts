@@ -1,11 +1,26 @@
 /** Catálogo pt-BR: comandos (grupo, descrição, aliases, tecla) e ações de tecla (rótulo, contexto, origem). Só dados e consultas puras. */
 
-import { CLAUDE_KEYBINDINGS } from '../claude-compat/shortcuts.ts'
+import { CLAUDE_KEYBINDINGS } from "../claude-compat/shortcuts.ts";
 
-export const GROUPS = ['Conversa', 'Modelo e raciocínio', 'Sessão', 'Plano e tarefas', 'Agentes', 'Arquivos e Git', 'Configuração', 'Ajuda'] as const
-export type Group = (typeof GROUPS)[number] | 'Outros'
+export const GROUPS = [
+	"Conversa",
+	"Modelo e raciocínio",
+	"Sessão",
+	"Plano e tarefas",
+	"Agentes",
+	"Arquivos e Git",
+	"Configuração",
+	"Ajuda",
+] as const;
+export type Group = (typeof GROUPS)[number] | "Outros";
 
-export interface Cmd { name: string; group: Group; desc: string; aliases?: string[]; act?: string }
+export interface Cmd {
+	name: string;
+	group: Group;
+	desc: string;
+	aliases?: string[];
+	act?: string;
+}
 
 // Compacto: grupo | nome | aliases (espaço) | tecla (id de ação) | descrição. `act` é resolvido para a tecla efetiva na paleta.
 const RAW = `
@@ -23,6 +38,9 @@ Conversa|stop|||Interrompe o agente; com "agents", cancela também os subagentes
 Conversa|transcript|||Abre a transcrição rolável da conversa
 Conversa|focus|||Alterna o modo foco: último prompt, resumo e resposta final
 Conversa|recap|||Resume os últimos pedidos da sessão
+Configuração|docs-pointer|||Aponta os docs do nycode no prompt do sistema: completo, compacto ou automático
+Configuração|llama|||Gerencia os modelos do roteador llama.cpp
+Configuração|ponytail|||Muda o modo do ponytail e mostra o estado
 Modelo e raciocínio|model||app.model.select|Escolhe o modelo
 Modelo e raciocínio|thinking||app.thinking.cycle|Define o nível de raciocínio
 Modelo e raciocínio|claude-effort|||Define o esforço de raciocínio da sessão
@@ -42,7 +60,7 @@ Sessão|import|||Importa uma sessão .jsonl
 Sessão|share|||Compartilha a sessão (artefato ou gist)
 Sessão|puxar|||Importa sessão de um perfil do Claude Code
 Sessão|heapdump|||Grava um heap snapshot local, após confirmação
-Sessão|quit||app.exit|Sai do pi
+Sessão|quit||app.exit|Sai do nycode
 Plano e tarefas|plan||ext.plan|Entra no modo plano
 Plano e tarefas|todos|||Mostra as tarefas do ramo
 Plano e tarefas|plan-todos|||Mostra as tarefas do plano
@@ -74,11 +92,10 @@ Configuração|hooks|||Mostra os hooks configurados
 Configuração|mcp|||Mostra servidores MCP e suas ferramentas
 Configuração|skills|||Lista as skills carregadas
 Configuração|skill-doctor|||Valida o frontmatter e as duplicatas das skills
-Configuração|pi-docs|||Docs do pi no prompt: on, off ou auto
 Configuração|reload|||Recarrega atalhos, extensões, skills e temas
 Configuração|painel|||Visão geral do que está ligado
 Configuração|avisos|||Avisos e notificações do harness
-Configuração|diagnostico|||Erros, avisos e eventos do pi nesta sessão
+Configuração|diagnostico|||Erros, avisos e eventos do nycode nesta sessão
 Configuração|doctor|||Verifica a saúde do harness
 Configuração|keybindings|||Edita keybindings.json direto (avançado)
 Ajuda|atalhos|hotkeys|ext.atalhos|Ver, buscar e mudar atalhos
@@ -87,70 +104,123 @@ Ajuda|claude-help|||Mapa de comandos do Claude Code e seus limites
 Ajuda|changelog|||Mostra as novidades da versão
 Ajuda|upgrade|||Abre a página de upgrade do plano Claude
 Ajuda|stickers|||Mostra o status dos pacotes de stickers
-Ajuda|bug|||Reporta um bug aos desenvolvedores do Pi`
+Ajuda|bug|||Reporta um bug aos desenvolvedores do nycode`;
 
-export const COMMANDS: Cmd[] = RAW.trim().split('\n').map((l) => {
-  const [group, name, aliases, act, desc] = l.split('|')
-  return { name: name!, group: group as Group, desc: desc!, ...(aliases ? { aliases: aliases.split(' ') } : {}), ...(act ? { act } : {}) }
-})
+export const COMMANDS: Cmd[] = RAW.trim()
+	.split("\n")
+	.map((l) => {
+		const [group, name, aliases, act, desc] = l.split("|");
+		return {
+			name: name!,
+			group: group as Group,
+			desc: desc!,
+			...(aliases ? { aliases: aliases.split(" ") } : {}),
+			...(act ? { act } : {}),
+		};
+	});
 
 /** Entrada pelo nome ou alias; `viaAlias` quando o nome dado é um alias. Desconhecido (skill, prompt, MCP) → undefined. */
 export function findCommand(name: string): { cmd: Cmd; viaAlias: boolean } | undefined {
-  for (const cmd of COMMANDS) {
-    if (cmd.name === name) return { cmd, viaAlias: false }
-    if (cmd.aliases?.includes(name)) return { cmd, viaAlias: true }
-  }
-  return undefined
+	for (const cmd of COMMANDS) {
+		if (cmd.name === name) return { cmd, viaAlias: false };
+		if (cmd.aliases?.includes(name)) return { cmd, viaAlias: true };
+	}
+	return undefined;
 }
 
-export type Context = 'editor' | 'sessões' | 'modelos' | 'árvore' | 'seletores' | 'tela cheia' | 'subagentes'
+export type Context = "editor" | "sessões" | "modelos" | "árvore" | "seletores" | "tela cheia" | "subagentes";
 export const CONTEXTS: Record<Context, string> = {
-  editor: 'Editor e atalhos globais', sessões: 'Lista de sessões', modelos: 'Seletor de modelos',
-  árvore: 'Árvore da sessão', seletores: 'Menus e seletores', 'tela cheia': 'Tela cheia',
-  subagentes: 'Painel de subagentes',
-}
+	editor: "Editor e atalhos globais",
+	sessões: "Lista de sessões",
+	modelos: "Seletor de modelos",
+	árvore: "Árvore da sessão",
+	seletores: "Menus e seletores",
+	"tela cheia": "Tela cheia",
+	subagentes: "Painel de subagentes",
+};
 
-const SESSION_LIST = new Set(['toggleNamedFilter', 'togglePath', 'toggleSort', 'rename', 'delete', 'deleteNoninvasive'])
+const SESSION_LIST = new Set([
+	"toggleNamedFilter",
+	"togglePath",
+	"toggleSort",
+	"rename",
+	"delete",
+	"deleteNoninvasive",
+]);
 /** Contexto em que a tecla vale; global e editor dividem o mesmo (ações globais rodam no editor). */
 export function contextOf(id: string): Context {
-  if (id.startsWith('app.tree.')) return 'árvore'
-  if (id.startsWith('app.models.')) return 'modelos'
-  if (id.startsWith('app.session.') && SESSION_LIST.has(id.slice('app.session.'.length))) return 'sessões'
-  if (id.startsWith('tui.select.')) return 'seletores'
-  if (id.startsWith('tui.altScreen.')) return 'tela cheia'
-  return 'editor'
+	if (id.startsWith("app.tree.")) return "árvore";
+	if (id.startsWith("app.models.")) return "modelos";
+	if (id.startsWith("app.session.") && SESSION_LIST.has(id.slice("app.session.".length))) return "sessões";
+	if (id.startsWith("tui.select.")) return "seletores";
+	if (id.startsWith("tui.altScreen.")) return "tela cheia";
+	return "editor";
 }
 
 /** Ação de extensão (sem API pública de listagem): o harness declara as teclas que ele mesmo trata. */
-export interface ExtAction { id: string; contexto?: Context; label: string; keys: string[]; origin: 'extensão' | 'harness'; intentional?: boolean; unless?: string }
-// `unless`: o editor só trata a tecla quando a ação nativa do pi não a tem (ui/editor.ts handleInput); então some do catálogo, do painel e dos conflitos.
+export interface ExtAction {
+	id: string;
+	contexto?: Context;
+	label: string;
+	keys: string[];
+	origin: "extensão" | "harness";
+	intentional?: boolean;
+	unless?: string;
+}
+// `unless`: o editor só trata a tecla quando a ação nativa do nycode não a tem (ui/editor.ts handleInput); então some do catálogo, do painel e dos conflitos.
 export const EXT_ACTIONS: ExtAction[] = [
-  { id: 'ext.stash', label: 'Guardar e devolver o rascunho', keys: ['ctrl+s'], origin: 'harness' },
-  { id: 'ext.history', label: 'Histórico de prompts', keys: ['ctrl+r'], origin: 'harness' },
-  { id: 'ext.redraw', label: 'Redesenhar a tela', keys: ['ctrl+l'], origin: 'harness', unless: 'app.model.select' },
-  { id: 'ext.tasks', label: 'Lista de tarefas', keys: ['ctrl+t'], origin: 'harness', unless: 'app.thinking.toggle' },
-  { id: 'ext.up', label: 'Linha ou histórico anterior', keys: ['ctrl+p'], origin: 'harness', unless: 'app.model.cycleForward' },
-  { id: 'ext.down', label: 'Linha ou histórico seguinte', keys: ['ctrl+n'], origin: 'harness', intentional: true },
-  { id: 'ext.interrupt', label: 'Interromper com o agente ocupado', keys: ['ctrl+c'], origin: 'harness', intentional: true },
-  { id: 'ext.sendnow', label: 'Enviar agora (Ctrl+X Ctrl+S)', keys: ['ctrl+enter'], origin: 'harness' },
-  { id: 'ext.sendprefix', label: 'Prefixo de “enviar agora”', keys: ['ctrl+x'], origin: 'harness', intentional: true },
-  { id: 'ext.dropqueue', label: 'Excluir última da fila', keys: ['shift+backspace'], origin: 'harness' },
-  { id: 'ext.fleet', label: 'Subagente para segundo plano', keys: ['ctrl+b'], origin: 'extensão', contexto: 'subagentes' }, // pi-code fleet-ui/panel.ts: só consome com subagente em primeiro plano
-  { id: 'ext.plan', label: 'Modo plano', keys: ['ctrl+shift+p'], origin: 'extensão' },
-  { id: 'ext.bypass', label: 'Bypass de permissões', keys: ['ctrl+shift+b'], origin: 'harness' },
-  { id: 'ext.atalhos', label: 'Painel de atalhos (editor vazio)', keys: ['?'], origin: 'harness' },
-  { id: 'ext.transcript', label: 'Transcrição da conversa', keys: ['ctrl+o'], origin: 'harness', unless: 'app.tools.expand' }, // claude-compat/interface/transcript.ts
-  { id: 'ext.diagnostico', label: 'Diagnóstico: erros e avisos', keys: ['ctrl+e'], origin: 'harness' }, // diagnostico/index.ts (ATALHO)
-]
+	{ id: "ext.stash", label: "Guardar e devolver o rascunho", keys: ["ctrl+s"], origin: "harness" },
+	{ id: "ext.history", label: "Histórico de prompts", keys: ["ctrl+r"], origin: "harness" },
+	{ id: "ext.redraw", label: "Redesenhar a tela", keys: ["ctrl+l"], origin: "harness", unless: "app.model.select" },
+	{ id: "ext.tasks", label: "Lista de tarefas", keys: ["ctrl+t"], origin: "harness", unless: "app.thinking.toggle" },
+	{
+		id: "ext.up",
+		label: "Linha ou histórico anterior",
+		keys: ["ctrl+p"],
+		origin: "harness",
+		unless: "app.model.cycleForward",
+	},
+	{ id: "ext.down", label: "Linha ou histórico seguinte", keys: ["ctrl+n"], origin: "harness", intentional: true },
+	{
+		id: "ext.interrupt",
+		label: "Interromper com o agente ocupado",
+		keys: ["ctrl+c"],
+		origin: "harness",
+		intentional: true,
+	},
+	{ id: "ext.sendnow", label: "Enviar agora (Ctrl+X Ctrl+S)", keys: ["ctrl+enter"], origin: "harness" },
+	{ id: "ext.sendprefix", label: "Prefixo de “enviar agora”", keys: ["ctrl+x"], origin: "harness", intentional: true },
+	{ id: "ext.dropqueue", label: "Excluir última da fila", keys: ["shift+backspace"], origin: "harness" },
+	{
+		id: "ext.fleet",
+		label: "Subagente para segundo plano",
+		keys: ["ctrl+b"],
+		origin: "extensão",
+		contexto: "subagentes",
+	}, // nycode fleet-ui/panel.ts: só consome com subagente em primeiro plano
+	{ id: "ext.plan", label: "Modo plano", keys: ["ctrl+shift+p"], origin: "extensão" },
+	{ id: "ext.bypass", label: "Bypass de permissões", keys: ["ctrl+shift+b"], origin: "harness" },
+	{ id: "ext.atalhos", label: "Painel de atalhos (editor vazio)", keys: ["?"], origin: "harness" },
+	{
+		id: "ext.transcript",
+		label: "Transcrição da conversa",
+		keys: ["ctrl+o"],
+		origin: "harness",
+		unless: "app.tools.expand",
+	}, // claude-compat/interface/transcript.ts
+	{ id: "ext.diagnostico", label: "Diagnóstico: erros e avisos", keys: ["ctrl+e"], origin: "harness" }, // diagnostico/index.ts (ATALHO)
+];
 
-/** Alt de paridade com o Claude Code (decisão do dono, 2026-11-14): vale como “intencional”, não ⚠. */
+/** Alt de paridade com o Claude Code (decisão do dono, 2026-11-14): vale como “intencional”, não !. */
 // Alt intencional = o que a paridade Claude Code grava (fonte única: claude-compat/shortcuts.ts).
 export const PARIDADE_ALT: Record<string, string[]> = Object.fromEntries(
-  Object.entries(CLAUDE_KEYBINDINGS).map(([id, v]) => [id, [v].flat().filter((k) => /(^|\+)alt(\+|$)/.test(k))]).filter(([, ks]) => ks.length),
-)
+	Object.entries(CLAUDE_KEYBINDINGS)
+		.map(([id, v]) => [id, [v].flat().filter((k) => /(^|\+)alt(\+|$)/.test(k))])
+		.filter(([, ks]) => ks.length),
+);
 
-// Pares que o próprio pi desenhou com a mesma tecla (a ação vale conforme o estado): não são conflito.
-export const NATIVOS_DUPLOS: string[][] = [['app.exit', 'tui.editor.deleteCharForward']]
+// Pares que o próprio nycode desenhou com a mesma tecla (a ação vale conforme o estado): não são conflito.
+export const NATIVOS_DUPLOS: string[][] = [["app.exit", "tui.editor.deleteCharForward"]];
 
 const LABELS = `
 tui.editor.cursorUp|Cursor para cima
@@ -242,9 +312,13 @@ app.models.enableAll|Modelos: ativar todos
 app.models.clearAll|Modelos: limpar todos
 app.models.toggleProvider|Modelos: alternar o provedor
 app.models.reorderUp|Modelos: mover para cima
-app.models.reorderDown|Modelos: mover para baixo`
+app.models.reorderDown|Modelos: mover para baixo`;
 
 export const ACTION_LABELS: Record<string, string> = {
-  ...Object.fromEntries(LABELS.trim().split('\n').map((l) => l.split('|') as [string, string])),
-  ...Object.fromEntries(EXT_ACTIONS.map((a) => [a.id, a.label])),
-}
+	...Object.fromEntries(
+		LABELS.trim()
+			.split("\n")
+			.map((l) => l.split("|") as [string, string]),
+	),
+	...Object.fromEntries(EXT_ACTIONS.map((a) => [a.id, a.label])),
+};
