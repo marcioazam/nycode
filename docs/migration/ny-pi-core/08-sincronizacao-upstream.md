@@ -405,7 +405,8 @@ git log --oneline "origin/main..$U" | wc -l      # tamanho do atraso: commits pe
 git push origin "$U:refs/heads/upstream/main"
 
 # 4. Gerar a imagem renomeada (R tem pais R_prev e U; ver seção 4.3)
-PREV=$(git log --first-parent --merges -1 --grep='^chore(sync): ' --format='%H^2' origin/main | xargs git rev-parse)
+# R_prev = a imagem mais recente na main. O `^2` do merge do PR é a ponta do ramo de sync, não a imagem (medido na 2ª sync)
+PREV=$(git log -1 --format=%H --grep='^chore(sync): rename image of upstream ' origin/main)
 scripts/fork/image.sh --upstream "$U" --prev "$PREV" --branch "upstream-renamed/$S"
 git rev-parse "upstream-renamed/$S^1" "upstream-renamed/$S^2"   # confere os 2 pais
 
