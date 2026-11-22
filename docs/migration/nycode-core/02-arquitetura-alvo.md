@@ -127,6 +127,7 @@ ganha a atribuição e o commit de origem.
 | `dev-commands` | `extensions/dev-commands/` | N2 | `/copy-code`, `/keybindings` | F7 |
 | `effort-sandwich` | `extensions/effort-sandwich/` | N2 | Opcional, desligada | F7 |
 | `folha` | `~/.pi/agent/extensions/folha/` (camada local) | N2 | Confirmações seguras em português, saídas `/context /memory /agents /hooks` em folha e `/painel`; depende de `ui/a11y.ts` (`movimento`) (D-56) | F12 |
+| `travar-modelos` | `~/.pi/agent/extensions/travar-modelos/` (camada local) | N2 | `/travar-modelos`: obriga a sessão a usar só os modelos e esforços escolhidos; separada do roteamento de subagentes (só reaproveita o seletor `subagent/routing/setup-ui.ts`) (D-56) | F12 |
 | `claude-compat` (base) | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`) | N2 | Só a base de que `ui/editor.ts` depende; biblioteca sem fábrica, ainda não registrada (D-56, parte 1 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
@@ -203,6 +204,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_SOUND_NOTIFY` | `notify.sound` | `NYCODE_SOUND_NOTIFY` | ligado (o nycode-harness só desligava com `PI_SOUND_NOTIFY=0`) |
 | `PI_UI_STATE`, `PI_REDUCED_MOTION`, `PI_NERD_FONT`, `PI_ASCII_ICONS` | `terminal.{uiState,reducedMotion,nerdFont,asciiIcons}` | `NYCODE_*` iguais | conforme o nycode-harness |
 | `PI_FOLHA` | — (desliga a extensão `folha`) | `NYCODE_FOLHA` | ligado (`0` desliga; D-56) |
+| `PI_MODEL_LOCK` | — (a trava vive no ambiente do processo e dos filhos) | `NYCODE_MODEL_LOCK` | vazio, sem trava (D-56) |
 | `PI_PERMISSION_MODE`, `PI_BYPASS_ELIGIBLE`, `PI_BYPASS_OPTIN` | — (estado do controlador de modos de permissão da extensão `claude-compat`) | `NYCODE_PERMISSION_MODE`, `NYCODE_BYPASS_ELIGIBLE`, `NYCODE_BYPASS_OPTIN` | vazio (D-56) |
 | `NO_COLOR`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | — | `NO_COLOR` (padrão externo), `NYCODE_DISABLE_TERMINAL_TITLE` | — |
 | `PI_KNOWLEDGE_VAULT`, `PI_GRAPHS_VAULT` | `knowledge.vault`, `knowledge.graphsVault` | `NYCODE_KNOWLEDGE_VAULT`, `NYCODE_GRAPHS_VAULT` | vazio |
