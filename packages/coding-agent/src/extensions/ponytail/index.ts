@@ -61,6 +61,7 @@ export function childMode(options: {
 	const name = subagentName(options.argv);
 	if (name === null) return mode;
 	try {
+		// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- PONYTAIL_SUBAGENT_MATCHER is a regex by contract from the user's own environment or settings, tested against a short agent name
 		return new RegExp(options.matcher, "i").test(name) ? mode : "off";
 	} catch {
 		return mode;
