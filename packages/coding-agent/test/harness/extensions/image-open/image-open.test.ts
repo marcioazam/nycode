@@ -149,10 +149,13 @@ test("segurança 12: diretório recusado não derruba o clique nem abre nada", a
 
 // Nativo: o nycode construído (dist/bundle) em tmux (env -i, CLI direto, provedor falso 127.0.0.1 sem requests, fullscreen). Prova que o Image da extensão
 // é o mesmo do bundle e que o clique SGR no transcript chega ao handleMouse.
-// Waits up to 70 s; the CI terminal may render the image as the text fallback (pending): two retries meanwhile.
+// The row is found by the fixture's own text: the footer shows the cwd, whose path (`.../nycode-image-open-.../work`) also
+// contains "image", and a frame drawn before the message made the click land on the footer.
+// The child runs under `env -i` (TERM=xterm-256color, no KITTY_*/TERM_PROGRAM), so the image always renders as its text
+// fallback line; that line is what the click targets. Budget: up to 40 s to settle, 30 s for the opener, plus startup.
 test(
 	"nativo: clique SGR na imagem do transcript abre o arquivo no abridor falso, 0 requests",
-	{ timeout: 120_000, retry: 2 },
+	{ timeout: 100_000 },
 	async () => {
 		assert.equal(spawnSync("tmux", ["-V"]).status, 0, "tmux é necessário (blocked, não skip)");
 		const cli =
@@ -184,6 +187,10 @@ test(
 			JSON.stringify({ theme: "tokyo-night", tuiMode: "fullscreen", packages: [], quietStartup: true }),
 		);
 		const f = fakeOpener("native");
+		const tracePath = path.join(dir, "trace.log");
+		const clicks: string[] = [];
+		const trace = () =>
+			`--- terminal trace (child)\n${existsSync(tracePath) ? readFileSync(tracePath, "utf8") : "(none)"}--- clicks sent by the test\n${clicks.join("\n")}\n--- pane\n${pane()}`;
 		const S = `nycodeimg-${process.pid}`;
 		const ext = fileURLToPath(new URL("../../../../src/extensions/image-open/index.ts", import.meta.url));
 		const fixture = fileURLToPath(new URL("./native-fixture.ts", import.meta.url));
@@ -196,14 +203,14 @@ test(
 			"120",
 			"-y",
 			"40",
-			`cd ${dir}/work && env -i PATH=${process.env.PATH} TERM=xterm-256color LANG=C.UTF-8 HOME=${dir}/home NYCODE_CODING_AGENT_DIR=${dir}/agent NYCODE_OFFLINE=1 NYCODE_IMAGE_OPENER=${f.bin} ${process.execPath} ${cli} --no-extensions --no-context-files --no-skills --no-prompt-templates --no-session -e ${ext} -e ${fixture} --model fake/m1; sleep 20`,
+			`cd ${dir}/work && env -i PATH=${process.env.PATH} TERM=xterm-256color LANG=C.UTF-8 HOME=${dir}/home NYCODE_CODING_AGENT_DIR=${dir}/agent NYCODE_OFFLINE=1 NYCODE_IMAGE_OPENER=${f.bin} NYCODE_IMGFIX_TRACE=${tracePath} ${process.execPath} ${cli} --no-extensions --no-context-files --no-skills --no-prompt-templates --no-session -e ${ext} -e ${fixture} --model fake/m1; sleep 20`,
 		]);
 		const pane = () => spawnSync("tmux", ["capture-pane", "-p", "-t", S], { encoding: "utf8" }).stdout;
 		try {
 			const imageRow = () =>
 				pane()
 					.split("\n")
-					.findIndex((l) => /image/i.test(l));
+					.findIndex((l) => l.includes("[Image: fixture.png"));
 			// The click only counts once the app has switched mouse reporting on; the image row is read right before it.
 			const mouseOn = () =>
 				spawnSync("tmux", ["display-message", "-p", "-t", S, "#{mouse_any_flag}"], {
@@ -211,13 +218,14 @@ test(
 				}).stdout.trim() === "1";
 			await wait(() => imageRow() >= 0 && mouseOn(), 40000);
 			const row = imageRow();
-			assert.ok(row >= 0, `sem linha de imagem\n${pane()}`);
-			assert.ok(mouseOn(), `o app não ligou o mouse\n${pane()}`);
+			assert.ok(row >= 0, `sem linha de imagem\n${trace()}`);
+			assert.ok(mouseOn(), `o app não ligou o mouse\n${trace()}`);
 			const lit = (t: string) => spawnSync("tmux", ["send-keys", "-t", S, "-l", "--", t]);
+			clicks.push(`${Date.now()} press+release at row ${row + 1}, column 6`);
 			lit(`\x1b[<0;6;${row + 1}M`);
 			lit(`\x1b[<0;6;${row + 1}m`);
 			await wait(() => existsSync(f.copy) && f.got().length >= 1, 30000);
-			assert.equal(f.got().length, 1, pane());
+			assert.equal(f.got().length, 1, trace());
 			assert.deepEqual(readFileSync(f.copy), Buffer.from(PNG, "base64"));
 			assert.deepEqual(requests, []);
 		} finally {
