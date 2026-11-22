@@ -91,7 +91,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F5-21 a C-F5-22 `status-line` e `run`, que entram em F6 depois de `subagent` (D-34); fecharam no #249
   ([F6](evidencias/F6.md)).
 - [x] C-F5-23 Pendência P-3 fechada: `npm run check` sem erro de tipo contra a `ExtensionAPI` da 1.6.0.
-- [x] C-F5-24 `web` nasce desligada; `web_search` ausente da lista de ferramentas numa sessão nova.
+- [x] C-F5-24 ~~`web` nasce desligada;~~ (**superada por D-52**: `web` nasce ligada, com `web_fetch`) `web_search` ausente da lista de ferramentas numa sessão nova.
 - [x] C-F5-25 Testes de patch portados verdes: `notify-focus`, `rewind-tree`, `statusline-multiline`, `todo-collapse`, `statusline-provider` (os dois `statusline-*` com `status-line`, em F6,
   D-34; #249: 8/9 e 4/4, o caso do rodapé entra com `footer-no-stats` em F7).
 - [x] C-F5-26 `mcp/` e `version-floor.ts` do pi-code não entram; `internal` sem arquivo órfão (falta o consumidor de

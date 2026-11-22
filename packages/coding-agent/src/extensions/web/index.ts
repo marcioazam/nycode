@@ -1,8 +1,8 @@
 /**
  * Web Extension
  *
- * Key-free web access: web_search scrapes the DuckDuckGo HTML endpoint (no
- * API key, no account) and web_fetch retrieves a URL as readable text.
+ * Key-free web access: web_fetch retrieves a URL as readable text; web_search (opt-in with
+ * NYCODE_KEEP_WEB_SEARCH=1) scrapes the DuckDuckGo HTML endpoint (no API key, no account).
  * Honors the local-only setup: no cloud accounts, plain HTTPS to public web.
  */
 
@@ -427,43 +427,46 @@ function pageBody(text: string, contentType: string): string {
 
 export default function webExtension(nycode: ExtensionAPI) {
 	const fetchCache = new Map<string, { expires: number; body: string }>();
-	nycode.registerTool({
-		name: "web_search",
-		label: "Web search",
-		description:
-			"Search the web (DuckDuckGo). Returns titles, URLs, and snippets. Use web_fetch to read a result in full.",
-		parameters: Type.Object({
-			query: Type.String({ description: "Search query" }),
-			count: Type.Optional(Type.Number({ description: "Max results (default 5)" })),
-			allowed_domains: Type.Optional(
-				Type.Array(Type.String(), { description: "Only include results from these domains" }),
-			),
-			blocked_domains: Type.Optional(
-				Type.Array(Type.String(), { description: "Exclude results from these domains" }),
-			),
-		}),
-		async execute(_id, params, signal) {
-			// Claude documents allowed/blocked domains as mutually exclusive; allowed wins.
-			const outcome = await fetchText(
-				SEARCH_ENDPOINT + encodeURIComponent(params.query),
-				"follow",
-				SEARCH_LIMIT,
-				signal,
-			);
-			const text = outcome.kind === "body" ? outcome.text : "";
-			const limit = Math.min(params.count ?? 5, 10);
-			const results = filterByDomain(
-				parseSearchResults(text, 10),
-				params.allowed_domains,
-				params.blocked_domains,
-			).slice(0, limit);
-			if (results.length === 0) {
-				return { content: [{ type: "text" as const, text: "No results found." }], details: {} };
-			}
-			const formatted = results.map((r, i) => `${i + 1}. ${r.title}\n   ${r.url}\n   ${r.snippet}`).join("\n");
-			return { content: [{ type: "text" as const, text: formatted }], details: {} };
-		},
-	});
+	// web_search scrapes DuckDuckGo and fails often: off unless NYCODE_KEEP_WEB_SEARCH=1 (D-52).
+	if (process.env.NYCODE_KEEP_WEB_SEARCH === "1") {
+		nycode.registerTool({
+			name: "web_search",
+			label: "Web search",
+			description:
+				"Search the web (DuckDuckGo). Returns titles, URLs, and snippets. Use web_fetch to read a result in full.",
+			parameters: Type.Object({
+				query: Type.String({ description: "Search query" }),
+				count: Type.Optional(Type.Number({ description: "Max results (default 5)" })),
+				allowed_domains: Type.Optional(
+					Type.Array(Type.String(), { description: "Only include results from these domains" }),
+				),
+				blocked_domains: Type.Optional(
+					Type.Array(Type.String(), { description: "Exclude results from these domains" }),
+				),
+			}),
+			async execute(_id, params, signal) {
+				// Claude documents allowed/blocked domains as mutually exclusive; allowed wins.
+				const outcome = await fetchText(
+					SEARCH_ENDPOINT + encodeURIComponent(params.query),
+					"follow",
+					SEARCH_LIMIT,
+					signal,
+				);
+				const text = outcome.kind === "body" ? outcome.text : "";
+				const limit = Math.min(params.count ?? 5, 10);
+				const results = filterByDomain(
+					parseSearchResults(text, 10),
+					params.allowed_domains,
+					params.blocked_domains,
+				).slice(0, limit);
+				if (results.length === 0) {
+					return { content: [{ type: "text" as const, text: "No results found." }], details: {} };
+				}
+				const formatted = results.map((r, i) => `${i + 1}. ${r.title}\n   ${r.url}\n   ${r.snippet}`).join("\n");
+				return { content: [{ type: "text" as const, text: formatted }], details: {} };
+			},
+		});
+	}
 
 	nycode.registerTool({
 		name: "web_fetch",

@@ -162,7 +162,7 @@ Resource paths in user settings resolve from the agent directory. Paths in proje
 
 Resource arrays support glob exclusions with `!pattern`, exact inclusion with `+path`, and exact exclusion with `-path`. Nycode loads resources listed in both user-level and project settings.
 
-The built-in extensions are named `builtin:mcp`, `builtin:llama.cpp`, `builtin:codemode`, and `builtin:tool-search` in `extensions`. They load by default; `-builtin:mcp` disables one. A `+builtin:<name>` or `-builtin:<name>` entry in project settings overrides the user setting. A built-in extension that ships off by default (`web`) loads only when `"extensions": ["builtin:web"]` (or `+builtin:web`) is set or `-e builtin:web` is passed. `nycode config` lists them under Built-in. `--no-extensions` disables them too, and `-e builtin:<name>` loads one explicitly.
+The built-in extensions are named `builtin:mcp`, `builtin:llama.cpp`, `builtin:codemode`, and `builtin:tool-search` in `extensions`. They load by default; `-builtin:mcp` disables one. A `+builtin:<name>` or `-builtin:<name>` entry in project settings overrides the user setting. The `web` extension (`web_fetch`) and `import-claude-session` (`/puxar`) load by default too (D-52); `-builtin:web` or `-builtin:import-claude-session` turns one off. `web_search` is not registered unless `NYCODE_KEEP_WEB_SEARCH=1` is set in the environment (it scrapes DuckDuckGo and often fails; the default search is an MCP server). A built-in extension that ships off by default would load only when `"extensions": ["builtin:<name>"]` (or `+builtin:<name>`) is set or `-e builtin:<name>` is passed; none does today. `nycode config` lists them under Built-in. `--no-extensions` disables them too, and `-e builtin:<name>` loads one explicitly.
 
 ## Permissions, harness, and integrations
 
@@ -202,6 +202,14 @@ These keys only exist, validate, and are read here; the built-in extensions that
 | `env` | `Record<string, string>` | `{ "EIO_BACKEND": "posix" }` | none | Variables exported to the nycode process, so to hooks and the status line command. A value here overrides the default. |
 
 `quietStartup`, `defaultProjectTrust`, `retry`, and `shellCommandPrefix` above carry the nycode-harness defaults.
+
+### `local.env`
+
+Nycode reads `~/.nycode/agent/local.env` (the agent directory; `NYCODE_LOCAL_ENV` names another file) at startup, before it reads any other variable (D-52). The file is `KEY=VALUE` lines, `#` comments, no `export`, no quoting rules beyond one pair of matching quotes around a value. Values are literal: nothing is expanded or evaluated. Only these keys are read; any other line is ignored with a `local.env:<n> ignored` warning on stderr:
+
+`NYCODE_BYPASS_PERMISSIONS`, `NYCODE_COMPACT_AT`, `PONYTAIL_QUIET_STARTUP`, `NYCODE_KNOWLEDGE_VAULT`, `NYCODE_GRAPHS_VAULT`, `CODEGRAPH_AUTO_ROOT`, `NYCODE_SUBAGENT_RESPAWN`, `NYCODE_EFFORT_SANDWICH`, `NYCODE_EFFORT_SANDWICH_TURNS`.
+
+The file must belong to you and have mode `0600` or `0400`; otherwise nothing is loaded and a warning says why (not checked on Windows). A variable already set in the real environment wins over the file; the file wins over `settings.json`, like any `NYCODE_*` variable. A missing file is fine. Precedence, highest first: the real environment, then `local.env`, then `settings.json`, then the default. the one-time `nycode migrate` command converts an old `local.env` into `settings.json` keys once; if that `local.env` is also kept in the agent directory, its values win over the converted ones, so edit one place or the other.
 
 ### Embedded hooks and status line
 

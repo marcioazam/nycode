@@ -76,7 +76,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "subagent", factory: subagentExtension, builtin: true },
 	{ name: "thinking", factory: thinkingExtension, builtin: true },
 	{ name: "todo", factory: todoExtension, builtin: true },
-	{ name: "web", factory: webExtension, builtin: true, enabledByDefault: false },
+	{ name: "web", factory: webExtension, builtin: true },
 	// Embedded nycode-lsp: a settings package listed right after nycode in nycode-harness, so it loads before the nycode-harness extensions.
 	{ name: "lsp", factory: lspExtension, builtin: true },
 	// Embedded nycode-harness extensions, in nycode-harness's load order (after nycode, by source file name).
@@ -91,7 +91,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "docs-pointer", factory: docsPointerExtension, builtin: true },
 	{ name: "plan-gate", factory: planGateExtension, builtin: true },
 	{ name: "prefix-cache-1h", factory: prefixCache1hExtension, builtin: true },
-	{ name: "import-claude-session", factory: importClaudeSessionExtension, builtin: true, enabledByDefault: false },
+	{ name: "import-claude-session", factory: importClaudeSessionExtension, builtin: true },
 	{ name: "sound-notify", factory: soundNotifyExtension, builtin: true },
 	{ name: "sticky-prompt", factory: stickyPromptExtension, builtin: true },
 	{ name: "syntax-check", factory: syntaxCheckExtension, builtin: true },
