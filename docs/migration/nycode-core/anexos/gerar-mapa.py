@@ -553,8 +553,20 @@ RULES: list[tuple[str, str, str, str, str]] = [
     ),
     ("R14", r"^claude-home/bin/hud/(.+)$", rf"{RES}/statusline/\1", "converter", "F8"),
     # D-53: os scripts que as instruções embarcadas citam vão no pacote (resources/bin), como o publish.list instalava bin/.
-    ("R16", r"^claude-home/bin/(checks|doctor|telemetry)/(.+)$", rf"{RES}/bin/\1/\2", "converter", "F8"),
-    ("R17", r"^claude-home/bin/(git-deliver|mcp-header\.sh|pi-image\.mjs)$", rf"{RES}/bin/\1", "converter", "F8"),
+    (
+        "R16",
+        r"^claude-home/bin/(checks|doctor|telemetry)/(.+)$",
+        rf"{RES}/bin/\1/\2",
+        "converter",
+        "F8",
+    ),
+    (
+        "R17",
+        r"^claude-home/bin/(git-deliver|mcp-header\.sh|pi-image\.mjs)$",
+        rf"{RES}/bin/\1",
+        "converter",
+        "F8",
+    ),
     ("R15", r"^claude-home/bin/(.+)$", r"scripts/harness/\1", "converter", "F8"),
     # Terceiros (F9)
     ("T01", r"^patches/third-party/pi-lsp\.patch$", f"{EXT}/lsp/", "absorver", "F9"),
