@@ -1,5 +1,6 @@
 import { type Component, Loader, type TUI, truncateToWidth } from "@nycode/tui";
 import type { WorkingIndicatorOptions } from "../../../core/extensions/index.ts";
+import * as avisos from "../avisos/index.ts";
 import { theme } from "../theme/theme.ts";
 import { CountdownTimer } from "./countdown-timer.ts";
 import { keyText } from "./keybinding-hints.ts";
@@ -51,15 +52,17 @@ export class WorkingStatusIndicator extends StatusIndicator {
 export class RetryStatusIndicator extends StatusIndicator {
 	private countdown: CountdownTimer | undefined;
 
-	constructor(ui: TUI, attempt: number, maxAttempts: number, delayMs: number) {
+	constructor(ui: TUI, attempt: number, maxAttempts: number, delayMs: number, errorMessage?: string) {
 		const retryMessage = (seconds: number) =>
+			avisos.retryLinha(errorMessage, attempt, maxAttempts, seconds, keyText("app.interrupt")) ?? // nycode: K17
 			`Retrying (${attempt}/${maxAttempts}) in ${seconds}s... (${keyText("app.interrupt")} to cancel)`;
 		super(
 			"retry",
 			ui,
 			(spinner) => theme.fg("warning", spinner),
-			(text) => theme.fg("muted", text),
+			(text) => theme.fg(avisos.corRetry(), text), // nycode: K17
 			retryMessage(Math.ceil(delayMs / 1000)),
+			avisos.indicadorRetry(), // nycode: K17
 		);
 		this.countdown = new CountdownTimer(
 			delayMs,

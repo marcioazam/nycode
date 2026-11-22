@@ -180,6 +180,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K14 | `packages/coding-agent/src/config.ts:605` | Título de reserva "π" vira "nycode" | — | F2 |
 | K15 | `packages/tui/src/index.ts` | Exporta `isImageLine` na API pública do `@nycode/tui` | `chat-margin` | F12 |
 | K16 | `packages/tui/src/components/editor.ts` | `runEditorAction` e `withUndoGroup` no `Editor` (ações semânticas e grupo de desfazer) | `ui/editor`, `claude-compat/vim` | F12 |
+| K17 | `interactive-mode.ts`, `components/status-indicator.ts`, `components/assistant-message.ts`, `components/compaction-summary-message.ts` (em `modes/interactive`) | Uma chamada ao módulo `modes/interactive/avisos` por ponto de gancho (avisos em pt-BR); `NYCODE_AVISOS=0` devolve os textos do upstream | `avisos` | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 

@@ -9,6 +9,7 @@
 
 import { getAgentDir } from "../../config.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
+import { ligarAvisos } from "../../modes/interactive/avisos/index.ts";
 import { causa } from "./causa.ts";
 import { type Config, caminhoAvisos, carregar, type Evento, gravar } from "./config.ts";
 import { corpo, criarNotificador, type Info } from "./notificar.ts";
@@ -190,5 +191,7 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 }
 
 export default function (nycode: ExtensionAPI) {
+	if (process.env.NYCODE_AVISOS === "0") return;
+	ligarAvisos(true);
 	montar(nycode);
 }
