@@ -139,6 +139,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
 | extension | claude-compat | core | Base de modos de permissão, vim e aliases do editor; biblioteca ainda sem fábrica (D-56, parte 1) |
 | extension | chat-margin | core | Margem do texto nos blocos com fundo do chat (D-56) |
+| extension | bash-main-guard | core | Na sessão principal interativa o bash não prende o turno: padrão de 120 s, teto de 600 s, sleep longo e laço de consulta recusados, `run wait` limitado a 30 s (D-57) (D-56) |
 | extension | avisos | core | Dono dos sinais de fim de turno: notificação, som, progresso na aba do terminal e o painel `/avisos` (D-56) |
 | extension | comandos | core | Paleta do `/` em pt-BR, painel `?` e `/atalhos` (ver, buscar e mudar atalhos); a ponte `__nycodeHarnessComandos` serve o editor (D-56) |
 | extension | diagnostico | core | Registro de erros e avisos internos, trilha de spans (OTel) e `/doctor`; `/diagnostico` ou ctrl+e abre o modal e o rodapé mostra só a contagem (D-56) |

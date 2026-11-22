@@ -1,6 +1,7 @@
 import type { InlineExtension } from "../core/extensions/types.ts";
 import bypassPermissionsExtension from "../core/permissions/bypass-command.ts";
 import autoResumeExtension from "./auto-resume/index.ts";
+import bashMainGuardExtension from "./bash-main-guard/index.ts";
 import avisosExtension from "./avisos/index.ts";
 import chatMarginExtension from "./chat-margin/index.ts";
 import claudeRulesExtension from "./claude-rules/index.ts";
@@ -93,6 +94,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "ponytail", factory: ponytailExtension, builtin: true },
 	// Embedded nycode-harness extensions, in nycode-harness's load order (after nycode, by source file name).
 	{ name: "auto-resume", factory: autoResumeExtension, builtin: true },
+	{ name: "bash-main-guard", factory: bashMainGuardExtension, builtin: true },
 	// nycode: K11 the logic lives with the permission engine in core/permissions/, this line only registers it.
 	{ name: "bypass-permissions", factory: bypassPermissionsExtension, builtin: true },
 	{ name: "chat-margin", factory: chatMarginExtension, builtin: true },

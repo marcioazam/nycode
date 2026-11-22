@@ -64,6 +64,27 @@ test("handler: arquivo limpo que quebra reporta; erro preexistente não; arquivo
 	assert.match(r3.content[1].text, /in the new file\.$/);
 });
 
+test("handler: o erro vai também em details.sintaxe, preservando os details da tool (Onda 10, P12)", async () => {
+	const cwd = mkdtempSync(join(tmpdir(), "syntax-check-test-"));
+	const h = harness();
+	writeFileSync(join(cwd, "a.py"), "x = 1\n");
+	await h.tool_call({ toolName: "edit", toolCallId: "d", input: { path: "a.py" } }, ctx(cwd));
+	writeFileSync(join(cwd, "a.py"), "x = (1 +\n");
+	const r = await h.tool_result(
+		{
+			toolName: "edit",
+			toolCallId: "d",
+			input: { path: "a.py" },
+			isError: false,
+			content: [],
+			details: { diff: "+1 x" },
+		},
+		ctx(cwd),
+	);
+	assert.equal(r.details.diff, "+1 x");
+	assert.equal(typeof r.details.sintaxe.line, "number");
+	assert.match(r.details.sintaxe.text, /^(unexpected|missing) /);
+});
 test("handler: extensão sem gramática e isError não produzem nada", async () => {
 	const cwd = mkdtempSync(join(tmpdir(), "syntax-check-test-"));
 	const h = harness();
