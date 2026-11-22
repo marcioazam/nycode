@@ -4,8 +4,12 @@ import { Spacer } from "@nycode/tui";
 import { test } from "vitest";
 import { ThemedText } from "../../../../src/modes/interactive/components/themed-text.ts";
 import { InteractiveMode } from "../../../../src/modes/interactive/interactive-mode.ts";
+import { initTheme } from "../../../../src/modes/interactive/theme/theme.ts";
 import { classify, focusLines, summarize } from "../../../../src/modes/interactive/ui-controls/focus.ts";
 import { COLORS, createControls, installUiControls, KEY } from "../../../../src/modes/interactive/ui-controls/index.ts";
+
+// updateEditorBorderColor reads the theme: initialize it here so the file also passes alone.
+initTheme("dark");
 
 const lines = (text: any) => (w: any) => text.split("\n").map((l: any) => l.slice(0, w));
 const user = (text: any): any => ({ text, markdownTransformers: [], render: lines(text) });
