@@ -190,6 +190,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K18 | `packages/coding-agent/src/core/settings-manager.ts` | `getCompactionReserveTokens` aplica o limite de compactação por sessão (`/contexto`, módulo `core/compaction/session-limit.ts`) | `compact-at-400k.ts`, patch `contexto-reserve` (D-58) | F12 |
 | K19 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | `updateEditorBorderColor()` instala os controles de interface (`/focus`, `/color`; módulo `modes/interactive/ui-controls`) | `claude-compat/interface`, patch `ui-controls` (D-58) | F12 |
 | K20 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | O `handleResumeSession` mostra o divisor da sessão retomada (módulo `modes/interactive/retomada`) no lugar do `showStatus` | patch `retomada` (D-58) | F12 |
+| K21 | `packages/tui/src/layout.ts` | A célula da barra de rolagem é pintada em linha de imagem kitty (módulo `scrollbar-image.ts`) | patch `scrollbar-imagem` (D-58) | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 
