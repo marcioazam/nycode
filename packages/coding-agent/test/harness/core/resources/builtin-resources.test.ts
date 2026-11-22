@@ -96,20 +96,27 @@ describe("built-in skills in the resource loader (K6)", () => {
 	});
 });
 
-// D-39: the `optional` skills of docs/specs/0005-core-scope.md stay loaded (so /skill:<name> expands them) but out of
-// the model's <available_skills> section.
+// D-51 (supersedes D-39): the six skills once `optional` are `core` again and sit in the model's <available_skills>
+// section, as in the harness they came from. The hiding key stays for the skills that really are model-hidden.
 const SHIPPED_SKILLS = join(dirname(fileURLToPath(import.meta.url)), "../../../../resources/skills");
-const HIDDEN_OPTIONAL = ["agent-systems", "atualizador", "codegraph", "deep-search", "perplexity-urls", "soteiros"];
+const MODEL_VISIBLE = ["agent-systems", "atualizador", "codegraph", "deep-search", "perplexity-urls", "soteiros"];
 
-describe("shipped optional skills (D-39)", () => {
-	it("are loaded and invocable but absent from the prompt skills section", () => {
+describe("shipped skills restored to the model context (D-51)", () => {
+	it("are loaded, invocable and listed in the prompt skills section", () => {
 		const { skills } = loadSkillsFromDir({ dir: SHIPPED_SKILLS, source: "builtin" });
-		const names = skills.map((s) => s.name);
 		const prompt = formatSkillsForPrompt(skills);
-		for (const name of HIDDEN_OPTIONAL) {
-			expect(names).toContain(name);
-			expect(prompt).not.toContain(`<name>${name}</name>`);
+		for (const name of MODEL_VISIBLE) {
+			const skill = skills.find((s) => s.name === name);
+			expect(skill?.disableModelInvocation).toBe(false);
+			expect(prompt).toContain(`<name>${name}</name>`);
 		}
 		expect(prompt).toContain("<name>tdd</name>");
+	});
+
+	it("still hides the skills that declare disable-model-invocation", () => {
+		const { skills } = loadSkillsFromDir({ dir: SHIPPED_SKILLS, source: "builtin" });
+		const hidden = skills.find((s) => s.name === "plan-workflow");
+		expect(hidden?.disableModelInvocation).toBe(true);
+		expect(formatSkillsForPrompt(skills)).not.toContain("<name>plan-workflow</name>");
 	});
 });

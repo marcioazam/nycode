@@ -3,6 +3,11 @@
 Estado: regra e checagem de classificação adotadas (2026-11-16). A mudança das peças `optional` para fora do contexto
 do modelo é outro pull request, medido no gate (K3c), porque mexe em custo e acerto.
 
+**Supera, em parte (D-51, 2026-11-21):** as 6 skills que eram `optional` (`agent-systems`, `atualizador`, `codegraph`,
+`deep-search`, `perplexity-urls`, `soteiros`) voltam ao contexto do modelo como no nycode-harness: ficam `core` e perdem
+`disable-model-invocation: true`. É mudança de contrato registrada, não afrouxamento: a checagem de `core_scope.py`
+continua exigindo a chave em toda skill que ficar `optional`.
+
 ## Pergunta
 
 O nycode-harness deve trazer só peças generalistas, como um harness "vanilla", e deixar as de domínio, de serviço ou de gosto
@@ -57,7 +62,8 @@ entram no repositório. Uma skill de marketing não entra nem como opção.
 2. Peça só de interface (`ui`) não entra no contexto do modelo e só muda o terminal. Pode vir ligada, como o TUI do
    próprio pi.
 3. O resto é `optional`: fica no repositório, mas fora do contexto do modelo por padrão. Skill oculta com
-   `disable-model-invocation: true`; agente, extensão, hook, comando ou plugin só com opt-in.
+   `disable-model-invocation: true`; agente, extensão, hook, comando ou plugin só com opt-in. As 6 skills que a D-39
+   ocultava deixaram de ser `optional` pela D-51 (acima) e a exigência de MCP da regra 1 não vale para elas.
 4. Código de diagnóstico ou temporário é `remove` e sai no próximo pull request que tocar a área.
 5. Peça de domínio estreito (marketing, design visual, uma nuvem ou SaaS específicos) não entra no repositório.
 6. O orçamento do que o modelo vê sempre continua no gate `instruction-budget`, que não deixa o catálogo crescer sem
@@ -77,12 +83,12 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | Tipo | Nome | Classe | Motivo |
 |---|---|---|---|
 | skill | agent-routing | core | Escolha entre agentes e ferramentas, qualquer projeto |
-| skill | agent-systems | optional | Domínio: projetar agentes e prompts de LLM |
-| skill | atualizador | optional | Fluxo de entrega do dono; `git-workflow` cobre o geral |
+| skill | agent-systems | core | Domínio: projetar agentes e prompts de LLM; no contexto do modelo como no nycode-harness (D-51) |
+| skill | atualizador | core | Fluxo de entrega do dono; `git-workflow` cobre o geral; no contexto do modelo como no nycode-harness (D-51) |
 | skill | code-simplification | core | Refatoração geral |
-| skill | codegraph | optional | Exige o MCP codegraph |
+| skill | codegraph | core | Exige o MCP codegraph; no contexto do modelo como no nycode-harness (D-51) |
 | skill | context-economy | core | Custo de contexto, qualquer sessão |
-| skill | deep-search | optional | Exige MCPs de busca |
+| skill | deep-search | core | Exige MCPs de busca; no contexto do modelo como no nycode-harness (D-51) |
 | skill | diagnose | core | Depuração geral |
 | skill | differential-review | core | Revisão de segurança de diff, geral |
 | skill | doces-ou-travessuras | core | Detecta teste maquiado, geral |
@@ -92,7 +98,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | skill | insecure-defaults | core | Auditoria de padrões inseguros, oculta |
 | skill | lane-integration | core | Integração de lanes paralelas |
 | skill | loop-engineering | core | Laços com parada verificável |
-| skill | perplexity-urls | optional | Exige o MCP Perplexity |
+| skill | perplexity-urls | core | Exige o MCP Perplexity; no contexto do modelo como no nycode-harness (D-51) |
 | skill | plan-workflow | core | Modo plano, oculta |
 | skill | pr-review | core | Revisão de PR geral |
 | skill | property-based-testing | core | Testes de propriedade, geral |
@@ -101,7 +107,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | skill | sdd-workflow | core | Especificação antes de mudança grande |
 | skill | security-audit | core | Auditoria de segurança geral |
 | skill | sharp-edges | core | APIs perigosas, geral |
-| skill | soteiros | optional | Auditoria de atualidade sob pedido, nicho |
+| skill | soteiros | core | Auditoria de atualidade sob pedido, nicho; no contexto do modelo como no nycode-harness (D-51) |
 | skill | swarm-orchestration | core | Delegação em lanes |
 | skill | tdd | core | Teste antes, geral |
 | skill | to-questionnaire | core | Perguntas para terceiros, oculta |
@@ -191,5 +197,5 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 ## Próximo passo (pull request medido, #89)
 
 Tirar do contexto do modelo as skills e agentes `optional` e pôr extensões, hooks, comandos e plugin `optional` atrás de
-opt-in. Remover `cache-prefix-probe`. A checagem passa a exigir `disable-model-invocation: true` nas skills `optional`.
+opt-in. Remover `cache-prefix-probe`. A checagem passa a exigir `disable-model-invocation: true` nas skills `optional` (hoje nenhuma: D-51).
 A medição é a do K3c: custo por tarefa no gate, contra o `main`, sem perda de acerto.

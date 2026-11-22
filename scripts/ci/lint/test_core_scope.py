@@ -194,6 +194,26 @@ def test_real_repo(capsys: pytest.CaptureFixture[str]) -> None:
     assert code == 0, cap.err
 
 
+D51_CORE_SKILLS = (
+    "agent-systems",
+    "atualizador",
+    "codegraph",
+    "deep-search",
+    "perplexity-urls",
+    "soteiros",
+)
+
+
+def test_d50_skills_are_core_and_in_the_model_context() -> None:
+    root = Path(core_scope.__file__).resolve().parents[3]
+    rows = core_scope.parse_table((root / core_scope.SPEC).read_text(encoding="utf-8"))
+    classes = {n: c for t, n, c in rows if t == "skill"}
+    for name in D51_CORE_SKILLS:
+        assert classes[name] == "core"
+        skill = root / core_scope.RESOURCES / "skills" / name / "SKILL.md"
+        assert core_scope.HIDDEN_KEY not in skill.read_text(encoding="utf-8")
+
+
 def test_row_waiting_in_import_is_pending(tmp_path: Path) -> None:
     touch(tmp_path / "packages/coding-agent/src/extensions/todo/index.ts")
     touch(tmp_path / "import/ny-pi/extensions/bash-timeout/index.ts")

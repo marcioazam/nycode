@@ -7,6 +7,7 @@ their rows already exist. The first piece of a type turns the stale check on for
 row whose piece still waits in import/ny-pi (extensions/, claude-home/) is pending, not stale.
 A piece without a row is always a finding. Every `optional` skill must carry
 `disable-model-invocation: true` (D-39: it stays out of the model context, `/skill:<name>` still works).
+D-51 moved the six skills that carried it to `core`; the check stays for any skill classed `optional`.
 
 Usage: core_scope.py [--root DIR]   (default: repository root)
 Exit 0 clean, 1 findings, 2 spec unreadable or malformed.
