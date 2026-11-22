@@ -1,4 +1,4 @@
-# Seams K1..K15 (docs/migration/nycode-core/08-sincronizacao-upstream.md, section 4; 02-arquitetura-alvo.md, section 4).
+# Seams K1..K16 (docs/migration/nycode-core/08-sincronizacao-upstream.md, section 4; 02-arquitetura-alvo.md, section 4).
 # Read by scripts/ci/seams/check-seams.sh. Fields, separated by " | ":
 #   id | files (space-separated; a directory is searched recursively) | marker pattern (ERE; it must not contain " | ") | test | state
 # state "ativa": the pattern must match in every file and the test must exist ("-" = no test yet, reported).
@@ -20,3 +20,4 @@ K12 | packages/coding-agent/src/main.ts | nycode: K12[[:space:]] | packages/codi
 K13 | packages/coding-agent/package.json | "resources" | packages/coding-agent/test/harness/core/resources/package-files.test.ts | ativa
 K14 | packages/coding-agent/src/config.ts | nycode: K14[[:space:]] | packages/coding-agent/test/cli-brand.test.ts | ativa
 K15 | packages/tui/src/index.ts | nycode: K15[[:space:]] | packages/tui/test/image-line-export.test.ts | ativa
+K16 | packages/tui/src/components/editor.ts | nycode: K16[[:space:]] | packages/tui/test/editor-actions.test.ts | ativa

@@ -2,7 +2,7 @@
 
 Política para o nycode continuar recebendo o upstream durante e depois da migração. O registro do fork
 (`docs/fork/2026-11-20-fork-do-pi.md`) não tem esta política (lido inteiro em 2026-11-20); este documento a cria.
-Decisões citadas: [D-06, D-07](11-decisoes-e-pendencias.md). Costuras K1..K15: [02, seção 4](02-arquitetura-alvo.md).
+Decisões citadas: [D-06, D-07](11-decisoes-e-pendencias.md). Costuras K1..K16: [02, seção 4](02-arquitetura-alvo.md).
 Estado: **proposta, ferramentas criadas** (C-F6-17, PR A, 2026-11-21). Existem `scripts/fork/{all,image,test_reproduction}.sh`,
 `scripts/fork/seams.txt`, `scripts/ci/seams/check-seams.sh`, `docs/fork/sync-pr-template.md` e `docs/fork/syncs/`; o job
 `merge-policy` já existe (`.github/workflows/merge-policy.yml`). Nenhuma sincronização foi feita ainda: o restante
@@ -138,10 +138,10 @@ primeiras sincronizações.
 
 ## 4. Costuras
 
-Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 15 de
+Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 16 de
 [02, seção 4](02-arquitetura-alvo.md), mais as costuras do renome (seção 4.3).
 
-### 4.1 Tabela de costuras K1..K15
+### 4.1 Tabela de costuras K1..K16
 
 Frequência medida em 2026-11-20 com `git log --oneline --since='3 months ago' 073b0ba -- <arquivo>` (só commits do
 upstream, antes do renome; inclui merges; coluna 1m = `--since='1 month ago'`). Sem a ponta `073b0ba` o comando pedido
@@ -168,6 +168,7 @@ Abreviação: `CA` = `packages/coding-agent/src`; `core/` e `cli/` abaixo são d
 | K13 | `packages/coding-agent/package.json` (`files`) | Inclui `resources/` | 50 / 11 | 0 | médio |
 | K14 | `CA/config.ts:605` | "π" de reserva vira "nycode" | 12 / 2 | 0 (`APP_TITLE`) | baixo |
 | K15 | `packages/tui/src/index.ts` | Uma linha de exportação (`isImageLine`) | 13 / 2 | 0 (`terminal-image`) | baixo |
+| K16 | `packages/tui/src/components/editor.ts` | Dois métodos novos no `Editor` (`runEditorAction`, `withUndoGroup`) | 8 / 3 | 0 (região: 0) | médio |
 
 Legenda: 3m/1m = commits em 3 meses e em 1 mês; Região = commits dos 3 meses cujo diff casa o termo (aproximação por
 `git log -G`); n. med. = região não medida; indef. = ponto do gancho ainda não decidido.
@@ -237,6 +238,7 @@ Para cada costura: como reduzir (arquivo novo e chamada única) e o teste que fa
 - **K14.** Uma string: marcador na linha. Teste: `--version` e `--help` com `HOME` isolado (critério do registro do
   fork).
 - **K15.** Uma linha de exportação em `packages/tui/src/index.ts`, junto do bloco de `terminal-image.ts`. Teste: `packages/tui/test/image-line-export.test.ts`.
+- **K16.** Dois métodos e um campo privado no `Editor`, logo após `insertTextAtCursor`; reaplicar o bloco marcado `// nycode: K16` se o upstream mexer em `pushUndoSnapshot`/`undo`. Teste: `packages/tui/test/editor-actions.test.ts`.
 
 ### 4.3 Costuras do renome
 
@@ -430,7 +432,7 @@ Ordem de resolução quando há conflito (regra de cada arquivo, nesta ordem):
 3. **`CHANGELOG.md` de qualquer pacote**: o renome os pula, então a imagem os traz iguais aos do upstream. Aceitar o
    texto do upstream como vem; reaplicar abaixo de `## [Unreleased]` as entradas do nycode (D-19). Seções de versões
    lançadas são imutáveis.
-4. **Costuras K1..K15**: resolver mantendo a linha com o marcador `// nycode: K<n>`; conferir com
+4. **Costuras K1..K16**: resolver mantendo a linha com o marcador `// nycode: K<n>`; conferir com
    `scripts/ci/seams/check-seams.sh` e o teste da costura (seção 4.2).
 5. **Arquivos do fork que não vêm do upstream** (`NOTICE`, `docs/fork/2026-11-20-fork-do-pi.md`): manter o nosso. A
    imagem não os tem, porque `P` não os cria; já `R_prev = f523ebd25` os tem, então a primeira fusão os vê como
