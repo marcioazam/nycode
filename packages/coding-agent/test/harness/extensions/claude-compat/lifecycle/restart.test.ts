@@ -108,12 +108,12 @@ test("flags de extensão: valor string preservado por índice; booleana sem valo
 });
 
 for (const [name, o, deps, re] of [
-	["sem wrapper novo", {}, { env: {}, ppid: 1 }, /wrapper `nycode` novo/],
+	["sem supervisor", {}, { env: {}, ppid: 1 }, /sem supervisor/],
 	[
 		"PID inválido",
 		{},
 		{ env: { NYCODE_RESTART_WRAPPER_PID: "x", NYCODE_RESTART_REQUEST_FILE: "/x/y" }, ppid: 1 },
-		/wrapper `nycode` novo/,
+		/sem supervisor/,
 	],
 	["ppid diferente (subagente com variável herdada)", {}, { ppid: 9 }, /não é filho/],
 	["agente ocupado", { idle: false }, {}, /ocupado/],

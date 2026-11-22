@@ -102,7 +102,25 @@ async function translatedStdin() {
   return raw;
 }
 
-if (latest) {
+// "renderer": "calm" na config troca o claude-hud pelo desenho próprio do nycode (calm-statusline.mjs).
+const readConfig = () => {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(configDir, 'plugins', 'claude-hud', 'config.json'), 'utf8'));
+  } catch {
+    return {};
+  }
+};
+const config = readConfig();
+const calmFile = config.renderer !== 'calm' ? undefined
+  : [path.join(path.dirname(fileURLToPath(import.meta.url)), 'calm-statusline.mjs')].find((file) => fs.existsSync(file));
+
+if (calmFile) {
+  const input = await translatedStdin();
+  if (input !== null) {
+    const { render } = await import(pathToFileURL(calmFile).href);
+    process.stdout.write(render(JSON.parse(input), { columns: columns > 0 ? columns - 4 : 120, level: config.level }).join('\n') + '\n');
+  }
+} else if (latest) {
   const input = await translatedStdin();
   if (input !== null) {
     Object.defineProperty(process, 'stdin', { value: Readable.from([input]), configurable: true });

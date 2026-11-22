@@ -37,8 +37,14 @@ import shutil
 import subprocess
 import sys
 import time
+import traceback
 from pathlib import Path
 from typing import Any
+
+try:
+    from diag import relatar
+except Exception:  # noqa: BLE001 - o diagnóstico nunca pode quebrar o hook
+    relatar = lambda *a, **k: None
 
 STDIN_LIMIT = 1_048_576
 STATUS_LIMIT = 262_144
@@ -400,8 +406,14 @@ def main() -> int:
                     }
                 )
             )
-    except Exception:  # noqa: BLE001, S110 - context hooks must never block a session
-        pass
+    except Exception as e:  # noqa: BLE001 - context hooks must never block a session
+        relatar(
+            13,
+            "graph_context",
+            "erro-interno",
+            f"Graph: indisponível ({type(e).__name__}: {e})",
+            traceback.format_exc(),
+        )
     return 0
 
 

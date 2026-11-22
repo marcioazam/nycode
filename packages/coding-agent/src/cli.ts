@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import { setupCli } from "./cli/setup.ts";
-import { main } from "./main.ts";
+import { launch } from "./core/lifecycle/launch.ts";
 
-setupCli();
-main(process.argv.slice(2));
+launch(process.argv.slice(2)); // nycode: K24
