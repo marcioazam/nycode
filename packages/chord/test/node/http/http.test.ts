@@ -436,6 +436,7 @@ describe("reloads and close", () => {
 	it("close refuses new requests (503), waits for running ones up to closeTimeout, then seals them (503)", async () => {
 		let sealed: AbortSignal | undefined;
 		const quickEntered = Promise.withResolvers<void>();
+		const quickGate = Promise.withResolvers<void>();
 		const stuckEntered = Promise.withResolvers<void>();
 		const server = await served(
 			{
@@ -445,7 +446,7 @@ describe("reloads and close", () => {
 							public: true,
 							handler: async () => {
 								quickEntered.resolve();
-								await new Promise((resolve) => setTimeout(resolve, 30));
+								await quickGate.promise;
 								return { kind: "html", body: "done" };
 							},
 						},
@@ -460,7 +461,7 @@ describe("reloads and close", () => {
 					},
 				}),
 			},
-			{ config: { listen: { host: "127.0.0.1", port: 0 }, closeTimeout: 100 } },
+			{ config: { listen: { host: "127.0.0.1", port: 0 }, closeTimeout: 1_000 } },
 		);
 		const quick = send(server.port, "GET", "/quick");
 		const stuck = send(server.port, "GET", "/stuck");
@@ -468,6 +469,8 @@ describe("reloads and close", () => {
 		await Promise.all([quickEntered.promise, stuckEntered.promise]);
 		const closing = server.http.close(context);
 		expect((await server.http.fetch(loopback("/quick"), LOOPBACK)).status).toBe(503);
+		// The running request finishes only now, well inside closeTimeout, whatever the load.
+		quickGate.resolve();
 		expect((await quick).body.toString()).toBe("done");
 		await closing;
 		expect(sealed?.aborted).toBe(true);
