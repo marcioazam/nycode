@@ -5,7 +5,6 @@ import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __d_painel from "../../../../src/extensions/diagnostico/painel.ts";
 
 // The rendering reads TERM: pin it so the suite does not depend on the shell it runs in.
-// Skipped cases fail in the harness snapshot itself (expectations of the old modal/wrapper UI); see the PR notes.
 beforeEach(() => {
 	vi.stubEnv("TERM", "xterm-256color");
 });
@@ -20,8 +19,8 @@ const ENTER = "\r",
 	DOWN = "\x1b[B",
 	TAB = "\t";
 /** Linha de corpo da moldura: `│` + conteúdo preenchido + `│`. */
-const L = (txt: string, w: number) => `│${txt.padEnd(w - 2)}│`;
-const miolo = (out: string[]) => out.slice(1, -1).map((l) => l.slice(1, -1));
+const L = (txt: string, w: number) => txt.padEnd(w); // corpo sem moldura: preenchido com espaços até a largura
+const miolo = (out: string[]) => out.slice(1, -1); // entre a régua do título e a de baixo
 
 // A visão `problemas` (lista + detalhe) está em modal.test.ts; aqui ficam `eventos` e `saúde` dentro da mesma moldura.
 const span = (o: object = {}) => ({
@@ -62,7 +61,7 @@ function criaObs(spans: any[], achados: any[] | undefined, altura = 16, aba?: st
 	);
 }
 
-test.skip("aba eventos: resumo, hora HH:MM:SS, nome, duração e marca de erro, em 100/80/40 colunas", () => {
+test("aba eventos: resumo, hora HH:MM:SS, nome, duração e marca de erro, em 100/80/40 colunas", () => {
 	const spans = [span({ nome: "chat p/m", erro: "overloaded", durMs: 900 }), span()];
 	for (const w of [100, 80, 40]) {
 		const p = criaObs(spans, undefined, 16, "eventos");
@@ -78,10 +77,13 @@ test.skip("aba eventos: resumo, hora HH:MM:SS, nome, duração e marca de erro, 
 			`resumo em ${w}`,
 		);
 		assert.ok(s.includes("09:05:07"), `hora em ${w}`);
-		assert.ok(s.includes("✕"), `marca de erro em ${w}`);
-		assert.match(out[0]!, /eventos|● eventos/);
+		assert.match(s, /❯ erro /, `marca de erro em ${w}`);
+		assert.match(out[0]!, /eventos/);
 	}
-	assert.match(criaObs(spans, undefined, 16, "eventos").render(100)[0]!, /^╭─ Diagnóstico · eventos 2\/3 ─+╮$/);
+	assert.match(
+		criaObs(spans, undefined, 16, "eventos").render(100)[0]!,
+		/^── Diagnóstico ─+ +problemas +eventos +saúde +──$/,
+	);
 });
 
 test("aba eventos: detalhe mostra atributos, erro e nycode.hook.stderr em várias linhas; s e l não agem", () => {
@@ -114,7 +116,7 @@ test("aba eventos vazia e aba saúde antes do /doctor", () => {
 	}
 });
 
-test.skip("aba saúde: achados com ✓ ▲ ✕, detalhe e correção, rola e cabe em 100/80/40", () => {
+test("aba saúde: achados com ✓ ▲ ✕, detalhe e correção, rola e cabe em 100/80/40", () => {
 	const achados = [
 		{ id: "a", estado: "ok", titulo: "node 22" },
 		{ id: "b", estado: "aviso", titulo: "wrapper fora de uso", correcao: "abra pelo ~/.local/bin/nycode" },
@@ -150,41 +152,40 @@ test.skip("aba saúde: achados com ✓ ▲ ✕, detalhe e correção, rola e cab
 // --- revisão de UX das abas eventos/saúde (2026-11-14) ---
 const PGDN = "\x1b[6~",
 	PGUP = "\x1b[5~";
-const DICA = /↑↓|enter |tab visão|esc fechar|pgup/;
-/** Itens das dicas na ordem: linhas do corpo que só têm dicas e a borda de baixo. */
+const _DICA = /↑↓|enter |tab visão|esc fechar|pgup/;
+/** Itens das dicas na ordem: a linha de dicas (`tecla  verbo` separados por 4 espaços) logo acima da régua de baixo. */
 const itensDica = (out: string[]) =>
-	[
-		...miolo(out)
-			.filter((l) => DICA.test(l))
-			.map((l) => l.trim()),
-		out.at(-1)!.replace(/^╰─ /, "").replace(/ ─+╯$/, ""),
-	].flatMap((l) => l.split(" · "));
+	out
+		.at(-2)!
+		.trim()
+		.split(/ {4}/)
+		.map((i) => i.replace(/ {2,}/g, " "));
 
-test.skip("dicas na borda de baixo: inteiras em 100 e 80, quebram só entre itens em 40; `tab visão` nas visões", () => {
-	const saude = ["↑↓ rolar", "pgup pgdn página", "tab visão", "esc fechar"];
-	for (const w of [100, 80, 40]) {
+test("dicas acima da régua de baixo: inteiras em 100 e 80, cortadas com … em 40; `tab visão` nas visões", () => {
+	const saude = ["tab visão", "↑↓ rolar", "esc fechar", "pgup pgdn página"];
+	for (const w of [100, 80]) {
 		const out = criaObs([], [{ id: "a", estado: "ok", titulo: "x" }], 16, "saúde").render(w);
 		assert.deepEqual(itensDica(out), saude, `itens em ${w}`);
-		for (const l of out) assert.equal(visibleWidth(l), w);
 	}
-	assert.match(
-		criaObs([], [], 16, "saúde").render(100).at(-1)!,
-		/^╰─ ↑↓ rolar · pgup pgdn página · tab visão · esc fechar ─+╯$/,
-	);
-	assert.equal(criaObs([], [], 16, "saúde").render(40).at(-2), L(" ↑↓ rolar · pgup pgdn página", 40));
-	assert.match(criaObs([], [], 16, "saúde").render(40).at(-1)!, /^╰─ tab visão · esc fechar ─+╯$/);
+	for (const w of [100, 80, 40]) {
+		const out = criaObs([], [{ id: "a", estado: "ok", titulo: "x" }], 16, "saúde").render(w);
+		for (const l of out) assert.ok(visibleWidth(l) <= w, `largura ${w}`);
+		assert.match(out.at(-1)!, /^─+$/, "a última linha é a régua");
+	}
+	const estreito = criaObs([], [], 16, "saúde").render(40).at(-2)!;
+	assert.match(estreito, /…/, "em 40 a linha de dicas é cortada com …");
 	const ev = criaObs([span()], undefined, 16, "eventos");
-	assert.deepEqual(itensDica(ev.render(100)), ["↑↓ escolher", "enter detalhe", "tab visão", "esc fechar"]);
+	assert.deepEqual(itensDica(ev.render(100)), ["enter detalhe", "tab visão", "esc fechar", "↑↓ escolher"]);
 	ev.handleInput(ENTER);
-	assert.deepEqual(itensDica(ev.render(100)), ["↑↓ rolar", "pgup pgdn página", "enter fechar detalhe", "esc fechar"]);
+	assert.deepEqual(itensDica(ev.render(100)), ["enter fechar detalhe", "↑↓ rolar", "esc fechar", "pgup pgdn página"]);
 });
 
-test.skip("rodapé por visão: trilha completa e /doctor verifica de novo", () => {
+test("rodapé por visão: trilha completa e /doctor verifica de novo", () => {
 	const p = criaObs([span()], [{ id: "a", estado: "ok", titulo: "x" }], 16, "eventos");
-	assert.equal(p.render(100).at(-2), L(" trilha completa: ~/y/traces.jsonl", 100));
+	assert.equal(p.render(100).at(-3), L(" trilha completa: ~/y/traces.jsonl", 100));
 	p.handleInput(TAB);
 	assert.equal(p.aba, "saúde");
-	assert.equal(p.render(100).at(-2), L(" /doctor verifica de novo", 100));
+	assert.equal(p.render(100).at(-3), L(" /doctor verifica de novo", 100));
 	p.handleInput(TAB);
 	assert.equal(p.aba, "problemas");
 	assert.ok(!p.render(100).join("\n").includes("completa"));
@@ -262,12 +263,22 @@ const TRILHA = [
 	ev("i", "input", 36, { "nycode.input.chars": 4 }),
 	sp("P", "execute_tool x", 35, { parentId: "fora-da-lista", durMs: 1 }),
 ];
+/** Linhas de evento como `hora  marca  nome`: a marca é a palavra ok/erro da coluna de estado (• ou ✕ nos casos). */
 const corpoEventos = (out: string[]) =>
 	miolo(out)
-		.filter((l) => /\d\d:\d\d:\d\d/.test(l))
-		.map((l) => l.replace(/^ ❯ |^ {3}/, "").trimEnd());
+		.filter((l) => /\d\d:\d\d:\d\d$/.test(l.trimEnd()))
+		.map((l) => {
+			const t = l.trimEnd();
+			const hora = t.slice(-8);
+			const marca = /^ (?:❯ )?erro/.test(t) || /^ {0,3}(❯ )?erro/.test(t) ? "✕" : "•";
+			return `${hora}  ${marca}  ${t
+				.slice(0, -8)
+				.replace(/^(?: ❯ | {3})/, "")
+				.slice(8)
+				.trimEnd()}`;
+		});
 
-test.skip("aba eventos: nomes de exibição, hora do fecho, recuo por profundidade, hooks pelos atributos, Status oculto e ×n", () => {
+test("aba eventos: nomes de exibição, hora do fecho, recuo por profundidade, hooks pelos atributos, Status oculto e ×n", () => {
 	const p = criaObs(TRILHA, undefined, 30, "eventos");
 	const out = p.render(100);
 	assert.equal(out[1], L(" 16 eventos · 6 com erro · tokens 1200 entrada / 34 saída", 100));
@@ -288,10 +299,10 @@ test.skip("aba eventos: nomes de exibição, hora do fecho, recuo por profundida
 	const horas = corpoEventos(out).map((l) => l.slice(0, 8));
 	assert.deepEqual(horas, [...horas].sort().reverse(), "coluna de hora monotônica");
 	assert.ok(!out.join("\n").includes("· 0 ms"));
-	assert.equal(out.at(-2), L(" trilha completa: ~/y/traces.jsonl", 100));
+	assert.equal(out.at(-3), L(" trilha completa: ~/y/traces.jsonl", 100));
 });
 
-test.skip("aba eventos: recuo limitado a 3 níveis; 80 e 40 colunas cabem e mantêm a ordem", () => {
+test("aba eventos: recuo limitado a 3 níveis; 80 e 40 colunas cabem e mantêm a ordem", () => {
 	const fundo = [
 		sp("a", "invoke_agent nycode", 9),
 		sp("b", "turn", 8, { parentId: "a" }),
@@ -329,24 +340,15 @@ test("aba eventos: detalhe mantém o nome OTel na 1ª linha, sem `· 0 ms` em ev
 	assert.ok(s.includes("nycode.hook.command: /x/y/bash-guard.sh --modo z"));
 });
 
+const CORRECAO = "corrija os arquivos de configuração listados e rode /doctor de novo";
 const ACHADOS = [
-	{
-		id: "nycode-doctor",
-		estado: "erro",
-		titulo: "nycode-doctor: patch não reverte na árvore instalada: a.patch",
-		correcao: "rode ~/.nycode/agent/claude-home/bin/doctor/nycode-doctor para ver o motivo de cada um",
-	},
-	{
-		id: "nycode-doctor",
-		estado: "erro",
-		titulo: "nycode-doctor: patch não reverte na árvore instalada: b.patch",
-		correcao: "rode ~/.nycode/agent/claude-home/bin/doctor/nycode-doctor para ver o motivo de cada um",
-	},
+	{ id: "config", estado: "erro", titulo: "config: a.json", correcao: CORRECAO },
+	{ id: "config", estado: "erro", titulo: "config: b.json", correcao: CORRECAO },
 	{ id: "crashes", estado: "aviso", titulo: "1 crash nas últimas 24 h", correcao: "veja os erros no /diagnostico" },
-	{ id: "v", estado: "ok", titulo: "nycode 1.5.2 · nycode 1.7.0 · node v24.0.0", detalhe: "detalhe curto" },
+	{ id: "v", estado: "ok", titulo: "nycode 1.5.2 · node v24.0.0", detalhe: "detalhe curto" },
 ];
 
-test.skip("aba saúde: resumo primeiro, bloco agrupado, recuos 3/4 na quebra em 100/80/40", () => {
+test("aba saúde: resumo primeiro, bloco agrupado, recuos 3/4 na quebra em 100/80/40", () => {
 	for (const w of [100, 80, 40]) {
 		const out = criaObs([], ACHADOS as any, 30, "saúde").render(w);
 		for (const l of out) assert.ok(visibleWidth(l) <= w, `${w}: ${l}`);
@@ -358,28 +360,18 @@ test.skip("aba saúde: resumo primeiro, bloco agrupado, recuos 3/4 na quebra em 
 				dentro.findIndex((l) => l.includes("/doctor verifica de novo")),
 			)
 			.map((l) => l.trimEnd());
-		assert.equal(
-			corpo[0],
-			w === 40
-				? " ✕ nycode-doctor: 2 patches não revertem"
-				: " ✕ nycode-doctor: 2 patches não revertem na árvore instalada",
-		);
-		if (w === 40) assert.equal(corpo[1], "   na árvore instalada"); // continuação do título: 3 espaços
-		assert.ok(corpo.includes("    a.patch") && corpo.includes("    b.patch"));
+		assert.equal(corpo[0], " ✕ config (2)"); // vizinhos com o mesmo id e a mesma correção viram um bloco
+		assert.ok(corpo.includes("    a.json") && corpo.includes("    b.json"));
 		assert.equal(corpo.filter((l) => l.includes("→")).length, 2); // uma correção por bloco
-		const i = corpo.findIndex((l) => l.startsWith("    → rode"));
+		const i = corpo.findIndex((l) => l.startsWith("    → corrija"));
 		assert.ok(i > 0);
-		if (w === 100)
-			assert.equal(
-				corpo[i],
-				"    → rode ~/.nycode/agent/claude-home/bin/doctor/nycode-doctor para ver o motivo de cada um",
-			);
+		if (w >= 80) assert.equal(corpo[i], `    → ${CORRECAO}`);
 		else assert.match(corpo[i + 1]!, /^ {4}\S/); // continuação da correção: 4 espaços
 		for (const l of corpo)
 			assert.ok(/^ [✕▲✓] /.test(l) || /^ {3}\S/.test(l) || /^ {4}\S/.test(l), `recuo em ${w}: ${l}`);
 		assert.ok(corpo.includes(" ▲ 1 crash nas últimas 24 h") && corpo.includes("    detalhe curto"));
 		assert.ok(out.includes(L(" /doctor verifica de novo", w)));
-		assert.ok(out.join("\n").includes("nycode-doctor para ver o motivo de cada um") || w < 100);
+		assert.ok(out.join("\n").includes("e rode /doctor de novo") || w < 100);
 	}
 });
 

@@ -14,6 +14,8 @@ export type Entrada = {
 	agentDir: string;
 	exec(cmd: string, args: string[]): Promise<{ code: number; stdout: string; stderr: string }>;
 	fs: Fs;
+	/** Versão do pacote do core. */
+	versao?: string;
 	sessao?: { modelo?: string; temAuth?: boolean; erros: number; avisos: number; crashes: number };
 };
 
@@ -58,87 +60,34 @@ const primeiro = (s: string) =>
 		.split(/\s+/)[0]
 		?.replace(/^["']|["']$/g, "") ?? "";
 const pl = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`;
-const PATCH = "patch não reverte na árvore instalada";
 
 /** Troca o diretório home por `~` quando ele aparece como caminho inteiro (não como prefixo de outro nome). */
 export function abreviarHome(s: string | undefined, home: string | undefined): string | undefined {
 	const h = (home ?? "").replace(/\/+$/, "");
 	if (!s || !h) return s;
-	return s.replace(new RegExp(`(^|[^\\w/.-])${h.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=/|$|[^\\w.-])`, "g"), "$1~");
-}
-
-async function piDoctor(d: Entrada): Promise<Achado[]> {
-	const script = juntar(d.agentDir, "claude-home/bin/doctor/nycode-doctor");
-	if (!d.fs.existsSync(script)) return [ach("nycode-doctor", "aviso", "nycode-doctor não encontrado", script)];
-	const r = await d.exec(script, []);
-	const falhas = r.stdout
-		.split("\n")
-		.filter((l) => l.startsWith("FALHA  "))
-		.map((l) => l.slice(7).trim());
-	const patches = falhas.filter((f) => f.startsWith(`${PATCH}: `)).length;
-	const motivo = `rode ${script} para ver o motivo${patches > 1 ? " de cada um" : ""}`;
-	if (falhas.length)
-		return falhas.map((f) =>
-			ach(
-				"nycode-doctor",
-				"erro",
-				`nycode-doctor: ${f}`,
-				undefined,
-				f.startsWith(`${PATCH}: `) ? motivo : `rode ${script} e corrija o item`,
-			),
-		);
-	if (r.code !== 0)
-		return [ach("nycode-doctor", "erro", `nycode-doctor saiu com código ${r.code}`, undefined, `rode ${script}`)];
-	return [ach("nycode-doctor", "ok", "nycode-doctor sem falhas")];
-}
-
-function wrapper(d: Entrada): Achado[] {
-	return d.env.NYCODE_DIAG_INBOX
-		? [ach("wrapper", "ok", "nycode aberto pelo wrapper")]
-		: [
-				ach(
-					"wrapper",
-					"aviso",
-					"nycode fora do wrapper (sem NYCODE_DIAG_INBOX)",
-					undefined,
-					"abra o nycode pelo ~/.local/bin/nycode",
-				),
-			];
-}
-
-function versao(d: Entrada, p: string): string | undefined {
-	try {
-		const v = json(d, p)?.version;
-		return typeof v === "string" ? v : undefined;
-	} catch {
-		return undefined;
+	const antes = /[\w/.-]/;
+	const depois = /[\w.-]/;
+	let out = "";
+	let i = 0;
+	for (let k = s.indexOf(h); k >= 0; k = s.indexOf(h, i)) {
+		const prev = k > 0 ? s[k - 1]! : "";
+		const next = s[k + h.length] ?? "";
+		const inteiro = !(prev && antes.test(prev)) && (next === "" || next === "/" || !depois.test(next));
+		out += s.slice(i, k) + (inteiro ? "~" : h);
+		i = k + h.length;
 	}
+	return out + s.slice(i);
 }
 
 function versoes(d: Entrada): Achado[] {
-	let nycode = d.env.NYCODE_VERSION;
-	if (!nycode) {
-		const rel = juntar(d.agentDir, "install/releases");
-		let nome: string | undefined;
-		try {
-			nome = String(d.fs.readFileSync(juntar(d.agentDir, "install/current-version"), "utf8")).trim();
-		} catch {
-			/* sem current-version */
-		}
-		if (!nome && d.fs.readdirSync)
-			nome = [...d.fs.readdirSync(rel)].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).pop();
-		if (nome) nycode = versao(d, juntar(rel, nome, "node_modules/@nycode/coding-agent/package.json"));
-	}
-	const code = versao(d, juntar(d.agentDir, "npm/node_modules/nycode/package.json"));
+	const nycode = d.versao ?? d.env.NYCODE_VERSION;
 	const node = d.env.NYCODE_DOCTOR_NODE ?? process.version;
-	const titulo = `nycode ${nycode ?? "?"} · nycode ${code ?? "?"} · node ${node}`;
-	return [
-		nycode && code ? ach("versoes", "ok", titulo) : ach("versoes", "aviso", titulo, "versão não encontrada em disco"),
-	];
+	const titulo = `nycode ${nycode ?? "?"} · node ${node}`;
+	return [nycode ? ach("versoes", "ok", titulo) : ach("versoes", "aviso", titulo, "versão do nycode não informada")];
 }
 
 function hooks(d: Entrada): Achado[] {
-	const fontes = [juntar(d.agentDir, "settings.json"), juntar(d.agentDir, "claude-home/settings.json")];
+	const fontes = [juntar(d.agentDir, "settings.json")];
 	const out: Achado[] = [];
 	let total = 0;
 	for (const f of fontes) {
@@ -322,8 +271,6 @@ function sessao(d: Entrada): Achado[] {
 }
 
 const CHECKS: [string, (d: Entrada) => Achado[] | Promise<Achado[]>][] = [
-	["nycode-doctor", piDoctor],
-	["wrapper", wrapper],
 	["versoes", versoes],
 	["hooks", hooks],
 	["mcp", mcp],
@@ -355,10 +302,6 @@ export async function verificar(d: Entrada): Promise<Achado[]> {
 }
 
 const ORDEM: Estado[] = ["erro", "aviso", "ok"];
-/** Título do grupo quando o prefixo comum tem plural próprio; os demais usam `prefixo (n)`. */
-const PLURAL: Record<string, (n: number) => string> = {
-	[`nycode-doctor: ${PATCH}`]: (n) => `nycode-doctor: ${n} patches não revertem na árvore instalada`,
-};
 
 export type Bloco = { estado: Estado; titulo: string; linhas: string[]; correcao?: string };
 
@@ -387,7 +330,7 @@ export function blocosDoctor(achados: Achado[]): Bloco[] {
 				});
 				out.push({
 					estado: e,
-					titulo: PLURAL[prefixo]?.(vistos.size) ?? `${prefixo} (${vistos.size})`,
+					titulo: `${prefixo} (${vistos.size})`,
 					linhas,
 					correcao: a.correcao,
 				});

@@ -8,7 +8,6 @@ import * as __d_index from "../../../../../src/extensions/diagnostico/index.ts";
 import * as __d_registro from "../../../../../src/extensions/diagnostico/registro.ts";
 
 // The rendering reads TERM: pin it so the suite does not depend on the shell it runs in.
-// Skipped cases fail in the harness snapshot itself (expectations of the old modal/wrapper UI); see the PR notes.
 beforeEach(() => {
 	vi.stubEnv("TERM", "xterm-256color");
 });
@@ -35,11 +34,15 @@ function cria(env: Record<string, string> = {}, extra: Record<string, any> = {})
 	};
 	const chamadasUi: string[] = [];
 	const widgets: any[] = [];
+	const status: any[] = [];
 	const notices: Array<[string, string]> = [];
 	const ui: any = {
 		theme,
 		notify: (msg: string, tipo: string) => notices.push([msg, tipo]),
-		setStatus: () => chamadasUi.push("setStatus"),
+		setStatus: (_k: string, v: any) => {
+			chamadasUi.push("setStatus");
+			status.push(v);
+		},
 		setWidget: (_k: string, v: any) => {
 			chamadasUi.push("setWidget");
 			widgets.push(v);
@@ -106,6 +109,7 @@ function cria(env: Record<string, string> = {}, extra: Record<string, any> = {})
 		rt,
 		notices,
 		widgets,
+		ultimo: () => status.at(-1),
 		chamadasUi,
 		logs,
 		traces,
@@ -270,7 +274,7 @@ test("fio: throw síncrono é registrado e relançado igual", async () => {
 	assert.equal(t.log().filter((x) => x["error.type"] === "chamada").length, 1);
 });
 
-test.skip("hooks: sink vira evento nycode.hook; sev 9 é quieto, falha avisa", async () => {
+test("hooks: sink vira evento nycode.hook; sev 9 é quieto, falha avisa", async () => {
 	const t = cria({}, {});
 	t.start();
 	const sink = (globalThis as any)[SINK];
@@ -291,7 +295,8 @@ test.skip("hooks: sink vira evento nycode.hook; sev 9 é quieto, falha avisa", a
 		detalhe: "linha1\nlinha2",
 		dados: { evento: "PreToolUse", comando: "/x/h.sh", code: 2, durMs: 9, timedOut: false },
 	});
-	assert.deepEqual(t.notices, [["hook: h.sh bloqueou", "warning"]]);
+	assert.deepEqual(t.notices, [], "sem notify: a falha aparece só no rodapé");
+	assert.equal(t.ultimo(), "▲ 1 aviso · ctrl+e abre");
 	await t.fim();
 	const hooks = t.traces().filter((s: any) => s.name === "nycode.hook PreToolUse");
 	assert.equal(hooks.length, 2);
@@ -397,74 +402,61 @@ test("filho sem NYCODE_DIAG_INBOX não escreve nada e sem agente conhecido a fon
 	assert.match(readFileSync(inbox, "utf8"), /^13\tsub\ttool:bash\t/);
 });
 
-test.skip("pai lê a caixa quando a ferramenta termina (falha de subagente aparece ao voltar)", () => {
+test("pai lê a caixa quando a ferramenta termina (falha de subagente aparece ao voltar)", () => {
 	const inbox = join(mkdtempSync(join(tmpdir(), "diag-in-")), "inbox.tsv");
 	writeFileSync(inbox, "");
 	const t = cria({ NYCODE_DIAG_INBOX: inbox });
 	t.start();
 	writeFileSync(inbox, "17\tsub:Plan\ttool:bash\tfalhou no filho\n");
 	t.h("tool_execution_end", { toolName: "subagent", isError: false, toolCallId: "z", result: {} });
-	assert.deepEqual(t.notices, [["sub:Plan: falhou no filho", "error"]]);
+	assert.deepEqual(t.notices, []);
+	assert.equal(t.ultimo(), "✕ 1 erro · ctrl+e abre");
 });
 
-test.skip("nível: padrão avisos, filtra a faixa, /diagnostico nivel e limpar", async () => {
+test("rodapé: info não conta, aviso e erro contam, limpar zera e abrir marca como visto", async () => {
 	const t = cria();
 	t.start();
 	const cmd = t.comandos.get("diagnostico");
-	const ultimo = () => t.widgets.at(-1);
 	t.ui.notify("só info", "info");
-	assert.equal(t.widgets.length, 0);
+	assert.equal(t.ultimo(), undefined);
 	t.ui.notify("atenção", "warning");
-	assert.deepEqual(ultimo(), ["▲ notify: atenção"]);
-	await cmd.handler("nivel erros", t.ctx);
-	assert.deepEqual(t.notices.at(-1), ["nível da faixa: erros", "info"]);
-	t.ui.notify("outra", "warning");
-	assert.equal(ultimo().length, 1); // aviso não entra em erros
+	assert.equal(t.ultimo(), "▲ 1 aviso · ctrl+e abre");
 	t.ui.notify("falha", "error");
-	assert.deepEqual(ultimo(), ["▲ notify: atenção", "✕ notify: falha"]);
-	await cmd.handler("nivel", t.ctx);
-	assert.deepEqual(t.notices.at(-1), ["nível da faixa: erros (erros, avisos ou tudo)", "info"]);
-	await cmd.handler("nivel xis", t.ctx);
-	assert.deepEqual(t.notices.at(-1), ["uso: /diagnostico nivel erros|avisos|tudo", "info"]);
+	assert.equal(t.ultimo(), "✕ 1 erro · ▲ 1 aviso · ctrl+e abre");
 	await cmd.handler("limpar", t.ctx);
-	assert.equal(ultimo(), undefined);
+	assert.equal(t.ultimo(), undefined);
 	assert.equal(t.ui.painel, undefined);
 	t.ui.notify("falha 2", "error");
-	assert.equal(ultimo().length, 1);
-	await cmd.handler("", t.ctx); // abrir o painel esvazia a faixa
-	assert.equal(ultimo(), undefined);
+	assert.equal(t.ultimo(), "✕ 1 erro · ctrl+e abre");
+	await cmd.handler("", t.ctx); // abrir o painel marca tudo como visto
+	assert.equal(t.ultimo(), "diagnóstico: 1");
 	await cmd.handler("eventos", t.ctx);
 	assert.equal(t.ui.painel.aba, "eventos");
 	assert.match(t.ui.painel.render(100)[0], /eventos/);
 });
 
-test.skip("nível tudo: NYCODE_DIAG_NIVEL; hooks quietos e uma linha por chamada de modelo; inválido cai em avisos", async () => {
-	const t = cria({ NYCODE_DIAG_NIVEL: "tudo" });
+test("hooks quietos e chamadas de modelo bem-sucedidas não entram no rodapé", async () => {
+	const t = cria();
 	t.start();
 	(globalThis as any)[SINK]({ sev: 9, fonte: "hook", tipo: "hook", msg: "h ok", quieto: true });
-	assert.deepEqual(t.widgets.at(-1), ["• hook: h ok"]);
+	assert.equal(t.ultimo(), undefined);
 	t.rt.proximo = () => ({
 		result: () => Promise.resolve({ stopReason: "stop", usage: { input: 5, output: 2, cacheRead: 0 } }),
 	});
 	t.rt.streamSimple({ provider: "p", id: "m" }, {}, { reasoning: "low" });
 	await tick();
-	assert.ok(t.widgets.at(-1).at(-1).includes("modelo: chat p/m · low · 0 ms · 5/2 tok"));
-	const v = cria({ NYCODE_DIAG_NIVEL: "zzz" });
-	v.start();
-	(globalThis as any)[SINK]({ sev: 9, fonte: "hook", tipo: "hook", msg: "h ok", quieto: true });
-	assert.equal(v.widgets.length, 0);
+	assert.equal(t.ultimo(), undefined);
+	assert.equal(t.widgets.length, 0, "não há faixa acima do editor");
 });
 
-test.skip("/doctor: popula a aba saúde; sem UI imprime pelo log original", async () => {
+test("/doctor: popula a aba saúde; sem UI imprime pelo log original", async () => {
 	const t = cria();
 	t.start();
 	const doc = t.comandos.get("doctor");
-	assert.match(doc.description, /^Verifica a saúde do harness/);
+	assert.match(doc.description, /^Verifica a saúde do nycode/);
 	await t.comandos.get("diagnostico").handler("", t.ctx);
-	t.ui.painel.handleInput("\t");
-	t.ui.painel.handleInput("\t");
-	t.ui.painel.handleInput("\t");
-	t.ui.painel.handleInput("\t");
+	t.ui.painel.handleInput("\t"); // problemas -> eventos
+	t.ui.painel.handleInput("\t"); // eventos -> saúde
 	assert.equal(t.ui.painel.aba, "saúde");
 	assert.ok(t.ui.painel.render(100).join("\n").includes("rode /doctor"));
 	await doc.handler("", t.ctx);

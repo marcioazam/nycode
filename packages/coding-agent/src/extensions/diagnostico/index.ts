@@ -12,7 +12,7 @@ import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { format } from "node:util";
 import { visibleWidth } from "@nycode/tui";
-import { getAgentDir } from "../../config.ts";
+import { getAgentDir, VERSION } from "../../config.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import type { ThemeColor } from "../../modes/interactive/theme/theme.ts";
 import { copyToClipboard } from "../../utils/clipboard.ts";
@@ -340,20 +340,12 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 		} catch {}
 	};
 
-	const lerVersao = () => {
-		try {
-			return readFileSync(join(agentDir, "install", "current-version"), "utf8").trim() || undefined;
-		} catch {
-			return undefined;
-		}
-	};
-
 	const prepararExportador = () => {
 		if (exp && sessaoExp === sessao) return;
 		descarregar();
 		sessaoExp = sessao;
 		const recurso: Record<string, string> = { "service.name": "nycode", "nycode.subagent": filho ? "1" : "0" };
-		const versao = deps.versao ?? lerVersao();
+		const versao = deps.versao ?? VERSION;
 		if (versao) recurso["service.version"] = versao;
 		if (sessao) recurso["nycode.session.id"] = sessao;
 		if (filho && /^[\w-]{1,40}$/.test(env.NYCODE_FLEET_RUN_ID ?? ""))
@@ -761,6 +753,7 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 			achados = await verificar({
 				env,
 				agentDir,
+				versao: deps.versao ?? VERSION,
 				exec: deps.exec ?? execReal,
 				fs: { existsSync, readFileSync, statSync, accessSync, readdirSync },
 				sessao: {
@@ -789,7 +782,7 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 	// O claude-compat registra /doctor antes (ordem de carga) e delega para cá por este símbolo.
 	g[DOCTOR] = rodarDoctor;
 	nycode.registerCommand("doctor", {
-		description: "Verifica a saúde do harness: config, patches, hooks, MCP, credencial, exportação",
+		description: "Verifica a saúde do nycode: config, hooks, MCP, credencial, exportação",
 		handler: async (_args: string, ctx) => rodarDoctor(ctx),
 	});
 }

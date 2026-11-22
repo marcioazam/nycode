@@ -17,7 +17,6 @@ import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __d_registro from "../../../../src/extensions/diagnostico/registro.ts";
 
 // The rendering reads TERM: pin it so the suite does not depend on the shell it runs in.
-// Skipped cases fail in the harness snapshot itself (expectations of the old modal/wrapper UI); see the PR notes.
 beforeEach(() => {
 	vi.stubEnv("TERM", "xterm-256color");
 });
@@ -236,7 +235,7 @@ test("humano: cota vence o 429; vale para texto sem JSON só em entradas de mode
 	);
 });
 
-test.skip("humano: JSON cortado é lido por regex (tipo, mensagem, request_id)", () => {
+test("humano: JSON cortado é lido por regex (tipo, mensagem, request_id)", () => {
 	const inteiro = `429 ${erroJson("rate_limit_error", 'This request would exceed the "rate" limit.\nTry later', "req_011CZx4abc")}`;
 	const semFim = hm(inteiro.slice(0, -6));
 	assert.deepEqual(
@@ -245,7 +244,7 @@ test.skip("humano: JSON cortado é lido por regex (tipo, mensagem, request_id)",
 			"Limite de requisições (429)",
 			"rate_limit_error",
 			'This request would exceed the "rate" limit.\nTry later',
-			"req_011CZ",
+			"req_011CZx",
 		],
 	);
 	const noMeio = hm(inteiro.slice(0, inteiro.indexOf("Try")));

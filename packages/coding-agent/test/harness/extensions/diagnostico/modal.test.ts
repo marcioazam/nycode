@@ -6,7 +6,6 @@ import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __d_painel from "../../../../src/extensions/diagnostico/painel.ts";
 
 // The rendering reads TERM: pin it so the suite does not depend on the shell it runs in.
-// Skipped cases fail in the harness snapshot itself (expectations of the old modal/wrapper UI); see the PR notes.
 beforeEach(() => {
 	vi.stubEnv("TERM", "xterm-256color");
 });
@@ -111,146 +110,117 @@ const TAB = "\t",
 	ESC = "\x1b",
 	PGDN = "\x1b[6~",
 	PGUP = "\x1b[5~";
-/** Moldura fechada: toda linha com a largura pedida, cantos e bordas nos lugares. */
-function fechada(out: string[], w: number, ascii = false) {
-	const [tl, tr, bl, br, v, ml, mr] = ascii
-		? ["+", "+", "+", "+", "|", "+", "+"]
-		: ["╭", "╮", "╰", "╯", "│", "├", "┤"];
-	for (const l of out) assert.equal(visibleWidth(l), w, `largura ${w}: ${l}`);
-	assert.ok(out[0]!.startsWith(tl) && out[0]!.endsWith(tr), out[0]);
-	assert.ok(out.at(-1)!.startsWith(bl) && out.at(-1)!.endsWith(br), out.at(-1));
-	for (const l of out.slice(1, -1))
-		assert.ok((l.startsWith(v) && l.endsWith(v)) || (l.startsWith(ml) && l.endsWith(mr)), l);
+/** Painel sem moldura: régua no topo e na base, corpo preenchido até a largura pedida. */
+function aberta(out: string[], w: number, ascii = false) {
+	for (const l of out) assert.ok(visibleWidth(l) <= w, `largura ${w}: ${l}`);
+	assert.ok(out[0]!.startsWith(ascii ? "-- " : "── "), out[0]);
+	assert.match(out.at(-1)!, ascii ? /^-+$/ : /^─+$/);
 }
+const sem = (l: string) => semAnsi(l).trimEnd();
 
-test.skip("desenho aprovado em 80 colunas: moldura, contagem, lista, divisória, detalhe e dicas na borda", () => {
+test("desenho aprovado em 80 colunas: régua com a visão, contagem, lista, divisória, detalhe e dicas", () => {
 	const out = cria(MOCKUP(), { obs: true }).p.render(80);
-	if (process.env.DIAG_MOSTRAR) console.log(`\n${out.join("\n")}\n`); // quadro para conferir a olho
-	fechada(out, 80);
-	assert.match(out[0]!, /^╭─ Diagnóstico ─+ ✕ 3 erros · ▲ 1 aviso ─╮$/);
-	assert.equal(out[1], `│ ❯ ✕ 17:21  modelo            Limite de requisições (429)${" ".repeat(17)}×1  │`);
-	assert.ok(
-		out[2]!.startsWith("│   ✕ 17:21  sub:swarm-worker  Limite de requisições (429) ") && out[2]!.endsWith("×2  │"),
-	);
-	assert.ok(out[3]!.startsWith("│   ✕ 17:22  sub:swarm-worker  Cota da conta esgotada (429) "));
-	assert.ok(out[4]!.startsWith("│   ▲ 17:16  tool              tool bash: saiu com código 1 "));
-	assert.equal(out[5], `├${"─".repeat(78)}┤`);
-	assert.deepEqual(
-		out.slice(6, -1).map((l) => l.slice(1, -1).trimEnd()),
-		[
-			" ✕ modelo · rate_limit_error · 17:21:04",
-			"",
-			" This request would exceed your account's rate limit. Please try again later.",
-			"",
-			" → aguarde a renovação ou troque de modelo com /model",
-			" request_id req_011CZx4a… · trace 4bf92f35… · span 00f067aa…",
-		],
-	);
-	assert.match(out.at(-1)!, /^╰─ ↑↓ item · enter json bruto · c copiar · e evento · l limpar · esc fechar ─+╯$/);
+	aberta(out, 80);
+	assert.match(out[0]!, /^── Diagnóstico ─+ +problemas +eventos +saúde +──$/);
+	assert.equal(sem(out[1]!), " ✕ 3 erros · ▲ 1 aviso");
+	assert.equal(sem(out[2]!), ` ❯ erro    Limite de requisições (429)${" ".repeat(36)}17:21`);
+	assert.ok(sem(out[3]!).startsWith("   erro    Limite de requisições (429) ×2"));
+	assert.ok(sem(out[4]!).startsWith("   erro    Cota da conta esgotada (429)"));
+	assert.ok(sem(out[5]!).startsWith("   atenção tool bash: saiu com código 1") && sem(out[5]!).endsWith("17:16"));
+	assert.match(out[6]!, /^─+$/);
+	assert.deepEqual(out.slice(7, -2).map(sem), [
+		" modelo · rate_limit_error · 17:21:04",
+		"",
+		" This request would exceed your account's rate limit. Please try again later.",
+		"",
+		" → aguarde a renovação ou troque de modelo com /model",
+		" request_id req_011CZx4a… · trace 4bf92f35… · span 00f067aa…",
+	]);
+	assert.equal(sem(out.at(-2)!), "  enter  json bruto    c  copiar    tab  visão    esc  fechar    ?  mais");
 });
 
-test.skip("larguras 100/80/40 e ASCII: moldura fechada; em 40 a fonte some antes de cortar o título e as dicas quebram entre itens", () => {
-	for (const w of [100, 80, 40]) fechada(cria(MOCKUP()).p.render(w), w);
+test("larguras 100/80/40 e ASCII: régua nos extremos, em 40 a fonte some e o texto quebra na largura", () => {
+	for (const w of [100, 80, 40]) aberta(cria(MOCKUP()).p.render(w), w);
 	const o40 = cria(MOCKUP()).p.render(40);
-	assert.equal(o40[0], "╭─ Diagnóstico ──────────── ✕ 3 · ▲ 1 ─╮"); // contagem curta quando a longa não cabe
-	assert.equal(semAnsi(o40[1]!), "│ ❯ ✕ 17:21  Limite de requisiçõ…  ×1  │");
-	assert.equal(semAnsi(o40[4]!), "│   ▲ 17:16  tool bash: saiu com…  ×1  │");
-	assert.ok(!o40.join("\n").includes("swarm-worker  "), "sem a coluna da fonte");
+	assert.equal(sem(o40[0]!), "── Diagnóstico ──────────  problemas  ──");
+	assert.equal(sem(o40[2]!), " ❯ erro    Limite de requisições… 17:21");
+	assert.equal(sem(o40[5]!), "   atenção tool bash: saiu com c… 17:16");
+	assert.ok(!o40.join("\n").includes("swarm-worker"), "sem a coluna da fonte");
 	assert.ok(
 		o40.some((l: string) => l.includes("→ aguarde a renovação ou troque de")),
 		"correção quebrada na largura",
 	);
-	const dicas = [
-		...o40.slice(-3, -1).map((l: string) => l.slice(1, -1).trim()),
-		o40.at(-1)!.replace(/^╰─ /, "").replace(/ ─+╯$/, ""),
-	].filter((l) => /esc fechar|↑↓ item|c copiar/.test(l));
-	assert.deepEqual(
-		dicas.flatMap((l) => l.split(" · ")),
-		["↑↓ item", "enter json bruto", "c copiar", "l limpar", "esc fechar"],
-	);
-	assert.ok(!cria(MOCKUP()).p.render(100).at(-1)!.includes("tab visão")); // sem eventos/saúde não há outra visão
-	assert.ok(
-		cria(MOCKUP(), { obs: true })
-			.p.render(100)
-			.at(-1)!
-			.includes("e evento · l limpar · tab visão · t info · esc fechar"),
-	);
+	assert.match(sem(o40.at(-2)!), /^ {1,2}enter {2}json bruto {4}c {2}copiar {4}esc…$/, "dicas cortadas com … em 40");
+	assert.ok(!cria(MOCKUP()).p.render(100).at(-2)!.includes("tab  visão")); // sem eventos/saúde não há outra visão
+	assert.ok(cria(MOCKUP(), { obs: true }).p.render(100).at(-2)!.includes("tab  visão"));
 	const a = cria(MOCKUP(), { env: { NYCODE_ASCII_ICONS: "1" } }).p.render(80);
-	fechada(a, 80, true);
-	assert.match(a[0]!, /^\+- Diagnóstico -+ x 3 erros · ! 1 aviso -\+$/);
-	assert.ok(a[1]!.startsWith("| ❯ x 17:21  modelo"));
-	assert.equal(a[5], `+${"-".repeat(78)}+`);
-	assert.ok(!/[╭╮╰╯│├┤─]/.test(a.join("")));
+	assert.equal(sem(a[1]!), " x 3 erros · ! 1 aviso");
+	assert.match(a[0]!, /^── Diagnóstico ─+ +problemas +──$/);
 });
 
-test.skip("contagem com plural certo e só do que existe; vazio", () => {
+test("contagem com plural certo e só do que existe; vazio", () => {
 	const um = cria([reg({ sev: 13, msg: "a" })]).p.render(80);
-	assert.match(um[0]!, /^╭─ Diagnóstico ─+ ▲ 1 aviso ─╮$/);
+	assert.equal(sem(um[1]!), " ▲ 1 aviso");
 	const dois = cria([reg({ sev: 13, msg: "a" }), reg({ sev: 13, msg: "b" }), reg({ sev: 21, msg: "c" })]).p.render(80);
-	assert.match(dois[0]!, /─ ✕ 1 erro · ▲ 2 avisos ─╮$/);
+	assert.equal(sem(dois[1]!), " ✕ 1 erro · ▲ 2 avisos");
 	const vazio = cria([]).p.render(80);
-	fechada(vazio, 80);
-	assert.match(vazio[0]!, /^╭─ Diagnóstico ─+╮$/);
-	assert.equal(vazio.length, 3);
+	aberta(vazio, 80);
+	assert.equal(vazio.length, 4);
 	assert.ok(vazio[1]!.includes("Nenhum erro ou aviso nesta sessão"));
 });
 
-test.skip("cores: borda e teclas em accent, verbos em dim, linha escolhida com selectedBg, glifo pela severidade", () => {
+test("cores: régua em borderMuted, glifo pela severidade, linha escolhida com selectedBg e dicas accent/dim", () => {
 	const out = cria(MOCKUP(), { tema: marcado }).p.render(400);
-	assert.ok(out[0]!.startsWith("<accent>╭─ </>Diagnóstico"));
-	assert.ok(out[0]!.includes("<error>✕ 3 erros</>") && out[0]!.includes("<warning>▲ 1 aviso</>"));
-	assert.ok(out[1]!.includes("[selectedBg]") && out[1]!.includes("<accent>❯</>") && out[1]!.includes("<error>✕</>"));
-	assert.ok(!out[2]!.includes("[selectedBg]"));
-	assert.ok(out[4]!.includes("<warning>▲</>"));
-	assert.ok(
-		out.at(-1)!.includes("<accent>enter</> <dim>json bruto</>") &&
-			out.at(-1)!.includes("<accent>esc</> <dim>fechar</>"),
-	);
+	assert.ok(out[0]!.startsWith("<borderMuted>── </>Diagnóstico"));
+	assert.ok(out[1]!.includes("<error>✕ 3 erros</>") && out[1]!.includes("<warning>▲ 1 aviso</>"));
+	assert.ok(out[2]!.includes("[selectedBg]") && out[2]!.includes("<accent>❯</>"));
+	assert.ok(!out[3]!.includes("[selectedBg]"));
+	assert.ok(out[5]!.includes("<warning>atenção</>"));
+	assert.ok(out.at(-2)!.includes("[customMessageBg]") && out.at(-2)!.includes("<dim>json bruto</>"));
 	assert.ok(out.some((l: string) => l.includes("com <accent>/model</>")));
-	assert.ok(out.at(-2)!.includes("<dim>request_id req_011CZx4a… · trace 4bf92f35… · span 00f067aa…</>"));
+	assert.ok(out.at(-3)!.includes("<dim>request_id req_011CZx4a… · trace 4bf92f35… · span 00f067aa…</>"));
 });
 
-test.skip("↑↓ trocam o item e o detalhe acompanha; sem ids nem correção a última linha é o corpo", () => {
+test("↑↓ trocam o item e o detalhe acompanha; sem ids nem correção a última linha é o corpo", () => {
 	const { p } = cria(MOCKUP());
 	p.handleInput(DOWN);
 	p.handleInput(DOWN);
-	let s = p.render(100).join("\n");
-	assert.ok(s.includes("│ ❯ ✕ 17:22  sub:swarm-worker  Cota da conta esgotada (429)"));
-	assert.ok(s.includes(" ✕ sub:swarm-worker · rate_limit_error · 17:22:00"));
+	let s = p.render(100).map(sem).join("\n");
+	assert.ok(s.includes(" ❯ erro    Cota da conta esgotada (429)"));
+	assert.ok(s.includes(" sub:swarm-worker · rate_limit_error · 17:22:00"));
 	assert.ok(s.includes(" Usage limit reached: quota exceeded for this account."));
 	assert.ok(s.includes(" → aguarde a renovação do limite; a retomada automática espera por ela"));
 	assert.ok(s.includes(" request_id req_022") && !s.includes("trace "));
 	p.handleInput(DOWN);
 	p.handleInput(DOWN); // para no último
 	assert.equal(p.index, 3);
-	const o = p.render(100);
-	s = o.join("\n");
-	assert.ok(s.includes(" ▲ tool · bash · 17:16:00") && s.includes(" Command exited with code 1"));
+	s = p.render(100).map(sem).join("\n");
+	assert.ok(s.includes(" tool · bash · 17:16:00") && s.includes(" Command exited with code 1"));
 	assert.ok(!s.includes("→") && !s.includes("request_id"));
 	p.handleInput(UP);
 	assert.equal(p.index, 2);
 });
 
-test.skip("enter alterna o detalhe entre a leitura humana e o texto original", () => {
+test("enter alterna o detalhe entre a leitura humana e o texto original", () => {
 	const { p } = cria(MOCKUP());
 	p.handleInput(ENTER);
 	let o = p.render(100);
-	fechada(o, 100);
-	const s = o.join("").replace(/[│ ]/g, "");
+	aberta(o, 100);
+	const s = o.map(sem).join("").replace(/ /g, "");
 	assert.ok(s.includes(J429.replace(/ /g, "")), "json original inteiro, só quebrado");
 	assert.ok(!o.join("\n").includes("→ aguarde"));
-	assert.ok(o.at(-1)!.includes("enter resumo"));
+	assert.ok(sem(o.at(-2)!).includes("enter  resumo"));
 	assert.ok(o.join("\n").includes("trace 4bf92f35…"));
 	p.handleInput(ENTER);
 	o = p.render(100);
-	assert.ok(o.join("\n").includes("→ aguarde") && o.at(-1)!.includes("enter json bruto"));
+	assert.ok(o.join("\n").includes("→ aguarde") && sem(o.at(-2)!).includes("enter  json bruto"));
 	const q = cria([reg({ msg: "curta", detalhe: "Error: outra\n  at x (y.ts:1)" })]).p;
 	q.handleInput(ENTER);
-	const b = q.render(80).join("\n");
+	const b = q.render(80).map(sem).join("\n");
 	assert.ok(b.includes(" curta") && b.includes(" Error: outra") && b.includes("   at x (y.ts:1)"));
 });
 
-test.skip("t inclui as informativas; s silencia e reativa; l limpa; esc fecha", () => {
+test("t inclui as informativas; s silencia e reativa; l limpa; esc fecha", () => {
 	const lista = [
 		reg({ fonte: "a", tipo: "b", msg: "c" }),
 		reg({ sev: 9, fonte: "notify", tipo: "notify", msg: "só informação" }),
@@ -258,17 +228,15 @@ test.skip("t inclui as informativas; s silencia e reativa; l limpa; esc fecha", 
 	const { p, calls } = cria(lista);
 	assert.ok(!p.render(120).join("\n").includes("só informação"));
 	p.handleInput("t");
-	const o = p.render(120);
-	assert.ok(o.join("\n").includes("• 09:05  notify  só informação"));
-	assert.match(o[0]!, /^╭─ Diagnóstico · com informativas ─/);
-	assert.ok(o.at(-1)!.includes("t sem info"));
+	const o = p.render(120).map(sem);
+	assert.ok(o.some((l) => l.includes("info    só informação")));
+	assert.equal(o[1], " ✕ 1 erro · com informativas");
 	p.handleInput("t");
 	assert.ok(!p.render(120).join("\n").includes("só informação"));
 	p.handleInput("s");
 	assert.deepEqual(calls.silenciar, ["a|b|c"]);
 	lista[0]!.silencioso = true;
 	assert.ok(p.render(120).join("\n").includes("c (silenciado)"));
-	assert.ok(p.render(120).at(-1)!.includes("s reativar"));
 	p.handleInput("s");
 	assert.deepEqual(calls.reativar, ["a|b|c"]);
 	p.handleInput("l");
@@ -278,7 +246,7 @@ test.skip("t inclui as informativas; s silencia e reativa; l limpa; esc fecha", 
 	assert.equal(calls.done, 1);
 });
 
-test.skip("c copia título humano, texto original e ids inteiros; sem `copiar` a tecla some", () => {
+test("c copia título humano, texto original e ids inteiros; sem `copiar` a tecla some", () => {
 	const { p, calls } = cria(MOCKUP());
 	p.handleInput("c");
 	assert.equal(calls.copiado.length, 1);
@@ -288,31 +256,31 @@ test.skip("c copia título humano, texto original e ids inteiros; sem `copiar` a
 	assert.ok(
 		c.endsWith(`request_id req_011CZx4abcdefgh · trace ${"4bf92f35".repeat(4)} · span ${"00f067aa".repeat(2)}`),
 	);
-	assert.ok(p.render(100).at(-1)!.includes("c copiado"));
+	assert.ok(p.render(100).at(-2)!.includes("c  copiado"));
 	p.handleInput(DOWN);
-	assert.ok(p.render(100).at(-1)!.includes("c copiar"));
+	assert.ok(p.render(100).at(-2)!.includes("c  copiar"));
 	const s = cria(MOCKUP());
 	delete s.acoes.copiar;
 	s.p.handleInput("c");
-	assert.ok(!s.p.render(100).at(-1)!.includes("copiar"));
+	assert.ok(!s.p.render(100).at(-2)!.includes("copiar"));
 });
 
-test.skip("altura: lista com … acima/abaixo, nunca passa do orçamento, borda de baixo sempre presente", () => {
+test("altura: lista com … acima/abaixo, nunca passa do orçamento, régua de baixo sempre presente", () => {
 	const lista = Array.from({ length: 12 }, (_, i) => reg({ msg: `m${i}` }));
 	for (const w of [100, 80, 40]) {
 		for (const altura of [8, 10, 16]) {
 			const { p } = cria(lista, { altura });
 			let o = p.render(w);
 			assert.ok(o.length <= altura, `${w}x${altura}: ${o.length}`);
-			fechada(o, w);
-			assert.ok(o.some((l: string) => / … \d+ abaixo/.test(l)) && !o.some((l: string) => /\d+ acima/.test(l)));
+			aberta(o, w);
+			assert.ok(o.some((l: string) => /… \d+ abaixo/.test(l)) && !o.some((l: string) => /\d+ acima/.test(l)));
 			for (let i = 0; i < 6; i++) p.handleInput(DOWN);
 			o = p.render(w);
 			assert.ok(o.length <= altura);
-			fechada(o, w);
+			aberta(o, w);
 			if (altura <= 10)
 				assert.ok(
-					o.some((l: string) => / … \d+ acima/.test(l)) && o.some((l: string) => / … \d+ abaixo/.test(l)),
+					o.some((l: string) => /… \d+ acima/.test(l)) && o.some((l: string) => /… \d+ abaixo/.test(l)),
 					`meio ${w}x${altura}`,
 				);
 			assert.ok(o.find((l: string) => l.includes("m6"))!.includes("❯"));
@@ -323,11 +291,11 @@ test.skip("altura: lista com … acima/abaixo, nunca passa do orçamento, borda 
 	}
 });
 
-test.skip("detalhe maior que a janela: pgdn/pgup rolam o detalhe; quando cabe, andam a lista", () => {
+test("detalhe maior que a janela: pgdn/pgup rolam o detalhe; quando cabe, andam a lista", () => {
 	const corpo = Array.from({ length: 60 }, (_, i) => `linha-${i + 1}`).join("\n");
 	const { p } = cria([reg({ msg: "curta", detalhe: corpo })], { altura: 16 });
 	let o = p.render(80);
-	fechada(o, 80);
+	aberta(o, 80);
 	assert.ok(
 		o.length <= 16 &&
 			o.some((l: string) => l.includes("linhas abaixo")) &&
@@ -356,7 +324,7 @@ test.skip("detalhe maior que a janela: pgdn/pgup rolam o detalhe; quando cabe, a
 	assert.equal(q.index, 0);
 });
 
-test.skip("tab e shift+tab ciclam problemas → eventos → saúde; título mostra a visão e a posição", () => {
+test("tab e shift+tab ciclam problemas → eventos → saúde; a régua do topo mostra as visões", () => {
 	const { p } = cria(MOCKUP(), { obs: true });
 	const vistas = [p.aba];
 	for (let i = 0; i < 3; i++) {
@@ -366,21 +334,23 @@ test.skip("tab e shift+tab ciclam problemas → eventos → saúde; título most
 	assert.deepEqual(vistas, ["problemas", "eventos", "saúde", "problemas"]);
 	p.handleInput(SHIFT_TAB);
 	assert.equal(p.aba, "saúde");
-	for (const w of [100, 80, 40]) {
+	for (const w of [100, 80]) {
 		const o = p.render(w);
-		fechada(o, w);
-		assert.match(o[0]!, /^╭─ Diagnóstico · saúde 3\/3 ─+╮$/);
+		aberta(o, w);
+		assert.match(o[0]!, /^── Diagnóstico ─+ +problemas +eventos +saúde +──$/);
 	}
+	assert.match(p.render(40)[0]!, /^── Diagnóstico ─+ +saúde +──$/, "em 40 só cabe a visão atual");
 	p.handleInput(SHIFT_TAB);
-	assert.match(p.render(40)[0]!, /^╭─ Diagnóstico · eventos 2\/3 ─+╮$/);
+	assert.match(p.render(40)[0]!, /^── Diagnóstico ─+ +eventos +──$/);
 	const so = cria([]).p;
 	so.handleInput(TAB);
 	assert.equal(so.aba, "problemas"); // sem eventos nem saúde só existe uma visão
 });
 
-test.skip("linha do wrapper sem o `nycode: ` redundante; silenciada continua legível em 40", () => {
+test("linha do wrapper sem o `nycode: ` redundante; silenciada continua legível em 40", () => {
 	const o = cria([reg({ sev: 13, fonte: "wrapper", msg: "nycode: nycode 9.9.9 is not 1.7.0" })]).p.render(100);
-	assert.ok(o[1]!.includes("▲ 09:05  wrapper  nycode 9.9.9 is not 1.7.0"));
+	assert.ok(sem(o[2]!).startsWith(" ❯ atenção nycode 9.9.9 is not 1.7.0"));
+	assert.ok(o.map(sem).some((l) => l.includes(" wrapper · error · 09:05:00")));
 	const e = cria([
 		reg({
 			fonte: "fonte-x",
@@ -390,9 +360,9 @@ test.skip("linha do wrapper sem o `nycode: ` redundante; silenciada continua leg
 			n: 12,
 		}),
 	]).p.render(40);
-	fechada(e, 40);
-	assert.ok(e[1]!.includes("×12") && e[1]!.includes("mmm") && !e[1]!.includes("fonte-x"));
-	assert.ok(e.join("\n").includes(" ✕ fonte-x · error · 09:05:00"));
+	aberta(e, 40);
+	assert.ok(e[2]!.includes("mmm") && !e[2]!.includes("fonte-x"));
+	assert.ok(e.map(sem).some((l) => l === " fonte-x · error · 09:05:00"));
 });
 
 // --- rastreabilidade: problema ↔ evento da trilha pelo span_id ---
@@ -418,7 +388,7 @@ function criaTrilha(lista: any[], spans: any[]) {
 	return t;
 }
 
-test.skip("e salta do problema para o evento com o mesmo span_id (mesmo agrupado); sem correlação fica e avisa por uma renderização", () => {
+test("e salta do problema para o evento com o mesmo span_id (mesmo agrupado); sem correlação fica e avisa por uma renderização", () => {
 	const spans = [
 		sp("t9", "turn", 9),
 		sp("b3", "execute_tool bash", 8, { erro: "erro na ferramenta" }),
@@ -432,16 +402,16 @@ test.skip("e salta do problema para o evento com o mesmo span_id (mesmo agrupado
 		reg({ msg: "span antigo", spanId: "zz" }),
 	];
 	const { p } = criaTrilha(lista, spans);
-	assert.ok(p.render(100).at(-1)!.includes("c copiar · e evento · l limpar"));
+	assert.ok(p.render(100).at(-2)!.includes("?  mais")); // e/p ficam na ajuda expandida
 	p.handleInput("e");
 	assert.deepEqual([p.aba, p.index], ["eventos", 2]);
 	let o = p.render(100);
 	assert.ok(o.find((l: string) => l.includes("❯"))!.includes("chat p/m"));
-	assert.ok(o.at(-1)!.includes("enter detalhe · p problema · tab visão"));
+	assert.ok(o.at(-2)!.includes("enter  detalhe"));
 	p.handleInput(ENTER);
 	o = p.render(100);
 	assert.ok(o.join("\n").includes("│ chat p/m · 09:05:06 · 6000 ms · erro · 1 problema"));
-	assert.ok(o.at(-1)!.includes("enter fechar detalhe · p problema · esc fechar"));
+	assert.ok(o.at(-2)!.includes("enter  fechar detalhe"));
 	p.handleInput("p");
 	assert.deepEqual([p.aba, p.index], ["problemas", 0]);
 	p.handleInput(DOWN);
@@ -460,15 +430,15 @@ test.skip("e salta do problema para o evento com o mesmo span_id (mesmo agrupado
 		p.handleInput("e");
 		assert.deepEqual([p.aba, p.index], ["problemas", i]);
 		o = p.render(100);
-		fechada(o, 100);
-		assert.match(o.at(-1)!, /^╰─ sem evento correlacionado ─+╯$/);
+		aberta(o, 100);
+		assert.ok(o.map(sem).some((l) => l.includes("sem evento correlacionado")));
 		p.handleInput(UP);
 		p.handleInput(DOWN);
-		assert.ok(p.render(100).at(-1)!.includes("↑↓ item"));
+		assert.ok(p.render(100).at(-2)!.includes("?  mais")); // a linha de dicas volta ao normal
 	}
 });
 
-test.skip("p num evento sem problema: fica e avisa; dois problemas no mesmo span contam no detalhe", () => {
+test("p num evento sem problema: fica e avisa; dois problemas no mesmo span contam no detalhe", () => {
 	const spans = [sp("t9", "turn", 9), sp("c1", "chat p/m", 6, { erro: "x" })];
 	const lista = [
 		reg({ msg: "um", spanId: "c1" }),
@@ -477,10 +447,15 @@ test.skip("p num evento sem problema: fica e avisa; dois problemas no mesmo span
 	];
 	const { p } = criaTrilha(lista, spans);
 	p.handleInput(TAB);
-	assert.ok(!p.render(100).at(-1)!.includes("p problema")); // turn só tem entrada informativa
+	assert.ok(!p.render(100).at(-2)!.includes("p  problema")); // turn só tem entrada informativa
 	p.handleInput("p");
 	assert.equal(p.aba, "eventos");
-	assert.match(p.render(100).at(-1)!, /^╰─ sem problema correlacionado ─+╯$/);
+	assert.ok(
+		p
+			.render(100)
+			.map(sem)
+			.some((l) => l.includes("sem problema correlacionado")),
+	);
 	p.handleInput(DOWN);
 	p.handleInput(ENTER);
 	assert.ok(p.render(100).join("\n").includes("· erro · 2 problemas"));

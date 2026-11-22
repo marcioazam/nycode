@@ -9,7 +9,6 @@ import * as __d_index from "../../../../../src/extensions/diagnostico/index.ts";
 import * as __d_registro from "../../../../../src/extensions/diagnostico/registro.ts";
 
 // The rendering reads TERM: pin it so the suite does not depend on the shell it runs in.
-// Skipped cases fail in the harness snapshot itself (expectations of the old modal/wrapper UI); see the PR notes.
 beforeEach(() => {
 	vi.stubEnv("TERM", "xterm-256color");
 });
@@ -220,7 +219,7 @@ test("painel: detalhe do registro mostra trace e span; crash de outra execução
 	assert.ok(crash.includes("caiu antes") && !crash.includes("trace "));
 });
 
-test.skip("/diagnostico trace: avisa o trace id e os dois arquivos; completa os subcomandos", async () => {
+test("/diagnostico trace: avisa o trace id e os dois arquivos; completa os subcomandos", async () => {
 	const t = cria({ HOME: "/home/fulano" });
 	t.start();
 	const cmd = t.comandos.get("diagnostico");
@@ -235,41 +234,36 @@ test.skip("/diagnostico trace: avisa o trace id e os dois arquivos; completa os 
 	assert.equal(t.ui.painel, undefined); // não abre o painel
 	assert.deepEqual(
 		cmd.getArgumentCompletions("").map((x: any) => x.value),
-		["eventos", "trace", "limpar", "nivel"],
+		["eventos", "trace", "limpar"],
 	);
 	assert.deepEqual(
 		cmd.getArgumentCompletions("tr").map((x: any) => x.value),
 		["trace"],
 	);
 	assert.equal(cmd.getArgumentCompletions("zz"), null);
-	assert.equal(cmd.getArgumentCompletions("nivel "), null);
 	await cmd.handler("xis", t.ctx);
-	assert.deepEqual(t.notices.at(-1), ["uso: /diagnostico [eventos|trace|limpar|nivel erros|avisos|tudo]", "info"]);
+	assert.deepEqual(t.notices.at(-1), ["uso: /diagnostico [eventos|trace|limpar]", "info"]);
 });
 
-test.skip("/doctor não limpa a faixa nem o contador; /diagnostico e o `l` do painel limpam os dois", async () => {
+test("/doctor não limpa o contador do rodapé; /diagnostico marca como visto e o `l` do painel limpa", async () => {
 	const t = cria();
 	t.start();
 	t.ui.notify("atenção", "warning");
-	assert.deepEqual(t.widgets.at(-1), ["▲ notify: atenção"]);
-	assert.equal(t.status.at(-1), "▲ 1 · /diagnostico");
-	const nW = t.widgets.length;
+	assert.equal(t.status.at(-1), "▲ 1 aviso · ctrl+e abre");
+	const nStatus = t.status.length;
 	await t.comandos.get("doctor").handler("", t.ctx);
 	assert.equal(t.ui.painel.aba, "saúde");
-	assert.equal(t.widgets.length, nW, "faixa intocada pelo /doctor");
-	assert.deepEqual(t.widgets.at(-1), ["▲ notify: atenção"]);
-	assert.equal(t.status.at(-1), "▲ 1 · /diagnostico");
+	assert.equal(t.status.length, nStatus, "rodapé intocado pelo /doctor");
+	assert.equal(t.status.at(-1), "▲ 1 aviso · ctrl+e abre");
 	await t.comandos.get("diagnostico").handler("", t.ctx);
-	assert.equal(t.widgets.at(-1), undefined);
-	assert.equal(t.status.at(-1), undefined);
+	assert.equal(t.status.at(-1), "diagnóstico: 1", "visto: o rodapé troca a contagem pelo total da sessão");
 	t.ui.notify("outra", "warning");
-	assert.deepEqual(t.widgets.at(-1), ["▲ notify: outra"]);
+	assert.equal(t.status.at(-1), "▲ 1 aviso · ctrl+e abre");
 	t.ui.painel.handleInput("l");
-	assert.equal(t.widgets.at(-1), undefined);
 	assert.equal(t.status.at(-1), undefined);
 });
 
-test.skip("aviso do wrapper: `nycode: ` some da faixa e do aviso, fica no registro", () => {
+test("aviso do wrapper: vira contagem no rodapé, sem notify, e o texto fica inteiro no registro", () => {
 	const t = cria();
 	t.start();
 	sink({
@@ -278,12 +272,12 @@ test.skip("aviso do wrapper: `nycode: ` some da faixa e do aviso, fica no regist
 		tipo: "patch",
 		msg: "nycode: nycode 9.9.9 is not 1.7.0, skipping harness patches",
 	});
-	assert.deepEqual(t.widgets.at(-1), ["▲ wrapper: nycode 9.9.9 is not 1.7.0, skipping harness patches"]);
-	assert.deepEqual(t.notices.at(-1), ["wrapper: nycode 9.9.9 is not 1.7.0, skipping harness patches", "warning"]);
+	assert.equal(t.status.at(-1), "▲ 1 aviso · ctrl+e abre");
+	assert.deepEqual(t.notices, [], "nenhum notify: o aviso só aparece no rodapé e no modal");
 	assert.equal(t.log().at(-1).body, "nycode: nycode 9.9.9 is not 1.7.0, skipping harness patches");
 });
 
-test.skip("detectores de ponta a ponta: hook lento, tool em laço, modelo lento e falhas de modelo", async () => {
+test("detectores de ponta a ponta: hook lento, tool em laço, modelo lento e falhas de modelo", async () => {
 	const t = cria();
 	t.start();
 	sink({
@@ -303,9 +297,8 @@ test.skip("detectores de ponta a ponta: hook lento, tool em laço, modelo lento 
 		dados: { evento: "Stop", comando: "/x/lento.sh a", code: 0, durMs: 2600, timedOut: false },
 	});
 	assert.deepEqual(detector(t), [["hook-lento", 13, "hook Stop · lento.sh levou 2500 ms"]]);
-	assert.deepEqual(t.widgets.at(-1), ["▲ detector: hook Stop · lento.sh levou 2500 ms"]); // na faixa como qualquer aviso
-	assert.equal(t.status.at(-1), "▲ 1 · /diagnostico");
-	assert.deepEqual(t.notices, []); // sem aviso extra: a faixa já mostra
+	assert.equal(t.status.at(-1), "▲ 1 aviso · ctrl+e abre"); // no rodapé como qualquer aviso
+	assert.deepEqual(t.notices, []); // sem notify extra: o rodapé já mostra
 
 	toolErro(t, "a");
 	toolErro(t, "b");

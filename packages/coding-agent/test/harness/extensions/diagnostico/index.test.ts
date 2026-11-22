@@ -7,7 +7,6 @@ import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __d_index from "../../../../src/extensions/diagnostico/index.ts";
 
 // The rendering reads TERM: pin it so the suite does not depend on the shell it runs in.
-// Skipped cases fail in the harness snapshot itself (expectations of the old modal/wrapper UI); see the PR notes.
 beforeEach(() => {
 	vi.stubEnv("TERM", "xterm-256color");
 });
@@ -276,7 +275,7 @@ test("crash da sessão: monitor grava FATAL; nunca registra unhandledRejection/u
 	assert.equal(t.ultimo(), "✕ 1 erro · ctrl+e abre");
 });
 
-test.skip("/diagnostico marca tudo visto: o rodapé troca a contagem pelo total da sessão", async () => {
+test("/diagnostico marca tudo visto: o rodapé troca a contagem pelo total da sessão", async () => {
 	const t = cria({ HOME: "/home/fulano" });
 	t.start();
 	t.ui.notify("erro qualquer", "error");
@@ -285,7 +284,7 @@ test.skip("/diagnostico marca tudo visto: o rodapé troca a contagem pelo total 
 	assert.equal(t.ultimo(), "diagnóstico: 1");
 	const out = t.ui.painel.render(120);
 	assert.equal(t.ui.painel.aba, "problemas");
-	assert.match(out[0], /^╭─ Diagnóstico ─+ ✕ 1 erro ─╮$/);
+	assert.match(out[0], /^── Diagnóstico ─+ +problemas +eventos +saúde +──$/);
 	assert.ok(out.join("\n").includes("erro qualquer"));
 	await t.comandos.get("diagnostico").handler("limpar", t.ctx);
 	assert.equal(t.ultimo(), undefined); // lista vazia: nada no rodapé

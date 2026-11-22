@@ -21,15 +21,12 @@ type Cfg = {
 	exe?: string[];
 	sizes?: Record<string, number>;
 	ro?: string[];
+	versao?: string;
 };
 
 // fs em memória: files = existentes (conteúdo); exe = executáveis; sizes = tamanhos
 function montar(c: Cfg = {}) {
 	const files: Record<string, string> = {
-		[`${A}/claude-home/bin/doctor/nycode-doctor`]: "",
-		[`${A}/install/current-version`]: "0.9.1",
-		[`${A}/install/releases/0.9.1/node_modules/@nycode/coding-agent/package.json`]: '{"version":"0.9.1"}',
-		[`${A}/npm/node_modules/nycode/package.json`]: '{"version":"2.3.4"}',
 		[`${A}/diag`]: "",
 		...c.files,
 	};
@@ -50,56 +47,16 @@ function montar(c: Cfg = {}) {
 	};
 	const exec = c.exec ?? (async () => ({ code: 0, stdout: "tudo bem\n", stderr: "" }));
 	const env = { PATH: "/bin:/usr/bin", HOME: "/home/u", NYCODE_DIAG_INBOX: "/x", ...c.env };
-	return { env, agentDir: A, exec, fs, sessao: c.sessao } as any;
+	return { env, agentDir: A, exec, fs, sessao: c.sessao, versao: c.versao } as any;
 }
 const get = (r: any[], id: string) => r.filter((x) => x.id === id);
 
-test("nycode-doctor: ok, FALHA vira erro, ausente vira aviso, exec que lança vira erro", async () => {
-	assert.equal(get(await verificar(montar()), "nycode-doctor")[0].estado, "ok");
-	const falha = await verificar(
-		montar({ exec: async () => ({ code: 1, stdout: "ok x\nFALHA  settings quebrado\nFALHA  patch\n", stderr: "" }) }),
-	);
-	const f = get(falha, "nycode-doctor");
-	assert.equal(f.length, 2);
-	assert.ok(f.every((x) => x.estado === "erro" && x.correcao));
-	assert.match(f[0].titulo, /settings quebrado/);
-	const m = montar();
-	m.fs.existsSync = (p: string) => !p.endsWith("nycode-doctor");
-	assert.equal(get(await verificar(m), "nycode-doctor")[0].estado, "aviso");
-	const t = get(
-		await verificar(
-			montar({
-				exec: async () => {
-					throw new Error("boom");
-				},
-			}),
-		),
-		"nycode-doctor",
-	)[0];
-	assert.equal(t.estado, "erro");
-	assert.match(t.detalhe, /boom/);
-});
-
-test("wrapper", async () => {
-	assert.equal(get(await verificar(montar()), "wrapper")[0].estado, "ok");
-	const d = montar();
-	delete d.env.NYCODE_DIAG_INBOX;
-	const w2 = get(await verificar(d), "wrapper")[0];
-	assert.equal(w2.estado, "aviso");
-	assert.equal(w2.correcao, "abra o nycode pelo ~/.local/bin/nycode");
-});
-
-test("versoes: ok, NYCODE_VERSION, faltando = aviso", async () => {
-	const v = get(await verificar(montar({ env: { NYCODE_DOCTOR_NODE: "v22.1.0" } })), "versoes")[0];
+test("versoes: versão do pacote do core + node; NYCODE_VERSION como reserva; faltando = aviso", async () => {
+	const v = get(await verificar(montar({ versao: "0.9.1", env: { NYCODE_DOCTOR_NODE: "v22.1.0" } })), "versoes")[0];
 	assert.equal(v.estado, "ok");
-	assert.match(v.titulo, /0\.9\.1.*2\.3\.4.*v22\.1\.0/);
+	assert.equal(v.titulo, "nycode 0.9.1 · node v22.1.0");
 	assert.match(get(await verificar(montar({ env: { NYCODE_VERSION: "7.7.7" } })), "versoes")[0].titulo, /7\.7\.7/);
-	const m = montar();
-	m.fs.existsSync = () => false;
-	m.fs.readFileSync = () => {
-		throw new Error("x");
-	};
-	assert.equal(get(await verificar(m), "versoes")[0].estado, "aviso");
+	assert.equal(get(await verificar(montar()), "versoes")[0].estado, "aviso");
 });
 
 const settings = (cmd: string) =>
@@ -230,38 +187,6 @@ test("crashes e sessao: plurais e só as partes diferentes de zero", async () =>
 });
 
 const G = (e: string) => ({ ok: "✓", aviso: "▲", erro: "✕" })[e as "ok"];
-test("nycode-doctor: patches que não revertem viram um bloco só, com ~ no caminho", async () => {
-	const H = "/home/u/.nycode/agent";
-	const stdout = [
-		"FALHA  patch não reverte na árvore instalada: a.patch",
-		"FALHA  patch não reverte na árvore instalada: b.patch",
-		"FALHA  patch não reverte na árvore instalada: c.patch",
-		"FALHA  settings quebrado",
-		"",
-	].join("\n");
-	const d = montar({
-		files: { [`${H}/claude-home/bin/doctor/nycode-doctor`]: "", [`${H}/diag`]: "" },
-		exec: async () => ({ code: 1, stdout, stderr: "" }),
-	});
-	d.agentDir = H;
-	const r = await verificar(d);
-	const l = formatarDoctor(get(r, "nycode-doctor"), G);
-	assert.deepEqual(l, [
-		"✕ nycode-doctor: 3 patches não revertem na árvore instalada",
-		"  a.patch",
-		"  b.patch",
-		"  c.patch",
-		"  → rode ~/.nycode/agent/claude-home/bin/doctor/nycode-doctor para ver o motivo de cada um",
-		"✕ nycode-doctor: settings quebrado",
-		"  → rode ~/.nycode/agent/claude-home/bin/doctor/nycode-doctor e corrija o item",
-		"4 erros · 0 avisos · 0 ok", // o resumo conta achados, não blocos
-	]);
-	assert.ok(
-		!JSON.stringify(r.map((x: any) => [x.detalhe, x.correcao])).includes("/home/u"),
-		"home abreviado em detalhe e correção",
-	);
-});
-
 test("home abreviado em detalhe (log grande) e intocado sem HOME", async () => {
 	const H = "/home/u/.nycode/agent";
 	const base = {
@@ -342,20 +267,9 @@ test("formatarDoctor e codigoSaida", () => {
 	assert.equal(codigoSaida(a.slice(0, 2)), 0);
 });
 
-test("F21: settings.json inválido não impede a verificação do segundo arquivo de hooks", async () => {
-	const r = await verificar(
-		montar({
-			files: {
-				[`${A}/settings.json`]: "{ quebrado",
-				[`${A}/claude-home/settings.json`]: settings("/nao/existe.sh"),
-			},
-		}),
-	);
+test("F21: settings.json inválido vira erro do check de hooks, sem derrubar a verificação", async () => {
+	const r = await verificar(montar({ files: { [`${A}/settings.json`]: "{ quebrado" } }));
 	const h = get(r, "hooks");
-	assert.ok(
-		h.some((x: any) => x.estado === "erro" && /nao\/existe\.sh/.test(x.titulo)),
-		JSON.stringify(h),
-	);
 	assert.ok(
 		h.some((x: any) => x.estado === "erro" && /settings\.json/.test(x.titulo)),
 		JSON.stringify(h),
