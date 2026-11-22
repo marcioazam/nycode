@@ -154,8 +154,15 @@ pub trait Pipe: io::Read + std::os::fd::AsRawFd {}
 impl<T: io::Read + std::os::fd::AsRawFd> Pipe for T {}
 
 /// Read `pipe` until it ends, `on_data` returns false, or `stop` is set (looked at every 100 ms, also while no output
-/// arrives); the pipe closes when this returns.
-pub fn read_pipe(mut pipe: impl Pipe, stop: &AtomicBool, mut on_data: impl FnMut(&[u8]) -> bool) {
+/// arrives); the pipe closes when this returns. // nycode: K25 With `drain` set (looked at the same time) it reads what the
+/// pipe holds, at most `DRAIN_LIMIT` bytes, and returns without waiting for more, also while a descendant holds the
+/// write end open.
+pub fn read_pipe(
+    mut pipe: impl Pipe,
+    stop: &AtomicBool,
+    drain: &AtomicBool,
+    mut on_data: impl FnMut(&[u8]) -> bool,
+) {
     let fd = pipe.as_raw_fd();
     // SAFETY: fcntl on a descriptor this thread owns.
     unsafe {
@@ -164,6 +171,10 @@ pub fn read_pipe(mut pipe: impl Pipe, stop: &AtomicBool, mut on_data: impl FnMut
     }
     let mut buffer = vec![0u8; 64 * 1024];
     while !stop.load(Ordering::SeqCst) {
+        // nycode: K25
+        if drain.load(Ordering::SeqCst) {
+            return drain_pipe(&mut pipe, &mut buffer, &mut on_data);
+        }
         let mut poll = libc::pollfd {
             fd,
             events: libc::POLLIN,
@@ -191,6 +202,28 @@ pub fn read_pipe(mut pipe: impl Pipe, stop: &AtomicBool, mut on_data: impl FnMut
                     error.kind(),
                     io::ErrorKind::WouldBlock | io::ErrorKind::Interrupted
                 ) => {}
+            Err(_) => return,
+        }
+    }
+}
+
+/// nycode: K25 Read what a non-blocking `pipe` holds, without waiting, until it is empty, ends or `DRAIN_LIMIT` bytes.
+pub fn drain_pipe(
+    pipe: &mut impl io::Read,
+    buffer: &mut [u8],
+    on_data: &mut impl FnMut(&[u8]) -> bool,
+) {
+    let mut total = 0;
+    while total < super::DRAIN_LIMIT {
+        match pipe.read(buffer) {
+            Ok(0) => return,
+            Ok(read) => {
+                total += read;
+                if !on_data(&buffer[..read]) {
+                    return;
+                }
+            }
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => {}
             Err(_) => return,
         }
     }
@@ -462,5 +495,61 @@ mod tests {
         }
         // SAFETY: as above.
         assert_ne!(unsafe { libc::kill(sleeper, 0) }, 0);
+    }
+}
+
+// nycode: K25
+#[cfg(test)]
+mod drain_tests {
+    use super::*;
+    use std::fs::File;
+    use std::io::Write;
+    use std::os::fd::FromRawFd;
+    use std::time::{Duration, Instant};
+
+    fn pipe() -> (File, File) {
+        let mut fds = [0; 2];
+        // SAFETY: two descriptors, each owned by one File from here on.
+        unsafe {
+            assert_eq!(libc::pipe(fds.as_mut_ptr()), 0);
+            (File::from_raw_fd(fds[0]), File::from_raw_fd(fds[1]))
+        }
+    }
+
+    #[test]
+    fn drain_returns_what_the_pipe_holds_while_a_writer_keeps_it_open() {
+        let (reader, mut writer) = pipe();
+        writer.write_all(&[7u8; 10_000]).unwrap();
+        let (stop, drain) = (AtomicBool::new(false), AtomicBool::new(true));
+        let started = Instant::now();
+        let mut total = 0;
+        read_pipe(reader, &stop, &drain, |bytes| {
+            total += bytes.len();
+            true
+        });
+        assert_eq!(total, 10_000);
+        assert!(
+            started.elapsed() < Duration::from_millis(500),
+            "returns without waiting for the writer"
+        );
+        drop(writer);
+    }
+
+    #[test]
+    fn drain_stops_at_the_limit_while_a_writer_keeps_writing() {
+        struct Endless;
+        impl io::Read for Endless {
+            fn read(&mut self, buffer: &mut [u8]) -> io::Result<usize> {
+                buffer.fill(1);
+                Ok(buffer.len())
+            }
+        }
+        let mut buffer = vec![0u8; 64 * 1024];
+        let mut total = 0;
+        drain_pipe(&mut Endless, &mut buffer, &mut |bytes| {
+            total += bytes.len();
+            true
+        });
+        assert!(total >= crate::sys::DRAIN_LIMIT && total < crate::sys::DRAIN_LIMIT + buffer.len());
     }
 }

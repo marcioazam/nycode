@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed the end of a program's output still going missing after it exited: the daemon stopped the readers after 100 ms of silence, so a reader the system did not schedule in that time lost what was left in the pipe (up to 64 KiB on Linux, seen as 65536 of 98304 bytes). The readers now read what the pipe or terminal holds, without waiting and at most 1 MiB, and end; a descendant that keeps the pipe open still does not keep the command from settling
+
 ## [2.0.0] - 2026-11-21
 
 ## [1.6.0] - 2026-11-20

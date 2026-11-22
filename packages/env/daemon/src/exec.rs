@@ -297,22 +297,31 @@ pub fn running<T>(
         .ok_or_else(|| Failure::new("EBADF", format!("no running {what} with this id")))
 }
 
+/// nycode: K25 Tests only: how long a reader stays away after it got room, like a thread the system did not run.
+#[cfg(test)]
+pub static READER_AWAY_MS: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
 /// Read one pipe on its own thread until it ends or `stop` is set. With `gate`, reading waits while too much output is
-/// unsent.
+/// unsent. // nycode: K25 `drain` makes it read what the pipe holds and end, see `sys::read_pipe`.
 pub fn spawn_reader(
     stream: usize,
     pipe: impl sys::Pipe + Send + 'static,
     sender: Sender<Message>,
     stop: Arc<AtomicBool>,
+    drain: Arc<AtomicBool>,
     gate: Option<Gate>,
 ) -> std::io::Result<JoinHandle<()>> {
     thread::Builder::new().spawn(move || {
-        sys::read_pipe(pipe, &stop, |bytes| {
+        sys::read_pipe(pipe, &stop, &drain, |bytes| {
             let deliver = || sender.send(Message::Data(stream, bytes.to_vec())).is_ok();
-            match &gate {
+            let delivered = match &gate {
                 Some(gate) => gate.pass(&stop, deliver),
                 None => deliver(),
-            }
+            };
+            // nycode: K25
+            #[cfg(test)]
+            thread::sleep(Duration::from_millis(READER_AWAY_MS.load(Ordering::SeqCst)));
+            delivered
         });
         let _ = sender.send(Message::Eof(stream));
     })
@@ -390,6 +399,8 @@ pub fn run(
     groups.lock().unwrap().insert(pid);
     let deadline = request.timeout.map(|timeout| Instant::now() + timeout);
     let stop = Arc::new(AtomicBool::new(false));
+    // nycode: K25 set once the process exited and the link is not holding a reader up: the readers drain their pipes.
+    let drain = Arc::new(AtomicBool::new(false));
     // Without a window, output is not coalesced; reading then waits for the link.
     let gate = if request.window.is_none() {
         Some(Gate::new(output))
@@ -408,11 +419,25 @@ pub fn run(
         Failure::new("spawn_error", error.to_string())
     };
     let stdout = child.stdout.take().unwrap();
-    if let Err(error) = spawn_reader(0, stdout, sender.clone(), stop.clone(), gate.clone()) {
+    if let Err(error) = spawn_reader(
+        0,
+        stdout,
+        sender.clone(),
+        stop.clone(),
+        drain.clone(),
+        gate.clone(),
+    ) {
         return Err(abandon(child, error));
     }
     let stderr = child.stderr.take().unwrap();
-    if let Err(error) = spawn_reader(1, stderr, sender.clone(), stop.clone(), gate.clone()) {
+    if let Err(error) = spawn_reader(
+        1,
+        stderr,
+        sender.clone(),
+        stop.clone(),
+        drain.clone(),
+        gate.clone(),
+    ) {
         return Err(abandon(child, error));
     }
     if let Err((child, error)) = start_waiter(child, None, sender.clone()) {
@@ -481,8 +506,10 @@ pub fn run(
             if gate.as_ref().is_some_and(Gate::held) {
                 idle_until = Some(now + EXIT_STDIO_GRACE);
             } else {
-                // A descendant may hold the pipes open after the process exited; stop waiting for it.
-                break;
+                // nycode: K25 A descendant may hold the pipes open after the process exited: the readers take what
+                // the pipes hold and end, instead of this loop stopping them with output still in the pipe.
+                drain.store(true, Ordering::SeqCst);
+                idle_until = None;
             }
         }
         if let Some(pending) = &mut pending
