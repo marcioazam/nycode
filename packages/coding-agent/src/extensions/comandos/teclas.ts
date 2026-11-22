@@ -120,6 +120,8 @@ export function montarLinhas(kb: KbLike): Linha[] {
 			l.teclas.every(
 				(k) => !/(^|\+)(alt|meta)(\+|$)/.test(k.toLowerCase()) || (PARIDADE_ALT[l.id] ?? []).includes(canonica(k)),
 			);
+		// the second key of a chord (after the copy prefix) is not a standalone key: it cannot conflict
+		if (l.id === "app.message.sendNowChord") continue;
 		for (const k of l.teclas) {
 			const chave = `${l.contexto}|${norm(k)}`;
 			grupos.set(chave, [...(grupos.get(chave) ?? []), l]);

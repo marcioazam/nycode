@@ -2,7 +2,7 @@
 
 Política para o nycode continuar recebendo o upstream durante e depois da migração. O registro do fork
 (`docs/fork/2026-11-20-fork-do-pi.md`) não tem esta política (lido inteiro em 2026-11-20); este documento a cria.
-Decisões citadas: [D-06, D-07](11-decisoes-e-pendencias.md). Costuras K1..K21: [02, seção 4](02-arquitetura-alvo.md).
+Decisões citadas: [D-06, D-07](11-decisoes-e-pendencias.md). Costuras K1..K22: [02, seção 4](02-arquitetura-alvo.md).
 Estado: **proposta, ferramentas criadas** (C-F6-17, PR A, 2026-11-21). Existem `scripts/fork/{all,image,test_reproduction}.sh`,
 `scripts/fork/seams.txt`, `scripts/ci/seams/check-seams.sh`, `docs/fork/sync-pr-template.md` e `docs/fork/syncs/`; o job
 `merge-policy` já existe (`.github/workflows/merge-policy.yml`). Nenhuma sincronização foi feita ainda: o restante
@@ -138,10 +138,10 @@ primeiras sincronizações.
 
 ## 4. Costuras
 
-Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 21 de
+Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 22 de
 [02, seção 4](02-arquitetura-alvo.md), mais as costuras do renome (seção 4.3).
 
-### 4.1 Tabela de costuras K1..K21
+### 4.1 Tabela de costuras K1..K22
 
 Frequência medida em 2026-11-20 com `git log --oneline --since='3 months ago' 073b0ba -- <arquivo>` (só commits do
 upstream, antes do renome; inclui merges; coluna 1m = `--since='1 month ago'`). Sem a ponta `073b0ba` o comando pedido
@@ -174,6 +174,8 @@ Abreviação: `CA` = `packages/coding-agent/src`; `core/` e `cli/` abaixo são d
 | K19 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Uma linha no início de `updateEditorBorderColor()` | 91 / 25 | 3 (região: `updateEditorBorderColor`) | médio |
 | K20 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Uma linha no lugar de `this.showStatus("Resumed session")` | 91 / 25 | 1 (região: `Resumed session`) | médio |
 | K21 | `packages/tui/src/layout.ts` | Uma chamada no lugar de `if (isImageLine(line)) return line;` em `replaceScrollbarCell` | 4 / 3 | 1 (região: `replaceScrollbarCell`) | médio |
+| K22 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Duas chamadas `installSendNow(this)` (início de `setupKeyHandlers()` e após `clearExtensionTerminalInputListeners()` em `resetExtensionUI`) e a linha da ajuda | 91 / 25 | 1 (região: `installSendNow` ou `app.message.dequeue`) | médio |
+| K22 | `packages/coding-agent/src/core/keybindings.ts` | Cinco atalhos novos em `DEFAULT_APP_KEYBINDINGS` (`app.message.sendNow`, `app.message.sendNowChord`, `app.queue.drop`, `app.queue.selectPrev`, `app.queue.selectNext`) | 6 / 1 | 1 (região: `installSendNow` ou `app.message.dequeue`) | médio |
 
 Legenda: 3m/1m = commits em 3 meses e em 1 mês; Região = commits dos 3 meses cujo diff casa o termo (aproximação por
 `git log -G`); n. med. = região não medida; indef. = ponto do gancho ainda não decidido.
@@ -249,6 +251,7 @@ Para cada costura: como reduzir (arquivo novo e chamada única) e o teste que fa
 - **K19.** Uma chamada `installUiControls(this)` no início de `updateEditorBorderColor()`, marcada `// nycode: K19`; a lógica fica em `modes/interactive/ui-controls/` e os comandos em `claude-compat/interface`. No merge, reaplicar a linha marcada. Teste: `packages/coding-agent/test/harness/modes/ui-controls/index.test.ts`.
 - **K20.** Uma chamada `mostrarRetomada(this)` no lugar de `this.showStatus("Resumed session")` em `handleResumeSession`, marcada `// nycode: K20`; a lógica fica em `modes/interactive/retomada/`. No merge, reaplicar a linha marcada. Teste: `packages/coding-agent/test/harness/modes/retomada/index.test.ts`.
 - **K21.** Uma chamada `paintScrollbarOnImageLine(...)` no lugar do retorno antecipado de `replaceScrollbarCell` para linha de imagem, marcada `// nycode: K21`; a lógica fica em `packages/tui/src/scrollbar-image.ts`. No merge, reaplicar a linha marcada. Teste: `packages/tui/test/scrollbar-image.test.ts`.
+- **K22.** Duas chamadas `installSendNow(this)` marcadas `// nycode: K22` em `interactive-mode.ts` (início de `setupKeyHandlers()` e depois de `clearExtensionTerminalInputListeners()` na reinicialização da UI de extensões), uma linha na tabela de ajuda e cinco entradas (`app.message.sendNow`, `app.message.sendNowChord`, `app.queue.drop`, `app.queue.selectPrev`, `app.queue.selectNext`) em `DEFAULT_APP_KEYBINDINGS`, marcadas `// nycode: K22` em `core/keybindings.ts`. A lógica fica em `modes/interactive/send-now/`. No merge, reaplicar as linhas marcadas. Teste: `packages/coding-agent/test/harness/modes/send-now/index.test.ts`.
 
 ### 4.3 Costuras do renome
 
@@ -442,7 +445,7 @@ Ordem de resolução quando há conflito (regra de cada arquivo, nesta ordem):
 3. **`CHANGELOG.md` de qualquer pacote**: o renome os pula, então a imagem os traz iguais aos do upstream. Aceitar o
    texto do upstream como vem; reaplicar abaixo de `## [Unreleased]` as entradas do nycode (D-19). Seções de versões
    lançadas são imutáveis.
-4. **Costuras K1..K21**: resolver mantendo a linha com o marcador `// nycode: K<n>`; conferir com
+4. **Costuras K1..K22**: resolver mantendo a linha com o marcador `// nycode: K<n>`; conferir com
    `scripts/ci/seams/check-seams.sh` e o teste da costura (seção 4.2).
 5. **Arquivos do fork que não vêm do upstream** (`NOTICE`, `docs/fork/2026-11-20-fork-do-pi.md`): manter o nosso. A
    imagem não os tem, porque `P` não os cria; já `R_prev = f523ebd25` os tem, então a primeira fusão os vê como
