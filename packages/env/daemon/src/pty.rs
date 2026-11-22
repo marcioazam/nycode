@@ -508,7 +508,9 @@ mod unix {
     }
 
     /// Read until the terminal closes (Linux reports `EIO` once no program holds it), `on_data` returns false, or
-    /// `stop` is set. // nycode: K25 With `drain` set it reads what the terminal holds and ends.
+    /// `stop` is set.
+    /// With `drain` set, it reads what the terminal holds, without waiting, and ends.
+    // nycode: K25 the `drain` parameter
     pub fn read(
         master: &File,
         stop: &AtomicBool,
@@ -543,7 +545,8 @@ mod unix {
         }
     }
 
-    /// nycode: K25 Read what the terminal holds, without waiting, until it is empty, closed or `DRAIN_LIMIT` bytes.
+    // nycode: K25
+    /// Read what the terminal holds, without waiting, until it is empty, closed or `DRAIN_LIMIT` bytes.
     fn drain_terminal(master: &File, buffer: &mut [u8], on_data: &mut impl FnMut(&[u8]) -> bool) {
         let mut total = 0;
         while total < crate::sys::DRAIN_LIMIT {

@@ -154,9 +154,10 @@ pub trait Pipe: io::Read + std::os::fd::AsRawFd {}
 impl<T: io::Read + std::os::fd::AsRawFd> Pipe for T {}
 
 /// Read `pipe` until it ends, `on_data` returns false, or `stop` is set (looked at every 100 ms, also while no output
-/// arrives); the pipe closes when this returns. // nycode: K25 With `drain` set (looked at the same time) it reads what the
-/// pipe holds, at most `DRAIN_LIMIT` bytes, and returns without waiting for more, also while a descendant holds the
-/// write end open.
+/// arrives); the pipe closes when this returns.
+/// With `drain` set (looked at the same time) it reads what the pipe holds, at most `DRAIN_LIMIT` bytes, and returns
+/// without waiting for more, also while a descendant holds the write end open.
+// nycode: K25 the `drain` parameter
 pub fn read_pipe(
     mut pipe: impl Pipe,
     stop: &AtomicBool,
@@ -207,7 +208,8 @@ pub fn read_pipe(
     }
 }
 
-/// nycode: K25 Read what a non-blocking `pipe` holds, without waiting, until it is empty, ends or `DRAIN_LIMIT` bytes.
+// nycode: K25
+/// Read what a non-blocking `pipe` holds, without waiting, until it is empty, ends or `DRAIN_LIMIT` bytes.
 pub fn drain_pipe(
     pipe: &mut impl io::Read,
     buffer: &mut [u8],

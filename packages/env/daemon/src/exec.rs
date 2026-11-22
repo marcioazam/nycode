@@ -297,12 +297,15 @@ pub fn running<T>(
         .ok_or_else(|| Failure::new("EBADF", format!("no running {what} with this id")))
 }
 
-/// nycode: K25 Tests only: how long a reader stays away after it got room, like a thread the system did not run.
+// nycode: K25
+/// Tests only: how long a reader stays away after it got room, like a thread the system did not run.
 #[cfg(test)]
 pub static READER_AWAY_MS: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
 
 /// Read one pipe on its own thread until it ends or `stop` is set. With `gate`, reading waits while too much output is
-/// unsent. // nycode: K25 `drain` makes it read what the pipe holds and end, see `sys::read_pipe`.
+/// unsent.
+/// With `drain` set, the reader takes what the pipe holds and ends, see `sys::read_pipe`.
+// nycode: K25 the `drain` parameter
 pub fn spawn_reader(
     stream: usize,
     pipe: impl sys::Pipe + Send + 'static,

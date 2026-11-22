@@ -338,9 +338,10 @@ impl Overlapped {
 }
 
 /// Read `pipe` until it ends, `on_data` returns false, or `stop` is set (looked at every 100 ms, also while no output
-/// arrives); the pipe closes when this returns. // nycode: K25 With `drain` set (looked at the same time) it reads what
-/// the pipe holds, at most `DRAIN_LIMIT` bytes, and returns without waiting for more, also while a descendant holds the
-/// write end open.
+/// arrives); the pipe closes when this returns.
+/// With `drain` set (looked at the same time) it reads what the pipe holds, at most `DRAIN_LIMIT` bytes, and returns
+/// without waiting for more, also while a descendant holds the write end open.
+// nycode: K25 the `drain` parameter
 pub fn read_pipe(
     pipe: impl Pipe,
     stop: &AtomicBool,
@@ -380,7 +381,8 @@ pub fn read_pipe(
     }
 }
 
-/// nycode: K25 Read what the pipe holds, without waiting: `PeekNamedPipe` says how many bytes are there, and that many
+// nycode: K25
+/// Read what the pipe holds, without waiting: `PeekNamedPipe` says how many bytes are there, and that many
 /// are read, until none are left, the pipe ends or `DRAIN_LIMIT` bytes.
 fn drain_pipe(io: &Overlapped, buffer: &mut [u8], on_data: &mut impl FnMut(&[u8]) -> bool) {
     let never = AtomicBool::new(false);
