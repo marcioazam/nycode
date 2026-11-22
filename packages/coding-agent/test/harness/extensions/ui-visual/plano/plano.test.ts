@@ -23,7 +23,11 @@ const th = {
 	bold: (t: string) => `*${t}*`,
 	getFgAnsi: (c: string) => `\x1b[38;2;${(RGB[c] ?? [1, 1, 1]).join(";")}m`,
 };
-const plain = (s: string) => s.split(/<\/?[a-zA-Z]*>/g).join("").replace(/\x1b\[[0-9;]*m/g, "");
+const plain = (s: string) =>
+	s
+		.split(/<\/?[a-zA-Z]*>/g)
+		.join("")
+		.replace(/\x1b\[[0-9;]*m/g, "");
 const amb = (f: () => void, env: Record<string, string> = {}) => {
 	const salvo = { NO_COLOR: process.env.NO_COLOR, NYCODE_REDUCED_MOTION: process.env.NYCODE_REDUCED_MOTION };
 	delete process.env.NO_COLOR;
