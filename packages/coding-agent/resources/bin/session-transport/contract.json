@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "markerEnv": "NYCODE_SESSION_TRANSPORT_ID",
+  "launcherEnv": "NYCODE_SESSION_LAUNCHER",
+  "directoryName": "session-transport",
+  "recordName": "state.json",
+  "socketName": "tmux.sock",
+  "attachLockName": "attach.lock",
+  "idPattern": "^[a-f0-9]{32}$",
+  "recordMaxBytes": 16384,
+  "bootMaxBytes": 1048576,
+  "runLimit": 128,
+  "bootTimeoutSeconds": 10,
+  "controlTimeoutSeconds": 3,
+  "tmuxSession": "nycode",
+  "bufferName": "nycode-startup",
+  "channelName": "nycode-startup",
+  "historyLines": 2000,
+  "recordFields": ["v", "id", "owner", "tmuxSocket", "paneId", "panePid", "paneStart", "state", "rootPid", "rootStart", "sessionId", "sessionFile", "exitCode"],
+  "states": ["starting", "running", "ended"]
+}
