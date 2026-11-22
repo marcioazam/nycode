@@ -131,8 +131,8 @@ def generated_outputs(root: Path) -> tuple[set[str], list[str]]:
         try:
             # This implementation belongs to the nycode checkout, never the scanned tree.
             source = (
-                Path(__file__).resolve().parents[4]
-                / "packages/coding-agent/resources/skills/diagram-design/scripts/compose_examples.py"
+                Path(__file__).resolve().parents[2]
+                / "skills/diagram-design/scripts/compose_examples.py"
             )  # optional: diagram-design skill not shipped
             if any(path.is_symlink() for path in (source, *source.parents)):
                 raise ValueError("untrusted verifier alias")

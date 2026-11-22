@@ -1,4 +1,4 @@
-"""Testes de nycode_telemetry.py com uma sessão sintética. Rodar: python3 -m pytest scripts/harness/telemetry."""
+"""Testes de nycode_telemetry.py com uma sessão sintética. Rodar: python3 -m pytest packages/coding-agent/resources/bin/telemetry."""
 
 import json
 import tempfile

@@ -29,10 +29,7 @@ from typing import Any
 
 sys.path.insert(
     0,
-    str(
-        Path(__file__).resolve().parents[3]
-        / "packages/coding-agent/resources/hooks/claims"
-    ),
+    str(Path(__file__).resolve().parents[2] / "hooks/claims"),
 )
 import claims  # type: ignore[import-not-found]
 

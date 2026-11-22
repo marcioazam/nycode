@@ -1,7 +1,7 @@
 /**
  * /puxar <profile> [N|session-id]: imports the newest (or N-th, or by id) Claude Code session of this directory
  * from a Claude Code profile into nycode and opens the imported session. Zero model tokens: the conversion to
- * nycode's session format runs in scripts/harness/puxar/puxar.py (tests in test_puxar.py next to it).
+ * nycode's session format runs in resources/bin/puxar/puxar.py (tests in test_puxar.py next to it).
  *
  * profile: 1|claude = ~/.claude, N = ~/.claude-N, name = ~/.claude-name, or an absolute path.
  */
@@ -9,12 +9,11 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getPackageDir } from "../../config.ts";
+import { getBuiltinResourcesRoot } from "../../core/builtin-resources.ts";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 
-// The script lives in the repository, not in the published package: it resolves only in a source checkout.
-// ponytail: the published package does not carry it yet (F8/F11, embedded resources); /puxar then reports it missing.
-const SCRIPT = path.join(getPackageDir(), "..", "..", "scripts", "harness", "puxar", "puxar.py");
+// The script ships in the package (and next to the binary) under resources/bin, like the rest of the harness tools.
+const SCRIPT = path.join(getBuiltinResourcesRoot(), "bin", "puxar", "puxar.py");
 const SESSION_FILE_PREFIX = "NYCODE_SESSION_FILE=";
 const USAGE =
 	"uso: /puxar <perfil> [N|session-id]  (perfil: 1=~/.claude, 2=~/.claude-2, glm=~/.claude-glm ou caminho; N: 1=mais recente, 2=penúltima...)";
@@ -55,7 +54,7 @@ export default function importClaudeSessionExtension(nycode: ExtensionAPI) {
 			}
 			if (!fs.existsSync(SCRIPT)) {
 				ctx.ui.notify(
-					`puxar.py não encontrado (${SCRIPT}); /puxar só funciona em um checkout do código-fonte do nycode.`,
+					`puxar.py não encontrado (${SCRIPT}); reinstale o nycode (o script vem em resources/bin).`,
 					"error",
 				);
 				return;

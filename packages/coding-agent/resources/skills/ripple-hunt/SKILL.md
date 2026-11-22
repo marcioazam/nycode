@@ -20,7 +20,7 @@ Inputs: the diff (`git diff`, plus untracked paths from `git status --porcelain`
    recompute them from source.
 3. A `README.md` in every new directory, when the repo requires one.
 4. Limits: 800 lines per code file and 7 direct code files per directory, with
-   `python3 scripts/ci/lint/structure/structure.py --project-root ROOT --json`, or the repo's stricter policy.
+   `python3 ${NYCODE_RESOURCES}/bin/structure/structure.py --project-root ROOT --json`, or the repo's stricter policy.
 5. Syntax: the formatter and the parsers (JSON, YAML, TOML, schema, markdown links) on edited files only, and
    every generator `--check` that finishes in seconds.
 6. Agreement: the CHANGELOG entry, the record and the doc anchors name the same things; relative links and

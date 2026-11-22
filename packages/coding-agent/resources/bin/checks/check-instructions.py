@@ -29,10 +29,9 @@ from pathlib import Path
 import yaml
 
 HOME = Path.home()
-ROOT = Path(__file__).resolve().parents[3]
-RESOURCES = Path(
-    os.environ.get("NYCODE_RESOURCES", ROOT / "packages/coding-agent/resources")
-)
+# This file lives in <package>/resources/bin/checks: the resources root is two levels up, the package root three.
+PACKAGE = Path(__file__).resolve().parents[3]
+RESOURCES = Path(os.environ.get("NYCODE_RESOURCES", PACKAGE / "resources"))
 SKILLS = {p.name for p in (RESOURCES / "skills").iterdir() if (p / "SKILL.md").exists()}
 AGENTS = {p.stem for p in (RESOURCES / "agents").glob("*.md")} | {
     "Explore",
@@ -40,7 +39,7 @@ AGENTS = {p.stem for p in (RESOURCES / "agents").glob("*.md")} | {
     "general-purpose",
 }
 CACHE = Path("/tmp/mcp-list.json")
-CODING_AGENT = ROOT / "packages/coding-agent"
+CODING_AGENT = PACKAGE
 EXT_DIRS = [CODING_AGENT / "src/extensions", HOME / ".nycode/agent/extensions"]
 SLASH_DOC = CODING_AGENT / "docs/slash-commands.md"
 ARG_CHECK = Path(__file__).resolve().parent / "arg-expansion-check.mjs"

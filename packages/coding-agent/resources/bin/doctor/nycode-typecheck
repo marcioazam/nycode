@@ -13,7 +13,7 @@ set -euo pipefail
 
 AGENT="${NYCODE_CODING_AGENT_DIR:-$HOME/.nycode/agent}"
 DIR="$(realpath "${1:-$AGENT/extensions}")"
-REPO="${NYCODE_REPO:-$(cd "$(dirname "$0")/../../.." && pwd)}"
+REPO="${NYCODE_REPO:-$(cd "$(dirname "$0")/../../../../.." && pwd)}"
 MODULES="$REPO/node_modules"
 [ -f "$REPO/packages/coding-agent/dist/index.d.ts" ] || {
   echo "nycode-typecheck: tipos não encontrados em $REPO/packages/coding-agent/dist (rode npm run build)" >&2

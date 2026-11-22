@@ -1,4 +1,4 @@
-# scripts/harness/checks — lint da própria configuração do harness
+# resources/bin/checks — lint da própria configuração do harness
 
 - `check-instructions.py` — instructions/contract.md, rules, commands e skills (YAML, nome, descrição) + bytes sempre carregados.
 - `check-agents.py` — contrato dos agentes de `packages/coding-agent/resources/agents`.

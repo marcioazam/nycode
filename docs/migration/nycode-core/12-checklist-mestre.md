@@ -135,7 +135,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F8-11 Hooks fase B: motor nativo com o mesmo veredito que `guard.py` em 100% do corpus e do fuzz. Prova: relatório do teste diferencial.
 - [x] C-F8-12 Falha do motor de permissão nega a chamada. Prova: teste de falha (`gate.test.ts`, "denies the call when the engine itself fails").
 - [x] C-F8-13 Revisão de segurança de F8 concluída.
-- [x] C-F8-14 Ferramentas de `claude-home/bin` em `scripts/harness/`; testes verdes.
+- [x] C-F8-14 Ferramentas de `claude-home/bin` em `scripts/harness/`; testes verdes. (D-53 **supera** o destino: as que as instruções citam estão em `packages/coding-agent/resources/bin/`.)
 - [x] C-F8-15 `claude-home/docs` em `docs/harness/`; ligações internas válidas.
 - [x] C-F8-16 Pendência P-4 fechada: origem e licença das skills de terceiros no `NOTICE`.
 

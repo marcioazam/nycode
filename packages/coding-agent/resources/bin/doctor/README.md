@@ -1,4 +1,4 @@
-# scripts/harness/doctor — manutenção e diagnóstico do harness nycode
+# resources/bin/doctor — manutenção e diagnóstico do harness nycode
 
 - `nycode-doctor` — valida JSON de settings/mcp/keybindings, caminhos locais do settings e extensões sem `index.ts/js`
   em `~/.nycode/agent`. Exit 1 se algo falhar.
