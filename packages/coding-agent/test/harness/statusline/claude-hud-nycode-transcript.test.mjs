@@ -120,3 +120,71 @@ test('launcher feeds the translated transcript to the HUD (end to end)', async (
   assert.match(outText, /Bash/);
   assert.match(outText, /tarefa/);
 });
+
+// ---- S7 (poda) e U20 (trava O_EXCL, estado atômico, retomada após morte entre append e estado) ----
+const old = (file, days) => {
+  const t = new Date(Date.now() - days * 24 * 3600 * 1000);
+  fs.utimesSync(file, t, t);
+};
+
+test('S7: a 1ª sincronização apaga cópias sem sessão-fonte ou com mais de 14 dias, e só elas', () => {
+  const { dir, source, out } = setup([call('t1', 'bash', { command: 'ls' })]);
+  const pdir = path.dirname(out);
+  fs.mkdirSync(pdir, { recursive: true });
+  const mk = (name, src, days) => {
+    const f = path.join(pdir, name);
+    fs.writeFileSync(f, '{}\n');
+    fs.writeFileSync(`${f}.state.json`, JSON.stringify({ source: src, offset: 0 }));
+    old(f, days);
+    return f;
+  };
+  const alive = mk('alive.jsonl', source, 1);
+  const aged = mk('aged.jsonl', source, 20);
+  const orphan = mk('orphan.jsonl', path.join(dir, 'gone.jsonl'), 1);
+  const noState = path.join(pdir, 'nostate.jsonl');
+  fs.writeFileSync(noState, '{}\n');
+  old(noState, 20);
+  fs.writeFileSync(path.join(pdir, 'lonely.jsonl.state.json'), '{}');
+  syncTranscript(source, out);
+  const left = fs.readdirSync(pdir).sort();
+  assert.deepEqual(left, ['.pruned', 'alive.jsonl', 'alive.jsonl.state.json', 'session.jsonl', 'session.jsonl.state.json']);
+  assert.ok(fs.existsSync(alive) && !fs.existsSync(aged) && !fs.existsSync(orphan));
+});
+
+test('S7: a poda não repete dentro de uma hora (marcador .pruned)', () => {
+  const { source, out } = setup([call('t1', 'bash', { command: 'ls' })]);
+  const pdir = path.dirname(out);
+  fs.mkdirSync(pdir, { recursive: true });
+  fs.writeFileSync(path.join(pdir, '.pruned'), '');
+  const aged = path.join(pdir, 'aged.jsonl');
+  fs.writeFileSync(aged, '{}\n');
+  old(aged, 20);
+  syncTranscript(source, out);
+  assert.ok(fs.existsSync(aged));
+});
+
+test('U20: trava fresca = outro processo sincronizando: não escreve nada; trava velha é retomada', () => {
+  const { source, out } = setup([call('t1', 'bash', { command: 'ls' })]);
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(`${out}.lock`, '');
+  syncTranscript(source, out);
+  assert.equal(fs.existsSync(out), false);
+  old(`${out}.lock`, 1);
+  syncTranscript(source, out);
+  assert.equal(toolUses(out).length, 1);
+  assert.equal(fs.existsSync(`${out}.lock`), false, 'trava liberada');
+});
+
+test('U20: morte entre o append e o estado não duplica linhas; estado por rename, sem .tmp sobrando', () => {
+  const { source, out } = setup([call('t1', 'bash', { command: 'ls' })]);
+  syncTranscript(source, out);
+  const statePath = `${out}.state.json`;
+  const before = fs.readFileSync(statePath, 'utf8');
+  fs.appendFileSync(source, `${JSON.stringify(call('t2', 'bash', { command: 'pwd' }))}\n`);
+  syncTranscript(source, out);
+  const expected = fs.readFileSync(out, 'utf8');
+  fs.writeFileSync(statePath, before); // como se o processo morresse antes de gravar o estado novo
+  syncTranscript(source, out);
+  assert.equal(fs.readFileSync(out, 'utf8'), expected);
+  assert.deepEqual(fs.readdirSync(path.dirname(out)).filter((f) => /\.tmp$|\.lock$/.test(f)), []);
+});

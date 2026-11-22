@@ -1,7 +1,14 @@
 #!/bin/sh
 # Valor de header para o MCP nativo do nycode (~/.nycode/agent/mcp.json usa "!<este script> <servidor>").
 # Lê ~/.config/claude-secrets/<servidor>: "Bearer <key>" sai inteiro; "Nome: valor" sai só o valor.
-f="${HOME}/.config/claude-secrets/${1:?servidor}"
+# $1 vem do mcp.json: só um nome simples dentro de claude-secrets (sem "/", "..", ponto ou hífen no início).
+case "${1:-}" in
+'' | */* | *..* | .* | -*)
+  echo "mcp-header: nome de servidor inválido" >&2
+  exit 2
+  ;;
+esac
+f="${HOME}/.config/claude-secrets/$1"
 [ -r "$f" ] || {
   echo "missing $f" >&2
   exit 1
