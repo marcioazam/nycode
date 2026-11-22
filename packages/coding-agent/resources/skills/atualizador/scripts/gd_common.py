@@ -135,20 +135,33 @@ class Ctx:
         cwd = cwd or self.repo
         env = {**os.environ, **ENV_OVERRIDES}
         try:
-            done = subprocess.run(
+            # E1: own session + killpg on timeout (as run_file): subprocess.run(timeout) kills only the child, and a
+            # commit hook or push helper would outlive the repo lock.
+            child = subprocess.Popen(
                 argv,
                 cwd=cwd,
                 env=env,
-                capture_output=True,
-                text=True,
-                errors="replace",
-                timeout=timeout,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
-                check=False,
+                start_new_session=True,
             )
-            proc = Proc(done.returncode, done.stdout, done.stderr)
-        except subprocess.TimeoutExpired as exc:
-            proc = Proc(124, _text(exc.stdout), f"timeout after {timeout}s")
+            try:
+                out, err = child.communicate(timeout=timeout)
+                proc = Proc(
+                    child.returncode,
+                    out.decode(errors="replace"),
+                    err.decode(errors="replace"),
+                )
+            except subprocess.TimeoutExpired:
+                with contextlib.suppress(ProcessLookupError):
+                    os.killpg(child.pid, signal.SIGKILL)  # a group we started ourselves
+                out, _ = child.communicate()
+                proc = Proc(
+                    124,
+                    (out or b"").decode(errors="replace"),
+                    f"timeout after {timeout}s",
+                )
         except OSError as exc:
             proc = Proc(127, "", f"{type(exc).__name__}: {exc}")
         self.log(

@@ -2,6 +2,8 @@
 name: test-author
 model: anthropic/claude-sonnet-5-5
 description: "Writes focused behavioral tests and fixtures in assigned files; reports regression evidence. Use when tests are their own lane."
+tools: read, write, edit, bash, grep, ls, mcp__codegraph__*, tool_search
+agents: ["Explore", "gate-runner"]
 maxTurns: 150
 disallowedTools: memory, question, plan_mode_complete, mcp__computer_use_linux__*, mcp__linear__*, mcp__nimble__*, mcp__exa__agent_run, mcp__firecrawl__firecrawl_agent, mcp__firecrawl__firecrawl_agent_status, mcp__firecrawl__firecrawl_crawl, mcp__firecrawl__firecrawl_check_crawl_status, mcp__firecrawl__firecrawl_interact, mcp__firecrawl__firecrawl_interact_stop, mcp__firecrawl__firecrawl_parse, mcp__firecrawl__firecrawl_monitor_create, mcp__firecrawl__firecrawl_monitor_update, mcp__firecrawl__firecrawl_monitor_delete, mcp__firecrawl__firecrawl_monitor_run, mcp__playwright__browser_file_upload
 skills: ["tdd"]

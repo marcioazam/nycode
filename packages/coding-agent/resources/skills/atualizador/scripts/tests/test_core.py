@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -35,6 +36,18 @@ class Plumbing(Base):
         self.assertIn("rc=124", ctx.log_path.read_text())
         self.assertIn(
             str(self.root / "cache" / "git-deliver" / "work"), str(ctx.log_path)
+        )
+
+    def test_e1_timeout_kills_the_whole_process_group(self) -> None:
+        ctx = Ctx(self.work, "t")
+        marker = self.root / "orphan"
+        started = time.monotonic()
+        proc = ctx.run(["sh", "-c", f"(sleep 1.5; touch {marker}) & wait"], timeout=0.3)
+        self.assertEqual(proc.rc, 124)
+        self.assertLess(time.monotonic() - started, 1.2, "não espera o neto terminar")
+        time.sleep(2)
+        self.assertFalse(
+            marker.exists(), "o neto sobreviveu ao timeout (hook/push órfão)"
         )
 
     def test_log_dir_falls_back_to_the_temp_dir_then_to_no_log(self) -> None:
