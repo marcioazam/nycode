@@ -63,7 +63,7 @@ entregar.
 2. `wc -l SKILL.md` abaixo de 500.
 3. Sem documentação auxiliar no diretório da skill (README.md, CHANGELOG.md, INSTALLATION_GUIDE.md).
 4. Arquivos de `references/` a um nível do SKILL.md (sem subdiretórios dentro de `references/`).
-5. Global: `python3 scripts/harness/checks/check-instructions.py` sem problemas novos.
+5. Global: `python3 ${NYCODE_RESOURCES}/bin/checks/check-instructions.py` sem problemas novos.
 6. Carga real: `nycode --session-dir "\$(mktemp -d)" -p "/skill:<nome>"` não acusa erro de skill (ou `/reload` e
    `/skill:<nome>` na TUI).
 

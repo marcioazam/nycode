@@ -18,7 +18,7 @@ import yaml
 RESOURCES = Path(
     os.environ.get(
         "NYCODE_RESOURCES",
-        Path(__file__).resolve().parents[3] / "packages/coding-agent/resources",
+        Path(__file__).resolve().parents[2],
     )
 )
 READ_RE = re.compile(r"/skills/([^/]+)/SKILL\.md$")

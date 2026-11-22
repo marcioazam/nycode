@@ -1,6 +1,6 @@
 """puxar.py (pi) importa sessões do Claude Code para o formato de sessão v3 do nycode.
 
-Run: python3 scripts/harness/puxar/test_puxar.py
+Run: python3 packages/coding-agent/resources/bin/puxar/test_puxar.py
 """
 
 import importlib.util

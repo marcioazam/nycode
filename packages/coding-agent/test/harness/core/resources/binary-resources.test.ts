@@ -1,9 +1,11 @@
 // K6: the standalone binary resolves the built-in resources next to the executable, so scripts/build-binaries.sh must
 // copy `resources/` into every platform directory. A full binary build is too slow for a unit test: this checks the
 // static contract (the "Copy shared files" loop and the bun-binary package dir); the real build is the F11 rehearsal.
-import { readFileSync } from "node:fs";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 
 const pkgRoot = join(import.meta.dirname, "../../../..");
 const script = readFileSync(join(pkgRoot, "../../scripts/build-binaries.sh"), "utf-8");
@@ -17,5 +19,28 @@ describe("binary ships the built-in resources", () => {
 
 	it("resolves the package dir of a bun binary to the executable directory", () => {
 		expect(config).toMatch(/if \(isBunBinary\) \{\s*\/\/[^\n]*\n\s*return dirname\(process\.execPath\);/);
+	});
+
+	// D-53: the harness scripts the instructions tell the model to run ship in resources/bin; the binary directory gets
+	// them through the same `cp -r resources`, so the copy must keep the execute bit and run without a checkout.
+	describe("resources/bin in the copied directory", () => {
+		const out = mkdtempSync(join(tmpdir(), "nycode-binres-"));
+		afterAll(() => rmSync(out, { recursive: true, force: true }));
+		execFileSync("cp", ["-r", join(pkgRoot, "resources"), out]);
+
+		it("keeps the execute bit of the entry points", () => {
+			for (const rel of ["bin/git-deliver", "bin/doctor/nycode-doctor", "bin/checks/check-agents.py"]) {
+				expect(statSync(join(out, "resources", rel)).mode & 0o111, rel).not.toBe(0);
+			}
+		});
+
+		it("runs git-deliver from the copy, resolving its engine next to it", () => {
+			const env = { ...process.env };
+			delete env.NYCODE_RESOURCES;
+			const run = spawnSync(join(out, "resources/bin/git-deliver"), [], { encoding: "utf-8", env });
+			// no subcommand: the engine answers its usage JSON with exit 2 (a missing engine would exit 127 or 1)
+			expect(run.status).toBe(2);
+			expect(JSON.parse(run.stdout)).toMatchObject({ ok: false, cmd: "usage" });
+		});
 	});
 });

@@ -70,10 +70,10 @@ def test_x01_removes_what_nothing_in_nycode_reads() -> None:
         assert row and row[1:] == ("remover", "F3", "X01")
     # structure and the Harbor agents are converted, with their tests
     assert module.classify("claude-home/bin/structure/structure.py", compiled) == (
-        "scripts/ci/lint/structure/structure.py", "converter", "F3", "C09"
+        "packages/coding-agent/resources/bin/structure/structure.py", "converter", "F3", "C09"
     )  # fmt: skip
     for path, dest in (
-        ("claude-home/bin/structure/test_structure.py", "scripts/ci/lint/structure/test_structure.py"),
+        ("claude-home/bin/structure/test_structure.py", "packages/coding-agent/resources/bin/structure/test_structure.py"),
         ("claude-home/bin/evals/harbor/bundle.sh", "bench/harbor/pi_bundle.sh"),
         ("claude-home/bin/evals/harbor/pi_harness_agent.py", "bench/harbor/pi_harness_agent.py"),
         ("claude-home/bin/evals/harbor/tests/test_pi_vanilla_api_agent.py", "bench/tests/harbor/test_pi_vanilla_api_agent.py"),

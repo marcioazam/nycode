@@ -27,7 +27,7 @@
 ## Engineering
 
 - A first-party code file has at most 800 physical lines, blanks and comments included; a directory has at most 7 direct code files (defaults; a repository's stricter or explicitly different limits win). Count code, tests and scripts; exclude only proven generated, dependency and build artifacts, and never hide owned code to pass.
-- Every function, file and directory has one coherent responsibility. When a change touches an oversized file or directory, split it by domain or behavior and update consumers. Check with `python3 scripts/ci/lint/structure/structure.py --project-root ROOT --json` plus stricter repository gates; report pre-existing violations and never claim compliance while they remain.
+- Every function, file and directory has one coherent responsibility. When a change touches an oversized file or directory, split it by domain or behavior and update consumers. Check with `python3 ${NYCODE_RESOURCES}/bin/structure/structure.py --project-root ROOT --json` plus stricter repo gates; report pre-existing violations; never claim compliance while they remain.
 - Search for existing implementations first and centralize duplicated rules with their domain owner; no speculative abstractions, catch-all modules or generics beyond preserving type information across two or more positions.
 - Keep failures explicit, inputs validated at trust boundaries and resources bounded. Use strict typing, reproducible dependencies and relevant lint, type and security checks.
 - Keep tests deterministic (controlled fixtures, isolated environments); no test or diagnostic may modify production resources.

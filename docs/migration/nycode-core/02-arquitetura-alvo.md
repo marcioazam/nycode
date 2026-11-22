@@ -56,7 +56,7 @@ nycode/
 │   └── tui/                    API pública para o que hoje é campo interno (N1)
 ├── scripts/
 │   ├── ci/                     run-static.sh, run-security.sh, lint/, install-tools.sh
-│   └── harness/                ferramentas vindas de claude-home/bin
+│   └── harness/                ferramentas de repositório vindas de claude-home/bin (as que as instruções embarcadas citam: `resources/bin/`, D-53)
 └── import/ny-pi/               histórico importado; esvazia a cada fase e some em F12
 ```
 
@@ -133,7 +133,7 @@ ganha a atribuição e o commit de origem.
 | `docs-pointer` | `extensions/pi-docs/` | N2 | A seção `docs` do prompt de sistema passa a ser uma linha por padrão; extensão que sobrescreve `sections.docs`, como no nycode-harness (D-36) | F7 |
 | `plan-gate` | `extensions/plan-gate.ts` | N2 | Depende de `plan-mode` e do agente `plan-reviewer` | F7 |
 | `prefix-cache-1h` | `extensions/prefix-cache-1h/` | N2 | Só sessão interativa | F7 |
-| `import-claude-session` | `extensions/puxar.ts` | N2 | Opcional; chama `scripts/harness/puxar/puxar.py` | F7 |
+| `import-claude-session` | `extensions/puxar.ts` | N2 | Opcional; chama `resources/bin/puxar/puxar.py` (D-53; **supera** `scripts/harness/puxar/`) | F7 |
 | `sound-notify` | `extensions/sound-notify/` | N2 | Opcional, desligada | F7 |
 | `sticky-prompt` | `extensions/sticky-prompt/` | N2 + N1 | Precisa de API pública em `@nycode/tui` no lugar dos campos internos do pi-tui 1.5.2 | F7 |
 | `syntax-check` | `extensions/syntax-check/` | N2 | `@vscode/tree-sitter-wasm` 0.3.1 vira dependência exata do `coding-agent` | F7 |

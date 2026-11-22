@@ -254,7 +254,7 @@ O script falha em PR quando um arquivo de código alterado passa de 800 linhas o
 passa de 7 arquivos de código; o legado não alterado nunca bloqueia. Para o nycode:
 
 - **Fonte da lista de sufixos de código**. De: `claude-home/bin/structure/structure.py`. Para:
-  `scripts/ci/lint/structure/structure.py` (anexo E, regra C09; F10 converteu; a proposta de `scripts/harness/` caiu: as instruções
+  `packages/coding-agent/resources/bin/structure/structure.py` (D-53 **supera** `scripts/ci/lint/structure/`; anexo E, regra C09; F10 converteu; a proposta de `scripts/harness/` caiu: as instruções
   embarcadas já citavam este caminho). `structure_changed.py` carrega a lista daí e mantém `DEFAULT_SUFFIXES` como cópia,
   fixada por teste.
 - **Alcance do limite (D-06)**. De: todo arquivo alterado. Para: só arquivos criados pelo nycode (lista em 02, seção 9).
@@ -331,7 +331,7 @@ D-24: 80% por arquivo nos arquivos próprios, medida como cobertura do diff.
 Um gate local mede cobertura de Node: `claude-home/bin/tests/terminal-sota/gate.sh` usa `node --experimental-strip-types
 --test --experimental-test-coverage` e exige 80% de linhas nos arquivos que lista. Ele não roda no CI.
 
-Destino Python: os caminhos de `pytest` passam a `scripts packages/coding-agent/resources/hooks scripts/harness bench`.
+Destino Python: os caminhos de `pytest` passam a `scripts packages/coding-agent/resources/hooks scripts/harness bench` (D-53 acrescenta `packages/coding-agent/resources/bin`).
 `diff-cover` continua com as exclusões de `bench/suites`.
 
 ### 5.2 TypeScript no nycode

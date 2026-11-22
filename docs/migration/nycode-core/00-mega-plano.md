@@ -70,7 +70,7 @@ Detalhe em [02-arquitetura-alvo.md](02-arquitetura-alvo.md).
 | 23 extensões próprias | `packages/coding-agent/src/extensions/<nome>/` ou core, conforme a peça | Embutidas; as que dependem de campo interno viram API nativa |
 | `claude-home/agents`, `skills`, `commands`, `rules*`, `CLAUDE.md` | `packages/coding-agent/resources/` (novo) | Recursos embarcados, carregados pelo `resource-loader` com a menor precedência |
 | `claude-home/hooks` (guard etc.) | Fase A: scripts embarcados em `resources/hooks/`; fase B: motor de permissão nativo em `core/permissions/` | Paridade primeiro, porta nativa depois, com o corpus do `test_guard.py` como oráculo |
-| `claude-home/bin` (ferramentas) | `scripts/harness/` e subcomandos `nycode doctor`, `nycode deliver` | Ferramentas do repositório ou do CLI |
+| `claude-home/bin` (ferramentas) | `packages/coding-agent/resources/bin/` (D-53, **supera** `scripts/harness/`; só `ui-gates`, `port-agents` e `cache-misses` ficam no repositório) e subcomandos `nycode doctor`, `nycode deliver` | Ferramentas do repositório ou do CLI |
 | Terceiros (`pi-lsp`, `ponytail`, `ralph-loop`, `pr-review-toolkit`, `claude-red`) | `pi-lsp` embutido; os demais como pacotes opcionais | Sem `third-party.json` com patch por fora |
 | `bench/` | `bench/` na raiz | Braço `nycode` novo; referências guardadas preservadas |
 | `scripts/ci`, workflows | `scripts/ci/` + `.github/workflows/` unificados | Um conjunto de checks obrigatórios |

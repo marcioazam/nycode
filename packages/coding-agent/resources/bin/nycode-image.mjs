@@ -4,7 +4,7 @@
 // que exige OPENAI_API_KEY. Padrão: openrouter/google/gemini-3-pro-image. O adaptador de imagens do
 // OpenRouter no @nycode/ai usa chat/completions: os modelos openai/gpt-image-* (só /api/v1/images) dão 404 aqui.
 //
-// node scripts/harness/nycode-image.mjs --prompt-file p.txt --out plate.png \
+// node ${NYCODE_RESOURCES}/bin/nycode-image.mjs --prompt-file p.txt --out plate.png \
 //   [--ref crop.png ...] [--size 1536x1024] [--background transparent|opaque] [--model provider/id]
 //   [--list]
 // Sai 0 com "WROTE <out> <WxH> alpha=<yes|no>"; 1 em erro; 3 quando pediu transparent e veio sem alpha

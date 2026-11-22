@@ -329,7 +329,7 @@ Cada contagem do [anexo A](anexos/A-inventario-nycode-harness.md) tem de fechar 
 | Arquivos em `claude-home/patches/` | 60 | K05 a K07, P01 a P15 | 60 |
 | Agentes, comandos, skills | 17 + 17 + 227 | R08 | 261 |
 | Hooks | 21 | R09 (9), R10 (6), R11 (6) | 21 |
-| `claude-home/bin` | 57 | B04, B05, C09, E03, E04, E08, E16, E18, E21, E22, E28, K08, K09, R13, R14, R15 | 57 |
+| `claude-home/bin` | 57 | B04, B05, C09, E03, E04, E08, E16, E18, E21, E22, E28, K08, K09, R13, R14, R15, R16, R17 | 57 |
 | `claude-home/docs` | 29 | D02 | 29 |
 | `bench/` | 870 | B01, B02 | 870 |
 | `docs/` | 39 | B03 (31), C10 (1), D01 (7) | 39 |

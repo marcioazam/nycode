@@ -20,7 +20,7 @@ from pathlib import Path
 import yaml
 
 HOME = Path.home()
-RESOURCES = Path(__file__).resolve().parents[3] / "packages/coding-agent/resources"
+RESOURCES = Path(__file__).resolve().parents[2]
 AGENTS = RESOURCES / "agents"
 SKILLS = RESOURCES / "skills"
 # Skills that agents name but nycode does not embed (nycode-harness kept them only in the owner's profile);

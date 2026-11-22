@@ -72,9 +72,8 @@ packages/coding-agent/examples/* | pi-doom|PI MASCOT | terceiros | names of exam
 apps/p2/* | \bPI\b | falso-positivo | Math.PI and fixtures named PI
 packages/* | Math\.PI | falso-positivo | the constant
 packages/* | (npm:|/)?pi-(tools|formatter|markdown-preview|interactive-subagents|observational-memory|demo-extension|mcp-adapter|tools-filter) | terceiros | names of third-party extension packages used as fixtures and examples
-scripts/harness/* | docs/harness/pi-[\w.-]+\.md | migracao | pointers to records kept in docs/harness
 packages/coding-agent/* | docs/harness/pi-[\w.-]+\.md | migracao | pointers to records kept in docs/harness
-scripts/harness/puxar/test_puxar.py | \(pi\) | compat | puxar imports sessions of the origin harness
+packages/coding-agent/resources/bin/puxar/test_puxar.py | \(pi\) | compat | puxar imports sessions of the origin harness
 scripts/sync-versions.test.mjs | @mariozechner/pi-ai | compat | fixture of a manifest that still holds the legacy name
 scripts/coding-agent-smoke.test.mjs | @earendil-works\\/undeclared | terceiros | scope of an undeclared package used as a fixture
 scripts/check-runtime-deps.test.mjs | @earendil-works\\/pi-server | terceiros | scope of an undeclared package used as a fixture

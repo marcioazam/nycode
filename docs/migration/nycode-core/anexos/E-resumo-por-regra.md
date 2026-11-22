@@ -28,7 +28,7 @@ Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arq
 | C06 | 1 | `^scripts/check-leaks\.sh$` | `scripts/ci/check-leaks.sh` | mover | F3 |
 | C07 | 3 | `^scripts/(check-refs\.py\|refs-allow\.txt\|test_check_refs\.py)$` | `scripts/ci/lint/$1` | converter | F3 |
 | C08 | 1 | `^scripts/fixtures/leak/(.+)$` | `scripts/ci/fixtures/leak/$1` | mover | F3 |
-| C09 | 2 | `^claude-home/bin/structure/(.+)$` | `scripts/ci/lint/structure/$1` | converter | F3 |
+| C09 | 2 | `^claude-home/bin/structure/(.+)$` | `packages/coding-agent/resources/bin/structure/$1` | converter | F3 |
 | C10 | 1 | `^docs/ci-local\.md$` | `docs/ci-local.md` | converter | F3 |
 | B01 | 1 | `^bench/arms/omp$` | `(braço omp fora das medições, D-26)` | remover | F3 |
 | B02 | 869 | `^bench/(.+)$` | `bench/$1` | converter | F3 |
@@ -80,7 +80,7 @@ Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arq
 | E18 | 1 | `^claude-home/bin/tests/plan-gate\.test\.ts$` | `packages/coding-agent/test/harness/extensions/plan-gate/index.test.ts` | converter | F7 |
 | E19 | 1 | `^extensions/footer-no-stats\.ts$` | `packages/coding-agent/src/extensions/footer/index.ts` | mover | F7 |
 | E20 | 1 | `^extensions/puxar\.ts$` | `packages/coding-agent/src/extensions/import-claude-session/index.ts` | mover | F7 |
-| E21 | 2 | `^claude-home/bin/puxar/(.+)$` | `scripts/harness/puxar/$1` | mover | F7 |
+| E21 | 2 | `^claude-home/bin/puxar/(.+)$` | `packages/coding-agent/resources/bin/puxar/$1` | mover | F7 |
 | E22 | 2 | `^claude-home/bin/tests/(prefix-cache-1h\|sound-notify)\.test\.ts$` | `packages/coding-agent/test/harness/extensions/$1/index.test.ts` | converter | F7 |
 | E23 | 2 | `^extensions/syntax-check/package(-lock)?\.json$` | `packages/coding-agent/package.json (dependência exata)` | absorver | F7 |
 | E24 | 13 | `^extensions/([a-z0-9-]+)/test/(.+\.test\.ts)$` | `packages/coding-agent/test/harness/extensions/$1/$2` | converter | F7 |
@@ -102,7 +102,9 @@ Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arq
 | R12 | 1 | `^claude-home/plugins/claude-hud/statusline\.mjs$` | `packages/coding-agent/resources/statusline/statusline.mjs` | converter | F8 |
 | R13 | 4 | `^claude-home/bin/hud/tests/(.+)$` | `packages/coding-agent/test/harness/statusline/$1` | converter | F8 |
 | R14 | 4 | `^claude-home/bin/hud/(.+)$` | `packages/coding-agent/resources/statusline/$1` | converter | F8 |
-| R15 | 18 | `^claude-home/bin/(.+)$` | `scripts/harness/$1` | converter | F8 |
+| R16 | 13 | `^claude-home/bin/(checks\|doctor\|telemetry)/(.+)$` | `packages/coding-agent/resources/bin/$1/$2` | converter | F8 |
+| R17 | 3 | `^claude-home/bin/(git-deliver\|mcp-header\.sh\|pi-image\.mjs)$` | `packages/coding-agent/resources/bin/$1` | converter | F8 |
+| R15 | 2 | `^claude-home/bin/(.+)$` | `scripts/harness/$1` | converter | F8 |
 | T01 | 1 | `^patches/third-party/pi-lsp\.patch$` | `packages/coding-agent/src/extensions/lsp/` | absorver | F9 |
 | T02 | 2 | `^patches/third-party/(ponytail\|ralph-loop)\.patch$` | `fork próprio de $1 (D-11)` | converter | F9 |
 | T03 | 1 | `^third-party\.json$` | `NOTICE + pacotes opcionais (D-11)` | remover | F9 |

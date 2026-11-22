@@ -10,9 +10,9 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
-const CH = process.env.NYCODE_RESOURCES ?? path.join(ROOT, 'packages/coding-agent/resources')
-const CMD_FILE = path.join(ROOT, 'packages/coding-agent/src/extensions/_shared/commands/command-file.ts')
+const PACKAGE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
+const CH = process.env.NYCODE_RESOURCES ?? path.join(PACKAGE, 'resources')
+const CMD_FILE = path.join(PACKAGE, 'src/extensions/_shared/commands/command-file.ts')
 
 const { parseCommandFile, substituteArgs } = await import(pathToFileURL(CMD_FILE).href)
 
