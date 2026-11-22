@@ -1,8 +1,13 @@
 // Ported from import/ny-pi/claude-home/bin/tests/plan-gate.test.ts (node:test), same cases and expectations.
 import { strict as assert } from "node:assert";
 import { test } from "vitest";
+import type { ExtensionAPI, MessageRenderOptions } from "../../../../src/core/extensions/types.ts";
 import { resolveNycodeSettings } from "../../../../src/core/settings-nycode.ts";
-import { decidePlanGate } from "../../../../src/extensions/plan-gate/index.ts";
+import planGateExtension, {
+	decidePlanGate,
+	gateComponent,
+	giveUpNotice,
+} from "../../../../src/extensions/plan-gate/index.ts";
 
 type Entry = Record<string, unknown>;
 let n = 0;
@@ -159,4 +164,154 @@ test("edição e revisão na mesma mensagem: não completa", () => {
 	};
 	const d = decidePlanGate([approve(), both, result("rv", "subagent", "PLAN_REVIEW: complete"), say("ok")]);
 	assert.equal(d.why, "edit_after_review");
+});
+
+// --- display (wave 9, 8a): only the screen changes; the text to the model and the decision stay the same ---
+const theme = { fg: (_c: string, t: string) => t, bold: (t: string) => t };
+const opts = (expanded: boolean) =>
+	({ expanded, outputPad: 1, keyText: () => "ctrl+o" }) as unknown as MessageRenderOptions;
+const msg = (blocks?: number) => ({
+	content: "Plan gate: no plan-reviewer verdict yet. Finish the remaining plan items.",
+	details: blocks === undefined ? undefined : { blocks },
+});
+type Clicavel = { render(w: number): readonly string[]; handleMouse(e: { type: string; button: string }): unknown };
+
+test("bloco do gate recolhido: uma linha em português, sem o parágrafo em inglês", () => {
+	const lines = gateComponent(msg(1), opts(false), theme).render(100);
+	assert.equal(lines.length, 1);
+	assert.match(lines[0] as string, /^ {3}▲ Plano {2}falta a revisão final \(plan-reviewer\) · o agente foi avisado/);
+	assert.match(lines[0] as string, /ctrl\+o/);
+	assert.doesNotMatch(lines[0] as string, /vez/);
+	assert.doesNotMatch(lines[0] as string, /Plan gate/);
+});
+
+test("bloco do gate: contador a partir da 2ª vez e linha nunca passa da largura", () => {
+	assert.match(gateComponent(msg(3), opts(false), theme).render(100)[0] as string, /3ª vez · ctrl\+o/);
+	for (const w of [20, 40, 60])
+		for (const l of gateComponent(msg(3), opts(false), theme).render(w))
+			assert.ok(l.length <= w, `${l.length} > ${w}`);
+});
+
+test("bloco do gate expandido: cabeçalho e o texto completo original", () => {
+	const lines = gateComponent(msg(2), opts(true), theme).render(30);
+	assert.match(lines[0] as string, /▲ Plano/);
+	assert.equal(
+		lines
+			.slice(1)
+			.map((l) => l.trim())
+			.join(" ")
+			.replace(/\s+/g, " ")
+			.trim(),
+		msg().content,
+	);
+	for (const l of lines) assert.ok(l.length <= 30);
+});
+
+test("bloco do gate: ▲ = aviso, então a faixa tem o fundo de aviso na largura toda", () => {
+	const bg = { fg: (_c: string, s: string) => s, bg: (c: string, s: string) => `[${c}]${s}` };
+	for (const expanded of [false, true])
+		for (const l of gateComponent(msg(1), opts(expanded), bg).render(90))
+			assert.ok(l.replace(/\[[A-Za-z]+\]/, "").length >= 90, l);
+});
+
+test("aviso final em português com N", () => {
+	assert.equal(
+		giveUpNotice(3),
+		"▲ Plano  parou de cobrar após 3 avisos sem avanço · rode o plan-reviewer antes de concluir",
+	);
+	assert.equal(
+		giveUpNotice(1, 30),
+		"▲ Plano  parou de cobrar após 30 avisos · rode o plan-reviewer antes de concluir",
+	);
+});
+
+test("handler: bloqueio mantém o content e grava o contador em details; give_up notifica em português", async () => {
+	const saved = process.env.NYCODE_SUBAGENT;
+	delete process.env.NYCODE_SUBAGENT;
+	const h: Record<string, (...a: unknown[]) => Promise<any>> = {};
+	const renderers: Record<string, unknown> = {};
+	planGateExtension({
+		on: (e: string, f: (...a: unknown[]) => Promise<unknown>) => {
+			h[e] = f as never;
+		},
+		getSettings: () => ({}),
+		registerMessageRenderer: (t: string, f: unknown) => {
+			renderers[t] = f;
+		},
+	} as unknown as ExtensionAPI);
+	if (saved !== undefined) process.env.NYCODE_SUBAGENT = saved;
+	assert.equal(typeof renderers["plan-gate"], "function");
+	const branch: Entry[] = [approve(), say("a")];
+	const notes: unknown[] = [];
+	const ctx = {
+		sessionManager: { getBranch: () => branch },
+		ui: { notify: (...a: unknown[]) => notes.push(a) },
+	};
+	const expected = decidePlanGate(branch);
+	const out = await (h.agent_before_settle as (...a: unknown[]) => Promise<any>)({ entries: [] }, ctx);
+	const m = out.entries.at(-1);
+	assert.equal(m.content, expected.message);
+	assert.deepEqual(m.details, { blocks: 1 });
+	assert.equal(out.continue, true);
+	for (let i = 0; i < 3; i++) branch.push(record(decidePlanGate(branch).record ?? {}), say("sem progresso"));
+	const fin = await (h.agent_before_settle as (...a: unknown[]) => Promise<any>)({ entries: [] }, ctx);
+	assert.equal(fin?.continue, undefined);
+	assert.deepEqual(notes, [[giveUpNotice(3, 3), "warning"]]);
+});
+
+// Owner's request (2026-11-14): every signal line shows the hour it happened.
+test("gateComponent: mostra HH:MM do timestamp antes da tecla; sem timestamp fica como antes", () => {
+	const T = new Date(2026, 10, 14, 14, 15, 0).getTime();
+	assert.match(
+		gateComponent({ ...msg(1), timestamp: T }, opts(false), theme).render(100)[0] as string,
+		/o agente foi avisado · ctrl\+o abre +14:15$/,
+	);
+	assert.doesNotMatch(gateComponent(msg(1), opts(false), theme).render(100)[0] as string, /\d\d:\d\d/);
+});
+
+// Owner's request (2026-11-14): every chat block opens and closes with a click, this one included.
+test("bloco do gate: clique esquerdo abre e fecha", () => {
+	const c = gateComponent(msg(1), opts(false), theme) as Clicavel;
+	assert.equal(c.render(100).length, 1);
+	assert.deepEqual(c.handleMouse({ type: "click", button: "left" }), { handled: true });
+	assert.ok(c.render(100).length > 1);
+	c.handleMouse({ type: "click", button: "left" });
+	assert.equal(c.render(100).length, 1);
+	assert.equal(c.handleMouse({ type: "click", button: "right" }), undefined);
+});
+
+// Contract 2026-11-15: Esc / send now (stopReason aborted) never blocks nor counts; the plan stays active.
+const aborted = (text = "parcial"): Entry => ({
+	type: "message",
+	id: id(),
+	message: { role: "assistant", content: [{ type: "text", text }], stopReason: "aborted" },
+});
+
+test("parada abortada pelo usuário: libera sem bloquear nem contar", () => {
+	const d = decidePlanGate([approve(), call("edit", { path: "a" }), aborted()]);
+	assert.equal(d.action, "allow");
+	assert.equal(d.why, "user_interrupt");
+	assert.equal(d.record?.state, "allowed");
+	assert.equal(d.record?.blocks, 0);
+	assert.equal(d.record?.noProgress, 0);
+});
+
+test("aborto não soma ao contador anterior e a parada normal seguinte volta a bloquear", () => {
+	const before = [approve(), call("edit", { path: "a" }), say("pronto")];
+	const first = decidePlanGate(before);
+	assert.equal(first.action, "block");
+	const withRec = [...before, record(first.record as unknown as Record<string, unknown>)];
+	const ab = decidePlanGate([...withRec, aborted()]);
+	assert.equal(ab.action, "allow");
+	assert.deepEqual(
+		[ab.record?.blocks, ab.record?.noProgress, ab.record?.sig],
+		[first.record?.blocks, first.record?.noProgress, first.record?.sig],
+	);
+	const next = decidePlanGate([
+		...withRec,
+		record(ab.record as unknown as Record<string, unknown>),
+		aborted(),
+		say("de novo"),
+	]);
+	assert.equal(next.action, "block");
 });
