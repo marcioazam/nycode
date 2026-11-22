@@ -188,9 +188,10 @@ describe("input and output", () => {
 			),
 			onStdout: stdout.onData,
 		});
-		program.write("go");
 		// A second program floods the link while this client stalls for longer than the grace after exit, so the unsent
-		// output stays above the daemon's limit while the first program writes and exits.
+		// output stays above the daemon's limit while the first program writes and exits. Go only once the flood reaches
+		// the client: under load the program could otherwise exit before any flood output arrived, and the stall would
+		// never happen.
 		let stalled = false;
 		const flood = await openProcess(connection, {
 			cwd,
@@ -200,7 +201,9 @@ describe("input and output", () => {
 			onStdout: () => {
 				if (stalled) return;
 				stalled = true;
-				Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1500);
+				program.write("go");
+				// After this tick, so the input has reached the daemon before the client stops reading.
+				setImmediate(() => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1500));
 			},
 		});
 		expect(await program.exited).toBe(0);

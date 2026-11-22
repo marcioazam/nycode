@@ -194,6 +194,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K22 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` `packages/coding-agent/src/core/keybindings.ts` | Enviar agora (`Ctrl+Enter`, `Ctrl+X Ctrl+S`) e as teclas da fila (módulo `modes/interactive/send-now`): duas chamadas em `interactive-mode.ts`, uma linha na ajuda e cinco atalhos em `DEFAULT_APP_KEYBINDINGS` | patch `send-now` (D-58) | F12 |
 | K23 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` `packages/coding-agent/src/core/session-manager.ts` | Transição de cwd na mesma sessão (`/cd`; módulo `core/cwd-switch`): `handleResumeSession` desvia quando existe `options.piSessionCwd` e o `SessionManager` ganha os buscadores pelo cwd do cabeçalho | patch `session-cwd` (D-58) | F12 |
 | K24 | `packages/coding-agent/src/cli.ts` | Supervisor nativo do `/restart` (módulo `core/lifecycle`): o ponto de entrada do CLI chama `launch` em vez de importar `main` e `setupCli` | supervisor nativo do `/restart` (D-58) | F12 |
+| K25 | `packages/env/daemon/src/{exec,process,pty,output}.rs`, `sys/{mod,unix,windows}.rs`, `Cargo.toml` | Os leitores do daemon esgotam o pipe depois da saída do programa antes de encerrar, em vez de parar após 100 ms de silêncio | saída que ficou no pipe se perdia (P-21) | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 

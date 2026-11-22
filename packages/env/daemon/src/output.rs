@@ -60,6 +60,13 @@ impl Output {
         }
     }
 
+    // nycode: K25
+    /// Tests only: the bulk bytes queued and not yet written.
+    #[cfg(test)]
+    pub fn queued_bulk_bytes(&self) -> usize {
+        self.queues.lock().unwrap().bulk_bytes
+    }
+
     pub fn close(&self) {
         let mut queues = self.queues.lock().unwrap();
         queues.closed = true;

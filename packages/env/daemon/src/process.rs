@@ -108,6 +108,8 @@ pub fn run(
     let pid = child.id();
     groups.lock().unwrap().insert(pid);
     let stop = Arc::new(AtomicBool::new(false));
+    // nycode: K25 set once the program exited and the link is not holding a reader up: the readers drain their pipes.
+    let drain = Arc::new(AtomicBool::new(false));
     // A thread that cannot start (a task limit) fails the request; the started program is killed and reaped. Threads
     // already running see `stop` within 100 ms.
     let abandon = |mut child: Child, error: std::io::Error| {
@@ -128,11 +130,25 @@ pub fn run(
     // Like a full pipe: a program that writes faster than the link waits.
     let gate = Gate::new(output);
     let stdout = child.stdout.take().unwrap();
-    if let Err(error) = spawn_reader(0, stdout, sender.clone(), stop.clone(), Some(gate.clone())) {
+    if let Err(error) = spawn_reader(
+        0,
+        stdout,
+        sender.clone(),
+        stop.clone(),
+        drain.clone(),
+        Some(gate.clone()),
+    ) {
         return Err(abandon(child, error));
     }
     let stderr = child.stderr.take().unwrap();
-    if let Err(error) = spawn_reader(1, stderr, sender.clone(), stop.clone(), Some(gate.clone())) {
+    if let Err(error) = spawn_reader(
+        1,
+        stderr,
+        sender.clone(),
+        stop.clone(),
+        drain.clone(),
+        Some(gate.clone()),
+    ) {
         return Err(abandon(child, error));
     }
     let (input, inputs) = mpsc::channel::<Input>();
@@ -211,8 +227,11 @@ pub fn run(
                     idle_until = Some(now + EXIT_STDIO_GRACE);
                     EXIT_STDIO_GRACE
                 } else {
-                    // A descendant may hold the pipes open after the program exited; stop waiting for it.
-                    break;
+                    // nycode: K25 A descendant may hold the pipes open after the program exited: the readers take what
+                    // the pipes hold and end, instead of this loop stopping them with output still in the pipe.
+                    drain.store(true, Ordering::SeqCst);
+                    idle_until = None;
+                    Duration::from_secs(3600)
                 }
             }
             None => Duration::from_secs(3600),
@@ -267,5 +286,46 @@ pub fn run(
             "spawn_error",
             "process did not report its exit",
         )),
+    }
+}
+
+// nycode: K25
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::exec::READER_AWAY_MS;
+    use std::collections::HashSet;
+
+    fn run_sh(script: &str) -> (usize, Result<Value, Failure>) {
+        let output = Arc::new(Output::default());
+        let request =
+            ProcessRequest::from_json(&json!({ "argv": ["sh", "-c", script], "cwd": "/tmp" }))
+                .unwrap();
+        let control = Control::default();
+        let groups: Groups = Arc::new(Mutex::new(HashSet::new()));
+        let processes: Processes = Arc::new(Mutex::new(HashMap::new()));
+        let result = run(1, request, &output, &control, &groups, &processes);
+        (output.queued_bulk_bytes(), result)
+    }
+
+    #[test]
+    fn output_left_in_the_pipe_after_exit_is_delivered_when_the_reader_is_away_longer_than_the_grace()
+     {
+        // The program writes more than one pipe holds and exits; the reader takes the first part and is away for
+        // longer than the 100 ms grace after the exit, with the rest still in the pipe.
+        READER_AWAY_MS.store(250, Ordering::SeqCst);
+        let (bytes, result) = run_sh("head -c 98304 /dev/zero");
+        READER_AWAY_MS.store(0, Ordering::SeqCst);
+        assert!(result.is_ok());
+        assert_eq!(bytes, 98304);
+    }
+
+    #[test]
+    fn a_descendant_holding_the_pipe_open_does_not_keep_the_program_from_settling() {
+        let started = Instant::now();
+        let (bytes, result) = run_sh("echo done; (sleep 5 &) ; exit 0");
+        assert!(result.is_ok());
+        assert_eq!(bytes, 5, "the output written before the exit arrives");
+        assert!(started.elapsed() < Duration::from_secs(3));
     }
 }

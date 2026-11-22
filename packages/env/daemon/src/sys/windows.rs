@@ -35,6 +35,7 @@ use windows_sys::Win32::System::JobObjects::{
     JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK, JOBOBJECT_EXTENDED_LIMIT_INFORMATION,
     JobObjectExtendedLimitInformation, SetInformationJobObject, TerminateJobObject,
 };
+use windows_sys::Win32::System::Pipes::PeekNamedPipe;
 use windows_sys::Win32::System::Threading::{CREATE_NO_WINDOW, CreateEventW, WaitForSingleObject};
 use windows_sys::core::BOOL;
 
@@ -338,12 +339,24 @@ impl Overlapped {
 
 /// Read `pipe` until it ends, `on_data` returns false, or `stop` is set (looked at every 100 ms, also while no output
 /// arrives); the pipe closes when this returns.
-pub fn read_pipe(pipe: impl Pipe, stop: &AtomicBool, mut on_data: impl FnMut(&[u8]) -> bool) {
+/// With `drain` set (looked at the same time) it reads what the pipe holds, at most `DRAIN_LIMIT` bytes, and returns
+/// without waiting for more, also while a descendant holds the write end open.
+// nycode: K25 the `drain` parameter
+pub fn read_pipe(
+    pipe: impl Pipe,
+    stop: &AtomicBool,
+    drain: &AtomicBool,
+    mut on_data: impl FnMut(&[u8]) -> bool,
+) {
     let Ok(io) = Overlapped::new(&pipe) else {
         return;
     };
     let mut buffer = vec![0u8; 64 * 1024];
     while !stop.load(Ordering::SeqCst) {
+        // nycode: K25
+        if drain.load(Ordering::SeqCst) {
+            return drain_pipe(&io, &mut buffer, &mut on_data);
+        }
         let read = io.run(stop, |overlapped| {
             // SAFETY: the buffer outlives the operation, which `run` completes or cancels before returning.
             unsafe {
@@ -359,6 +372,53 @@ pub fn read_pipe(pipe: impl Pipe, stop: &AtomicBool, mut on_data: impl FnMut(&[u
         // A broken pipe (every writer closed) is the end, as for the standard library's reads.
         match read {
             Ok(Some(read)) if read > 0 => {
+                if !on_data(&buffer[..read as usize]) {
+                    return;
+                }
+            }
+            _ => return,
+        }
+    }
+}
+
+// nycode: K25
+/// Read what the pipe holds, without waiting: `PeekNamedPipe` says how many bytes are there, and that many
+/// are read, until none are left, the pipe ends or `DRAIN_LIMIT` bytes.
+fn drain_pipe(io: &Overlapped, buffer: &mut [u8], on_data: &mut impl FnMut(&[u8]) -> bool) {
+    let never = AtomicBool::new(false);
+    let mut total = 0;
+    while total < super::DRAIN_LIMIT {
+        let mut available = 0u32;
+        // SAFETY: a valid pipe handle and one valid out pointer; no data is copied or removed.
+        let peeked = unsafe {
+            PeekNamedPipe(
+                io.handle,
+                std::ptr::null_mut(),
+                0,
+                std::ptr::null_mut(),
+                &mut available,
+                std::ptr::null_mut(),
+            )
+        };
+        if peeked == FALSE || available == 0 {
+            return;
+        }
+        let length = (available as usize).min(buffer.len()) as u32;
+        let read = io.run(&never, |overlapped| {
+            // SAFETY: the buffer outlives the operation, which `run` completes before returning; the bytes are there.
+            unsafe {
+                ReadFile(
+                    io.handle,
+                    buffer.as_mut_ptr(),
+                    length,
+                    std::ptr::null_mut(),
+                    overlapped,
+                )
+            }
+        });
+        match read {
+            Ok(Some(read)) if read > 0 => {
+                total += read as usize;
                 if !on_data(&buffer[..read as usize]) {
                     return;
                 }

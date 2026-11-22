@@ -11,6 +11,11 @@ mod windows;
 #[cfg(windows)]
 pub use windows::*;
 
+// nycode: K25
+/// The most a reader takes from a pipe once its command has ended: a descendant that keeps writing must not
+/// keep the command from settling.
+pub const DRAIN_LIMIT: usize = 1 << 20;
+
 /// How a string command runs: the shell, its arguments before the command, and whether the command goes to its
 /// stdin instead of its arguments (legacy WSL `bash.exe`).
 pub struct ShellConfig {

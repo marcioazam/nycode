@@ -180,6 +180,8 @@ pub fn run(
     ));
 
     let stop = Arc::new(AtomicBool::new(false));
+    // nycode: K25 set once the program exited and the link is not holding the reader up: the reader drains the terminal.
+    let drain = Arc::new(AtomicBool::new(false));
     // A thread that cannot start (a task limit) fails the terminal; the started program is killed and reaped.
     let abandon = |mut child: std::process::Child, error: std::io::Error| {
         stop.store(true, Ordering::SeqCst);
@@ -195,9 +197,10 @@ pub fn run(
         let master = master.clone();
         let sender = sender.clone();
         let stop = stop.clone();
+        let drain = drain.clone();
         let gate = gate.clone();
         thread::Builder::new().spawn(move || {
-            unix::read(&master, &stop, |bytes| {
+            unix::read(&master, &stop, &drain, |bytes| {
                 gate.pass(&stop, || {
                     sender.send(Message::Data(0, bytes.to_vec())).is_ok()
                 })
@@ -256,8 +259,11 @@ pub fn run(
                     idle_until = Some(now + EXIT_GRACE);
                     EXIT_GRACE
                 } else {
-                    // A background job may keep the terminal open after the program exited.
-                    break;
+                    // nycode: K25 A background job may keep the terminal open after the program exited: the reader
+                    // takes what the terminal holds and ends, instead of this loop stopping it with output left.
+                    drain.store(true, Ordering::SeqCst);
+                    idle_until = None;
+                    Duration::from_secs(3600)
                 }
             }
             None => Duration::from_secs(3600),
@@ -503,9 +509,20 @@ mod unix {
 
     /// Read until the terminal closes (Linux reports `EIO` once no program holds it), `on_data` returns false, or
     /// `stop` is set.
-    pub fn read(master: &File, stop: &AtomicBool, mut on_data: impl FnMut(&[u8]) -> bool) {
+    /// With `drain` set, it reads what the terminal holds, without waiting, and ends.
+    // nycode: K25 the `drain` parameter
+    pub fn read(
+        master: &File,
+        stop: &AtomicBool,
+        drain: &AtomicBool,
+        mut on_data: impl FnMut(&[u8]) -> bool,
+    ) {
         let mut buffer = vec![0u8; 64 * 1024];
         while !stop.load(Ordering::SeqCst) {
+            // nycode: K25
+            if drain.load(Ordering::SeqCst) {
+                return drain_terminal(master, &mut buffer, &mut on_data);
+            }
             match poll(master.as_raw_fd(), libc::POLLIN) {
                 Ok(false) => continue,
                 Ok(true) => {}
@@ -523,6 +540,25 @@ mod unix {
                         error.kind(),
                         io::ErrorKind::WouldBlock | io::ErrorKind::Interrupted
                     ) => {}
+                Err(_) => return,
+            }
+        }
+    }
+
+    // nycode: K25
+    /// Read what the terminal holds, without waiting, until it is empty, closed or `DRAIN_LIMIT` bytes.
+    fn drain_terminal(master: &File, buffer: &mut [u8], on_data: &mut impl FnMut(&[u8]) -> bool) {
+        let mut total = 0;
+        while total < crate::sys::DRAIN_LIMIT {
+            match (&*master).read(buffer) {
+                Ok(0) => return,
+                Ok(read) => {
+                    total += read;
+                    if !on_data(&buffer[..read]) {
+                        return;
+                    }
+                }
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => {}
                 Err(_) => return,
             }
         }
