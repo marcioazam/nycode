@@ -1,5 +1,5 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { type AddressInfo, createServer } from "node:net";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fauxAssistantMessage, fauxToolCall } from "@nycode/ai";
@@ -13,6 +13,9 @@ import { createMcpExtension } from "../../src/extensions/mcp/index.ts";
 import { McpOAuthCredentialStore } from "../../src/extensions/mcp/oauth/oauth.ts";
 import { createHarness, createTestUiContext, getMessageText, type Harness } from "./harness.ts";
 import { startOAuthMcpServer } from "./mcp-oauth-server.ts";
+
+const FIXED_PORT_BASE = 20_000;
+let nextPort = 0;
 
 describe("AgentSession MCP OAuth", () => {
 	const cleanups: (() => Promise<void> | void)[] = [];
@@ -171,12 +174,28 @@ describe("AgentSession MCP OAuth", () => {
 		expect(server.deletes).toEqual(["access-1"]);
 	});
 
+	/**
+	 * A fixed loopback port for the callback URL. The product binds a configured port itself, so the test cannot hand it a
+	 * bound socket, and a probe-then-close port from the OS pool (port 0) can be taken by any other process's ephemeral
+	 * bind or outgoing connection before the product listens. Ports below the ephemeral range are never handed out by the
+	 * OS, so only a deliberate listener there can collide; each candidate is bound once to make sure it is unused now.
+	 */
 	async function freePort(): Promise<number> {
-		return new Promise<number>((resolve) => {
-			const probe = createServer().listen(0, "127.0.0.1", () => {
-				const address = probe.address() as AddressInfo;
-				probe.close(() => resolve(address.port));
-			});
+		const ephemeralLow =
+			Number(readFileSync("/proc/sys/net/ipv4/ip_local_port_range", "utf8").split(/\s+/)[0]) || 32768;
+		const span = ephemeralLow - FIXED_PORT_BASE;
+		for (let attempt = 0; attempt < span; attempt++) {
+			const port = FIXED_PORT_BASE + ((process.pid * 7 + nextPort++ * 131 + attempt) % span);
+			if (await canBind(port)) return port;
+		}
+		throw new Error("no unused port below the ephemeral range");
+	}
+
+	function canBind(port: number): Promise<boolean> {
+		return new Promise<boolean>((resolve) => {
+			const probe = createServer();
+			probe.once("error", () => resolve(false));
+			probe.listen(port, "127.0.0.1", () => probe.close(() => resolve(true)));
 		});
 	}
 
