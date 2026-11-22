@@ -17,6 +17,7 @@ import footerExtension from "./footer/index.ts";
 import gitCheckpointExtension from "./git-checkpoint/index.ts";
 import goalExtension from "./goal/index.ts";
 import headlessLeanExtension from "./headless-lean/index.ts";
+import hookMsgsExtension from "./hook-msgs/index.ts";
 import hooksExtension from "./hooks/index.ts";
 import imageOpenExtension from "./image-open/index.ts";
 import importClaudeSessionExtension from "./import-claude-session/index.ts";
@@ -97,6 +98,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "folha", factory: folhaExtension, builtin: true },
 	{ name: "footer", factory: footerExtension, builtin: true },
 	{ name: "headless-lean", factory: headlessLeanExtension, builtin: true },
+	{ name: "hook-msgs", factory: hookMsgsExtension, builtin: true },
 	{ name: "docs-pointer", factory: docsPointerExtension, builtin: true },
 	{ name: "image-open", factory: imageOpenExtension, builtin: true },
 	{ name: "plan-gate", factory: planGateExtension, builtin: true },
