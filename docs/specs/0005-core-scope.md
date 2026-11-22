@@ -145,6 +145,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | docs-pointer | core | Prompt menor |
 | extension | effort-sandwich | optional | Raciocínio high só no 1º turno do `pi -p` de topo (opt-in, spec 0009) |
 | extension | env-settings | core | Variáveis de ambiente do settings do Claude |
+| extension | folha | core | Confirmações seguras em português, saídas em folha e `/painel` (D-56) |
 | extension | footer | ui | Rodapé só com os status das extensões |
 | extension | git-checkpoint | core | Checkpoints git e `/rewind` |
 | extension | goal | core | Objetivo de sessão (/goal) |

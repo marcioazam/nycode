@@ -11,6 +11,7 @@ import devCommandsExtension from "./dev-commands/index.ts";
 import docsPointerExtension from "./docs-pointer/index.ts";
 import effortSandwichExtension from "./effort-sandwich/index.ts";
 import envSettingsExtension from "./env-settings/index.ts";
+import folhaExtension from "./folha/index.ts";
 import footerExtension from "./footer/index.ts";
 import gitCheckpointExtension from "./git-checkpoint/index.ts";
 import goalExtension from "./goal/index.ts";
@@ -89,6 +90,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "completion-gate", factory: completionGateExtension, builtin: true },
 	{ name: "dev-commands", factory: devCommandsExtension, builtin: true },
 	{ name: "effort-sandwich", factory: effortSandwichExtension, builtin: true },
+	{ name: "folha", factory: folhaExtension, builtin: true },
 	{ name: "footer", factory: footerExtension, builtin: true },
 	{ name: "headless-lean", factory: headlessLeanExtension, builtin: true },
 	{ name: "docs-pointer", factory: docsPointerExtension, builtin: true },
