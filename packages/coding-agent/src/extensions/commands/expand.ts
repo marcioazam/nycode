@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { getAgentDir } from "../../config.ts";
 import { builtinResourceDir, resolveResourcesMarker } from "../../core/builtin-resources.ts";
 import {
 	type DiscoveredCommand,
@@ -40,7 +41,7 @@ export interface VarContext {
  * enterprise directory beside the managed settings file, per "enterprise
  * overrides personal, and personal overrides project". The project directories
  * are included only for approved projects. */
-export function commandDirs(cwd: string, home: string, trusted: boolean): string[] {
+export function commandDirs(cwd: string, home: string, trusted: boolean, agentDir = getAgentDir()): string[] {
 	// K6: the embedded commands come first, the lowest precedence, so any same-named command replaces them.
 	const embedded = builtinResourceDir("commands");
 	const candidates: string[] = embedded ? [embedded] : [];
@@ -49,6 +50,9 @@ export function commandDirs(cwd: string, home: string, trusted: boolean): string
 	if (trusted) candidates.push(...ancestorDirs(cwd, path.join(".claude", "commands")).reverse());
 	candidates.push(
 		path.join(claudeConfigDir(home), "commands"),
+		// The nycode agent directory wins over ~/.claude, as for skills (core/skills.ts:455-458 loads <agent dir>/skills first,
+		// first name wins) and agents (subagent/registry/agents.ts:480-486, last wins); the enterprise directory still wins.
+		path.join(agentDir, "commands"),
 		path.join(path.dirname(managedSettingsFile()), ".claude", "commands"),
 	);
 	const dirs: string[] = [];

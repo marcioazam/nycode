@@ -4,6 +4,7 @@ import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { questionTerminal } from "../utils/terminal-question.ts";
 import { applyPlan } from "./from-pi-apply.ts";
+import { PERSONAL_DIRS } from "./from-pi-personal.ts";
 import { buildPlan, defaultSource, KEPT_DIRS, type Plan, type PlanFile } from "./from-pi-plan.ts";
 
 export interface MigrateIo {
@@ -32,8 +33,11 @@ Options:
 Converts settings.json and local.env (only read when owned by you with mode 0600 or 0400) to nycode settings;
 copies mcp.json (env and headers values become \${ENV} placeholders; credential-like args and urls are
 listed, not rewritten), models.json, lsp.json, keybindings.json,
-sessions/, memory/ (the memory extension store) and the project trust file. auth*.json is copied only with --apply, after an interactive
-confirmation. The origin directory is never changed or deleted. Backups go to
+sessions/, memory/ (the memory extension store), plans/ and the project trust file. The personal layer
+comes along without overwriting anything that already exists: AGENTS.md, subagent-routing.json (when valid), the themes of
+themes/ that are not built in, extensions/conta.ts, and the claude-home skills, agents and commands the package does not embed
+(the embedded ones are left out). checkpoints/ and the claude-home hooks are not copied. auth*.json and mcp-auth.json are
+copied only with --apply, after an interactive confirmation. The origin directory is never changed or deleted. Backups go to
 <agent dir>/.backup-from-pi/<timestamp>/.`;
 
 interface Parsed {
@@ -77,7 +81,7 @@ function defaultIo(): MigrateIo {
 }
 
 function describeFile(file: PlanFile, apply: boolean, interactive: boolean): string {
-	if (file.credential) {
+	if (file.credential && file.action !== "keep") {
 		const how = apply
 			? interactive
 				? "asks for confirmation before copying"
@@ -96,9 +100,10 @@ function formatPlan(plan: Plan, apply: boolean, interactive: boolean): string[] 
 		"",
 		"Plan:",
 	];
-	const inKept = (f: PlanFile) => KEPT_DIRS.some((dir) => f.rel.startsWith(`${dir}/`));
-	for (const file of plan.files.filter((f) => !inKept(f))) lines.push(describeFile(file, apply, interactive));
-	for (const dir of KEPT_DIRS) {
+	const summarised = [...KEPT_DIRS, ...PERSONAL_DIRS];
+	const inGroup = (f: PlanFile) => summarised.some((dir) => f.rel.startsWith(`${dir}/`));
+	for (const file of plan.files.filter((f) => !inGroup(f))) lines.push(describeFile(file, apply, interactive));
+	for (const dir of summarised) {
 		const entries = plan.files.filter((f) => f.rel.startsWith(`${dir}/`));
 		if (entries.length === 0) continue;
 		const fresh = entries.filter((f) => f.action === "create").length;
