@@ -130,8 +130,10 @@ const emphasize = (rem: Entry[], add: Entry[]): void => {
 export const mixRgb = (fg: number[], bg: number[], ratio: number): number[] =>
 	fg.map((f, k) => Math.round(Math.round((bg[k] * (1 - ratio) + f * ratio) * 1e6) / 1e6)); // 1e6: absorve o ruído de ponto flutuante em x.5
 
+const RGB_SGR = { 38: /38;2;(\d+);(\d+);(\d+)/, 48: /48;2;(\d+);(\d+);(\d+)/ } as const;
+
 const rgbOf = (ansi: string, kind: 38 | 48): number[] | undefined => {
-	const m = new RegExp(`${kind};2;(\\d+);(\\d+);(\\d+)`).exec(ansi);
+	const m = RGB_SGR[kind].exec(ansi);
 	return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : undefined;
 };
 

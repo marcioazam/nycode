@@ -236,6 +236,7 @@ export function highlight(text: string, query: string, mark: (s: string) => stri
 		.split(/\s+/)
 		.filter(Boolean)
 		.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+	// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- every word is escaped above; only the `|` alternation is regex syntax
 	return words.length ? text.replace(new RegExp(words.join("|"), "gi"), mark) : text;
 }
 
