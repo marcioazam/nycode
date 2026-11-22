@@ -1,4 +1,4 @@
-# Seams K1..K23 (docs/migration/nycode-core/08-sincronizacao-upstream.md, section 4; 02-arquitetura-alvo.md, section 4).
+# Seams K1..K24 (docs/migration/nycode-core/08-sincronizacao-upstream.md, section 4; 02-arquitetura-alvo.md, section 4).
 # Read by scripts/ci/seams/check-seams.sh. Fields, separated by " | ":
 #   id | files (space-separated; a directory is searched recursively) | marker pattern (ERE; it must not contain " | ") | test | state
 # state "ativa": the pattern must match in every file and the test must exist ("-" = no test yet, reported).
@@ -28,3 +28,4 @@ K20 | packages/coding-agent/src/modes/interactive/interactive-mode.ts | nycode: 
 K21 | packages/tui/src/layout.ts | nycode: K21([[:space:]]|$) | packages/tui/test/scrollbar-image.test.ts | ativa
 K22 | packages/coding-agent/src/modes/interactive/interactive-mode.ts packages/coding-agent/src/core/keybindings.ts | nycode: K22([[:space:]]|$) | packages/coding-agent/test/harness/modes/send-now/index.test.ts | ativa
 K23 | packages/coding-agent/src/modes/interactive/interactive-mode.ts packages/coding-agent/src/core/session-manager.ts | nycode: K23([[:space:]]|$) | packages/coding-agent/test/harness/core/cwd-switch/index.test.ts | ativa
+K24 | packages/coding-agent/src/cli.ts | nycode: K24([[:space:]]|$) | packages/coding-agent/test/harness/core/lifecycle/supervisor.test.ts | ativa
