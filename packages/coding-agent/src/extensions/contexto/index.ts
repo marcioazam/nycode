@@ -49,7 +49,8 @@ export function condensePrevious(
 
 export default function contextoExtension(nycode: ExtensionAPI): void {
 	const defaultLimit = () => resolveNycodeSettings(nycode.getSettings(), process.env).compaction.maxContextTokens;
-	let limit = defaultLimit();
+	// Settings are an action method, unavailable while extensions load: the limit is resolved on first use.
+	let limit: number | undefined;
 	const set = (next: number) => {
 		limit = next;
 		setSessionCompactAt(next > defaultLimit() ? next : undefined);
@@ -81,7 +82,10 @@ export default function contextoExtension(nycode: ExtensionAPI): void {
 			const arg = args.trim().toLowerCase();
 			const window = ctx.getContextUsage()?.contextWindow;
 			if (!arg) {
-				ctx.ui.notify(`Compacta em ${limit / 1000}k${window ? ` de ${window / 1000}k` : ""}. ${USAGE}`, "info");
+				ctx.ui.notify(
+					`Compacta em ${(limit ?? defaultLimit()) / 1000}k${window ? ` de ${window / 1000}k` : ""}. ${USAGE}`,
+					"info",
+				);
 				return;
 			}
 			const next = arg === "padrao" || arg === "padrão" || arg === "reset" ? base : parseTokens(arg);
@@ -99,7 +103,7 @@ export default function contextoExtension(nycode: ExtensionAPI): void {
 			set(next);
 			nycode.appendEntry(ENTRY, { limit: next });
 			ctx.ui.notify(
-				`Compactação automática desta sessão: a partir de ${limit / 1000}k tokens (gravado na sessão)`,
+				`Compactação automática desta sessão: a partir de ${next / 1000}k tokens (gravado na sessão)`,
 				"info",
 			);
 		},
