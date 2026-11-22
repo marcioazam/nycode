@@ -136,13 +136,13 @@ Cada decisão tem um identificador estável (D-nn) citado nos outros documentos.
 - `guard.py` (799 linhas) é o único controle técnico de segurança do harness; tem `test_guard.py` e fuzz.
 - Fase A: roda como hoje, lançado pela extensão `hooks` em `PreToolUse`. Paridade garantida, custo de um processo
   Python por chamada de ferramenta.
-- Fase B: `core/permissions/` em TypeScript, ligado por `permissions.engine: "native"` (padrão `"script"`). O padrão
-  só muda quando o teste diferencial der o mesmo veredito nos dois motores em 100% do corpus e do fuzz com semente
+- Fase B: `core/permissions/` em TypeScript, ligado por `permissions.engine: "native"` (padrão `"native"` desde a D-60; era `"script"`). O padrão
+  só mudava quando o teste diferencial der o mesmo veredito nos dois motores em 100% do corpus e do fuzz com semente
   fixa, e depois de revisão de segurança.
 - Nunca os dois desligados: se o motor escolhido falhar ao iniciar, a chamada é negada.
 - F8 (K11): com `native` o `PreToolUse` do `guard.py` não roda (um motor por vez) e o motor nativo que lança exceção, um valor
   desconhecido de `permissions.engine` e `"script"` sem o `guard.py` negam a chamada (C-F8-12), ao contrário do `guard.py`, que em erro interno pergunta (Bash) ou deixa passar. O padrão continua
-  `"script"`: a troca espera `security-reviewer` e o benchmark (D-29).
+  `"script"` até a D-60. A fase B virou padrão pela D-60 (2026-11-22), com a evidência: o teste diferencial dá o mesmo veredito nos dois motores em 100% do corpus e do fuzz com semente fixa (modos, `Grep` e `run` incluídos) e a revisão de segurança do #362 (falha fecha, só `NYCODE_GUARD_FAIL_OPEN=1` abre, entradas de 256 KB sem custo quadrático). `"script"` segue como opção e reativa o `PreToolUse` do `guard.py`.
 - Pré-condições para `native` por padrão: F5, F6, N1 (laudo F8; [evidência F8](evidencias/F8.md)).
 
 ### D-12. Serviços do upstream
