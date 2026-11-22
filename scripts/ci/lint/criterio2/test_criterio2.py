@@ -79,7 +79,6 @@ def test_check_covers_by_pattern_and_class() -> None:
 
 def test_search_skips_excluded_directories(tmp_path: Path) -> None:
     put(tmp_path, "src/a.ts", "x ~/.pi/agent\n")
-    put(tmp_path, "import/ny-pi/b.sh", "sed -i x\n")
     put(tmp_path, "docs/c.md", "patch -p1\n")
     put(tmp_path, "scripts/ci/lint/criterio2/d.py", "CLAUDE_CONFIG_DIR\n")
     put(tmp_path, "clean.txt", "nothing\n")

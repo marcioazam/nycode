@@ -43,7 +43,7 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 | R-19 | Perda de dados em `nycode migrate from-pi` | Sobrescrita de auth, sessões, MCP | F4, F12 | B | A | Seg. |
 | R-20 | Dois harnesses disputam `~/.pi` e `~/.nycode` | Convivência em F12 | F12 | M | M | Dono |
 | R-21 | Licenças de terceiros sem atribuição | MIT do pi-code e pi-lsp, Apache-2.0 | F5, F9 | M | M | Exec. |
-| R-22 | Identificador pessoal vaza ao importar o histórico | Histórico do nycode-harness entra no nycode | F1 | B | M | Seg. |
+| R-22 | Identificador pessoal vaza ao importar o histórico | Histórico do harness Nycode entra no Nycode | F1 | B | M | Seg. |
 | R-23 | 8 alertas de secret scanning continuam abertos | D-16 aguarda o dono | F0 | A | B | Dono |
 | R-24 | Apagar ramo errado dos 213 herdados | D-15, apagar em lote | F0 | B | M | Dono |
 | R-25 | Limite 800/7 quebra arquivos importados | pi-code tem arquivo de 1392 linhas | F5 | A | B | Exec. |
@@ -87,7 +87,7 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 | R-24 | Ramo com PR aberto na lista de exclusão | Conferir PR por ramo antes de apagar |
 | R-25 | `structure_changed` reprova arquivo importado | Lista de base no commit de cópia (D-06) |
 | R-26 | Diff de PR com milhares de linhas de formato | Três commits: cópia, imports, formatação |
-| R-27 | Captura de tela difere do nycode-harness | Comparar telas antes e depois; defeito visual bloqueia |
+| R-27 | Captura de tela difere do harness Nycode | Comparar telas antes e depois; defeito visual bloqueia |
 | R-28 | Dono indisponível; PR parado | Fases em PRs pequenos; checklist mestre atualizado |
 | R-29 | `build-check` vermelho em `main` | Etiqueta `v1.6.0-base` em F0 |
 | R-30 | Atraso acima de 14 dias | Sincronização semanal; ver [08](08-sincronizacao-upstream.md) |
@@ -100,7 +100,7 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 
 | ID | Plano de reversão |
 |---|---|
-| R-01 | Voltar ao `pi` 1.5.2 do nycode-harness (continua instalado até F12) |
+| R-01 | Voltar ao `pi` 1.5.2 do harness Nycode (continua instalado até F12) |
 | R-02 | Desligar a extensão `subagent` em `nycode config`; usar o `pi` |
 | R-03 | Reverter o PR da extensão; manter o `pi` |
 | R-04 | Reverter a costura (PR de squash); extensão embutida segue |
@@ -131,13 +131,13 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 | R-29 | Criar a etiqueta; reexecutar o CI |
 | R-30 | Sincronização de emergência antes de qualquer PR |
 | R-31 | Reverter o merge ou remover o caminho do pacote |
-| R-32 | Reaplicar a correção no nycode por PR |
+| R-32 | Reaplicar a correção no Nycode por PR |
 | R-33 | Nenhuma; a costura continua |
 | R-34 | Tratar como código próprio; reduzir o patch em PRs |
 
 ## 2. Reversão por fase
 
-Princípio: cada fase termina em PR verde e reversível (princípio 5 do mega plano). O `pi` do nycode-harness continua instalado e
+Princípio: cada fase termina em PR verde e reversível (princípio 5 do mega plano). O `pi` do harness Nycode continua instalado e
 utilizável até F12 (documento: princípio 2). Todo comando abaixo é proposta e **não foi executado**; as ações que
 escrevem no GitHub (reverter, apagar, recriar proteção) exigem a autorização do dono e rodam pelo `git-delivery`.
 
@@ -149,7 +149,7 @@ escrevem no GitHub (reverter, apagar, recriar proteção) exigem a autorização
 | F3 | `DELETE` do ruleset e recriar a proteção clássica pelo JSON de `evidencias/` | Enquanto o JSON existir |
 | F4 | Revert do PR de cada costura; a migração de dados é por cópia e não altera `~/.pi` | Sempre |
 | F5 | Desligar a extensão em `nycode config`; revert do PR; usar o `pi` | Sempre |
-| F6 | Idem a F5; subagentes voltam ao pi-code do nycode-harness | Sempre |
+| F6 | Idem a F5; subagentes voltam ao pi-code do harness Nycode | Sempre |
 | F7 | Idem a F5, extensão a extensão; K10 por revert | Sempre |
 | F8 | Motor de permissão para `"script"`; revert dos recursos | Sempre |
 | F9 | Desligar `lsp`; opcionais saem de `nycode install` | Sempre |
@@ -172,7 +172,7 @@ Detalhes por fase, para quem executa:
   seção 1). Costura de core (K1 a K14): revert do PR de squash correspondente; cada costura tem seu teste e seu PR (08).
 - **F11.** Reverter a infraestrutura (instalador, binários, Nix) é revert de PR. O que já foi para o npm não volta.
 - **F12.** Arquivar `marcioazam/ny-pi` é reversível (desarquivar no GitHub); apagar `import/ny-pi/` é reversível por git (o
-  histórico fica). O `pi` do nycode-harness continua instalado até F12 (documento: princípio 2).
+  histórico fica). O `pi` do harness Nycode continua instalado até F12 (documento: princípio 2).
 
 ### 2.1 Ponto sem volta
 
@@ -191,7 +191,7 @@ Detalhes por fase, para quem executa:
 
 ## 3. Critérios de parada
 
-Interromper a migração, congelar a fase em curso e voltar ao `pi` do nycode-harness quando **qualquer** destes for verdade:
+Interromper a migração, congelar a fase em curso e voltar ao `pi` do harness Nycode quando **qualquer** destes for verdade:
 
 1. Um gate de segurança falha duas vezes em sequência na mesma unidade (F4 e F8: o `security-reviewer` reprova após uma
    correção).
@@ -215,13 +215,13 @@ Os limiares numéricos dos itens 1, 3, 5 e 8 são propostas deste plano, não va
 
 Suposição: a migração falhou. Três histórias plausíveis e o que o plano faz para evitá-las.
 
-1. **"O harness chegou, mas se comporta diferente e ninguém sabe por quê."** O nycode foi cortado em F12 com acerto e
-   custo piores que o nycode-harness. Causa: a base mudou (1.5.2 para 1.6.0) e o código migrou na mesma onda, então a regressão
-   não tem dono. O plano evita assim: D-25 mede o nycode-harness por fora sobre 1.6.0 antes de migrar (F3); o princípio 1
+1. **"O harness chegou, mas se comporta diferente e ninguém sabe por quê."** O Nycode foi cortado em F12 com acerto e
+   custo piores que o harness Nycode. Causa: a base mudou (1.5.2 para 1.6.0) e o código migrou na mesma onda, então a regressão
+   não tem dono. O plano evita assim: D-25 mede o harness Nycode por fora sobre 1.6.0 antes de migrar (F3); o princípio 1
    (paridade antes de melhoria) e a cópia byte a byte de F5 e F6 separam mudança de lugar de mudança de código; o gate
    de F10 e o critério 4 comparam com a referência; D-14 remede `pi-vanilla` e `cc-vanilla`.
 2. **"O fork parou de acompanhar o upstream."** Depois do corte, o custo de sincronizar ficou tão alto (renome em 2316
-   arquivos, 14 costuras, 944 arquivos por semana) que ninguém mais sincronizou, e o nycode virou um fork morto. O plano
+   arquivos, 14 costuras, 944 arquivos por semana) que ninguém mais sincronizou, e o Nycode virou um fork morto. O plano
    evita assim: [08](08-sincronizacao-upstream.md) mede o ritmo, fixa cadência semanal e atraso máximo, versiona o
    pipeline de renome (PC-1), troca o conflito de renome pela imagem determinística, mantém as costuras em lista fechada
    com teste, e exige duas sincronizações completas depois de F6 como critério 7. O bus factor (R-28) é o fator
@@ -275,7 +275,7 @@ Proposta (os números são a calibrar; **não medidos**):
    ser desinstalado só depois, a pedido do dono.
 
 Durante a convivência, o `nycode-harness` segue congelado: entra só correção de segurança (F0), e cada uma é reaplicada no
-nycode por PR (R-32).
+Nycode por PR (R-32).
 
 ## 6. Não verificado neste documento
 

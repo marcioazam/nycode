@@ -1,4 +1,4 @@
-// Ported from import/ny-pi/extensions/nycode-docs/index.test.ts: mode `auto` rules, the before_agent_start override
+// Ported from the pre-migration harness: extensions/nycode-docs/index.test.ts: mode `auto` rules, the before_agent_start override
 // of the docs section, custom prompts untouched, and the /docs-pointer command.
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

@@ -5,7 +5,7 @@ migra tem linha.
 
 ## 1. Cinco fontes de coisas a migrar
 
-O nycode-harness não está todo no seu repositório. Parte do que roda hoje vem de fora e só existe na máquina depois da
+O harness Nycode não está todo no seu repositório. Parte do que roda hoje vem de fora e só existe na máquina depois da
 instalação. O mapa cobre as cinco fontes:
 
 | # | Fonte | Quantidade | Onde está o mapa |
@@ -72,14 +72,14 @@ Dos 1312 "converter", 869 são `bench/` (784 deles são tarefas de teste em `ben
 | `pi-code-installed.SHA256SUMS` (`import/ny-pi/`) | Lista de checksums da cópia congelada do pi-code; a referência é o tarball de sha1 conferido. Sai junto com `import/` em C-F12-05 | D-02, D-47 |
 | `install.sh`, `publish.list`, `scripts/install-lib.sh`, `scripts/test_install.sh`, `npm/package.json`, `npm/package-lock.json` | Instalação e publicação do fork | — |
 
-Testes do nycode-harness que o nycode não repete caso a caso (C-F10-07, detalhe em
+Testes do harness Nycode que o Nycode não repete caso a caso (C-F10-07, detalhe em
 [evidencias/F10-testes.md](evidencias/F10-testes.md)):
 
-- `bench/tests/classify/test_affects.py`, `test_more_ui`. O nycode-harness tratava `sound-notify`, `dev-commands`, `up-dequeue` e
-  `puxar` como UI pura e, por isso, não funcionais. O nycode é deliberadamente mais estreito: a UI pura é só `ui`,
+- `bench/tests/classify/test_affects.py`, `test_more_ui`. O harness Nycode tratava `sound-notify`, `dev-commands`, `up-dequeue` e
+  `puxar` como UI pura e, por isso, não funcionais. O Nycode é deliberadamente mais estreito: a UI pura é só `ui`,
   `ui-visual`, `footer`, `sticky-prompt` e os temas e a linha de status embarcados (09 §3.2, D-21), e o resto falha
   fechado como funcional. O teste `test_functional` afirma agora `sound-notify`, `dev-commands`, `up-dequeue` e
-  `import-claude-session` (o `puxar` do nycode-harness) como funcionais.
+  `import-claude-session` (o `puxar` do harness Nycode) como funcionais.
 - `todo-collapse.test.ts`: 7 casos (atalho, linha recolhida, glifos, clique, roda, estouro e `allDone`) testavam o
   widget de todos acima do editor. Desde que a lista passou à seção Plan, esse widget renderizava `[]`: sem linhas não
   tem caixa de clique nem de roda, e `ctrl+shift+t` alternava um estado invisível. O código (`TodoOverlay`, o atalho e
@@ -296,7 +296,7 @@ unidade 0 avulsa não existe: a cópia congelada do #231 e o commit 1 do PR cump
 **Superado por D-54 para `ponytail` e `ralph-loop`:** os dois voltam a ser padrão (embutidos), o hook `Stop` do ralph-loop é padrão e a
 marca `(optional)` saiu dos comandos `ralph-*`. O parágrafo abaixo vale só para `pr-review-toolkit` e `claude-red`.
 
-Arquivos do nycode-harness que referenciam estes componentes e mudam junto: `claude-home/commands/ralph-loop.md`,
+Arquivos do harness Nycode que referenciam estes componentes e mudam junto: `claude-home/commands/ralph-loop.md`,
 `ralph-help.md`, `cancel-ralph.md`, `review-pr.md` (comandos que só funcionam com o pacote instalado: ficam marcados
 `(optional)` e `check-refs.py` aceita), `claude-home/hooks` no bloco `Stop` (`vendor/ralph-loop/hooks/stop-hook.sh`
 deixa de ser padrão; o instalador não registra hooks, então o `hooks.Stop` é uma entrada manual de `settings.json`, documentada em `packages/coding-agent/docs/optional-packages.md`).
@@ -309,7 +309,7 @@ faria.
 | Em `~/.pi/agent/` | Para `~/.nycode/agent/` | Regra |
 |---|---|---|
 | `settings.json` | `settings.json` | Chaves convertidas pela tabela de [02, seção 5](02-arquitetura-alvo.md#5-configuracao-e-variaveis-de-ambiente); `packages` perde `pi-code`, `./vendor/pi-lsp` e `./vendor/ponytail` (embutidos; `ponytail` pela D-54) |
-| `local.env` | `local.env` (carregador, D-52) e chaves em `settings.json` | As 9 chaves permitidas; o arquivo de origem fica intacto. O nycode lê `~/.nycode/agent/local.env` (ou `NYCODE_LOCAL_ENV`) no começo de `main` (K12), modo 0600/0400, valores literais, só as 9 chaves com nomes `NYCODE_*`, sem ler nada de `~/.pi`; como no `bin/pi` do nycode-harness, uma variável já definida no ambiente real **não** é sobrescrita. Precedência: ambiente real > `local.env` > `settings.json` > padrão. O `migrate from-pi` converte o `local.env` do pi em chaves de `settings.json` uma vez; se o `local.env` continuar existindo, vale o dele sobre o `settings.json` (mesma ordem de qualquer `NYCODE_*`), então os dois só divergem se o usuário editar um deles depois |
+| `local.env` | `local.env` (carregador, D-52) e chaves em `settings.json` | As 9 chaves permitidas; o arquivo de origem fica intacto. O Nycode lê `~/.nycode/agent/local.env` (ou `NYCODE_LOCAL_ENV`) no começo de `main` (K12), modo 0600/0400, valores literais, só as 9 chaves com nomes `NYCODE_*`, sem ler nada de `~/.pi`; como no `bin/pi` do harness Nycode, uma variável já definida no ambiente real **não** é sobrescrita. Precedência: ambiente real > `local.env` > `settings.json` > padrão. O `migrate from-pi` converte o `local.env` do pi em chaves de `settings.json` uma vez; se o `local.env` continuar existindo, vale o dele sobre o `settings.json` (mesma ordem de qualquer `NYCODE_*`), então os dois só divergem se o usuário editar um deles depois |
 | `claude-home/settings.json` (hooks, statusLine, env) | `settings.json` | Só as entradas que o usuário mudou em relação ao exemplo; o padrão já vem embarcado |
 | `mcp.json`, `models.json`, `lsp.json`, `keybindings.json` | iguais | Cópia; `mcp.json` e `models.json` nunca são sobrescritos se já existirem |
 | `sessions/` | `sessions/` | Cópia; o formato de sessão é o do pi e não muda entre 1.5.2 e 1.6.0 (não verificado: conferir `docs/session-format.md` e `migrations.ts` em F4) |

@@ -6,14 +6,14 @@
 set -euo pipefail
 here=$(dirname "$(readlink -f "$0")")
 # The nycode-harness tree (install.sh, bin/pi, npm/): BENCH_NYCODE_HARNESS_SRC, a checkout or an extracted archive of the nycode-harness
-# repository. It has no default: import/nycode-harness lost install.sh and npm/ in F11 and never had bin/pi (F5). A stage that is
+# repository. It has no default. A stage that is
 # already built runs without the tree when BENCH_STAGE names it. The default stage name uses the git commit of that
 # directory: without a .git there, set BENCH_STAGE.
 src=${BENCH_NYCODE_HARNESS_SRC:-}
 repo=
 need_src() {
   [ -d "$src" ] || {
-    echo "bench: the nycode-harness arm needs a nycode-harness tree: set BENCH_NYCODE_HARNESS_SRC to a nycode-harness checkout (import/nycode-harness has no install.sh or bin/pi and is no default)" >&2
+    echo "bench: the nycode-harness arm needs a nycode-harness tree: set BENCH_NYCODE_HARNESS_SRC to a nycode-harness checkout (there is no default tree)" >&2
     exit 2
   }
   repo=$(cd "$src" && pwd)

@@ -1,5 +1,5 @@
 <!-- Anexo A: levantamento bruto de 2026-11-20 (`marcioazam/ny-pi` origin/main e4f8729). Fonte de fatos do plano; não editar à mão, regenerar. -->
-# Inventário nycode-harness para migração ao core de um fork do pi
+# Inventário harness Nycode para migração ao core de um fork do pi
 
 Fonte: `origin/main` = e4f8729 (2026-11-20, "fix(security): clear code-fixable Security and quality findings (#66)"), extraído com `git archive` para /tmp/nyx (somente leitura). Working tree sujo (351 entradas no porcelain), não lido. 1485 arquivos rastreados.
 Cobertura: leitura direta de arquivos (sem codegraph; inventário literal). Raiz de caminhos abaixo = raiz do repo.

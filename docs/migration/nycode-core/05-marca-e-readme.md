@@ -1,12 +1,12 @@
-# Marca e README do nycode
+# Marca e README do Nycode
 
-Estado: **plano, nada aplicado** (F2 e F12 do [mega plano](00-mega-plano.md)). Este guia fixa o logo do nycode, o novo
+Estado: **plano, nada aplicado** (F2 e F12 do [mega plano](00-mega-plano.md)). Este guia fixa o logo do Nycode, o novo
 topo do `README.md`, o destino de cada menção a pi.dev, Earendil e Discord, o que migra do README do `marcioazam/ny-pi` e os pontos
 de marca fora do README. Identificadores: F0 a F12, D-nn ([11](11-decisoes-e-pendencias.md)), K1 a K14
 ([02](02-arquitetura-alvo.md)). Fatos do logo: [anexo C](anexos/C-logo-historico.md), reconferidos em 2026-11-20.
 
 Fontes lidas: worktree `/home/marcio/source/nycode.wt/migration` (HEAD `fb05db936`, `README.md` com 206 linhas);
-nycode-harness em `origin/main` (e4f8729) só por `git show`. O que não foi possível verificar vem marcado "não verificado".
+harness Nycode em `origin/main` (e4f8729) só por `git show`. O que não foi possível verificar vem marcado "não verificado".
 
 ## 1. O logo: fatos e verificação
 
@@ -30,7 +30,7 @@ git show 9ea437bf7:docs/assets/nycode-wordmark-ansi.txt | sha256sum
 As duas somas coincidem com o anexo C. O SVG final tem `viewBox 0 0 168 52`, nenhum retângulo de fundo, 37 elementos
 `<path>` e 37 preenchimentos cinza de `#606060` a `#f0f0f0` (contagem feita no blob). A versão antiga, com fundo
 preto, é `6ac81de56` (sha256 `596a1b1a...`, no anexo C) e **não** deve ser restaurada. O `docs/assets/` não existe hoje
-no worktree. Os arquivos `logo/pi_logo_*` e o `logo.svg` do chord são do pi e do chord, não do nycode.
+no worktree. Os arquivos `logo/pi_logo_*` e o `logo.svg` do chord são do pi e do chord, não do Nycode.
 
 ## 2. Restaurar `docs/assets/` (F2)
 
@@ -69,17 +69,17 @@ Substitui as linhas 1 a 9 (`README.md:1-9`: o `<p>` com o logo do pi e o `<p>` c
 O primeiro `<p>` é o bloco que o `README.md` tinha em `9ea437bf7` (anexo C, seção (b)). Não há link para `pi.dev` nem
 para o Discord. O selo do npm fica (linha 8); se `@nycode/coding-agent` está publicado: não verificado (a publicação é
 F11, D-13). Proposta: tirar o selo em F2 e devolvê-lo em F11. Os selos de CI do `marcioazam/ny-pi` (`ci-static`, `ci-security`,
-`instruction-budget`, Scorecard, licença) entram em F3, quando os workflows existirem no nycode.
+`instruction-budget`, Scorecard, licença) entram em F3, quando os workflows existirem no Nycode.
 
 ### 3.2 Diff proposto, linha a linha
 
-Fases: **F2** muda o topo, o que aponta para serviços que o nycode não opera e o que contradiz D-18; **F6**, o que
+Fases: **F2** muda o topo, o que aponta para serviços que o Nycode não opera e o que contradiz D-18; **F6**, o que
 deixa de ser verdade com o harness embutido; **F11**, o que depende de instalador e publicação próprios; **F12**
 consolida. Veredito: remover, substituir (por quê) ou manter (exceção D-12).
 
 - Linha 2-4: `<a href="https://pi.dev">` com `<img src="https://pi.dev/logo-auto.svg">`. Veredito: substituir pelo
   bloco 3.1. Fase: F2.
-- Linha 7: selo do Discord (`discord.com/invite/3cU7Bz4UPx`). Veredito: remover; o nycode não tem Discord (D-18).
+- Linha 7: selo do Discord (`discord.com/invite/3cU7Bz4UPx`). Veredito: remover; o Nycode não tem Discord (D-18).
   Fase: F2.
 - Linha 11: aviso "New issues and PRs ... are auto-closed". Veredito: remover; o portão `lgtm` sai (D-18). Fase: F2.
 - Linha 13: `# Nycode`. Veredito: manter (único H1). Fase: —.
@@ -97,12 +97,12 @@ consolida. Veredito: remover, substituir (por quê) ou manter (exceção D-12).
   `stable` existe: não verificado. Fase: F11.
 - Linha 66: "bundled model data comes from a pi.dev model catalog ... overlays newer catalog data from pi.dev".
   Veredito: **manter**: exceção D-12 (catálogo do upstream). Fase: —.
-- Linha 86: link para `earendil-works/pi-chat`. Veredito: remover: pacote do pi, compatibilidade com o nycode não
+- Linha 86: link para `earendil-works/pi-chat`. Veredito: remover: pacote do pi, compatibilidade com o Nycode não
   verificada. Fase: F2.
 - Linha 100: "Longer term plans ... [RFCs](https://rfc.earendil.com/keyword/nycode)". Veredito: remover o trecho;
   manter `CONTRIBUTING.md` e `AGENTS.md`. Fase: F2.
 - Linha 176: "The pi.dev installer installs from `install-lock/`". Veredito: "The installer" até F11, "o instalador do
-  nycode" depois. Fase: F11.
+  Nycode" depois. Fase: F11.
 - Linha 182-196: seção "Share your OSS coding agent sessions" (`badlogicgames`, `badlogic/nycode-share-hf`, dataset).
   Veredito: remover a seção: é a prática do autor do pi. Fase: F2.
 - Linha 198-200: `## License` e `MIT`. Veredito: manter; a seção "Origin" (3.3) entra antes. Fase: F2.
@@ -146,27 +146,27 @@ O README do `marcioazam/ny-pi` tem 450 linhas (`origin/main`). Seções: `Conten
   Fase: F10.
 - Benchmarks (89-304): migra? resumo e link; dados brutos vão com `bench/` (F3); o README leva a tabela final. Fase:
   F10.
-- Reproduce (305): migra? sim; comando de `bench/` do nycode. Fase: F3.
+- Reproduce (305): migra? sim; comando de `bench/` do Nycode. Fase: F3.
 - What you get (315): migra? sim, reescrito; extensões embutidas e recursos. Fase: F7 a F9.
-- Install, Link/backup/restore, Overlay: migra? reescrito; instalação do nycode (npm, instalador); `~/.pi/agent` por
+- Install, Link/backup/restore, Overlay: migra? reescrito; instalação do Nycode (npm, instalador); `~/.pi/agent` por
   D-09. Fase: F11.
 - Quality gates (389-403): migra? sim, adaptado; 10 checks do ruleset ([04](04-regras-do-repositorio.md), seção 3),
   não 4. Fase: F3.
 - Comparison (405-421): migra? só depois de medir; tabela do braço `nycode`; sem comparação de recursos. Fase: F10.
-- Community, Layout, Documentation: migra? sim, reescrito; caminhos do nycode (`packages/`, `bench/`, `resources/`).
+- Community, Layout, Documentation: migra? sim, reescrito; caminhos do Nycode (`packages/`, `bench/`, `resources/`).
   Fase: F12.
 - License: migra? sim; MIT e seção "Origin" (3.3). Fase: F2.
 
 ### 4.1 Regra de honestidade
 
 Todo número do README do nycode vem de uma medição do braço `nycode` (D-14, D-25). **Até F10**, nenhum número do nycode-harness
-entra como se fosse do nycode: se aparecer, a frase é "measured on the Nycode harness ... on pi 1.5.2" (D-48; antes "medido como ny-pi") e a tabela de comparação
-**não** entra. Depois de F10 o número antigo é substituído, não mantido ao lado do novo (regra do nycode-harness, README:36-37).
+entra como se fosse do Nycode: se aparecer, a frase é "measured on the Nycode harness ... on pi 1.5.2" (D-48; antes "medido como ny-pi") e a tabela de comparação
+**não** entra. Depois de F10 o número antigo é substituído, não mantido ao lado do novo (regra do harness Nycode, README:36-37).
 Os números atuais do README do `marcioazam/ny-pi` (97,8% de 42 tarefas, 134 de 168 no Terminal-Bench, 0,57x de custo) não foram
 reverificados neste plano: não verificado.
 
-**Ajustada em 2026-11-21 por D-31:** a pedido do dono o README de F4 já traz as tabelas do nycode-harness, rotuladas como
-medidas no nycode-harness sobre pi 1.5.2 e não no binário nycode, com a lista do que o `docs/bench/` tem e não tem. Em F10 as
+**Ajustada em 2026-11-21 por D-31:** a pedido do dono o README de F4 já traz as tabelas do harness Nycode, rotuladas como
+medidas no harness Nycode sobre pi 1.5.2 e não no binário Nycode, com a lista do que o `docs/bench/` tem e não tem. Em F10 as
 tabelas são substituídas pelas do braço `nycode` e as menções a nycode-harness e Pi Vanilla saem ou mudam de função.
 
 ### 4.2 Sumário proposto do README final
@@ -193,7 +193,7 @@ F4 por causa do motor de permissão (K3). "Contributing" (98) perde o link de RF
   linhas: `nycodeLogoLines`, `supportsNycodeLogo`, `nycodeWordmark`), usado em `interactive-mode.ts:168`. Proposta:
   manter; `CORAL`, `BLUE`, `YELLOW` são a marca da TUI. Defeito: `nycodeWordmark()` devolve `"P"` e `"i"`, resíduo do
   pi; corrigir é escopo de F7. Fase: F7.
-- `ui-visual/header.ts` (nycode-harness): linha 18: "Logo oficial do pi (cópia de pi-coding-agent components/pi-logo.js)"; Na D-56 o header passa a desenhar a marca "nycode" do dono (`motion/nycode.ts`) em vez do logo do core; o título do terminal fica sem o prefixo `APP_TITLE`, por paridade com a versão ativa.
+- `ui-visual/header.ts` (harness Nycode): linha 18: "Logo oficial do pi (cópia de pi-coding-agent components/pi-logo.js)"; Na D-56 o header passa a desenhar a marca "nycode" do dono (`motion/nycode.ts`) em vez do logo do core; o título do terminal fica sem o prefixo `APP_TITLE`, por paridade com a versão ativa.
   linha 53 mostra `pi` e a versão; linhas 6-8 importam `@earendil-works/*`. Proposta: ao migrar, **não** copiar o
   logo: usar `nycodeLogoLines()`, trocar `pi` por `nycode` e os imports por `@nycode/*`. Fase: F7.
 - `nycode-wordmark-ansi.txt` no cabeçalho: 53 176 bytes de texto ANSI truecolor. Proposta: **proposta**: exibir só em
@@ -201,7 +201,7 @@ F4 por causa do motor de permissão (K3). "Contributing" (98) perde o link de RF
 - Favicon e ícones de app: `apps/p2/public/icons/*` e `apps/p2/src/web/NycodeLogo.tsx`. Proposta: fora de escopo
   (D-23). Fase: —.
 - `nix/package.nix`: linhas 20, 28 e 168 citam `pi.dev` (homepage na 168). Proposta: `homepage` aponta para o
-  repositório do nycode; 20 e 28 seguem D-12 (conteúdo exato: não verificado). Fase: F11.
+  repositório do Nycode; 20 e 28 seguem D-12 (conteúdo exato: não verificado). Fase: F11.
 - `ISSUE_TEMPLATE`: `config.yml` com Discord; `package-report.yml` com `pi.dev` (2, 8, 18, 27); `bug.yml` e
   `contribution.yml` com `nycode-cli/blob/main/CONTRIBUTING.md`. Proposta: [04](04-regras-do-repositorio.md), seção
   5.3. Fase: F2.
@@ -221,10 +221,10 @@ D-31, para nomear a referência do benchmark:
 - `CHANGELOG.md` dos pacotes: histórico imutável (`AGENTS.md`, seção Changelog).
 - `docs/fork` e `docs/migration`: registro do fork e da migração.
 - `nycode migrate from-pi` (`src/migrations/from-pi*`): lê a configuração antiga do usuário (D-09).
-- `docs/harness/`: cópia de `claude-home/docs` do nycode-harness, trazida por outro PR (D-31 b); `docs/migration/nycode-arquivo` já
+- `docs/harness/`: cópia de `claude-home/docs` do harness Nycode, trazida por outro PR (D-31 b); `docs/migration/nycode-arquivo` já
   cabe em `docs/migration`.
 - `README.md`: "Pi Vanilla" (pi 1.5.2 sem harness) só nas seções de proposta e de benchmark, para dizer contra o que
-  os números foram medidos; o nome nycode-harness onde o README explica de onde vem o harness e os números (D-31 a). O gate
+  os números foram medidos; o nome harness Nycode onde o README explica de onde vem o harness e os números (D-31 a). O gate
   R1 isenta o arquivo inteiro; a revisão do PR confere que "pi" sozinho só aparece nessas seções.
 
 Deixam de ser exceção: a seção "Origin" do README (vira "License: MIT, see LICENSE and NOTICE"), os aliases

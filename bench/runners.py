@@ -47,7 +47,7 @@ INFRA_STREAK = (
 # tokens {input, output, cache_read, cache_write}; turns = assistant messages; tool_errors = failed tool results;
 # first_request_tokens = input + cache_read + cache_write of the first assistant response (the fixed context).
 METRICS = ("tokens", "turns", "tool_errors", "first_request_tokens")
-# our key -> (pi/omp usage key, Claude Code usage key)
+# our key -> (pi usage key, Claude Code usage key)
 _USAGE = {
     "input": ("input", "input_tokens"),
     "output": ("output", "output_tokens"),
@@ -320,14 +320,6 @@ def harbor_agent(
             "ANTHROPIC_OAUTH_TOKEN",
         )
     if (
-        arm == "omp"
-    ):  # reviewed release binary (omp-release.sh); medium = pi's default thinking
-        return (
-            ["-a", "omp_agent:OmpAgent", "--ak", "thinking=medium", "-m", m],
-            {"PYTHONPATH": str(harbor_dir)},
-            "ANTHROPIC_OAUTH_TOKEN",
-        )
-    if (
         arm == "nycode"
     ):  # bench/harbor/nycode_agent.py; run.py builds its bundle (bench/harbor/bundle.sh) first
         return (
@@ -531,7 +523,7 @@ def _usage(u: Any, kind: str) -> dict[str, int] | None:
 
 
 def parse_events(text: str, kind: str) -> dict[str, Any]:
-    """cost, final text, subagent use, error and the METRICS from a headless cc (stream-json) or pi/omp (json)
+    """cost, final text, subagent use, error and the METRICS from a headless cc (stream-json) or pi (json)
     transcript."""
     events: list[Any] = []
     for line in text.splitlines():

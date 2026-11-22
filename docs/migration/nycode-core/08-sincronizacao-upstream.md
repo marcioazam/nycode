@@ -1,6 +1,6 @@
 # Sincronização com o upstream (earendil-works/pi)
 
-Política para o nycode continuar recebendo o upstream durante e depois da migração. O registro do fork
+Política para o Nycode continuar recebendo o upstream durante e depois da migração. O registro do fork
 (`docs/fork/2026-11-20-fork-do-pi.md`) não tem esta política (lido inteiro em 2026-11-20); este documento a cria.
 Decisões citadas: [D-06, D-07](11-decisoes-e-pendencias.md). Costuras K1..K24: [02, seção 4](02-arquitetura-alvo.md).
 Estado: **proposta, ferramentas criadas** (C-F6-17, PR A, 2026-11-21). Existem `scripts/fork/{all,image,test_reproduction}.sh`,
@@ -87,7 +87,7 @@ Estado atual: o `main` do upstream está 8 commits e 22 arquivos à frente do co
 ### 2.1 Peças
 
 - **Espelho:** ramo `upstream/main` no `origin`. Somente leitura: só recebe avanço rápido (fast-forward) vindo de
-  `git fetch upstream`, nunca commit do nycode, sem exclusão e sem push forçado.
+  `git fetch upstream`, nunca commit do Nycode, sem exclusão e sem push forçado.
 - **Remoto:** `upstream` = `https://github.com/earendil-works/pi.git`, adicionado uma vez por clone (passo 1, seção 6).
 - **Ramo de trabalho:** `sync/upstream-AAAA-MM-DD`, nasce de `origin/main` e recebe a fusão e as correções.
 - **Fusão:** `git merge --no-ff` (merge commit); nunca rebase nem cherry-pick.
@@ -101,7 +101,7 @@ diferentes. Para evitar ambiguidade, os comandos usam `origin/upstream/main` e `
 
 A fusão de duas linhas usa o ancestral comum mais recente (merge base) como referência de três vias. Um PR com squash
 grava um commit novo com um só pai, `main`: o conteúdo do upstream entra, mas o commit do upstream não passa a ser
-ancestral de `main`. Na sincronização seguinte o merge base continua sendo o commit antigo, e tudo o que o nycode já
+ancestral de `main`. Na sincronização seguinte o merge base continua sendo o commit antigo, e tudo o que o Nycode já
 resolveu volta a aparecer como diferença entre as duas linhas, conflitando de novo. Com merge commit, o segundo pai
 liga `main` ao upstream e o merge base avança. O `rebase` tem o mesmo defeito do squash (reescreve os commits, que
 ganham novos hashes). Origem da regra: [D-07](11-decisoes-e-pendencias.md). Fonte externa: nenhuma (P-5); o argumento
@@ -138,7 +138,7 @@ primeiras sincronizações.
 
 ## 4. Costuras
 
-Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 24 de
+Costura é uma edição do Nycode dentro de arquivo do upstream. A lista é fechada: são as 24 de
 [02, seção 4](02-arquitetura-alvo.md), mais as costuras do renome (seção 4.3).
 
 ### 4.1 Tabela de costuras K1..K24
@@ -440,7 +440,7 @@ git merge --no-ff "upstream-renamed/$S" -m "chore(sync): upstream $S"
 Ordem de resolução quando há conflito (regra de cada arquivo, nesta ordem):
 
 1. **Lockfiles** (`package-lock.json`, `packages/coding-agent/install-lock/`): não resolver à mão. Pegar o lado
-   do nycode e regenerar:
+   do Nycode e regenerar:
    `git checkout --ours -- package-lock.json packages/coding-agent/install-lock/package-lock.json`, depois
    `npm install --package-lock-only --ignore-scripts` e `node scripts/generate-coding-agent-install-lock.mjs`.
    O hook de pre-commit bloqueia lockfile sem `NYCODE_ALLOW_LOCKFILE_CHANGE=1` (documento: `AGENTS.md` do fork).
@@ -448,7 +448,7 @@ Ordem de resolução quando há conflito (regra de cada arquivo, nesta ordem):
    regenerar com `npm run generate:models` (`package.json:29`, `packages/ai/package.json:72`); a fonte é
    `packages/ai/catalog/`.
 3. **`CHANGELOG.md` de qualquer pacote**: o renome os pula, então a imagem os traz iguais aos do upstream. Aceitar o
-   texto do upstream como vem; reaplicar abaixo de `## [Unreleased]` as entradas do nycode (D-19). Seções de versões
+   texto do upstream como vem; reaplicar abaixo de `## [Unreleased]` as entradas do Nycode (D-19). Seções de versões
    lançadas são imutáveis.
 4. **Costuras K1..K24**: resolver mantendo a linha com o marcador `// nycode: K<n>`; conferir com
    `scripts/ci/seams/check-seams.sh` e o teste da costura (seção 4.2).
@@ -488,7 +488,7 @@ seção 1 foram executados.
 
 ## 7. Regras para manter o conflito baixo
 
-1. **Arquivo novo em vez de edição.** Código do nycode mora em diretórios próprios (`extensions/<nome>/`,
+1. **Arquivo novo em vez de edição.** Código do Nycode mora em diretórios próprios (`extensions/<nome>/`,
    `core/permissions/`, `migrations/`, `resources/`, `scripts/fork/`, `bench/`). A edição de arquivo do upstream só
    existe nas 14 costuras.
 2. **Nunca reformatar arquivo do upstream.** O `npm run check` roda o `biome --write`. O renome já reformatou 224
@@ -503,7 +503,7 @@ seção 1 foram executados.
 4. **Extensão embutida em diretório próprio** (D-01): `src/extensions/<nome>/` mais uma linha de registro em
    `extensions/index.ts` (K5).
 5. **Lista de base de estrutura (D-06).** O limite de 800 linhas e 7 arquivos vale só para arquivos criados pelo
-   nycode; arquivos do upstream ficam em `scripts/ci/lint/structure-upstream.txt`. Dividir arquivo do upstream
+   Nycode; arquivos do upstream ficam em `scripts/ci/lint/structure-upstream.txt`. Dividir arquivo do upstream
    aumentaria o conflito; o fork tem 50 arquivos de fonte acima de 800 linhas herdados (documento: arquitetura alvo,
    seção 9; exemplo `core/extensions/types.ts`, 2358).
 6. **Uma costura por PR de migração**, com o teste da costura no mesmo PR.
@@ -542,7 +542,7 @@ K1 (cache-warm) e K2 (mcp-close-grace) são correções genéricas, sem relaçã
 
 1. Reproduzir cada defeito no código do upstream mais recente (K1: comparação por identidade em `sdk.ts` impede o
    reaproveitamento do cache; K2: 500 ms de espera no fechamento de `stdin` do MCP). A medição de origem está na
-   especificação 0003 e em `pi-memory-cache-sota-2026-11-13.md` do nycode-harness (documento: anexo A, seção 2.2).
+   especificação 0003 e em `pi-memory-cache-sota-2026-11-13.md` do harness Nycode (documento: anexo A, seção 2.2).
 2. **O CONTRIBUTING do upstream fecha PR de novos contribuidores automaticamente.** Lido em 2026-11-20
    (`gh api repos/earendil-works/pi/contents/CONTRIBUTING.md`): issues e PRs de novos contribuidores são fechados por
    padrão; `lgtmi` libera issues futuras, e só `lgtm` libera PR; o comando vem na resposta de um mantenedor. Logo: abrir

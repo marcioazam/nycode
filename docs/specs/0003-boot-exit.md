@@ -9,13 +9,13 @@ Cause (measured): at quit pi closes every MCP stdio server. `pi-mcp`'s `StdioTra
 waits `STDIN_CLOSE_GRACE_MS = 500` before SIGTERM. A server that is still booting does not read stdin; the template
 the `mcp.json.example` template starts `npx -y @playwright/mcp` (1.7 s cold start), so every short `pi -p` waited the whole 500 ms.
 Probe: a preload logging `child_process.spawn` showed `npx -y @playwright/mcp` alive 0.47 s after `codegraph` closed;
-`ProcessWrap` was the only handle left. No timer, hook or `session_shutdown` handler of nycode-harness is involved
-(`session_shutdown` handlers of nycode-harness and pi-code only clear timers). Servers already up exit in 11-24 ms after stdin
+`ProcessWrap` was the only handle left. No timer, hook or `session_shutdown` handler of harness Nycode is involved
+(`session_shutdown` handlers of harness Nycode and pi-code only clear timers). Servers already up exit in 11-24 ms after stdin
 closes (measured: codegraph 11 ms, playwright 24 ms).
 
-Fix: in nycode the grace is set in `packages/mcp/src/transports/stdio.ts` (nycode-harness: patch `claude-home/patches/pi-core/mcp-close-grace.mjs` applied by `bin/pi`, same pattern and version pin as
+Fix: in Nycode the grace is set in `packages/mcp/src/transports/stdio.ts` (harness Nycode: patch `claude-home/patches/pi-core/mcp-close-grace.mjs` applied by `bin/pi`, same pattern and version pin as
 `cache-warm-identity.mjs`) to 100 ms; SIGKILL stays 2 s later. Test:
-`packages/mcp/test/stdio-close-grace.test.ts` (nycode-harness: `claude-home/patches/pi-core/mcp-close-grace.test.ts`; red: unpatched close of a silent server takes about 500 ms; green: about
+`packages/mcp/test/stdio-close-grace.test.ts` (harness Nycode: `claude-home/patches/pi-core/mcp-close-grace.test.ts`; red: unpatched close of a silent server takes about 500 ms; green: about
 100 ms; plus the patch's idempotence, mismatch and symlink cases). End to end on the fake-SSE meter (noisy): exit_s
 0.53 -> 0.126 s.
 
@@ -24,7 +24,7 @@ A long task finds every server up and pays about 0.
 
 ## turn_gap 0.057 vs 0.012 s
 
-Diagnosis only. Per tool call nycode-harness runs two hooks in sequence around the tool: `packages/coding-agent/resources/hooks/guard.py` (python3, about 31-33 ms)
+Diagnosis only. Per tool call harness Nycode runs two hooks in sequence around the tool: `packages/coding-agent/resources/hooks/guard.py` (python3, about 31-33 ms)
 and `hooks/dispatch/hook-dispatch.sh` (about 10 ms), plus the Stop-phase hooks (ralph-loop, impeccable gate, about 5 ms).
 That is about 43-45 ms per tool call, the whole 45 ms difference. Not changed: guard.py is the safety control.
 A long-lived guard process (one python start per session) would cut about 25 ms per call; out of scope here.
