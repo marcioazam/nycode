@@ -79,6 +79,7 @@ import {
 	prepareCompaction,
 	shouldCompact,
 } from "./compaction/index.ts";
+import { getSessionCompactAt } from "./compaction/session-limit.ts";
 import { compactWhenOverLimit, warnInvalidCompactAt } from "./compaction/threshold.ts";
 import { DEFAULT_THINKING_LEVEL, THINKING_LEVEL_OPTIONS } from "./defaults.ts";
 import { exportSessionToHtml, type ToolHtmlRenderer } from "./export-html/index.ts";
@@ -1150,7 +1151,7 @@ export class AgentSession {
 	}
 
 	private async _compactAtThreshold(aborted: boolean): Promise<void> {
-		const limit = this.settingsManager.getNycodeSettings().compaction.maxContextTokens;
+		const limit = getSessionCompactAt() ?? this.settingsManager.getNycodeSettings().compaction.maxContextTokens;
 		warnInvalidCompactAt(process.env, limit);
 		await compactWhenOverLimit({
 			aborted,
