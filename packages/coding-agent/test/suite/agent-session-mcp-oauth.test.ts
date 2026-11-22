@@ -181,14 +181,22 @@ describe("AgentSession MCP OAuth", () => {
 	 * OS, so only a deliberate listener there can collide; each candidate is bound once to make sure it is unused now.
 	 */
 	async function freePort(): Promise<number> {
-		const ephemeralLow =
-			Number(readFileSync("/proc/sys/net/ipv4/ip_local_port_range", "utf8").split(/\s+/)[0]) || 32768;
+		const ephemeralLow = ephemeralPortLow();
 		const span = ephemeralLow - FIXED_PORT_BASE;
 		for (let attempt = 0; attempt < span; attempt++) {
 			const port = FIXED_PORT_BASE + ((process.pid * 7 + nextPort++ * 131 + attempt) % span);
 			if (await canBind(port)) return port;
 		}
 		throw new Error("no unused port below the ephemeral range");
+	}
+
+	/** The first port of the OS ephemeral range: read from /proc on Linux, 32768 (the IANA and macOS default) elsewhere. */
+	function ephemeralPortLow(): number {
+		try {
+			return Number(readFileSync("/proc/sys/net/ipv4/ip_local_port_range", "utf8").split(/\s+/)[0]) || 32768;
+		} catch {
+			return 32768;
+		}
 	}
 
 	function canBind(port: number): Promise<boolean> {
