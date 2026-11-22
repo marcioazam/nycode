@@ -1,8 +1,8 @@
 import type { InlineExtension } from "../core/extensions/types.ts";
 import bypassPermissionsExtension from "../core/permissions/bypass-command.ts";
 import autoResumeExtension from "./auto-resume/index.ts";
-import bashMainGuardExtension from "./bash-main-guard/index.ts";
 import avisosExtension from "./avisos/index.ts";
+import bashMainGuardExtension from "./bash-main-guard/index.ts";
 import chatMarginExtension from "./chat-margin/index.ts";
 import claudeCompatExtension from "./claude-compat/index.ts";
 import claudeRulesExtension from "./claude-rules/index.ts";
