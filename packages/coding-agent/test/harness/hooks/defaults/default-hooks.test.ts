@@ -90,8 +90,8 @@ describe("default hooks", () => {
 	it("registers the guard, graph context and dispatch on their events", async () => {
 		const text = await (await startSession()).summary();
 		expect(text).toContain("PreToolUse:\n  [Bash|run|Edit|Write|Read|Grep] command: python3 ");
-		expect(text).toContain("SessionStart:\n  [startup|resume|clear|compact] command: python3 ");
-		expect(text).toContain("SubagentStart:\n  [*] command: python3 ");
+		expect(text).toContain("SessionStart:\n  [startup|resume|clear|compact] internal: graph-context");
+		expect(text).toContain("SubagentStart:\n  [*] internal: graph-context");
 		expect(text).toMatch(/PostToolUse:\n {2}\[\*\] command: bash .*hook-dispatch\.sh/);
 		expect(text).not.toContain("impeccable_gate");
 		// D-54: the ralph-loop Stop hook (embedded) is the only default Stop hook.
@@ -106,12 +106,21 @@ describe("default hooks", () => {
 		expect(script).toContain("guard.py");
 	});
 
+	it("an internal hook with an unknown name is reported and never runs", async () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const bad = { type: "internal", name: "nope" };
+		const text = await (await startSession({ hooks: { SessionStart: [{ hooks: [bad] }] } })).summary();
+		expect(warn.mock.calls.flat().join("\n")).toContain('"nope" is not a core hook (known: graph-context)');
+		expect(text).toContain("internal: nope");
+		warn.mockRestore();
+	});
+
 	it("every default command names a script that exists under the embedded resources", () => {
 		const root = getBuiltinResourcesRoot();
 		const commands = Object.values(SETTINGS_DEFAULTS.hooks)
 			.flatMap((matchers) => matchers.flatMap((matcher) => matcher.hooks))
-			.map((hook) => hook.command);
-		expect(commands.length).toBe(6);
+			.flatMap((hook) => ("command" in hook ? [hook.command] : []));
+		expect(commands.length).toBe(4);
 		for (const command of commands) {
 			const script = /"([^"]+)"/.exec(resolveResourcesMarker(command, root))?.[1] ?? "";
 			expect(script.startsWith(root), command).toBe(true);

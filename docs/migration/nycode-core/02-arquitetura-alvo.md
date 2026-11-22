@@ -39,7 +39,7 @@ nycode/
 │   │   ├── resources/          N3 (novo)
 │   │   │   ├── agents/         17 agentes
 │   │   │   ├── commands/       17 comandos
-│   │   │   ├── hooks/          guard.py, graph_context.py, dispatch/, claims/
+│   │   │   ├── hooks/          guard.py (motor script), dispatch/, claims/
 │   │   │   ├── instructions/   contrato de trabalho (ex-CLAUDE.md), headless, lite
 │   │   │   ├── rules/          safety.md e rules-ref/
 │   │   │   └── skills/         30 skills
@@ -277,6 +277,8 @@ sempre carregado não pode crescer com a mudança de lugar.
 Hooks, fase A (F8): os scripts Python e shell rodam como hoje, lançados pela extensão `hooks`. Dependência de
 execução: `python3` e `jq` na máquina. Fase B (F8): `guard.py` ganha equivalente nativo em `core/permissions/`
 (K11), sem Python no caminho de toda chamada de ferramenta; o script fica como referência e oráculo de teste.
+
+Tipo de hook `internal` (D-60): a extensão `hooks` aceita `{ "type": "internal", "name": "graph-context" }`, que roda uma função do core no próprio processo (registro em `src/extensions/hooks/internal/registry.ts`) e devolve o que um hook de comando devolveria (código, stdout, stderr), com `timeout` e `onFailure` como nos outros tipos. Nome desconhecido é erro de configuração (aviso na carga, hook ignorado, nunca silencioso). `graph-context` (SessionStart e SubagentStart) é o primeiro; o `graph_context.py` saiu. Com isso o `python3` deixa de ser necessário para os hooks padrão (restam `jq` e `bash` no `hook-dispatch.sh`); continua necessário para o motor `"script"` opcional (`guard.py`) e para os scripts das skills.
 
 ## 7. Pacotes opcionais
 

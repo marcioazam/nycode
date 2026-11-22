@@ -1051,10 +1051,10 @@ claude-home/hooks/fixtures/pi-code-1.7.0/PostToolUseFailure-Bash.json	packages/c
 claude-home/hooks/fixtures/pi-code-1.7.0/README.md	packages/coding-agent/test/harness/hooks/fixtures/README.md	mover	F8	R09
 claude-home/hooks/fixtures/pi-code-1.7.0/SessionStart.json	packages/coding-agent/test/harness/hooks/fixtures/SessionStart.json	mover	F8	R09
 claude-home/hooks/fuzz/test_guard_fuzz.py	packages/coding-agent/test/harness/hooks/fuzz/test_guard_fuzz.py	converter	F8	R10
-claude-home/hooks/graph_context.py	packages/coding-agent/resources/hooks/graph_context.py	converter	F8	R11
+claude-home/hooks/graph_context.py	packages/coding-agent/src/extensions/hooks/internal/graph-context.ts	converter	F8	R11
 claude-home/hooks/guard.py	packages/coding-agent/resources/hooks/guard.py	converter	F8	R11
 claude-home/hooks/impeccable_gate.sh	packages/coding-agent/resources/hooks/impeccable_gate.sh	converter	F8	R11
-claude-home/hooks/test_graph_context.py	packages/coding-agent/test/harness/hooks/test_graph_context.py	converter	F8	R10
+claude-home/hooks/test_graph_context.py	packages/coding-agent/test/harness/hooks/internal/graph-context.test.ts	converter	F8	R10
 claude-home/hooks/test_guard.py	packages/coding-agent/test/harness/hooks/test_guard.py	converter	F8	R10
 claude-home/hooks/test_hook_budget.py	packages/coding-agent/test/harness/hooks/test_hook_budget.py	converter	F8	R10
 claude-home/hooks/test_impeccable_gate.py	packages/coding-agent/test/harness/hooks/test_impeccable_gate.py	converter	F8	R10
