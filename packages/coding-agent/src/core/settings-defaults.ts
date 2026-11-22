@@ -18,7 +18,6 @@ const ralphLoopStop = hook(
 	`if [ -f "${RES}/ralph-loop/hooks/stop-hook.sh" ]; then bash "${RES}/ralph-loop/hooks/stop-hook.sh"; fi`,
 	10,
 );
-const impeccableGate = (timeout: number) => hook(`sh "${RES}/hooks/impeccable_gate.sh" hook`, timeout);
 
 /** Runtime defaults shared by settings accessors and the published JSON Schema. */
 export const SETTINGS_DEFAULTS = {
@@ -108,20 +107,17 @@ export const SETTINGS_DEFAULTS = {
 	// nycode: K4 hooks, statusLine and env defaults
 	// Hooks registered by default, run by the `hooks` extension (needs python3 and jq). A `hooks` entry in settings.json
 	// replaces the default list of that event; `"PreToolUse": []` turns the guard off. The embedded ralph-loop Stop hook
-	// (D-54) runs before the impeccable gate.
+	// (D-54) is the only Stop hook; the optional impeccable_gate.sh is not registered (onda 9).
 	hooks: {
-		PreToolUse: [{ matcher: "Bash|Edit|Write|Read", hooks: [guardHook] }],
-		SessionStart: [{ matcher: "startup|resume|clear|compact", hooks: [graphContext, dispatch, impeccableGate(5)] }],
+		PreToolUse: [{ matcher: "Bash|run|Edit|Write|Read|Grep", hooks: [guardHook] }],
+		SessionStart: [{ matcher: "startup|resume|clear|compact", hooks: [graphContext, dispatch] }],
 		SubagentStart: [{ matcher: "*", hooks: [graphContext] }],
-		PostToolUse: [
-			{ matcher: "*", hooks: [dispatch] },
-			{ matcher: "Edit|Write", hooks: [impeccableGate(5)] },
-		],
-		Stop: [{ hooks: [ralphLoopStop, impeccableGate(30)] }],
+		PostToolUse: [{ matcher: "*", hooks: [dispatch] }],
+		Stop: [{ hooks: [ralphLoopStop] }],
 	},
 	// Status line: the claude-hud launcher. It prints nothing until the claude-hud plugin is installed (/claude-hud-setup).
 	// A `statusLine` entry in settings.json replaces it; an empty `command` turns it off.
-	statusLine: { type: "command", command: `node "${RES}/statusline/statusline.mjs"` },
+	statusLine: { type: "command", command: `node "${RES}/statusline/statusline.mjs"`, refreshInterval: 60 },
 	// Exported to every process by the `env-settings` extension; a `env` entry in settings.json adds to or overrides it.
 	// PONYTAIL_*: the embedded ponytail extension (D-54). Rules reach only the writer subagents of the list below (an
 	// unanchored, case-insensitive regex over the agent name; agents of that list absent here simply never match).
