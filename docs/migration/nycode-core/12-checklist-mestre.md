@@ -174,7 +174,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 ## F12. Corte e descomissionamento
 
 - [x] C-F12-01 `nycode migrate from-pi` executado na máquina do dono; cópia de segurança guardada.
-- [ ] C-F12-02 Período de convivência cumprido pelo critério de [10](10-riscos-e-rollback.md).
+- [x] C-F12-02 Período de convivência cumprido pelo critério de [10](10-riscos-e-rollback.md). Dispensado pelo dono em 2026-11-22 (D-49), com 0 sessões reais registradas.
 - [x] C-F12-03 Unidades systemd do benchmark apontam para o nycode.
 - [ ] C-F12-04 `marcioazam/ny-pi` com aviso no README e arquivado (D-22, com autorização).
 - [ ] C-F12-05 `import/ny-pi/` vazio e removido.
