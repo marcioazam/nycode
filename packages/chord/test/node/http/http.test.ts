@@ -432,6 +432,8 @@ describe("reloads and close", () => {
 
 	it("close refuses new requests (503), waits for running ones up to closeTimeout, then seals them (503)", async () => {
 		let sealed: AbortSignal | undefined;
+		const quickEntered = Promise.withResolvers<void>();
+		const stuckEntered = Promise.withResolvers<void>();
 		const server = await served(
 			{
 				"@app/slow": contributing({
@@ -439,6 +441,7 @@ describe("reloads and close", () => {
 						"GET /quick": {
 							public: true,
 							handler: async () => {
+								quickEntered.resolve();
 								await new Promise((resolve) => setTimeout(resolve, 30));
 								return { kind: "html", body: "done" };
 							},
@@ -447,6 +450,7 @@ describe("reloads and close", () => {
 							public: true,
 							handler: async (_request, ctx: Ctx) => {
 								sealed = ctx.abortSignal;
+								stuckEntered.resolve();
 								return new Promise(() => {});
 							},
 						},
@@ -457,7 +461,8 @@ describe("reloads and close", () => {
 		);
 		const quick = send(server.port, "GET", "/quick");
 		const stuck = send(server.port, "GET", "/stuck");
-		await new Promise((resolve) => setTimeout(resolve, 10));
+		// Both are running when close begins: under load a request could otherwise still be on its way and be refused.
+		await Promise.all([quickEntered.promise, stuckEntered.promise]);
 		const closing = server.http.close(context);
 		expect((await server.http.fetch(loopback("/quick"), LOOPBACK)).status).toBe(503);
 		expect((await quick).body.toString()).toBe("done");

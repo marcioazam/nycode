@@ -743,7 +743,7 @@ describe("on", () => {
 		await flushed();
 		source.set("b");
 		source.set("c");
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(3), { timeout: 2_000 });
 		expect(calls).toEqual([
 			{ kind: "value", value: "a" },
 			{ kind: "value", value: "b" },
