@@ -127,6 +127,7 @@ ganha a atribuição e o commit de origem.
 | `dev-commands` | `extensions/dev-commands/` | N2 | `/copy-code`, `/keybindings` | F7 |
 | `effort-sandwich` | `extensions/effort-sandwich/` | N2 | Opcional, desligada | F7 |
 | `folha` | `~/.pi/agent/extensions/folha/` (camada local) | N2 | Confirmações seguras em português, saídas `/context /memory /agents /hooks` em folha e `/painel`; depende de `ui/a11y.ts` (`movimento`) (D-56) | F12 |
+| `chat-margin` | `~/.pi/agent/extensions/chat-margin/` (camada local) | N2 | Todo bloco com fundo do chat respeita a margem do texto (`outputPad`); embrulha `render`/`handleMouse` dos componentes do chat; usa `isImageLine` do `@nycode/tui` (K15) (D-56) | F12 |
 | `claude-compat` (base) | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`) | N2 | Só a base de que `ui/editor.ts` depende; biblioteca sem fábrica, ainda não registrada (D-56, parte 1 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
@@ -174,6 +175,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K12 | `packages/coding-agent/src/main.ts` (chamada) + `src/migrations/from-pi.ts` (novo) | `nycode migrate from-pi` | `install.sh --link/--restore` | F4 |
 | K13 | `packages/coding-agent/package.json` (`files`) | Inclui `resources/` | `publish.list` | F8 |
 | K14 | `packages/coding-agent/src/config.ts:605` | Título de reserva "π" vira "nycode" | — | F2 |
+| K15 | `packages/tui/src/index.ts` | Exporta `isImageLine` na API pública do `@nycode/tui` | `chat-margin` | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 

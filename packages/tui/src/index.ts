@@ -134,6 +134,7 @@ export {
 	type TerminalColors,
 } from "./terminal-colors.ts";
 // Terminal image support
+// nycode: K15 isImageLine for built-in extensions (chat-margin keeps image lines out of its text insets)
 export {
 	allocateImageId,
 	type CellDimensions,
@@ -156,6 +157,7 @@ export {
 	type ImageProtocol,
 	type ImageRenderOptions,
 	imageFallback,
+	isImageLine,
 	renderImage,
 	resetCapabilitiesCache,
 	setCapabilities,
