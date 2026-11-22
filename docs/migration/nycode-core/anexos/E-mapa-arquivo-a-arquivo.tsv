@@ -930,8 +930,8 @@ claude-home/bin/checks/skill-usage.py	packages/coding-agent/resources/bin/checks
 claude-home/bin/checks/test_check_agents.py	packages/coding-agent/resources/bin/checks/test_check_agents.py	converter	F8	R16
 claude-home/bin/checks/test_skill_usage.py	packages/coding-agent/resources/bin/checks/test_skill_usage.py	converter	F8	R16
 claude-home/bin/doctor/README.md	packages/coding-agent/resources/bin/doctor/README.md	converter	F8	R16
-claude-home/bin/doctor/pi-doctor	packages/coding-agent/resources/bin/doctor/pi-doctor	converter	F8	R16
-claude-home/bin/doctor/pi-typecheck	packages/coding-agent/resources/bin/doctor/pi-typecheck	converter	F8	R16
+claude-home/bin/doctor/pi-doctor	packages/coding-agent/resources/bin/doctor/nycode-doctor	converter	F8	R16
+claude-home/bin/doctor/pi-typecheck	packages/coding-agent/resources/bin/doctor/nycode-typecheck	converter	F8	R16
 claude-home/bin/doctor/prune-sessions	packages/coding-agent/resources/bin/doctor/prune-sessions	converter	F8	R16
 claude-home/bin/evals/harbor/README.md	(sem referência no nycode)	remover	F3	X01
 claude-home/bin/evals/harbor/bundle.sh	bench/harbor/pi_bundle.sh	converter	F3	B05
@@ -947,16 +947,16 @@ claude-home/bin/evals/plan_ab.py	(sem referência no nycode)	remover	F3	X01
 claude-home/bin/evals/plan_ab_cases.jsonl	(sem referência no nycode)	remover	F3	X01
 claude-home/bin/evals/test_plan_ab.py	(sem referência no nycode)	remover	F3	X01
 claude-home/bin/git-deliver	packages/coding-agent/resources/bin/git-deliver	converter	F8	R17
-claude-home/bin/hud/claude-hud-pi-transcript.mjs	packages/coding-agent/resources/statusline/claude-hud-pi-transcript.mjs	converter	F8	R14
+claude-home/bin/hud/claude-hud-pi-transcript.mjs	packages/coding-agent/resources/statusline/claude-hud-nycode-transcript.mjs	converter	F8	R14
 claude-home/bin/hud/claude-hud-provider.mjs	packages/coding-agent/resources/statusline/claude-hud-provider.mjs	converter	F8	R14
 claude-home/bin/hud/claude-hud-statusline.mjs	packages/coding-agent/resources/statusline/claude-hud-statusline.mjs	converter	F8	R14
 claude-home/bin/hud/claude-hud-usage.mjs	packages/coding-agent/resources/statusline/claude-hud-usage.mjs	converter	F8	R14
-claude-home/bin/hud/tests/claude-hud-pi-transcript.test.mjs	packages/coding-agent/test/harness/statusline/claude-hud-pi-transcript.test.mjs	converter	F8	R13
+claude-home/bin/hud/tests/claude-hud-pi-transcript.test.mjs	packages/coding-agent/test/harness/statusline/claude-hud-nycode-transcript.test.mjs	converter	F8	R13
 claude-home/bin/hud/tests/claude-hud-provider.test.mjs	packages/coding-agent/test/harness/statusline/claude-hud-provider.test.mjs	converter	F8	R13
 claude-home/bin/hud/tests/claude-hud-statusline.test.mjs	packages/coding-agent/test/harness/statusline/claude-hud-statusline.test.mjs	converter	F8	R13
 claude-home/bin/hud/tests/claude-hud-usage.test.mjs	packages/coding-agent/test/harness/statusline/claude-hud-usage.test.mjs	converter	F8	R13
 claude-home/bin/mcp-header.sh	packages/coding-agent/resources/bin/mcp-header.sh	converter	F8	R17
-claude-home/bin/pi-image.mjs	packages/coding-agent/resources/bin/pi-image.mjs	converter	F8	R17
+claude-home/bin/pi-image.mjs	packages/coding-agent/resources/bin/nycode-image.mjs	converter	F8	R17
 claude-home/bin/port-agents.py	scripts/harness/port-agents.py	converter	F8	R15
 claude-home/bin/puxar/puxar.py	packages/coding-agent/resources/bin/puxar/puxar.py	mover	F7	E21
 claude-home/bin/puxar/test_puxar.py	packages/coding-agent/resources/bin/puxar/test_puxar.py	mover	F7	E21
@@ -964,9 +964,9 @@ claude-home/bin/structure/structure.py	packages/coding-agent/resources/bin/struc
 claude-home/bin/structure/test_structure.py	packages/coding-agent/resources/bin/structure/test_structure.py	converter	F3	C09
 claude-home/bin/telemetry/cache-remeasure.sh	(acompanha cache-prefix-probe, D-10)	remover	F7	E04
 claude-home/bin/telemetry/cache_probe_join.py	(acompanha cache-prefix-probe, D-10)	remover	F7	E04
-claude-home/bin/telemetry/pi_telemetry.py	packages/coding-agent/resources/bin/telemetry/pi_telemetry.py	converter	F8	R16
+claude-home/bin/telemetry/pi_telemetry.py	packages/coding-agent/resources/bin/telemetry/nycode_telemetry.py	converter	F8	R16
 claude-home/bin/telemetry/test_cache_probe_join.py	(acompanha cache-prefix-probe, D-10)	remover	F7	E04
-claude-home/bin/telemetry/test_pi_telemetry.py	packages/coding-agent/resources/bin/telemetry/test_pi_telemetry.py	converter	F8	R16
+claude-home/bin/telemetry/test_pi_telemetry.py	packages/coding-agent/resources/bin/telemetry/test_nycode_telemetry.py	converter	F8	R16
 claude-home/bin/tests/cache-warm-identity.test.ts	packages/coding-agent/test/harness/core/cache-warm-identity.test.ts	converter	F4	K08
 claude-home/bin/tests/compact-at-400k.test.ts	packages/coding-agent/test/harness/core/compact-threshold.test.ts	converter	F7	E08
 claude-home/bin/tests/config/models-example.test.ts	packages/coding-agent/test/harness/core/models-example.test.ts	converter	F4	K09
