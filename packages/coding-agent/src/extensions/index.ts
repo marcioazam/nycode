@@ -1,6 +1,7 @@
 import type { InlineExtension } from "../core/extensions/types.ts";
 import bypassPermissionsExtension from "../core/permissions/bypass-command.ts";
 import autoResumeExtension from "./auto-resume/index.ts";
+import chatMarginExtension from "./chat-margin/index.ts";
 import claudeRulesExtension from "./claude-rules/index.ts";
 import codemodeExtension from "./codemode/index.ts";
 import commandsExtension from "./commands/index.ts";
@@ -88,6 +89,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "auto-resume", factory: autoResumeExtension, builtin: true },
 	// nycode: K11 the logic lives with the permission engine in core/permissions/, this line only registers it.
 	{ name: "bypass-permissions", factory: bypassPermissionsExtension, builtin: true },
+	{ name: "chat-margin", factory: chatMarginExtension, builtin: true },
 	{ name: "completion-gate", factory: completionGateExtension, builtin: true },
 	{ name: "dev-commands", factory: devCommandsExtension, builtin: true },
 	{ name: "effort-sandwich", factory: effortSandwichExtension, builtin: true },
