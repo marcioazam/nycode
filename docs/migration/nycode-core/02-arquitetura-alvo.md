@@ -137,7 +137,7 @@ ganha a atribuição e o commit de origem.
 | `code-blocks` | `~/.pi/agent/extensions/code-blocks/` (camada local) | N2 | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) | F12 |
 | `image-open` | `~/.pi/agent/extensions/image-open/` (camada local) | N2 | Clicar numa imagem do transcript a abre no visualizador do sistema (`/imagem` abre a última) e a imagem de resultado de tool ganha o fundo da tool (D-56) | F12 |
 | `hook-msgs` | `~/.pi/agent/extensions/hook-msgs/` (camada local) | N2 | Mensagens de hook, de gate, de subagente em segundo plano e de fim de run no ritmo das tools, com o fundo do estado (D-56) | F12 |
-| `claude-compat` | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`, `commands/*`, `services/*`, `runbooks/*`, `matrix`, `index`) | N2 | Fábrica registrada: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz; faltam `directory`, `interface` e `lifecycle` (partes 3 a 5); `background` fica fora (D-56, parte 2 de 5) | F12 |
+| `claude-compat` | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`, `commands/*`, `services/*`, `runbooks/*`, `lifecycle/*`, `matrix`, `index`) | N2 | Fábrica registrada: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz; `lifecycle` na parte 3; faltam `directory` e `interface` (partes 4 e 5); `background` fica fora (D-56, partes 2 e 3 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
 | `context-files` | `extensions/no-context-files-covers-claude-md.ts` | — | **Some**: existia para contornar a injeção de `CLAUDE.md` pelo pi-code; com `claude-rules` embutida a regra é escrita direto nela | F7 |
@@ -230,6 +230,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_DOCTOR_NODE` | — | `NYCODE_DOCTOR_NODE` | versão do Node que o /doctor confere (testes) (D-56) |
 | `PI_VERSION` | — | `NYCODE_VERSION` | versão informada pelo wrapper ao /doctor (D-56) |
 | `PI_IMAGE_OPENER` | — | `NYCODE_IMAGE_OPENER` | abridor de imagens (testes); padrão xdg-open/open (D-56) |
+| `PI_RESTART_WRAPPER_PID`, `PI_RESTART_REQUEST_FILE`, `PI_LIFECYCLE_ROOT_PID` | — | `NYCODE_RESTART_WRAPPER_PID`, `NYCODE_RESTART_REQUEST_FILE`, `NYCODE_LIFECYCLE_ROOT_PID` | definidos pelo supervisor do wrapper para `/restart`; sem ele o comando recusa (D-56) |
 | `PI_PERMISSION_MODE`, `PI_BYPASS_ELIGIBLE`, `PI_BYPASS_OPTIN` | — (estado do controlador de modos de permissão da extensão `claude-compat`) | `NYCODE_PERMISSION_MODE`, `NYCODE_BYPASS_ELIGIBLE`, `NYCODE_BYPASS_OPTIN` | vazio (D-56) |
 | `NO_COLOR`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | — | `NO_COLOR` (padrão externo), `NYCODE_DISABLE_TERMINAL_TITLE` | — |
 | `PI_KNOWLEDGE_VAULT`, `PI_GRAPHS_VAULT` | `knowledge.vault`, `knowledge.graphsVault` | `NYCODE_KNOWLEDGE_VAULT`, `NYCODE_GRAPHS_VAULT` | vazio |

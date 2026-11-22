@@ -137,7 +137,10 @@ test("registra clear, reset, help, skills, claude-help e os comandos locais; nun
 			"android",
 			"stickers",
 			"upgrade",
-			// focus, color, transcript (interface), restart, update, terminal-setup (lifecycle), cd (directory) and
+			"restart",
+			"update",
+			"terminal-setup",
+			// focus, color, transcript (interface), cd (directory) and
 			// background, bg come with the later claude-compat parts.
 		].sort(),
 	);
