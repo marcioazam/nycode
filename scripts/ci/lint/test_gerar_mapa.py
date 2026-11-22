@@ -37,11 +37,12 @@ def test_override_wins_over_the_rule_that_would_match() -> None:
         (rid, module.re.compile(rx), dest, act, ph)
         for rid, rx, dest, act, ph in module.RULES
     ]
-    assert module.classify("scripts/test_check_refs.py", compiled) == (
-        "scripts/test_check_refs.py",
+    # E28 would keep the pi- name; the override has the renamed gate (D-61)
+    assert module.classify("claude-home/bin/tests/pi-ui-final-gate.sh", compiled) == (
+        "scripts/harness/ui-gates/nycode-ui-final-gate.sh",
         "converter",
-        "F3",
-        "C07",
+        "F7",
+        "E28",
     )
     # replay.test.ts is a removal: it only reverts and reapplies the patch stack
     replay = "claude-home/patches/pi-code/zzzzzzz-subagent-model-effort/replay.test.ts"
@@ -111,3 +112,69 @@ def test_resumo_counts_per_rule_and_per_phase(
     )
     assert "| F2 | 2 | 0 | 1 | 0 | 1 | 4 |" in lines
     assert lines[-1] == "| **Total** | 2 | 0 | 1 | 0 | 1 | **4** |"
+
+
+def test_onda9_paths_follow_the_standard_input_and_are_counted_apart(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    extra = tmp_path / "onda9.txt"
+    extra.write_text("claude-home/bin/session-transport/cli.py\n\n")
+    code, _ = run(monkeypatch, ["README.md"], "--onda9", str(extra))
+    assert code == 0
+    assert capsys.readouterr().out.splitlines()[1:] == [
+        "README.md\tREADME.md\tfundir\tF2\tG01",
+        (
+            "claude-home/bin/session-transport/cli.py\t"
+            "packages/coding-agent/resources/bin/session-transport/cli.py\tconverter\tF8\tR19"
+        ),
+    ]
+    code, _ = run(
+        monkeypatch, ["README.md"], "--onda9", str(extra), "--resumo", "abc1234"
+    )
+    head = capsys.readouterr().out.splitlines()
+    assert code == 0
+    assert "abc1234 (1 arquivos) e da lista da onda 9 (1 arquivos)" in head[0]
+    assert "**2** (1 do nycode-harness e 1 da onda 9)" in head[3]
+
+
+ANEXOS = SCRIPT.parent
+REPO = Path(__file__).resolve().parents[3]
+
+
+def committed_rows() -> list[list[str]]:
+    lines = (
+        (ANEXOS / "E-mapa-arquivo-a-arquivo.tsv")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    )
+    assert lines[0] == "origem\tdestino\tacao\tfase\tregra"
+    return [line.split("\t") for line in lines[1:]]
+
+
+def test_the_committed_map_is_the_script_output_row_by_row() -> None:
+    """The TSV is never edited by hand: every row is what classify() gives for its origin."""
+    module = load()
+    compiled = [
+        (rid, module.re.compile(rx), dest, act, ph)
+        for rid, rx, dest, act, ph in module.RULES
+    ]
+    rows = committed_rows()
+    assert [
+        row for row in rows if tuple(row[1:]) != module.classify(row[0], compiled)
+    ] == []
+    onda9 = (ANEXOS / "E-onda9-caminhos.txt").read_text(encoding="utf-8").split()
+    assert [row[0] for row in rows[-len(onda9) :]] == onda9
+
+
+def test_every_destination_of_the_committed_map_exists() -> None:
+    """Destinations are paths in this repository, except removals and descriptions in parentheses."""
+    missing = [
+        (origin, dest)
+        for origin, dest, action, _, _ in committed_rows()
+        if action != "remover"
+        and not dest.startswith("(")
+        and not (REPO / dest.split(" ")[0]).exists()
+    ]
+    assert missing == []

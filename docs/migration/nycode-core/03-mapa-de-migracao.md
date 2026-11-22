@@ -20,11 +20,15 @@ instalação. O mapa cobre as cinco fontes:
 
 Cada um dos 1485 arquivos casa com exatamente uma regra de [anexos/gerar-mapa.py](anexos/gerar-mapa.py). O script
 falha se um arquivo ficar sem regra; a execução de 2026-11-20 terminou com 0 sem regra e todas as 104 regras usadas.
-Para regerar depois de um novo commit no `marcioazam/ny-pi`:
+A onda 9 (D-57, D-58) acrescentou 44 arquivos que só existem na foto do pi-harness; eles entram pela lista
+[anexos/E-onda9-caminhos.txt](anexos/E-onda9-caminhos.txt) e passam pelas mesmas regras (R18 a R20 e exceções). O TSV
+e o resumo são só saída do script: `scripts/ci/lint/test_gerar_mapa.py` confere que cada linha do TSV é o que o script
+dá para a origem e que todo destino existe no repositório. Para regerar (2026-11-22: 1529 linhas, 109 regras usadas,
+0 destino inexistente):
 
 ```bash
 git -C ~/source/ny-pi ls-tree -r --name-only origin/main \
-  | python3 docs/migration/nycode-core/anexos/gerar-mapa.py \
+  | python3 docs/migration/nycode-core/anexos/gerar-mapa.py --onda9 docs/migration/nycode-core/anexos/E-onda9-caminhos.txt \
   > docs/migration/nycode-core/anexos/E-mapa-arquivo-a-arquivo.tsv
 ```
 
@@ -33,11 +37,11 @@ git -C ~/source/ny-pi ls-tree -r --name-only origin/main \
 | Ação | Significado | Arquivos |
 |---|---|---:|
 | mover | `git mv` sem mudar o conteúdo | 90 |
-| converter | `git mv` e ajuste mecânico: caminhos, imports `@earendil-works/pi-*` para `@nycode/*`, nomes `PI_*`, formatação | 1312 |
+| converter | `git mv` e ajuste mecânico: caminhos, imports `@earendil-works/pi-*` para `@nycode/*`, nomes `PI_*`, formatação | 1353 |
 | fundir | O destino já existe no fork; o conteúdo é combinado | 11 |
-| absorver | O arquivo some e seu comportamento passa a morar em código do core ou de uma extensão | 32 |
-| remover | Não migra; o motivo está na regra | 40 |
-| **Total** | | **1485** |
+| absorver | O arquivo some e seu comportamento passa a morar em código do core ou de uma extensão | 34 |
+| remover | Não migra; o motivo está na regra | 41 |
+| **Total** | | **1529** |
 
 Dos 1312 "converter", 869 são `bench/` (784 deles são tarefas de teste em `bench/suites/`, que só mudam de lugar) e
 261 são agentes, comandos e skills.
