@@ -1,39 +1,48 @@
-// The ui extension wires its five parts (editor, a11y, terminal, diff, btw) into one registration.
-import { describe, expect, it } from "vitest";
-import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";
-import ui from "../../../../src/extensions/ui/index.ts";
+// node --experimental-strip-types --test ~/.nycode/agent/extensions/ui/test/index.test.ts
+import assert from "node:assert/strict";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { test } from "vitest";
+import * as __m1 from "../../../../src/extensions/ui/index.ts";
 
-type Recorder = { events: string[]; commands: string[]; api: ExtensionAPI };
+// Monta ui/ e claude-compat/aliases.ts numa cópia com o nycode ao lado (o Node não tira tipos dentro de node_modules).
+const _tmp = mkdtempSync(join(tmpdir(), "ui-index-test-"));
+const _src = new URL("..", import.meta.url);
+const { default: ui } = __m1;
 
-// Records registrations; every other API member is a no-op so each part can load.
-function recorder(): Recorder {
-	const events: string[] = [];
+function register() {
 	const commands: string[] = [];
-	const target = {
-		on: (name: string) => events.push(name),
+	const events: Record<string, Array<(e: unknown, ctx: unknown) => unknown>> = {};
+	const nycode = {
 		registerCommand: (name: string) => commands.push(name),
+		on: (name: string, h: (e: unknown, ctx: unknown) => unknown) => {
+			events[name] ??= [];
+			events[name].push(h);
+			return () => {};
+		},
+		getSessionName: () => undefined,
+		setSessionName() {},
+		getCommands: () => [],
 		getSettings: () => ({}),
 	};
-	const api = new Proxy(target, {
-		get: (t, key) => (key in t ? t[key as keyof typeof t] : () => undefined),
-	}) as unknown as ExtensionAPI;
-	return { events, commands, api };
+	ui(nycode as never);
+	return { commands, events };
 }
 
-describe("ui extension", () => {
-	it("registers the /diff and /btw commands and the session handlers of its parts", () => {
-		const { events, commands, api } = recorder();
-		ui(api);
-		expect(commands).toEqual(expect.arrayContaining(["diff", "btw"]));
-		expect(events).toContain("session_start");
-	});
+test("ui/index.ts monta todas as partes: comandos, editor, a11y e terminal", () => {
+	const { commands, events } = register();
+	assert.deepEqual([...commands].sort(), ["btw", "diff", "movimento", "rename", "vim"]); // movimento: Onda 10, P01
+	assert.ok(events.session_start!.length >= 3); // editor, a11y, terminal
+	for (const ev of ["session_info_changed", "agent_start", "agent_settled", "session_shutdown"])
+		assert.ok(events[ev]?.length, ev);
+});
 
-	it("loads each part once per registration", () => {
-		const first = recorder();
-		const second = recorder();
-		ui(first.api);
-		ui(second.api);
-		expect(second.commands).toEqual(first.commands);
-		expect(new Set(first.commands).size).toBe(first.commands.length);
-	});
+test("ciclo de vida sem UI: session_start e session_shutdown não falham nem instalam editor", async () => {
+	const { events } = register();
+	let installed = 0;
+	const ctx = { hasUI: false, ui: { setEditorComponent: () => installed++ } };
+	for (const h of events.session_start!) await h({}, ctx);
+	for (const h of events.session_shutdown!) await h({}, ctx);
+	assert.equal(installed, 0);
 });

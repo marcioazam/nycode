@@ -22,13 +22,10 @@ B=$(cd "$ROOT" && git status --porcelain | sha256sum | cut -c1-16)
 echo "arvore antes: $B"
 
 H=test/harness
-r=$(vcov ui $H/extensions/ui/a11y.test.ts $H/extensions/ui/btw.test.ts $H/extensions/ui/diff.test.ts \
-  $H/extensions/ui/editor.test.ts $H/extensions/ui/history.test.ts $H/extensions/ui/terminal.test.ts \
-  $H/extensions/ui/index.test.ts)
+r=$(vcov ui $H/extensions/ui)
 chk "1 ui tests + cobertura>=80" "${r%%|*}" "${r#*|}"
 
-r=$(vcov ui-visual $H/extensions/ui-visual/header.test.ts $H/extensions/ui-visual/icons.test.ts \
-  $H/extensions/ui-visual/index.test.ts $H/extensions/ui-visual/tools.test.ts $H/extensions/ui-visual/working.test.ts)
+r=$(vcov ui-visual $H/extensions/ui-visual)
 chk "1b ui-visual tests + cobertura>=80" "${r%%|*}" "${r#*|}"
 
 # 2: the three nycode patches of the task (rewind-tree, todo-collapse, notify-focus) are core extensions now.

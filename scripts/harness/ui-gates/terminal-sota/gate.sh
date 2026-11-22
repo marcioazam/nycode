@@ -19,8 +19,7 @@ FAIL=0
 unset NYCODE_SUBAGENT NYCODE_SUBAGENT_DEPTH
 H=test/harness/extensions
 
-r=$(vcov ui $H/ui/a11y.test.ts $H/ui/btw.test.ts $H/ui/diff.test.ts $H/ui/editor.test.ts $H/ui/history.test.ts \
-  $H/ui/terminal.test.ts $H/ui/index.test.ts)
+r=$(vcov ui $H/ui)
 chk "1 ui (U1+U2) + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov dev-commands $H/dev-commands/copy-code.test.ts $H/dev-commands/keybindings.test.ts)
 chk "2 dev-commands (U4) + cobertura>=80" "${r%%|*}" "${r#*|}"

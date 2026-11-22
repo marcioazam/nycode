@@ -1,20 +1,20 @@
-// Ports import/ny-pi/extensions/ui/test/terminal.test.ts to vitest.
+// node --experimental-strip-types --test ~/.nycode/agent/extensions/ui/test/terminal.test.ts
 import assert from "node:assert/strict";
-import { afterAll, test } from "vitest";
-import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";
+import { afterAll, test, vi } from "vitest";
 import terminal, { baseTitle, lastFocus, parseFocus, titleFor } from "../../../../src/extensions/ui/terminal.ts";
+import { tique } from "../../../../src/extensions/ui-visual/motion/motion.ts";
 
 delete process.env.NYCODE_SUBAGENT; // o próprio teste pode rodar dentro de um subagente
 
 test("baseTitle segue o formato nativo, com e sem nome", () => {
-	assert.equal(baseTitle("feat", "/a/b/proj"), "nycode - feat - proj");
-	assert.equal(baseTitle(undefined, "/a/b/proj"), "nycode - proj");
+	assert.equal(baseTitle("feat", "/a/b/proj"), "feat · proj");
+	assert.equal(baseTitle(undefined, "/a/b/proj"), "proj");
 });
 
 test("titleFor por estado", () => {
-	assert.equal(titleFor("nycode - x", "idle", "⠋"), "nycode - x");
-	assert.equal(titleFor("nycode - x", "working", "⠋"), "⠋ nycode - x");
-	assert.equal(titleFor("nycode - x", "done", "⠋"), "✓ nycode - x");
+	assert.equal(titleFor("x", "idle", "⠋"), "x");
+	assert.equal(titleFor("x", "working", "⠋"), "⠋ x");
+	assert.equal(titleFor("x", "done", "⠋"), "✓ x");
 });
 
 test("parseFocus: exato; outra entrada ou sequência misturada → undefined", () => {
@@ -61,7 +61,7 @@ function setup(opts: { tuiMode?: string; hasUI?: boolean; name?: string } = {}) 
 			},
 		},
 	};
-	terminal(nycode as unknown as ExtensionAPI);
+	terminal(nycode as any);
 	return { handlers, titles, events, ctx, input: () => input, unsubbed: () => unsubbed };
 }
 
@@ -79,22 +79,31 @@ async function withStdout<T>(fn: () => T | Promise<T>): Promise<{ out: string[];
 	}
 }
 
-test("trabalha com spinner, termina fora de foco com ✓ e volta ao focar (regular)", async () => {
+test("anima enquanto trabalha, termina fora de foco com ✓ e volta ao focar (regular)", async () => {
+	vi.spyOn(performance, "now").mockImplementation(() => 1000);
+	const antes = process.env;
+	process.env = { ...antes, TERM: "xterm-256color", NYCODE_ASCII_ICONS: "", NYCODE_REDUCED_MOTION: "" };
+	afterAll(() => {
+		process.env = antes;
+	});
 	const s = setup({ tuiMode: "regular" });
 	const { out } = await withStdout(() => s.handlers.session_start({}, s.ctx));
 	assert.deepEqual(out, ["\x1b[?1004h"]);
 	s.handlers.agent_start({}, s.ctx);
-	assert.equal(s.titles.at(-1), "⠋ nycode - proj");
-	await new Promise((r) => setTimeout(r, 200));
-	assert.notEqual(s.titles.at(-1), "⠋ nycode - proj");
+	assert.equal(s.titles.at(-1), "⠋ proj");
+	tique(1160);
+	assert.equal(s.titles.at(-1), "⠙ proj");
+	const n = s.titles.length;
+	tique(1260);
+	assert.equal(s.titles.length, n);
 	assert.deepEqual(s.input()("\x1b[O"), { consume: true });
 	focusIn("\x1b[O");
 	focusIn("\x1b[O"); // repetido: sem novo evento
 	s.handlers.agent_settled({}, s.ctx);
-	assert.equal(s.titles.at(-1), "✓ nycode - proj");
+	assert.equal(s.titles.at(-1), "✓ proj");
 	assert.deepEqual(s.input()("\x1b[I"), { consume: true });
 	focusIn(Buffer.from("x\x1b[I"));
-	assert.equal(s.titles.at(-1), "nycode - proj");
+	assert.equal(s.titles.at(-1), "proj");
 	assert.deepEqual(s.events, [{ focused: false }, { focused: true }]);
 	assert.equal(s.input()("x"), undefined);
 	const { out: off } = await withStdout(() => s.handlers.session_shutdown({}, s.ctx));
@@ -112,9 +121,9 @@ test("fullscreen não consome o foco; settle em foco mantém título normal", as
 	focusIn("\x1b[I");
 	s.handlers.agent_start({}, s.ctx);
 	s.handlers.agent_settled({}, s.ctx);
-	assert.equal(s.titles.at(-1), "nycode - n - proj");
+	assert.equal(s.titles.at(-1), "n · proj");
 	s.handlers.session_info_changed({}, s.ctx);
-	assert.equal(s.titles.at(-1), "nycode - n - proj");
+	assert.equal(s.titles.at(-1), "n · proj");
 	await withStdout(() => s.handlers.session_shutdown({}, s.ctx));
 	focusIn("\x1b[O"); // listener removido no shutdown
 	assert.equal(s.events.length, 2);
@@ -129,8 +138,9 @@ test("NYCODE_REDUCED_MOTION: prefixo estático, sem timer", async () => {
 		const n = s.titles.length;
 		await new Promise((r) => setTimeout(r, 150));
 		assert.equal(s.titles.length, n);
-		assert.equal(s.titles.at(-1), "● nycode - proj");
+		assert.equal(s.titles.at(-1), "● proj");
 		s.handlers.agent_settled({}, s.ctx);
+		await withStdout(() => s.handlers.session_shutdown({}, s.ctx));
 	} finally {
 		delete process.env.NYCODE_REDUCED_MOTION;
 	}
