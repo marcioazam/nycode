@@ -110,7 +110,7 @@ export const SETTINGS_DEFAULTS = {
 	// replaces the default list of that event; `"PreToolUse": []` turns the guard off. The embedded ralph-loop Stop hook
 	// (D-54) runs before the impeccable gate.
 	hooks: {
-		PreToolUse: [{ matcher: "Bash|Edit|Write|Read", hooks: [guardHook] }],
+		PreToolUse: [{ matcher: "Bash|run|Edit|Write|Read|Grep", hooks: [guardHook] }],
 		SessionStart: [{ matcher: "startup|resume|clear|compact", hooks: [graphContext, dispatch, impeccableGate(5)] }],
 		SubagentStart: [{ matcher: "*", hooks: [graphContext] }],
 		PostToolUse: [
@@ -121,7 +121,7 @@ export const SETTINGS_DEFAULTS = {
 	},
 	// Status line: the claude-hud launcher. It prints nothing until the claude-hud plugin is installed (/claude-hud-setup).
 	// A `statusLine` entry in settings.json replaces it; an empty `command` turns it off.
-	statusLine: { type: "command", command: `node "${RES}/statusline/statusline.mjs"` },
+	statusLine: { type: "command", command: `node "${RES}/statusline/statusline.mjs"`, refreshInterval: 60 },
 	// Exported to every process by the `env-settings` extension; a `env` entry in settings.json adds to or overrides it.
 	// PONYTAIL_*: the embedded ponytail extension (D-54). Rules reach only the writer subagents of the list below (an
 	// unanchored, case-insensitive regex over the agent name; agents of that list absent here simply never match).
