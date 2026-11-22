@@ -238,7 +238,7 @@ Para cada costura: como reduzir (arquivo novo e chamada única) e o teste que fa
   prompt com as instruções. A seção `docs` em uma linha é da extensão `docs-pointer` (D-36).
 - **K8.** Política de tempo limite em arquivo novo; `bash.ts` a chama. Teste: `bash` com 600 s padrão e teto 1800 s.
 - **K9.** Regra do limite absoluto em arquivo novo dentro de `core/compaction/`. Teste: `compact-at-400k` portado.
-- **K10.** API pública em arquivos novos de `packages/tui/src/`, mais uma linha de exportação. Teste: teste da API e
+- **K10.** API pública em arquivos novos de `packages/tui/src/`, mais uma linha de exportação. O snapshot de rolagem expõe `isFollowingEnd` e `replaceScrollToEndIndicator` troca o rótulo de voltar ao fim (campo privado do `TuiAltScreen` deixa de ser `readonly`, com marcador K10). Teste: teste da API e
   `check-entry-graphs` do repositório (documento: anexo B, seção 1).
 - **K11.** Motor inteiro em `core/permissions/`; o gancho é uma chamada. Teste: diferencial dos dois motores (D-08).
 - **K12.** `migrations/from-pi.ts`; a chamada (`runMigrateCommand`) está em `main.ts`, no ramo `args[0] === "migrate"`, e não

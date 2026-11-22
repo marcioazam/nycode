@@ -248,7 +248,7 @@ export class TuiAltScreen extends TuiBase implements ViewportTUI {
 	private readonly searchMatchStyle: (text: string) => string;
 	private readonly searchCurrentMatchStyle: (text: string) => string;
 	private readonly searchNavigationButtonStyle: (text: string, hovered: boolean) => string;
-	private readonly scrollToEndIndicator?: () => string;
+	private scrollToEndIndicator?: () => string;
 	private readonly openUrl?: (url: string) => void;
 	private readonly onRightClickPaste?: () => void;
 	private copyOnSelect: boolean;
@@ -349,10 +349,20 @@ export class TuiAltScreen extends TuiBase implements ViewportTUI {
 		if (!box?.scrollContentLines) return undefined;
 		return {
 			scrollTop: scrollView.scrollTop,
+			isFollowingEnd: scrollView.isFollowingEnd,
 			contentLines: box.scrollContentLines,
 			rect: box.rect,
 			scrollTo: (row, options) => scrollView.scrollTo(row, options),
 		};
+	}
+
+	// nycode: K10 swap of the jump-to-end label for built-in extensions (public-hooks.ts)
+	getScrollToEndIndicator(): (() => string) | undefined {
+		return this.scrollToEndIndicator;
+	}
+
+	setScrollToEndIndicator(indicator: (() => string) | undefined): void {
+		this.scrollToEndIndicator = indicator;
 	}
 
 	// nycode: K10 selection state for built-in extensions (public-hooks.ts)

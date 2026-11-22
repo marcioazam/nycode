@@ -3,6 +3,7 @@ import { stripTerminalSequences, truncateToWidth, visibleWidth } from "@nycode/t
 import { test } from "vitest";
 import {
 	findSticky,
+	indicadorFim,
 	stickyLine,
 	stickyLinhas,
 	stickyRect,
@@ -216,4 +217,11 @@ test("findSticky acha prompt de uma linha (B e C antes do A na mesma linha)", ()
 		row: 1,
 		text: "❯ arrume o login  23:58",
 	});
+});
+
+test("indicadorFim: voltar ao fim sem novas; contagem verde com novas; singular", () => {
+	const t = { fg: (c: string, s: string) => `<${c}>${s}</>`, bg: (c: string, s: string) => `[${c}]${s}[/]` } as never;
+	assert.equal(indicadorFim(0, "ctrl+end", t), "[selectedBg] <text>↓ voltar ao fim · ctrl+end</> [/]");
+	assert.equal(indicadorFim(3, "ctrl+end", t), "[selectedBg] <success>3 novas</><text> · ↓ ctrl+end</> [/]");
+	assert.equal(indicadorFim(1, "", t), "[selectedBg] <success>1 nova</><text> · ↓</> [/]");
 });
