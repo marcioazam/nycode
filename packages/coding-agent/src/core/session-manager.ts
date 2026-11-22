@@ -31,6 +31,7 @@ import { createInterface } from "readline";
 import { StringDecoder } from "string_decoder";
 import { APP_NAME, getAgentDir as getDefaultAgentDir, getSessionsDir } from "../config.ts";
 import { normalizePath, pathsEqual, resolvePath } from "../utils/paths.ts";
+import { type FinderTarget, installCwdFinders } from "./cwd-switch/finders.ts";
 import {
 	type BashExecutionMessage,
 	type CustomMessage,
@@ -2036,3 +2037,5 @@ export class SessionManager {
 		}
 	}
 }
+
+installCwdFinders(SessionManager as unknown as FinderTarget); // nycode: K23

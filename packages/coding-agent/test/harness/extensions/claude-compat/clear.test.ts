@@ -140,7 +140,10 @@ test("registra clear, reset, help, skills, claude-help e os comandos locais; nun
 			"restart",
 			"update",
 			"terminal-setup",
-			// focus, color, transcript (interface), cd (directory) and
+			"focus",
+			"color",
+			"transcript",
+			"cd",
 			// background, bg come with the later claude-compat parts.
 		].sort(),
 	);
