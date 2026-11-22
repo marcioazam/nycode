@@ -2,7 +2,12 @@ import assert from "node:assert";
 import type { EventEmitter } from "node:events";
 import { describe, it } from "node:test";
 import { Text } from "../src/components/text.ts";
-import { getPrimaryScrollSnapshot, isSelectionPressActive, observeTerminalInput } from "../src/public-hooks.ts";
+import {
+	getPrimaryScrollSnapshot,
+	isSelectionPressActive,
+	observeTerminalInput,
+	replaceScrollToEndIndicator,
+} from "../src/public-hooks.ts";
 import { TuiAltScreen } from "../src/tui-alt-screen.ts";
 import { TuiMainScreen } from "../src/tui-main-screen.ts";
 import { VirtualTerminal } from "./virtual-terminal.ts";
@@ -23,10 +28,12 @@ describe("public hooks (seam K10)", () => {
 			assert.strictEqual(snapshot.contentLines.length, 30);
 			assert.deepStrictEqual(snapshot.rect, { x: 0, y: 0, width: 20, height: 5 });
 			assert.strictEqual(snapshot.scrollTop, 25, "follows the end of the content");
+			assert.strictEqual(snapshot.isFollowingEnd, true);
 
 			snapshot.scrollTo(3, { disableFollow: true });
 			await terminal.waitForRender();
 			assert.strictEqual(getPrimaryScrollSnapshot(tui)?.scrollTop, 3);
+			assert.strictEqual(getPrimaryScrollSnapshot(tui)?.isFollowingEnd, false, "scrolled away from the end");
 		} finally {
 			tui.stop();
 		}
@@ -76,5 +83,41 @@ describe("public hooks (seam K10)", () => {
 		assert.deepStrictEqual(seen, ["\x1b[I", "abc"]);
 		assert.strictEqual(stdin.listenerCount("data"), before);
 		process.stdin.pause(); // a data listener put stdin in flowing mode, which would keep the test process alive
+	});
+
+	it("replaces the jump-to-end label while scrolled away and restores the previous one", async () => {
+		const terminal = new VirtualTerminal(30, 5);
+		const tui = new TuiAltScreen(terminal, false, undefined, { scrollToEndIndicator: () => "ORIGINAL" });
+		try {
+			tui.addChild(new Text(content, 0, 0));
+			tui.start();
+			await terminal.waitForRender();
+			let seen: (() => string) | undefined;
+			const restore = replaceScrollToEndIndicator(tui, (current) => {
+				seen = current;
+				return () => " VOLTAR AO FIM ";
+			});
+			assert.strictEqual(seen?.(), "ORIGINAL");
+			getPrimaryScrollSnapshot(tui)?.scrollTo(3, { disableFollow: true });
+			await terminal.waitForRender();
+			assert.ok(terminal.getViewport().join("\n").includes("VOLTAR AO FIM"));
+			restore();
+			getPrimaryScrollSnapshot(tui)?.scrollTo(4, { disableFollow: true });
+			await terminal.waitForRender();
+			assert.ok(terminal.getViewport().join("\n").includes("ORIGINAL"));
+		} finally {
+			tui.stop();
+		}
+	});
+
+	it("replacing the jump-to-end label is a no-op outside fullscreen mode", () => {
+		const tui = new TuiMainScreen(new VirtualTerminal(20, 5));
+		let called = false;
+		const restore = replaceScrollToEndIndicator(tui, () => {
+			called = true;
+			return () => "";
+		});
+		restore();
+		assert.strictEqual(called, false);
 	});
 });

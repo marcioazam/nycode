@@ -1,6 +1,7 @@
 // Behavior of the sticky-prompt extension: widget wiring, floating line visibility and click-to-scroll.
 // The two scroll hooks of the public @nycode/tui API (K10) are replaced by typed fakes: the real ones only answer
 // for a fullscreen TUI instance.
+import assert from "node:assert/strict";
 import type * as Tui from "@nycode/tui";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExtensionAPI, ExtensionContext } from "../../../../src/core/extensions/types.ts";
@@ -17,12 +18,14 @@ afterEach(() => {
 const hooks = vi.hoisted(() => ({
 	snapshot: vi.fn(),
 	selecting: vi.fn(),
+	replace: vi.fn<(tui: unknown, make: (c: (() => string) | undefined) => () => string) => () => void>(() => () => {}),
 }));
 
 vi.mock("@nycode/tui", async (importOriginal) => ({
 	...(await importOriginal<typeof Tui>()),
 	getPrimaryScrollSnapshot: hooks.snapshot,
 	isSelectionPressActive: hooks.selecting,
+	replaceScrollToEndIndicator: hooks.replace,
 }));
 
 const A = "\x1b]133;A\x07";
@@ -69,7 +72,12 @@ function setup(opts: { hasUI?: boolean; users?: string[] } = {}) {
 			],
 		},
 	} as unknown as ExtensionContext;
-	const theme = { fg: (_c: string, t: string) => t, getFgAnsi: () => "", getBgAnsi: () => "" };
+	const theme = {
+		fg: (_c: string, t: string) => t,
+		bg: (_c: string, t: string) => t,
+		getFgAnsi: () => "",
+		getBgAnsi: () => "",
+	};
 	return { handlers, ctx, overlay, hide, requestRender, mount: () => widget?.(tui, theme), getWidget: () => widget };
 }
 
@@ -203,5 +211,40 @@ describe("sticky-prompt extension", () => {
 		expect(o.visible?.()).toBe(true);
 		s.handlers.get("session_tree")?.({}, s.ctx);
 		expect(o.visible?.()).toBe(false);
+	});
+
+	it("jump-to-end pill: takes the shortcut from the original label and counts replies while scrolled away", () => {
+		const restore = vi.fn();
+		let label: (() => string) | undefined;
+		hooks.replace.mockImplementation((_tui, make) => {
+			label = make(() => "\x1b[7m ↓ Jump to latest message · Ctrl+End \x1b[27m");
+			return restore;
+		});
+		const s = setup();
+		s.handlers.get("session_start")?.({}, s.ctx);
+		const widget = s.mount();
+		hooks.selecting.mockReturnValue(false);
+		const view = (isFollowingEnd: boolean) =>
+			hooks.snapshot.mockReturnValue({
+				scrollTop: 4,
+				contentLines: content,
+				rect: { x: 0, y: 0, width: 40, height: 5 },
+				isFollowingEnd,
+				scrollTo: vi.fn(),
+			});
+		const o = s.overlay.options as Overlay;
+		view(false);
+		o.visible?.();
+		const reply = { message: { role: "assistant" } };
+		s.handlers.get("message_end")?.(reply, s.ctx);
+		s.handlers.get("message_end")?.(reply, s.ctx);
+		assert.ok(label);
+		expect(label?.()).toContain("2 novas");
+		expect(label?.()).toContain("ctrl+end");
+		view(true);
+		o.visible?.();
+		expect(label?.()).toContain("voltar ao fim");
+		widget?.dispose();
+		expect(restore).toHaveBeenCalledTimes(1);
 	});
 });

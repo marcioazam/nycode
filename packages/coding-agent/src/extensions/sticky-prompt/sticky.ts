@@ -143,6 +143,19 @@ export function stickyLinhas(
 	];
 }
 
+/**
+ * Jump-to-end label (lab /rolagem desenho 6): a selectedBg pill with `↓ voltar ao fim · shortcut`, or
+ * `N novas · ↓ shortcut` (count in green) when replies arrived while scrolled away.
+ */
+export function indicadorFim(novas: number, atalho: string, t: StickyLabelTheme): string {
+	const tecla = atalho ? ` · ${atalho}` : "";
+	const meio =
+		novas > 0
+			? `${t.fg("success", `${novas} ${novas === 1 ? "nova" : "novas"}`)}${t.fg("text", ` · ↓${atalho ? ` ${atalho}` : ""}`)}`
+			: t.fg("text", `↓ voltar ao fim${tecla}`);
+	return t.bg("selectedBg", ` ${meio} `);
+}
+
 /** Coluna e largura da linha fixa: dentro da margem do chat (outputPad), como os demais blocos, e sem a coluna da
  * barra de rolagem. Estreito demais: a largura toda menos a barra. */
 export function stickyRect(rect: { x: number; width: number }, pad: number): { col: number; width: number } {
@@ -153,7 +166,8 @@ export function stickyRect(rect: { x: number; width: number }, pad: number): { c
 }
 
 export interface StickyLabelTheme {
-	fg(c: "accent" | "dim", s: string): string;
+	fg(c: "accent" | "dim" | "success" | "text", s: string): string;
+	bg(c: "selectedBg", s: string): string;
 }
 
 export interface StickyTheme {

@@ -13,6 +13,8 @@ export interface PrimaryScrollRect {
 /** What the primary scroll area showed in the last frame; valid until the next render. */
 export interface PrimaryScrollSnapshot {
 	scrollTop: number;
+	/** True while the view follows the end of the content (not scrolled away from it). */
+	isFollowingEnd: boolean;
 	/** Every line of the scrolled content, not only the visible ones. */
 	contentLines: readonly string[];
 	/** Screen rectangle of the scroll area. */
@@ -23,6 +25,20 @@ export interface PrimaryScrollSnapshot {
 /** The primary scroll area of the last frame, or undefined outside fullscreen mode or before the first frame. */
 export function getPrimaryScrollSnapshot(tui: TUI): PrimaryScrollSnapshot | undefined {
 	return tui instanceof TuiAltScreen ? tui.getPrimaryScrollSnapshot() : undefined;
+}
+
+/**
+ * Replaces the jump-to-end label of the fullscreen TUI: `make` receives the current label renderer (undefined when none)
+ * and returns the new one. Returns the function that restores the previous renderer; a no-op outside fullscreen mode.
+ */
+export function replaceScrollToEndIndicator(
+	tui: TUI,
+	make: (current: (() => string) | undefined) => () => string,
+): () => void {
+	if (!(tui instanceof TuiAltScreen)) return () => {};
+	const original = tui.getScrollToEndIndicator();
+	tui.setScrollToEndIndicator(make(original));
+	return () => tui.setScrollToEndIndicator(original);
 }
 
 /** True while a mouse press may still become a text selection (fullscreen mode only). */

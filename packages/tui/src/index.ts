@@ -121,6 +121,7 @@ export {
 	observeTerminalInput,
 	type PrimaryScrollRect,
 	type PrimaryScrollSnapshot,
+	replaceScrollToEndIndicator,
 } from "./public-hooks.ts";
 // Input buffering for batch splitting
 export { StdinBuffer, type StdinBufferEventMap, type StdinBufferOptions } from "./stdin-buffer.ts";

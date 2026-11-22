@@ -10,6 +10,7 @@ import {
 	isSelectionPressActive,
 	type OverlayOptions,
 	type PrimaryScrollSnapshot,
+	replaceScrollToEndIndicator,
 	stripTerminalSequences,
 	type TUI,
 	truncateToWidth,
@@ -18,6 +19,7 @@ import {
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import {
 	findSticky,
+	indicadorFim,
 	type Sticky,
 	type StickyLabelTheme,
 	type StickyTheme,
@@ -26,6 +28,9 @@ import {
 	stickyStyle,
 	userMatcher,
 } from "./sticky.ts";
+
+/** Replies that arrived while the scroll was away from the end (cleared on return to the end). */
+const fila = { novas: 0, seguindo: true };
 
 function attach(
 	tui: TUI,
@@ -42,6 +47,8 @@ function attach(
 		if (isSelectionPressActive(tui)) return false; // some durante a seleção para o arraste rolar o transcript
 		snapshot = getPrimaryScrollSnapshot(tui);
 		if (!snapshot) return false;
+		fila.seguindo = snapshot.isFollowingEnd;
+		if (snapshot.isFollowingEnd) fila.novas = 0;
 		current = findSticky(snapshot.contentLines, snapshot.scrollTop, isUser(), stripTerminalSequences);
 		opts.row = snapshot.rect.y;
 		Object.assign(opts, stickyRect(snapshot.rect, pad)); // dentro da margem do chat, sem a coluna da barra de rolagem
@@ -63,7 +70,20 @@ function attach(
 		},
 	};
 	const handle = tui.showOverlay(component, opts);
-	return () => handle.hide();
+	// Jump-to-end pill: the shortcut comes from the original label text.
+	const restoreIndicator = replaceScrollToEndIndicator(tui, (original) => {
+		let atalho = "";
+		try {
+			atalho = (/·\s*(.+?)\s*$/.exec(stripTerminalSequences(original?.() ?? ""))?.[1] ?? "").toLowerCase();
+		} catch {
+			// no shortcut in the original label
+		}
+		return () => indicadorFim(fila.novas, atalho, theme);
+	});
+	return () => {
+		restoreIndicator();
+		handle.hide();
+	};
 }
 
 function userTexts(ctx: ExtensionContext): string[] {
@@ -94,6 +114,7 @@ export default function stickyPromptExtension(nycode: ExtensionAPI) {
 	};
 	nycode.on("message_end", (e, ctx) => {
 		if (e.message.role === "user") refresh(e, ctx);
+		if (e.message.role === "assistant" && !fila.seguindo) fila.novas++;
 	});
 	nycode.on("session_tree", refresh);
 	nycode.on("session_start", (e, ctx) => {

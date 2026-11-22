@@ -179,7 +179,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K7 | `packages/coding-agent/src/core/system-prompt.ts` | Inclusão das instruções embarcadas (a seção `docs` em uma linha ficou na extensão `docs-pointer`, D-36) | `claude-home/CLAUDE.md` | F8 |
 | K8 | `packages/coding-agent/src/core/tools/bash.ts` | Tempo limite padrão e teto configuráveis; opção de seguir em segundo plano | `extensions/bash-timeout`, especificação 0008 | F7 |
 | K9 | `packages/coding-agent/src/core/compaction/` | Limite absoluto de contexto para compactar | `compact-at-400k.ts` | F7 |
-| K10 | `packages/tui/src/` | API pública: widget fixo no topo, clique no cabeçalho, observador de entrada do terminal | `sticky-prompt`, `ui/a11y`, `ui/terminal` | F7 |
+| K10 | `packages/tui/src/` | API pública: widget fixo no topo, clique no cabeçalho, observador de entrada do terminal, troca do rótulo de voltar ao fim (`replaceScrollToEndIndicator`) e `isFollowingEnd` no snapshot de rolagem | `sticky-prompt`, `ui/a11y`, `ui/terminal` | F7 |
 | K11 | `packages/coding-agent/src/core/permissions/` (novo) + gancho em `tool_call` | Motor nativo de permissão | `claude-home/hooks/guard.py` | F8 |
 | K12 | `packages/coding-agent/src/main.ts` (chamada) + `src/migrations/from-pi.ts` (novo) | `nycode migrate from-pi` | `install.sh --link/--restore` | F4 |
 | K13 | `packages/coding-agent/package.json` (`files`) | Inclui `resources/` | `publish.list` | F8 |
