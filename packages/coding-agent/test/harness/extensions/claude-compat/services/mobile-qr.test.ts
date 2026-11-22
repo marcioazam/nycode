@@ -97,6 +97,6 @@ test("QrPanel: terminal estreito não corta o QR em silêncio e nada excede a la
 		assert.match(lines.join(""), /estreito|Terminal|Enter/);
 	}
 	assert.deepEqual(p.render(0), []);
-	assert.equal(p.render(10).join("").includes("https://claude.ai/mobile"), true);
+	assert.ok(p.render(10).join("").split("https://claude.ai/mobile").length > 1); // the wrapped lines carry the URL
 	assert.match(qrNotice(), /https:\/\/claude\.ai\/mobile$/);
 });
