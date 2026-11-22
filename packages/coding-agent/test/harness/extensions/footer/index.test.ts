@@ -6,6 +6,7 @@ import type { ExtensionAPI, ExtensionContext } from "../../../../src/core/extens
 import footerExtension from "../../../../src/extensions/footer/index.ts";
 
 interface Bridge {
+	footerData: { getExtensionStatuses(): Map<string, string> };
 	absorbed: Set<string>;
 	folded: boolean;
 }
@@ -49,6 +50,17 @@ describe("footer extension", () => {
 		expect(channel).toBe("nycode:footer-bridge");
 		expect(bridge.absorbed.size).toBe(0);
 		expect(bridge.folded).toBe(false);
+	});
+
+	it("the bridge hands the HUD the same data without the hidden statuses", () => {
+		const { bridge } = mount(
+			new Map([
+				["nycode-status", "x"],
+				["ponytail", "y"],
+				["goal", "alvo"],
+			]),
+		);
+		expect([...bridge.footerData.getExtensionStatuses().keys()]).toEqual(["goal"]);
 	});
 
 	it("renders the statuses sorted by key, joined by a dim separator, whitespace collapsed", () => {

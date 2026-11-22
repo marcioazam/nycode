@@ -7,6 +7,10 @@
  * and lanes do not play in series. Player order: canberra-gtk-play, pw-play with the freedesktop sound, TTY bell.
  * Switched by `notify.sound` (NYCODE_SOUND_NOTIFY wins), on by default. Complements the notify extension (terminal
  * notification only when "away").
+ *
+ * Single owner of the decision: alone, it plays on every end of turn. When the avisos extension announces
+ * `nycode-harness:notify-owner`, this extension stops deciding and only plays on `nycode-harness:aviso-som`, which
+ * avisos emits for the events in the `som` list of avisos.json (and on "Testar agora").
  */
 
 import { spawn } from "node:child_process";
@@ -29,26 +33,51 @@ export function playerCommand(
 	return undefined;
 }
 
-function play(): void {
-	const command = playerCommand();
+type Spawn = (cmd: string, args: string[], opts: { stdio: "ignore"; detached: true }) => { unref(): void };
+const bellTty = () => fs.writeFileSync("/dev/tty", "\x07");
+
+/** Player local; se não houver ou falhar, bell no TTY. `spawnFn` e `bell` são injetáveis nos testes (nunca tocam som real). */
+export function play(
+	command: string[] | null = playerCommand() ?? null,
+	spawnFn: Spawn = spawn,
+	bell: () => void = bellTty,
+): void {
 	if (command) {
 		try {
-			spawn(command[0], command.slice(1), { stdio: "ignore", detached: true }).unref();
+			spawnFn(command[0], command.slice(1), { stdio: "ignore", detached: true }).unref();
 			return;
 		} catch {
 			// falls back to the bell
 		}
 	}
 	try {
-		fs.writeFileSync("/dev/tty", "\x07");
+		bell();
 	} catch {
 		// no TTY: nothing to do
 	}
 }
 
-export default function soundNotifyExtension(nycode: ExtensionAPI): void {
-	if (process.env.NYCODE_SUBAGENT === "1") return;
-	nycode.on("agent_settled", async (_event, ctx) => {
-		if (ctx.hasUI && resolveNycodeSettings(nycode.getSettings(), process.env).notify.sound) play();
+export const OWNER_CHANNEL = "nycode-harness:notify-owner";
+export const SOUND_CHANNEL = "nycode-harness:aviso-som";
+
+export function setup(
+	nycode: ExtensionAPI,
+	tocar: () => void = () => play(),
+	env: Record<string, string | undefined> = process.env,
+): void {
+	if (env.NYCODE_SUBAGENT === "1") return;
+	let avisosDecide = false;
+	nycode.events?.on(OWNER_CHANNEL, () => {
+		avisosDecide = true;
 	});
+	nycode.events?.on(SOUND_CHANNEL, () => {
+		if (avisosDecide) tocar();
+	});
+	nycode.on("agent_settled", async (_event, ctx) => {
+		if (!avisosDecide && ctx.hasUI && resolveNycodeSettings(nycode.getSettings(), env).notify.sound) tocar();
+	});
+}
+
+export default function (nycode: ExtensionAPI) {
+	setup(nycode);
 }

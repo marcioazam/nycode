@@ -138,7 +138,7 @@ primeiras sincronizações.
 
 ## 4. Costuras
 
-Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 17 de
+Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 18 de
 [02, seção 4](02-arquitetura-alvo.md), mais as costuras do renome (seção 4.3).
 
 ### 4.1 Tabela de costuras K1..K18
@@ -169,6 +169,7 @@ Abreviação: `CA` = `packages/coding-agent/src`; `core/` e `cli/` abaixo são d
 | K14 | `CA/config.ts:605` | "π" de reserva vira "nycode" | 12 / 2 | 0 (`APP_TITLE`) | baixo |
 | K15 | `packages/tui/src/index.ts` | Uma linha de exportação (`isImageLine`) | 13 / 2 | 0 (`terminal-image`) | baixo |
 | K16 | `packages/tui/src/components/editor.ts` | Dois métodos novos no `Editor` (`runEditorAction`, `withUndoGroup`) | 8 / 3 | 0 (região: 0) | médio |
+| K17 | `interactive-mode.ts`, `status-indicator.ts`, `assistant-message.ts`, `compaction-summary-message.ts` (em `packages/coding-agent/src/modes/interactive`) | 18 chamadas ao módulo `avisos`, cada uma com `?? <original>` ou `if (...) return`, mais um parâmetro opcional no `RetryStatusIndicator` | 91 / 25, 3 / 0, 4 / 4, 3 / 1 (na ordem dos arquivos) | 3, 0, 0, 0 (na ordem dos arquivos) | alto no `interactive-mode.ts` |
 | K18 | `packages/coding-agent/src/core/settings-manager.ts` | Uma linha em `getCompactionReserveTokens` (e o tipo do parâmetro ganha `contextWindow?`) que chama o módulo `session-limit` | 18 / 1 | 1 (região: `getCompactionReserveTokens`) | baixo |
 
 Legenda: 3m/1m = commits em 3 meses e em 1 mês; Região = commits dos 3 meses cujo diff casa o termo (aproximação por
@@ -240,6 +241,7 @@ Para cada costura: como reduzir (arquivo novo e chamada única) e o teste que fa
   fork).
 - **K15.** Uma linha de exportação em `packages/tui/src/index.ts`, junto do bloco de `terminal-image.ts`. Teste: `packages/tui/test/image-line-export.test.ts`.
 - **K16.** Dois métodos e um campo privado no `Editor`, logo após `insertTextAtCursor`; reaplicar o bloco marcado `// nycode: K16` se o upstream mexer em `pushUndoSnapshot`/`undo`. Teste: `packages/tui/test/editor-actions.test.ts`.
+- **K17.** Uma chamada `avisos.*` marcada `// nycode: K17` em cada ponto (retry, erro, interrupção, confiança, recarga, compactação, caixa neutra, dica de bug); a lógica fica em `modes/interactive/avisos/`. No merge, reaplicar a linha marcada e manter o `?? <original>`. Teste: `packages/coding-agent/test/harness/modes/avisos/hooks.test.ts`.
 - **K18.** Uma chamada `reserveWithSessionLimit` em `getCompactionReserveTokens`, marcada `// nycode: K18`; a lógica fica em `core/compaction/session-limit.ts` e o `/contexto` na extensão `contexto`. No merge, reaplicar a linha marcada. Teste: `packages/coding-agent/test/harness/core/compaction/session-limit.test.ts`.
 
 ### 4.3 Costuras do renome

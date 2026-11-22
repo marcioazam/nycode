@@ -21,4 +21,5 @@ K13 | packages/coding-agent/package.json | "resources" | packages/coding-agent/t
 K14 | packages/coding-agent/src/config.ts | nycode: K14[[:space:]] | packages/coding-agent/test/cli-brand.test.ts | ativa
 K15 | packages/tui/src/index.ts | nycode: K15[[:space:]] | packages/tui/test/image-line-export.test.ts | ativa
 K16 | packages/tui/src/components/editor.ts | nycode: K16[[:space:]] | packages/tui/test/editor-actions.test.ts | ativa
+K17 | packages/coding-agent/src/modes/interactive/interactive-mode.ts packages/coding-agent/src/modes/interactive/components/status-indicator.ts packages/coding-agent/src/modes/interactive/components/assistant-message.ts packages/coding-agent/src/modes/interactive/components/compaction-summary-message.ts | nycode: K17([[:space:]]|$) | packages/coding-agent/test/harness/modes/avisos/hooks.test.ts | ativa
 K18 | packages/coding-agent/src/core/settings-manager.ts | nycode: K18([[:space:]]|$) | packages/coding-agent/test/harness/core/compaction/session-limit.test.ts | ativa

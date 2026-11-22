@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { stripTerminalSequences, truncateToWidth, visibleWidth } from "@nycode/tui";
 import { test } from "vitest";
-import { findSticky, stickyLine, stickyStyle, userMatcher } from "../../../../src/extensions/sticky-prompt/sticky.ts";
+import {
+	findSticky,
+	stickyLine,
+	stickyLinhas,
+	stickyRect,
+	stickyStyle,
+	userMatcher,
+} from "../../../../src/extensions/sticky-prompt/sticky.ts";
 
 const BG = "\x1b[48;5;236m";
 const A = "\x1b]133;A\x07";
@@ -44,10 +51,10 @@ test("linha cabe na largura e trunca com reticências", () => {
 	const id = (s: string) => s;
 	const short = stickyLine("oi", 20, truncateToWidth, visibleWidth, id);
 	assert.equal(visibleWidth(short), 20);
-	assert.ok(short.startsWith(" ❯ oi"));
+	assert.ok(short.startsWith("   ❯ oi"));
 	const long = stickyLine("x".repeat(100), 30, truncateToWidth, visibleWidth, id);
 	assert.equal(visibleWidth(long), 30);
-	assert.ok(long.includes("…"));
+	assert.ok(strip(long).endsWith("…   "), JSON.stringify(long));
 	assert.ok(stickyLine("a", 1, truncateToWidth, visibleWidth, (s) => `[${s}]`).startsWith("["));
 });
 
@@ -72,4 +79,141 @@ test("estilo relê o tema a cada chamada", () => {
 	assert.ok(style("a").includes("<bg>"));
 	on = false;
 	assert.equal(style("a"), "a");
+});
+
+// Bug seen by the owner (2026-11-14): with the arrow and hour on sent messages the sticky showed `❯ ❯ continue ... 14...`.
+test("stickyLine: não repete a setinha nem mostra a hora que a mensagem já traz", () => {
+	const id = (s: string) => s;
+	assert.equal(
+		stickyLine(`❯ continue${" ".repeat(40)}14:05`, 30, truncateToWidth, visibleWidth, id).trimEnd(),
+		"   ❯ continue",
+	);
+	assert.equal(stickyLine("> continue", 30, truncateToWidth, visibleWidth, id).trimEnd(), "   ❯ continue");
+	assert.equal(stickyLine("rodar às 14:05", 30, truncateToWidth, visibleWidth, id).trimEnd(), "   ❯ rodar às 14:05"); // hour in the middle stays
+});
+
+// Owner's request (2026-11-15): nothing in the chat takes 100%; the sticky line respects the chat margin.
+test("stickyRect: dentro da margem e sem a barra de rolagem; pad 0 ou estreito ocupa tudo menos a barra", () => {
+	assert.deepEqual(stickyRect({ x: 0, width: 100 }, 1), { col: 1, width: 97 });
+	assert.deepEqual(stickyRect({ x: 3, width: 100 }, 0), { col: 3, width: 99 });
+	assert.deepEqual(stickyRect({ x: 0, width: 21 }, 1), { col: 0, width: 20 });
+});
+
+test("findSticky acha o prompt com a margem do chat-margin (OSC 133 na coluna 0, espaços depois)", () => {
+	const l = ["\x1b]133;A\x07 \x1b[48;5;1m ❯ oi mundo\x1b[49m ", "\x1b]133;B\x07 fim ", "x", "y"];
+	assert.deepEqual(
+		findSticky(l, 3, (z) => z.includes("oi mundo"), strip),
+		{ row: 0, text: "❯ oi mundo fim" },
+	);
+});
+
+// Reference: the previous implementation (line scan on every call).
+function findStickyRef(
+	l: readonly string[],
+	scrollTop: number,
+	isU: (z: string) => boolean,
+	st: (s: string) => string,
+) {
+	const START = /^(?:\x1b\]133;[BC](?:\x07|\x1b\\))*\x1b\]133;A(?:\x07|\x1b\\)/;
+	const END = /\x1b\]133;B(?:\x07|\x1b\\)/;
+	for (let row = Math.min(scrollTop, l.length) - 1; row >= 0; row--) {
+		if (!START.test(l[row] ?? "")) continue;
+		const parts: string[] = [];
+		for (let r = row; r < l.length; r++) {
+			const t = st(l[r] ?? "").trim();
+			if (t) parts.push(t);
+			if (END.test(l[r] ?? "")) break;
+		}
+		const text = parts.join(" ");
+		if (isU(text)) return { row, text };
+	}
+	return undefined;
+}
+
+test("equivalência com a implementação anterior em 200 entradas pseudoaleatórias (semente fixa)", () => {
+	let seed = 12345;
+	const rnd = (n: number) => {
+		seed = (Math.imul(seed, 1103515245) + 12345) >>> 0;
+		return seed % n;
+	};
+	const pool = [
+		`${A}meu pedido`,
+		`${A}${BG}outro pedido`,
+		`${A}resposta`,
+		`${A}\x1b]133;B\x07um só`,
+		BC,
+		"texto",
+		"",
+		"mais texto",
+		`x${A}no meio`,
+	];
+	const user = userMatcher(["meu pedido", "outro pedido"]);
+	for (let i = 0; i < 200; i++) {
+		const arr = Array.from({ length: rnd(40) }, () => pool[rnd(pool.length)] as string);
+		for (let k = 0; k < 3; k++) {
+			const top = rnd(arr.length + 5) - 2;
+			assert.deepEqual(
+				findSticky(arr, top, user, strip),
+				findStickyRef(arr, top, user, strip),
+				`caso ${i}/${k} top=${top}`,
+			);
+		}
+	}
+});
+
+test("mesma entrada não reexecuta a varredura; mudança de comprimento, última linha, scrollTop ou matcher refaz", () => {
+	let calls = 0;
+	const strip2 = (s: string) => {
+		calls++;
+		return strip(s);
+	};
+	const arr = [...lines];
+	const first = findSticky(arr, 10, isUser, strip2);
+	const n = calls;
+	assert.ok(n > 0);
+	assert.equal(findSticky(arr, 10, isUser, strip2), first);
+	assert.equal(calls, n);
+	assert.deepEqual(findSticky(arr, 5, isUser, strip2), { row: 0, text: "primeiro pedido" }); // new scrollTop
+	arr.push(`${A}${BG} terceiro \x1b[49m`, `${BC}`); // same array growing (stream)
+	assert.deepEqual(findSticky(arr, 13, userMatcher(["terceiro"]), strip2), { row: 11, text: "terceiro" });
+	arr[arr.length - 1] = `${BG}tail`;
+	assert.deepEqual(findSticky(arr, 13, userMatcher(["terceiro"]), strip2), { row: 11, text: "terceiro tail" }); // last line changed, same length
+	assert.deepEqual(findSticky(arr, 13, isUser, strip2), findStickyRef(arr, 13, isUser, strip));
+});
+
+test("busca por índice: não relê linhas fora das zonas", () => {
+	const big = Array.from({ length: 20000 }, (_, i) => (i % 100 === 0 ? `${A}pedido ${i}` : `linha ${i}`));
+	big[99] = BC;
+	let stripped = 0;
+	const s = (x: string) => {
+		stripped++;
+		return strip(x);
+	};
+	const r = findSticky(big, 19999, () => true, s);
+	assert.equal(r?.row, 19900);
+	assert.ok(stripped <= 100, `strip chamado ${stripped}x`);
+});
+
+// Lab /rolagem desenho 6 "Duas linhas" (owner, 2026-11-19): label `▎ você · hora` above the strip.
+test("stickyLinhas: rótulo você · hora em cima, sem fundo; faixa embaixo; ambas na largura", () => {
+	const tr = (s: string, w: number) => s.slice(0, w);
+	const me = (s: string) => s.split(/<\/?\w*>/g).join("").length;
+	const fg = (c: string, s: string) => `<${c}>${s}</>`;
+	const [cima = "", baixo] = stickyLinhas("❯ arrume o login  23:58", 40, tr, me, (s) => `[${s}]`, fg);
+	assert.equal(cima, `  <accent>▎ você</><dim> · 23:58</>${" ".repeat(40 - 16)}`);
+	assert.equal(me(cima), 40);
+	assert.equal(
+		baixo,
+		stickyLine("❯ arrume o login  23:58", 40, tr, me, (s) => `[${s}]`),
+	);
+	assert.equal(stickyLinhas("sem hora", 30, tr, me, (s) => s, fg)[0]?.trimEnd(), "  <accent>▎ você</>");
+});
+
+// Bug (owner, 2026-11-19): a one-line prompt arrives as `133;B 133;C 133;A text` and the sticky did not find it.
+test("findSticky acha prompt de uma linha (B e C antes do A na mesma linha)", () => {
+	const l = ["x", `${BC}${A} ❯ arrume o login  23:58`, "resposta 1", "resposta 2", "resposta 3"];
+	assert.deepEqual(findSticky(l, 3, userMatcher(["arrume o login"]), strip), {
+		row: 1,
+		text: "❯ arrume o login  23:58",
+	});
 });

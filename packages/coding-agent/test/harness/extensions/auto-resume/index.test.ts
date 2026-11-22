@@ -2,13 +2,15 @@
 // handler and `harness.autoResume` / NYCODE_AUTO_RESUME). HOME points at an empty directory so the HUD usage cache of
 // the machine running the tests never feeds the account-limit wait.
 import { strict as assert } from "node:assert";
-import { mkdtempSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, it } from "vitest";
+import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";
 import autoResumeExtension, {
 	decideResume,
+	delayText,
+	jitter,
 	limitReset,
 	markLimit,
 	sleep,
@@ -25,7 +27,12 @@ const waiter =
 type Handlers = Record<string, any>;
 
 /** Loads the extension against a fake API and returns the handlers it registered, by event name. */
-function load(wait: typeof sleep, now?: () => number, settings: unknown = {}): Handlers {
+function load(
+	wait: typeof sleep,
+	now?: () => number,
+	settings: unknown = {},
+	rand: () => number = () => 0.5, // jitter factor 1.0: waits stay exact
+): Handlers {
 	const handlers: Handlers = {};
 	register(
 		{
@@ -36,6 +43,7 @@ function load(wait: typeof sleep, now?: () => number, settings: unknown = {}): H
 		} as unknown as ExtensionAPI,
 		wait,
 		now,
+		rand,
 	);
 	return handlers;
 }
@@ -236,7 +244,16 @@ describe("auto-resume", () => {
 		assert.deepEqual(waits, [660_000], "header do 429 sobrevive a um 200 sem headers de limite");
 		assert.equal(out.continue, true);
 		assert.equal(out.entries.at(-1).customType, "auto-resume-limit");
-		assert.match(status[0][1], /limit/);
+		assert.match(status[0][1], /^⏸ limite de uso da conta · retoma sozinho às \d{2}:\d{2} · esc cancela$/);
+		assert.match(
+			notes[0][0],
+			/^\u2063\u2063Limite de uso da conta atingido\na conversa retoma sozinha às .* · esc cancela$/,
+		);
+		assert.equal(
+			notes[0][1],
+			"info",
+			"caixa com fundo de aviso: o módulo de avisos só desenha a caixa em notify info",
+		);
 		assert.equal(status.at(-1)[1], undefined);
 		assert.equal(notes.length, 1);
 	});
@@ -297,8 +314,8 @@ describe("auto-resume", () => {
 			process.stderr.write = write;
 		}
 		assert.equal(notes[0][1], "warning");
-		assert.match(notes[0][0], /gave up after 3 waits/);
-		assert.match(errs.join(""), /gave up after 3 waits/);
+		assert.match(notes[0][0], /desistiu após 3 esperas/);
+		assert.match(errs.join(""), /desistiu após 3 esperas/);
 	});
 
 	it("handler: Esc durante a espera descarta os headers usados (a próxima espera não herda o reset antigo)", async () => {
@@ -394,5 +411,182 @@ describe("auto-resume", () => {
 		process.env.NYCODE_AUTO_RESUME = "1";
 		assert.equal((await settle({ harness: { autoResume: false } })).continue, true);
 		assert.deepEqual(waits, [30_000]);
+	});
+
+	it("503: a linha de status mostra a tentativa e o atraso", async () => {
+		const status: any[] = [];
+		const handler = load(async () => true).agent_before_settle;
+		await handler(
+			{ entries: [] },
+			{ sessionManager: { getBranch: () => [err("503")] }, ui: { setStatus: (...a: any[]) => status.push(a) } },
+		);
+		assert.equal(status[0][1], "↻ nova tentativa em 30s · 1 de 5 · esc cancela");
+	});
+
+	it("cartão de limite: atualiza o mesmo cartão, só redesenha se o valor mudou e não exibe a instrução interna", async () => {
+		vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+		try {
+			let tempo = NOW;
+			let renders = 0;
+			let terminar!: (ok: boolean) => void;
+			let cartao: any;
+			const tema = { fg: (_c: string, x: string) => x, bg: (_c: string, x: string) => x, bold: (x: string) => x };
+			const h = load(
+				() =>
+					new Promise((res) => {
+						terminar = res;
+					}),
+				() => tempo,
+			);
+			await h.after_provider_response({ status: 429, headers: { "retry-after": "840" } }); // ignores the local HUD cache
+			const marcado = markLimit(LIMIT)!;
+			const responder = h.agent_before_settle(
+				{ entries: [] },
+				{
+					hasUI: true,
+					sessionManager: { getBranch: () => [err(marcado)] },
+					// The avisos module delivers the card by the global signal read during the synchronous notify.
+					ui: {
+						notify: () => {
+							cartao = (globalThis as Record<symbol, any>)[Symbol.for("nycode-harness:cartao-limite")];
+							cartao.redesenhar = () => renders++;
+						},
+					},
+				},
+			);
+			assert.ok(cartao, "o cartão é entregue no notify síncrono");
+			const inicial = cartao.linhas(tema).join("\n");
+			assert.match(inicial, /retoma às \d{2}:\d{2} · faltam \d+ min/);
+			assert.doesNotMatch(inicial, /│/);
+			const primeiro = renders;
+			vi.advanceTimersByTime(250);
+			assert.equal(renders, primeiro);
+			tempo += 120_000;
+			vi.advanceTimersByTime(250);
+			assert.equal(renders, primeiro + 1);
+			assert.notEqual(cartao.linhas(tema).join("\n"), inicial);
+			terminar(true);
+			const out = await responder;
+			assert.equal(out.entries[0].display, false);
+			assert.match(cartao.linhas(tema).join("\n"), /retomou às \d{2}:\d{2}/);
+			const ultimo = renders;
+			vi.advanceTimersByTime(60_000);
+			assert.equal(renders, ultimo, "o timer foi removido");
+		} finally {
+			vi.useRealTimers();
+		}
+	});
+
+	it("delayText: minutos só quando exatos, senão segundos", () => {
+		assert.equal(delayText(30_000), "30s");
+		assert.equal(delayText(90_000), "90s");
+		assert.equal(delayText(180_000), "3 min");
+		assert.equal(delayText(600_000), "10 min");
+	});
+
+	// Bug seen by the owner (2026-11-14): during the account-limit wait, esc, ctrl+c and "send now" did nothing: the
+	// agent run is over and ctx.signal is undefined, so the extension listens to the keyboard and the queue itself.
+	it("espera cancelável: esc, ctrl+c ou mensagem na fila acordam a espera, sem retomar", async () => {
+		for (const acordar of ["\x1b", "\x03", "\x1b[27u", "\x1b[99;5u", "fila"] as const) {
+			let sinal: AbortSignal | undefined;
+			let ouvinte: ((d: string) => unknown) | undefined;
+			let soltou = 0;
+			let fila = false;
+			const h = load(
+				(ms: number, sg?: AbortSignal) => {
+					sinal = sg;
+					return sleep(ms, sg);
+				},
+				() => NOW,
+			);
+			const status: any[] = [];
+			const ctx = {
+				sessionManager: { getBranch: () => [err("503")] },
+				signal: undefined,
+				hasPendingMessages: () => fila,
+				ui: {
+					setStatus: (...a: any[]) => status.push(a),
+					onTerminalInput: (f: (d: string) => unknown) => {
+						ouvinte = f;
+						return () => {
+							soltou++;
+						};
+					},
+				},
+			};
+			const p = h.agent_before_settle({ entries: [] }, ctx);
+			await new Promise((res) => setTimeout(res, 5));
+			assert.ok(sinal && !sinal.aborted && ouvinte, acordar);
+			assert.equal(ouvinte?.("a"), undefined); // another key goes on to the editor and does not cancel
+			assert.equal(sinal?.aborted, false);
+			if (acordar === "fila") fila = true;
+			else ouvinte?.(acordar);
+			assert.equal(
+				await Promise.race([p, new Promise((res) => setTimeout(() => res("travou"), 1500))]),
+				undefined,
+				acordar,
+			);
+			assert.equal(soltou, 1);
+			assert.deepEqual(status.at(-1), ["auto-resume", undefined]);
+		}
+	});
+
+	const user = { type: "message", message: { role: "user", content: "novo prompt" } };
+
+	it("F1: prompt novo do usuário zera o contador de retomadas (503 e limite)", () => {
+		const e = err("503 status code (no body)");
+		const esgotado = Array.from({ length: 5 }, () => [e, resumed]).flat();
+		assert.equal(decideResume([...esgotado, e]).action, "give_up", "sem prompt novo continua desistindo");
+		const d: any = decideResume([...esgotado, e, user, e]);
+		assert.equal(d.action, "resume");
+		assert.equal(d.attempt, 1);
+		const le = err(markLimit(LIMIT)!);
+		const lim = { type: "custom_message", customType: "auto-resume-limit", content: "x" };
+		const gastos = Array.from({ length: 3 }, () => [le, lim]).flat();
+		assert.equal(decideResume([...gastos, le], {}, { now: NOW }).action, "give_up");
+		assert.equal((decideResume([...gastos, le, user, le], {}, { now: NOW }) as any).attempt, 1);
+	});
+
+	it("F15: jitter ±20% com aleatoriedade injetável; limites exatos", () => {
+		assert.equal(
+			jitter(100_000, () => 0),
+			80_000,
+		);
+		assert.equal(
+			jitter(100_000, () => 0.5),
+			100_000,
+		);
+		assert.ok(jitter(100_000, () => 0.999999) <= 120_000);
+		assert.ok(jitter(100_000, () => 0.999999) > 119_000);
+	});
+
+	it("F15: o handler espera o atraso com jitter nas retomadas por erro", async () => {
+		const waits: number[] = [];
+		const h = load(
+			waiter(waits, true),
+			() => NOW,
+			{},
+			() => 0,
+		);
+		await h.agent_before_settle({ entries: [] }, { sessionManager: { getBranch: () => [err("503")] } });
+		assert.deepEqual(waits, [24_000]);
+	});
+
+	it("F16: o cache do HUD só entra na espera pelo limite da conta; erro 503 não o consulta", async () => {
+		const dir = join(process.env.HOME as string, ".claude", "plugins", "claude-hud");
+		mkdirSync(dir, { recursive: true });
+		writeFileSync(
+			join(dir, "usage-cache.json"),
+			JSON.stringify({ data: { fiveHour: { resetAt: new Date(NOW + 600_000).toISOString() } } }),
+		);
+		const waits: number[] = [];
+		const h = load(
+			waiter(waits, true),
+			() => NOW,
+			{},
+			() => 0.5,
+		);
+		await h.agent_before_settle({ entries: [] }, { sessionManager: { getBranch: () => [err("503")] } });
+		assert.deepEqual(waits, [30_000], "503: o atraso é o do erro, sem consultar o cache");
 	});
 });

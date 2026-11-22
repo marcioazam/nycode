@@ -1,6 +1,7 @@
 import { Box, Container, Markdown, type MarkdownTheme, MouseRegion, Spacer, Text } from "@nycode/tui";
 import type { MarkdownTransformer } from "../../../core/extensions/types.ts";
 import type { CompactionSummaryMessage } from "../../../core/messages.ts";
+import * as avisos from "../avisos/index.ts";
 import { getMarkdownTheme, theme } from "../theme/theme.ts";
 import { keyText } from "./keybinding-hints.ts";
 import { createMarkdownTransform } from "./markdown-transform.ts";
@@ -89,6 +90,7 @@ export class CompactionSummaryMessageComponent extends Box {
 			);
 		}
 
+		avisos.compactacao(content, this); // nycode: K17
 		this.addChild(
 			new MouseRegion(content, (event) => {
 				if (event.type !== "click" || event.button !== "left") return undefined;

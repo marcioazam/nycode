@@ -139,6 +139,9 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
 | extension | claude-compat | core | Base de modos de permissão, vim e aliases do editor; biblioteca ainda sem fábrica (D-56, parte 1) |
 | extension | chat-margin | core | Margem do texto nos blocos com fundo do chat (D-56) |
+| extension | bash-main-guard | core | Na sessão principal interativa o bash não prende o turno: padrão de 120 s, teto de 600 s, sleep longo e laço de consulta recusados, `run wait` limitado a 30 s (D-57) (D-56) |
+| extension | avisos | core | Dono dos sinais de fim de turno: notificação, som, progresso na aba do terminal e o painel `/avisos` (D-56) |
+| extension | comandos | core | Paleta do `/` em pt-BR, painel `?` e `/atalhos` (ver, buscar e mudar atalhos); a ponte `__nycodeHarnessComandos` serve o editor (D-56) |
 | extension | contexto | core | Limite de compactação por sessão (`/contexto 400k`, restaurado ao retomar) e resumo anterior condensado quando passa de `NYCODE_COMPACT_SUMMARY_MAX` caracteres (D-57, D-58) (D-56) |
 | extension | diagnostico | core | Registro de erros e avisos internos, trilha de spans (OTel) e `/doctor`; `/diagnostico` ou ctrl+e abre o modal e o rodapé mostra só a contagem (D-56) |
 | extension | code-blocks | core | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) |
@@ -183,7 +186,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | travar-modelos | core | Trava global de modelos e esforços (D-56) |
 | extension | ui | ui | Editor, acessibilidade, `/diff` |
 | extension | ui-visual | ui | Cabeçalho e ícones |
-| extension | up-dequeue | ui | Seta para cima restaura a fila |
+| extension | up-dequeue | ui | Fila de mensagens em português (Variante C: editar, excluir, enviar agora); a seta para cima fica só com o histórico |
 | extension | web | core | `web_fetch` ligado por padrão como no nycode-harness; `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1` (D-52; era `optional`, desligada, e o `no-web-search` do nycode-harness, que a 03 listava como `core`, foi removido pela D-10 e substituído por essa regra) |
 | hook | claims | core | Afirmação sem evidência |
 | hook | dispatch | core | Despachante dos hooks |
