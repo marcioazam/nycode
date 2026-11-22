@@ -650,8 +650,12 @@ claude-home/bin/pi-session | packages/coding-agent/resources/bin/nycode-session 
 claude-home/bin/session-transport/tests/support.py | packages/coding-agent/resources/bin/session-transport/tests/transport_support.py | converter | F8 | R19
 claude-home/bin/telemetry/pi_telemetry.py | packages/coding-agent/resources/bin/telemetry/nycode_telemetry.py | converter | F8 | R16
 claude-home/bin/telemetry/test_pi_telemetry.py | packages/coding-agent/resources/bin/telemetry/test_nycode_telemetry.py | converter | F8 | R16
+claude-home/bin/tests/interactive-display/native-frame.test.ts | packages/coding-agent/test/harness/ui-display/native/native-frame.test.ts | converter | F8 | R20
+claude-home/bin/tests/interactive-display/native-harness.ts | packages/coding-agent/test/harness/ui-display/native/native-harness.ts | converter | F8 | R20
+claude-home/bin/tests/interactive-display/native-panels.test.ts | packages/coding-agent/test/harness/ui-display/native/native-panels.test.ts | converter | F8 | R20
 claude-home/bin/tests/interactive-input/async-default-routing.test.ts | packages/coding-agent/test/harness/subagent/detach/async-default-routing.test.ts | converter | F8 | R15
 claude-home/bin/tests/interactive-input/detach-capacity.test.ts | packages/coding-agent/test/harness/subagent/detach/detach-capacity.test.ts | converter | F8 | R15
+claude-home/bin/tests/interactive-input/native-cli-e2e.test.ts | packages/coding-agent/test/harness/ui-display/native/native-cli-e2e.test.ts | converter | F8 | R15
 claude-home/bin/tests/interactive-input/root-routing-integration.test.ts | packages/coding-agent/test/harness/subagent/routing/root-routing.test.ts | converter | F8 | R15
 claude-home/bin/tests/lifecycle/mcp-header.test.sh | packages/coding-agent/resources/bin/test_mcp_header.py | converter | F8 | R15
 claude-home/bin/tests/pi-ui-final-gate.sh | scripts/harness/ui-gates/nycode-ui-final-gate.sh | converter | F7 | E28

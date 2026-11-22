@@ -1,7 +1,7 @@
-<!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main 3981d9d (1485 arquivos) e da lista da onda 9 (44 arquivos). Não editar à mão. -->
+<!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main 3981d9d (1485 arquivos) e da lista da onda 9 (48 arquivos). Não editar à mão. -->
 # Anexo E: resumo do mapa por regra
 
-Total de arquivos no mapa: **1529** (1485 do nycode-harness e 44 da onda 9). Arquivos sem regra: **0**.
+Total de arquivos no mapa: **1533** (1485 do nycode-harness e 48 da onda 9). Arquivos sem regra: **0**.
 Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arquivo-a-arquivo.tsv).
 
 | Regra | Arquivos | Padrão de origem | Destino | Ação | Fase |
@@ -106,8 +106,8 @@ Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arq
 | R16 | 14 | `^claude-home/bin/(checks\|doctor\|telemetry)/(.+)$` | `packages/coding-agent/resources/bin/$1/$2` | converter | F8 |
 | R17 | 3 | `^claude-home/bin/(git-deliver\|mcp-header\.sh\|pi-image\.mjs)$` | `packages/coding-agent/resources/bin/$1` | converter | F8 |
 | R19 | 11 | `^claude-home/bin/(session-transport/.+)$` | `packages/coding-agent/resources/bin/$1` | converter | F8 |
-| R20 | 4 | `^claude-home/bin/tests/interactive-display/(.+\.test\.ts)$` | `packages/coding-agent/test/harness/ui-display/$1` | converter | F8 |
-| R15 | 8 | `^claude-home/bin/(.+)$` | `scripts/harness/$1` | converter | F8 |
+| R20 | 7 | `^claude-home/bin/tests/interactive-display/(.+\.test\.ts)$` | `packages/coding-agent/test/harness/ui-display/$1` | converter | F8 |
+| R15 | 9 | `^claude-home/bin/(.+)$` | `scripts/harness/$1` | converter | F8 |
 | T01 | 1 | `^patches/third-party/pi-lsp\.patch$` | `packages/coding-agent/src/extensions/lsp/` | absorver | F9 |
 | T02 | 2 | `^patches/third-party/(ponytail\|ralph-loop)\.patch$` | `embutido no core a partir do fork marcioazam/$1 (D-11, D-54)` | absorver | F9 |
 | T03 | 1 | `^third-party\.json$` | `NOTICE + pacotes opcionais (D-11)` | remover | F9 |
@@ -126,7 +126,7 @@ Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arq
 | F5 | 0 | 5 | 0 | 6 | 13 | 24 |
 | F6 | 0 | 19 | 0 | 13 | 2 | 34 |
 | F7 | 33 | 31 | 1 | 4 | 7 | 76 |
-| F8 | 9 | 381 | 0 | 2 | 1 | 393 |
+| F8 | 9 | 385 | 0 | 2 | 1 | 397 |
 | F9 | 0 | 0 | 0 | 3 | 1 | 4 |
 | F11 | 0 | 0 | 0 | 0 | 6 | 6 |
-| **Total** | 90 | 1353 | 11 | 34 | 41 | **1529** |
+| **Total** | 90 | 1357 | 11 | 34 | 41 | **1533** |

@@ -52,6 +52,7 @@ mudanças não commitadas), em `/tmp/pi-harness-snap-20261122` com `MANIFEST.sha
 | `bin/` parte 1: `hud` (`calm`, usage), `checks`, `puxar`, `mcp-header.sh`, `fonte-icones.py` | 18/20 | feito | #363 |
 | `bin/` parte 2: `session-transport` (`nycode-session`), `evals/harbor`, `mcp-header` testado, testes de display e roteamento | — | em curso | — |
 | Remoção de `import/ny-pi/` e do braço `omp` do bench | — | em curso | — |
+| Testes nativos em tmux (`native-harness`, `native-frame`, `native-panels`, `native-cli-e2e`) | 4/4 | feito: `test/harness/ui-display/native/` | — |
 | `docs/` | 2/10 | só o que um texto embarcado cita (coberto por #349 e #351) | — |
 
 ## Fora, com o motivo
@@ -61,7 +62,6 @@ mudanças não commitadas), em `/tmp/pi-harness-snap-20261122` com `MANIFEST.sha
 - `lifecycle/supervisor.sh`, `lifecycle/test_supervisor.sh`: substituídos pelo K24.
 - `lifecycle/patches-manifest.sh`, `lifecycle/patches.sha256` e seus testes: só serviam aos patches do pi.
 - Testes de `bin/tests` cobertos ou redundantes: `avisos-core/*`, `retomada-core`, `send-now-apply`, `send-now-runtime` (cobertos pelos testes de K17, K20 e K22); `claude-compat/*` (`sdk-hooks`, `sdk-register`, `with-sdk`, `coverage-map`, `pycov`: ferramentas do SDK gerenciado e de cobertura); `extensions-contract/*`; `headless-lean.test.ts` e `lifecycle/*`; `tests/no-context-files` (D-10).
-- Testes `native-*` (`native-frame`, `native-panels`, `native-harness`, `native-cli-e2e`): abrem o CLI real em tmux; pendência do gate final.
 - `claims.py`: não é chamado por hook; fica como referência do `check-instructions.py`.
 - `claude-compat/background/` e `test/acceptance/` (D-56).
 
