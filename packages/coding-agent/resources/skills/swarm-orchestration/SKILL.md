@@ -22,8 +22,8 @@ How nycode picks a subagent's model (nycode `src/extensions/subagent/`): the `su
 resolved by the first available model id that contains it, which picks the oldest tier (`sonnet` became
 `claude-sonnet-4-5`, refused with a 404, on 2026-11-11), so pins use concrete ids; otherwise the child runs on
 `CLAUDE_CODE_SUBAGENT_MODEL` when that variable is set (not for the built-ins `Explore` and `Plan`), else on the session
-model. Pins today (2026-11-11, every agent pinned): `Explore`, `gate-runner`, `git-delivery`, `code-mapper`, `research-scout`, `linear-operator`, `egm-structural`, `impeccable-manual-edit-applier` = `anthropic/claude-haiku-5-5`; every other agent =
-`anthropic/claude-sonnet-5-5`; when a new tier ships, update these ids. So the tier is
+model. Pins today (2026-11-15, every agent pinned, user decision): every agent =
+`anthropic/claude-sonnet-5-5` (the former Haiku pins moved to Sonnet); when a new tier ships, update these ids. So the tier is
 chosen by choosing the agent. Changing a pin is a harness change (edit `${NYCODE_RESOURCES}/agents/<name>.md`), not a
 per-task routing step; never edit agent files mid-task to change a tier.
 
@@ -32,7 +32,7 @@ agent), not by this table.
 
 ## Thinking level
 
-nycode has no per-call effort either. A child runs at its agent file's `effort:` (mapped 1:1 to nycode's thinking level,
+Without a routing policy nycode has no per-call effort either. A child runs at its agent file's `effort:` (mapped 1:1 to nycode's thinking level,
 appended as `model:level` when a model is pinned) or, without one, at nycode's `defaultThinkingLevel` (`medium` unless
 `~/.nycode/agent/settings.json` sets it). Rules for agent files and for the main session's thinking level:
 - High-risk work (the session row's list) never runs below its model's default level.

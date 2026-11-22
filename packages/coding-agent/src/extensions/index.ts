@@ -13,6 +13,7 @@ import commandsExtension from "./commands/index.ts";
 import completionGateExtension from "./completion-gate/index.ts";
 import contextImportsExtension from "./context-imports/index.ts";
 import contextUsageExtension from "./context-usage/index.ts";
+import contextoExtension from "./contexto/index.ts";
 import devCommandsExtension from "./dev-commands/index.ts";
 import diagnosticoExtension from "./diagnostico/index.ts";
 import docsPointerExtension from "./docs-pointer/index.ts";
@@ -70,6 +71,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "commands", factory: commandsExtension, builtin: true },
 	{ name: "context-imports", factory: contextImportsExtension, builtin: true },
 	{ name: "context-usage", factory: contextUsageExtension, builtin: true },
+	{ name: "contexto", factory: contextoExtension, builtin: true },
 	{ name: "env-settings", factory: envSettingsExtension, builtin: true },
 	{ name: "git-checkpoint", factory: gitCheckpointExtension, builtin: true },
 	{ name: "goal", factory: goalExtension, builtin: true },

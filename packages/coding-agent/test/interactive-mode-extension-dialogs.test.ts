@@ -19,6 +19,7 @@ type DialogContext = {
 	programStatus: { setBlocked: ReturnType<typeof vi.fn> };
 	disposeActiveSelector: () => void;
 	toggleToolOutputExpansion: () => void;
+	addExtensionTerminalInputListener: () => () => void;
 };
 
 type DialogMethods = {
@@ -72,6 +73,8 @@ function createContext(): DialogContext & DialogMethods {
 		programStatus: { setBlocked: vi.fn() },
 		disposeActiveSelector: vi.fn(),
 		toggleToolOutputExpansion: vi.fn(),
+		// resetExtensionUI reinstalls send-now (K22) through this listener; not under test here.
+		addExtensionTerminalInputListener: () => () => {},
 	};
 	return new Proxy(context, {
 		get(target, key, receiver) {

@@ -1,4 +1,4 @@
-# Seams K1..K17 (docs/migration/nycode-core/08-sincronizacao-upstream.md, section 4; 02-arquitetura-alvo.md, section 4).
+# Seams K1..K23 (docs/migration/nycode-core/08-sincronizacao-upstream.md, section 4; 02-arquitetura-alvo.md, section 4).
 # Read by scripts/ci/seams/check-seams.sh. Fields, separated by " | ":
 #   id | files (space-separated; a directory is searched recursively) | marker pattern (ERE; it must not contain " | ") | test | state
 # state "ativa": the pattern must match in every file and the test must exist ("-" = no test yet, reported).
@@ -22,3 +22,9 @@ K14 | packages/coding-agent/src/config.ts | nycode: K14[[:space:]] | packages/co
 K15 | packages/tui/src/index.ts | nycode: K15[[:space:]] | packages/tui/test/image-line-export.test.ts | ativa
 K16 | packages/tui/src/components/editor.ts | nycode: K16[[:space:]] | packages/tui/test/editor-actions.test.ts | ativa
 K17 | packages/coding-agent/src/modes/interactive/interactive-mode.ts packages/coding-agent/src/modes/interactive/components/status-indicator.ts packages/coding-agent/src/modes/interactive/components/assistant-message.ts packages/coding-agent/src/modes/interactive/components/compaction-summary-message.ts | nycode: K17([[:space:]]|$) | packages/coding-agent/test/harness/modes/avisos/hooks.test.ts | ativa
+K18 | packages/coding-agent/src/core/settings-manager.ts | nycode: K18([[:space:]]|$) | packages/coding-agent/test/harness/core/compaction/session-limit.test.ts | ativa
+K19 | packages/coding-agent/src/modes/interactive/interactive-mode.ts | nycode: K19([[:space:]]|$) | packages/coding-agent/test/harness/modes/ui-controls/index.test.ts | ativa
+K20 | packages/coding-agent/src/modes/interactive/interactive-mode.ts | nycode: K20([[:space:]]|$) | packages/coding-agent/test/harness/modes/retomada/index.test.ts | ativa
+K21 | packages/tui/src/layout.ts | nycode: K21([[:space:]]|$) | packages/tui/test/scrollbar-image.test.ts | ativa
+K22 | packages/coding-agent/src/modes/interactive/interactive-mode.ts packages/coding-agent/src/core/keybindings.ts | nycode: K22([[:space:]]|$) | packages/coding-agent/test/harness/modes/send-now/index.test.ts | ativa
+K23 | packages/coding-agent/src/modes/interactive/interactive-mode.ts packages/coding-agent/src/core/session-manager.ts | nycode: K23([[:space:]]|$) | packages/coding-agent/test/harness/core/cwd-switch/index.test.ts | ativa

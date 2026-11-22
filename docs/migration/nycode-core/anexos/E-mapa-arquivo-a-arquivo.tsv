@@ -995,6 +995,13 @@ claude-home/commands/review-pr.md	packages/coding-agent/resources/commands/revie
 claude-home/commands/revise-claude-md.md	packages/coding-agent/resources/commands/revise-claude-md.md	converter	F8	R08
 claude-home/commands/skill-gen.md	packages/coding-agent/resources/commands/skill-gen.md	converter	F8	R08
 claude-home/commands/swarm.md	packages/coding-agent/resources/commands/swarm.md	converter	F8	R08
+claude-home/commands/batch.md	packages/coding-agent/resources/commands/batch.md	converter	F8	R08
+claude-home/commands/run.md	packages/coding-agent/resources/commands/run.md	converter	F8	R08
+claude-home/commands/run-skill-generator.md	packages/coding-agent/resources/commands/run-skill-generator.md	converter	F8	R08
+claude-home/commands/statusline.md	packages/coding-agent/resources/commands/statusline.md	converter	F8	R08
+claude-home/commands/team-onboarding.md	packages/coding-agent/resources/commands/team-onboarding.md	converter	F8	R08
+claude-home/commands/update-config.md	packages/coding-agent/resources/commands/update-config.md	converter	F8	R08
+claude-home/commands/verify.md	packages/coding-agent/resources/commands/verify.md	converter	F8	R08
 claude-home/docs/agent-contract.md	docs/harness/agent-contract.md	converter	F8	D02
 claude-home/docs/context-economy-extensions-2026-11-12.md	docs/harness/context-economy-extensions-2026-11-12.md	converter	F8	D02
 claude-home/docs/external-eval-terminal-bench-2026-11-13.md	docs/harness/external-eval-terminal-bench-2026-11-13.md	converter	F8	D02

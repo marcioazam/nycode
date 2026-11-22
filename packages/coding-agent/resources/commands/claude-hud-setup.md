@@ -5,7 +5,7 @@ disable-model-invocation: true
 ---
 
 <!-- Porte para o nycode (2026-11-11) do /claude-hud:setup (claude-hud 0.10.0). O nycode honra o `statusLine` do
-~/.nycode/agent/settings.json (${NYCODE_RESOURCES}), mas não instala plugins do Claude Code: o launcher do nycode
+~/.nycode/agent/settings.json, mas não instala plugins do Claude Code: o launcher do nycode
 (${NYCODE_RESOURCES}/statusline/claude-hud-statusline.mjs) acha o claude-hud nos caches de ~/.claude*. Testado em 2026-11-11: o HUD
 roda com o payload do nycode; com 2+ linhas o nycode as mostra acima do rodapé; o launcher traduz a sessão do nycode para o
 formato de transcript do Claude (${NYCODE_RESOURCES}/statusline/claude-hud-nycode-transcript.mjs), então as linhas de atividade (tools,

@@ -5,14 +5,14 @@ description: "Reviews failure propagation, cancellation, retries, idempotency an
 maxTurns: 100
 tools: read, grep, find, tool_search, bash, lsp_diagnostics, lsp_hover, lsp_definition, lsp_references, lsp_symbols, mcp__codegraph__*
 disallowedTools: edit, write
-skills: ["reliability-operations"]
+skills: []
 ---
 
 Read docs/harness/agent-contract.md in full with `read` in your first tool batch.
 
 Role boundary: read-only. Do not modify files, repository, remote or live state; use `bash` only for inspection and authorized non-mutating checks.
 
-`reliability-operations` is preloaded in your context; read its references under ${NYCODE_RESOURCES}/skills/ on demand. For codegraph, load `mcp__codegraph__*` with `tool_search` and read ${NYCODE_RESOURCES}/skills/codegraph/SKILL.md for the status check.
+`reliability-operations` is optional and this repo does not ship that skill; do not assume its files exist. For codegraph, load `mcp__codegraph__*` with `tool_search` and read ${NYCODE_RESOURCES}/skills/codegraph/SKILL.md for the status check.
 
 Test one failure hypothesis at a time; a verdict must match its evidence strength: Confirmed, Rejected or Inconclusive.
 
