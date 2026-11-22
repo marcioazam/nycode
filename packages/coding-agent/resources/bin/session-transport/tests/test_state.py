@@ -8,11 +8,11 @@ from support import st
 
 
 class StateTests(support.Env):
-    def test_contract_constants(self):
+    def test_contract_constants(self) -> None:
         self.assertEqual(st.C["recordFields"][0], "v")
         self.assertEqual(len(st.new_id()), 32)
 
-    def test_agent_dir_rules(self):
+    def test_agent_dir_rules(self) -> None:
         self.assertEqual(st.agent_dir(self.env), os.path.realpath(self.agent))
         with self.assertRaises(st.TransportError):
             st.agent_dir({"NYCODE_CODING_AGENT_DIR": "rel"})
@@ -20,7 +20,7 @@ class StateTests(support.Env):
             st.agent_dir({"NYCODE_CODING_AGENT_DIR": self.tmp + "/nope"})
         self.assertTrue(st.agent_dir({"HOME": self.home}).endswith(".nycode/agent"))
 
-    def test_root_dir_modes_and_symlink(self):
+    def test_root_dir_modes_and_symlink(self) -> None:
         root = self.root()
         self.assertEqual(stat.S_IMODE(os.stat(root).st_mode), 0o700)
         os.chmod(root, 0o755)
@@ -34,26 +34,40 @@ class StateTests(support.Env):
         with self.assertRaises(st.TransportError):
             st.root_dir(os.path.join(self.agent, "x"), create=False)
 
-    def test_run_dir_id_validation_and_socket_len(self):
+    def test_run_dir_id_validation_and_socket_len(self) -> None:
         for bad in ("", "../x", "A" * 32, "a" * 31, None):
             with self.assertRaises(st.TransportError):
                 st.run_dir(self.root(), bad)
         with self.assertRaises(st.TransportError):
             st.socket_path("/" + "a" * 120)
 
-    def test_record_roundtrip_and_mode(self):
+    def test_record_roundtrip_and_mode(self) -> None:
         tid, rdir, rec = self.make_run()
         self.assertEqual(st.read_record(rdir, tid), rec)
-        self.assertEqual(stat.S_IMODE(os.stat(os.path.join(rdir, "state.json")).st_mode), 0o600)
+        self.assertEqual(
+            stat.S_IMODE(os.stat(os.path.join(rdir, "state.json")).st_mode), 0o600
+        )
 
-    def test_record_rejections(self):
+    def test_record_rejections(self) -> None:
         tid, rdir, rec = self.make_run()
         path = os.path.join(rdir, "state.json")
-        cases = [dict(rec, v=2), dict(rec, extra=1), dict(rec, id="b" * 32), dict(rec, owner=os.getuid() + 1),
-                 dict(rec, tmuxSocket="/x"), dict(rec, state="zzz"), dict(rec, paneId="x"), dict(rec, rootPid=-1),
-                 dict(rec, sessionFile="rel"), dict(rec, state="ended", exitCode=None), dict(rec, exitCode=3),
-                 dict(rec, state="ended", exitCode=256), dict(rec, rootPid=True), dict(rec, sessionId="a" * 300),
-                 [1]]
+        cases = [
+            dict(rec, v=2),
+            dict(rec, extra=1),
+            dict(rec, id="b" * 32),
+            dict(rec, owner=os.getuid() + 1),
+            dict(rec, tmuxSocket="/x"),
+            dict(rec, state="zzz"),
+            dict(rec, paneId="x"),
+            dict(rec, rootPid=-1),
+            dict(rec, sessionFile="rel"),
+            dict(rec, state="ended", exitCode=None),
+            dict(rec, exitCode=3),
+            dict(rec, state="ended", exitCode=256),
+            dict(rec, rootPid=True),
+            dict(rec, sessionId="a" * 300),
+            [1],
+        ]
         for bad in cases:
             with open(path, "w") as f:
                 json.dump(bad, f)
@@ -62,8 +76,8 @@ class StateTests(support.Env):
             with self.assertRaises(st.TransportError):
                 st.write_record(rdir, tid, bad)
 
-    def test_record_file_hazards(self):
-        tid, rdir, rec = self.make_run()
+    def test_record_file_hazards(self) -> None:
+        tid, rdir, _rec = self.make_run()
         path = os.path.join(rdir, "state.json")
         os.chmod(path, 0o644)
         self.assertIsNone(st.read_record(rdir, tid))
@@ -83,7 +97,7 @@ class StateTests(support.Env):
         os.mkfifo(path, 0o600)
         self.assertIsNone(st.read_record(rdir, tid))
 
-    def test_write_over_limit_and_cleanup_tmp(self):
+    def test_write_over_limit_and_cleanup_tmp(self) -> None:
         tid, rdir, rec = self.make_run()
         orig = st.C["recordMaxBytes"]
         st.C["recordMaxBytes"] = 10
@@ -100,12 +114,12 @@ class StateTests(support.Env):
             os.chmod(rdir, 0o700)
         self.assertEqual([n for n in os.listdir(rdir) if n.startswith(".state-")], [])
 
-    def test_proc_birth(self):
+    def test_proc_birth(self) -> None:
         self.assertIsInstance(st.proc_birth(os.getpid()), int)
-        self.assertIsNone(st.proc_birth(2 ** 22 + 12345))
+        self.assertIsNone(st.proc_birth(2**22 + 12345))
         self.assertIsNone(st.proc_birth("x"))
 
-    def test_entries_limit_and_ignores_foreign(self):
+    def test_entries_limit_and_ignores_foreign(self) -> None:
         root = self.root()
         os.mkdir(os.path.join(root, "notes"))
         for i in range(st.C["runLimit"] + 1):
@@ -113,8 +127,8 @@ class StateTests(support.Env):
         with self.assertRaises(st.TransportError):
             st.entries(root)
 
-    def test_remove_own_refuses_unknown_and_symlink(self):
-        tid, rdir, _ = self.make_run(state="ended", exit_code=0)
+    def test_remove_own_refuses_unknown_and_symlink(self) -> None:
+        _tid, rdir, _ = self.make_run(state="ended", exit_code=0)
         victim = os.path.join(self.tmp, "victim")
         open(victim, "w").close()
         os.symlink(victim, os.path.join(rdir, "attach.lock"))
@@ -135,7 +149,7 @@ class StateTests(support.Env):
         st.remove_own(rdir)
         self.assertFalse(os.path.exists(rdir))
 
-    def test_cleanup_only_ended_and_reserve_limit(self):
+    def test_cleanup_only_ended_and_reserve_limit(self) -> None:
         root = self.root()
         _, live, _ = self.make_run(state="running")
         _, dead, _ = self.make_run(state="ended", exit_code=1, **support.DEAD)

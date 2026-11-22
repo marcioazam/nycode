@@ -1,14 +1,15 @@
 import json
 import os
-from pathlib import Path
 import signal
 import subprocess
 import sys
 import time
 import unittest
+from pathlib import Path
+from typing import Any
 
 import support
-from support import st, CODE
+from support import CODE, st
 
 BOOT = os.path.join(CODE, "bootstrap.py")
 FAKE_TMUX = r"""#!/bin/sh
@@ -25,7 +26,7 @@ esac
 
 
 class BootstrapTests(support.Env):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.fake = os.path.join(self.tmp, "faketmux")
         support.write_exec(self.fake, FAKE_TMUX)
@@ -34,70 +35,124 @@ class BootstrapTests(support.Env):
         self.tid = st.new_id()
         self.rdir = st.run_dir(self.root(), self.tid, create=True)
 
-    def spawn(self, payload, **extra):
+    def spawn(self, payload: Any, **extra: Any) -> Any:
         data = payload if isinstance(payload, bytes) else json.dumps(payload).encode()
         with open(self.payload, "wb") as f:
             f.write(data)
-        env = dict(self.env, NYCODE_SESSION_TMUX=self.fake, FAKE_LOG=self.log, FAKE_PAYLOAD=self.payload,
-                   TMUX_PANE="%7", **extra)
-        return subprocess.Popen([sys.executable, BOOT, self.tid, self.rdir], env=env,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        env = dict(
+            self.env,
+            NYCODE_SESSION_TMUX=self.fake,
+            FAKE_LOG=self.log,
+            FAKE_PAYLOAD=self.payload,
+            TMUX_PANE="%7",
+            **extra,
+        )
+        return subprocess.Popen(
+            [sys.executable, BOOT, self.tid, self.rdir],
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
 
-    def run_boot(self, payload, **extra):
+    def run_boot(self, payload: Any, **extra: Any) -> Any:
         p = self.spawn(payload, **extra)
         out, err = p.communicate(timeout=20)
         return p.returncode, out, err, st.read_record(self.rdir, self.tid)
 
-    def calls(self):
+    def calls(self) -> Any:
         with open(self.log) as f:
             return f.read().split()
 
-    def test_exit_code_table(self):
-        for sh, want in (("exit 0", 0), ("exit 7", 7), ("kill -9 $$", 137), ("kill -15 $$", 143)):
+    def test_exit_code_table(self) -> None:
+        for sh, want in (
+            ("exit 0", 0),
+            ("exit 7", 7),
+            ("kill -9 $$", 137),
+            ("kill -15 $$", 143),
+        ):
             rc, out, err, rec = self.run_boot({"argv": ["sh", "-c", sh]})
-            self.assertEqual((rc, rec["state"], rec["exitCode"]), (want, "ended", want), sh)
+            self.assertEqual(
+                (rc, rec["state"], rec["exitCode"]), (want, "ended", want), sh
+            )
             self.assertEqual((out, err, rec["paneId"]), (b"", b"", "%7"))
             self.assertEqual(rec["panePid"], rec["panePid"])
 
-    def test_handoff_order_buffer_deleted_and_marker(self):
+    def test_handoff_order_buffer_deleted_and_marker(self) -> None:
         out = os.path.join(self.tmp, "marker")
-        rc, *_ = self.run_boot({"argv": ["sh", "-c", 'printf %s "$NYCODE_SESSION_TRANSPORT_ID:$NYCODE_SESSION_TMUX" > "$1"', "x", out]})
+        rc, *_ = self.run_boot(
+            {
+                "argv": [
+                    "sh",
+                    "-c",
+                    'printf %s "$NYCODE_SESSION_TRANSPORT_ID:$NYCODE_SESSION_TMUX" > "$1"',
+                    "x",
+                    out,
+                ]
+            }
+        )
         self.assertEqual(rc, 0)
         self.assertEqual(self.calls(), ["wait-for", "save-buffer", "delete-buffer"])
-        self.assertEqual(Path(out).read_text(), self.tid + ":")  # marker só no filho; NYCODE_SESSION_TMUX removido
+        self.assertEqual(
+            Path(out).read_text(), self.tid + ":"
+        )  # marker só no filho; NYCODE_SESSION_TMUX removido
 
-    def test_argv_literal_with_canaries(self):
+    def test_argv_literal_with_canaries(self) -> None:
         canary = "$(touch /tmp/pst-pwn); `x` ;|&\n'\"*"
         out = os.path.join(self.tmp, "args")
-        rc, *_ = self.run_boot({"argv": ["sh", "-c", 'printf %s "$2" > "$1"', "x", out, canary]})
+        _rc, *_ = self.run_boot(
+            {"argv": ["sh", "-c", 'printf %s "$2" > "$1"', "x", out, canary]}
+        )
         self.assertEqual(Path(out).read_text(), canary)
         self.assertFalse(os.path.exists("/tmp/pst-pwn"))
         raw = Path(self.rdir, "state.json").read_text()
         self.assertNotIn("touch", raw)
 
-    def test_failures_by_stage(self):
+    def test_failures_by_stage(self) -> None:
         for fail in ("wait", "save"):
             rc, _, _, rec = self.run_boot({"argv": ["true"]}, FAKE_FAIL=fail)
-            self.assertEqual((rc, rec["state"], rec["exitCode"]), (70, "ended", 70), fail)
-        bad = (b"not json", b'{"argv": []}', b'{"argv": [1]}', b'[1]', b'{"argv": ["a\\u0000b"]}', b"\xff",
-               b'{"argv":["x"],"pad":"' + b"a" * (st.C["bootMaxBytes"] + 1) + b'"}')
+            self.assertEqual(
+                (rc, rec["state"], rec["exitCode"]), (70, "ended", 70), fail
+            )
+        bad = (
+            b"not json",
+            b'{"argv": []}',
+            b'{"argv": [1]}',
+            b"[1]",
+            b'{"argv": ["a\\u0000b"]}',
+            b"\xff",
+            b'{"argv":["x"],"pad":"' + b"a" * (st.C["bootMaxBytes"] + 1) + b'"}',
+        )
         for payload in bad:
             rc, _, _, rec = self.run_boot(payload)
             self.assertEqual((rc, rec["state"]), (70, "ended"), payload[:20])
         rc, _, _, rec = self.run_boot({"argv": ["/nonexistent/launcher"]})
         self.assertEqual((rc, rec["exitCode"]), (127, 127))
 
-    def test_bad_arguments_and_dirs(self):
-        self.assertEqual(subprocess.run([sys.executable, BOOT, "x"]).returncode, 70)
-        self.assertEqual(subprocess.run([sys.executable, BOOT, self.tid, self.tmp + "/none/" + self.tid]).returncode, 70)
+    def test_bad_arguments_and_dirs(self) -> None:
+        self.assertEqual(
+            subprocess.run([sys.executable, BOOT, "x"], check=False).returncode, 70
+        )
+        self.assertEqual(
+            subprocess.run(
+                [sys.executable, BOOT, self.tid, self.tmp + "/none/" + self.tid],
+                check=False,
+            ).returncode,
+            70,
+        )
         os.chmod(self.rdir, 0o500)
         try:
-            self.assertEqual(subprocess.run([sys.executable, BOOT, self.tid, self.rdir],
-                                            env=self.env).returncode, 70)
+            self.assertEqual(
+                subprocess.run(
+                    [sys.executable, BOOT, self.tid, self.rdir],
+                    env=self.env,
+                    check=False,
+                ).returncode,
+                70,
+            )
         finally:
             os.chmod(self.rdir, 0o700)
 
-    def wait_running(self):
+    def wait_running(self) -> Any:
         for _ in range(200):
             rec = st.read_record(self.rdir, self.tid)
             if rec and rec["state"] == "running":
@@ -105,8 +160,10 @@ class BootstrapTests(support.Env):
             time.sleep(0.05)
         self.fail("não ficou running")
 
-    def test_term_forwarded_once_and_normalized(self):
-        script = 'trap "echo t >> $1; sleep 0.3; exit 0" TERM; while :; do sleep 0.05; done'
+    def test_term_forwarded_once_and_normalized(self) -> None:
+        script = (
+            'trap "echo t >> $1; sleep 0.3; exit 0" TERM; while :; do sleep 0.05; done'
+        )
         mark = os.path.join(self.tmp, "terms")
         p = self.spawn({"argv": ["sh", "-c", script, "x", mark]})
         self.wait_running()
@@ -119,7 +176,7 @@ class BootstrapTests(support.Env):
         self.assertEqual(Path(mark).read_text().split(), ["t"])
         self.assertEqual(st.read_record(self.rdir, self.tid)["exitCode"], 143)
 
-    def test_sigint_noop_child_keeps_running_and_default_after_exec(self):
+    def test_sigint_noop_child_keeps_running_and_default_after_exec(self) -> None:
         mark = os.path.join(self.tmp, "int")
         script = 'echo $$ > "$1"; sleep 1; exit 4'
         p = self.spawn({"argv": ["sh", "-c", script, "x", mark]})
@@ -129,18 +186,22 @@ class BootstrapTests(support.Env):
         p.communicate(timeout=20)
         self.assertEqual(p.returncode, 4)
 
-    def test_fresh_record_identity_preserved(self):
-        script = 'sleep 0.5'
+    def test_fresh_record_identity_preserved(self) -> None:
+        script = "sleep 0.5"
         p = self.spawn({"argv": ["sh", "-c", script]})
         rec = self.wait_running()
-        upd = dict(rec, rootPid=4242, rootStart=99, sessionId="sid", sessionFile="/tmp/s.jsonl")
+        upd = dict(
+            rec, rootPid=4242, rootStart=99, sessionId="sid", sessionFile="/tmp/s.jsonl"
+        )
         st.write_record(self.rdir, self.tid, upd)
         p.communicate(timeout=20)
         end = st.read_record(self.rdir, self.tid)
-        self.assertEqual((end["rootPid"], end["sessionId"], end["state"]), (4242, "sid", "ended"))
+        self.assertEqual(
+            (end["rootPid"], end["sessionId"], end["state"]), (4242, "sid", "ended")
+        )
 
-    def test_unreadable_fresh_record_falls_back_to_base(self):
-        p = self.spawn({"argv": ["sh", "-c", 'sleep 0.5']})
+    def test_unreadable_fresh_record_falls_back_to_base(self) -> None:
+        p = self.spawn({"argv": ["sh", "-c", "sleep 0.5"]})
         self.wait_running()
         with open(os.path.join(self.rdir, "state.json"), "w") as f:
             f.write("garbage")

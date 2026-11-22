@@ -2,24 +2,30 @@
 
 Argumentos do usuário chegam só pelo buffer tmux nativo (nunca argv/arquivo/log). O supervisor existente continua
 dono de restart; aqui só se espera o launcher e se grava o código de saída."""
+
 import json
 import os
 import signal
 import subprocess
 import sys
+from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-import transport_state as st  # noqa: E402
+import transport_state as st
 
 C = st.C
 FAIL = 70  # falha de handoff/spawn (EX_SOFTWARE)
 
 
-def tmux(sock, *args, **kw):
-    return subprocess.run([kw.pop("tmux_bin", "tmux"), "-S", sock, "-f", "/dev/null", *args], **kw)
+def tmux(sock: Any, *args: Any, **kw: Any) -> Any:
+    return subprocess.run(
+        [kw.pop("tmux_bin", "tmux"), "-S", sock, "-f", "/dev/null", *args],
+        **kw,
+        check=False,
+    )
 
 
-def end_record(rdir, tid, code, base):
+def end_record(rdir: Any, tid: Any, code: Any, base: Any) -> None:
     """Lê o registro FRESCO (a raiz pode ter atualizado a identidade) e grava ended; sem sobrescrever identidade."""
     rec = st.read_record(rdir, tid) or base
     rec = dict(rec, state="ended", exitCode=code)
@@ -29,17 +35,41 @@ def end_record(rdir, tid, code, base):
         pass
 
 
-def handoff(sock, tmux_bin):
+def handoff(sock: Any, tmux_bin: Any) -> Any:
     """Espera o canal, captura o buffer em memória e o remove na hora. Retorna dict ou None."""
     try:
-        w = tmux(sock, "wait-for", C["channelName"], tmux_bin=tmux_bin, timeout=C["bootTimeoutSeconds"],
-                 stdin=subprocess.DEVNULL, capture_output=True)
+        w = tmux(
+            sock,
+            "wait-for",
+            C["channelName"],
+            tmux_bin=tmux_bin,
+            timeout=C["bootTimeoutSeconds"],
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+        )
         if w.returncode != 0:
             return None
-        p = tmux(sock, "save-buffer", "-b", C["bufferName"], "-", tmux_bin=tmux_bin,
-                 timeout=C["controlTimeoutSeconds"], stdin=subprocess.DEVNULL, capture_output=True)
-        tmux(sock, "delete-buffer", "-b", C["bufferName"], tmux_bin=tmux_bin,
-             timeout=C["controlTimeoutSeconds"], stdin=subprocess.DEVNULL, capture_output=True)
+        p = tmux(
+            sock,
+            "save-buffer",
+            "-b",
+            C["bufferName"],
+            "-",
+            tmux_bin=tmux_bin,
+            timeout=C["controlTimeoutSeconds"],
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+        )
+        tmux(
+            sock,
+            "delete-buffer",
+            "-b",
+            C["bufferName"],
+            tmux_bin=tmux_bin,
+            timeout=C["controlTimeoutSeconds"],
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+        )
     except (subprocess.SubprocessError, OSError):
         return None
     if p.returncode != 0 or len(p.stdout) > C["bootMaxBytes"]:
@@ -49,12 +79,16 @@ def handoff(sock, tmux_bin):
     except (ValueError, UnicodeDecodeError):
         return None
     argv = data.get("argv") if isinstance(data, dict) else None
-    if not isinstance(argv, list) or not argv or not all(isinstance(a, str) and "\x00" not in a for a in argv):
+    if (
+        not isinstance(argv, list)
+        or not argv
+        or not all(isinstance(a, str) and "\x00" not in a for a in argv)
+    ):
         return None
     return {"argv": argv}
 
 
-def main(argv, env=None):
+def main(argv: Any, env: Any = None) -> Any:
     env = dict(os.environ if env is None else env)
     if len(argv) != 2 or not st.valid_id(argv[0]):
         return FAIL
@@ -77,9 +111,9 @@ def main(argv, env=None):
         return FAIL
     child_env = {k: v for k, v in env.items() if k not in ("NYCODE_SESSION_TMUX",)}
     child_env[C["markerEnv"]] = tid
-    got = {"sig": 0, "child": None}
+    got: dict[str, Any] = {"sig": 0, "child": None}
 
-    def forward(signum, _frame):
+    def forward(signum: Any, _frame: Any) -> None:
         if got["sig"] == 0:  # no máximo uma vez, só ao filho próprio
             got["sig"] = signum
             if got["child"] is not None:
@@ -88,7 +122,9 @@ def main(argv, env=None):
                 except OSError:
                     pass
 
-    signal.signal(signal.SIGINT, lambda *_: None)  # o grupo já recebe INT; handler (não SIG_IGN) não cruza o exec
+    signal.signal(
+        signal.SIGINT, lambda *_: None
+    )  # o grupo já recebe INT; handler (não SIG_IGN) não cruza o exec
     signal.signal(signal.SIGTERM, forward)
     signal.signal(signal.SIGHUP, forward)
     try:
