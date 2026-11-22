@@ -10,7 +10,7 @@ data indicada, ou está marcado como não verificado.
 | Commit da origem | `git -C ~/source/ny-pi rev-parse origin/main` | `e4f8729` |
 | Commit do destino | `git -C ~/source/nycode-cli rev-parse origin/main` | `fb05db936` |
 | Arquivos rastreados na origem | `git -C ~/source/ny-pi ls-tree -r --name-only origin/main \| wc -l` | 1485 |
-| Mapa cobre todos os arquivos | `python3 anexos/gerar-mapa.py < lista; echo $?` | 0, 1485 linhas, 104 regras, todas usadas |
+| Mapa cobre todos os arquivos | `python3 anexos/gerar-mapa.py --onda9 anexos/E-onda9-caminhos.txt < lista; echo $?` | 0, 1529 linhas (1485 do ny-pi `3981d9d` e 44 da onda 9), 109 regras, todas usadas, 0 destino inexistente |
 | Destino é o fork do pi | `git log --oneline -8 origin/main` | `4ecc500eb feat: importa o pi (earendil-works/pi@073b0ba) com histórico`, `f523ebd25 feat: renomeia o fork do pi para nycode` |
 | Versão do fork | `npm view @earendil-works/pi-coding-agent version` e `packages/*/package.json` | 1.6.0 |
 | pi-code | `npm view pi-code version license repository.url` | 1.10.1 (a mais nova), MIT, `github.com/ilovepixelart/pi-code`; instalada: 1.7.0 |
