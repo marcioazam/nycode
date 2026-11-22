@@ -138,7 +138,7 @@ primeiras sincronizações.
 
 ## 4. Costuras
 
-Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 21 de
+Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 22 de
 [02, seção 4](02-arquitetura-alvo.md), mais as costuras do renome (seção 4.3).
 
 ### 4.1 Tabela de costuras K1..K22
