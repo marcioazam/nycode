@@ -97,7 +97,9 @@ function comTmp(nome: string, fn: (tmp: string, dir: string) => void) {
 	try {
 		fn(tmp, path.join(tmp, `nycode-images-${process.getuid?.() ?? 0}-${process.pid}`));
 	} finally {
-		process.env.TMPDIR = antigo;
+		// Assigning undefined would store the string "undefined" and send later temp files to ./undefined.
+		if (antigo === undefined) delete process.env.TMPDIR;
+		else process.env.TMPDIR = antigo;
 	}
 }
 const nomeDe = () => `${createHash("sha256").update(Buffer.from(PNG, "base64")).digest("hex").slice(0, 24)}.png`;
