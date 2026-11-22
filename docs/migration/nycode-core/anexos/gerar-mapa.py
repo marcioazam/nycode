@@ -29,7 +29,13 @@ RULES: list[tuple[str, str, str, str, str]] = [
     ),
     # Raiz e governança (F2)
     ("G01", r"^README\.md$", "README.md", "fundir", "F2"),
-    ("G02", r"^CHANGELOG\.md$", "docs/harness/CHANGELOG-nycode-harness.md", "mover", "F2"),
+    (
+        "G02",
+        r"^CHANGELOG\.md$",
+        "docs/harness/CHANGELOG-nycode-harness.md",
+        "mover",
+        "F2",
+    ),
     ("G03", r"^(CODE_OF_CONDUCT|SUPPORT)\.md$", r"\1.md", "mover", "F2"),
     ("G04", r"^(CONTRIBUTING|SECURITY)\.md$", r"\1.md", "fundir", "F2"),
     ("G05", r"^NOTICE$", "NOTICE", "fundir", "F2"),
