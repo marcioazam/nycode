@@ -197,7 +197,7 @@ test("busca por índice: não relê linhas fora das zonas", () => {
 // Lab /rolagem desenho 6 "Duas linhas" (owner, 2026-11-19): label `▎ você · hora` above the strip.
 test("stickyLinhas: rótulo você · hora em cima, sem fundo; faixa embaixo; ambas na largura", () => {
 	const tr = (s: string, w: number) => s.slice(0, w);
-	const me = (s: string) => s.replace(/<\/?\w*>/g, "").length;
+	const me = (s: string) => s.split(/<\/?\w*>/g).join("").length;
 	const fg = (c: string, s: string) => `<${c}>${s}</>`;
 	const [cima = "", baixo] = stickyLinhas("❯ arrume o login  23:58", 40, tr, me, (s) => `[${s}]`, fg);
 	assert.equal(cima, `  <accent>▎ você</><dim> · 23:58</>${" ".repeat(40 - 16)}`);
