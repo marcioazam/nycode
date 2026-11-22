@@ -289,10 +289,13 @@ unidade 0 avulsa não existe: a cópia congelada do #231 e o commit 1 do PR cump
 | Componente | Fixado em | Licença | Patch local | Destino | Fase |
 |---|---|---|---|---|---|
 | `pi-lsp` | npm 0.1.7 (integridade sha512 em `third-party.json`) | MIT | 4080 linhas | Extensão embutida `lsp` (cópia do pacote com o patch aplicado, mesmo método da seção 3.1) | F9 |
-| `ponytail` | git `ef8ca48` (v4.10.3) | MIT | 351 linhas | Pacote opcional instalado do fork `marcioazam/ponytail` (ramo `nycode`, commit `a75382e` = `ef8ca48` + patch); proposta ao autor: issue DietrichGebert/ponytail#1533 e PR #1534 (só a correção do matcher de subagent, sobre v5.3.3). Feito em F9 | F9 |
-| `ralph-loop` | claude-plugins-official `893173f` | Apache-2.0 | 26 linhas | Pacote opcional instalado do fork `marcioazam/ralph-loop` (`main` `9e7f895`: subtree de `plugins/ralph-loop` com histórico + a correção; o script virou `scripts/start-ralph-loop.sh`); o upstream não aceita PR externo, a correção foi comentada em anthropics/claude-plugins-official#748. Feito em F9 | F9 |
+| `ponytail` | git `ef8ca48` (v4.10.3) | MIT | 351 linhas | **Superado por D-54: embutido** (extensão `ponytail` em TypeScript e 6 skills, mesmo SHA). Era: pacote opcional instalado do fork `marcioazam/ponytail` (ramo `nycode`, commit `a75382e` = `ef8ca48` + patch); proposta ao autor: issue DietrichGebert/ponytail#1533 e PR #1534 (só a correção do matcher de subagent, sobre v5.3.3). Feito em F9 | F9 |
+| `ralph-loop` | claude-plugins-official `893173f` | Apache-2.0 | 26 linhas | **Superado por D-54: embutido** (`resources/ralph-loop/`, hook `Stop` padrão). Era: pacote opcional instalado do fork `marcioazam/ralph-loop` (`main` `9e7f895`: subtree de `plugins/ralph-loop` com histórico + a correção; o script virou `scripts/start-ralph-loop.sh`); o upstream não aceita PR externo, a correção foi comentada em anthropics/claude-plugins-official#748. Feito em F9 | F9 |
 | `pr-review-toolkit` | claude-plugins-official `893173f` | Apache-2.0 | nenhum | Pacote opcional instalado da origem com SHA fixo (`893173f`; o instalador clona o repositório inteiro e os agentes ficam em `plugins/pr-review-toolkit/agents/`). Feito em F9 | F9 |
 | `claude-red` | git `a8de813` | MIT | nenhum | Pacote opcional (já era opcional), instalado da origem com SHA fixo; a pasta `Skills/` pede a entrada `skills` em `settings.json` (79 skills). Feito em F9 | F9 |
+
+**Superado por D-54 para `ponytail` e `ralph-loop`:** os dois voltam a ser padrão (embutidos), o hook `Stop` do ralph-loop é padrão e a
+marca `(optional)` saiu dos comandos `ralph-*`. O parágrafo abaixo vale só para `pr-review-toolkit` e `claude-red`.
 
 Arquivos do nycode-harness que referenciam estes componentes e mudam junto: `claude-home/commands/ralph-loop.md`,
 `ralph-help.md`, `cancel-ralph.md`, `review-pr.md` (comandos que só funcionam com o pacote instalado: ficam marcados
@@ -306,7 +309,7 @@ faria.
 
 | Em `~/.pi/agent/` | Para `~/.nycode/agent/` | Regra |
 |---|---|---|
-| `settings.json` | `settings.json` | Chaves convertidas pela tabela de [02, seção 5](02-arquitetura-alvo.md#5-configuracao-e-variaveis-de-ambiente); `packages` perde `pi-code`, `./vendor/pi-lsp`; `./vendor/ponytail` vira a fonte do pacote opcional |
+| `settings.json` | `settings.json` | Chaves convertidas pela tabela de [02, seção 5](02-arquitetura-alvo.md#5-configuracao-e-variaveis-de-ambiente); `packages` perde `pi-code`, `./vendor/pi-lsp` e `./vendor/ponytail` (embutidos; `ponytail` pela D-54) |
 | `local.env` | `local.env` (carregador, D-52) e chaves em `settings.json` | As 9 chaves permitidas; o arquivo de origem fica intacto. O nycode lê `~/.nycode/agent/local.env` (ou `NYCODE_LOCAL_ENV`) no começo de `main` (K12), modo 0600/0400, valores literais, só as 9 chaves com nomes `NYCODE_*`, sem ler nada de `~/.pi`; como no `bin/pi` do nycode-harness, uma variável já definida no ambiente real **não** é sobrescrita. Precedência: ambiente real > `local.env` > `settings.json` > padrão. O `migrate from-pi` converte o `local.env` do pi em chaves de `settings.json` uma vez; se o `local.env` continuar existindo, vale o dele sobre o `settings.json` (mesma ordem de qualquer `NYCODE_*`), então os dois só divergem se o usuário editar um deles depois |
 | `claude-home/settings.json` (hooks, statusLine, env) | `settings.json` | Só as entradas que o usuário mudou em relação ao exemplo; o padrão já vem embarcado |
 | `mcp.json`, `models.json`, `lsp.json`, `keybindings.json` | iguais | Cópia; `mcp.json` e `models.json` nunca são sobrescritos se já existirem |

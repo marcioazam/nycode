@@ -12,6 +12,12 @@ const hook = (command: string, timeout: number) => ({ type: "command", command, 
 const guardHook = { ...hook(`python3 "${RES}/hooks/guard.py"`, 30), onFailure: "block" } as const;
 const graphContext = hook(`python3 "${RES}/hooks/graph_context.py"`, 10);
 const dispatch = hook(`bash "${RES}/hooks/dispatch/hook-dispatch.sh"`, 10);
+/** The embedded ralph-loop Stop hook (D-54). Inert without a loop state file; the guard skips a resources root that lacks
+ * the script, and an `if` (not `&&`) keeps the hook's own exit code. Needs bash, and jq once a loop is active. */
+const ralphLoopStop = hook(
+	`if [ -f "${RES}/ralph-loop/hooks/stop-hook.sh" ]; then bash "${RES}/ralph-loop/hooks/stop-hook.sh"; fi`,
+	10,
+);
 const impeccableGate = (timeout: number) => hook(`sh "${RES}/hooks/impeccable_gate.sh" hook`, timeout);
 
 /** Runtime defaults shared by settings accessors and the published JSON Schema. */
@@ -101,8 +107,8 @@ export const SETTINGS_DEFAULTS = {
 	notify: { sound: true },
 	// nycode: K4 hooks, statusLine and env defaults
 	// Hooks registered by default, run by the `hooks` extension (needs python3 and jq). A `hooks` entry in settings.json
-	// replaces the default list of that event; `"PreToolUse": []` turns the guard off. The ralph-loop Stop hook is a
-	// third-party package (F9); installing it registers no hooks, so docs/optional-packages.md has the settings entry.
+	// replaces the default list of that event; `"PreToolUse": []` turns the guard off. The embedded ralph-loop Stop hook
+	// (D-54) runs before the impeccable gate.
 	hooks: {
 		PreToolUse: [{ matcher: "Bash|Edit|Write|Read", hooks: [guardHook] }],
 		SessionStart: [{ matcher: "startup|resume|clear|compact", hooks: [graphContext, dispatch, impeccableGate(5)] }],
@@ -111,11 +117,18 @@ export const SETTINGS_DEFAULTS = {
 			{ matcher: "*", hooks: [dispatch] },
 			{ matcher: "Edit|Write", hooks: [impeccableGate(5)] },
 		],
-		Stop: [{ hooks: [impeccableGate(30)] }],
+		Stop: [{ hooks: [ralphLoopStop, impeccableGate(30)] }],
 	},
 	// Status line: the claude-hud launcher. It prints nothing until the claude-hud plugin is installed (/claude-hud-setup).
 	// A `statusLine` entry in settings.json replaces it; an empty `command` turns it off.
 	statusLine: { type: "command", command: `node "${RES}/statusline/statusline.mjs"` },
 	// Exported to every process by the `env-settings` extension; a `env` entry in settings.json adds to or overrides it.
-	env: { EIO_BACKEND: "posix" },
+	// PONYTAIL_*: the embedded ponytail extension (D-54). Rules reach only the writer subagents of the list below (an
+	// unanchored, case-insensitive regex over the agent name; agents of that list absent here simply never match).
+	env: {
+		EIO_BACKEND: "posix",
+		PONYTAIL_QUIET_STARTUP: "1",
+		PONYTAIL_SUBAGENT_MATCHER:
+			"^(swarm-worker|go-service-engineer|gateway-engineer|web-platform-engineer|terraform-specialist|zero-legado-builder|dependency-remediator|contract-engineer|test-author|docs-architect|lane-integrator|general-purpose)$",
+	},
 } as const;

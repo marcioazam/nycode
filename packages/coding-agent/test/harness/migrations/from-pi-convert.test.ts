@@ -28,11 +28,14 @@ describe("migrate from-pi conversion", () => {
 		expect(h.out.join("\n")).toContain("PONYTAIL_QUIET_STARTUP");
 	});
 
-	it("drops the embedded packages and reports ponytail for installation", async () => {
+	// D-54 supersedes D-11: ponytail is embedded, so its package entry is dropped and no install is asked for.
+	it("drops the embedded packages, ponytail included, and asks for no install", async () => {
 		const h = makeHome();
 		await h.run(["--apply"]);
 		expect(read(h.agentDir, "settings.json").packages).toEqual(["npm:some-other-package@1.0.0"]);
-		expect(h.out.join("\n")).toMatch(/install.*ponytail|ponytail.*install/i);
+		const text = h.out.join("\n");
+		expect(text).toMatch(/\.\/vendor\/ponytail is embedded in nycode/);
+		expect(text).not.toMatch(/nycode install/);
 	});
 
 	it("replaces literal mcp secrets with env placeholders and keeps the rest", async () => {

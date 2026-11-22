@@ -22,7 +22,7 @@ const ENV_MAPPINGS: EnvMapping[] = [
 	{ envKey: "PI_EFFORT_SANDWICH_TURNS", path: ["harness", "effortSandwich", "turns"], kind: "int" },
 ];
 
-/** Belongs to the optional ponytail package, which reads it from the environment: reported, never converted. */
+/** Read by the embedded ponytail extension from the environment (nycode's default is 1): reported, never converted. */
 const PACKAGE_ENV_KEY = "PONYTAIL_QUIET_STARTUP";
 
 const KNOWN_ENV_KEYS = new Set([...ENV_MAPPINGS.map((m) => m.envKey), PACKAGE_ENV_KEY]);
@@ -79,11 +79,9 @@ export interface SettingsConversion {
 	/** `ENV_KEY -> settings.path` lines for the plan; values are not included. */
 	converted: string[];
 	warnings: string[];
-	/** Packages the new core embeds (pi-code, pi-lsp) and removes from `packages`. */
+	/** Packages the new core embeds (pi-code, pi-lsp, ponytail) and removes from `packages`. */
 	embedded: string[];
-	/** Packages the user must install again as nycode packages. */
-	toInstall: string[];
-	/** The optional ponytail package env key, when it was set. */
+	/** The ponytail env key, when it was set. */
 	packageEnvKey: string | undefined;
 }
 
@@ -108,8 +106,7 @@ export function mergeSettings(existing: Json, incoming: Json): SettingsMerge {
 	return { settings, kept };
 }
 
-const EMBEDDED_PACKAGE = /^(npm:pi-code(@.*)?|\.\/vendor\/pi-lsp\/?)$/;
-const INSTALL_PACKAGE = /^\.\/vendor\/ponytail\/?$/;
+const EMBEDDED_PACKAGE = /^(npm:pi-code(@.*)?|\.\/vendor\/(pi-lsp|ponytail)\/?)$/;
 
 function packageSource(entry: unknown): string {
 	if (typeof entry === "string") return entry;
@@ -121,13 +118,11 @@ function packageSource(entry: unknown): string {
 export function convertSettings(piSettings: Json, env: LocalEnv): SettingsConversion {
 	const settings: Json = structuredClone(piSettings);
 	const embedded: string[] = [];
-	const toInstall: string[] = [];
 	if (Array.isArray(settings.packages)) {
 		const kept = settings.packages.filter((entry: unknown) => {
 			const source = packageSource(entry);
-			if (EMBEDDED_PACKAGE.test(source)) embedded.push(source);
-			else if (INSTALL_PACKAGE.test(source)) toInstall.push(source);
-			else return true;
+			if (!EMBEDDED_PACKAGE.test(source)) return true;
+			embedded.push(source);
 			return false;
 		});
 		if (kept.length > 0) settings.packages = kept;
@@ -152,7 +147,6 @@ export function convertSettings(piSettings: Json, env: LocalEnv): SettingsConver
 		converted,
 		warnings,
 		embedded,
-		toInstall,
 		packageEnvKey: PACKAGE_ENV_KEY in env.values ? PACKAGE_ENV_KEY : undefined,
 	};
 }

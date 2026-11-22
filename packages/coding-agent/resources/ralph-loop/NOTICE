@@ -1,0 +1,26 @@
+ralph-loop
+==========
+
+This repository is derived from the `ralph-loop` plugin published by Anthropic in
+https://github.com/anthropics/claude-plugins-official (directory plugins/ralph-loop, commit
+893173fb82a7184fcf3f08ae55930016d84fd588), licensed under the Apache License, Version 2.0 (see LICENSE).
+The history of that directory up to that commit is kept.
+
+Changes made to the original files (Apache-2.0, section 4(b)):
+
+- commands/ralph-loop.md: the raw command arguments are no longer pasted into the shell command line. They are
+  passed to scripts/start-ralph-loop.sh through a heredoc with a quoted delimiter, and `allowed-tools` names the new
+  script. Reason: a prompt containing shell metacharacters (`<promise>...</promise>`, `;`, `'`, `$(...)`) broke the
+  line or ran as shell code.
+- README.md: a note that this is a modified copy.
+
+Files added:
+
+- scripts/start-ralph-loop.sh: splits the raw arguments into words with Python's shlex and runs the unchanged
+  scripts/setup-ralph-loop.sh with them.
+- scripts/test-start-ralph-loop.sh: smoke test for the script above.
+
+Embedded in nycode (D-54) from marcioazam/ralph-loop commit 9e7f895c7a806e4648b172d18b2d3bd8d39101df: only hooks/stop-hook.sh,
+scripts/setup-ralph-loop.sh and scripts/start-ralph-loop.sh, with LICENSE and this NOTICE. The shell files were
+reformatted with `shfmt -i 2` and one expansion in setup-ralph-loop.sh was quoted (shellcheck SC2086); the logic is
+unchanged. The commands are the nycode ports in resources/commands/.

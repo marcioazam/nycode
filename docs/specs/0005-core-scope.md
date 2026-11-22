@@ -100,6 +100,12 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | skill | loop-engineering | core | Laços com parada verificável |
 | skill | perplexity-urls | core | Exige o MCP Perplexity; no contexto do modelo como no nycode-harness (D-51) |
 | skill | plan-workflow | core | Modo plano, oculta |
+| skill | ponytail | core | Regras do ponytail, ligadas por padrão (D-54); oculta |
+| skill | ponytail-audit | core | Auditoria do ponytail (D-54); oculta |
+| skill | ponytail-debt | core | Dívida do ponytail (D-54); oculta |
+| skill | ponytail-gain | core | Ganho do ponytail (D-54); oculta |
+| skill | ponytail-help | core | Ajuda do ponytail (D-54); oculta |
+| skill | ponytail-review | core | Revisão do ponytail (D-54); oculta |
 | skill | pr-review | core | Revisão de PR geral |
 | skill | property-based-testing | core | Testes de propriedade, geral |
 | skill | quality-gates | core | Cobertura e mutação, geral |
@@ -152,6 +158,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | output-styles | core | Estilos de saída |
 | extension | plan-gate | core | Plano aprovado vai ao fim |
 | extension | plan-mode | core | Modo de plano |
+| extension | ponytail | core | Regras de código mínimo no prompt, ligadas por padrão (D-54) |
 | extension | prefix-cache-1h | core | Cache do prefixo |
 | extension | question | core | Pergunta ao usuário com opções |
 | extension | run | core | Processos em segundo plano e a seção de execução |

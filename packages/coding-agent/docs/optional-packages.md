@@ -1,14 +1,14 @@
 # Optional Packages
 
-Four third-party packages extend nycode without being bundled with it: `ponytail`, `ralph-loop`, `pr-review-toolkit` and `claude-red`. Each installs from its source repository at a fixed commit, so a clone never moves without a change here. Nothing in this page is needed for nycode to run. The embedded commands `/ralph-loop`, `/cancel-ralph`, `/ralph-help` and `/review-pr`, and the `offensive-*` references of the `security-audit` skill, use these packages when present.
+Two third-party packages extend nycode without being bundled with it: `pr-review-toolkit` and `claude-red`. Each installs from its source repository at a fixed commit, so a clone never moves without a change here. Nothing in this page is needed for nycode to run. The embedded command `/review-pr` and the `offensive-*` references of the `security-audit` skill use these packages when present.
+
+`ponytail` and `ralph-loop` are no longer optional: they ship inside nycode and are on by default (decision D-54, which supersedes D-11). The pinned forks are embedded at the commits `marcioazam/ponytail@a75382e` and `marcioazam/ralph-loop@9e7f895`, with the authors' licenses in `NOTICE` and next to the files. Nothing is installed or fetched. See [Embedded ponytail and ralph-loop](#embedded-ponytail-and-ralph-loop).
 
 Installing a package runs no code, but packages can ship extensions and skills that instruct the model to run programs: read the source before you install. See [Nycode Packages](packages.md) for how `nycode install` works.
 
 ## Install
 
 ```bash
-nycode install git:github.com/marcioazam/ponytail@a75382edeb22ec2917cdfa487c6202d8b6f26c99
-nycode install git:github.com/marcioazam/ralph-loop@9e7f895c7a806e4648b172d18b2d3bd8d39101df
 nycode install git:github.com/anthropics/claude-plugins-official@893173fb82a7184fcf3f08ae55930016d84fd588
 nycode install git:github.com/SnailSploit/Claude-Red@a8de813edc9f66f60d44cfe42d47750e89d9930b
 ```
@@ -17,16 +17,19 @@ Each clone lands in `~/.nycode/agent/git/github.com/<owner>/<repo>` and the decl
 
 | Package | Source | Pinned commit | License | What it adds |
 | --- | --- | --- | --- | --- |
-| ponytail | `marcioazam/ponytail`, fork of `DietrichGebert/ponytail` v4.10.3 (`ef8ca48`), branch `nycode` | `a75382e` | MIT | Extension and 6 skills (`ponytail`, `-audit`, `-debt`, `-gain`, `-help`, `-review`) |
-| ralph-loop | `marcioazam/ralph-loop`, fork of `anthropics/claude-plugins-official` `893173f`, `plugins/ralph-loop` with history | `9e7f895` | Apache-2.0 | `Stop` hook and `scripts/start-ralph-loop.sh` for `/ralph-loop` |
 | pr-review-toolkit | `anthropics/claude-plugins-official`, directory `plugins/pr-review-toolkit` | `893173f` | Apache-2.0 | 6 reviewer prompts for `/review-pr` |
 | claude-red | `SnailSploit/Claude-Red` (Copyright (c) 2024-2025 SnailSploit / Kai Aizen) | `a8de813` | MIT | 79 offensive-security skills |
 
-The forks differ from their upstreams as follows: ponytail carries the subagent matcher fix, recognizes nycode child processes through `NYCODE_SUBAGENT` and declares its extension and skills under a `nycode` key in `package.json`; ralph-loop passes the command arguments through a quoted heredoc, so `<promise>X</promise>` in a prompt is no longer shell syntax (upstream issue [anthropics/claude-plugins-official#748](https://github.com/anthropics/claude-plugins-official/issues/748)). The authors' licenses and notices stay in each repository and in `NOTICE`.
+## Embedded ponytail and ralph-loop
 
-## ponytail
+| Embedded | Source | Pinned commit | License | Where |
+| --- | --- | --- | --- | --- |
+| ponytail | `marcioazam/ponytail`, fork of `DietrichGebert/ponytail` v4.10.3 (`ef8ca48`), branch `nycode` | `a75382e` | MIT | extension `ponytail` (TypeScript port, `src/extensions/ponytail/`), 6 skills `ponytail`, `-audit`, `-debt`, `-gain`, `-help`, `-review` |
+| ralph-loop | `marcioazam/ralph-loop`, fork of `anthropics/claude-plugins-official` `893173f`, `plugins/ralph-loop` with history | `9e7f895` | Apache-2.0 | `resources/ralph-loop/` (`Stop` hook, `start-ralph-loop.sh`, `setup-ralph-loop.sh`) |
 
-The extension and skills load after the install. To scope the subagent instruction to some subagents, set a regular expression (unanchored, case-insensitive, matched against the subagent name) in `env`, which nycode exports to every process:
+The forks differ from their upstreams as follows: ponytail carries the subagent matcher fix and recognizes nycode child processes through `NYCODE_SUBAGENT`; ralph-loop passes the command arguments through a quoted heredoc, so `<promise>X</promise>` in a prompt is no longer shell syntax (upstream issue [anthropics/claude-plugins-official#748](https://github.com/anthropics/claude-plugins-official/issues/748)). The authors' licenses and notices stay in `NOTICE` and in `resources/ponytail/` and `resources/ralph-loop/`.
+
+ponytail adds the `ponytail` section to the system prompt at level `full`. `/ponytail lite|full|ultra|off|status|default <level>` changes it for the session; `PONYTAIL_DEFAULT_MODE` or `~/.config/ponytail/config.json` set the default. By default nycode sets `PONYTAIL_QUIET_STARTUP=1` and `PONYTAIL_SUBAGENT_MATCHER` to the list of writer subagents, so only those receive the rules. To scope the instruction differently, set a regular expression (unanchored, case-insensitive, matched against the subagent name) in `env`:
 
 ```json
 {
@@ -34,32 +37,11 @@ The extension and skills load after the install. To scope the subagent instructi
 }
 ```
 
-## ralph-loop
+To turn ponytail off for every session, add `"-builtin:ponytail"` to `extensions` in `~/.nycode/agent/settings.json`.
 
-`/ralph-loop` and `/cancel-ralph` work after the install, but the loop only continues with its `Stop` hook. `/ralph-loop` writes the loop state; the hook returns the same prompt on each stop until the completion promise or the iteration limit. The hook needs `bash` and `jq`.
+ralph-loop registers its `Stop` hook by default, before the embedded impeccable gate: `/ralph-loop` writes the loop state in `.claude/ralph-loop.local.md`, and the hook returns the same prompt on each stop until the completion promise or the iteration limit. Without a state file the hook exits at once. The hook needs `bash`, and `jq` once a loop is active. An entry for the `Stop` event in `settings.json` replaces the default list of that event, so keep the embedded entries when you add your own (see [Settings](settings.md#embedded-hooks-and-status-line)).
 
-Add it to `hooks.Stop` in `~/.nycode/agent/settings.json`. An entry for an event replaces the default list of that event, and the default `Stop` list holds the embedded impeccable gate, so keep that entry next to the loop:
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          { "type": "command", "command": "bash \"$HOME/.nycode/agent/git/github.com/marcioazam/ralph-loop/hooks/stop-hook.sh\"" }
-        ]
-      },
-      {
-        "hooks": [
-          { "type": "command", "command": "sh \"${NYCODE_RESOURCES}/hooks/impeccable_gate.sh\" hook", "timeout": 30 }
-        ]
-      }
-    ]
-  }
-}
-```
-
-`/hooks` lists both entries after a restart. See [Settings](settings.md#embedded-hooks-and-status-line) for how hook lists merge.
+If you installed either package from the fork before D-54, remove it (`nycode remove git:github.com/marcioazam/ponytail@a75382edeb22ec2917cdfa487c6202d8b6f26c99`, same for `ralph-loop`) and delete the `hooks.Stop` entry of the old instructions: the clone and the embedded copy would otherwise load twice.
 
 ## pr-review-toolkit
 
@@ -79,4 +61,4 @@ This loads 79 skills. They are offensive-security material; the `security-audit`
 
 ## Remove
 
-`nycode remove git:github.com/marcioazam/ralph-loop@9e7f895c7a806e4648b172d18b2d3bd8d39101df` removes the clone and the declaration. Delete the `hooks.Stop`, `skills` and `env` entries above by hand.
+`nycode remove git:github.com/anthropics/claude-plugins-official@893173fb82a7184fcf3f08ae55930016d84fd588` removes the clone and the declaration. Delete the `skills` entry above by hand.

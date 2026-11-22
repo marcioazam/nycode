@@ -199,7 +199,7 @@ These keys only exist, validate, and are read here; the built-in extensions that
 | `mcp.configPath` | string | `mcp.json` in the agent directory | `NYCODE_MCP_CONFIG` | MCP servers file. |
 | `hooks` | object | Embedded hooks (below) | none | Command hooks by event name, each `[{ "matcher": "Bash", "hooks": [{ "type": "command", "command": "...", "timeout": 30 }] }]`; run by the hooks extension. An event named here replaces that event's embedded default. |
 | `statusLine` | object | Embedded claude-hud launcher (below) | none | `{ "type": "command", "command": "...", "padding": 0 }`; status line command. An empty `command` turns the status line off. |
-| `env` | `Record<string, string>` | `{ "EIO_BACKEND": "posix" }` | none | Variables exported to the nycode process, so to hooks and the status line command. A value here overrides the default. |
+| `env` | `Record<string, string>` | `{ "EIO_BACKEND": "posix", "PONYTAIL_QUIET_STARTUP": "1", "PONYTAIL_SUBAGENT_MATCHER": "<writer subagents>" }` | none | Variables exported to the nycode process, so to hooks and the status line command. A value here overrides the default. |
 
 `quietStartup`, `defaultProjectTrust`, `retry`, and `shellCommandPrefix` above carry the nycode-harness defaults.
 
@@ -241,9 +241,8 @@ To turn hooks off or replace them:
   `--settings` file) it turns every hook off, the guard included. In the project's `.claude/settings.json` or
   `settings.local.json` it turns the other hooks off and the guard keeps running.
 
-The ralph-loop `Stop` hook and the `ponytail` variables (`PONYTAIL_SUBAGENT_MATCHER`) belong to the optional packages of
-the same names. Installing a package does not register hooks: add the `hooks.Stop` and `env` entries by hand, as
-[Optional Packages](optional-packages.md) shows.
+The ralph-loop `Stop` hook is embedded and runs before the impeccable gate; the `ponytail` variables (`PONYTAIL_QUIET_STARTUP`,
+`PONYTAIL_SUBAGENT_MATCHER`) are in the default `env`. See [Optional Packages](optional-packages.md#embedded-ponytail-and-ralph-loop).
 
 The default `statusLine` runs `node "${NYCODE_RESOURCES}/statusline/statusline.mjs"`, the claude-hud launcher. It prints
 nothing until the claude-hud plugin is installed in a Claude Code profile (`/claude-hud-setup`), and then the built-in

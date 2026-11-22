@@ -182,13 +182,10 @@ export function buildPlan(source: string, dest: string): Plan {
 		for (const warning of result.warnings) plan.notes.push(`local.env: ${warning}`);
 		for (const source of result.embedded)
 			plan.notes.push(`package ${source} is embedded in nycode; removed from packages`);
-		for (const source of result.toInstall) {
-			plan.notes.push(
-				`package ${source}: install it as a nycode package (nycode install <source>); removed from packages`,
-			);
-		}
 		if (result.packageEnvKey) {
-			plan.notes.push(`${result.packageEnvKey} belongs to the ponytail package: keep it in your shell environment`);
+			plan.notes.push(
+				`${result.packageEnvKey} is read by the embedded ponytail from the environment (nycode sets 1 by default): keep it in your shell environment or in the env of settings.json`,
+			);
 		}
 	}
 	if (env.ignored.length > 0) plan.notes.push(`local.env: ignored ${env.ignored.slice(0, WARN_LIMIT).join(", ")}`);
