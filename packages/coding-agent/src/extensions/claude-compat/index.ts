@@ -6,6 +6,7 @@
 import type { ExtensionAPI, ExtensionCommandContext } from "../../core/extensions/types.ts";
 import { ALIASES } from "./aliases.ts";
 import registerLocalCommands from "./commands/index.ts";
+import registerLifecycle from "./lifecycle/index.ts";
 import { COMMANDS } from "./matrix.ts";
 import { registerPublicServices } from "./services/public.ts";
 import { CLAUDE_KEYBINDINGS } from "./shortcuts.ts";
@@ -95,6 +96,7 @@ export function skillsText(nycode: Lister): string {
 export default function (nycode: ExtensionAPI) {
 	registerLocalCommands(nycode);
 	registerPublicServices(nycode);
+	registerLifecycle(nycode);
 	for (const name of ["clear", "reset"]) {
 		nycode.registerCommand(name, {
 			description: "Inicia uma sessão nova como /new, sem turno de modelo [nome da sessão anterior]",
