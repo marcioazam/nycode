@@ -20,7 +20,7 @@ describe("matchesSelf", () => {
 	it("denies the F5 command through checkSelfKill", () => {
 		const cmd = `pgrep -f '(a+)+$' | xargs kill ; echo ${"a".repeat(40)}!`;
 		const start = Date.now();
-		expect(checkSelfKill(cmd)).toEqual([["deny", expect.any(String)]]);
+		expect(checkSelfKill(cmd, cmd)).toEqual([["deny", expect.any(String)]]);
 		expect(Date.now() - start).toBeLessThan(2000);
 	});
 });
