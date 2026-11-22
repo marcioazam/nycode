@@ -16,9 +16,24 @@ import {
 	visibleWidth,
 } from "@nycode/tui";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
-import { findSticky, type Sticky, stickyLine, stickyStyle, userMatcher } from "./sticky.ts";
+import {
+	findSticky,
+	type Sticky,
+	type StickyLabelTheme,
+	type StickyTheme,
+	stickyLinhas,
+	stickyRect,
+	stickyStyle,
+	userMatcher,
+} from "./sticky.ts";
 
-function attach(tui: TUI, style: (s: string) => string, isUser: () => (zone: string) => boolean): () => void {
+function attach(
+	tui: TUI,
+	theme: StickyTheme & StickyLabelTheme,
+	style: (s: string) => string,
+	isUser: () => (zone: string) => boolean,
+	pad: number,
+): () => void {
 	const opts: OverlayOptions = { row: 0, col: 0, width: 1, nonCapturing: true };
 	let current: Sticky | undefined;
 	let snapshot: PrimaryScrollSnapshot | undefined;
@@ -29,13 +44,14 @@ function attach(tui: TUI, style: (s: string) => string, isUser: () => (zone: str
 		if (!snapshot) return false;
 		current = findSticky(snapshot.contentLines, snapshot.scrollTop, isUser(), stripTerminalSequences);
 		opts.row = snapshot.rect.y;
-		opts.col = snapshot.rect.x;
-		opts.width = Math.max(1, snapshot.rect.width - 1); // deixa a coluna da barra de rolagem livre
+		Object.assign(opts, stickyRect(snapshot.rect, pad)); // dentro da margem do chat, sem a coluna da barra de rolagem
 		return current !== undefined;
 	};
 	const component = {
 		render: (width: number) =>
-			current ? [stickyLine(current.text, width, truncateToWidth, visibleWidth, style)] : [],
+			current
+				? stickyLinhas(current.text, width, truncateToWidth, visibleWidth, style, (c, x) => theme.fg(c, x))
+				: [],
 		invalidate: () => {},
 		handleMouse: (e: { button: string; type: string }) => {
 			if (e.button !== "left") return undefined;
@@ -67,18 +83,24 @@ function userTexts(ctx: ExtensionContext): string[] {
 	return out;
 }
 
+function outputPad(nycode: ExtensionAPI): number {
+	return nycode.getSettings().outputPad === 0 ? 0 : 1; // nycode default: 1
+}
+
 export default function stickyPromptExtension(nycode: ExtensionAPI) {
 	let matcher = userMatcher([]);
 	const refresh = (_e: unknown, ctx: ExtensionContext) => {
 		matcher = userMatcher(userTexts(ctx));
 	};
-	nycode.on("message_end", refresh);
+	nycode.on("message_end", (e, ctx) => {
+		if (e.message.role === "user") refresh(e, ctx);
+	});
 	nycode.on("session_tree", refresh);
 	nycode.on("session_start", (e, ctx) => {
 		refresh(e, ctx);
 		if (!ctx.hasUI) return;
 		ctx.ui.setWidget("sticky-prompt", (tui, theme) => {
-			const dispose = attach(tui, stickyStyle(theme), () => matcher);
+			const dispose = attach(tui, theme, stickyStyle(theme), () => matcher, outputPad(nycode));
 			return { render: () => [], invalidate: () => {}, dispose };
 		});
 	});

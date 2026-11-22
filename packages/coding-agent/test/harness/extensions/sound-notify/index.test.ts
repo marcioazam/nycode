@@ -5,7 +5,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";
-import soundNotifyExtension, { playerCommand } from "../../../../src/extensions/sound-notify/index.ts";
+import soundNotifyExtension, { playerCommand, setup } from "../../../../src/extensions/sound-notify/index.ts";
 
 const { spawnMock } = vi.hoisted(() => ({ spawnMock: vi.fn() }));
 vi.mock("node:child_process", () => ({ spawn: spawnMock }));
@@ -50,6 +50,64 @@ describe("sound-notify", () => {
 		expect(handler).toBeDefined();
 		// Off by key: no player is looked up, so the call is a no-op even with a UI.
 		await expect(handler?.({}, { hasUI: true })).resolves.toBeUndefined();
+	});
+});
+
+describe("sound-notify owner", () => {
+	/** Fake API: event handlers and the extension bus. */
+	function fake(env: Record<string, string> = {}, sound = true) {
+		const handlers = new Map<string, (...a: never[]) => unknown>();
+		const bus = new Map<string, Array<(d: unknown) => void>>();
+		const nycode = {
+			getSettings: () => ({ notify: { sound } }),
+			on: (n: string, h: (...a: never[]) => unknown) => handlers.set(n, h),
+			events: {
+				on: (n: string, h: (d: unknown) => void) => bus.set(n, [...(bus.get(n) ?? []), h]),
+				emit: (n: string, d: unknown = {}) => {
+					for (const h of bus.get(n) ?? []) h(d);
+				},
+			},
+		};
+		let toques = 0;
+		setup(nycode as unknown as ExtensionAPI, () => toques++, env);
+		const settled = (hasUI = true) =>
+			(handlers.get("agent_settled") as unknown as (e: unknown, c: { hasUI: boolean }) => Promise<void>)(
+				{},
+				{ hasUI },
+			);
+		return { nycode, settled, toques: () => toques, handlers };
+	}
+
+	it("alone (without avisos): plays on every end of turn with a UI, never without one", async () => {
+		const f = fake();
+		await f.settled();
+		await f.settled(false);
+		expect(f.toques()).toBe(1);
+	});
+
+	it("subagent: nothing registered", () => {
+		expect(fake({ NYCODE_SUBAGENT: "1" }).handlers.size).toBe(0);
+	});
+
+	it("with avisos as the owner: the end of turn no longer decides; only nycode-harness:aviso-som plays", async () => {
+		const f = fake();
+		f.nycode.events.emit("nycode-harness:notify-owner");
+		await f.settled();
+		expect(f.toques()).toBe(0);
+		f.nycode.events.emit("nycode-harness:aviso-som");
+		expect(f.toques()).toBe(1);
+	});
+
+	it("aviso-som without an announced owner is ignored (a single decider)", () => {
+		const f = fake();
+		f.nycode.events.emit("nycode-harness:aviso-som");
+		expect(f.toques()).toBe(0);
+	});
+
+	it("notify.sound=false: the end of turn does not play", async () => {
+		const f = fake({}, false);
+		await f.settled();
+		expect(f.toques()).toBe(0);
 	});
 });
 
