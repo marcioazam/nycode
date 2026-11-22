@@ -130,6 +130,7 @@ def main(argv: Any, env: Any = None) -> Any:
     try:
         run = dict(base, state="running")
         st.write_record(rdir, tid, run)
+        # nosemgrep: python.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args -- argv list without a shell, from the private 0600 payload that cli.py wrote
         got["child"] = subprocess.Popen(payload["argv"], env=child_env)
     except (OSError, st.TransportError):
         end_record(rdir, tid, 127, base)
