@@ -254,8 +254,11 @@ def test_heredocs_without_terminator_are_linear() -> None:
 
 
 def test_real_heredoc_still_masked_and_fast() -> None:
-    got, dt = timed("cat > f <<'EOF'\n" + "rm -rf /\n" * 10000 + "EOF")
-    assert got == "allow" and dt < 0.5
+    def heredoc(n: int) -> str:
+        return "cat > f <<'EOF'\n" + "rm -rf /\n" * n + "EOF"
+
+    assert timed(heredoc(10000))[0] == "allow"
+    assert_scales_linearly(heredoc, 2500)
 
 
 def test_forkbomb_forms_still_denied() -> None:
