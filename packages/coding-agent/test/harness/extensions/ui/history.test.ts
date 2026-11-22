@@ -1,15 +1,17 @@
-// Ports import/ny-pi/extensions/ui/test/history.test.ts to vitest.
+// node --experimental-strip-types --test ~/.nycode/agent/extensions/ui/test/history.test.ts
 import assert from "node:assert/strict";
 import { chmodSync, mkdirSync, mkdtempSync, truncateSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import * as typed from "../../../../src/extensions/ui/history.ts";
+import * as __m1 from "../../../../src/extensions/ui/history.ts";
 
-// Os módulos são exercitados com fakes parciais (como no teste original): sem tipos nas chamadas.
-const m: any = typed;
-
+// O Node não tira tipos de .ts dentro de node_modules: testa uma cópia do módulo, com o nycode ao lado.
 const tmp = mkdtempSync(join(tmpdir(), "ui-history-test-"));
+// history.ts importa folha/sheet.ts e ui-visual/icons.ts: a cópia mantém o layout de extensions/.
+delete process.env.NYCODE_ASCII_ICONS; // glifos (⌕ ❯ ⏎) só fora do modo ASCII
+process.env.TERM = "xterm-256color";
+const m = __m1;
 
 const line = (content: unknown, role = "user") => JSON.stringify({ type: "message", message: { role, content } });
 const file = (dir: string, name: string, lines: string[], mtime?: number) => {
@@ -125,7 +127,7 @@ test("loadScope: sessão, projeto e todas", async () => {
 	assert.deepEqual(gone, { prompts: [], skipped: 1 });
 });
 
-const theme = { fg: (_c: string, s: string) => s, bg: (_c: string, s: string) => `[${s}]` };
+const theme = { fg: (_c: string, s: string) => s, bg: (_c: string, s: string) => `[${s}]`, bold: (s: string) => s };
 function overlay(load: (s: string) => Promise<{ prompts: string[]; skipped: number }>) {
 	const result: { done: boolean; value?: string } = { done: false };
 	let renders = 0;
@@ -149,10 +151,17 @@ test("overlay: Carregando…, lista com ⏎, filtro, setas e Enter", async () =>
 	assert.ok(o.render(60).join("\n").includes("Carregando…"));
 	await tick();
 	const out = o.render(60);
-	assert.ok(out[0].includes("Histórico de prompts") && out[0].includes("[sessão]"));
-	assert.ok(out.some((l: string) => l.includes("um ⏎ dois")));
-	assert.ok(out.some((l: string) => l.includes("1 arquivo(s) ignorado(s)")));
-	assert.ok(out.some((l: string) => l.startsWith("[→ um")));
+	assert.ok(
+		out[0].includes("── Histórico ") &&
+			out[0].includes("[ sessão ]") &&
+			!out[0].includes("[ projeto ]") &&
+			!out[0].includes("●"),
+	);
+	assert.ok(out.at(-2)!.includes("[ ⏎ ] usar   [ tab ] escopo   [ esc ] fechar"));
+	assert.ok(out[1].includes("Buscar nos prompts") && out[1].trimEnd().endsWith("1 de 3"));
+	assert.ok(out.some((l) => l.includes("um ⏎ dois")));
+	assert.ok(out.some((l) => l.includes("1 arquivo ignorado")));
+	assert.ok(out.some((l) => l.startsWith("[ ❯ um")));
 	o.handleInput("\x1b[B");
 	assert.equal(o.index, 1);
 	o.handleInput("\x1b[B");
@@ -164,6 +173,7 @@ test("overlay: Carregando…, lista com ⏎, filtro, setas e Enter", async () =>
 	assert.equal(o.index, 0);
 	for (const c of "TR") o.handleInput(c);
 	assert.deepEqual(o.visible(), ["tres", "quatro"]); // sem caixa: "TR" também casa "quaTRo"
+	assert.ok(o.render(60)[1].startsWith(" ⌕ TR") && o.render(60)[1].trimEnd().endsWith("1 de 2"));
 	o.handleInput("\x7f");
 	assert.equal(o.query, "T");
 	o.handleInput("\x1b[C"); // sequência de escape não vira texto
@@ -182,7 +192,11 @@ test("overlay: Esc fecha sem valor; Enter sem resultado não fecha; sem resultad
 	await tick();
 	b.o.handleInput("\r");
 	assert.equal(b.result.done, false);
-	assert.ok(b.o.render(40).join("\n").includes("Nenhum prompt"));
+	assert.ok(b.o.render(70).join("\n").includes("Nenhum prompt nesta sessão ainda · Tab amplia a busca"));
+	for (const c of "zz") a.o.query += c;
+	assert.ok(a.o.render(60).join("\n").includes("Nada com “zz” · Tab amplia a busca"));
+	a.o.scope = "todas";
+	assert.ok(a.o.render(60).some((l: string) => l.trimEnd().endsWith("Nada com “zz”")));
 });
 
 test("overlay: Tab troca sessão → projeto → todas → sessão; leitura antiga é descartada; falha não lança", async () => {
@@ -218,6 +232,129 @@ test("overlay: rolagem mantém o item selecionado visível", async () => {
 	await tick();
 	for (let i = 0; i < 20; i++) o.handleInput("\x1b[B");
 	const out = o.render(40);
-	assert.ok(out.some((l: string) => l.includes("item20")));
-	assert.ok(!out.some((l: string) => l.includes("item0")));
+	assert.ok(out.some((l) => l.includes("item20")));
+	assert.ok(!out.some((l) => l.includes("item0")));
+});
+
+test("overlay: destaque do trecho casado, linhas na largura exata e régua estreita sem título", async () => {
+	const marks = {
+		fg: (_c: string, s: string) => s,
+		bg: (_c: string, s: string) => s,
+		bold: (s: string) => `**${s}**`,
+	};
+	const o = new m.PromptHistory(
+		marks,
+		async () => ({ prompts: ["Refatora o parser (v2)", "outro"], skipped: 2 }),
+		() => {},
+		() => {},
+	);
+	await tick();
+	for (const c of "PARSER (") o.handleInput(c);
+	const out = o.render(50);
+	assert.ok(out.some((l: string) => l.includes("Refatora o **parser** **(**v2)")));
+	assert.ok(out.some((l: string) => l.includes("2 arquivos ignorados")));
+	assert.equal(
+		m.highlight("abc", "", (s: string) => `<${s}>`),
+		"abc",
+	);
+	const ansi = { ...theme, bg: (_c: string, s: string) => `\x1b[44m${s}\x1b[49m` };
+	const plain = new m.PromptHistory(
+		ansi,
+		async () => ({ prompts: ["x".repeat(200)], skipped: 0 }),
+		() => {},
+		() => {},
+	);
+	await tick();
+	for (const w of [50, 24]) for (const l of plain.render(w)) assert.equal(l.replace(/\x1b\[[0-9;]*m/g, "").length, w);
+	assert.ok(!plain.render(24)[0].includes("Histórico"));
+});
+
+test("ageLabel: agora, minutos, horas, ontem, dia e mês (com ano se for de outro)", () => {
+	const now = new Date(2026, 10, 18, 15, 0, 0).getTime();
+	const at = (d: Date) => m.ageLabel(d.getTime(), now);
+	assert.equal(at(new Date(2026, 10, 18, 14, 59, 30)), "agora");
+	assert.equal(at(new Date(2026, 10, 18, 15, 5)), "agora"); // futuro (relógio adiantado)
+	assert.equal(at(new Date(2026, 10, 18, 14, 55)), "há 5 min");
+	assert.equal(at(new Date(2026, 10, 18, 13, 0)), "há 2 h");
+	assert.equal(at(new Date(2026, 10, 17, 22, 0)), "ontem");
+	assert.equal(at(new Date(2026, 10, 3, 9, 0)), "3 nov");
+	assert.equal(at(new Date(2025, 11, 25, 9, 0)), "25 dez 2025");
+});
+
+test("hora do prompt: message.timestamp (ms) ou timestamp ISO da entrada; sem data, sem hora", async () => {
+	const withTs = [
+		JSON.stringify({
+			type: "message",
+			timestamp: "2026-11-18T12:00:00.000Z",
+			message: { role: "user", content: "iso" },
+		}),
+		JSON.stringify({
+			type: "message",
+			timestamp: "2026-11-18T12:00:00.000Z",
+			message: { role: "user", content: "ms", timestamp: 1000 },
+		}),
+		line("sem data"),
+	].join("\n");
+	assert.deepEqual(m.parseUserPromptsAt(withTs), [
+		{ text: "iso", at: Date.parse("2026-11-18T12:00:00.000Z") },
+		{ text: "ms", at: 1000 },
+		{ text: "sem data", at: undefined },
+	]);
+	const d = join(tmp, "quando");
+	file(
+		d,
+		"a.jsonl",
+		[JSON.stringify({ type: "message", message: { role: "user", content: "a", timestamp: 5 } }), line("b")],
+		4000,
+	);
+	const r = await m.loadFromDirs([d], new Map());
+	assert.deepEqual([...(r.when ?? [])], [["a", 5]]); // o prompt sem data não ganha idade
+	const sess = await m.loadScope(
+		"sessão",
+		{
+			sessionDir: d,
+			branch: [
+				{ type: "message", timestamp: "2026-11-18T12:00:00.000Z", message: { role: "user", content: "x" } },
+				{ type: "message", timestamp: "2026-11-18T13:00:00.000Z", message: { role: "user", content: "x" } },
+			],
+		},
+		new Map(),
+	);
+	assert.deepEqual([...(sess.when ?? [])], [["x", Date.parse("2026-11-18T13:00:00.000Z")]]); // a mais recente vence
+});
+
+test("overlay: idade dim à direita de cada prompt; sem data, sem idade; estreito esconde a idade", async () => {
+	const dimmed = {
+		fg: (c: string, s: string) => (c === "dim" ? `<${s}>` : s),
+		bg: (_c: string, s: string) => s,
+		bold: (s: string) => s,
+	};
+	const when = new Map([["com data", Date.now() - 5 * 60_000]]);
+	const o = new m.PromptHistory(
+		dimmed,
+		async () => ({ prompts: ["com data", "sem data"], skipped: 0, when }),
+		() => {},
+		() => {},
+	);
+	await tick();
+	const out = o.render(50);
+	const com = out.find((l: string) => l.includes("com data"))!;
+	assert.ok(com.trimEnd().endsWith("<há 5 min>"));
+	assert.ok(!out.find((l: string) => l.includes("sem data"))!.includes("há"));
+	assert.ok(!o.render(14).some((l: string) => l.includes("há 5")));
+});
+
+test("overlay: ASCII troca ⌕ ❯ ⏎ por / > Enter", async () => {
+	process.env.NYCODE_ASCII_ICONS = "1";
+	try {
+		const { o } = overlay(async () => ({ prompts: ["um"], skipped: 0 }));
+		await tick();
+		const out = o.render(60).join("\n");
+		assert.ok(
+			out.includes(" / ") && out.includes("[ > um") && out.includes("> um") && out.includes("[ Enter ] usar"),
+		);
+		assert.ok(!/[⌕❯⏎]/.test(out));
+	} finally {
+		delete process.env.NYCODE_ASCII_ICONS;
+	}
 });

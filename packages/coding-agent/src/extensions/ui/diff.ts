@@ -5,9 +5,11 @@
 
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { matchesKey, truncateToWidth } from "@nycode/tui";
+import { matchesKey, truncateToWidth, visibleWidth } from "@nycode/tui";
 import type { ExtensionAPI, ExtensionCommandContext } from "../../core/extensions/types.ts";
 import type { Theme } from "../../modes/interactive/theme/theme.ts";
+import { rule, teclas } from "../folha/sheet.ts";
+import { ascii } from "../ui-visual/icons.ts";
 
 export interface FileChange {
 	path: string;
@@ -172,19 +174,9 @@ export class DiffView {
 	render(width: number): string[] {
 		const t = this.theme;
 		const h = this.body();
+		if (!this.lines) return this.renderList(width, h);
 		const out: string[] = [];
-		if (!this.lines) {
-			out.push(t.fg("accent", t.bold(`Mudanças: ${this.files.length} arquivo${this.files.length > 1 ? "s" : ""}`)));
-			const start = Math.max(0, Math.min(this.sel - Math.floor(h / 2), this.files.length - h));
-			this.files.slice(start, start + h).forEach((f, i) => {
-				const stat = f.binary
-					? t.fg("dim", "binário")
-					: `${t.fg("toolDiffAdded", `+${f.added}`)} ${t.fg("toolDiffRemoved", `−${f.removed}`)}`;
-				const row = `${start + i === this.sel ? "› " : "  "}${f.path}${f.untracked ? t.fg("dim", " (novo)") : ""}  ${stat}`;
-				out.push(start + i === this.sel ? t.bold(row) : row);
-			});
-			out.push(t.fg("dim", "↑↓ navegar · Enter abrir · Esc fechar"));
-		} else {
+		{
 			const f = this.files[this.sel];
 			this.scroll = clampScroll(this.scroll, this.lines.length, h);
 			out.push(t.fg("accent", t.bold(f.path)));
@@ -201,10 +193,74 @@ export class DiffView {
 					? t.fg("accent", `comentar ${f.path}:${ref?.line} › `) +
 							`${this.input}▏ ` +
 							t.fg("dim", "(Enter salva · Esc cancela)")
-					: t.fg("dim", `↑↓ linha · c comentar · PgUp/PgDn · Esc voltar · ${this.cur + 1}/${this.lines.length}`),
+					: this.footer(
+							width,
+							` ${teclas(t, [
+								["↑↓", "linha"],
+								["c", "comenta"],
+								["PgUp/PgDn", "página"],
+								["esc", "volta"],
+							])}`,
+							`${this.cur + 1}/${this.lines.length}`,
+						),
 			);
 		}
 		return out.map((l) => truncateToWidth(l, width, "…"));
+	}
+
+	/** Rodapé com a posição dim à direita (some se não couber). */
+	private footer(width: number, keys: string, pos: string): string {
+		const gap = width - visibleWidth(keys) - pos.length - 1;
+		return gap >= 2 ? keys + " ".repeat(gap) + this.theme.fg("dim", pos) : keys;
+	}
+
+	/** Lista de arquivos como folha padrão: régua `Mudanças`, `❯` + selectedBg na ativa, contagens alinhadas à direita. */
+	private renderList(width: number, h: number): string[] {
+		const t = this.theme;
+		const flat = ascii(process.env);
+		const minus = flat ? "-" : "−";
+		const fitLine = (s: string) => truncateToWidth(s, width, "…");
+		const padTo = (s: string) => s + " ".repeat(Math.max(0, width - visibleWidth(s)));
+		const n = this.files.length;
+		const sum = (k: "added" | "removed") => this.files.reduce((a, f) => a + f[k], 0);
+		const total = `${n} ${n === 1 ? "arquivo" : "arquivos"} · ${t.fg("toolDiffAdded", `+${sum("added")}`)} ${t.fg("toolDiffRemoved", `${minus}${sum("removed")}`)}`;
+		const out = [rule(t, width, "Mudanças", total)];
+		const rows = Math.max(2, h - 1); // a régua de baixo ocupa a linha que o título antigo deixava
+		const start = Math.max(0, Math.min(this.sel - Math.floor(rows / 2), n - rows));
+		const shown = this.files.slice(start, start + rows);
+		const wa = Math.max(0, ...shown.filter((f) => !f.binary).map((f) => `+${f.added}`.length));
+		const wr = Math.max(0, ...shown.filter((f) => !f.binary).map((f) => `${minus}${f.removed}`.length));
+		shown.forEach((f, i) => {
+			const on = start + i === this.sel;
+			const right = f.binary
+				? ""
+				: `${t.fg("toolDiffAdded", `+${f.added}`.padStart(wa))} ${t.fg("toolDiffRemoved", `${minus}${f.removed}`.padStart(wr))}`;
+			const room = Math.max(1, width - 5 - (right ? visibleWidth(right) + 2 : 0));
+			const tag = f.binary ? " · binário" : f.untracked ? " novo" : "";
+			const name = truncateToWidth(f.path, Math.max(1, room - tag.length), "…");
+			const label = f.binary ? t.fg("dim", name + tag) : name + (tag ? t.fg("dim", tag) : "");
+			const body =
+				label +
+				(right
+					? " ".repeat(Math.max(1, width - 4 - visibleWidth(name) - tag.length - visibleWidth(right))) + right
+					: "");
+			out.push(
+				on
+					? t.bg("selectedBg", padTo(fitLine(` ${t.fg("accent", flat ? ">" : "❯")} ${body}`)))
+					: fitLine(`   ${body}`),
+			);
+		});
+		out.push(
+			fitLine(
+				` ${teclas(t, [
+					[flat ? "Enter" : "⏎", "abre"],
+					["c", "comenta"],
+					["esc", "fecha"],
+				])}`,
+			),
+			rule(t, width),
+		);
+		return out;
 	}
 
 	private color(l: string): string {

@@ -1,13 +1,15 @@
-// Ports import/ny-pi/extensions/ui/test/btw.test.ts to vitest.
+// node --experimental-strip-types --test ~/.nycode/agent/extensions/ui/test/btw.test.ts
 import assert from "node:assert/strict";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "vitest";
-import * as typed from "../../../../src/extensions/ui/btw.ts";
-import { initTheme } from "../../../../src/modes/interactive/theme/theme.ts";
+import * as __l1 from "../../../../../src/extensions/ui/btw.ts";
+import { initTheme } from "../../../../../src/modes/interactive/theme/theme.ts";
 
-// Os módulos são exercitados com fakes parciais (como no teste original): sem tipos nas chamadas.
-const mod: any = typed;
-
+const _tmp = mkdtempSync(join(tmpdir(), "ui-test-"));
 const theme = { fg: (c: string, t: string) => `<${c}>${t}`, bold: (t: string) => t };
+const mod = __l1;
 initTheme("dark"); // BorderedLoader e Markdown usam o tema global
 
 test("transcript: papéis, ferramentas e truncamento", () => {
@@ -43,7 +45,7 @@ function setup(over: any = {}) {
 		registerCommand: (_n: string, c: any) => {
 			cmd = c;
 		},
-	});
+	} as never);
 	const notes: any[] = [];
 	const calls: any[] = [];
 	const shown: string[][] = [];

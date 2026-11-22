@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { test } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";
 import a11y, {
 	definirMovimento,
@@ -13,6 +13,14 @@ import a11y, {
 	noColor,
 	reducedMotion,
 } from "../../../../src/extensions/ui/a11y.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
 
 const nycodeStub = { getSettings: () => ({}) } as unknown as ExtensionAPI;
 const vazio = mkdtempSync(join(tmpdir(), "a11y-test-"));

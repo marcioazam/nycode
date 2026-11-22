@@ -1,25 +1,69 @@
-// Ports import/ny-pi/extensions/ui/test/diff.test.ts to vitest.
+// node --experimental-strip-types --test ~/.nycode/agent/extensions/ui/test/diff.test.ts
 import assert from "node:assert/strict";
-import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { test } from "vitest";
-import * as typed from "../../../../src/extensions/ui/diff.ts";
+import { afterEach, beforeEach, onTestFinished, test, vi } from "vitest";
 
-// Os módulos são exercitados com fakes parciais (como no teste original): sem tipos nas chamadas.
-const mod: any = typed;
-
+const _tmp = mkdtempSync(join(tmpdir(), "ui-test-"));
 const theme = {
 	fg: (c: string, t: string) => `<${c}>${t}`,
 	bold: (t: string) => t,
 	bg: (c: string, t: string) => `[${c}]${t}`,
 };
 
+import { execFileSync, spawnSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
+import * as __typed1 from "../../../../../src/extensions/ui/diff.ts";
+
+// The animations read TERM: pin it so the suite does not depend on the shell it runs in.
+beforeEach(() => {
+	vi.stubEnv("TERM", "xterm-256color");
+});
+afterEach(() => {
+	vi.unstubAllEnvs();
+});
+
+// The source tests exercise the modules with partial fakes, without types.
+const __l1: any = __typed1;
+
+const mod = __l1;
+
 const exec = async (cmd: string, args: string[], o: { cwd: string }) => {
 	const r = spawnSync(cmd, args, { cwd: o.cwd, encoding: "utf8" });
 	return { stdout: r.stdout, stderr: r.stderr, code: r.status ?? 1, killed: false, truncated: false };
 };
+// Sincronia por eventos do ciclo de vida (sem sleep nem polling): `until` reavalia o predicado a cada requestRender
+// do componente e só rejeita pelo prazo `within`, que existe apenas para falhar em vez de travar.
+const within = <T>(p: Promise<T>, what: string, ms = 5000): Promise<T> => {
+	let timer: NodeJS.Timeout;
+	const deadline = new Promise<never>((_, rej) => {
+		timer = setTimeout(() => rej(new Error(`prazo excedido: ${what}`)), ms);
+	});
+	return Promise.race([p, deadline]).finally(() => clearTimeout(timer));
+};
+const watch = () => {
+	const waiters: Array<() => void> = [];
+	return {
+		requestRender: () => {
+			for (const w of waiters.slice()) w();
+		},
+		until: (view: any, ok: (lines: string[]) => boolean, what: string) =>
+			within(
+				new Promise<void>((resolve) => {
+					const check = () => {
+						if (!ok(view.render(80))) return;
+						waiters.splice(waiters.indexOf(check), 1);
+						resolve();
+					};
+					waiters.push(check);
+					check();
+				}),
+				what,
+			),
+	};
+};
+const loaded = (lines: string[]) => !lines.some((l) => l.includes("Carregando"));
 const git = (cwd: string, ...a: string[]) =>
 	execFileSync("git", ["-c", "user.email=t@t", "-c", "user.name=t", ...a], { cwd, stdio: "pipe" });
 
@@ -66,6 +110,11 @@ test("collectChanges em repositório real e loadDiff", async () => {
 	assert.equal(await mod.loadDiff(exec, repo, true, by["bin.dat"]), "Arquivo binário");
 	const long = { path: "l.txt", added: 0, removed: 0, binary: false, untracked: false };
 	writeFileSync(join(repo, "l.txt"), "");
+	// The snapshot only unlinks the file, which leaves it tracked and makes later tests see 5 changed files instead of 4; here it is removed and committed.
+	onTestFinished(() => {
+		git(repo, "rm", "-qf", "l.txt");
+		git(repo, "commit", "-qm", "rm l");
+	});
 	git(repo, "add", "l.txt");
 	git(repo, "commit", "-qm", "l");
 	writeFileSync(join(repo, "l.txt"), "z\n".repeat(2100));
@@ -97,14 +146,14 @@ test("fora de git: collectChanges e comando avisam", async () => {
 	assert.deepEqual(notes, [["Fora de um repositório git", "warning"]]);
 });
 
-function register() {
+function register(run: typeof exec = exec) {
 	let cmd: any;
 	mod.default({
-		exec,
+		exec: run,
 		registerCommand: (_n: string, c: any) => {
 			cmd = c;
 		},
-	});
+	} as never);
 	return cmd;
 }
 
@@ -125,17 +174,15 @@ test("comando: sem mudanças, sem UI e erro", async () => {
 	assert.match(notes.pop()[0], /^\/diff falhou/);
 });
 
-// Espera por condição (git real roda em subprocesso: sem duração fixa); só o prazo falha.
-const until = async (cond: () => boolean, ms = 15000) => {
-	for (const end = Date.now() + ms; !cond(); await new Promise((r) => setTimeout(r, 5))) {
-		if (Date.now() > end) throw new Error("until: prazo esgotado");
-	}
-};
-
 test("comando abre o componente e navega", async () => {
 	const cmd = register();
 	let comp: any;
 	let renders = 0;
+	const w = watch();
+	let ready: () => void = () => {};
+	const created = new Promise<void>((r) => {
+		ready = r;
+	});
 	const ctx = {
 		cwd: repo,
 		hasUI: true,
@@ -146,23 +193,35 @@ test("comando abre o componente e navega", async () => {
 				const closed = new Promise<void>((r) => {
 					finish = r;
 				});
-				comp = f({ terminal: { rows: 12 }, requestRender: () => renders++ }, theme, undefined, finish);
+				comp = f(
+					{
+						terminal: { rows: 12 },
+						requestRender: () => {
+							renders++;
+							w.requestRender();
+						},
+					},
+					theme,
+					undefined,
+					finish,
+				);
+				ready();
 				await closed;
 			},
 		},
 	};
 	const p = cmd.handler("", ctx);
-	await until(() => comp?.render(80)[0].includes("Mudanças"));
+	await within(created, "componente do /diff criado");
 	const list = comp.render(80);
-	assert.match(list[0], /Mudanças: 5 arquivos/);
-	assert.match(list[1], /^<accent>|› /);
+	assert.match(list[0], /Mudanças.*4 arquivos/);
+	assert.match(list[1], /^\[selectedBg\] <accent>❯/);
 	comp.handleInput("\x1b[B"); // down
 	comp.handleInput("\x1b[A"); // up
 	comp.handleInput("\x1b[A"); // up no topo: fica
-	assert.match(comp.render(80)[1], /^› a\.txt/);
+	assert.match(comp.render(80)[1], /^\[selectedBg\] <accent>❯ a\.txt/);
 	comp.handleInput("\r");
 	assert.match(comp.render(80)[1], /Carregando/);
-	await until(() => !comp.render(80).join("\n").includes("Carregando"));
+	await w.until(comp, loaded, "diff carregado");
 	const view = comp.render(80);
 	assert.ok(view.some((l: string) => l.includes("<toolDiffAdded>+DOIS")));
 	assert.ok(view.some((l: string) => l.includes("<toolDiffRemoved>-dois")));
@@ -174,9 +233,9 @@ test("comando abre o componente e navega", async () => {
 	comp.handleInput("\x1b[B");
 	comp.handleInput("\x1b[A");
 	comp.handleInput("\x1b"); // volta à lista
-	assert.match(comp.render(80)[0], /Mudanças/);
+	assert.match(comp!.render(80)[0], /Mudanças/);
 	for (let i = 0; i < 9; i++) comp.handleInput("\x1b[B");
-	assert.match(comp.render(80).join("\n"), /›/);
+	assert.match(comp.render(80).join("\n"), /<accent>❯/);
 	comp.invalidate();
 	comp.handleInput("\x1b"); // fecha
 	await p;
@@ -186,16 +245,17 @@ test("comando abre o componente e navega", async () => {
 test("erro ao carregar o diff aparece na visão", async () => {
 	const files = [{ path: "x", added: 0, removed: 0, binary: false, untracked: false }];
 	const { DiffView } = mod;
+	const w = watch();
 	const v = new DiffView(
 		files,
 		async () => Promise.reject(new Error("boom")),
 		theme,
 		() => 10,
-		() => {},
+		w.requestRender,
 		() => {},
 	);
 	v.handleInput("\r");
-	await new Promise((r) => setTimeout(r, 20));
+	await w.until(v, loaded, "erro de carga renderizado");
 	// largura folgada: as marcas do tema falso ocupam colunas (ANSI real tem largura zero)
 	assert.ok(v.render(80).some((l: string) => l.includes("Erro: boom")));
 });
@@ -249,20 +309,23 @@ const diffs: Record<string, string> = {
 	a: ["diff --git a/a b/a", "@@ -1,2 +1,2 @@", " um", "-dois", "+DOIS"].join("\n"),
 	b: ["@@ -0,0 +1 @@", "+novo"].join("\n"),
 };
+const watches = new WeakMap<object, ReturnType<typeof watch>>();
+const mkView = (loadFn: (f: any) => Promise<string>, done: (c: any) => void) => {
+	const w = watch();
+	const v = new mod.DiffView(files2, loadFn, theme, () => 12, w.requestRender, done);
+	watches.set(v, w);
+	return v;
+};
 const open = async (view: any) => {
 	view.handleInput("\r");
-	await new Promise((r) => setTimeout(r, 20));
+	await watches.get(view)!.until(view, loaded, "diff carregado");
 };
 const type = (view: any, s: string) => {
 	for (const ch of s) view.handleInput(ch);
 };
 const mk = (closed: any[][] = []) =>
-	new mod.DiffView(
-		files2,
+	mkView(
 		async (f: any) => diffs[f.path],
-		theme,
-		() => 12,
-		() => {},
 		(c: any) => closed.push(c),
 	);
 
@@ -328,12 +391,8 @@ test("comentários de vários arquivos, linha removida e PgUp/PgDn", async () =>
 });
 
 test("erro ao carregar: comentar não faz nada", async () => {
-	const v = new mod.DiffView(
-		files2,
+	const v = mkView(
 		async () => Promise.reject(new Error("x")),
-		theme,
-		() => 12,
-		() => {},
 		() => {},
 	);
 	await open(v);
@@ -375,4 +434,52 @@ test("comando: comentários vão ao editor, acrescentados, e avisam", async () =
 	assert.match(r.text, /^Comentários/);
 	r = await run("intacto", []);
 	assert.deepEqual([r.text, r.notes], ["intacto", []]);
+});
+
+test("preparação atrasada do comando: o teste espera o componente real, sem sleep", async () => {
+	let release: () => void = () => {};
+	const gate = new Promise<void>((r) => {
+		release = r;
+	});
+	const cmd = register(async (c, a, o) => {
+		await gate;
+		return exec(c, a, o);
+	});
+	let comp: any;
+	let created = 0;
+	let ready: () => void = () => {};
+	const made = new Promise<void>((r) => {
+		ready = r;
+	});
+	const ctx = {
+		cwd: repo,
+		hasUI: true,
+		ui: {
+			notify() {},
+			custom: async (f: any) => {
+				created++;
+				let finish: () => void = () => {};
+				const closed = new Promise<void>((r) => {
+					finish = r;
+				});
+				comp = f({ terminal: { rows: 12 }, requestRender() {} }, theme, undefined, finish);
+				ready();
+				await closed;
+			},
+		},
+	};
+	const p = cmd.handler("", ctx);
+	await Promise.resolve(); // deixa a preparação (exec) pendente no portão controlado
+	assert.equal(created, 0);
+	assert.equal(comp, undefined);
+	release();
+	await within(made, "componente criado após a preparação");
+	assert.equal(created, 1);
+	assert.match(comp!.render(80)[0]!, /Mudanças.*4 arquivos/);
+	comp!.handleInput("\x1b");
+	await p;
+});
+
+test("within rejeita no prazo em vez de travar", async () => {
+	await assert.rejects(within(new Promise<void>(() => {}), "nunca", 20), /prazo excedido: nunca/);
 });
