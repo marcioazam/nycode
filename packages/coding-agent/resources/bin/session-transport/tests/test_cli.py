@@ -7,10 +7,8 @@ from pathlib import Path
 from typing import Any
 from unittest import mock
 
-import cli  # type: ignore[import-not-found]
-import support
-import transport_tmux as tx  # type: ignore[import-not-found]
-from support import CODE, st
+import transport_support as support
+from transport_support import CODE, cli, st, tx
 
 
 def run(argv: Any, env: Any) -> Any:

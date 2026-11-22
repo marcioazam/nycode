@@ -10,8 +10,8 @@ import unittest
 from pathlib import Path
 from typing import Any
 
-import support
-from support import CODE, st
+import transport_support as support
+from transport_support import CODE, st
 
 CLI = os.path.join(CODE, "cli.py")
 CANARY = "CANARY-ARG-9f3a"

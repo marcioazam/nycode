@@ -8,8 +8,8 @@ import unittest
 from pathlib import Path
 from typing import Any
 
-import support
-from support import CODE, st
+import transport_support as support
+from transport_support import CODE, st
 
 BOOT = os.path.join(CODE, "bootstrap.py")
 FAKE_TMUX = r"""#!/bin/sh

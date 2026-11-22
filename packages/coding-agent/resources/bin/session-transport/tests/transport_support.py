@@ -1,5 +1,6 @@
 """Fixtures dos testes: HOME/agentDir temporários, env em whitelist, launcher fixture (o próprio nycode, que se supervisiona)."""
 
+import importlib.util
 import os
 import shutil
 import sys
@@ -10,9 +11,23 @@ from typing import Any
 HERE = os.path.dirname(os.path.realpath(__file__))
 CODE = os.path.dirname(HERE)
 sys.path.insert(0, CODE)
-import transport_state as st  # type: ignore[import-not-found]
 
-__all__ = ["CODE", "DEAD", "Env", "st", "write_exec"]
+
+def load(name: str, filename: str) -> Any:
+    """A session-transport module loaded by path under a unique name (no clash with other tests' modules)."""
+    spec = importlib.util.spec_from_file_location(name, os.path.join(CODE, filename))
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+st: Any = load("transport_state", "transport_state.py")
+tx: Any = load("transport_tmux", "transport_tmux.py")
+cli: Any = load("session_transport_cli", "cli.py")
+
+__all__ = ["CODE", "DEAD", "Env", "cli", "load", "st", "tx", "write_exec"]
 
 NATIVE = r"""#!/bin/sh
 # CLI nativo fictício e absoluto: --exit N | --wait FILE (dorme até o arquivo existir, sai com 5) | --report FILE

@@ -10,10 +10,8 @@ from contextlib import redirect_stderr
 from typing import Any
 from unittest import mock
 
-import cli  # type: ignore[import-not-found]
-import support
-import transport_tmux as tx  # type: ignore[import-not-found]
-from support import st
+import transport_support as support
+from transport_support import cli, st, tx
 
 
 def start(env: Any) -> Any:

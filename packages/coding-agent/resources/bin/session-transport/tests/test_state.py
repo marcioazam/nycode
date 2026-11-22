@@ -3,8 +3,8 @@ import os
 import stat
 import unittest
 
-import support
-from support import st
+import transport_support as support
+from transport_support import st
 
 
 class StateTests(support.Env):
