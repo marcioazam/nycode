@@ -208,7 +208,7 @@ function highlighted(md: { theme: MarkdownTheme }, text: string, lang: Lang): st
 				() =>
 					grammar
 						? hljsToAnsi(hljs.highlight(text, { language: grammar, ignoreIllegals: true }).value, sp.p, shell)
-						: hljsToAnsi(text.replace(/&/g, "&amp;").replace(/</g, "&lt;"), sp.p),
+						: hljsToAnsi(text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"), sp.p),
 				(t) => t.split("\n"),
 			);
 		} catch {}
