@@ -520,7 +520,7 @@ K1 (cache-warm) e K2 (mcp-close-grace) são correções genéricas, sem relaçã
 
 1. Reproduzir cada defeito no código do upstream mais recente (K1: comparação por identidade em `sdk.ts` impede o
    reaproveitamento do cache; K2: 500 ms de espera no fechamento de `stdin` do MCP). A medição de origem está na
-   especificação 0003 e em `pi-memory-cache-sota-2026-11-13.md` do ny-pi (documento: anexo A, seção 2.2).
+   especificação 0003 e em `pi-memory-cache-sota-2026-11-13.md` do nycode-harness (documento: anexo A, seção 2.2).
 2. **O CONTRIBUTING do upstream fecha PR de novos contribuidores automaticamente.** Lido em 2026-11-20
    (`gh api repos/earendil-works/pi/contents/CONTRIBUTING.md`): issues e PRs de novos contribuidores são fechados por
    padrão; `lgtmi` libera issues futuras, e só `lgtm` libera PR; o comando vem na resposta de um mantenedor. Logo: abrir

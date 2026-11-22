@@ -77,6 +77,7 @@ def internals(tmp_path: Path) -> Path:
     files = {
         "src/a.ts": (
             "const x = fold(pi); entry?.pi; // the ny-pi harness and pi-code, as pi 1.5.2 did\n"
+            "see marcioazam/ny-pi and import/ny-pi\n"
             "env PI_CODE_SUBAGENT PI_CODING_AGENT_DIR PI_HOME, dir .pi/skills, upstream pi\n"
             "// Working contract (pi) vs (nycode)\n"
             "`nycode migrate from-pi` reads docs/harness/pi-hooks.md\n"
@@ -101,7 +102,8 @@ def internals(tmp_path: Path) -> Path:
 def test_internals_are_renamed_but_legacy_names_stay(internals: Path) -> None:
     run(internals, "--fork")
     assert (internals / "src/a.ts").read_text() == (
-        "const x = fold(nycode); entry?.nycode; // the ny-harness harness and nycode, as upstream 1.5.2 did\n"
+        "const x = fold(nycode); entry?.nycode; // the nycode harness and nycode, as upstream 1.5.2 did\n"
+        "see marcioazam/ny-pi and import/ny-pi\n"
         "env PI_CODE_SUBAGENT PI_CODING_AGENT_DIR NYCODE_HOME, dir .pi/skills, upstream agent\n"
         "// Working contract (pi) vs (nycode)\n"
         "`nycode migrate from-pi` reads docs/harness/pi-hooks.md\n"

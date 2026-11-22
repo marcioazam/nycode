@@ -1,4 +1,4 @@
-# import/ holds verbatim ny-pi and pi-code copies waiting to be moved (removed in F12) and
+# import/ holds verbatim nycode-harness and pi-code copies waiting to be moved (removed in F12) and
 # docs/migration/nycode-arquivo is a frozen archive; both are excluded from lints and semgrep the same way
 # (scripts/ci/run-static.sh, run-security.sh). Code moved out of them into packages/ is scanned as usual.
 paths-ignore:

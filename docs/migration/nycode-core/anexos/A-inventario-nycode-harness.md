@@ -1,5 +1,5 @@
-<!-- Anexo A: levantamento bruto de 2026-11-20 (ny-pi origin/main e4f8729). Fonte de fatos do plano; não editar à mão, regenerar. -->
-# Inventário ny-pi para migração ao core de um fork do pi
+<!-- Anexo A: levantamento bruto de 2026-11-20 (`marcioazam/ny-pi` origin/main e4f8729). Fonte de fatos do plano; não editar à mão, regenerar. -->
+# Inventário nycode-harness para migração ao core de um fork do pi
 
 Fonte: `origin/main` = e4f8729 (2026-11-20, "fix(security): clear code-fixable Security and quality findings (#66)"), extraído com `git archive` para /tmp/nyx (somente leitura). Working tree sujo (351 entradas no porcelain), não lido. 1485 arquivos rastreados.
 Cobertura: leitura direta de arquivos (sem codegraph; inventário literal). Raiz de caminhos abaixo = raiz do repo.
@@ -152,9 +152,9 @@ Outros: .github/{CODEOWNERS (`* @marcioazam`), dependabot.yml (github-actions `/
 ## 7. bench/ (808 arquivos em bench/; 788 em suites/)
 
 - Código: run.py (CLI `bench run|post-status|…`), runners.py, gate.py (compara com baseline), report.py, stats.py, evidence.py, arms.toml, suites.toml (suites s1..; `est_cost_usd`), capabilities.toml.
-- arms/ (7): claude-vanilla, ny-pi, omp, pi-vanilla (braços comparados), oauth-token.sh, overlay-sha.sh, overlay.list. classify/ (2), contract/ (8; fake_api, speed, regras), faults/ (7; injetor de falhas), metrics/ (8), power/ (3; simulação de poder), tasks/ (7; swebenchpro, tb2, tb41 + excluídas), tests/ (19), tools/ (11): bench-pr.sh (poller local do status `bench-pr`, `--poll|--pr N`, worktree descartável, gate vs baseline main), bench-nightly.sh (tier full 03:30, nunca atualiza baseline), gate_real.py, systemd/{bench-pr,bench-nightly}.{service,timer} (timer PR a cada 10 min; instalação manual em ~/.config/systemd/user; env em ~/.config/ny-pi/bench.env: BENCH_REPO obrigatório, BENCH_STATE, BENCH_MODEL, BENCH_REPO_URL).
+- arms/ (7): claude-vanilla, nycode-harness, omp, pi-vanilla (braços comparados), oauth-token.sh, overlay-sha.sh, overlay.list. classify/ (2), contract/ (8; fake_api, speed, regras), faults/ (7; injetor de falhas), metrics/ (8), power/ (3; simulação de poder), tasks/ (7; swebenchpro, tb2, tb41 + excluídas), tests/ (19), tools/ (11): bench-pr.sh (poller local do status `bench-pr`, `--poll|--pr N`, worktree descartável, gate vs baseline main), bench-nightly.sh (tier full 03:30, nunca atualiza baseline), gate_real.py, systemd/{bench-pr,bench-nightly}.{service,timer} (timer PR a cada 10 min; instalação manual em ~/.config/systemd/user; env em ~/.config/ny-pi/bench.env: BENCH_REPO obrigatório, BENCH_STATE, BENCH_MODEL, BENCH_REPO_URL).
 - suites/ (788): hard/ 12 tarefas (577 arquivos), multi/ 10 (113), plan/ (94; casos plan-ask-*), check_oracles.py + teste + conftest + README.
-- Baselines em docs/bench/ (31): baseline-main/{meta.json,runs.jsonl,verdict.json}; BASELINE-VANILLA-2026-11.{md,json}; baseline-vanilla-2026-11/{opus,sonnet,tb41}/{cc-vanilla,ny-pi,omp,pi-vanilla}/{meta.json,runs.jsonl} (24 arquivos); coverage-map.json; RUNBOOK.md (666 l).
+- Baselines em docs/bench/ (31): baseline-main/{meta.json,runs.jsonl,verdict.json}; BASELINE-VANILLA-2026-11.{md,json}; baseline-vanilla-2026-11/{opus,sonnet,tb41}/{cc-vanilla,nycode-harness,omp,pi-vanilla}/{meta.json,runs.jsonl} (24 arquivos); coverage-map.json; RUNBOOK.md (666 l).
 
 ## 8. docs/ (39 arquivos)
 

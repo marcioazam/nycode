@@ -1,6 +1,6 @@
 # CI, qualidade e segurança
 
-Como os gates de CI do ny-pi e os do nycode viram um conjunto só em F3
+Como os gates de CI do `marcioazam/ny-pi` e os do nycode viram um conjunto só em F3
 ([00](00-mega-plano.md#f3-ci-unificado-gates-e-benchmark)).
 Decisões citadas como D-nn e pendências P-n: [11](11-decisoes-e-pendencias.md). Caminhos de destino: seção 2 de
 [02](02-arquitetura-alvo.md). Benchmark e o check `bench-pr`: [09](09-paridade-e-benchmark.md).
@@ -13,35 +13,35 @@ repositórios; **não verificado** é o que não pôde ser conferido nos arquivo
 
 ### 1.1 Workflows
 
-- **Arquivos em `.github/workflows/`**. ny-pi: `ci-static`, `ci-security`, `instruction-budget`, `codeql`, `scorecard`.
+- **Arquivos em `.github/workflows/`**. nycode-harness: `ci-static`, `ci-security`, `instruction-budget`, `codeql`, `scorecard`.
   nycode: `ci.yml`, `npm-audit.yml`.
-- **Outros arquivos de regra**. ny-pi: `zizmor.yml`, `dependabot.yml`, `CODEOWNERS`, `rulesets/main.json`,
+- **Outros arquivos de regra**. nycode-harness: `zizmor.yml`, `dependabot.yml`, `CODEOWNERS`, `rulesets/main.json`,
   `release.yml`. nycode: nenhum.
-- **Check de benchmark**. ny-pi: `bench-pr`: commit status publicado por um poster local, sem workflow. nycode: não
+- **Check de benchmark**. nycode-harness: `bench-pr`: commit status publicado por um poster local, sem workflow. nycode: não
   existe.
-- **`merge_group`**. ny-pi: sim, em `ci-static`, `ci-security` e `instruction-budget`. nycode: não (`ci.yml`, bloco
+- **`merge_group`**. nycode-harness: sim, em `ci-static`, `ci-security` e `instruction-budget`. nycode: não (`ci.yml`, bloco
   `on:`).
-- **`permissions` de topo**. ny-pi: `permissions: {}` em todos (a política de `run-security.sh` exige). nycode: ausente
+- **`permissions` de topo**. nycode-harness: `permissions: {}` em todos (a política de `run-security.sh` exige). nycode: ausente
   em `ci.yml`; `contents: read` em `npm-audit.yml`.
-- **Runner**. ny-pi: `ubuntu-24.04`. nycode: `ubuntu-latest`.
-- **`harden-runner`**. ny-pi: sim, com `egress-policy: block` e lista de destinos. nycode: não.
-- **Ações fixadas por SHA**. ny-pi: sim. nycode: sim (checkout `3d3c42e`, setup-node `8207627`).
+- **Runner**. nycode-harness: `ubuntu-24.04`. nycode: `ubuntu-latest`.
+- **`harden-runner`**. nycode-harness: sim, com `egress-policy: block` e lista de destinos. nycode: não.
+- **Ações fixadas por SHA**. nycode-harness: sim. nycode: sim (checkout `3d3c42e`, setup-node `8207627`).
 
 ### 1.2 Jobs e checks
 
-- **ny-pi `ci-static`**. Gatilhos: `pull_request`, `merge_group`, push em main. Job: `ci-static` (30 min). Nome do
+- **nycode-harness `ci-static`**. Gatilhos: `pull_request`, `merge_group`, push em main. Job: `ci-static` (30 min). Nome do
   check: `ci-static`. O que roda: `run-static.sh`.
-- **ny-pi `ci-static`**. Gatilhos: idem. Job: `mutation` (45 min). Nome do check: `ci-mutation`. O que roda:
+- **nycode-harness `ci-static`**. Gatilhos: idem. Job: `mutation` (45 min). Nome do check: `ci-mutation`. O que roda:
   `run-static.sh mutation`.
-- **ny-pi `ci-security`**. Gatilhos: idem. Job: `ci-security` (30 min). Nome do check: `ci-security`. O que roda:
+- **nycode-harness `ci-security`**. Gatilhos: idem. Job: `ci-security` (30 min). Nome do check: `ci-security`. O que roda:
   `run-security.sh`.
-- **ny-pi `instruction-budget`**. Gatilhos: PR (`labeled`, `unlabeled` incluídos), `merge_group`, push. Job:
+- **nycode-harness `instruction-budget`**. Gatilhos: PR (`labeled`, `unlabeled` incluídos), `merge_group`, push. Job:
   `instruction-budget` (5 min). Nome do check: `instruction-budget`. O que roda: `instruction_budget.py check`.
-- **ny-pi `codeql`**. Gatilhos: push e PR em main, cron `41 6 * * 3`, manual. Job: `analyze` (30 min). Nome do check:
+- **nycode-harness `codeql`**. Gatilhos: push e PR em main, cron `41 6 * * 3`, manual. Job: `analyze` (30 min). Nome do check:
   `Analyze (python)`, `(javascript-typescript)`, `(actions)`. O que roda: CodeQL, `build-mode: none`.
-- **ny-pi `scorecard`**. Gatilhos: push em main, cron `23 9 * * 1`, manual. Job: `analysis` (15 min). Nome do check:
+- **nycode-harness `scorecard`**. Gatilhos: push em main, cron `23 9 * * 1`, manual. Job: `analysis` (15 min). Nome do check:
   `Scorecard analysis`. O que roda: `ossf/scorecard-action` e envio do SARIF.
-- **ny-pi (local)**. Gatilhos: poll de 10 min na máquina do dono. Job: `bench-pr.sh`. Nome do check: `bench-pr`. O que
+- **nycode-harness (local)**. Gatilhos: poll de 10 min na máquina do dono. Job: `bench-pr.sh`. Nome do check: `bench-pr`. O que
   roda: gate do benchmark (seções 3 e 5 de 09).
 - **nycode `ci.yml`**. Gatilhos: push em main, tags `v*.*.*`, PR em main. Job: `build-check`. Nome do check:
   `build-check`. O que roda: `npm ci --ignore-scripts`, `build`, `check`, changelog (`release/*`: o step `Check the version PR changelog diff`, D-44, no lugar do
@@ -53,16 +53,16 @@ repositórios; **não verificado** é o que não pôde ser conferido nos arquivo
 - **nycode `npm-audit.yml`**. Gatilhos: cron `37 7 * * *`, manual. Job: `audit`. Nome do check: `audit`. O que roda:
   `scripts/npm-audit.mjs` e `npm audit signatures`.
 
-Fontes: `.github/workflows/*.yml` nos dois repositórios; os 6 contextos obrigatórios do nycode e os 4 do ny-pi
+Fontes: `.github/workflows/*.yml` nos dois repositórios; os 6 contextos obrigatórios do nycode e os 4 do nycode-harness
 vêm do [anexo D](anexos/D-regras-github-brutas.md) (seções 2 e 3). Observações verificadas:
 
-- O `ci-mutation` do ny-pi é o segundo job de `ci-static.yml`, não um workflow à parte; não é check obrigatório.
-- `concurrency` do ny-pi: grupo `<workflow>-${{ github.ref }}` e `cancel-in-progress` só em `pull_request`. No nycode:
+- O `ci-mutation` do nycode-harness é o segundo job de `ci-static.yml`, não um workflow à parte; não é check obrigatório.
+- `concurrency` do nycode-harness: grupo `<workflow>-${{ github.ref }}` e `cancel-in-progress` só em `pull_request`. No nycode:
   `ci-${{ github.ref }}` com cancelamento sempre, inclusive em push na main e em tag (`ci.yml`, bloco `concurrency:`).
 - O `build-check` do nycode só roda o check de changelog se houver uma tag `v*.*.*`; sem tag ele é pulado (P-6 pede a
   tag `v1.6.0-base` em F0). Para head `release/*` ele não roda: o step `Check the version PR changelog diff` aceita só a
   troca de `## [Unreleased]` por `## [<versão>] - <data>` nos `CHANGELOG.md` (D-44, `scripts/ci/release/`).
-- O Node do `ci-static` do ny-pi é 24; o do nycode é 22, e o `package.json` do nycode declara `engines.node >=22.19.0`.
+- O Node do `ci-static` do nycode-harness é 24; o do nycode é 22, e o `package.json` do nycode declara `engines.node >=22.19.0`.
   A versão de Node do CI unificado fica **não verificada** (decidir em F3 com `npm run check` e `./test.sh`).
 - `npm run check` começa por `node scripts/biome-check.mjs --write` (`package.json:20`): em CI isso reescreve arquivos
   em vez de reprovar formatação. **Proposta:** o job `build-check` roda uma variante sem `--write`; o `check` local
@@ -73,7 +73,7 @@ vêm do [anexo D](anexos/D-regras-github-brutas.md) (seções 2 e 3). Observaç�
 ### 2.1 Checks obrigatórios (D-05)
 
 União dos dois conjuntos: 10 contextos no ruleset `main` do nycode (substituem os 6 da proteção clássica e os 4 do
-ruleset do ny-pi). Todos rodam também em `merge_group`.
+ruleset do `marcioazam/ny-pi`). Todos rodam também em `merge_group`.
 
 | # | Contexto | Origem | Workflow alvo |
 |---|---|---|---|
@@ -83,13 +83,13 @@ ruleset do ny-pi). Todos rodam também em `merge_group`.
 | 4 | `test (chord)` | nycode | `ci.yml` |
 | 5 | `test (other)` | nycode | `ci.yml` |
 | 6 | `mcp-conformance` | nycode | `ci.yml` |
-| 7 | `ci-static` | ny-pi | `ci-static.yml` |
-| 8 | `ci-security` | ny-pi | `ci-security.yml` |
-| 9 | `instruction-budget` | ny-pi | `instruction-budget.yml` |
-| 10 | `bench-pr` | ny-pi | status local (D-21 decide quando ele pula) |
+| 7 | `ci-static` | nycode-harness | `ci-static.yml` |
+| 8 | `ci-security` | nycode-harness | `ci-security.yml` |
+| 9 | `instruction-budget` | nycode-harness | `instruction-budget.yml` |
+| 10 | `bench-pr` | nycode-harness | status local (D-21 decide quando ele pula) |
 
 O ruleset também mantém `strict_required_status_checks_policy: true` (ramo atualizado antes do merge), como no
-`rulesets/main.json` do ny-pi. O contexto `bench-pr` não leva `integration_id`, porque o status vem de `gh api` e não
+`rulesets/main.json` do nycode-harness. O contexto `bench-pr` não leva `integration_id`, porque o status vem de `gh api` e não
 de um app (RUNBOOK, "Tornar `bench-pr` obrigatório"). Um check obrigatório que nunca é publicado trava o PR: nenhum dos
 workflows acima pode usar filtro de caminho (`paths:`).
 
@@ -106,16 +106,16 @@ workflows acima pode usar filtro de caminho (`paths:`).
 
 ### 2.3 Gatilhos, permissões e concorrência por workflow
 
-Regra única (o `run-security.sh` do ny-pi já a impõe em `check_workflow_policy`): `permissions: {}` no topo de todo
+Regra única (o `run-security.sh` do nycode-harness já a impõe em `check_workflow_policy`): `permissions: {}` no topo de todo
 workflow, permissões declaradas por job, nenhum `pull_request_target` nem `workflow_run`.
 
 - **`ci.yml`**. Gatilhos alvo: `pull_request`, `merge_group`, push em main, tag `v*.*.*`. Permissões por job: `contents:
   read`. Concorrência: `ci-${{ github.ref }}`, cancela só em PR.
 - **`ci-static.yml`**. Gatilhos alvo: `pull_request`, `merge_group`, push em main. Permissões por job: `contents: read`.
-  Concorrência: igual ao ny-pi.
-- **`ci-security.yml`**. Gatilhos alvo: idem. Permissões por job: `contents: read`. Concorrência: igual ao ny-pi.
+  Concorrência: igual ao nycode-harness.
+- **`ci-security.yml`**. Gatilhos alvo: idem. Permissões por job: `contents: read`. Concorrência: igual ao nycode-harness.
 - **`instruction-budget.yml`**. Gatilhos alvo: PR com `labeled`/`unlabeled`, `merge_group`, push. Permissões por job:
-  `contents: read`. Concorrência: igual ao ny-pi.
+  `contents: read`. Concorrência: igual ao nycode-harness.
 - **`codeql.yml`**. Gatilhos alvo: push, PR, cron, manual. Permissões por job: `contents: read`, `actions: read`,
   `security-events: write`. Concorrência: `cancel-in-progress: false`.
 - **`scorecard.yml`**. Gatilhos alvo: push em main, cron, manual. Permissões por job: acima, mais `id-token: write`.
@@ -165,7 +165,7 @@ Legenda: **igual** (sem mudança além de nome), **caminho** (muda de→para), *
   `bench/`, `scripts/` e `resources/hooks/`; `apps/` fora (D-23).
 - **4**. Etapa (nome no script): `mypy --strict` (alterados). Destino: igual. O que muda: nenhuma.
 - **5**. Etapa (nome no script): `biome (changed extensions ts)`. Destino: absorvida. O que muda: o Biome do fork
-  (tabulação, 120) em `npm run check`; o do ny-pi some (D-06).
+  (tabulação, 120) em `npm run check`; o do nycode-harness some (D-06).
 - **6**. Etapa (nome no script): `shellcheck -x` (alterados). Destino: igual. O que muda: nenhuma.
 - **7**. Etapa (nome no script): `shfmt -i 2 -d` (alterados). Destino: igual. O que muda: nenhuma. Os passos 6 e 7 pulam
   os `.sh` do upstream que têm costura `ativa` em `scripts/fork/seams.txt` (lista em `scripts/ci/seams/seam-files.sh`) e
@@ -190,7 +190,7 @@ Legenda: **igual** (sem mudança além de nome), **caminho** (muda de→para), *
   o `pi` instalado; **proposta:** não portar.
 
 A tabela tem 19 linhas (0 a 18): o autoteste inicial, que não usa `step`, e 18 linhas para as 19 chamadas a `step`,
-porque a linha 3 junta `ruff check` e `ruff format`. A etapa 5 do ny-pi só olhava
+porque a linha 3 junta `ruff check` e `ruff format`. A etapa 5 do nycode-harness só olhava
 `extensions/*.ts`; no nycode o `npm run check` cobre os `packages/*/src`, `packages/*/test` e exemplos (lista
 `files.includes` de `biome.json`).
 
@@ -234,18 +234,18 @@ vazio (`run-security.sh`, função `leaks`); no nycode a variável vira `NYCODE_
 
 ### 3.4 `instruction_budget.py` e a linha de base
 
-- **Fontes contadas**. ny-pi: `claude-home/CLAUDE.md`, `claude-home/rules/*.md`, `name` e `description` de cada
+- **Fontes contadas**. nycode-harness: `claude-home/CLAUDE.md`, `claude-home/rules/*.md`, `name` e `description` de cada
   `SKILL.md` e agente. nycode alvo: `resources/instructions/*.md`, `resources/rules/*.md` e o frontmatter de
   `resources/skills` e `resources/agents` (02, seção 6).
-- **Estimador**. ny-pi: `ceil(bytes_utf8/3.5)`. nycode alvo: igual.
-- **Falha**. ny-pi: total acima do baseline, exit 1; rótulo `budget-increase` libera; exit 2 entrada inválida. nycode
+- **Estimador**. nycode-harness: `ceil(bytes_utf8/3.5)`. nycode alvo: igual.
+- **Falha**. nycode-harness: total acima do baseline, exit 1; rótulo `budget-increase` libera; exit 2 entrada inválida. nycode
   alvo: igual.
-- **Linha de base**. ny-pi: `scripts/ci/instruction_budget.baseline.json` (versão 1). nycode alvo: mesmo caminho,
+- **Linha de base**. nycode-harness: `scripts/ci/instruction_budget.baseline.json` (versão 1). nycode alvo: mesmo caminho,
   **regravada** com `update` depois do corte de F8.
 
 02 (seção 6) torna o orçamento obrigatório e diz que o texto sempre carregado não pode crescer com a mudança de lugar.
 Como as instruções passam a vir de `contract.md`, `headless.md` e `lite.md` (e não de `CLAUDE.md`), o primeiro baseline
-do nycode **só vale depois** da cópia byte a byte das instruções: o total do baseline atual do ny-pi **não foi lido**.
+do nycode **só vale depois** da cópia byte a byte das instruções: o total do baseline atual do nycode-harness **não foi lido**.
 O rótulo `budget-increase` é lido de `GITHUB_EVENT_PATH`, por isso o workflow escuta `labeled` e `unlabeled`.
 
 ### 3.5 `structure_changed.py` e a lista de base do upstream (D-06)
@@ -279,22 +279,22 @@ existe, se a linha é marcada `(optional)`, ou se está em `scripts/refs-allow.t
   `docs/specs/`, `resources/hooks/fixtures/`; a terceira some (patches viram fonte).
 - **Marcador de caminho**. De: `$CLAUDE_CONFIG_DIR/...`, `~/.pi/agent/claude-home/...`. Para: `${NYCODE_RESOURCES}` (02,
   seção 6); a validação do marcador é **proposta**.
-- **`scripts/refs-allow.txt`**. De: entradas do ny-pi. Para: revisar uma a uma; conteúdo **não lido**.
+- **`scripts/refs-allow.txt`**. De: entradas do nycode-harness. Para: revisar uma a uma; conteúdo **não lido**.
 
-Local: o script mora em `scripts/check-refs.py` no ny-pi; em `run-static.sh` é chamado como `scripts/check-refs.py`.
+Local: o script mora em `scripts/check-refs.py` no nycode-harness; em `run-static.sh` é chamado como `scripts/check-refs.py`.
 Destino sugerido: `scripts/ci/check-refs.py` (**proposta**, junto dos demais verificadores; atualiza o `run-static.sh`).
 
 ### 3.7 `check-leaks.sh` e o gancho de commit
 
-- **Modos**. ny-pi: `--tree` (padrão), `--staged FILES...`, `--history`, `--selftest`. nycode alvo: iguais.
-- **Configuração gitleaks**. ny-pi: `.gitleaks.toml` e `.leak-allow`. nycode alvo: o nycode usa `.gitleaksignore`
+- **Modos**. nycode-harness: `--tree` (padrão), `--staged FILES...`, `--history`, `--selftest`. nycode alvo: iguais.
+- **Configuração gitleaks**. nycode-harness: `.gitleaks.toml` e `.leak-allow`. nycode alvo: o nycode usa `.gitleaksignore`
   (fingerprints, 3 linhas lidas); os dois mecanismos coexistem até F2 (**proposta:** manter `.gitleaks.toml` e converter
   as 3 entradas).
-- **trufflehog**. ny-pi: 3.99.9, sha256 verificado em `install_trufflehog`. nycode alvo: igual; vem de
+- **trufflehog**. nycode-harness: 3.99.9, sha256 verificado em `install_trufflehog`. nycode alvo: igual; vem de
   `install-tools.sh`.
-- **Gancho**. ny-pi: `.githooks/pre-commit` mais `.pre-commit-config.yaml`. nycode alvo: `.husky/pre-commit` do fork
+- **Gancho**. nycode-harness: `.githooks/pre-commit` mais `.pre-commit-config.yaml`. nycode alvo: `.husky/pre-commit` do fork
   chama `check-leaks.sh --staged` (02, seção 8).
-- **Identificadores pessoais**. ny-pi: `PI_HARNESS_IDENTIFIERS` (vazio em CI). nycode alvo: variável renomeada (seção
+- **Identificadores pessoais**. nycode-harness: `PI_HARNESS_IDENTIFIERS` (vazio em CI). nycode alvo: variável renomeada (seção
   3.2).
 
 O `.husky/pre-commit` do nycode hoje roda `node scripts/check-lockfile-commit.mjs`, `npm run check` e, se existir
@@ -306,7 +306,7 @@ O `.husky/pre-commit` do nycode hoje roda `node scripts/check-lockfile-commit.mj
 - **`scripts/ci/changed-files.sh`**. Papel: lista de arquivos alterados contra `BASE_SHA`. Observação: Base: PR base,
   `merge_group.base_sha` ou `event.before`; sem isso, merge-base com `origin/main`.
 - **`scripts/ci/install-tools.sh`**. Papel: instala binários por sha256. Observação: Lista no `ci-static`: shellcheck,
-  shfmt, biome, rg; no `ci-security`: actionlint, gitleaks, trufflehog, osv-scanner, shellcheck, rg. O `biome` do ny-pi
+  shfmt, biome, rg; no `ci-security`: actionlint, gitleaks, trufflehog, osv-scanner, shellcheck, rg. O `biome` do nycode-harness
   sai (D-06).
 - **`scripts/ci/requirements-ci.in` e `.txt`**. Papel: pins Python com hash. Observação: `ruff==0.17.5`, `mypy==2.4.1`,
   `zizmor==1.32.0`, `diff-cover==11.0.1`, `mutmut==3.8.1`, `coverage`, `pytest`, `pyyaml`.
@@ -343,7 +343,7 @@ Fato: `vitest` `4.1.12` está em `packages/coding-agent/package.json:77`; a raiz
 
 **Proposta** (D-24 aplicado a TypeScript):
 
-1. Cada pacote que recebe código do ny-pi roda `vitest run --coverage` com o provedor `v8`, dependência de
+1. Cada pacote que recebe código do nycode-harness roda `vitest run --coverage` com o provedor `v8`, dependência de
    desenvolvimento em versão exata (o `check:pinned-deps` exige).
 2. O relatório sai em formato que o `diff-cover` leia (Cobertura XML é a aposta; a lista de formatos de `diff-cover`
    11.0.1 e o relatório `cobertura` do vitest **não foram verificados**: conferir na primeira unidade de F3).
@@ -366,7 +366,7 @@ Até a primeira medição, a cobertura TypeScript do nycode é "sem medida".
 - O arquivo `mutmut-baseline.json` não aparece na listagem de `scripts/ci/` de `origin/main`, então hoje nenhum
   arquivo tem linha de base e o job só informa; o script tolera a ausência (`jq ... || true`).
 - Quando o mutmut não mapeia os testes aos mutantes, o job avisa e só reprova se o arquivo constar da linha de base.
-- Não há mutação para TypeScript no ny-pi nem no nycode: **sem medida**.
+- Não há mutação para TypeScript no nycode-harness nem no nycode: **sem medida**.
 
 O job continua não obrigatório (45 min de teto) e roda em PR e `merge_group`; `local.sh --mutation` o reproduz.
 
@@ -376,7 +376,7 @@ O job continua não obrigatório (45 min de teto) e roda em PR e `merge_group`; 
 
 - Toda `uses:` por SHA de 40 hex (ou `docker://...@sha256:`), com o número da versão em comentário. O
   `run-security.sh` reprova pin ausente (`check_pins`, linhas 27-39). Os SHAs atuais: checkout `3d3c42e`, setup-python
-  `6d4fd22`, setup-node `949feb2` no ny-pi e `8207627` no nycode (versões distintas do mesmo action: unificar em F3),
+  `6d4fd22`, setup-node `949feb2` no nycode-harness e `8207627` no nycode (versões distintas do mesmo action: unificar em F3),
   codeql-action `33d7b85` (v4.39.3), scorecard-action `fa7117d` (v2.5.0).
 - `step-security/harden-runner` `1d88384` (v2.22.4), `egress-policy: block`, destinos por job.
 - `actionlint` e `zizmor` (política `hash-pin` em `.github/zizmor.yml`) validam os workflows.
@@ -386,26 +386,26 @@ O job continua não obrigatório (45 min de teto) e roda em PR e `merge_group`; 
 - `gitleaks` mais `trufflehog` via `check-leaks.sh`, e `trufflehog git --only-verified` no histórico.
 - `semgrep` roda pela imagem oficial fixada por digest, não pela roda PyPI: `semgrep/semgrep:1.186.0@sha256:6e1b0434...`
   (`run-security.sh`, `SEMGREP_IMAGE`). A razão registrada no script é que a roda fixa `mcp==1.29.0` e
-  `opentelemetry-api~=1.37.0`, ambos com avisos abertos. A mudança é o PR #66 do ny-pi (número vindo da instrução desta
+  `opentelemetry-api~=1.37.0`, ambos com avisos abertos. A mudança é o PR #66 do `marcioazam/ny-pi` (número vindo da instrução desta
   frente; o texto do PR **não foi lido**). Regras: `p/default`, `p/python`, `p/typescript`, `p/command-injection`,
   `p/github-actions`. Com `BASE_SHA`, só acha o que é novo desde a base (`--baseline-commit`); sem ele, varre tudo.
   O job exige Docker no runner.
 
 ### 6.3 Dependências
 
-- **Instalação**. ny-pi: `npm ci --ignore-scripts` no `install.sh` e no CI. nycode: `npm ci --ignore-scripts`
+- **Instalação**. nycode-harness: `npm ci --ignore-scripts` no `install.sh` e no CI. nycode: `npm ci --ignore-scripts`
   (`ci.yml`). Alvo: igual; `.npmrc` com `save-exact=true`.
-- **Versões exatas**. ny-pi: pins no `npm/package.json`. nycode: `scripts/check-pinned-deps.mjs` em `npm run check`.
+- **Versões exatas**. nycode-harness: pins no `npm/package.json`. nycode: `scripts/check-pinned-deps.mjs` em `npm run check`.
   Alvo: mantém; vale também para as dependências novas das extensões.
-- **Idade mínima**. ny-pi: cooldown de 7 dias no Dependabot. nycode: `.npmrc`: `min-release-age=2`, exceção
+- **Idade mínima**. nycode-harness: cooldown de 7 dias no Dependabot. nycode: `.npmrc`: `min-release-age=2`, exceção
   `@earendil-works/*`. Alvo: os dois (o `.npmrc` vale para instalação; o cooldown, para o PR do Dependabot).
-- **Lockfile**. ny-pi: n/a. nycode: `.husky/pre-commit` chama `check-lockfile-commit.mjs`;
+- **Lockfile**. nycode-harness: n/a. nycode: `.husky/pre-commit` chama `check-lockfile-commit.mjs`;
   `NYCODE_ALLOW_LOCKFILE_CHANGE=1` libera. Alvo: mantém; só local (o CI falha por `npm ci` fora de sincronia).
-- **Auditoria PR**. ny-pi: `osv-scanner` (CVSS >= 7 ou sem nota = falha), exceções com dono e prazo em
+- **Auditoria PR**. nycode-harness: `osv-scanner` (CVSS >= 7 ou sem nota = falha), exceções com dono e prazo em
   `osv-scanner.toml`. nycode: nenhuma em PR. Alvo: `osv-scanner` sobre os 5 `package-lock.json`.
-- **Auditoria diária**. ny-pi: n/a. nycode: `npm-audit.yml`: `scripts/npm-audit.mjs` (nível `moderate`, só produção,
+- **Auditoria diária**. nycode-harness: n/a. nycode: `npm-audit.yml`: `scripts/npm-audit.mjs` (nível `moderate`, só produção,
   exceções em `acceptedAdvisories`, hoje `{}`) e `npm audit signatures --omit=dev`. Alvo: mantém.
-- **Dependabot**. ny-pi: `github-actions` em `/` e `npm` em `/npm`, semanal, espera de 7 dias, agrupado. nycode: não
+- **Dependabot**. nycode-harness: `github-actions` em `/` e `npm` em `/npm`, semanal, espera de 7 dias, agrupado. nycode: não
   existe. Alvo: `github-actions` em `/` e `npm` nos diretórios dos 5 lockfiles (**proposta**); mesma espera e
   agrupamento.
 
@@ -421,13 +421,13 @@ listas separadas. A implementação (o `.mjs` ler o `.toml`) não foi desenhada 
 
 - O nycode tem o "default setup" configurado para `actions` e `rust`, semanal ([anexo
   D](anexos/D-regras-github-brutas.md),
-  seção 5). Em F3: levar `codeql.yml` do ny-pi (matriz `javascript-typescript`, `python`, `actions`,
+  seção 5). Em F3: levar `codeql.yml` do nycode-harness (matriz `javascript-typescript`, `python`, `actions`,
   `build-mode: none`, `fail-fast: false`) e desligar o default setup, que ficaria preso em `rust`. Como desligar
   (interface
   ou API do GitHub) **não foi verificado**; é uma ação de escrita no repositório do dono, de responsabilidade do
   executor de F3.
-- `python` continua na matriz porque o `bench/` e os `scripts/` do ny-pi entram (D-23 deixa `apps/` de fora dos gates).
-- Scorecard: o workflow roda só em push na main, cron e manual; precisa de `id-token: write` para publicar. O ny-pi tem
+- `python` continua na matriz porque o `bench/` e os `scripts/` do nycode-harness entram (D-23 deixa `apps/` de fora dos gates).
+- Scorecard: o workflow roda só em push na main, cron e manual; precisa de `id-token: write` para publicar. O nycode-harness tem
   2 alertas abertos de Scorecard (SAST e CII-Best-Practices, anexo D, seção 5); o critério 8 de [00](00-mega-plano.md)
   pede nenhum alerta que o código possa fechar.
 
@@ -449,7 +449,7 @@ listas separadas. A implementação (o `.mjs` ler o `.toml`) não foi desenhada 
 
 ## 7. CI local (`docs/ci-local.md`, `scripts/ci/local.sh`)
 
-O `local.sh` do ny-pi roda `ci-static`, `ci-security` e `instruction-budget` com os mesmos scripts, binários fixados e
+O `local.sh` do nycode-harness roda `ci-static`, `ci-security` e `instruction-budget` com os mesmos scripts, binários fixados e
 pacotes Python com hash, num `HOME` descartável (`--mutation` acrescenta `ci-mutation`). Limite de 900 s para o conjunto
 (`CI_LOCAL_MAX_S`), cache em `~/.cache/ny-pi-ci`, base em `BASE_SHA` (padrão `origin/main`), saída 0/1/124. `--post`
 publica cada gate como commit status no HEAD, exigindo árvore limpa e HEAD já publicado (exit 2 se não).
@@ -484,7 +484,7 @@ O local não prova o CI remoto, nem o `bench-pr`, nem estado de produção.
 
 ### 7.2 Contingência sem CI remoto
 
-`docs/ci-local.md` do ny-pi (decisão de 2026-11-15) descreve usar `local.sh --mutation --post` quando o remoto não
+`docs/ci-local.md` do nycode-harness (decisão de 2026-11-15) descreve usar `local.sh --mutation --post` quando o remoto não
 roda por cobrança. Ela vale só com a autorização permanente que o dono registrou; um check remoto vermelho não é coberto
 por status local verde, e o caminho de desligar workflows **não foi exercitado** com falha real. O doc migra para
 `docs/ci-local.md` do nycode com os nomes novos. Nunca `--admin` nem desligar a proteção.
@@ -549,7 +549,7 @@ Pontos em aberto (nenhum resolvido aqui):
   foi lido.
 - O job não pode impedir o merge (roda depois); é auditoria. O ruleset continua com PR obrigatório, sem exclusão de
   ramo e sem push forçado (D-07).
-- `allow_merge_commit` hoje é `true` no nycode e `false` no ny-pi; o conjunto de métodos fica em 04.
+- `allow_merge_commit` hoje é `true` no nycode e `false` no nycode-harness; o conjunto de métodos fica em 04.
 
 ## 9. Ordem de ativação em F3, aceite e riscos
 
@@ -559,7 +559,7 @@ Pontos em aberto (nenhum resolvido aqui):
    `ci.yml` e `npm-audit.yml` (seção 2.3). Rodar `local.sh` no head.
 2. Instalar o poster local: `bench-pr.sh`, `bench-nightly.sh` e `vanilla-retest.sh` em `~/.local/bin`, units em
    `~/.config/systemd/user`, env em `~/.config/nycode/bench.env` (modo 0600; detalhe em 09, seção 3).
-3. Medir a referência do ny-pi sobre o pi 1.6.0 (D-25) e regravar `docs/bench/baseline-main` por PR (09, seções 6 e 7).
+3. Medir a referência do nycode-harness sobre o pi 1.6.0 (D-25) e regravar `docs/bench/baseline-main` por PR (09, seções 6 e 7).
 4. Levar `codeql.yml` e desligar o default setup (D-20); levar `scorecard.yml` e `merge-policy.yml`.
 5. Abrir o PR de teste (seção 9.2). Só com o primeiro `bench-pr` verde e a baseline commitada, ativar o ruleset `main`
    com os 10 contextos e a política de métodos de D-07 e remover a proteção clássica. Ativar antes travaria todo PR
@@ -580,7 +580,7 @@ Pontos em aberto (nenhum resolvido aqui):
 
 ### 9.3 Riscos
 
-- **Tempo de CI maior (build, vitest, CodeQL, Docker do semgrep)**. Efeito: Fila de PR lenta; o ny-pi mede 46 s e 14 s
+- **Tempo de CI maior (build, vitest, CodeQL, Docker do semgrep)**. Efeito: Fila de PR lenta; o nycode-harness mede 46 s e 14 s
   só nos gates Python. Contenção: Medir os jobs do nycode no PR de teste; cache de npm já existe (`cache: npm`); tempos
   do nycode **não medidos**.
 - **Custo do `bench-pr`**. Efeito: Cada PR funcional gasta estimados US$ 6,72 no olhar 1 (09, seção 6), até US$ 18 com a
@@ -606,5 +606,5 @@ lido.
 PR aberto mais antigo estiver sem `bench-pr` há mais de 2 h; (2) procedimento: conferir `list-timers`, ler o
 `journalctl`, conferir o token OAuth (o braço recusa quando faltam menos de 30 min de validade,
 `bench/arms/oauth-token.sh`), conferir espaço livre (`BENCH_MIN_FREE_GB`, padrão 30) e rodar `bench-pr.sh --pr N` à
-mão; (3) se a máquina ficar indisponível por mais que o aceitável, a contingência é do dono; o ny-pi não definiu
+mão; (3) se a máquina ficar indisponível por mais que o aceitável, a contingência é do dono; o nycode-harness não definiu
 tempo máximo. Contornar o ruleset nunca é saída.

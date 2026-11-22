@@ -25,7 +25,7 @@ TYPES = ("skill", "agent", "extension", "hook", "command", "plugin")
 CLASSES = ("core", "ui", "optional", "remove")
 RESOURCES = Path("packages/coding-agent/resources")
 EXTENSIONS = Path("packages/coding-agent/src/extensions")
-# The ny-harness copy waiting to move (removed in F12): same layout, resources under claude-home/.
+# The nycode-harness copy waiting to move (removed in F12): same layout, resources under claude-home/.
 IMPORT_RESOURCES = Path("import/ny-pi/claude-home")
 IMPORT_EXTENSIONS = Path("import/ny-pi/extensions")
 EXT_SKIP = {"test", "tests", "node_modules"}

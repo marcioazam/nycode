@@ -26,7 +26,7 @@ step() { # name cmd...
   fi
 }
 
-# import/ (history imported from ny-harness, removed in F12) and node_modules never take part in a lint.
+# import/ (history imported from nycode-harness, removed in F12) and node_modules never take part in a lint.
 mapfile -t CHANGED < <(bash "$CIDIR/changed-files.sh" | grep -vE '^import/|(^|/)node_modules/' || true)
 echo "changed files: ${#CHANGED[@]} (base ${BASE_SHA:-auto})"
 

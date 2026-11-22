@@ -1,4 +1,4 @@
-// K11 (C-F8-12): `/bypass`, its shortcut, the status key and the plan-mode hand-off, moved from ny-harness's
+// K11 (C-F8-12): `/bypass`, its shortcut, the status key and the plan-mode hand-off, moved from nycode-harness's
 // bypass-permissions extension to core/permissions/.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import bypassExtension from "../../../src/core/permissions/bypass-command.ts";

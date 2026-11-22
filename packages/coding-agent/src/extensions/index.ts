@@ -77,9 +77,9 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "thinking", factory: thinkingExtension, builtin: true },
 	{ name: "todo", factory: todoExtension, builtin: true },
 	{ name: "web", factory: webExtension, builtin: true, enabledByDefault: false },
-	// Embedded nycode-lsp: a settings package listed right after nycode in ny-harness, so it loads before the ny-harness extensions.
+	// Embedded nycode-lsp: a settings package listed right after nycode in nycode-harness, so it loads before the nycode-harness extensions.
 	{ name: "lsp", factory: lspExtension, builtin: true },
-	// Embedded ny-harness extensions, in ny-harness's load order (after nycode, by source file name).
+	// Embedded nycode-harness extensions, in nycode-harness's load order (after nycode, by source file name).
 	{ name: "auto-resume", factory: autoResumeExtension, builtin: true },
 	// nycode: K11 the logic lives with the permission engine in core/permissions/, this line only registers it.
 	{ name: "bypass-permissions", factory: bypassPermissionsExtension, builtin: true },

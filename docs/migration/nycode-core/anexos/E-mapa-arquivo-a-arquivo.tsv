@@ -22,7 +22,7 @@ origem	destino	acao	fase	regra
 .gitleaks.toml	.gitleaks.toml	mover	F2	G08
 .leak-allow	.leak-allow	mover	F2	G08
 .pre-commit-config.yaml	.pre-commit-config.yaml	mover	F2	G08
-CHANGELOG.md	docs/harness/CHANGELOG-ny-pi.md	mover	F2	G02
+CHANGELOG.md	docs/harness/CHANGELOG-nycode-harness.md	mover	F2	G02
 CODE_OF_CONDUCT.md	CODE_OF_CONDUCT.md	mover	F2	G03
 CONTRIBUTING.md	CONTRIBUTING.md	fundir	F2	G04
 LICENSE	LICENSE (a do destino, mesma MIT)	remover	F2	G06
@@ -33,7 +33,7 @@ SUPPORT.md	SUPPORT.md	mover	F2	G03
 bench/__init__.py	bench/__init__.py	converter	F3	B02
 bench/arms.toml	bench/arms.toml	converter	F3	B02
 bench/arms/claude-vanilla	bench/arms/claude-vanilla	converter	F3	B02
-bench/arms/ny-pi	bench/arms/ny-pi	converter	F3	B02
+bench/arms/ny-pi	bench/arms/nycode-harness	converter	F3	B02
 bench/arms/oauth-token.sh	bench/arms/oauth-token.sh	converter	F3	B02
 bench/arms/omp	(braço omp fora das medições, D-26)	remover	F3	B01
 bench/arms/overlay-sha.sh	bench/arms/overlay-sha.sh	converter	F3	B02

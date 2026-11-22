@@ -136,9 +136,9 @@ semgrep_scan() {
   return "$rc"
 }
 
-# import/ (history imported from ny-harness, removed in F12) is outside every gate except the leak scan: the semgrep
+# import/ (history imported from nycode-harness, removed in F12) is outside every gate except the leak scan: the semgrep
 # and osv-scanner runs exclude it (no other directory of the repository is named "import").
-# docs/migration/nycode-arquivo (verbatim ny-harness archive, not maintained or executed, owner decision 2026-11-21) is
+# docs/migration/nycode-arquivo (verbatim nycode-harness archive, not maintained or executed, owner decision 2026-11-21) is
 # outside semgrep too; the leak scan still covers it.
 # osv-scanner has no severity threshold flag: fail on any group with CVSS >= 7 (HIGH/CRITICAL) or
 # no score at all (unknown is not assumed safe). Exceptions live in scripts/ci/osv-scanner.toml with owner+expiry.

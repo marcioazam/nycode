@@ -1,14 +1,14 @@
-<!-- Gerado por gerar-mapa.py a partir de ny-pi origin/main e4f8729 (1485 arquivos). Não editar à mão. -->
+<!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main e4f8729 (1485 arquivos). Não editar à mão. -->
 # Anexo E: resumo do mapa por regra
 
-Total de arquivos rastreados no ny-pi: **1485**. Arquivos sem regra: **0**.
+Total de arquivos rastreados no nycode-harness: **1485**. Arquivos sem regra: **0**.
 Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arquivo-a-arquivo.tsv).
 
 | Regra | Arquivos | Padrão de origem | Destino | Ação | Fase |
 |---|---:|---|---|---|---|
 | X01 | 5 | `^claude-home/bin/evals/(?:plan_ab\.py\|plan_ab_cases\.jsonl\|test_plan_ab\.py\|harbor/(?:run\.sh\|README\.md))$` | `(sem referência no nycode)` | remover | F3 |
 | G01 | 1 | `^README\.md$` | `README.md` | fundir | F2 |
-| G02 | 1 | `^CHANGELOG\.md$` | `docs/harness/CHANGELOG-ny-pi.md` | mover | F2 |
+| G02 | 1 | `^CHANGELOG\.md$` | `docs/harness/CHANGELOG-nycode-harness.md` | mover | F2 |
 | G03 | 2 | `^(CODE_OF_CONDUCT\|SUPPORT)\.md$` | `$1.md` | mover | F2 |
 | G04 | 2 | `^(CONTRIBUTING\|SECURITY)\.md$` | `$1.md` | fundir | F2 |
 | G05 | 1 | `^NOTICE$` | `NOTICE` | fundir | F2 |

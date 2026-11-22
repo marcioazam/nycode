@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Gera o anexo E: destino de cada arquivo rastreado do ny-pi.
+"""Gera o anexo E: destino de cada arquivo rastreado do nycode-harness.
 
-Uso: git -C <ny-pi> ls-tree -r --name-only origin/main | python3 gerar-mapa.py > E-mapa-arquivo-a-arquivo.tsv
-     git -C <ny-pi> ls-tree -r --name-only origin/main | python3 gerar-mapa.py --resumo e4f8729 > E-resumo-por-regra.md
+Uso: git -C <clone de marcioazam/ny-pi> ls-tree -r --name-only origin/main | python3 gerar-mapa.py > E-mapa-arquivo-a-arquivo.tsv
+     git -C <clone de marcioazam/ny-pi> ls-tree -r --name-only origin/main | python3 gerar-mapa.py --resumo e4f8729 > E-resumo-por-regra.md
 Um caminho de OVERRIDES vence as regras; depois a primeira regra que casa vence. Sai com código 1 se algum caminho
 não casar com regra nenhuma. O TSV e o resumo são saídas deste script: corrija aqui e gere de novo, nunca à mão.
 """
@@ -29,7 +29,13 @@ RULES: list[tuple[str, str, str, str, str]] = [
     ),
     # Raiz e governança (F2)
     ("G01", r"^README\.md$", "README.md", "fundir", "F2"),
-    ("G02", r"^CHANGELOG\.md$", "docs/harness/CHANGELOG-ny-pi.md", "mover", "F2"),
+    (
+        "G02",
+        r"^CHANGELOG\.md$",
+        "docs/harness/CHANGELOG-nycode-harness.md",
+        "mover",
+        "F2",
+    ),
     ("G03", r"^(CODE_OF_CONDUCT|SUPPORT)\.md$", r"\1.md", "mover", "F2"),
     ("G04", r"^(CONTRIBUTING|SECURITY)\.md$", r"\1.md", "fundir", "F2"),
     ("G05", r"^NOTICE$", "NOTICE", "fundir", "F2"),
@@ -642,10 +648,10 @@ def resumo(rows: list[tuple[str, str, str, str]], base: str, total: int) -> str:
     per_rule = Counter(row[3] for row in rows)
     per_phase = Counter((row[2], row[1]) for row in rows)
     out = [
-        f"<!-- Gerado por gerar-mapa.py a partir de ny-pi origin/main {base} ({total} arquivos). Não editar à mão. -->",
+        f"<!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main {base} ({total} arquivos). Não editar à mão. -->",
         "# Anexo E: resumo do mapa por regra",
         "",
-        f"Total de arquivos rastreados no ny-pi: **{total}**. Arquivos sem regra: **0**.",
+        f"Total de arquivos rastreados no nycode-harness: **{total}**. Arquivos sem regra: **0**.",
         "Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arquivo-a-arquivo.tsv).",
         "",
         "| Regra | Arquivos | Padrão de origem | Destino | Ação | Fase |",
@@ -683,7 +689,7 @@ def main() -> int:
     parser.add_argument(
         "--resumo",
         metavar="SHA",
-        help="imprime o resumo por regra (base do ny-pi) em vez do TSV",
+        help="imprime o resumo por regra (base do nycode-harness) em vez do TSV",
     )
     args = parser.parse_args()
     compiled = [
