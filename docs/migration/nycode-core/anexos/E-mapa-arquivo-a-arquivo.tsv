@@ -978,6 +978,10 @@ claude-home/bin/tests/prefix-cache-1h.test.ts	packages/coding-agent/test/harness
 claude-home/bin/tests/sound-notify.test.ts	packages/coding-agent/test/harness/extensions/sound-notify/index.test.ts	converter	F7	E22
 claude-home/bin/tests/terminal-sota/e2e.sh	scripts/harness/ui-gates/terminal-sota/e2e.sh	converter	F7	E28
 claude-home/bin/tests/terminal-sota/gate.sh	scripts/harness/ui-gates/terminal-sota/gate.sh	converter	F7	E28
+claude-home/bin/checks/arg-expansion-check.test.mjs	packages/coding-agent/resources/bin/checks/arg-expansion-check.test.mjs	converter	F8	R08
+claude-home/bin/fonte-icones.py	(ferramenta pessoal do dono para o kitty, fora do produto)	remover	F8	R08
+claude-home/bin/hud/calm-statusline.mjs	packages/coding-agent/resources/statusline/calm-statusline.mjs	converter	F8	R08
+claude-home/bin/hud/tests/calm-statusline.test.mjs	packages/coding-agent/test/harness/statusline/calm-statusline.test.mjs	converter	F8	R08
 claude-home/commands/cancel-ralph.md	packages/coding-agent/resources/commands/cancel-ralph.md	converter	F8	R08
 claude-home/commands/claude-hud-configure.md	packages/coding-agent/resources/commands/claude-hud-configure.md	converter	F8	R08
 claude-home/commands/claude-hud-setup.md	packages/coding-agent/resources/commands/claude-hud-setup.md	converter	F8	R08
@@ -1047,10 +1051,10 @@ claude-home/hooks/fixtures/pi-code-1.7.0/PostToolUseFailure-Bash.json	packages/c
 claude-home/hooks/fixtures/pi-code-1.7.0/README.md	packages/coding-agent/test/harness/hooks/fixtures/README.md	mover	F8	R09
 claude-home/hooks/fixtures/pi-code-1.7.0/SessionStart.json	packages/coding-agent/test/harness/hooks/fixtures/SessionStart.json	mover	F8	R09
 claude-home/hooks/fuzz/test_guard_fuzz.py	packages/coding-agent/test/harness/hooks/fuzz/test_guard_fuzz.py	converter	F8	R10
-claude-home/hooks/graph_context.py	packages/coding-agent/resources/hooks/graph_context.py	converter	F8	R11
+claude-home/hooks/graph_context.py	packages/coding-agent/src/extensions/hooks/internal/graph-context.ts	converter	F8	R11
 claude-home/hooks/guard.py	packages/coding-agent/resources/hooks/guard.py	converter	F8	R11
 claude-home/hooks/impeccable_gate.sh	packages/coding-agent/resources/hooks/impeccable_gate.sh	converter	F8	R11
-claude-home/hooks/test_graph_context.py	packages/coding-agent/test/harness/hooks/test_graph_context.py	converter	F8	R10
+claude-home/hooks/test_graph_context.py	packages/coding-agent/test/harness/hooks/internal/graph-context.test.ts	converter	F8	R10
 claude-home/hooks/test_guard.py	packages/coding-agent/test/harness/hooks/test_guard.py	converter	F8	R10
 claude-home/hooks/test_hook_budget.py	packages/coding-agent/test/harness/hooks/test_hook_budget.py	converter	F8	R10
 claude-home/hooks/test_impeccable_gate.py	packages/coding-agent/test/harness/hooks/test_impeccable_gate.py	converter	F8	R10

@@ -6,24 +6,42 @@ import fs from 'node:fs';
 
 const MAX_BYTES = 8 * 1024 * 1024; // sessões maiores: modelo mais antigo que isso vira desconhecido
 
-/** Último model_change {provider, modelId} dentro dos últimos maxBytes do arquivo (uma leitura limitada). */
+const BLOCK = 64 * 1024;
+
+/** Último model_change {provider, modelId} dentro dos últimos maxBytes do arquivo. Lê de trás para frente em blocos
+ * de 64 KB e para no primeiro achado (a troca costuma estar perto do fim: 43 ms → <1 ms em 8 MB). */
 function lastModelChange(file, maxBytes) {
   let fd;
   try {
     fd = fs.openSync(file, 'r');
     const size = fs.fstatSync(fd).size;
-    const len = Math.min(size, maxBytes);
-    const buf = Buffer.alloc(len);
-    fs.readSync(fd, buf, 0, len, size - len);
-    const lines = buf.toString('utf8').split('\n');
-    if (len < size) lines.shift(); // primeira linha cortada pela janela
-    for (let i = lines.length - 1; i >= 0; i--) {
-      if (!lines[i].includes('"model_change"')) continue;
-      try {
-        const entry = JSON.parse(lines[i]);
-        if (entry?.type === 'model_change') return entry;
-      } catch {
-        // linha malformada: segue para a anterior
+    const floor = Math.max(0, size - maxBytes); // abaixo disso: modelo mais antigo que o teto vira desconhecido
+    let pos = size;
+    let carry = Buffer.alloc(0); // começo (ainda sem o início) da linha que cruza a fronteira do bloco
+    while (pos > floor) {
+      const n = Math.min(BLOCK, pos - floor);
+      pos -= n;
+      const chunk = Buffer.alloc(n);
+      fs.readSync(fd, chunk, 0, n, pos);
+      let buf = Buffer.concat([chunk, carry]);
+      const first = buf.indexOf(10);
+      if (pos > floor || floor === 0) {
+        // O trecho antes do 1º \n é linha parcial (resto vem no bloco anterior), salvo no começo real do arquivo.
+        if (pos > floor && first !== -1) { carry = buf.subarray(0, first); buf = buf.subarray(first + 1); }
+        else if (pos > floor) { carry = buf; continue; }
+        else carry = Buffer.alloc(0);
+      } else {
+        buf = first === -1 ? Buffer.alloc(0) : buf.subarray(first + 1); // janela cortou a 1ª linha
+      }
+      const lines = buf.toString('utf8').split('\n');
+      for (let i = lines.length - 1; i >= 0; i--) {
+        if (!lines[i].includes('"model_change"')) continue;
+        try {
+          const entry = JSON.parse(lines[i]);
+          if (entry?.type === 'model_change') return entry;
+        } catch {
+          // linha malformada: segue para a anterior
+        }
       }
     }
   } catch {

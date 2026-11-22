@@ -26,8 +26,8 @@ step() { # name cmd...
   fi
 }
 
-# import/ (history imported from nycode-harness, removed in F12) and node_modules never take part in a lint.
-mapfile -t CHANGED < <(bash "$CIDIR/changed-files.sh" | grep -vE '^import/|(^|/)node_modules/' || true)
+# node_modules never takes part in a lint.
+mapfile -t CHANGED < <(bash "$CIDIR/changed-files.sh" | grep -vE '(^|/)node_modules/' || true)
 echo "changed files: ${#CHANGED[@]} (base ${BASE_SHA:-auto})"
 
 pick() { # ERE over paths -> existing changed files
@@ -92,7 +92,7 @@ mypy_changed() {
 pytest_cov() {
   # source=. + include_namespace_packages: unimported files count as 0% (no per-file exemption);
   # patch=subprocess measures hooks the tests run as child processes (guard.py), merged by combine
-  printf '[run]\nrelative_files = True\nsource = .\npatch = subprocess\n[report]\ninclude_namespace_packages = True\nomit =\n  */node_modules/*\n  */.git/*\n  import/*\n  bench/suites/*/*/repo/*\n  bench/suites/*/*/hidden/*\n  bench/suites/*/*/oracle/*\n' >"$TMP/coveragerc"
+  printf '[run]\nrelative_files = True\nsource = .\npatch = subprocess\n[report]\ninclude_namespace_packages = True\nomit =\n  */node_modules/*\n  */.git/*\n  bench/suites/*/*/repo/*\n  bench/suites/*/*/hidden/*\n  bench/suites/*/*/oracle/*\n' >"$TMP/coveragerc"
   export COVERAGE_FILE="$TMP/.coverage"
   # Python test roots; the ones the migration has not created yet (hooks and harness tools: F8, bench: F3 bench lane)
   # are skipped until they exist, never dropped from the list.
@@ -109,7 +109,7 @@ diff_cover() {
   local base=${BASE_SHA:-}
   case $base in '' | 0000000000000000000000000000000000000000) base=$(git merge-base origin/main HEAD 2>/dev/null || git rev-parse HEAD~1) ;; esac
   diff-cover "$TMP/coverage.xml" --compare-branch="$base" --fail-under 80 \
-    --exclude 'import/*' 'bench/suites/*/*/repo/*' 'bench/suites/*/*/hidden/*' 'bench/suites/*/*/oracle/*'
+    --exclude 'bench/suites/*/*/repo/*' 'bench/suites/*/*/hidden/*' 'bench/suites/*/*/oracle/*'
 }
 
 # bench/ comes from its own migration lane: the oracle check runs as soon as the directory exists.

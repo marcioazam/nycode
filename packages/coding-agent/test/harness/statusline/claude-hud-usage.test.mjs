@@ -55,19 +55,46 @@ test('Anthropic: fills rate_limits at startup with the nycode token, then serves
   assert.equal(f.calls[0].init.headers.Authorization, 'Bearer ant-tok');
   assert.deepEqual((await run('anthropic', env, f, { now: 30_000 })).rate_limits, expected);
   assert.equal(f.calls.length, 1);
-  await run('anthropic', env, f, { now: 70_000 });
+  // rate_limits_at is the last successful read: the status line marks old limits with it
+  assert.equal((await run('anthropic', env, f, { now: 70_000 })).rate_limits_at, 70_000);
   assert.equal(f.calls.length, 2);
-  // Anthropic keeps the historical cache shape that extensions/auto-resume reads
+  const down = { fetchImpl: async () => { throw new Error('offline'); } };
+  assert.equal((await run('anthropic', env, down, { now: 200_000 })).rate_limits_at, 70_000);
+  // Anthropic keeps the cache shape that extensions/auto-resume reads (at, rate_limits), plus `ok`; no token
   const cached = JSON.parse(fs.readFileSync(env.cacheFile, 'utf8'));
-  assert.deepEqual(Object.keys(cached).sort(), ['at', 'rate_limits']);
+  assert.deepEqual(Object.keys(cached).sort(), ['at', 'ok', 'rate_limits']);
 });
 
-test('Anthropic: header data from nycode wins and skips the request', async () => {
+// Contrato antigo (até 2026-11-18): o header do nycode vencia e pulava o pedido. Defeito: o header só muda quando chega uma
+// resposta, então parado (esperando input ou o limite) o 5h e a semana ficavam congelados, e o uso de outras sessões
+// da mesma conta nunca aparecia. Novo: os dois entram; na mesma janela vale o maior uso (dentro da janela o uso só
+// cresce), e janela mais nova (resets_at depois) vence a velha.
+test('Anthropic: header do nycode e API juntos; mesma janela vale o maior uso, janela nova vence a velha', async () => {
+  const R5 = 1_800_000_000;
+  const W = 1_800_400_000;
   const env = setup();
-  const f = ok(api);
+  const body = (u5, r5, u7) => ({ five_hour: { utilization: u5, resets_at: new Date(r5 * 1000).toISOString() }, seven_day: { utilization: u7, resets_at: new Date(W * 1000).toISOString() } });
+  const header = { five_hour: { used_percentage: 99, resets_at: R5 }, seven_day: { used_percentage: 44, resets_at: W } };
+  const f = ok(body(97, R5 + 2, 46));
+  const p = await run('anthropic', env, f, {}, { rate_limits: structuredClone(header) });
+  assert.equal(f.calls.length, 1, 'a API é lida mesmo com header');
+  assert.deepEqual(p.rate_limits, { five_hour: { used_percentage: 99, resets_at: R5 }, seven_day: { used_percentage: 46, resets_at: W } });
+  assert.equal(p.rate_limits_at, 1_000)
+  // Parado: o header não muda; o próximo ciclo (TTL vencido) traz o uso de outras sessões.
+  const later = await run('anthropic', env, ok(body(100, R5, 51)), { now: 70_000 }, { rate_limits: structuredClone(header) });
+  assert.deepEqual([later.rate_limits.five_hour.used_percentage, later.rate_limits.seven_day.used_percentage], [100, 51]);
+  // A janela de 5h renovou: o header ainda fala da velha (99%), a API da nova (3%).
+  const nova = await run('anthropic', env, ok(body(3, R5 + 5 * 3600, 52)), { now: 140_000 }, { rate_limits: structuredClone(header) });
+  assert.deepEqual(nova.rate_limits.five_hour, { used_percentage: 3, resets_at: R5 + 5 * 3600 });
+});
+
+test('Anthropic: API fora do ar e sem cache, o header do nycode aparece sozinho', async () => {
+  const env = setup();
+  const down = { calls: [], fetchImpl: async () => { throw new Error('offline'); } };
   const own = { five_hour: { used_percentage: 50 } };
-  assert.deepEqual((await run('anthropic', env, f, {}, { rate_limits: own })).rate_limits, own);
-  assert.equal(f.calls.length, 0);
+  const p = await run('anthropic', env, down, {}, { rate_limits: own });
+  assert.deepEqual(p.rate_limits, own);
+  assert.equal(p.rate_limits_at, undefined);
 });
 
 test('OpenAI Codex: both windows with the chatgpt host, account header and its own token only', async () => {
@@ -175,4 +202,49 @@ test('a cached quota is not served once the credential is gone (no previous-acco
     fs.writeFileSync(env.authFile, JSON.stringify({ [provider]: { ...anthropicAuth, ...codexAuth, expires: 1 } }));
     assert.equal((await run(provider, env, f, { now: 3_000 })).rate_limits, undefined, `${provider} expired`);
   }
+});
+
+// U22: no statusline (refresh: 'background') o cache vencido é servido na hora e renovado por outro processo.
+import { refreshUsage } from '../../../resources/statusline/claude-hud-usage.mjs';
+
+test('U22: cache vencido é servido sem esperar o fetch; um só renovador por vez (trava O_EXCL)', async () => {
+  const env = setup();
+  await run('anthropic', env, ok(api), { now: 1_000 }); // enche o cache
+  const spawned = [];
+  const f = { calls: [], fetchImpl: async () => { f.calls.push(1); return { ok: true, json: async () => api }; } };
+  const bg = { refresh: 'background', spawnRefreshImpl: (...a) => spawned.push(a) };
+  const p = await run('anthropic', env, f, { now: 70_000, ...bg });
+  assert.deepEqual(p.rate_limits, expected);
+  assert.equal(p.rate_limits_at, 1_000, 'idade do último sucesso, não a de agora');
+  assert.equal(f.calls.length, 0, 'não esperou o fetch');
+  assert.deepEqual(spawned, [['anthropic', env.cacheFile, env.authFile]]);
+  await run('anthropic', env, f, { now: 71_000, ...bg });
+  assert.equal(spawned.length, 1, 'trava fresca: outro render não dispara outro renovador');
+  const old = new Date(Date.now() - 60_000);
+  fs.utimesSync(`${env.cacheFile}.lock`, old, old);
+  await run('anthropic', env, f, { now: 102_000, ...bg });
+  assert.equal(spawned.length, 2, 'trava velha (renovador morto) é retomada');
+});
+
+test('U22: sem cache nenhum ainda busca na hora; cache fresco não renova', async () => {
+  const env = setup();
+  const f = ok(api);
+  const spawned = [];
+  const bg = { refresh: 'background', spawnRefreshImpl: (...a) => spawned.push(a) };
+  assert.deepEqual((await run('anthropic', env, f, { now: 1_000, ...bg })).rate_limits, expected);
+  assert.equal(f.calls.length, 1);
+  await run('anthropic', env, f, { now: 2_000, ...bg });
+  assert.equal(f.calls.length, 1);
+  assert.equal(spawned.length, 0);
+});
+
+test('U22: refreshUsage grava o cache novo e libera a trava', async () => {
+  const env = setup();
+  await run('anthropic', env, ok(api), { now: 1_000 });
+  const lock = `${env.cacheFile}.lock`;
+  fs.writeFileSync(lock, '');
+  const next = { five_hour: { utilization: 40, resets_at: null } };
+  await refreshUsage({ provider: 'anthropic', cacheFile: env.cacheFile, authFile: env.authFile, now: 90_000, fetchImpl: ok(next).fetchImpl });
+  assert.equal(JSON.parse(fs.readFileSync(env.cacheFile, 'utf8')).rate_limits.five_hour.used_percentage, 40);
+  assert.equal(fs.existsSync(lock), false);
 });

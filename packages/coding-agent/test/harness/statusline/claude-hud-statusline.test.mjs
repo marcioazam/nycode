@@ -36,7 +36,8 @@ test('NO_COLOR não vazio tira todas as cores SGR', { skip: !hudInstalled }, () 
 });
 
 // Provedor e cota ponta a ponta: sessão do nycode com model_change, NYCODE_CODING_AGENT_DIR isolado (config padrão do HUD) e
-// provedores sem consulta de rede (anthropic com rate_limits do nycode, github-copilot sem fonte de cota).
+// provedores sem consulta de rede (anthropic com rate_limits do nycode, github-copilot sem fonte de cota). Sem auth.json,
+// a API de uso não é lida (desde 2026-11-18 ela entra junto com o header da anthropic).
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'hudstatus-'));
 after(() => fs.rmSync(tmp, { recursive: true, force: true }));
 const hud = (provider, rate_limits, modelId = 'm1') => {

@@ -1,4 +1,4 @@
-// Replaces import/ny-pi/bin/test_nycode_env.sh for the wrapper behavior that moved into the core (K3/K4):
+// Replaces the pre-migration harness: bin/test_nycode_env.sh for the wrapper behavior that moved into the core (K3/K4):
 // the four permission flags, the bypass precedence (flag > NYCODE_BYPASS_PERMISSIONS > settings.json > false) and
 // the `--no-approve` the wrapper injected, now the `defaultProjectTrust: "never"` default.
 // The local.env loader checks (owner, mode 0600, the nine keys) go with `nycode migrate from-pi`.
