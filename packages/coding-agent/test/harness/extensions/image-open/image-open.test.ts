@@ -1,7 +1,17 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+	chmodSync,
+	existsSync,
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	statSync,
+	symlinkSync,
+	writeFileSync,
+} from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -99,6 +109,28 @@ test("segurança 12: diretório com modo aberto é recusado (sem chmod nem escri
 		assert.throws(() => writeTemp(PNG, "image/png"));
 		assert.equal(statSync(dir).mode & 0o777, 0o755);
 		assert.equal(existsSync(path.join(dir, nomeDe())), false);
+	}));
+
+test("segurança 12: diretório symlink é recusado e o alvo não recebe o arquivo", () =>
+	comTmp("link", (tmp, dir) => {
+		const alvo = path.join(tmp, "alvo");
+		mkdirSync(alvo, { mode: 0o700 });
+		symlinkSync(alvo, dir);
+		assert.throws(() => writeTemp(PNG, "image/png"));
+		assert.equal(existsSync(path.join(alvo, nomeDe())), false);
+	}));
+
+test("segurança 12: arquivo pré-existente que é symlink é recusado; arquivo regular nosso é reutilizado", () =>
+	comTmp("wx", (tmp, dir) => {
+		mkdirSync(dir, { mode: 0o700 });
+		const isca = path.join(tmp, "isca");
+		writeFileSync(isca, "original");
+		symlinkSync(isca, path.join(dir, nomeDe()));
+		assert.throws(() => writeTemp(PNG, "image/png"));
+		assert.equal(readFileSync(isca, "utf8"), "original");
+		rmSync(path.join(dir, nomeDe()));
+		const f = writeTemp(PNG, "image/png");
+		assert.equal(writeTemp(PNG, "image/png"), f);
 	}));
 
 test("segurança 12: diretório recusado não derruba o clique nem abre nada", async () => {
