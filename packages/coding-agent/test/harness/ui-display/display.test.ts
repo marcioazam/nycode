@@ -15,7 +15,7 @@ const NOW = 1_000_000;
 const plain = { fg: (_c: string, s: string) => s, bold: (s: string) => s };
 // Tags each role so tests can see which role painted which text.
 const tagged = { fg: (c: string, s: string) => `<${c}>${s}</${c}>`, bold: (s: string) => `<b>${s}</b>` };
-const strip = (s: string): string => s.replace(/\x1b\[[0-9;]*m/g, "").replace(/<\/?[a-zA-Z]+>/g, "");
+const strip = (s: string): string => s.replace(/\x1b\[[0-9;]*m/g, "").split(/<\/?[a-zA-Z]+>/g).join("");
 const rec = (over: Record<string, unknown> = {}) =>
 	({
 		v: 1,
