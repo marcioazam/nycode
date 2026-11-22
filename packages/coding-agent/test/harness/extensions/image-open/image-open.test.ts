@@ -185,6 +185,10 @@ test(
 			JSON.stringify({ theme: "tokyo-night", tuiMode: "fullscreen", packages: [], quietStartup: true }),
 		);
 		const f = fakeOpener("native");
+		const tracePath = path.join(dir, "trace.log");
+		const clicks: string[] = [];
+		const trace = () =>
+			`--- terminal trace (child)\n${existsSync(tracePath) ? readFileSync(tracePath, "utf8") : "(none)"}--- clicks sent by the test\n${clicks.join("\n")}\n--- pane\n${pane()}`;
 		const S = `nycodeimg-${process.pid}`;
 		const ext = fileURLToPath(new URL("../../../../src/extensions/image-open/index.ts", import.meta.url));
 		const fixture = fileURLToPath(new URL("./native-fixture.ts", import.meta.url));
@@ -197,7 +201,7 @@ test(
 			"120",
 			"-y",
 			"40",
-			`cd ${dir}/work && env -i PATH=${process.env.PATH} TERM=xterm-256color LANG=C.UTF-8 HOME=${dir}/home NYCODE_CODING_AGENT_DIR=${dir}/agent NYCODE_OFFLINE=1 NYCODE_IMAGE_OPENER=${f.bin} ${process.execPath} ${cli} --no-extensions --no-context-files --no-skills --no-prompt-templates --no-session -e ${ext} -e ${fixture} --model fake/m1; sleep 20`,
+			`cd ${dir}/work && env -i PATH=${process.env.PATH} TERM=xterm-256color LANG=C.UTF-8 HOME=${dir}/home NYCODE_CODING_AGENT_DIR=${dir}/agent NYCODE_OFFLINE=1 NYCODE_IMAGE_OPENER=${f.bin} NYCODE_IMGFIX_TRACE=${tracePath} ${process.execPath} ${cli} --no-extensions --no-context-files --no-skills --no-prompt-templates --no-session -e ${ext} -e ${fixture} --model fake/m1; sleep 20`,
 		]);
 		const pane = () => spawnSync("tmux", ["capture-pane", "-p", "-t", S], { encoding: "utf8" }).stdout;
 		try {
@@ -220,13 +224,14 @@ test(
 				return still >= 5;
 			}, 40000);
 			const row = imageRow();
-			assert.ok(row >= 0, `sem linha de imagem\n${pane()}`);
-			assert.ok(mouseOn(), `o app não ligou o mouse\n${pane()}`);
+			assert.ok(row >= 0, `sem linha de imagem\n${trace()}`);
+			assert.ok(mouseOn(), `o app não ligou o mouse\n${trace()}`);
 			const lit = (t: string) => spawnSync("tmux", ["send-keys", "-t", S, "-l", "--", t]);
+			clicks.push(`${Date.now()} press+release at row ${row + 1}, column 6`);
 			lit(`\x1b[<0;6;${row + 1}M`);
 			lit(`\x1b[<0;6;${row + 1}m`);
 			await wait(() => existsSync(f.copy) && f.got().length >= 1, 30000);
-			assert.equal(f.got().length, 1, pane());
+			assert.equal(f.got().length, 1, trace());
 			assert.deepEqual(readFileSync(f.copy), Buffer.from(PNG, "base64"));
 			assert.deepEqual(requests, []);
 		} finally {
