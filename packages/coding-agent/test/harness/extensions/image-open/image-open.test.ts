@@ -209,7 +209,7 @@ for (let probe = 0; probe < 20; probe++)
 				const imageRow = () =>
 					pane()
 						.split("\n")
-						.findIndex((l) => /image/i.test(l));
+						.findIndex((l) => l.includes("[Image: fixture.png"));
 				// The click only counts once the app has switched mouse reporting on; the image row is read right before it.
 				const mouseOn = () =>
 					spawnSync("tmux", ["display-message", "-p", "-t", S, "#{mouse_any_flag}"], {
