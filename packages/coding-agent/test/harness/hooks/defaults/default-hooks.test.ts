@@ -37,6 +37,8 @@ interface SessionOptions {
 	projectClaude?: Record<string, unknown>;
 	/** `~/.claude/settings.json`. */
 	userClaude?: Record<string, unknown>;
+	/** Keep the default permission engine (native) instead of choosing the guard.py script. */
+	nativeEngine?: boolean;
 }
 
 const writeJson = (file: string, value: unknown) => {
@@ -57,7 +59,8 @@ async function startSession(settings: { hooks?: Record<string, unknown> } = {}, 
 	};
 	hooksExtension(api as unknown as ExtensionAPI);
 	const notify = vi.fn();
-	if (options.global) writeJson(join(home, ".nycode", "agent", "settings.json"), options.global);
+	const global = options.nativeEngine ? options.global : { permissions: { engine: "script" }, ...options.global };
+	if (global) writeJson(join(home, ".nycode", "agent", "settings.json"), global);
 	if (options.userClaude) writeJson(join(home, ".claude", "settings.json"), options.userClaude);
 	const project = join(home, "project");
 	if (options.projectClaude) writeJson(join(project, ".claude", "settings.json"), options.projectClaude);
@@ -93,6 +96,14 @@ describe("default hooks", () => {
 		expect(text).not.toContain("impeccable_gate");
 		// D-54: the ralph-loop Stop hook (embedded) is the only default Stop hook.
 		expect(text).toMatch(/Stop:\n {2}\[\*\] command: if \[ -f .*ralph-loop\/hooks\/stop-hook\.sh" \]/);
+	});
+
+	it("registers no guard.py hook under the default native engine, and the script engine brings it back", async () => {
+		const native = await (await startSession({}, { nativeEngine: true })).summary();
+		expect(native).not.toContain("guard.py");
+		expect(native).toContain("SessionStart:");
+		const script = await (await startSession()).summary();
+		expect(script).toContain("guard.py");
 	});
 
 	it("every default command names a script that exists under the embedded resources", () => {
