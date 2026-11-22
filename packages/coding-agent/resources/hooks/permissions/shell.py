@@ -7,7 +7,7 @@ import re
 import shlex
 from typing import Any
 
-from permissions.paths import (
+from permissions.paths import (  # type: ignore[import-not-found,unused-ignore]
     HOME,
     is_critical,
     no_protected_below,

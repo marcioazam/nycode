@@ -3,8 +3,9 @@ Nenhuma executa nada; só os.path e listagem de diretório."""
 
 import os
 import re
+import shlex
 
-from permissions.parse import short_flags
+from permissions.parse import SEPARATORS, mask_text, short_flags, strip_prefixes  # type: ignore[import-not-found,unused-ignore]
 
 Finding = tuple[str, str]
 HOME = os.path.expanduser("~")
@@ -273,3 +274,103 @@ def check_grep(path: str | None, cwd: str) -> list[Finding]:
         if why:
             return [("deny", f"Grep em área de segredos bloqueado ({why}): {p}")]
     return []
+
+
+# ---------- auto-kill: pkill -f / pgrep -f que casa com a própria linha do shell ----------
+
+
+# Opções do pkill/pgrep que consomem o argumento seguinte (procps-ng).
+PGREP_VALUE_OPTS = {
+    "-u",
+    "-U",
+    "-g",
+    "-G",
+    "-P",
+    "-s",
+    "-t",
+    "-d",
+    "--signal",
+    "--euid",
+    "--uid",
+    "--pgroup",
+    "--group",
+    "--parent",
+    "--session",
+    "--terminal",
+    "--delimiter",
+    "--ns",
+    "--nslist",
+}
+PGREP_KILL_RE = re.compile(r"\bpgrep\s+([^|;&)`]*)")
+SELF_KILL_MSG = (
+    "{0} -f com padrão que casa com a própria linha de comando do shell (o bash -c que roda isto morre, "
+    "exit 143/144); use o colchete, ex. '[c]hrome', ou o PID salvo"
+)
+
+
+def full_match_pattern(args: list[str]) -> str | None:
+    """Padrão de pkill/pgrep quando -f/--full está presente; senão None."""
+    if not (short_flags(args) & {"-f", "--full"}):
+        return None
+    rest: list[str] = []
+    skip = False
+    for a in args:
+        if skip:
+            skip = False
+        elif a in PGREP_VALUE_OPTS:
+            skip = True
+        elif not a.startswith("-"):
+            rest.append(a)
+    return rest[-1] if rest else None
+
+
+def matches_self(pattern: str, cmd: str) -> bool:
+    try:
+        return re.search(pattern, cmd) is not None
+    except (
+        re.error,
+        OverflowError,
+        RecursionError,
+    ):  # invalid or too large pattern: literal text
+        return pattern in cmd
+
+
+def check_self_kill(cmd: str, top: str) -> list[Finding]:
+    """pgrep -f cuja saída vai para kill (`| xargs kill`, `kill $(...)`, crases) e casa com o próprio shell.
+    O padrão casa com a linha inteira (o `bash -c` carrega tudo), mas só conta pgrep/kill fora de texto citado."""
+    found: list[Finding] = []
+    masked = mask_text(cmd)
+    for m in PGREP_KILL_RE.finditer(masked):
+        before, after = masked[: m.start()], masked[m.end() :]
+        to_kill = re.match(r"\s*\|\s*xargs\b[^|;&]*\bkill\b", after) or re.search(
+            r"\bkill\b[^;|&]*(\$\(|`)\s*$", before
+        )
+        if not to_kill:
+            continue
+        raw = cmd[m.start(1) : m.end(1)]
+        try:
+            args = shlex.split(raw)
+        except ValueError:
+            args = raw.split()
+        pattern = full_match_pattern(args)
+        if pattern and matches_self(pattern, top):
+            found.append(("deny", SELF_KILL_MSG.format("pgrep")))
+    return found
+
+
+def pkill_self_match(tokens: list[str], top: str) -> list[Finding]:
+    """pkill -f whose pattern matches the shell's own command line. Judged on pieces split only at real command
+    separators: a stray parenthesis inside the pattern text does not hide the pattern."""
+    found: list[Finding] = []
+    piece: list[str] = []
+    for t in [*tokens, ";"]:
+        if t not in SEPARATORS:
+            piece.append(t)
+            continue
+        real, _ = strip_prefixes(piece)
+        piece = []
+        if real and real[0] == "pkill":
+            pattern = full_match_pattern(real[1:])
+            if pattern and matches_self(pattern, top):
+                found.append(("deny", SELF_KILL_MSG.format("pkill")))
+    return found
