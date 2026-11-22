@@ -177,6 +177,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K13 | `packages/coding-agent/package.json` (`files`) | Inclui `resources/` | `publish.list` | F8 |
 | K14 | `packages/coding-agent/src/config.ts:605` | Título de reserva "π" vira "nycode" | — | F2 |
 | K15 | `packages/tui/src/index.ts` | Exporta `isImageLine` na API pública do `@nycode/tui` | `chat-margin` | F12 |
+| K16 | `packages/tui/src/components/editor.ts` | `runEditorAction` e `withUndoGroup` no `Editor` (ações semânticas e grupo de desfazer) | `ui/editor`, `claude-compat/vim` | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 

@@ -1143,6 +1143,92 @@ export class Editor implements Component, Focusable {
 		this.setTextInternal(normalized);
 	}
 
+	// nycode: K16 semantic editor actions and one-step undo groups for built-in extensions (claude-compat vim)
+	private undoGroupDepth = 0;
+
+	/** Runs a native editor action by name, independent of any key map. */
+	runEditorAction(action: "left" | "right" | "deleteForward" | "undo"): void {
+		switch (action) {
+			case "left":
+				this.moveCursor(0, -1);
+				return;
+			case "right":
+				this.moveCursor(0, 1);
+				return;
+			case "deleteForward":
+				this.handleForwardDelete();
+				return;
+			case "undo":
+				if (this.undoGroupDepth > 0) throw new Error("runEditorAction(undo) is unavailable inside withUndoGroup");
+				this.undo();
+				return;
+		}
+	}
+
+	/**
+	 * Runs a synchronous edit as ONE undo step (nested groups join the outermost). Native undo, also through a remapped
+	 * key, is refused inside the group. A failing callback keeps its edits as one undoable group and rethrows.
+	 */
+	withUndoGroup<T>(edit: () => T): T {
+		if (edit.constructor?.name === "AsyncFunction") throw new TypeError("withUndoGroup rejects async callbacks");
+		const thenable = (r: unknown): boolean =>
+			r !== null &&
+			(typeof r === "object" || typeof r === "function") &&
+			typeof (r as { then?: unknown }).then === "function";
+		const bad = "withUndoGroup callback returned a thenable; the synchronous edit is kept as one undo group";
+		if (this.undoGroupDepth > 0) {
+			const r = edit();
+			if (thenable(r)) throw new TypeError(bad);
+			return r;
+		}
+		const base = this.undoStack.length;
+		const before = structuredClone({ state: this.state, pastes: this.pastes, pasteCounter: this.pasteCounter });
+		const key = (): string => JSON.stringify([this.state.lines, [...this.pastes], this.pasteCounter]);
+		const sig = key();
+		// Scoped guard on the instance, restored in finally (own or inherited); installed before the depth so a
+		// non-configurable own `undo` fails with nothing changed and the callback never runs.
+		const own = Object.getOwnPropertyDescriptor(this, "undo");
+		Object.defineProperty(this, "undo", {
+			configurable: true,
+			writable: true,
+			value() {
+				throw new Error("undo is unavailable inside withUndoGroup");
+			},
+		});
+		let result: T | undefined;
+		let error: unknown;
+		let failed = false;
+		let restored: { error: unknown } | undefined;
+		const restore = (): { error: unknown } | undefined => {
+			try {
+				if (own) Object.defineProperty(this, "undo", own);
+				else if (!Reflect.deleteProperty(this, "undo")) throw new TypeError("withUndoGroup could not restore undo");
+				return undefined;
+			} catch (e) {
+				return { error: e };
+			}
+		};
+		this.undoGroupDepth = 1;
+		try {
+			result = edit();
+		} catch (e) {
+			failed = true;
+			error = e;
+		} finally {
+			this.undoGroupDepth = 0;
+			restored = restore();
+		}
+		if (restored) throw restored.error;
+		if (this.undoStack.length >= base) {
+			while (this.undoStack.length > base) this.undoStack.pop();
+			if (key() !== sig) this.undoStack.push(before);
+		}
+		this.lastAction = null;
+		if (failed) throw error;
+		if (thenable(result)) throw new TypeError(bad);
+		return result as T;
+	}
+
 	/**
 	 * Insert text at the current cursor position.
 	 * Used for programmatic insertion (e.g., clipboard image markers).
