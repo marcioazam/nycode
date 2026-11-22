@@ -18,8 +18,9 @@ class Fake implements VimHost {
 	failNext: string | undefined;
 	histCalls = 0;
 	constructor(spec: string) {
-		this.cur = Math.max(0, spec.indexOf("|"));
-		this.t = spec.replace("|", "");
+		const at = spec.indexOf("|");
+		this.cur = Math.max(0, at);
+		this.t = at < 0 ? spec : spec.slice(0, at) + spec.slice(at + 1);
 	}
 	text() {
 		return this.t;

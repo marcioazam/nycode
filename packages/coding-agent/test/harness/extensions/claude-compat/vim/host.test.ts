@@ -34,8 +34,9 @@ class FakeEditor implements EditorLike {
 		this.set(spec);
 	}
 	set(spec: string) {
-		this.cur = Math.max(0, spec.indexOf("|"));
-		this.text = spec.replace("|", "");
+		const at = spec.indexOf("|");
+		this.cur = Math.max(0, at);
+		this.text = at < 0 ? spec : spec.slice(0, at) + spec.slice(at + 1);
 	}
 	private buf() {
 		return new Buf(this.text, new Set(this.payloads.keys()));
