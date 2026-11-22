@@ -92,7 +92,7 @@ Nome do diretório e do registro `builtin:<nome>`. "Padrão" é o estado numa in
 | `init` | `init.ts` | 85 | — | ligada | F5 |
 | `run` | `run/` | 1413 | — | ligada | F6 (D-34) |
 | `context-usage` | `context-usage.ts` | 45 | — | ligada | F5 |
-| `web` | `web.ts` | 450 | — | **desligada** (hoje `--exclude-tools web_search` e `no-web-search.ts`) | F5 |
+| `web` | `web.ts` | 450 | — | **desligada** (hoje `--exclude-tools web_search` e `no-web-search.ts`; **superada por D-52**: `web_fetch` ligado, `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1`) | F5 |
 | `subagent` | `subagent/` | 8526 | `subagent-nesting`, `subagent-panel`, `subagent-render`, `team`, `zz-panel-main-root`, `zz-subagent-respawn`, `zzz-panel-column0`, `zzzzzz-subagent-send`, `zzzzzzz-subagent-model-effort` | ligada | F6 |
 | `plan-mode` | `plan-mode/` | 2628 | `zz-hotkeys-no-alt`, `zzzz-plan-done-rule`, `zzzzz-plan-sota` | ligada | F6 |
 | `goal` | `goal.ts` + `internal/goal-*` | 722 + parte de `internal` | `goal` (inclui o fim do portão de confiança que hoje é um `sed`) | ligada | F6 |
@@ -129,7 +129,7 @@ ganha a atribuição e o commit de origem.
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
 | `context-files` | `extensions/no-context-files-covers-claude-md.ts` | — | **Some**: existia para contornar a injeção de `CLAUDE.md` pelo pi-code; com `claude-rules` embutida a regra é escrita direto nela | F7 |
-| `no-web-search` | `extensions/no-web-search.ts` | — | **Some**: `web` nasce desligada | F5 |
+| `no-web-search` | `extensions/no-web-search.ts` | — | **Some**: `web` nasce desligada (**superada por D-52**: nasce ligada, sem `web_search`) | F5 |
 | `docs-pointer` | `extensions/pi-docs/` | N2 | A seção `docs` do prompt de sistema passa a ser uma linha por padrão; extensão que sobrescreve `sections.docs`, como no nycode-harness (D-36) | F7 |
 | `plan-gate` | `extensions/plan-gate.ts` | N2 | Depende de `plan-mode` e do agente `plan-reviewer` | F7 |
 | `prefix-cache-1h` | `extensions/prefix-cache-1h/` | N2 | Só sessão interativa | F7 |
@@ -186,7 +186,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_BYPASS_PERMISSIONS`, `--bypass`, `--safe` | `permissions.bypass` | `NYCODE_BYPASS_PERMISSIONS` | `false` |
 | (novo, K11) escolha do motor de permissão | `permissions.engine` | — (sem variável) | `"script"` (`guard.py`); `"native"` liga o motor TypeScript. valor desconhecido nega. **Só global** (`~/.nycode/agent/settings.json`; o do projeto é ignorado, como em `permissions.bypass`; C-F8-13). O padrão só muda após `security-reviewer` e benchmark (D-29) |
 | `--no-approve` injetado pelo wrapper | `defaultProjectTrust` (já existe) | — | `"never"` |
-| `--exclude-tools web_search` | extensão `web` desligada | — | desligada |
+| `--exclude-tools web_search` | extensão `web` desligada (**superada por D-52**) | `NYCODE_KEEP_WEB_SEARCH=1` mantém `web_search` | `web_fetch` ligado, `web_search` ausente |
 | `PI_COMPACT_AT` | `compaction.maxContextTokens` | `NYCODE_COMPACT_AT` | `250000` |
 | `PI_EFFORT_SANDWICH`, `PI_EFFORT_SANDWICH_TURNS` | `harness.effortSandwich.{enabled,turns}` | `NYCODE_EFFORT_SANDWICH[_TURNS]` | desligado |
 | `PI_SUBAGENT_RESPAWN` | `subagent.respawn` | `NYCODE_SUBAGENT_RESPAWN` | conforme o nycode-harness |
@@ -207,7 +207,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `CLAUDE_CONFIG_DIR` | **some**: recursos embarcados + `~/.nycode/agent` | — | — |
 | `PI_CODING_AGENT_DIR`, `PI_CODING_AGENT_SESSION_DIR`, `PI_SESSION_FILE` | — | `NYCODE_CODING_AGENT_DIR`, `NYCODE_CODING_AGENT_SESSION_DIR`, `NYCODE_SESSION_FILE` (já existem) | — |
 | `PI_MCP_CONFIG` | `mcp.configPath` | `NYCODE_MCP_CONFIG` | `~/.nycode/agent/mcp.json` |
-| `PI_LOCAL_ENV` + `local.env` (9 chaves, modo 0600) | **some**: as 9 chaves são chaves de `settings.json` | — | — |
+| `PI_LOCAL_ENV` + `local.env` (9 chaves, modo 0600) | ~~**some**: as 9 chaves são chaves de `settings.json`~~ (**superada por D-52**: o carregador volta, `core/local-env.ts`; as 9 chaves seguem também em `settings.json`) | `NYCODE_LOCAL_ENV` (arquivo) | `~/.nycode/agent/local.env` |
 | `PI_HARNESS_*` (instalador, pins) | **some** com o instalador por fora | — | — |
 | `BENCH_*` | iguais (ferramenta do repositório) | `BENCH_*` | — |
 | `hooks`, `statusLine`, `env` de `claude-home/settings.json` | `hooks`, `statusLine`, `env` em `settings.json` do nycode (lidos pela extensão `hooks`) | — | hooks embarcados da seção 6 |

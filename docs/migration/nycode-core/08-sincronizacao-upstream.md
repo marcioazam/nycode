@@ -164,7 +164,7 @@ Abreviação: `CA` = `packages/coding-agent/src`; `core/` e `cli/` abaixo são d
 | K9 | `CA/core/compaction/` | Limite absoluto de contexto | 15 / 4 | n. med. | médio |
 | K10 | `packages/tui/src/` | API pública nova | 91 / 30 | n. med. | alto |
 | K11 | `core/permissions/` (novo) + gancho `tool_call` | Arquivo novo, 1 chamada | novo | indef. | médio |
-| K12 | `CA/main.ts` (ramo `migrate`; o importador mora em `CA/migrations/from-pi.ts`) | Uma chamada ao importador | n. med. | n. med. | baixo |
+| K12 | `CA/main.ts` (ramo `migrate`; o importador mora em `CA/migrations/from-pi.ts`) | Uma chamada ao importador e uma ao carregador de `local.env` (D-52) | n. med. | n. med. | baixo |
 | K13 | `packages/coding-agent/package.json` (`files`) | Inclui `resources/` | 50 / 11 | 0 | médio |
 | K14 | `CA/config.ts:605` | "π" de reserva vira "nycode" | 12 / 2 | 0 (`APP_TITLE`) | baixo |
 

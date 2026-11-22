@@ -144,7 +144,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | goal | core | Objetivo de sessão (/goal) |
 | extension | headless-lean | core | Custo sem interface |
 | extension | hooks | core | Hooks no formato do Claude Code |
-| extension | import-claude-session | optional | Importa sessão de outro perfil, uso pessoal |
+| extension | import-claude-session | core | Importa sessão de outro perfil (`/puxar`), ligado por padrão como no nycode-harness (D-52; era `optional`) |
 | extension | init | core | `/init` |
 | extension | lsp | core | Diagnósticos e navegação por servidor de linguagem, para qualquer linguagem |
 | extension | memory | core | Memória do projeto |
@@ -168,7 +168,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | ui | ui | Editor, acessibilidade, `/diff` |
 | extension | ui-visual | ui | Cabeçalho e ícones |
 | extension | up-dequeue | ui | Seta para cima restaura a fila |
-| extension | web | optional | Busca e leitura web (desligada por padrão) |
+| extension | web | core | `web_fetch` ligado por padrão como no nycode-harness; `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1` (D-52; era `optional`, desligada, e o `no-web-search` do nycode-harness, que a 03 listava como `core`, foi removido pela D-10 e substituído por essa regra) |
 | hook | claims | core | Afirmação sem evidência |
 | hook | dispatch | core | Despachante dos hooks |
 | hook | graph_context.py | optional | Exige codegraph |

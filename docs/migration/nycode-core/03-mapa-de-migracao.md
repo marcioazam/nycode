@@ -172,11 +172,11 @@ ligada; `remove` não migra. A especificação migra para `docs/specs/` em F2 e 
 | extension | footer-no-stats | ui | Rodapé |
 | extension | headless-lean | core | Custo sem interface |
 | extension | no-context-files-covers-claude-md | core | Contexto sem duplicata |
-| extension | no-web-search | core | Desliga busca que falha |
+| extension | no-web-search | core | Desliga busca que falha. **Superada por D-52**: a peça foi removida (D-10) e o `web` registra `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1` |
 | extension | docs-pointer (ex-`pi-docs`, D-36) | core | Prompt menor |
 | extension | plan-gate | core | Plano aprovado vai ao fim |
 | extension | prefix-cache-1h | core | Cache do prefixo |
-| extension | puxar | optional | Importa sessão de outro perfil, uso pessoal |
+| extension | puxar | optional | Importa sessão de outro perfil, uso pessoal. **Superada por D-52**: `import-claude-session` é `core` e liga por padrão |
 | extension | sound-notify | optional | Som ao fim do turno, gosto pessoal |
 | extension | sticky-prompt | ui | Última mensagem fixa |
 | extension | syntax-check | core | Erro de sintaxe após edição |
@@ -307,7 +307,7 @@ faria.
 | Em `~/.pi/agent/` | Para `~/.nycode/agent/` | Regra |
 |---|---|---|
 | `settings.json` | `settings.json` | Chaves convertidas pela tabela de [02, seção 5](02-arquitetura-alvo.md#5-configuracao-e-variaveis-de-ambiente); `packages` perde `pi-code`, `./vendor/pi-lsp`; `./vendor/ponytail` vira a fonte do pacote opcional |
-| `local.env` | chaves em `settings.json` | As 9 chaves permitidas; o arquivo de origem fica intacto |
+| `local.env` | `local.env` (carregador, D-52) e chaves em `settings.json` | As 9 chaves permitidas; o arquivo de origem fica intacto. O nycode lê `~/.nycode/agent/local.env` (ou `NYCODE_LOCAL_ENV`) no começo de `main` (K12), modo 0600/0400, valores literais, só as 9 chaves com nomes `NYCODE_*`, sem ler nada de `~/.pi`; como no `bin/pi` do nycode-harness, uma variável já definida no ambiente real **não** é sobrescrita. Precedência: ambiente real > `local.env` > `settings.json` > padrão. O `migrate from-pi` converte o `local.env` do pi em chaves de `settings.json` uma vez; se o `local.env` continuar existindo, vale o dele sobre o `settings.json` (mesma ordem de qualquer `NYCODE_*`), então os dois só divergem se o usuário editar um deles depois |
 | `claude-home/settings.json` (hooks, statusLine, env) | `settings.json` | Só as entradas que o usuário mudou em relação ao exemplo; o padrão já vem embarcado |
 | `mcp.json`, `models.json`, `lsp.json`, `keybindings.json` | iguais | Cópia; `mcp.json` e `models.json` nunca são sobrescritos se já existirem |
 | `sessions/` | `sessions/` | Cópia; o formato de sessão é o do pi e não muda entre 1.5.2 e 1.6.0 (não verificado: conferir `docs/session-format.md` e `migrations.ts` em F4) |
