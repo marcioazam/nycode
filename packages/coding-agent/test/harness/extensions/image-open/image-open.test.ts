@@ -151,95 +151,96 @@ test("segurança 12: diretório recusado não derruba o clique nem abre nada", a
 // é o mesmo do bundle e que o clique SGR no transcript chega ao handleMouse.
 // The child runs under `env -i` (TERM=xterm-256color, no KITTY_*/TERM_PROGRAM), so the image always renders as its text
 // fallback line; that line is what the click targets. Budget: up to 40 s to settle, 30 s for the opener, plus startup.
-test(
-	"nativo: clique SGR na imagem do transcript abre o arquivo no abridor falso, 0 requests",
-	{ timeout: 100_000 },
-	async () => {
-		assert.equal(spawnSync("tmux", ["-V"]).status, 0, "tmux é necessário (blocked, não skip)");
-		const cli =
-			process.env.NYCODE_E2E_CLI ?? fileURLToPath(new URL("../../../../dist/bundle/cli.js", import.meta.url));
-		const dir = path.join(root, "native");
-		for (const d of ["agent", "work", "home"]) mkdirSync(path.join(dir, d), { recursive: true });
-		const requests: string[] = [];
-		const server = createServer((req, res) => {
-			requests.push(`${req.method} ${req.url}`);
-			res.writeHead(500).end();
-		});
-		await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
-		const port = (server.address() as { port: number }).port;
-		writeFileSync(
-			path.join(dir, "agent/models.json"),
-			JSON.stringify({
-				providers: {
-					fake: {
-						baseUrl: `http://127.0.0.1:${port}/v1`,
-						api: "openai-completions",
-						apiKey: "fake-key",
-						models: [{ id: "m1", name: "Fixture", input: ["text"], contextWindow: 32000, maxTokens: 2048 }],
+for (let probe = 0; probe < 20; probe++)
+	test(
+		`nativo: clique SGR na imagem do transcript abre o arquivo no abridor falso, 0 requests (probe ${probe})`,
+		{ timeout: 100_000 },
+		async () => {
+			assert.equal(spawnSync("tmux", ["-V"]).status, 0, "tmux é necessário (blocked, não skip)");
+			const cli =
+				process.env.NYCODE_E2E_CLI ?? fileURLToPath(new URL("../../../../dist/bundle/cli.js", import.meta.url));
+			const dir = path.join(root, `native-${probe}`);
+			for (const d of ["agent", "work", "home"]) mkdirSync(path.join(dir, d), { recursive: true });
+			const requests: string[] = [];
+			const server = createServer((req, res) => {
+				requests.push(`${req.method} ${req.url}`);
+				res.writeHead(500).end();
+			});
+			await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+			const port = (server.address() as { port: number }).port;
+			writeFileSync(
+				path.join(dir, "agent/models.json"),
+				JSON.stringify({
+					providers: {
+						fake: {
+							baseUrl: `http://127.0.0.1:${port}/v1`,
+							api: "openai-completions",
+							apiKey: "fake-key",
+							models: [{ id: "m1", name: "Fixture", input: ["text"], contextWindow: 32000, maxTokens: 2048 }],
+						},
 					},
-				},
-			}),
-		);
-		writeFileSync(
-			path.join(dir, "agent/settings.json"),
-			JSON.stringify({ theme: "tokyo-night", tuiMode: "fullscreen", packages: [], quietStartup: true }),
-		);
-		const f = fakeOpener("native");
-		const tracePath = path.join(dir, "trace.log");
-		const clicks: string[] = [];
-		const trace = () =>
-			`--- terminal trace (child)\n${existsSync(tracePath) ? readFileSync(tracePath, "utf8") : "(none)"}--- clicks sent by the test\n${clicks.join("\n")}\n--- pane\n${pane()}`;
-		const S = `nycodeimg-${process.pid}`;
-		const ext = fileURLToPath(new URL("../../../../src/extensions/image-open/index.ts", import.meta.url));
-		const fixture = fileURLToPath(new URL("./native-fixture.ts", import.meta.url));
-		spawnSync("tmux", [
-			"new-session",
-			"-d",
-			"-s",
-			S,
-			"-x",
-			"120",
-			"-y",
-			"40",
-			`cd ${dir}/work && env -i PATH=${process.env.PATH} TERM=xterm-256color LANG=C.UTF-8 HOME=${dir}/home NYCODE_CODING_AGENT_DIR=${dir}/agent NYCODE_OFFLINE=1 NYCODE_IMAGE_OPENER=${f.bin} NYCODE_IMGFIX_TRACE=${tracePath} ${process.execPath} ${cli} --no-extensions --no-context-files --no-skills --no-prompt-templates --no-session -e ${ext} -e ${fixture} --model fake/m1; sleep 20`,
-		]);
-		const pane = () => spawnSync("tmux", ["capture-pane", "-p", "-t", S], { encoding: "utf8" }).stdout;
-		try {
-			const imageRow = () =>
-				pane()
-					.split("\n")
-					.findIndex((l) => /image/i.test(l));
-			// The click only counts once the app has switched mouse reporting on; the image row is read right before it.
-			const mouseOn = () =>
-				spawnSync("tmux", ["display-message", "-p", "-t", S, "#{mouse_any_flag}"], {
-					encoding: "utf8",
-				}).stdout.trim() === "1";
-			// The first frame may still move (header, footer, model line): click only when the row has held still.
-			let still = 0;
-			let last = -1;
-			await wait(() => {
-				const now = imageRow();
-				still = now >= 0 && now === last && mouseOn() ? still + 1 : 0;
-				last = now;
-				return still >= 5;
-			}, 40000);
-			const row = imageRow();
-			assert.ok(row >= 0, `sem linha de imagem\n${trace()}`);
-			assert.ok(mouseOn(), `o app não ligou o mouse\n${trace()}`);
-			const lit = (t: string) => spawnSync("tmux", ["send-keys", "-t", S, "-l", "--", t]);
-			clicks.push(`${Date.now()} press+release at row ${row + 1}, column 6`);
-			lit(`\x1b[<0;6;${row + 1}M`);
-			lit(`\x1b[<0;6;${row + 1}m`);
-			await wait(() => existsSync(f.copy) && f.got().length >= 1, 30000);
-			assert.equal(f.got().length, 1, trace());
-			assert.deepEqual(readFileSync(f.copy), Buffer.from(PNG, "base64"));
-			assert.deepEqual(requests, []);
-		} finally {
-			spawnSync("tmux", ["kill-session", "-t", S]);
-			server.close();
-		}
-	},
-);
+				}),
+			);
+			writeFileSync(
+				path.join(dir, "agent/settings.json"),
+				JSON.stringify({ theme: "tokyo-night", tuiMode: "fullscreen", packages: [], quietStartup: true }),
+			);
+			const f = fakeOpener(`native-${probe}`);
+			const tracePath = path.join(dir, "trace.log");
+			const clicks: string[] = [];
+			const trace = () =>
+				`--- terminal trace (child)\n${existsSync(tracePath) ? readFileSync(tracePath, "utf8") : "(none)"}--- clicks sent by the test\n${clicks.join("\n")}\n--- pane\n${pane()}`;
+			const S = `nycodeimg-${process.pid}-${probe}`;
+			const ext = fileURLToPath(new URL("../../../../src/extensions/image-open/index.ts", import.meta.url));
+			const fixture = fileURLToPath(new URL("./native-fixture.ts", import.meta.url));
+			spawnSync("tmux", [
+				"new-session",
+				"-d",
+				"-s",
+				S,
+				"-x",
+				"120",
+				"-y",
+				"40",
+				`cd ${dir}/work && env -i PATH=${process.env.PATH} TERM=xterm-256color LANG=C.UTF-8 HOME=${dir}/home NYCODE_CODING_AGENT_DIR=${dir}/agent NYCODE_OFFLINE=1 NYCODE_IMAGE_OPENER=${f.bin} NYCODE_IMGFIX_TRACE=${tracePath} ${process.execPath} ${cli} --no-extensions --no-context-files --no-skills --no-prompt-templates --no-session -e ${ext} -e ${fixture} --model fake/m1; sleep 20`,
+			]);
+			const pane = () => spawnSync("tmux", ["capture-pane", "-p", "-t", S], { encoding: "utf8" }).stdout;
+			try {
+				const imageRow = () =>
+					pane()
+						.split("\n")
+						.findIndex((l) => /image/i.test(l));
+				// The click only counts once the app has switched mouse reporting on; the image row is read right before it.
+				const mouseOn = () =>
+					spawnSync("tmux", ["display-message", "-p", "-t", S, "#{mouse_any_flag}"], {
+						encoding: "utf8",
+					}).stdout.trim() === "1";
+				// The first frame may still move (header, footer, model line): click only when the row has held still.
+				let still = 0;
+				let last = -1;
+				await wait(() => {
+					const now = imageRow();
+					still = now >= 0 && now === last && mouseOn() ? still + 1 : 0;
+					last = now;
+					return still >= 5;
+				}, 40000);
+				const row = imageRow();
+				assert.ok(row >= 0, `sem linha de imagem\n${trace()}`);
+				assert.ok(mouseOn(), `o app não ligou o mouse\n${trace()}`);
+				const lit = (t: string) => spawnSync("tmux", ["send-keys", "-t", S, "-l", "--", t]);
+				clicks.push(`${Date.now()} press+release at row ${row + 1}, column 6`);
+				lit(`\x1b[<0;6;${row + 1}M`);
+				lit(`\x1b[<0;6;${row + 1}m`);
+				await wait(() => existsSync(f.copy) && f.got().length >= 1, 30000);
+				assert.equal(f.got().length, 1, trace());
+				assert.deepEqual(readFileSync(f.copy), Buffer.from(PNG, "base64"));
+				assert.deepEqual(requests, []);
+			} finally {
+				spawnSync("tmux", ["kill-session", "-t", S]);
+				server.close();
+			}
+		},
+	);
 
 test("F11: segundo clique na mesma imagem não decodifica/grava de novo (cache por base64Data)", async () => {
 	const f = fakeOpener("cache");
