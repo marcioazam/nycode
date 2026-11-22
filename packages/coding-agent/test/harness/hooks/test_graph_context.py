@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from pathlib import Path
 from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -115,6 +116,39 @@ class TestGraphContext(unittest.TestCase):
     def test_other_events_and_bad_input_are_silent(self) -> None:
         self.assertIsNone(run("PreToolUse", self.tmp, self.env))
         self.assertIsNone(run("SessionStart", self.tmp, self.env, raw="not json"))
+
+    def test_exception_path_reports_to_inbox_and_stays_silent(self) -> None:
+        inbox = os.path.join(self.tmp, "inbox.tsv")
+        env = {**os.environ, "NYCODE_DIAG_INBOX": inbox}
+        p = subprocess.run(
+            [sys.executable, HOOK],
+            check=False,
+            input="not json",
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=20,
+        )
+        self.assertEqual((p.returncode, p.stdout), (0, ""))
+        lines = Path(inbox).read_text(encoding="utf-8").splitlines()
+        self.assertEqual(len(lines), 1)
+        campos = lines[0].split("\t")
+        self.assertEqual(campos[:3], ["13", "graph_context", "erro-interno"])
+        self.assertTrue(campos[3].startswith("Graph: indisponível (JSONDecodeError"))
+        self.assertIn("Traceback", campos[4])
+
+    def test_exception_path_without_inbox_writes_nothing(self) -> None:
+        env = {k: v for k, v in os.environ.items() if k != "NYCODE_DIAG_INBOX"}
+        p = subprocess.run(
+            [sys.executable, HOOK],
+            check=False,
+            input="not json",
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=20,
+        )
+        self.assertEqual((p.returncode, p.stdout), (0, ""))
 
 
 if __name__ == "__main__":

@@ -84,16 +84,15 @@ async function startSession(settings: { hooks?: Record<string, unknown> } = {}, 
 }
 
 describe("default hooks", () => {
-	it("registers the guard, graph context, dispatch and impeccable gate on their events", async () => {
+	it("registers the guard, graph context and dispatch on their events", async () => {
 		const text = await (await startSession()).summary();
 		expect(text).toContain("PreToolUse:\n  [Bash|run|Edit|Write|Read|Grep] command: python3 ");
 		expect(text).toContain("SessionStart:\n  [startup|resume|clear|compact] command: python3 ");
 		expect(text).toContain("SubagentStart:\n  [*] command: python3 ");
 		expect(text).toMatch(/PostToolUse:\n {2}\[\*\] command: bash .*hook-dispatch\.sh/);
-		expect(text).toMatch(/\[Edit\|Write\] command: sh .*impeccable_gate\.sh" hook/);
-		// D-54: the ralph-loop Stop hook (embedded) runs first, the impeccable gate second, in one group.
+		expect(text).not.toContain("impeccable_gate");
+		// D-54: the ralph-loop Stop hook (embedded) is the only default Stop hook.
 		expect(text).toMatch(/Stop:\n {2}\[\*\] command: if \[ -f .*ralph-loop\/hooks\/stop-hook\.sh" \]/);
-		expect(text.split("Stop:")[1]).toMatch(/impeccable_gate\.sh" hook/);
 	});
 
 	it("every default command names a script that exists under the embedded resources", () => {
@@ -101,7 +100,7 @@ describe("default hooks", () => {
 		const commands = Object.values(SETTINGS_DEFAULTS.hooks)
 			.flatMap((matchers) => matchers.flatMap((matcher) => matcher.hooks))
 			.map((hook) => hook.command);
-		expect(commands.length).toBe(9);
+		expect(commands.length).toBe(6);
 		for (const command of commands) {
 			const script = /"([^"]+)"/.exec(resolveResourcesMarker(command, root))?.[1] ?? "";
 			expect(script.startsWith(root), command).toBe(true);
@@ -182,10 +181,8 @@ describe("default hooks", () => {
 				env: { ...process.env, NYCODE_RESOURCES: resources },
 			});
 
-		it("is the first Stop hook, ahead of the impeccable gate", () => {
-			expect(
-				group?.hooks.map((h) => h.command.includes("ralph-loop") || h.command.includes("impeccable_gate")),
-			).toEqual([true, true]);
+		it("is the only default Stop hook", () => {
+			expect(group?.hooks.map((h) => h.command.includes("ralph-loop"))).toEqual([true]);
 			expect(command).toContain("ralph-loop/hooks/stop-hook.sh");
 		});
 

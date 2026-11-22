@@ -79,6 +79,7 @@ import {
 } from "../../core/cache-stats.ts";
 import { formatCacheWarmingStatus, formatCacheWarmingUsage } from "../../core/cache-warmer.ts";
 import { findExtensionStackMatches, recordCrash, takeUnnotifiedCrash } from "../../core/crash-log.ts";
+import { hasSessionCwd, sessionCwdTransition, type TransitionHost } from "../../core/cwd-switch/transition.ts";
 import { DEFAULT_THINKING_LEVEL, THINKING_LEVEL_OPTIONS } from "../../core/defaults.ts";
 import type {
 	AutocompleteProviderFactory,
@@ -196,6 +197,8 @@ import { editInExternalEditor } from "./external-editor.ts";
 import { refreshModelCatalogs } from "./model-catalog-refresh.ts";
 import { getModelSearchText } from "./model-search.ts";
 import { type BlockedStatus, ProgramStatusReporter } from "./program-status-reporter.ts";
+import { mostrarRetomada, type ResumeHost } from "./retomada/index.ts";
+import { installSendNow, type SendNowHost } from "./send-now/index.ts";
 import { shareSession } from "./session-share.ts";
 import { initialThemeSetting } from "./theme/nycode-themes.ts";
 import {
@@ -2665,6 +2668,7 @@ export class InteractiveMode {
 		// newest first, the same way done() does, but leave the promises pending as for inline dialogs.
 		for (const removeOverlay of [...this.extensionOverlays.values()].reverse()) removeOverlay();
 		this.clearExtensionTerminalInputListeners();
+		installSendNow(this as unknown as SendNowHost); // nycode: K22
 		this.setExtensionFooter(undefined);
 		this.setExtensionHeader(undefined);
 		this.clearExtensionWidgets();
@@ -3261,6 +3265,7 @@ export class InteractiveMode {
 	// =========================================================================
 
 	private setupKeyHandlers(): void {
+		installSendNow(this as unknown as SendNowHost); // nycode: K22
 		// Set up handlers on defaultEditor - they use this.editor for text access
 		// so they work correctly regardless of which editor is active
 		this.defaultEditor.onEscape = () => {
@@ -6016,6 +6021,7 @@ export class InteractiveMode {
 		sessionPath: string,
 		options?: Parameters<ExtensionCommandContext["switchSession"]>[1],
 	): Promise<{ cancelled: boolean }> {
+		if (hasSessionCwd(options)) return sessionCwdTransition(this as unknown as TransitionHost, sessionPath, options); // nycode: K23
 		this.clearStatusIndicator();
 		try {
 			const result = await this.runtimeHost.switchSession(sessionPath, {
@@ -6025,7 +6031,7 @@ export class InteractiveMode {
 			if (result.cancelled) {
 				return result;
 			}
-			this.showStatus("Resumed session");
+			mostrarRetomada(this as unknown as ResumeHost); // nycode: K20
 			return result;
 		} catch (error: unknown) {
 			if (error instanceof MissingSessionCwdError) {
@@ -7114,6 +7120,8 @@ export class InteractiveMode {
 		const cycleModelBackward = this.getAppKeyDisplay("app.model.cycleBackward");
 		const copyMessage = this.getAppKeyDisplay("app.message.copy");
 		const followUp = this.getAppKeyDisplay("app.message.followUp");
+		const sendNow = this.getAppKeyDisplay("app.message.sendNow");
+		const sendNowChord = `${copyMessage} ${this.getAppKeyDisplay("app.message.sendNowChord")}`;
 		const dequeue = this.getAppKeyDisplay("app.message.dequeue");
 		const pasteImage = this.getAppKeyDisplay("app.clipboard.pasteImage");
 
@@ -7158,6 +7166,7 @@ export class InteractiveMode {
 | \`${externalEditor}\` | Edit message in external editor |
 | \`${copyMessage}\` | Copy selection or last assistant message |
 | \`${followUp}\` | Queue follow-up message |
+| \`${sendNow}\` / \`${sendNowChord}\` | Abort active tool and send now |
 | \`${dequeue}\` | Restore queued messages |
 | \`${pasteImage}\` | Paste files on macOS, images, or text from clipboard |
 | \`/\` | Slash commands |

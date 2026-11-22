@@ -190,6 +190,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | web | core | `web_fetch` ligado por padrão como no nycode-harness; `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1` (D-52; era `optional`, desligada, e o `no-web-search` do nycode-harness, que a 03 listava como `core`, foi removido pela D-10 e substituído por essa regra) |
 | hook | claims | core | Afirmação sem evidência |
 | hook | dispatch | core | Despachante dos hooks |
+| hook | diag.py | core | Relato de falhas dos hooks para a caixa de diagnóstico |
 | hook | graph_context.py | optional | Exige codegraph |
 | hook | guard.py | core | Bloqueio de comando destrutivo |
 | hook | permissions | core | Pacote Python do guard (modos, análise de shell, caminhos) |
@@ -211,6 +212,13 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | command | revise-claude-md | core | Aprendizado da sessão vira regra |
 | command | skill-gen | optional | Exige o MCP Firecrawl |
 | command | swarm | core | Delegação em lanes |
+| command | batch | core | Execução em lotes de lanes paralelas |
+| command | run | core | Sobe e dirige o app real para ver a mudança funcionando |
+| command | run-skill-generator | core | Gera a skill por projeto que ensina /run e /verify |
+| command | statusline | core | Configura a status line (HUD) |
+| command | team-onboarding | core | Guia de uso da equipe a partir das sessões locais |
+| command | update-config | core | Roteia mudanças de configuração para o dono real |
+| command | verify | core | Verifica a mudança no app real |
 | plugin | claude-hud | optional | Barra de status de terceiro |
 <!-- core-scope:end -->
 
