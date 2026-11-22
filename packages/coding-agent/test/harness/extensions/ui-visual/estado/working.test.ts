@@ -266,7 +266,14 @@ test("P05, P09 e P10 no turno: tokens do stream, aviso de travamento, dica e vol
 	withEnv({}, () => {
 		vi.useFakeTimers({ toFake: ["setInterval", "Date"] });
 		const { handlers, calls, ctx } = setup();
-		const msgs = () => calls.filter((c) => c[0] === "message").map((c) => String(c[1]).split(/<[a-zA-Z]+>/g).join(""));
+		const msgs = () =>
+			calls
+				.filter((c) => c[0] === "message")
+				.map((c) =>
+					String(c[1])
+						.split(/<[a-zA-Z]+>/g)
+						.join(""),
+				);
 		handlers.agent_start({}, ctx);
 		handlers.message_update({ assistantMessageEvent: { type: "text_delta", delta: "x".repeat(400) } }, ctx);
 		vi.advanceTimersByTime(40); // the next frame renders the new phase
