@@ -130,7 +130,6 @@ ganha a atribuição e o commit de origem.
 | `chat-margin` | `~/.pi/agent/extensions/chat-margin/` (camada local) | N2 | Todo bloco com fundo do chat respeita a margem do texto (`outputPad`); embrulha `render`/`handleMouse` dos componentes do chat; usa `isImageLine` do `@nycode/tui` (K15) (D-56) | F12 |
 | `travar-modelos` | `~/.pi/agent/extensions/travar-modelos/` (camada local) | N2 | `/travar-modelos`: obriga a sessão a usar só os modelos e esforços escolhidos; separada do roteamento de subagentes (só reaproveita o seletor `subagent/routing/setup-ui.ts`) (D-56) | F12 |
 | `diagnostico` | `~/.pi/agent/extensions/diagnostico/` (camada local) | N2 | Registro de erros e avisos internos, trilha de spans (OTel) e `/doctor`; `/diagnostico` ou ctrl+e abre o modal e o rodapé mostra só a contagem (D-56) | F12 |
-||||||| 6326ddb0f
 | `hook-msgs` | `~/.pi/agent/extensions/hook-msgs/` (camada local) | N2 | Mensagens de hook, de gate, de subagente em segundo plano e de fim de run no ritmo das tools, com o fundo do estado (D-56) | F12 |
 | `claude-compat` (base) | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`) | N2 | Só a base de que `ui/editor.ts` depende; biblioteca sem fábrica, ainda não registrada (D-56, parte 1 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
