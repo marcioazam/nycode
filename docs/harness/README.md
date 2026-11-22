@@ -2,7 +2,7 @@
 
 > Estes documentos vieram de `claude-home/docs/` do ny-pi (cópia de 2026-11-21, checkout na branch
 > `feat/ui-onda9-harness` mais arquivos ainda não commitados) e foram convertidos para o nycode na F8 (mapa em
-> `docs/migration/ny-pi-core/anexos/E-mapa-arquivo-a-arquivo.tsv`, decisão D-31). Critério da conversão:
+> `docs/migration/nycode-core/anexos/E-mapa-arquivo-a-arquivo.tsv`, decisão D-31). Critério da conversão:
 >
 > - Todos os documentos: caminhos internos trocados pelos do nycode (`packages/coding-agent/resources/...`,
 >   `scripts/harness/...`, `docs/harness/...`, `${NYCODE_RESOURCES}`, `~/.nycode/agent`).

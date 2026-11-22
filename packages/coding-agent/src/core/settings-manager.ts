@@ -951,7 +951,7 @@ export class SettingsManager {
 		return resolveBypassPermissions({ flag: cliFlag, env: process.env, settings: this.globalSettings });
 	}
 
-	/** The nycode keys of docs/migration/ny-pi-core section 5, each with its NYCODE_* variable applied over settings.json. */
+	/** The nycode keys of docs/migration/nycode-core section 5, each with its NYCODE_* variable applied over settings.json. */
 	getNycodeSettings(): NycodeSettings {
 		return resolveNycodeSettings(this.settings, process.env);
 	}

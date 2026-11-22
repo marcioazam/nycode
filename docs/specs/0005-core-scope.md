@@ -70,7 +70,7 @@ entram no repositório. Uma skill de marketing não entra nem como opção.
 Tipos: `skill` (`packages/coding-agent/resources/skills/<nome>/`), `agent` (`packages/coding-agent/resources/agents/<nome>.md`), `extension`
 (`packages/coding-agent/src/extensions/<nome>/`), `hook` (`packages/coding-agent/resources/hooks/<nome>`, fora testes e `fixtures`),
 `command` (`packages/coding-agent/resources/commands/<nome>.md`) e `plugin` (`claude-home/plugins/<nome>/` no ny-pi; no nycode a linha de status
-vai para `packages/coding-agent/resources/statusline/`). Os caminhos são os de destino do mapa de migração (`docs/migration/ny-pi-core/`); as peças
+vai para `packages/coding-agent/resources/statusline/`). Os caminhos são os de destino do mapa de migração (`docs/migration/nycode-core/`); as peças
 chegam por fase e o `core_scope.py` é convertido em F3.
 
 <!-- core-scope:begin -->

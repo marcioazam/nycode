@@ -1,4 +1,4 @@
-// Schemas of the nycode settings blocks (docs/migration/ny-pi-core/02-arquitetura-alvo.md section 5).
+// Schemas of the nycode settings blocks (docs/migration/nycode-core/02-arquitetura-alvo.md section 5).
 // The keys only exist, validate and are read here; the extensions that consume them arrive in later phases.
 import { type Static, Type } from "typebox";
 import { SETTINGS_DEFAULTS } from "./settings-defaults.ts";

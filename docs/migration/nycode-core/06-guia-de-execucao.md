@@ -45,7 +45,7 @@ O working tree de `$ORIG` está sujo (351 entradas): nunca é lido nem tocado.
 7. **Limites** (D-06): arquivo novo até 800 linhas, diretório até 7 arquivos de código; excedente importado vai à lista
    `scripts/ci/lint/structure-upstream.txt` (criada em F3). **Rerere** ligado em F0
    ([08](08-sincronizacao-upstream.md)).
-8. **Evidência** por fase em `docs/migration/ny-pi-core/evidencias/F<n>.md`, criada no primeiro PR e completada no
+8. **Evidência** por fase em `docs/migration/nycode-core/evidencias/F<n>.md`, criada no primeiro PR e completada no
    último, sem segredo nem saída longa (`head`/`tail`; o resto em `/tmp`). Modelo:
 
 ```markdown
@@ -261,17 +261,17 @@ com 1 ocorrência; `gh api repos/$UP/community/profile --jq .health_percentage` 
    CodeQL com `javascript-typescript`, `python`, `actions` (D-20). Validar sem rodar o CI:
    `actionlint .github/workflows/*.yml` e `zizmor --min-severity medium .github/workflows`.
 3. **`bench/`:** `git mv import/ny-pi/bench bench` e `git mv import/ny-pi/docs/bench docs/bench` (o destino não tem
-   `bench/`). A mudança de raiz quebra `bench/arms/ny-pi:12` (`repo=$(cd "$here/../.." && pwd)`, que usa `install.sh`,
+   `bench/`). A mudança de raiz quebra `bench/arms/nycode-harness:12` (`repo=$(cd "$here/../.." && pwd)`, que usa `install.sh`,
    `npm/package.json` e `publish.list` da raiz do ny-pi, só em `import/ny-pi/`): apontar `repo` para
    `<raiz>/import/ny-pi` enquanto ele existir; idem `bench/arms/overlay-sha.sh` e `bench/tools/bench-pr.sh` (não lidos
    linha a linha: não verificado). O poller é a unidade systemd `bench/tools/systemd/bench-pr.{service,timer}`
    com `~/.config/ny-pi/bench.env` (`BENCH_REPO=$UP`): etapa manual do dono, fora do repositório.
-4. **Braço `ny-pi@1.6.0` (D-14, D-25):** em `bench/arms.toml`, braço `ny-pi-pi160` (mesmo `bin` de `arms/ny-pi`, base pi
+4. **Braço `ny-pi@1.6.0` (D-14, D-25):** em `bench/arms.toml`, braço `nycode-harness-pi160` (mesmo `bin` de `arms/nycode-harness`, base pi
    1.6.0). O `bin/pi` do ny-pi usa `PI_HARNESS_PI_VERSION:-1.5.2` e os 2 patches de `dist` só aplicam nessa versão
    (anexo A §1 item 10): o braço mede "ny-pi sem os 2 patches de core sobre o pi 1.6.0", e isso entra no resultado. O
    instalador confere sha256 dos artefatos de 1.5.2 (`scripts/install-lib.sh:6-9`); os de 1.6.0 vêm de
    `https://pi.dev/api/installer/releases/1.6.0/` e o executor os confere (não verificado). Simulação sem custo:
-   `python3 bench/run.py run --arm ny-pi-pi160 --tier pr --model claude-sonnet-5-5 --budget-usd 12 --dry-run`. Os
+   `python3 bench/run.py run --arm nycode-harness-pi160 --tier pr --model claude-sonnet-5-5 --budget-usd 12 --dry-run`. Os
    níveis reais (`bench/run.py:535-539`) são `pr`, `baseline`, `full`, `vanilla`, `tb41`, `hard`: o "`tier smoke`" dos
    documentos canônicos **não existe** ali; usar `pr` ou criar `smoke` em `bench/suites.toml` (registrar em 09).
    Rodada real: conta `claude`, fila única, gasto autorizado.
@@ -292,7 +292,7 @@ com 1 ocorrência; `gh api repos/$UP/community/profile --jq .health_percentage` 
 `gh pr checks <n do PR de teste> -R "$UP"` mostra todos os contextos em `pass`.
 
 **Evidência:** contextos obrigatórios e o resultado de cada um no PR de teste, JSON do ruleset, saída do `--dry-run`,
-resultado ou pendência da rodada `ny-pi-pi160`, decisão sobre `smoke`. **Reversão:**
+resultado ou pendência da rodada `nycode-harness-pi160`, decisão sobre `smoke`. **Reversão:**
 `gh api -X DELETE repos/$UP/rulesets/<id>` e recriar a proteção clássica pela saída guardada.
 
 <a id="f4"></a>
@@ -640,7 +640,7 @@ python3 bench/run.py run --arm nycode --tier full --model claude-sonnet-5-5 --bu
 python3 bench/run.py gate --base docs/bench/baseline-main --cand /tmp/f10-nycode   # depois: report --runs ... --out ...
 ```
 
-**Verificação de saída:** `gate` sem regressão contra a referência guardada (ou contra `ny-pi-pi160` de F3, se ela já
+**Verificação de saída:** `gate` sem regressão contra a referência guardada (ou contra `nycode-harness-pi160` de F3, se ela já
 diferia por causa da base, D-25); `git diff --stat docs/bench/baseline-main` só no PR da nova linha de base.
 
 **Evidência:** saídas de `gate` e `report`, custo real, relatório de paridade assinado pelo dono. **Reversão:** a nova
@@ -842,7 +842,7 @@ serviço, não verificado). A remoção do Nix e o `release.mjs` novo revertem p
    alcançam `import/`: acrescentar `"import"` a `ignoredDirectories` nos dois (F1 passo 4).
 8. **`build-check` falha em `check:released-changelogs`.** A etiqueta `v1.6.0-base` não existe ou diverge do
    `CHANGELOG.md`: `git ls-remote --tags origin 'v*.*.*'` e criar a etiqueta (F0 passo 8).
-9. **Braço `ny-pi-pi160` sai com código 2 nos patches de core.** Esperado: os 2 patches de `dist` só aplicam em pi
+9. **Braço `nycode-harness-pi160` sai com código 2 nos patches de core.** Esperado: os 2 patches de `dist` só aplicam em pi
    1.5.2. Registrar como parte do resultado de D-25; não "consertar" o patch.
 10. **`publish.yml` falha ou o Release fica em rascunho.** Etiqueta `v*` criada em commit que não é o da `main` com a
     versão, ou permissão faltando no job `release` (`contents: write`, `id-token: write`, `attestations: write`): ler o log

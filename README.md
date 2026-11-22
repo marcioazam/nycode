@@ -38,7 +38,7 @@ Today the Nycode binary is the terminal agent described above, version 1.6.0, wi
 
 It also has the typed settings keys the harness will use (`harness.*`, `plan.gate`, `subagent.respawn`, `hooks`, `statusLine`, `permissions.bypass`, each with a `NYCODE_*` variable; see [settings](packages/coding-agent/docs/settings.md)) and a benchmark runner in [`bench/`](bench/) with a `nycode` arm. The settings keys only store configuration: the features they configure are not in the binary yet.
 
-**Not in the binary yet** (the harness is being migrated from ny-pi, which still lives under [`import/ny-pi/`](import/ny-pi/)): sub-agents, plan mode, goal mode, todo, hooks, the agents and skills of the harness, its extensions, and the permission engine. They arrive in phases F5 to F9 of the migration plan in [`docs/migration/ny-pi-core/`](docs/migration/ny-pi-core/); the benchmark of the finished binary is F10. Until a phase lands, do not assume its feature exists.
+**Not in the binary yet** (the harness is being migrated from ny-pi, which still lives under [`import/ny-pi/`](import/ny-pi/)): sub-agents, plan mode, goal mode, todo, hooks, the agents and skills of the harness, its extensions, and the permission engine. They arrive in phases F5 to F9 of the migration plan in [`docs/migration/nycode-core/`](docs/migration/nycode-core/); the benchmark of the finished binary is F10. Until a phase lands, do not assume its feature exists.
 
 ## Getting started
 
@@ -286,11 +286,11 @@ So the headline figures above cannot be recomputed from this repository. Two thi
 
 ### Reproduce
 
-The runner is in [`bench/`](bench/); its arms (`pi-vanilla`, `cc-vanilla`, `ny-pi` and the migration arm `nycode`) are in [`bench/arms.toml`](bench/arms.toml). Real rounds spend model tokens, are capped by `--budget-usd` and need the credentials described in the [runbook](docs/bench/RUNBOOK.md). Under D-29 only `--dry-run` runs during the migration:
+The runner is in [`bench/`](bench/); its arms (`pi-vanilla`, `cc-vanilla`, `nycode-harness` and the migration arm `nycode`) are in [`bench/arms.toml`](bench/arms.toml). Real rounds spend model tokens, are capped by `--budget-usd` and need the credentials described in the [runbook](docs/bench/RUNBOOK.md). Under D-29 only `--dry-run` runs during the migration:
 
 ```bash
-python3 bench/run.py run --arm ny-pi --tier baseline --model claude-sonnet-5-5 --budget-usd 40 --dry-run  # the 42 tasks
-python3 bench/run.py run --arm ny-pi --tier hard --model claude-sonnet-5-5 --budget-usd 40 --dry-run      # the harder suite
+python3 bench/run.py run --arm nycode-harness --tier baseline --model claude-sonnet-5-5 --budget-usd 40 --dry-run  # the 42 tasks
+python3 bench/run.py run --arm nycode-harness --tier hard --model claude-sonnet-5-5 --budget-usd 40 --dry-run      # the harder suite
 ```
 
 ## Contributing

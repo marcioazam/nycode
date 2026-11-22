@@ -5,7 +5,7 @@ Rodar a partir de um worktree do nycode, com o PR #196 já na `main`. O detalhe 
 citados; o prompt só fixa a ordem, os limites e a condição de parada.
 
 ```text
-Migrar o harness marcioazam/ny-pi para o core do fork marcioazam/nycode, executando o plano de docs/migration/ny-pi-core/ (PR #196) fase a fase, de F0 a F12, até o checklist 12-checklist-mestre.md estar 100% marcado com evidência.
+Migrar o harness marcioazam/ny-pi para o core do fork marcioazam/nycode, executando o plano de docs/migration/nycode-core/ (PR #196) fase a fase, de F0 a F12, até o checklist 12-checklist-mestre.md estar 100% marcado com evidência.
 
 Como trabalhar:
 1. Antes de tudo leia README.md, 00-mega-plano.md, 11-decisoes-e-pendencias.md e a seção da fase atual em 06-guia-de-execucao.md. O plano manda; se ele contradiz o código, pare, corrija o documento num PR de docs e siga.
@@ -36,5 +36,5 @@ Ao fim de cada turno: fase atual, itens fechados no turno com a evidência, o qu
 ## Variante por fase
 
 Para sessões mais curtas, trocar o primeiro parágrafo por "Executar apenas a fase F<n> de
-docs/migration/ny-pi-core/06-guia-de-execucao.md" e a condição de parada por "todos os itens C-F<n>-* marcados e
+docs/migration/nycode-core/06-guia-de-execucao.md" e a condição de parada por "todos os itens C-F<n>-* marcados e
 evidencias/F<n>.md gravado, com os comandos de verificação de saída da fase mostrados na conversa".

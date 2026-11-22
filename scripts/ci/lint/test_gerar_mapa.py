@@ -1,4 +1,4 @@
-"""The migration map generator (docs/migration/ny-pi-core/anexos/gerar-mapa.py): overrides, rules, TSV and summary."""
+"""The migration map generator (docs/migration/nycode-core/anexos/gerar-mapa.py): overrides, rules, TSV and summary."""
 
 import importlib.util
 import io
@@ -10,7 +10,7 @@ import pytest
 
 SCRIPT = (
     Path(__file__).resolve().parents[3]
-    / "docs/migration/ny-pi-core/anexos/gerar-mapa.py"
+    / "docs/migration/nycode-core/anexos/gerar-mapa.py"
 )
 
 

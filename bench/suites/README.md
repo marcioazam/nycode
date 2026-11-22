@@ -1,6 +1,6 @@
 # Suítes S4 (plan), S5 (multi) e S8 (hard)
 
-Avaliam o repositório ny-pi (braço `ny-pi`) contra as referências vanilla. Neutras de capacidade: medem o resultado (testes ocultos), nunca o formato de plano ou o uso de subagentes.
+Avaliam o repositório ny-pi (braço `nycode-harness`) contra as referências vanilla. Neutras de capacidade: medem o resultado (testes ocultos), nunca o formato de plano ou o uso de subagentes.
 Plano e decisões: `docs/bench/pi-harness-ci-2026-11-13.md` (D10, D11, D14).
 
 - `plan/`: 12 casos. 8 `outcome` multi-passo (refatoração, migração de formato, bug a rastrear) e 4 `ask`

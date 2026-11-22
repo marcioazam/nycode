@@ -1,4 +1,4 @@
-"""`bench gate --parity` (D-28, docs/migration/ny-pi-core/09 §2.4): compares two different arms. arm_version and
+"""`bench gate --parity` (D-28, docs/migration/nycode-core/09 §2.4): compares two different arms. arm_version and
 overlay_sha stop blocking; model and jobs still do; the verdict.json records which keys were ignored."""
 
 import json
@@ -13,7 +13,11 @@ from bench.tests.test_rounds import mk, tasks, write_round
 
 def rounds(tmp: Path, cost: float = 1.0, **cand_meta: object) -> tuple[Path, Path]:
     base = write_round(
-        tmp / "b", tasks(10), arm="ny-pi-pi160", arm_version="1.6.0", overlay_sha="aaa"
+        tmp / "b",
+        tasks(10),
+        arm="nycode-harness-pi160",
+        arm_version="1.6.0",
+        overlay_sha="aaa",
     )
     cand = write_round(
         tmp / "c",

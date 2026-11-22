@@ -1,6 +1,6 @@
 """Harbor agent that runs the nycode build of this checkout (+ the owner layer) in the task container (09 §2.2).
 
-Sibling of the ny-pi `pi_harness_agent` (same directory): subclasses Harbor's built-in Pi agent, so the CLI flags, the session-dir
+Sibling of the nycode-harness `pi_harness_agent` (same directory): subclasses Harbor's built-in Pi agent, so the CLI flags, the session-dir
 trajectory and the cost parsing are inherited (nycode keeps pi's `--print --mode json` contract and session format).
 Only install() (ships the bundle of bundle.sh instead of `npm i -g pi`) and the final invocation differ: the bundled
 `cli.js` runs under Node from nvm, with HOME and NYCODE_CODING_AGENT_DIR inside /opt/nycode-home.
@@ -27,7 +27,7 @@ _AGENT_ENV = {
     "NYCODE_SKIP_VERSION_CHECK": "1",  # same as bench/arms/nycode: no update check in a measured run
 }
 
-# curl and tar for nvm and the bundle (the bundle needs no python3 or patch, unlike the ny-pi harness); fails loudly.
+# curl and tar for nvm and the bundle (the bundle needs no python3 or patch, unlike the nycode-harness harness); fails loudly.
 _ROOT_DEPS = r"""
 set -e
 need=""

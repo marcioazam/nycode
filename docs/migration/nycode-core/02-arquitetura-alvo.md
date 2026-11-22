@@ -32,7 +32,7 @@ nycode/
 │   ├── bench/                  RUNBOOK e linhas de base
 │   ├── fork/                   registro do fork e política de sincronização
 │   ├── harness/                documentos vindos de claude-home/docs
-│   ├── migration/ny-pi-core/   este plano e as evidências
+│   ├── migration/nycode-core/   este plano e as evidências
 │   └── specs/                  especificações 0001-0009 do ny-pi
 ├── packages/
 │   ├── coding-agent/

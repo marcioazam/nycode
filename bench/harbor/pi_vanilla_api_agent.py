@@ -44,7 +44,7 @@ def _dashdash(command: str) -> str:
 
 
 class PiVanillaApiAgent(Pi):  # type: ignore[misc]
-    """Stock pi agent whose `pi --print` gets `-- <instruction>`, as in the ny-pi arm (pi_harness_agent).
+    """Stock pi agent whose `pi --print` gets `-- <instruction>`, as in the nycode-harness arm (pi_harness_agent).
 
     Without it an instruction starting with "-" is parsed as a pi option ("Unknown option").
     """

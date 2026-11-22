@@ -1,7 +1,7 @@
 """Does a PR change the nycode product's FUNCTIONAL behavior? Decides whether bench-pr spends a benchmark round.
 
 Fail closed: any path not proven non-functional is functional. The lists are the owner's proposal of
-docs/migration/ny-pi-core/09 §3.2 (D-21); the rule record is docs/bench/RUNBOOK.md.
+docs/migration/nycode-core/09 §3.2 (D-21); the rule record is docs/bench/RUNBOOK.md.
 
 non-functional = docs, repo tooling (CI, hooks, release checks), the benchmark's own infra, tests, licence and dotfiles,
 `apps/**` (outside the gates, D-23) and pure-UI paths (themes, statusline, visual extensions).

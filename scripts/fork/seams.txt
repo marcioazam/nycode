@@ -1,4 +1,4 @@
-# Seams K1..K14 (docs/migration/ny-pi-core/08-sincronizacao-upstream.md, section 4; 02-arquitetura-alvo.md, section 4).
+# Seams K1..K14 (docs/migration/nycode-core/08-sincronizacao-upstream.md, section 4; 02-arquitetura-alvo.md, section 4).
 # Read by scripts/ci/seams/check-seams.sh. Fields, separated by " | ":
 #   id | files (space-separated; a directory is searched recursively) | marker pattern (ERE; it must not contain " | ") | test | state
 # state "ativa": the pattern must match in every file and the test must exist ("-" = no test yet, reported).

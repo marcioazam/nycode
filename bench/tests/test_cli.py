@@ -30,7 +30,7 @@ def cfg_with(case_dir: Path) -> dict[str, Any]:
 
 
 def test_dry_run_all_arms_and_tiers(capsys: CF) -> None:
-    for arm in ("cc-vanilla", "pi-vanilla", "ny-pi"):
+    for arm in ("cc-vanilla", "pi-vanilla", "nycode-harness"):
         for tier in ("pr", "baseline", "vanilla", "full"):
             assert rb.main(RA(arm, "--dry-run", tier=tier, budget="12")) == 0
     out = capsys.readouterr().out
@@ -46,7 +46,7 @@ def test_dry_run_counts_cases_and_suite_filter(tmp_path: Path) -> None:
     steps = rb.build_plan("pr", cfg_with(tmp_path), ["s4", "s1"], k=2)
     assert {s["suite"]: s["units"] for s in steps} == {"s1": 16, "s4": 2}
     assert all(s["k"] == 2 for s in steps)
-    assert "units=  2" in rb.render_plan("ny-pi", "pr", "m", 12.0, steps)
+    assert "units=  2" in rb.render_plan("nycode-harness", "pr", "m", 12.0, steps)
 
 
 def test_tasks_filter_keeps_only_named_tasks(tmp_path: Path) -> None:
@@ -77,7 +77,7 @@ def test_extension_runs_named_tasks_and_appends(tmp_path: Path, monkeypatch: MP)
     for k, v in {"BENCH_EXTEND_TASKS": "sec-refuse-rm-rf", "BENCH_EXTEND_REPS": "3", "BENCH_EXTEND_DIR": str(tmp_path),
                  "BENCH_EXTEND_OUT": str(ext), "BENCH_CC_CREDENTIALS": "x", "BENCH_MIN_FREE_GB": "0"}.items():  # fmt: skip
         monkeypatch.setenv(k, v)
-    assert rb.main(RA("ny-pi", "--extension", tier="pr", budget="6")) == 0
+    assert rb.main(RA("nycode-harness", "--extension", tier="pr", budget="6")) == 0
     assert seen == {"k": 3, "tasks": ["sec-refuse-rm-rf"], "suites": ["s1"]}
     assert ext.read_text().splitlines() == ['{"old": 1}', '{"task_id": "sec-refuse-rm-rf"}']  # fmt: skip
 
@@ -164,7 +164,7 @@ echo '{{"task_name":"tb","verifier_result":{{"rewards":{{"reward":1.0}}}},"agent
     assert suites == {"s1", "s2"}
 
 
-def test_ny_pi_harbor_bundles_the_checkout_stage(
+def test_nycode_harness_harbor_bundles_the_checkout_stage(
     tmp_path: Path, monkeypatch: MP
 ) -> None:
     """Harbor must ship the stage of this checkout, never the live ~/.pi (bug found 2026-11-14)."""
@@ -181,11 +181,13 @@ def test_ny_pi_harbor_bundles_the_checkout_stage(
     monkeypatch.setattr(rb, "HARBOR_DIR", hd)
     monkeypatch.setattr(rb, "oauth_token", lambda: "tok")
     steps = rb.build_plan("pr", rb.load_toml(BENCH / "suites.toml"), ["s2"], k=1)
-    rb._harbor_step(steps[0], "ny-pi", "m", tmp_path / "o", 5.0)
+    rb._harbor_step(steps[0], "nycode-harness", "m", tmp_path / "o", 5.0)
     assert (tmp_path / "bundled_home").read_text().strip() == str(stage)
 
 
-def test_ny_pi_harbor_bundle_is_per_round(tmp_path: Path, monkeypatch: MP) -> None:
+def test_nycode_harness_harbor_bundle_is_per_round(
+    tmp_path: Path, monkeypatch: MP
+) -> None:
     """Two arms at once must not share one bundle path: each round bundles into its own out dir."""
     stage = tmp_path / "stage"
     stage.mkdir()
@@ -204,25 +206,27 @@ def test_ny_pi_harbor_bundle_is_per_round(tmp_path: Path, monkeypatch: MP) -> No
     steps = rb.build_plan("pr", rb.load_toml(BENCH / "suites.toml"), ["s2"], k=1)
     outs = [tmp_path / "o1", tmp_path / "o2"]
     for o in outs:
-        rb._harbor_step(steps[0], "ny-pi", "m", o, 5.0)
+        rb._harbor_step(steps[0], "nycode-harness", "m", o, 5.0)
     want = [str(o / "pi-harness-bundle.tgz") for o in outs]
     assert (tmp_path / "bundle_args").read_text().split() == want
     assert set((tmp_path / "env_seen").read_text().split()) == set(want)
 
 
-def test_ny_pi_harbor_refuses_without_stage(tmp_path: Path, monkeypatch: MP) -> None:
+def test_nycode_harness_harbor_refuses_without_stage(
+    tmp_path: Path, monkeypatch: MP
+) -> None:
     monkeypatch.delenv("BENCH_STAGE", raising=False)
     monkeypatch.setenv("BENCH_STAGE_ROOT", str(tmp_path / "none"))
     monkeypatch.setattr(rb, "oauth_token", lambda: "tok")
     steps = rb.build_plan("pr", rb.load_toml(BENCH / "suites.toml"), ["s2"], k=1)
     with pytest.raises(RuntimeError, match="stage"):
-        rb._harbor_step(steps[0], "ny-pi", "m", tmp_path / "o", 5.0)
+        rb._harbor_step(steps[0], "nycode-harness", "m", tmp_path / "o", 5.0)
 
 
 def test_main_run_requires_credentials(monkeypatch: MP) -> None:
     monkeypatch.delenv("BENCH_CC_CREDENTIALS", raising=False)
     with pytest.raises(SystemExit) as e:
-        rb.main(RA("ny-pi"))
+        rb.main(RA("nycode-harness"))
     assert e.value.code == 2
     with pytest.raises(SystemExit):
         rb.main(RA("nope"))
@@ -244,7 +248,7 @@ def test_main_run_refuses_expiring_token_before_any_run(
     monkeypatch.setenv("BENCH_CC_CREDENTIALS", creds(tmp_path, 10))
     monkeypatch.setattr(rb, "execute", lambda *a: pytest.fail("ran with a dying token"))
     with pytest.raises(SystemExit) as e:
-        rb.main(RA("ny-pi", "--out", str(tmp_path / "o")))
+        rb.main(RA("nycode-harness", "--out", str(tmp_path / "o")))
     assert e.value.code == 2
 
 
@@ -265,19 +269,19 @@ def test_main_real_run_dispatches_execute(tmp_path: Path, monkeypatch: MP) -> No
     monkeypatch.setenv("BENCH_CC_CREDENTIALS", creds(tmp_path, 120))
     seen: dict[str, Any] = {}
     monkeypatch.setattr(rb, "execute", lambda *a: seen.update(a=a) or 0)
-    assert rb.main(RA("ny-pi", "--out", str(tmp_path))) == 0
-    assert seen["a"][0] == "ny-pi" and seen["a"][6] == tmp_path
-    rb.main(RA("ny-pi"))
-    assert str(seen["a"][6]).startswith("/tmp/bench-ny-pi-pr-")
+    assert rb.main(RA("nycode-harness", "--out", str(tmp_path))) == 0
+    assert seen["a"][0] == "nycode-harness" and seen["a"][6] == tmp_path
+    rb.main(RA("nycode-harness"))
+    assert str(seen["a"][6]).startswith("/tmp/bench-nycode-harness-pr-")
 
 
 def test_arm_info_and_overlay_sha(tmp_path: Path, monkeypatch: MP) -> None:
     arms = rb.load_toml(BENCH / "arms.toml")
     assert (
         rb.arm_info("cc-vanilla", arms)[0] == "cc"
-        and rb.arm_info("ny-pi", arms)[0] == "pi"
+        and rb.arm_info("nycode-harness", arms)[0] == "pi"
     )
-    stage = tmp_path / "bench-nypi-abc123-dirty"
+    stage = tmp_path / "bench-nycode-harness-abc123-dirty"
     stage.mkdir()
     (stage / ".overlay-sha").write_text("deadbeef\n")
     monkeypatch.setenv("BENCH_STAGE_ROOT", str(tmp_path))
@@ -289,7 +293,7 @@ def test_arm_info_and_overlay_sha(tmp_path: Path, monkeypatch: MP) -> None:
     with pytest.raises(
         RuntimeError, match="stage not built: install: ERROR: npm ci failed"
     ):
-        rb.arm_meta("ny-pi", {"ny-pi": {}}, "pi", arm, "m", 1.0)
+        rb.arm_meta("nycode-harness", {"nycode-harness": {}}, "pi", arm, "m", 1.0)
     monkeypatch.delenv("BENCH_STAGE")
     (stage / ".ready").touch()
     assert rb.overlay_sha("abc123") == "deadbeef"
@@ -297,7 +301,12 @@ def test_arm_info_and_overlay_sha(tmp_path: Path, monkeypatch: MP) -> None:
     monkeypatch.setenv("BENCH_STAGE", str(stage))
     assert rb.overlay_sha("zzz") == "deadbeef"
     sha = rb.arm_meta(
-        "ny-pi", {"ny-pi": {"version": "v"}}, "pi", Path("/nonexistent/bin"), "m", 1.0
+        "nycode-harness",
+        {"nycode-harness": {"version": "v"}},
+        "pi",
+        Path("/nonexistent/bin"),
+        "m",
+        1.0,
     )
     assert (
         sha["arm_version"] == "v"
@@ -329,7 +338,7 @@ def test_capabilities_schema_and_docs_urls() -> None:
     caps = rb.load_toml(BENCH / "capabilities.toml")
     assert len(caps) >= 16
     for name, row in caps.items():
-        for arm in ("cc-vanilla", "pi-vanilla", "ny-pi"):
+        for arm in ("cc-vanilla", "pi-vanilla", "nycode-harness"):
             assert row[arm]["value"] and row[arm]["url"].startswith("https://"), (
                 name,
                 arm,
@@ -374,9 +383,9 @@ def test_suites_toml_tiers_are_consistent() -> None:
     assert os.access(BENCH / "tools/micro.sh", os.X_OK)
 
 
-def test_ny_pi_stage_default_is_outside_tmp() -> None:
+def test_nycode_harness_stage_default_is_outside_tmp() -> None:
     """The eval sandbox mounts a private tmpfs on /tmp: a stage there is invisible and is rebuilt per session."""
-    arm = (BENCH / "arms/ny-pi").read_text()
+    arm = (BENCH / "arms/nycode-harness").read_text()
     assert "/tmp" not in next(ln for ln in arm.splitlines() if ln.startswith("stage="))
     assert "BENCH_STAGE_ROOT" in arm
     # Version-manager shims resolve through $HOME; the arm pins them to the real HOME before staging one.
@@ -493,21 +502,21 @@ def test_main_run_refuses_low_disk(monkeypatch: MP, capsys: CF) -> None:
         lambda p: shutil._ntuple_diskusage(100 * 2**30, 99 * 2**30, 5 * 2**30),
     )
     with pytest.raises(SystemExit) as e:
-        rb.main(RA("ny-pi"))
+        rb.main(RA("nycode-harness"))
     assert e.value.code == 2
     err = capsys.readouterr().err
     assert "BENCH_MIN_FREE_GB" in err and "5.0" in err
-    rb.main(RA("ny-pi", "--dry-run"))  # dry-run never checks the disk
+    rb.main(RA("nycode-harness", "--dry-run"))  # dry-run never checks the disk
 
 
 def test_main_run_passes_resume_flag(tmp_path: Path, monkeypatch: MP) -> None:
     monkeypatch.setenv("BENCH_CC_CREDENTIALS", creds(tmp_path, 120))
     seen: dict[str, Any] = {}
     monkeypatch.setattr(rb, "execute", lambda *a: seen.update(a=a) or 0)
-    rb.main(RA("ny-pi", "--out", str(tmp_path), "--resume"))
+    rb.main(RA("nycode-harness", "--out", str(tmp_path), "--resume"))
     assert seen["a"][7] is True
     with pytest.raises(SystemExit):
-        rb.main(RA("ny-pi", "--resume"))  # nothing to resume without --out
+        rb.main(RA("nycode-harness", "--resume"))  # nothing to resume without --out
 
 
 def test_execute_parallel_runs_suites_and_units_together(
@@ -538,7 +547,7 @@ def test_execute_parallel_runs_suites_and_units_together(
     assert meta["cost_usd"] == pytest.approx(0.4)
     monkeypatch.setattr(rb, "execute", lambda *a: a[8])
     monkeypatch.setenv("BENCH_CC_CREDENTIALS", creds(tmp_path, 120))
-    assert rb.main(RA("ny-pi", "--out", str(out), "--jobs", "6")) == 6
+    assert rb.main(RA("nycode-harness", "--out", str(out), "--jobs", "6")) == 6
 
 
 def test_execute_stage_with_no_rows_is_not_verified(

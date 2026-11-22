@@ -1,4 +1,4 @@
-// One case set per row of docs/migration/ny-pi-core/02-arquitetura-alvo.md section 5 (C-F4-05) plus the ny-harness
+// One case set per row of docs/migration/nycode-core/02-arquitetura-alvo.md section 5 (C-F4-05) plus the ny-harness
 // defaults of K4 (C-F4-04): default, schema validation and environment override (the variable wins over settings.json).
 import { join } from "node:path";
 import { Compile } from "typebox/compile";
