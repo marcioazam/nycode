@@ -142,6 +142,7 @@ import { loadAllHighlightLanguages } from "../../utils/syntax-highlight.ts";
 import { stripBom } from "../../utils/text.ts";
 import { ensureTool, type ToolStatus } from "../../utils/tools-manager.ts";
 import { checkForNewNycodeVersion, type LatestNycodeRelease, RELEASES_URL } from "../../utils/version-check.ts";
+import * as avisos from "./avisos/index.ts";
 import { reportBug } from "./bug-report.ts";
 import { createChatViewport } from "./chat-viewport.ts";
 import { ArminComponent } from "./components/armin.ts";
@@ -2354,6 +2355,7 @@ export class InteractiveMode {
 	}
 
 	private suggestBugReport(): void {
+		if (avisos.semSugestaoDeBug()) return; // nycode: K17
 		if (this.bugReportHintShown) return;
 		this.bugReportHintShown = true;
 		this.chatContainer.addChild(
@@ -3128,6 +3130,7 @@ export class InteractiveMode {
 	 * Show a notification for extensions.
 	 */
 	private showExtensionNotify(message: string, type?: "info" | "warning" | "error"): void {
+		if (avisos.caixaNeutra(this, message, type)) return; // nycode: K17
 		if (type === "error") {
 			this.showError(message);
 		} else if (type === "warning") {
@@ -3942,8 +3945,9 @@ export class InteractiveMode {
 				this.defaultEditor.onEscape = () => {
 					this.session.abortRetry();
 				};
+				avisos.retryInicio(event); // nycode: K17
 				this.showStatusIndicator(
-					new RetryStatusIndicator(this.ui, event.attempt, event.maxAttempts, event.delayMs),
+					new RetryStatusIndicator(this.ui, event.attempt, event.maxAttempts, event.delayMs, event.errorMessage), // nycode: K17
 				);
 				this.ui.requestRender();
 				break;
@@ -3958,7 +3962,11 @@ export class InteractiveMode {
 				this.clearStatusIndicator("retry");
 				// Show error only on final failure (success shows normal response)
 				if (!event.success) {
-					this.showError(`Retry failed after ${event.attempt} attempts: ${event.finalError || "Unknown error"}`);
+					if (!avisos.retryFim(this, event))
+						// nycode: K17
+						this.showError(
+							`Retry failed after ${event.attempt} attempts: ${event.finalError || "Unknown error"}`,
+						);
 				}
 				this.ui.requestRender();
 				break;
@@ -3967,7 +3975,7 @@ export class InteractiveMode {
 			case "summarization_retry_scheduled": {
 				this.showError(event.errorMessage);
 				this.showStatusIndicator(
-					new RetryStatusIndicator(this.ui, event.attempt, event.maxAttempts, event.delayMs),
+					new RetryStatusIndicator(this.ui, event.attempt, event.maxAttempts, event.delayMs, event.errorMessage), // nycode: K17
 				);
 				this.ui.requestRender();
 				break;
@@ -4455,7 +4463,7 @@ export class InteractiveMode {
 		const compactionCount = allEntries.filter((e) => e.type === "compaction").length;
 		if (compactionCount > 0) {
 			const times = compactionCount === 1 ? "1 time" : `${compactionCount} times`;
-			this.showStatus(`Session compacted ${times}`);
+			if (!avisos.compactada(this, compactionCount)) this.showStatus(`Session compacted ${times}`); // nycode: K17
 		}
 	}
 
@@ -4468,15 +4476,16 @@ export class InteractiveMode {
 			this.chatContainer.addChild(new Spacer(1));
 		}
 		this.chatContainer.addChild(
-			new ThemedText(
-				() =>
-					theme.fg(
-						"warning",
-						`This project is not trusted. Project ${CONFIG_DIR_NAME} resources and packages are ignored. Use /trust to save a trust decision, then restart nycode.`,
-					),
-				1,
-				0,
-			),
+			avisos.confianca(this) ?? // nycode: K17
+				new ThemedText(
+					() =>
+						theme.fg(
+							"warning",
+							`This project is not trusted. Project ${CONFIG_DIR_NAME} resources and packages are ignored. Use /trust to save a trust decision, then restart nycode.`,
+						),
+					1,
+					0,
+				),
 		);
 	}
 
@@ -4865,13 +4874,25 @@ export class InteractiveMode {
 
 	showError(errorMessage: string): void {
 		this.chatContainer.addChild(new Spacer(1));
-		this.chatContainer.addChild(new ThemedText(() => theme.fg("error", `Error: ${errorMessage}`), this.outputPad, 0));
+		this.chatContainer.addChild(
+			new ThemedText(
+				() => theme.fg("error", avisos.semPrefixo(errorMessage) ?? `Error: ${errorMessage}`),
+				this.outputPad,
+				0,
+			),
+		); // nycode: K17
 		this.ui.requestRender();
 	}
 
 	showWarning(warningMessage: string): void {
 		this.chatContainer.addChild(new Spacer(1));
-		this.chatContainer.addChild(new ThemedText(() => theme.fg("warning", `Warning: ${warningMessage}`), 1, 0));
+		this.chatContainer.addChild(
+			new ThemedText(
+				() => theme.fg("warning", avisos.semPrefixo(warningMessage) ?? `Warning: ${warningMessage}`),
+				1,
+				0,
+			),
+		); // nycode: K17
 		this.ui.requestRender();
 	}
 
@@ -6681,11 +6702,13 @@ export class InteractiveMode {
 		reloadBox.addChild(new DynamicBorder(borderColor));
 		reloadBox.addChild(new Spacer(1));
 		reloadBox.addChild(
-			new ThemedText(
-				() => theme.fg("muted", "Reloading keybindings, extensions, skills, prompts, themes, and context files..."),
-				1,
-				0,
-			),
+			avisos.recarregando(this) ?? // nycode: K17
+				new ThemedText(
+					() =>
+						theme.fg("muted", "Reloading keybindings, extensions, skills, prompts, themes, and context files..."),
+					1,
+					0,
+				),
 		);
 		reloadBox.addChild(new Spacer(1));
 		reloadBox.addChild(new DynamicBorder(borderColor));
@@ -6739,11 +6762,13 @@ export class InteractiveMode {
 			if (modelsJsonError) {
 				this.showError(`models.json error: ${modelsJsonError}`);
 			}
-			this.showStatus(
-				savedImplicitProjectTrust
-					? "Reloaded keybindings, extensions, skills, prompts, themes, and context files; saved project trust"
-					: "Reloaded keybindings, extensions, skills, prompts, themes, and context files",
-			);
+			if (!avisos.recarregado(this, savedImplicitProjectTrust))
+				// nycode: K17
+				this.showStatus(
+					savedImplicitProjectTrust
+						? "Reloaded keybindings, extensions, skills, prompts, themes, and context files; saved project trust"
+						: "Reloaded keybindings, extensions, skills, prompts, themes, and context files",
+				);
 			dismissReloadBox(this.editor as Component);
 			reloadBoxDismissed = true;
 		} catch (error) {
