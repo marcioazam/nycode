@@ -127,10 +127,113 @@ export function convertEntry(entry, state) {
   return [];
 }
 
-const freshState = (source) => ({ source, offset: 0, todos: [], todoSeq: 0, pendingTodo: {} });
+const freshState = (source) => ({ source, offset: 0, outSize: 0, todos: [], todoSeq: 0, pendingTodo: {} });
+
+const PRUNE_MAX_AGE_MS = 14 * 24 * 3600 * 1000;
+const PRUNE_EVERY_MS = 3600 * 1000; // a statusline roda por mensagem: listar milhares de cópias só 1x por hora
+const LOCK_STALE_MS = 30 * 1000;
+const pruned = new Set();
+
+/** S7: apaga cópias (`<sessão>.jsonl` + `.state.json`) sem sessão-fonte ou com mais de 14 dias; nunca `keep`. Devolve quantas. */
+export function pruneTranscripts(dir, { now = Date.now(), keep = '' } = {}) {
+  let names;
+  try {
+    names = fs.readdirSync(dir);
+  } catch {
+    return 0;
+  }
+  let removed = 0;
+  const drop = (file) => {
+    try {
+      fs.rmSync(file, { force: true });
+    } catch {
+      /* corrida com outro processo: some na próxima passada */
+    }
+  };
+  for (const name of names) {
+    const file = path.join(dir, name);
+    if (name.startsWith('.') || file === keep || file === `${keep}.state.json`) continue;
+    try {
+      if (name.endsWith('.state.json')) {
+        if (names.includes(name.slice(0, -'.state.json'.length))) continue; // a cópia decide
+        drop(file); // estado órfão
+        removed++;
+      } else if (/\.(tmp|lock)$/.test(name)) {
+        if (now - fs.statSync(file).mtimeMs > LOCK_STALE_MS) drop(file); // resto de execução morta
+      } else if (name.endsWith('.jsonl')) {
+        let source;
+        try {
+          source = JSON.parse(fs.readFileSync(`${file}.state.json`, 'utf8')).source;
+        } catch {
+          source = undefined;
+        }
+        const orphan = typeof source === 'string' && !fs.existsSync(source);
+        if (orphan || now - fs.statSync(file).mtimeMs > PRUNE_MAX_AGE_MS) {
+          drop(file);
+          drop(`${file}.state.json`);
+          removed++;
+        }
+      }
+    } catch {
+      /* some entre o readdir e o stat */
+    }
+  }
+  return removed;
+}
+
+/** Poda uma vez por processo e no máximo 1x/hora (marcador `.pruned`); falha de E/S nunca atrapalha o HUD. */
+function maybePrune(out) {
+  const dir = path.dirname(out);
+  if (pruned.has(dir)) return;
+  pruned.add(dir);
+  const marker = path.join(dir, '.pruned');
+  try {
+    if (Date.now() - fs.statSync(marker).mtimeMs < PRUNE_EVERY_MS) return;
+  } catch {
+    /* sem marcador: poda */
+  }
+  pruneTranscripts(dir, { keep: out });
+  try {
+    fs.writeFileSync(marker, '');
+  } catch {
+    /* ok */
+  }
+}
+
+/** Trava `<out>.lock` (O_EXCL). Outro processo sincronizando: devolve null (a próxima execução alcança). Trava velha é retomada. */
+function takeLock(lock) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      return fs.openSync(lock, 'wx');
+    } catch (e) {
+      if (e.code !== 'EEXIST') return null;
+      try {
+        if (Date.now() - fs.statSync(lock).mtimeMs < LOCK_STALE_MS) return null;
+        fs.rmSync(lock, { force: true });
+      } catch {
+        return null;
+      }
+    }
+  }
+  return null;
+}
 
 /** Atualiza `out` com as linhas novas de `source` e devolve `out`. */
 export function syncTranscript(source, out) {
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  maybePrune(out);
+  const lock = `${out}.lock`;
+  const fdLock = takeLock(lock);
+  if (fdLock === null) return out;
+  try {
+    return syncLocked(source, out);
+  } finally {
+    fs.closeSync(fdLock);
+    fs.rmSync(lock, { force: true });
+  }
+}
+
+function syncLocked(source, out) {
   const statePath = `${out}.state.json`;
   let state;
   try {
@@ -139,9 +242,14 @@ export function syncTranscript(source, out) {
     state = null;
   }
   const size = fs.statSync(source).size;
+  // U20: morrer entre o append e o estado deixa `out` maior que `state.outSize`: corta o excedente em vez de duplicar.
+  if (state && state.source === source && Number.isInteger(state.outSize) && fs.existsSync(out)) {
+    const outSize = fs.statSync(out).size;
+    if (outSize > state.outSize) fs.truncateSync(out, state.outSize);
+    else if (outSize < state.outSize) state = null;
+  }
   if (!state || state.source !== source || size < state.offset || !fs.existsSync(out)) {
     state = freshState(source);
-    fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, '');
   }
   if (size === state.offset) return out;
@@ -169,6 +277,9 @@ export function syncTranscript(source, out) {
   }
   if (lines.length) fs.appendFileSync(out, `${lines.join('\n')}\n`);
   state.offset += Buffer.byteLength(text.slice(0, end + 1), 'utf8');
-  fs.writeFileSync(statePath, JSON.stringify(state));
+  state.outSize = fs.statSync(out).size;
+  const tmp = `${statePath}.${process.pid}.tmp`; // atômico: nunca um state.json pela metade
+  fs.writeFileSync(tmp, JSON.stringify(state));
+  fs.renameSync(tmp, statePath);
   return out;
 }

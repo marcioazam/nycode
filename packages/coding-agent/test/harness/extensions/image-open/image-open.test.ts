@@ -219,7 +219,7 @@ test("nativo: clique SGR na imagem do transcript abre o arquivo no abridor falso
 		spawnSync("tmux", ["kill-session", "-t", S]);
 		server.close();
 	}
-});
+}, 120_000); // waits up to 40 s for the mouse flag and 30 s for the opener, above the 30 s default
 
 test("F11: segundo clique na mesma imagem não decodifica/grava de novo (cache por base64Data)", async () => {
 	const f = fakeOpener("cache");

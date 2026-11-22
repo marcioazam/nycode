@@ -16,7 +16,7 @@ import {
 	realpath,
 	split,
 	tempDir,
-} from "../../../src/core/permissions/guard/py-path.ts";
+} from "../../../../src/core/permissions/guard/py-path.ts";
 
 const root = realpathSync(mkdtempSync(join(tmpdir(), "py-path-")));
 afterAll(() => rmSync(root, { recursive: true }));

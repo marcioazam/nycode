@@ -20,8 +20,14 @@ interface Case {
 
 type OracleVerdict = null | [string, string];
 
-function oracle(args: string[], input: unknown, bypass: boolean): unknown {
-	const env = { ...process.env, CLAUDE_PROJECT_DIR: PROJECT, NYCODE_BYPASS_PERMISSIONS: bypass ? "1" : "0" };
+function oracle(args: string[], input: unknown, bypass: boolean, mode?: string): unknown {
+	const env: NodeJS.ProcessEnv = {
+		...process.env,
+		CLAUDE_PROJECT_DIR: PROJECT,
+		NYCODE_BYPASS_PERMISSIONS: bypass ? "1" : "0",
+	};
+	if (mode === undefined) delete env.NYCODE_PERMISSION_MODE;
+	else env.NYCODE_PERMISSION_MODE = mode;
 	return JSON.parse(
 		execFileSync("python3", [ORACLE, ...args], { input: JSON.stringify(input), env, maxBuffer: 1 << 28 }).toString(),
 	);
@@ -114,58 +120,30 @@ function fileCases(literals: string[], cwd: string): Case[] {
 	]);
 }
 
-function native(c: Case, bypass: boolean): OracleVerdict {
-	const call: GuardCall = { tool: c.tool, input: c.input, cwd: c.cwd, project: PROJECT, bypass };
+function native(c: Case, bypass: boolean, mode?: string): OracleVerdict {
+	const call: GuardCall = { tool: c.tool, input: c.input, cwd: c.cwd, project: PROJECT, bypass, mode };
 	const verdict = decide(call);
 	if (verdict.kind === "allow") return null;
 	return [verdict.kind, verdict.reason];
 }
 
-function nativeOrError(c: Case, bypass: boolean): OracleVerdict {
+function nativeOrError(c: Case, bypass: boolean, mode?: string): OracleVerdict {
 	try {
-		return native(c, bypass);
+		return native(c, bypass, mode);
 	} catch (error) {
 		return ["error", error instanceof Error ? error.constructor.name : "?"];
 	}
 }
 
-/**
- * Fuzz-generated text that is not valid shell, where guard.py parses the pieces differently from the native port
- * (a parenthesis or a quoted `-c` argument in the middle of a command). Pinned so a new divergence still fails.
- */
-const INVALID_SHELL_DIVERGENCES = new Set<string>([
-	"bash -c '\u0000 -exec ( )  pkill git -exec git \u0000 -rf \\\n'",
-	"echo $(-rf ) chmod eval : -R) | cat",
-	"echo $(http://x -c tee ~ {} pkill ) mkfs.ext4 ( git -9 \\\n <<EOF) | cat",
-]);
-
-const STRICTNESS: Record<string, number> = { deny: 2, ask: 1 };
-const strictness = (verdict: OracleVerdict) => (verdict ? (STRICTNESS[verdict[0]] ?? 0) : 0);
-
-/**
- * guard.py carries rules the native port does not have yet (onda 9: modes, recursive re-analysis, download-and-execute,
- * expansion command words, /dev/* writes, cloud credentials, Grep, size limit, .env.*). Where it is at least as strict
- * as the native engine and gives the same decision level, or is stricter, that is a pending native gap, not a bug;
- * a native engine stricter than guard.py is still a failure.
- */
-function guardMayBeStricter(want: OracleVerdict, got: OracleVerdict): boolean {
-	return strictness(want) >= strictness(got);
-}
-
-function firstMismatch(cases: Case[], bypass: boolean): string | undefined {
-	const expected = oracle(["decide"], cases, bypass) as OracleVerdict[];
+function firstMismatch(cases: Case[], bypass: boolean, mode?: string): string | undefined {
+	const expected = oracle(["decide"], cases, bypass, mode) as OracleVerdict[];
 	judged += cases.length;
 	for (const [i, c] of cases.entries()) {
-		const got = nativeOrError(c, bypass);
+		const got = nativeOrError(c, bypass, mode);
 		// A guard.py exception is the guard's internal error, which the gate maps; here only that both fail matters.
 		const want = expected[i];
 		const bothFail = want?.[0] === "error" && got?.[0] === "error";
-		if (
-			!bothFail &&
-			JSON.stringify(got) !== JSON.stringify(want) &&
-			!guardMayBeStricter(want, got) &&
-			!INVALID_SHELL_DIVERGENCES.has(c.input.command ?? "")
-		) {
+		if (!bothFail && JSON.stringify(got) !== JSON.stringify(want)) {
 			diverged++;
 			return `${JSON.stringify(c)}\n  guard.py: ${JSON.stringify(want)}\n  native:   ${JSON.stringify(got)}`;
 		}
@@ -225,8 +203,44 @@ describe("native permission engine against guard.py", () => {
 		expect(firstMismatch(fileCases(paths, "/tmp"), false)).toBeUndefined();
 	});
 
+	it.each(["default", "acceptEdits", "plan", "bypassPermissions", "bogus"])(
+		"agrees under the %s permission mode",
+		(mode) => {
+			expect(firstMismatch(bashCases([...literals, ...random.slice(0, 400)], PROJECT), false, mode)).toBeUndefined();
+			expect(firstMismatch(bashCases(literals.slice(0, 150), PROJECT), true, mode)).toBeUndefined();
+			expect(firstMismatch(fileCases(literals, PROJECT), false, mode)).toBeUndefined();
+		},
+	);
+
+	it("agrees on Grep and on the run tool", () => {
+		const grepPaths = [
+			undefined,
+			"",
+			"/",
+			"~",
+			"~/.ssh",
+			"~/.nycode",
+			"/proc",
+			"/tmp",
+			PROJECT,
+			"..",
+			"~/.config",
+		] as Array<string | undefined>;
+		const grep: Case[] = grepPaths.map((path) => ({
+			tool: "Grep",
+			input: (path === undefined ? {} : { path }) as Record<string, string>,
+			cwd: PROJECT,
+		}));
+		const run: Case[] = ["start", "list", "tail", "stop", "wait", "bogus", undefined].map((action) => ({
+			tool: "run",
+			input: { action, command: "rm -rf /" } as Record<string, string>,
+			cwd: PROJECT,
+		}));
+		expect(firstMismatch([...grep, ...run], false)).toBeUndefined();
+	});
+
 	it("allows tools the guard does not judge", () => {
-		expect(decide({ tool: "Grep", input: {}, cwd: PROJECT, project: PROJECT, bypass: false })).toEqual({
+		expect(decide({ tool: "Glob", input: {}, cwd: PROJECT, project: PROJECT, bypass: false })).toEqual({
 			kind: "allow",
 		});
 	});

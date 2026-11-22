@@ -234,7 +234,9 @@ def _covers_secret(p: str) -> str:
         return "/proc"
     root = p.rstrip("/") or "/"
     prefix = root + os.sep
-    for secret in (*READ_DENY_FILES, *READ_DENY_DIRS):
+    for secret in sorted(
+        (*READ_DENY_FILES, *READ_DENY_DIRS)
+    ):  # sorted: the reason must not depend on hash order
         if secret != root and secret.startswith(prefix):
             return secret
     return ""

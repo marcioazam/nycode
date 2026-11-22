@@ -163,15 +163,17 @@ describe("gateToolCall", () => {
 });
 
 describe("guardHookEnabled", () => {
-	it("is on for the script engine, off for the native one and for the global opt-out", () => {
-		expect(guardHookEnabled({})).toBe(true);
+	it("is off for the default (native) engine, on for the script one, and off for the global opt-out", () => {
+		expect(guardHookEnabled({})).toBe(false);
 		expect(guardHookEnabled({ permissions: { engine: "script" } })).toBe(true);
 		expect(guardHookEnabled({ permissions: { engine: "native" } })).toBe(false);
 		expect(guardHookEnabled({ hooks: { PreToolUse: [] } })).toBe(false);
 	});
 
 	it("keeps the guard for a global PreToolUse that names hooks of its own", () => {
-		expect(guardHookEnabled({ hooks: { PreToolUse: [{ hooks: [] }] } })).toBe(true);
+		expect(guardHookEnabled({ permissions: { engine: "script" }, hooks: { PreToolUse: [{ hooks: [] }] } })).toBe(
+			true,
+		);
 	});
 
 	it("reads the engine as the gate does", async () => {
