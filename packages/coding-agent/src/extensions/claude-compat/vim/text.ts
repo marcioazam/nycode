@@ -11,6 +11,7 @@ export function activeMarkerIds(text: string, expanded: string): Set<string> {
 	if (text === expanded) return ids;
 	for (const m of text.matchAll(MARKER)) {
 		const id = m[1]!;
+		// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- id is the MARKER capture (\d+), digits only
 		if (!ids.has(id) && !new RegExp(`\\[paste #${id}(?: (?:\\+\\d+ lines|\\d+ chars))?\\]`).test(expanded))
 			ids.add(id);
 	}
