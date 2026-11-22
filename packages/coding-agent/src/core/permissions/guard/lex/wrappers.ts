@@ -3,12 +3,14 @@
 import { basename } from "../py-path.ts";
 import { maskHeredocs } from "./heredoc.ts";
 import { segments } from "./segments.ts";
-import { extractSubstitutions, FETCH_SUBST } from "./substitutions.ts";
+import { extractSubstitutions, FETCH_SUBST, PLAIN_SUBST } from "./substitutions.ts";
 import { shortFlags, tokenize } from "./tokens.ts";
 
 export const SHELLS = new Set(["sh", "bash", "zsh", "dash", "ksh", "fish"]);
 const FETCHERS = new Set(["curl", "wget"]);
 const PRIV = new Set(["sudo", "su", "doas"]);
+/** `env -S` expansions of one segment. */
+const MAX_ENV_SPLITS = 32;
 const ASSIGN_RE = /^[A-Za-z_][A-Za-z0-9_]*=/;
 const INTERP_RE = /^(python[\p{Nd}.]*|perl|ruby|node)$/u;
 const FETCH_HINT_RE = /\b(curl|wget)\b|base64\s+-\w*[dD]|--decode|xxd\s+-\w*r|openssl\s+enc/;
@@ -62,6 +64,7 @@ export function stripPrefixes(input: string[]): [string[], boolean] {
 	let argv = [...input];
 	let priv = false;
 	let i = 0;
+	let expansions = 0;
 	while (i < argv.length) {
 		const w = argv[i];
 		const base = basename(w);
@@ -101,6 +104,9 @@ export function stripPrefixes(input: string[]): [string[], boolean] {
 						val = argv[i];
 						i++;
 					}
+					expansions++;
+					// each expansion copies the rest: bounded, and the rest is not trusted
+					if (expansions > MAX_ENV_SPLITS) return [[PLAIN_SUBST, ...argv.slice(i)], priv];
 					argv = [...tokenize(val), ...argv.slice(i)];
 					i = 0;
 					broke = true;

@@ -18,6 +18,7 @@ SEPARATORS = {";", "&&", "||", "|", "&", "|&", "\n", ";;", ";&", ";;&"}
 CASE_SEPARATORS = {";;", ";&", ";;&"}
 PLAIN_SUBST = "__SUBST__"  # lugar de $( ), crase e <( ) no texto externo; o interior é analisado à parte
 FETCH_SUBST = "__FETCHSUBST__"  # idem, quando o interior baixa ou decodifica (alimenta um interpretador => deny)
+MAX_ENV_SPLITS = 32  # `env -S` expansions of one segment
 ASSIGN_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 HEREDOC_HEAD_RE = re.compile(r"<<[-~]?[ \t]*(['\"]?)(\w+)\1")
 SHELL_WORD_RE = re.compile(
@@ -571,6 +572,7 @@ def strip_prefixes(argv: list[str]) -> tuple[list[str], bool]:
     argv = list(argv)
     priv = False
     i = 0
+    expansions = 0
     while i < len(argv):
         w = argv[i]
         base = os.path.basename(w)
@@ -608,6 +610,11 @@ def strip_prefixes(argv: list[str]) -> tuple[list[str], bool]:
                         val = flag[2:]
                     elif not eq and i < len(argv):
                         val, i = argv[i], i + 1
+                    expansions += 1
+                    if (
+                        expansions > MAX_ENV_SPLITS
+                    ):  # each one copies the rest: bounded, and the rest is not trusted
+                        return [PLAIN_SUBST, *argv[i:]], priv
                     argv, i = tokenize(val) + argv[i:], 0
                     break
                 if key in values and not eq and i < len(argv):
