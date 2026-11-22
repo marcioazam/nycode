@@ -174,12 +174,10 @@ Abreviação: `CA` = `packages/coding-agent/src`; `core/` e `cli/` abaixo são d
 | K19 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Uma linha no início de `updateEditorBorderColor()` | 91 / 25 | 3 (região: `updateEditorBorderColor`) | médio |
 | K20 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Uma linha no lugar de `this.showStatus("Resumed session")` | 91 / 25 | 1 (região: `Resumed session`) | médio |
 | K21 | `packages/tui/src/layout.ts` | Uma chamada no lugar de `if (isImageLine(line)) return line;` em `replaceScrollbarCell` | 4 / 3 | 1 (região: `replaceScrollbarCell`) | médio |
-| K22 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Duas chamadas `installSendNow(this)` (início de `setupKeyHandlers()` e após `clearExtensionTerminalInputListeners()` em `resetExtensionUI`), a linha da ajuda e cinco atalhos novos | 91 / 25 | 1 (região: `installSendNow|app.message.dequeue`) | médio |
-| K22 | `packages/coding-agent/src/core/keybindings.ts` | Duas chamadas `installSendNow(this)` (início de `setupKeyHandlers()` e após `clearExtensionTerminalInputListeners()` em `resetExtensionUI`), a linha da ajuda e cinco atalhos novos | 6 / 1 | 1 (região: `installSendNow|app.message.dequeue`) | médio |
-| K23 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Uma linha no início de `handleResumeSession` (desvio) | 91 / 25 | 0 (região: `handleResumeSession`) | médio |
-| K23 | `packages/coding-agent/src/core/session-manager.ts` | Uma chamada `installCwdFinders(SessionManager)` depois da classe | 17 / 6 | 0 (região: `export class SessionManager`) | médio |
 | K22 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Duas chamadas `installSendNow(this)` (início de `setupKeyHandlers()` e após `clearExtensionTerminalInputListeners()` em `resetExtensionUI`) e a linha da ajuda | 91 / 25 | 1 (região: `installSendNow` ou `app.message.dequeue`) | médio |
 | K22 | `packages/coding-agent/src/core/keybindings.ts` | Cinco atalhos novos em `DEFAULT_APP_KEYBINDINGS` (`app.message.sendNow`, `app.message.sendNowChord`, `app.queue.drop`, `app.queue.selectPrev`, `app.queue.selectNext`) | 6 / 1 | 1 (região: `installSendNow` ou `app.message.dequeue`) | médio |
+| K23 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | Uma linha no início de `handleResumeSession` (desvio) | 91 / 25 | 0 (região: `handleResumeSession`) | médio |
+| K23 | `packages/coding-agent/src/core/session-manager.ts` | Uma chamada `installCwdFinders(SessionManager)` depois da classe | 17 / 6 | 0 (região: `export class SessionManager`) | médio |
 
 Legenda: 3m/1m = commits em 3 meses e em 1 mês; Região = commits dos 3 meses cujo diff casa o termo (aproximação por
 `git log -G`); n. med. = região não medida; indef. = ponto do gancho ainda não decidido.
