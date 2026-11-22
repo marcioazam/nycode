@@ -11,9 +11,9 @@ import {
 	MARCA_CAIXA,
 } from "../../../../src/modes/interactive/avisos/caixa.ts";
 import { blocoErro, causa, retryLinha } from "../../../../src/modes/interactive/avisos/causas.ts";
-import { chipsAviso } from "../../../../src/modes/interactive/avisos/chips.ts";
 import {
 	brilhoPonto,
+	chipsAviso,
 	limparTela,
 	recarregado,
 	recarregando,

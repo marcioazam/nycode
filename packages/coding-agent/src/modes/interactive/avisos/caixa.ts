@@ -21,8 +21,8 @@ import {
 	tocarRecarga,
 	vista,
 } from "./base.ts";
-import { avisoAnimado, chipsAviso } from "./chips.ts";
 import { comRecuo, esconder, ultimoErro } from "./erro.ts";
+import { avisoAnimado, chipsAviso } from "./recarga.ts";
 
 export const MAX_BOLAS = 10;
 export const COMPACTADA_MS = 360;
