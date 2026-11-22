@@ -214,6 +214,7 @@ import {
 } from "./theme/theme.ts";
 import { InteractiveThemeController } from "./theme/theme-controller.ts";
 import { createInteractiveTui, createInteractiveTuiReference } from "./tui-renderer.ts";
+import { type ControlsHost, installUiControls } from "./ui-controls/index.ts";
 
 export { createInteractiveTui, createInteractiveTuiReference } from "./tui-renderer.ts";
 
@@ -4764,6 +4765,7 @@ export class InteractiveMode {
 	}
 
 	private updateEditorBorderColor(): void {
+		installUiControls(this as unknown as ControlsHost); // nycode: K19
 		if (this.isBashMode) {
 			this.editor.borderColor = theme.getBashModeBorderColor();
 		} else {

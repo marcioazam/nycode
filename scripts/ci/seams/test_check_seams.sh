@@ -13,11 +13,11 @@ fail() {
   echo "FAIL: $1" >&2
   exit 1
 }
-# K1..K18 pending on a file that does not exist, then override single lines.
+# K1..K19 pending on a file that does not exist, then override single lines.
 mklist() { # extra lines replacing K1 and K2
   {
     printf '# comment\n\n%s\n%s\n' "$1" "$2"
-    for i in $(seq 3 18); do printf 'K%s | none.ts | nycode: K%s[[:space:]] | - | pendente: fase F9\n' "$i" "$i"; done
+    for i in $(seq 3 19); do printf 'K%s | none.ts | nycode: K%s[[:space:]] | - | pendente: fase F9\n' "$i" "$i"; done
   } >scripts/fork/seams.txt
 }
 run() { bash "$script" "$@" 2>&1; }
@@ -26,7 +26,7 @@ echo '// nycode: K1 reason' >a.ts
 touch a.test.ts
 mklist 'K1 | a.ts | nycode: K1[[:space:]] | a.test.ts | ativa' 'K2 | none.ts | nycode: K2[[:space:]] | - | pendente: fase F9'
 out=$(run) || fail "intact list must pass: $out"
-[[ $out == *"seams 1/18"* ]] || fail "expected 1/18: $out"
+[[ $out == *"seams 1/19"* ]] || fail "expected 1/19: $out"
 run --strict >/dev/null && fail "--strict must fail with pending seams"
 
 echo '// nothing' >a.ts
