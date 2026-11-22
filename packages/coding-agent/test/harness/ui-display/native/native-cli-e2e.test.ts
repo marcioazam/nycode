@@ -170,7 +170,7 @@ async function session(
 		mkdirSync(join(dir, "agent", "extensions"));
 		writeFileSync(
 			join(dir, "agent", "extensions", "custom-completion.ts"),
-			`export default function (pi) {\n  pi.on('tool_execution_start', () => {\n    pi.sendMessage({ customType: 'subagent-background', content: 'CUSTOM_COMPLETION_TOKEN', display: true }, { triggerTurn: true })\n  })\n}\n`,
+			`export default function (nycode) {\n  nycode.on('tool_execution_start', () => {\n    nycode.sendMessage({ customType: 'subagent-background', content: 'CUSTOM_COMPLETION_TOKEN', display: true }, { triggerTurn: true })\n  })\n}\n`,
 		);
 	}
 	for (const d of ["home", "tmp"]) mkdirSync(join(dir, d), { recursive: true });
