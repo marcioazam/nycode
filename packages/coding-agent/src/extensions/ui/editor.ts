@@ -9,10 +9,11 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import type { AutocompleteProvider, TUI } from "@nycode/tui";
+import type { AutocompleteProvider, EditorTheme, TUI } from "@nycode/tui";
 import { decodeKittyPrintable, matchesKey, truncateToWidth, visibleWidth } from "@nycode/tui";
 import { getAgentDir } from "../../config.ts";
-import type { ExtensionAPI } from "../../core/extensions/types.ts";
+import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
+import type { KeybindingsManager } from "../../core/keybindings.ts";
 import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
 import { CustomEditor } from "../../modes/interactive/components/custom-editor.ts";
 import { resolveAlias } from "../claude-compat/aliases.ts";
@@ -175,7 +176,14 @@ export class UiEditor extends CustomEditor {
 	private sweepStart = 0;
 	private sweepUntil = 0;
 
-	constructor(tui: TUI, theme: any, kb: any, vim: VimState, sessionName: () => string | undefined, ui: EditorUi = {}) {
+	constructor(
+		tui: TUI,
+		theme: EditorTheme,
+		kb: KeybindingsManager,
+		vim: VimState,
+		sessionName: () => string | undefined,
+		ui: EditorUi = {},
+	) {
 		super(tui, theme, kb, { embedWorkingStatus: true });
 		this.tuiRef = tui;
 		this.kbm = kb;
@@ -621,10 +629,13 @@ export class UiEditor extends CustomEditor {
 	}
 }
 
+/** Ponte do `comandos` (carregado à parte): só o que o editor usa. */
+type ComandosBridge = { openShortcuts?: (insert: (s: string) => void) => void };
+
 export default function (nycode: ExtensionAPI) {
 	let tui: TUI | undefined;
 	let installed = false;
-	let current: any; // último ctx: o editor sobrevive a /new e /resume
+	let current: ExtensionContext | undefined; // último ctx: o editor sobrevive a /new e /resume
 	let historyOpen = false;
 	const vim: VimState = { enabled: false };
 	// terminal.uiState (env NYCODE_UI_STATE > settings.json > <agentDir>/ui-state.json)
@@ -671,9 +682,8 @@ export default function (nycode: ExtensionAPI) {
 		try {
 			const sm = ctx.sessionManager;
 			const src = () => ({ branch: sm.getBranch(), sessionDir: sm.getSessionDir() });
-			// ctx aqui é `any` (sobrevive a /new): sem argumento de tipo, o retorno é anotado na const.
 			const chosen: string | undefined = await ctx.ui.custom(
-				(t: TUI, theme: any, _kb: unknown, done: (v: string | undefined) => void) =>
+				(t, theme, _kb, done) =>
 					new PromptHistory(
 						theme,
 						(scope) => loadScope(scope, src()),
@@ -717,7 +727,8 @@ export default function (nycode: ExtensionAPI) {
 				hasCommand: (n) => nycode.getCommands().some((c) => c.name === n),
 				// Ponte em globalThis (extensions/comandos/index.ts, carregado à parte); ausente com NYCODE_COMANDOS=0.
 				openShortcuts: (insert) => {
-					const open = (globalThis as any).__nycodeHarnessComandos?.openShortcuts;
+					const open = (globalThis as { __nycodeHarnessComandos?: ComandosBridge }).__nycodeHarnessComandos
+						?.openShortcuts;
 					if (typeof open !== "function") return false;
 					open(insert);
 					return true;

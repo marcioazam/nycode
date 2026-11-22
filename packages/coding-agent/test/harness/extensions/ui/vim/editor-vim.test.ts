@@ -25,7 +25,9 @@ function make(
 	opts: { busy?: boolean; remaps?: string[]; kb?: unknown; notify?: (m: string) => void } = {},
 ) {
 	const vim = { enabled: true, remaps: opts.remaps };
-	const e = new m.UiEditor(tui as never, theme, opts.kb ?? kb, vim, () => undefined, { busy: () => !!opts.busy });
+	const e = new m.UiEditor(tui as never, theme as never, (opts.kb ?? kb) as never, vim, () => undefined, {
+		busy: () => !!opts.busy,
+	});
 	if (opts.notify) e.compat = { notify: opts.notify };
 	const submitted: string[] = [];
 	e.onSubmit = (t: string) => submitted.push(t);

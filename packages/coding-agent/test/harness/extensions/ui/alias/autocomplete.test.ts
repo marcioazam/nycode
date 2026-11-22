@@ -15,8 +15,8 @@ function setup(registered: readonly string[] = COMMANDS) {
 	const tui = { requestRender: () => wake?.(), terminal: { rows: 24, columns: 80 } };
 	const e = new UiEditor(
 		tui as never,
-		{ borderColor: (s: string) => s, selectList: {} },
-		{ matches: () => false },
+		{ borderColor: (s: string) => s, selectList: {} } as never,
+		{ matches: () => false } as never,
 		{ enabled: false },
 		() => undefined,
 	);

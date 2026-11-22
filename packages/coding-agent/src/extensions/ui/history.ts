@@ -16,14 +16,26 @@ export const MAX_PROMPTS = 5000;
 export type Scope = "sessão" | "projeto" | "todas";
 export const SCOPES: Scope[] = ["sessão", "projeto", "todas"];
 
+/** Entrada de sessão como o histórico a lê: SessionEntry do core ou uma linha de JSONL (fronteira de confiança). */
+export interface EntryLike {
+	type?: string;
+	timestamp?: string;
+	message?: MessageLike;
+}
+interface MessageLike {
+	role?: string;
+	content?: unknown;
+	timestamp?: number;
+}
+
 /** Texto de uma mensagem de usuário (string ou blocos text); undefined se não for de usuário. */
-export function messageText(m: any): string | undefined {
+export function messageText(m: MessageLike | undefined): string | undefined {
 	if (m?.role !== "user") return undefined;
 	if (typeof m.content === "string") return m.content;
 	if (!Array.isArray(m.content)) return undefined;
-	return m.content
-		.filter((c: any) => c?.type === "text")
-		.map((c: any) => c.text)
+	return (m.content as ({ type?: string; text?: string } | null)[])
+		.filter((c) => c?.type === "text")
+		.map((c) => c?.text)
 		.join(" ");
 }
 
@@ -33,8 +45,8 @@ export interface Prompt {
 }
 
 /** Instante (ms) de uma entrada de sessão: `message.timestamp` (ms) ou `timestamp` ISO da entrada; undefined se não houver. */
-export function entryTime(o: any): number | undefined {
-	const ms = typeof o?.message?.timestamp === "number" ? o.message.timestamp : Date.parse(o?.timestamp);
+export function entryTime(o: EntryLike | undefined): number | undefined {
+	const ms = typeof o?.message?.timestamp === "number" ? o.message.timestamp : Date.parse(o?.timestamp ?? "");
 	return Number.isFinite(ms) ? ms : undefined;
 }
 
@@ -182,7 +194,7 @@ export async function loadFromDirs(dirs: string[], cache: PromptCache = defaultC
 }
 
 export interface HistorySource {
-	branch: any[];
+	branch: EntryLike[];
 	sessionDir: string;
 }
 

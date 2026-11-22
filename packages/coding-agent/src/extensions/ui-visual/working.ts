@@ -3,7 +3,7 @@
  * Onda 10: aviso de travamento (P05), dica rotativa (P09), tokens recebidos (P10); em `desligado`, texto fixo (P01).
  */
 
-import type { ExtensionAPI } from "../../core/extensions/types.ts";
+import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import type { Theme } from "../../modes/interactive/theme/theme.ts";
 import { FRAMES, gravarEstado, lerEstado, movimento } from "../ui/a11y.ts";
 import { icon, iconGap } from "./icons.ts";
@@ -125,14 +125,14 @@ export default function (nycode: ExtensionAPI) {
 		ultimoEvento = Date.now();
 	};
 
-	const indicador = (ctx: any, m: number, nowPerf: number) => {
+	const indicador = (ctx: ExtensionContext, m: number, nowPerf: number) => {
 		if (m === mistura) return;
 		mistura = m;
 		ctx.ui.setWorkingIndicator({ frames: quadrosTravados(ctx.ui.theme, m, nowPerf), intervalMs: 80 });
 	};
 
 	// Deduplicação anti-flicker: nunca reenvia a mesma string ao TUI se o SGR quantizado não mudou.
-	const render = (ctx: any, nowPerf = performance.now()) => {
+	const render = (ctx: ExtensionContext, nowPerf = performance.now()) => {
 		const theme = ctx.ui.theme as Fg;
 		let next: string;
 		if (movimento() === "desligado") next = theme.fg("syntaxType", "trabalhando… · esc interrompe");
@@ -207,7 +207,7 @@ export default function (nycode: ExtensionAPI) {
 			return true;
 		});
 	});
-	nycode.on("message_update", (e: any, ctx) => {
+	nycode.on("message_update", (e, ctx) => {
 		if (!enabled(ctx) || !activeTurn) return;
 		evento();
 		const d = e?.assistantMessageEvent;
@@ -215,7 +215,7 @@ export default function (nycode: ExtensionAPI) {
 			tokChars += d.delta.length;
 		phase = "escrevendo";
 	});
-	nycode.on("message_end", (e: any, ctx) => {
+	nycode.on("message_end", (e, ctx) => {
 		if (!enabled(ctx) || !activeTurn || e?.message?.role !== "assistant") return;
 		const out = Number(e.message.usage?.output);
 		if (Number.isFinite(out) && out > 0) {
@@ -225,13 +225,13 @@ export default function (nycode: ExtensionAPI) {
 		evento();
 		render(ctx);
 	});
-	nycode.on("tool_execution_start", (e: any, ctx) => {
+	nycode.on("tool_execution_start", (e, ctx) => {
 		if (!enabled(ctx) || !activeTurn) return;
 		evento();
 		running.set(e.toolCallId, { name: e.toolName, target: toolTarget(e.args) });
 		render(ctx);
 	});
-	nycode.on("tool_execution_end", (e: any, ctx) => {
+	nycode.on("tool_execution_end", (e, ctx) => {
 		if (!enabled(ctx) || !activeTurn) return;
 		evento();
 		running.delete(e.toolCallId);
