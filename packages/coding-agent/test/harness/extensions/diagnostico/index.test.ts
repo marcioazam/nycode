@@ -46,7 +46,7 @@ function cria(env: Record<string, string> = {}, pre?: (d: string) => void, colun
 			);
 		},
 	};
-	const ctx: any = { hasUI: true, ui };
+	const ctx: any = { hasUI: true, mode: "tui", ui };
 	const original = ui.notify;
 	const chamadas: any[] = [];
 	const con: any = { warn: (...a: any[]) => chamadas.push(["w", a]), error: (...a: any[]) => chamadas.push(["e", a]) };
@@ -156,6 +156,15 @@ test("console.warn/error: registra sem notify nem stderr; repetição soma; rest
 	assert.equal(t.ui.notify, t.original);
 	assert.equal(t.ouvintes.length, 0);
 	assert.equal((globalThis as any)[SINK], undefined);
+});
+
+test("modo rpc: console.warn/error seguem para o stderr (canal dos diagnósticos do runtime)", () => {
+	const t = cria();
+	t.ctx.mode = "rpc";
+	t.start();
+	t.con.error("Warning: Could not restore model");
+	assert.equal(t.con.error, t.conOriginal.error);
+	assert.equal(t.chamadas.length, 1);
 });
 
 test("sink global valida e registra sem notify", () => {
@@ -423,6 +432,6 @@ test("S8: sem UI (nycode -p, subagente) também poda inbox antigo; o atual fica"
 	assert.ok(!existsSync(join(t.d, "diag", "inbox-1.tsv")));
 	assert.ok(existsSync(join(t.d, "diag", "inbox-2.tsv")));
 	const f = cria({ NYCODE_SUBAGENT: "1" }, pre);
-	f.h("session_start", {}, { hasUI: true, ui: f.ui });
+	f.h("session_start", {}, { hasUI: true, mode: "tui", ui: f.ui });
 	assert.ok(!existsSync(join(f.d, "diag", "inbox-1.tsv")));
 });

@@ -379,7 +379,8 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 				restaurar = [];
 				if (ui) {
 					embrulharNotify(ctx.ui);
-					embrulharConsole();
+					// RPC also has UI, but there stderr is the channel for runtime diagnostics: only the TUI swallows console.
+					if (ctx.mode === "tui") embrulharConsole();
 				}
 				const sink = (x: unknown) => {
 					try {
