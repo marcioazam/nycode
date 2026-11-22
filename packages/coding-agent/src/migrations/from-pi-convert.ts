@@ -83,6 +83,8 @@ export interface SettingsConversion {
 	embedded: string[];
 	/** The ponytail env key, when it was set. */
 	packageEnvKey: string | undefined;
+	/** `old -> new` when the `theme` setting named a pi theme the built-in nycode themes replace (D-55, D-56). */
+	themeRenamed: string | undefined;
 }
 
 /** Keys that grant trust or run code; a value already in the destination is never replaced by the origin's. */
@@ -114,6 +116,16 @@ function packageSource(entry: unknown): string {
 	return typeof source === "string" ? source : "";
 }
 
+/** Rewrites pi theme names inside the `theme` value, also in composed values such as `pi-claro/pi-noite`. */
+function renameThemes(settings: Json): string | undefined {
+	const theme = settings.theme;
+	if (typeof theme !== "string") return undefined;
+	const renamed = theme.replace(/(?<![\w-])pi-(claro|escuro|noite)(?![\w-])/g, "nycode-$1");
+	if (renamed === theme) return undefined;
+	settings.theme = renamed;
+	return `${theme} -> ${renamed}`;
+}
+
 /** Applies the pi settings.json and local.env values to a nycode settings object (02 section 5). */
 export function convertSettings(piSettings: Json, env: LocalEnv): SettingsConversion {
 	const settings: Json = structuredClone(piSettings);
@@ -129,6 +141,7 @@ export function convertSettings(piSettings: Json, env: LocalEnv): SettingsConver
 		else delete settings.packages;
 	}
 
+	const themeRenamed = renameThemes(settings);
 	const converted: string[] = [];
 	const warnings: string[] = [];
 	for (const { envKey, path, kind } of ENV_MAPPINGS) {
@@ -148,6 +161,7 @@ export function convertSettings(piSettings: Json, env: LocalEnv): SettingsConver
 		warnings,
 		embedded,
 		packageEnvKey: PACKAGE_ENV_KEY in env.values ? PACKAGE_ENV_KEY : undefined,
+		themeRenamed,
 	};
 }
 

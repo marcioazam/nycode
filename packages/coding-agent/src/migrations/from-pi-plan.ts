@@ -4,6 +4,7 @@ import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { convertMcp, convertSettings, type LocalEnv, mergeSettings, parseLocalEnv } from "./from-pi-convert.ts";
 import { legacyImportNotes } from "./from-pi-imports.ts";
+import { addPersonalLayer } from "./from-pi-personal.ts";
 
 export type FileAction = "create" | "overwrite" | "unchanged" | "keep";
 
@@ -29,9 +30,9 @@ export interface Plan {
 }
 
 const COPIED_FILES = ["models.json", "lsp.json", "keybindings.json"];
-/** Directories copied without overwriting: pi sessions and the memory extension store. */
-export const KEPT_DIRS = ["sessions", "memory"];
-const AUTH_FILE = /^auth.*\.json$/;
+/** Directories copied without overwriting: pi sessions, the memory extension store and the saved plans. */
+export const KEPT_DIRS = ["sessions", "memory", "plans"];
+const AUTH_FILE = /^(auth.*|mcp-auth)\.json$/;
 const WARN_LIMIT = 20;
 /** Settings keys whose origin values run code at startup. */
 const CODE_KEYS = ["packages", "hooks", "shellCommandPrefix"];
@@ -69,6 +70,17 @@ function checkLocalEnv(path: string): string | undefined {
 		return `local.env has mode ${shown} (needs 0600 or 0400); refusing to read it. Run: chmod 600 ${path}`;
 	}
 	return undefined;
+}
+
+/** True when the destination MCP credential file already holds at least one server state. */
+function hasStoredStates(path: string): boolean {
+	if (!isRegularFile(path)) return false;
+	try {
+		const parsed: unknown = JSON.parse(readFileSync(path, "utf8"));
+		return typeof parsed === "object" && parsed !== null && Object.keys(parsed).length > 0;
+	} catch {
+		return true;
+	}
 }
 
 function actionFor(destPath: string, data: Buffer | string | undefined, from: string | undefined): FileAction {
@@ -180,6 +192,9 @@ export function buildPlan(source: string, dest: string): Plan {
 		);
 		for (const line of result.converted) plan.notes.push(`local.env: ${line}`);
 		for (const warning of result.warnings) plan.notes.push(`local.env: ${warning}`);
+		if (result.themeRenamed) {
+			plan.notes.push(`theme: ${result.themeRenamed} (the built-in nycode themes replace the pi ones)`);
+		}
 		for (const source of result.embedded)
 			plan.notes.push(`package ${source} is embedded in nycode; removed from packages`);
 		if (result.packageEnvKey) {
@@ -235,7 +250,14 @@ export function buildPlan(source: string, dest: string): Plan {
 	}
 
 	for (const name of readdirSync(source).filter((n) => AUTH_FILE.test(n) && isRegularFile(join(source, n)))) {
-		add({ rel: name, label: "credentials", from: join(source, name), mode: 0o600, credential: true });
+		const file = { rel: name, label: "credentials", from: join(source, name), mode: 0o600, credential: true };
+		if (name === "mcp-auth.json" && hasStoredStates(join(dest, name))) {
+			plan.files.push({
+				...file,
+				label: "credentials; kept: the destination already holds MCP sign-ins",
+				action: "keep",
+			});
+		} else add(file);
 	}
 
 	if (codeRunners.length > 0 && resolve(source) !== defaultSource(homedir())) {
@@ -246,13 +268,7 @@ export function buildPlan(source: string, dest: string): Plan {
 
 	plan.notes.push(...legacyImportNotes(source, piSettings));
 
-	const claudeHome = join(source, "claude-home");
-	if (existsSync(claudeHome) && statSync(claudeHome).isDirectory()) {
-		const entries = readdirSync(claudeHome);
-		plan.notes.push(
-			`claude-home/ is not copied (embedded resources replace it); review it for personal changes: ${entries.slice(0, WARN_LIMIT).join(", ")}`,
-		);
-	}
+	addPersonalLayer(source, plan);
 	return plan;
 }
 

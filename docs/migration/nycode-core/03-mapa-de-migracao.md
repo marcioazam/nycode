@@ -314,10 +314,11 @@ faria.
 | `claude-home/settings.json` (hooks, statusLine, env) | `settings.json` | Só as entradas que o usuário mudou em relação ao exemplo; o padrão já vem embarcado |
 | `mcp.json`, `models.json`, `lsp.json`, `keybindings.json` | iguais | Cópia; `mcp.json` e `models.json` nunca são sobrescritos se já existirem |
 | `sessions/` | `sessions/` | Cópia; o formato de sessão é o do pi e não muda entre 1.5.2 e 1.6.0 (não verificado: conferir `docs/session-format.md` e `migrations.ts` em F4) |
-| `auth*.json` | `auth.json` | Só com confirmação explícita; nunca em modo automático |
+| `auth*.json`, `mcp-auth.json` | `auth.json`, `mcp-auth.json` | Só com confirmação interativa, modo 0600, nunca em modo automático; `mcp-auth.json` com estados no destino fica como está (D-55) |
 | `trust.json` | `trust.json` | Cópia |
-| `extensions/`, `themes/`, `prompts/`, `skills/` do usuário | iguais | Cópia do que não for ligação simbólica criada pelo `install.sh --link` |
-| `claude-home/agents`, `skills`, `commands` criados pelo usuário | `agents/`, `skills/`, `commands/` | Só os que não existem no pacote embarcado |
+| `AGENTS.md`, `subagent-routing.json` (só se `parsePolicy` aceitar), `plans/`, `extensions/conta.ts` (nomes do pi convertidos) | iguais | Cópia sem sobrescrever (`keep` com nota); `checkpoints/` não é copiado (D-55) |
+| `themes/*.json` | `themes/` | Symlinks resolvidos; nome igual a tema embutido fica de fora (o embutido vence); `pi-claro`, `pi-escuro`, `pi-noite` viram os embutidos `nycode-*` (D-56) e a chave `theme` é convertida, também em valores compostos; depende da D-56 |
+| `claude-home/skills`, `agents`, `commands` sem equivalente embutido (mesmo nome em `packages/coding-agent/resources`, calculado na execução) | `skills/`, `agents/`, `commands/` | Versão de `claude-home`, sem sobrescrever; vence `~/.claude` (testado). Os `commands` também vão para `commands/`: o core passa a ler `<agentDir>/commands`, depois de `~/.claude/commands` e antes do diretório gerenciado (`expand.ts`); os hooks de `claude-home` não são copiados (D-55) |
 | `install/`, `npm/`, `vendor/`, `bin/` | não migram | São a instalação antiga |
 | `~/.local/bin/pi` (wrapper) | não é tocado | O usuário remove em F12, depois da convivência |
 | `~/.config/ny-pi/bench.env`, unidades systemd `bench-*` | `~/.config/nycode/bench.env`, mesmas unidades com `BENCH_REPO` novo | Manual, em F3 ([09](09-paridade-e-benchmark.md)) |
