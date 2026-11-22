@@ -259,6 +259,26 @@
       "$ref": "#/$defs/KeybindingValue",
       "description": "Restore queued messages"
     },
+    "app.message.sendNow": {
+      "$ref": "#/$defs/KeybindingValue",
+      "description": "Abort the active agent or tool and send now"
+    },
+    "app.message.sendNowChord": {
+      "$ref": "#/$defs/KeybindingValue",
+      "description": "Send now (second key after the copy prefix)"
+    },
+    "app.queue.drop": {
+      "$ref": "#/$defs/KeybindingValue",
+      "description": "Delete the chosen queued message (the last one by default)"
+    },
+    "app.queue.selectPrev": {
+      "$ref": "#/$defs/KeybindingValue",
+      "description": "Choose the previous queued message"
+    },
+    "app.queue.selectNext": {
+      "$ref": "#/$defs/KeybindingValue",
+      "description": "Choose the next queued message"
+    },
     "app.clipboard.pasteImage": {
       "$ref": "#/$defs/KeybindingValue",
       "description": "Paste files on macOS, images, or text from clipboard"

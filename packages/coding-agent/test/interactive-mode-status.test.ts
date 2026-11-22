@@ -485,6 +485,7 @@ describe("InteractiveMode.showExtensionCustom", () => {
 			...extensionDialogState(),
 			// The rest of resetExtensionUI is not under test here.
 			clearExtensionTerminalInputListeners: vi.fn(),
+			addExtensionTerminalInputListener: vi.fn(() => () => {}),
 			setExtensionFooter: vi.fn(),
 			setExtensionHeader: vi.fn(),
 			clearExtensionWidgets: vi.fn(),
