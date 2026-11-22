@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Renomeia pi -> nycode em um worktree. Uso: rename.py ROOT [--dry]"""
+"""Renomeia pi -> nycode em um worktree. Uso: rename.py ROOT [--fork] [--dry]
+
+Sem --fork (o padrao, usado por all.sh) renomeia a arvore do upstream e tem de reproduzir f523ebd25 (08 §10.1 item 5).
+Com --fork aplica tambem as regras da arvore do nycode (D-45)."""
 
 import collections
 import os
@@ -9,12 +12,14 @@ import sys
 
 root = sys.argv[1]
 dry = "--dry" in sys.argv
+fork = "--fork" in sys.argv
 os.chdir(root)
 
 SKIP_NAMES = {"package-lock.json", "flake.lock", "LICENSE", "NOTICE"}
 SKIP_BASENAME_RE = re.compile(r"^CHANGELOG(\..*)?\.md$")
 SKIP_PATH_PARTS = ("/third-party/", "examples/extensions/doom-overlay/doom/")
-# Paths that name the pi on purpose (D-45): the plan, the measured arms, the rename machinery, the migration from pi.
+# Only for the fork tree (--fork, D-45). Paths that name the pi on purpose:
+# the plan, the measured arms, the rename machinery, the migration from pi.
 # Each one is also covered by scripts/ci/lint/residuo/residuo-allow.txt or by the gate's fixed exemptions.
 SKIP_PATH_PREFIXES = (
     "import/",
@@ -46,7 +51,7 @@ KEEP_SCOPE = (
     r"pi-agent-old|pi-server|pi-client|pi-protocol|schema\b|x\b|undeclared)"
 )
 
-masks = [
+FORK_HEAD_MASKS = [
     re.compile(r"import/ny-pi"),  # path of the tree F12 removes
     re.compile(
         r"ny-pi-(?:arquivo|core)"
@@ -63,6 +68,23 @@ masks = [
     re.compile(
         r"\bPI_CODE_\w*"
     ),  # old pi-code variables that tests assert are no longer read (D-33)
+]
+FORK_MASKS_AFTER_REPO = [
+    re.compile(
+        r"(?<=from )earendil-works/pi(?![\w-])"
+    ),  # attribution comments name the upstream repository
+    re.compile(
+        r"@earendil-works\\/pi-(?:server|client|protocol|agent-old)"
+    ),  # KEEP_SCOPE with an escaped slash
+]
+PI_MONO_MASK = re.compile(
+    r"(?<=earendil-works\))\\?/pi-mono"
+    if fork
+    else r"(?<=\(\?:badlogic\|earendil-works\)/)pi-mono"
+)  # fork: LEGACY_REPO_RE, with or without the escaped slash
+
+masks = [
+    *(FORK_HEAD_MASKS if fork else []),
     re.compile(r"@mariozechner/[\w./-]*"),
     re.compile(r"HazAT/pi-[\w-]+"),
     re.compile(r"badlogic/pi-observers"),
@@ -73,15 +95,8 @@ masks = [
     ),
     re.compile(r"(?:earendil-works|badlogic)/pi(?:-mono)?#\d+"),
     re.compile(r"(?<!@)earendil-works/pi-(?!mono)[\w-]+"),
-    re.compile(
-        r"(?<=earendil-works\))\\?/pi-mono"
-    ),  # LEGACY_REPO_RE, with or without the escaped slash
-    re.compile(
-        r"(?<=from )earendil-works/pi(?![\w-])"
-    ),  # attribution comments name the upstream repository
-    re.compile(
-        r"@earendil-works\\/pi-(?:server|client|protocol|agent-old)"
-    ),  # KEEP_SCOPE with an escaped slash
+    PI_MONO_MASK,
+    *(FORK_MASKS_AFTER_REPO if fork else []),
     re.compile(r"npm:pi-[\w@.-]*"),
     re.compile(r"@oh-my-pi/[\w.-]+"),
     re.compile(r"[pP]\{Pi\}"),
@@ -97,7 +112,7 @@ masks = [
 ]
 
 REPO = r"(?:earendil-works|badlogic)/pi(?:-mono)?(?![\w-])"
-pre = [
+FORK_PRE = [
     # ny-pi (the origin harness) and pi-code (its extension pack) are not the pi: they get their own names
     (re.compile(r"(?<![\w-])ny-pi(?![\w])"), "ny-harness"),
     (re.compile(r"(?<![\w-])pi-code(?![A-Za-z0-9])"), "nycode"),
@@ -105,6 +120,9 @@ pre = [
     (re.compile(r"(?<![\w-])[pP]i(?= v?\d+\.\d)"), "upstream"),
     (re.compile(r"(?<=[uU]pstream )[pP]i(?![\w-])"), "agent"),
     (re.compile(r"(?<=Upstream \()pi (?=v?\d)"), ""),
+]
+pre = [
+    *(FORK_PRE if fork else []),
     # URLs do repo
     (
         re.compile(
@@ -170,7 +188,7 @@ def skipped(f: str) -> bool:
     return bool(
         os.path.basename(f) in SKIP_NAMES
         or SKIP_BASENAME_RE.match(os.path.basename(f))
-        or f.startswith(SKIP_PATH_PREFIXES)
+        or (fork and f.startswith(SKIP_PATH_PREFIXES))
         or any(p in "/" + f for p in SKIP_PATH_PARTS)
     )
 
