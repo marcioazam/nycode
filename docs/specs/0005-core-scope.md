@@ -193,6 +193,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | hook | diag.py | core | Relato de falhas dos hooks para a caixa de diagnóstico |
 | hook | graph_context.py | optional | Exige codegraph |
 | hook | guard.py | core | Bloqueio de comando destrutivo |
+| hook | permissions | core | Pacote Python do guard (modos, análise de shell, caminhos) |
 | hook | impeccable_gate.sh | optional | Serve uma skill de design que o repositório não traz |
 | command | cancel-ralph | core | Laço de prompt (par do `/loop` do Claude Code) |
 | command | claude-hud-configure | optional | Plugin `claude-hud` |
