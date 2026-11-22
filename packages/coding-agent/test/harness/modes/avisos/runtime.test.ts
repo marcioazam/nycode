@@ -11,6 +11,7 @@ import {
 	MARCA_CAIXA,
 } from "../../../../src/modes/interactive/avisos/caixa.ts";
 import { blocoErro, causa, retryLinha } from "../../../../src/modes/interactive/avisos/causas.ts";
+import { resumoPt } from "../../../../src/modes/interactive/avisos/compactacao.ts";
 import {
 	brilhoPonto,
 	chipsAviso,
@@ -161,4 +162,14 @@ test("compactada e confianca: medidor com bolhas, linha de texto sem truecolor",
 	assert.equal(parado(), false);
 	vi.stubEnv("TERM", "dumb");
 	assert.equal(parado(), true);
+});
+
+test("resumoPt traduz só títulos exatos, tira o espaço final e as linhas em branco seguintes, em tempo linear", () => {
+	assert.equal(resumoPt("## Done\n\n\nNext"), "## Feito\nNext");
+	assert.equal(resumoPt("a\n## Goal \t\n  \n\n- item\n## Nope  \n\n"), "a\n## Objetivo\n- item\n## Nope  \n\n");
+	assert.equal(resumoPt("#### Done\n"), "#### Done\n");
+	assert.equal(resumoPt("<read-files>\nx\n</read-files>"), "### Arquivos lidos\nx\n");
+	const t0 = performance.now();
+	resumoPt(`## ${" ".repeat(50000)}x`);
+	assert.ok(performance.now() - t0 < 500);
 });

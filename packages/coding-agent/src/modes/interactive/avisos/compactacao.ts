@@ -55,10 +55,29 @@ const TITULOS: Record<string, string> = {
 	"Critical Context": "Contexto crítico",
 };
 
+/**
+ * Translates `## Title` / `### Title` lines with an exact TITULOS match, line by line (linear time). Same output as the
+ * former `/^(#{2,3}) (.+?)\s*$/gm` replace: a translated title drops its trailing whitespace and the blank lines after it.
+ */
+function titulosPt(s: string): string {
+	const linhas = s.split("\n");
+	const out: string[] = [];
+	for (let i = 0; i < linhas.length; i++) {
+		const m = /^(#{2,3}) (.+)$/.exec(linhas[i]);
+		const pt = m ? TITULOS[m[2].trimEnd()] : undefined;
+		if (!m || !pt) {
+			out.push(linhas[i]);
+			continue;
+		}
+		out.push(`${m[1]} ${pt}`);
+		while (i + 1 < linhas.length && linhas[i + 1].trim() === "") i++;
+	}
+	return out.join("\n");
+}
+
 /** Standard summary titles in pt-BR; file lists become sections. Only the exact title is translated. */
 export const resumoPt = (s: string): string =>
-	s
-		.replace(/^(#{2,3}) (.+?)\s*$/gm, (m, h: string, t: string) => (TITULOS[t] ? `${h} ${TITULOS[t]}` : m))
+	titulosPt(s)
 		.replace(/<read-files>\n?/g, "### Arquivos lidos\n")
 		.replace(/<modified-files>\n?/g, "### Arquivos editados\n")
 		.replace(/<\/(read|modified)-files>/g, "");
