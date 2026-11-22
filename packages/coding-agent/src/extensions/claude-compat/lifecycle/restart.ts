@@ -1,4 +1,4 @@
-/** /restart (alias /update): pede ao supervisor do wrapper `nycode` (claude-home/bin/lifecycle/supervisor.sh) que relance o CLI na mesma sessão. */
+/** /restart (alias /update): pede ao supervisor nativo do core (core/lifecycle/supervisor.ts) que relance o CLI na mesma sessão. */
 import { existsSync, lstatSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
 import type { ExtensionAPI, ExtensionCommandContext } from "../../../core/extensions/types.ts";
@@ -91,12 +91,12 @@ export async function restartCommand(ctx: Ctx, args: string, d: RestartDeps = {}
 	const req = env.NYCODE_RESTART_REQUEST_FILE;
 	if (!Number.isInteger(wrapper) || wrapper <= 0 || !req) {
 		return refuse(
-			"/restart exige o wrapper `nycode` novo (supervisor interativo): este processo foi iniciado sem ele. Saia e abra o nycode uma vez; depois /restart funciona. Nada foi reiniciado.",
+			"/restart só funciona numa sessão interativa em terminal supervisionada pelo próprio nycode: este processo foi iniciado sem supervisor (sem terminal, modo -p/--mode, subagente ou sem diretório privado para o pedido). Abra o nycode num terminal; depois /restart funciona. Nada foi reiniciado.",
 		);
 	}
 	if ((d.ppid ?? process.ppid) !== wrapper)
 		return refuse(
-			"/restart só vale no nycode iniciado diretamente pelo wrapper (este processo não é filho dele, ex.: subagente); nada foi reiniciado.",
+			"/restart só vale no nycode iniciado diretamente pelo supervisor (este processo não é filho dele, ex.: subagente); nada foi reiniciado.",
 		);
 	if (!ctx.isIdle() || ctx.hasPendingMessages())
 		return refuse(

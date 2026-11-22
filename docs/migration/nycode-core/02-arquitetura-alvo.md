@@ -137,7 +137,7 @@ ganha a atribuição e o commit de origem.
 | `code-blocks` | `~/.pi/agent/extensions/code-blocks/` (camada local) | N2 | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) | F12 |
 | `image-open` | `~/.pi/agent/extensions/image-open/` (camada local) | N2 | Clicar numa imagem do transcript a abre no visualizador do sistema (`/imagem` abre a última) e a imagem de resultado de tool ganha o fundo da tool (D-56) | F12 |
 | `hook-msgs` | `~/.pi/agent/extensions/hook-msgs/` (camada local) | N2 | Mensagens de hook, de gate, de subagente em segundo plano e de fim de run no ritmo das tools, com o fundo do estado (D-56) | F12 |
-| `claude-compat` | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`, `commands/*`, `services/*`, `runbooks/*`, `lifecycle/*`, `interface/*`, `directory/*`, `matrix`, `index`) | N2 | Fábrica registrada: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz; `lifecycle` na parte 3; `interface/*` na parte 4 (K19); `directory/*` (`/cd`) na parte 5 (K23); `background` fica fora (D-56, partes 2 a 5 de 5) | F12 |
+| `claude-compat` | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`, `commands/*`, `services/*`, `runbooks/*`, `lifecycle/*`, `interface/*`, `directory/*`, `matrix`, `index`) | N2 | Fábrica registrada: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz; `lifecycle` na parte 3 (o `/restart` usa o supervisor nativo do core, K24); `interface/*` na parte 4 (K19); `directory/*` (`/cd`) na parte 5 (K23); `background` fica fora (D-56, partes 2 a 5 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
 | `context-files` | `extensions/no-context-files-covers-claude-md.ts` | — | **Some**: existia para contornar a injeção de `CLAUDE.md` pelo pi-code; com `claude-rules` embutida a regra é escrita direto nela | F7 |
@@ -193,6 +193,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K21 | `packages/tui/src/layout.ts` | A célula da barra de rolagem é pintada em linha de imagem kitty (módulo `scrollbar-image.ts`) | patch `scrollbar-imagem` (D-58) | F12 |
 | K22 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` `packages/coding-agent/src/core/keybindings.ts` | Enviar agora (`Ctrl+Enter`, `Ctrl+X Ctrl+S`) e as teclas da fila (módulo `modes/interactive/send-now`): duas chamadas em `interactive-mode.ts`, uma linha na ajuda e cinco atalhos em `DEFAULT_APP_KEYBINDINGS` | patch `send-now` (D-58) | F12 |
 | K23 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` `packages/coding-agent/src/core/session-manager.ts` | Transição de cwd na mesma sessão (`/cd`; módulo `core/cwd-switch`): `handleResumeSession` desvia quando existe `options.piSessionCwd` e o `SessionManager` ganha os buscadores pelo cwd do cabeçalho | patch `session-cwd` (D-58) | F12 |
+| K24 | `packages/coding-agent/src/cli.ts` | Supervisor nativo do `/restart` (módulo `core/lifecycle`): o ponto de entrada do CLI chama `launch` em vez de importar `main` e `setupCli` | supervisor nativo do `/restart` (D-58) | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 
@@ -235,7 +236,8 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_DOCTOR_NODE` | — | `NYCODE_DOCTOR_NODE` | versão do Node que o /doctor confere (testes) (D-56) |
 | `PI_VERSION` | — | `NYCODE_VERSION` | versão informada pelo wrapper ao /doctor (D-56) |
 | `PI_IMAGE_OPENER` | — | `NYCODE_IMAGE_OPENER` | abridor de imagens (testes); padrão xdg-open/open (D-56) |
-| `PI_RESTART_WRAPPER_PID`, `PI_RESTART_REQUEST_FILE`, `PI_LIFECYCLE_ROOT_PID` | — | `NYCODE_RESTART_WRAPPER_PID`, `NYCODE_RESTART_REQUEST_FILE`, `NYCODE_LIFECYCLE_ROOT_PID` | definidos pelo supervisor do wrapper para `/restart`; sem ele o comando recusa (D-56) |
+| `PI_RESTART_WRAPPER_PID`, `PI_RESTART_REQUEST_FILE`, `PI_LIFECYCLE_ROOT_PID` | — | `NYCODE_RESTART_WRAPPER_PID`, `NYCODE_RESTART_REQUEST_FILE`, `NYCODE_LIFECYCLE_ROOT_PID` | definidos pelo supervisor nativo do core (`core/lifecycle/supervisor.ts`, K24) para `/restart`; fora de uma sessão interativa em terminal o comando recusa (D-56) |
+| `PI_RESTART_MAX` | — | `NYCODE_RESTART_MAX` | limite de reinícios do supervisor (1 a 100, padrão 10) |
 | `PI_PERMISSION_MODE`, `PI_BYPASS_ELIGIBLE`, `PI_BYPASS_OPTIN` | — (estado do controlador de modos de permissão da extensão `claude-compat`) | `NYCODE_PERMISSION_MODE`, `NYCODE_BYPASS_ELIGIBLE`, `NYCODE_BYPASS_OPTIN` | vazio (D-56) |
 | `GUARD_FAIL_OPEN` | — (saída de emergência quando o próprio guard falha) | `NYCODE_GUARD_FAIL_OPEN` | vazio: falha interna do guard bloqueia (`guard.py` sai com 2; o motor nativo nega) (D-58, D-60) |
 | `NO_COLOR`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | — | `NO_COLOR` (padrão externo), `NYCODE_DISABLE_TERMINAL_TITLE` | — |

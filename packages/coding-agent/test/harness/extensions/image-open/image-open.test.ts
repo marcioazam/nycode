@@ -195,18 +195,23 @@ test("nativo: clique SGR na imagem do transcript abre o arquivo no abridor falso
 	]);
 	const pane = () => spawnSync("tmux", ["capture-pane", "-p", "-t", S], { encoding: "utf8" }).stdout;
 	try {
-		let row = -1;
-		for (let i = 0; i < 400 && row < 0; i++) {
-			row = pane()
+		const imageRow = () =>
+			pane()
 				.split("\n")
 				.findIndex((l) => /image/i.test(l));
-			if (row < 0) await new Promise((r) => setTimeout(r, 100));
-		}
+		// The click only counts once the app has switched mouse reporting on; the image row is read right before it.
+		const mouseOn = () =>
+			spawnSync("tmux", ["display-message", "-p", "-t", S, "#{mouse_any_flag}"], {
+				encoding: "utf8",
+			}).stdout.trim() === "1";
+		await wait(() => imageRow() >= 0 && mouseOn(), 40000);
+		const row = imageRow();
 		assert.ok(row >= 0, `sem linha de imagem\n${pane()}`);
+		assert.ok(mouseOn(), `o app não ligou o mouse\n${pane()}`);
 		const lit = (t: string) => spawnSync("tmux", ["send-keys", "-t", S, "-l", "--", t]);
 		lit(`\x1b[<0;6;${row + 1}M`);
 		lit(`\x1b[<0;6;${row + 1}m`);
-		await wait(() => existsSync(f.copy), 20000);
+		await wait(() => existsSync(f.copy) && f.got().length >= 1, 30000);
 		assert.equal(f.got().length, 1, pane());
 		assert.deepEqual(readFileSync(f.copy), Buffer.from(PNG, "base64"));
 		assert.deepEqual(requests, []);
