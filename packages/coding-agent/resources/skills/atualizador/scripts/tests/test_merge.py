@@ -124,6 +124,24 @@ class Merge(MergeBase):
         self.assertEqual(out["pr_head"], self.sha)
         self.assertNotEqual(out["local_head"], self.sha)
 
+    def test_red_gate_never_reaches_gh_merge(self) -> None:  # plano de testes 11
+        self.gate(self.work, check="bad=exit 1")
+        self.rules()
+        self.fails(6, "no_proof", "merge", "--repo", self.work, "--pr", "7")
+        self.assertEqual(self.gh_calls_of("pr", "merge"), [])
+
+    def test_proof_of_another_sha_copied_to_head_is_refused(self) -> None:  # item 11
+        self.proven()
+        old = self.proof(self.work)
+        self.commit(self.work, "later.txt", "l\n", "later")
+        new = git(self.work, "rev-parse", "HEAD")
+        folder = Path(git(self.work, "rev-parse", "--absolute-git-dir")) / "git-deliver"
+        forged = folder / f"proof-{new}.json"  # conteúdo com head = SHA antigo
+        forged.write_text(json.dumps(old))
+        self.rules(views=[pr_json(headRefOid=new)])
+        self.fails(6, "no_proof", "merge", "--repo", self.work, "--pr", "7")
+        self.assertEqual(self.gh_calls_of("pr", "merge"), [])
+
     def test_base_moved(self) -> None:
         self.proven()
         moved = self.move_base()
