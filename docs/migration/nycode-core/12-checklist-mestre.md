@@ -179,8 +179,8 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F12-04 `marcioazam/ny-pi` com aviso no README e arquivado (D-22, com autorização). Feito em 2026-11-22: aviso no README (`marcioazam/ny-pi#67`, `3981d9d`), `archived: true` ([F12](evidencias/F12.md)).
 - [x] C-F12-05 `import/ny-pi/` vazio e removido.
 - [x] C-F12-06 `rg -n "ny-pi|pi-harness"` no Nycode só em `docs/`, `NOTICE` e registros de mudança. Gate de resíduo do pi (D-30, P-17 R1) verde: nenhum `pi`, `pi.dev`, `earendil` ou `mariozechner` fora das exceções de [05](05-marca-e-readme.md) §6, que incluem `README.md` e `docs/harness/` (D-31).
-- [ ] C-F12-07 Os 8 critérios globais de aceite do [mega plano](00-mega-plano.md#8-criterios-globais-de-aceite) conferidos.
-- [ ] C-F12-08 Conhecimento reutilizável capturado; memória do agente atualizada (o `pi` do dia a dia passa a ser `nycode`).
+- [x] C-F12-07 Os 8 critérios globais de aceite do [mega plano](00-mega-plano.md#8-criterios-globais-de-aceite) conferidos.
+- [x] C-F12-08 Conhecimento reutilizável capturado; memória do agente atualizada (o `pi` do dia a dia passa a ser `nycode`).
 
 ## Contagem
 
