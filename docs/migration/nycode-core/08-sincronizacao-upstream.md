@@ -138,7 +138,7 @@ primeiras sincronizações.
 
 ## 4. Costuras
 
-Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 14 de
+Costura é uma edição do nycode dentro de arquivo do upstream. A lista é fechada: são as 15 de
 [02, seção 4](02-arquitetura-alvo.md), mais as costuras do renome (seção 4.3).
 
 ### 4.1 Tabela de costuras K1..K15
@@ -167,7 +167,7 @@ Abreviação: `CA` = `packages/coding-agent/src`; `core/` e `cli/` abaixo são d
 | K12 | `CA/main.ts` (ramo `migrate`; o importador mora em `CA/migrations/from-pi.ts`) | Uma chamada ao importador e uma ao carregador de `local.env` (D-52) | n. med. | n. med. | baixo |
 | K13 | `packages/coding-agent/package.json` (`files`) | Inclui `resources/` | 50 / 11 | 0 | médio |
 | K14 | `CA/config.ts:605` | "π" de reserva vira "nycode" | 12 / 2 | 0 (`APP_TITLE`) | baixo |
-| K15 | `packages/tui/src/index.ts` | Uma linha de exportação (`isImageLine`) | 91 / 30 (mesmo diretório do K10) | 0 | baixo |
+| K15 | `packages/tui/src/index.ts` | Uma linha de exportação (`isImageLine`) | 13 / 2 | 0 (`terminal-image`) | baixo |
 
 Legenda: 3m/1m = commits em 3 meses e em 1 mês; Região = commits dos 3 meses cujo diff casa o termo (aproximação por
 `git log -G`); n. med. = região não medida; indef. = ponto do gancho ainda não decidido.
@@ -234,9 +234,9 @@ Para cada costura: como reduzir (arquivo novo e chamada única) e o teste que fa
   em `migrations.ts` como a arquitetura alvo previa. Teste: `from-pi-apply.test.ts` e os demais de `test/harness/migrations/`.
 - **K13.** JSON não aceita comentário: marcador só em `seams.txt`. Teste: `check-package-install` falha sem
   `resources/` no pacote (documento: arquitetura alvo, seção 8).
-- **K15.** Uma linha de exportação em `packages/tui/src/index.ts`, junto do bloco de `terminal-image.ts`. Teste: `packages/tui/test/image-line-export.test.ts`.
 - **K14.** Uma string: marcador na linha. Teste: `--version` e `--help` com `HOME` isolado (critério do registro do
   fork).
+- **K15.** Uma linha de exportação em `packages/tui/src/index.ts`, junto do bloco de `terminal-image.ts`. Teste: `packages/tui/test/image-line-export.test.ts`.
 
 ### 4.3 Costuras do renome
 
