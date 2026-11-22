@@ -110,7 +110,7 @@ export const SETTINGS_DEFAULTS = {
 	// replaces the default list of that event; `"PreToolUse": []` turns the guard off. The embedded ralph-loop Stop hook
 	// (D-54) runs before the impeccable gate.
 	hooks: {
-		PreToolUse: [{ matcher: "Bash|Edit|Write|Read", hooks: [guardHook] }],
+		PreToolUse: [{ matcher: "Bash|run|Edit|Write|Read|Grep", hooks: [guardHook] }],
 		SessionStart: [{ matcher: "startup|resume|clear|compact", hooks: [graphContext, dispatch, impeccableGate(5)] }],
 		SubagentStart: [{ matcher: "*", hooks: [graphContext] }],
 		PostToolUse: [

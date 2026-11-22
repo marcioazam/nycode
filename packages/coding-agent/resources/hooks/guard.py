@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Guard de permissões do nycode (hook PreToolUse, no estilo Claude Code).
+"""Guard de permissões do nycode (hook PreToolUse do nycode, no estilo Claude Code).
 
-Registrado por padrão em hooks.PreToolUse de settings-defaults.ts (matcher Bash|Edit|Write|Read).
+Registrado em settings-defaults.ts (hooks.PreToolUse, matcher Bash|run|Edit|Write|Read|Grep).
 Lê o payload JSON do stdin e responde:
   - nada (exit 0)  -> allow
   - permissionDecision "ask"  -> o nycode mostra confirmação; sem UI (nycode -p, subagent) vira bloqueio
@@ -23,25 +23,36 @@ Política "Equilibrada":
     chmod -R, chown -R, shred, kill -9, docker rm/rmi/prune, npm|pnpm|yarn publish,
     Edit/Write em arquivo sensível (.env*, chaves, ~/.ssh, ~/.aws, auth.json, settings do nycode,
     wrapper ~/.local/bin/nycode, rc do shell) ou fora do projeto atual (/tmp é livre).
+  MODOS (2026-11-14): com NYCODE_PERMISSION_MODE definido (default|acceptEdits|plan; aliases ask, auto; legado bypassPermissions), o pacote
+  permissions/ decide depois dos DENY acima (que nunca mudam); com NYCODE_BYPASS_PERMISSIONS verdadeiro todo ASK
+  vira allow em qualquer modo (bypass ortogonal); sem a variável de modo, tudo acima vale bit a bit.
   DENY de Read (paridade com as 13 regras Read(...) deny de ~/.claude/settings.json, mais as
     credenciais do nycode): ~/.ssh/**, ~/.config/claude-secrets/**, ~/.claude*/.credentials.json,
-    ~/.nycode/agent/.credentials.json, ~/.codex/auth.json, ~/.config/mcp/secrets.env,
-    ~/.nycode/agent/auth.json e mcp-auth.json, e em qualquer lugar .env, .env.local, .env.*.local,
-    .env.production. Só a ferramenta read: `cat` via bash não é coberto (rules/safety.md).
+    claude-home/.credentials.json, ~/.codex/auth.json, ~/.config/mcp/secrets.env,
+    ~/.nycode/agent/auth.json e mcp-auth.json, e em qualquer lugar .env e .env.<qualquer> (G7, 2026-11-19; só .example, .sample,
+    .template e .dist passam). Só a ferramenta read: `cat` via bash não é coberto (rules/safety.md).
+  Auditoria 2026-11-19 (docs/audit-2026-11-19/02-seguranca-performance.md, D1-D10): o comando interno de `bash -c`,
+    eval, ( ), { }, $( ), crase, <( ), env -S, xargs, find -exec e do corpo de if/while/for/case é reanalisado
+    (profundidade <= 5, senão ask) com a decisão que teria escrito direto; wrappers consomem o valor das próprias
+    opções; palavra de comando vinda de expansão ($X, $IFS) é ask (deny se `rm` com esses argumentos seria deny);
+    baixar-e-executar (curl|wget|base64 -d|xxd -r|openssl enc -d ligado a interpretador) é deny; heredoc só é
+    mascarado fora de aspas; opções longas do rm casam por prefixo; escrita em /dev/* fora de null, zero, full,
+    stdout, stderr, stdin, tty, fd, pts e shm é deny; leitura nega também credenciais de nuvem/git/npm e usa realpath;
+    a ferramenta Grep passa pelo guard (negada em segredo, em diretório que guarda segredo, em $HOME e em /).
+    Comando acima de 256 KB vira ask (nunca allow sem análise).
+  Limite conhecido (lista não resolve): baixar para arquivo e executar depois, script escrito pelo próprio agente,
+    alias em arquivo de configuração; a resposta é sandbox de SO.
   Resto: allow.
 
 Bypass (igual ao "Bypass Permissions" do Claude Code): NYCODE_BYPASS_PERMISSIONS=1 transforma
-todo ASK em allow; DENY continua. O padrão é o modo seguro (confirmações ligadas); o bypass entra
-com NYCODE_BYPASS_PERMISSIONS=1 no ambiente do nycode. Este script só lê a variável: o nycode a exporta no
-startup a partir de `--bypass`/`--safe` e de `permissions.bypass`, e o `/bypass` a alterna (K11).
+todo ASK em allow; DENY continua. O wrapper bin/nycode inicia com NYCODE_BYPASS_PERMISSIONS=0.
+`nycode --bypass` liga; `nycode --safe` ou /bypass desliga. Na sessão: /bypass ou Ctrl+Shift+B
+(~/.nycode/agent/extensions/bypass-permissions/index.ts); independe do modo (Ask, Auto, Plan).
 
-Ajustar: edite as listas/funções abaixo e rode `python3 -m pytest test/harness/hooks/test_guard.py` em packages/coding-agent.
-Desligar: "hooks": {"PreToolUse": []} em ~/.nycode/agent/settings.json (só o global vale; o do projeto não),
-ou "disableAllHooks": true em ~/.claude/settings.json (em arquivo do projeto o guard segue ativo).
-Falha interna: JSON inválido permite (stderr); exceção na ferramenta Bash vira ASK "guard: erro interno"
-(no bypass, aprovado sozinho como todo ASK); outras ferramentas permitem.
-Análise do Bash: agrupamento/palavras-chave, opções de envoltórios, `bash -c`/eval/xargs/find -exec, $(...) e
-crases (profundidade máx. 3, além disso ASK), continuação de linha, opções longas abreviadas e caminhos normalizados.
+Ajustar: edite as listas/funções abaixo e rode `python3 -m unittest -v test_guard` aqui.
+Desligar tudo: remova o bloco "hooks" de ~/.nycode/agent/settings.json.
+Falha interna (JSON inválido, exceção, módulo ausente): bloqueia com exit 2 e escreve o motivo no stderr; saída de
+emergência NYCODE_GUARD_FAIL_OPEN=1 no ambiente de quem lança o nycode.
 """
 
 from __future__ import annotations
@@ -51,42 +62,147 @@ import os
 import re
 import shlex
 import sys
-import tempfile
-from typing import Any
 
-# fmt: off
+TYPE_CHECKING = False  # `from typing import TYPE_CHECKING` custa ~1 ms de import em toda chamada do hook
+if TYPE_CHECKING:
+    from typing import Any
+
+# realpath: a instalação viva liga cada arquivo por symlink; os módulos irmãos vêm do diretório real do guard (a mesma
+# versão do guard.py), nunca de um permissions/ vivo com links faltando (ModuleNotFoundError = hook não bloqueante).
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+
+try:
+    from diag import relatar
+except Exception:  # noqa: BLE001 - o diagnóstico nunca pode quebrar o hook
+    relatar = lambda *a, **k: None
+
+
+def falha_interna(e: BaseException, tb: str) -> int:
+    """Erro do próprio guard: bloqueia (exit 2), porque exit 1 é erro não bloqueante no Claude Code e no nycode e a tool
+    rodaria sem guarda (OWASP AI Agent Security: "fail closed when ... policy lookup ... fails"). Saída de emergência
+    só pelo ambiente de quem lança o nycode: NYCODE_GUARD_FAIL_OPEN=1 (o agente não altera o ambiente do hook)."""
+    if os.environ.get("NYCODE_GUARD_FAIL_OPEN") == "1":
+        msg = f"guard.py: erro interno, permitindo (NYCODE_GUARD_FAIL_OPEN=1): {e!r}"
+    else:
+        msg = (
+            f"guard.py: erro interno, bloqueando: {e!r}. Conserte fora do agente (veja o erro com "
+            f"`python3 {os.path.realpath(__file__)} </dev/null`) ou relance com NYCODE_GUARD_FAIL_OPEN=1 nycode"
+        )
+    print(msg, file=sys.stderr)
+    relatar(17, "guard", "erro-interno", msg, tb)
+    return 0 if os.environ.get("NYCODE_GUARD_FAIL_OPEN") == "1" else 2
+
+
+try:  # módulo ausente ou quebrado (instalação incompleta) também fecha
+    from permissions.parse import (
+        FETCH_SUBST,
+        MAX_CMD,
+        PLAIN_SUBST,
+        SEPARATORS,
+        SHELLS,
+        extract_substitutions,
+        fetch_tag,
+        fetches,
+        fork_bomb,
+        is_interpreter,
+        join_continuations,
+        long_opt,
+        mask_heredocs,
+        mask_text,
+        reads_stdin,
+        segments,
+        short_flags,
+        strip_prefixes,
+        tokenize,
+    )
+    from permissions.rules import (
+        PROTECTED_BRANCHES,  # noqa: F401 - reexportado: testes e consumidores antigos
+        check_git,
+        check_grep,
+        check_read,
+        dev_blocked,
+        inside,
+    )
+except Exception as _e:  # noqa: BLE001 - qualquer falha de import do guard bloqueia
+    import traceback
+
+    sys.exit(falha_interna(_e, traceback.format_exc()))
+
 HOME = os.path.expanduser("~")
-SHELLS = {"sh", "bash", "zsh", "dash", "ksh", "fish"}
-FETCHERS = {"curl", "wget"}
-WRAPPERS = {"env", "nohup", "time", "command", "exec", "nice", "stdbuf", "timeout"}
-# Opções de cada envoltório que consomem o argumento seguinte.
-WRAPPER_VALUE_OPTS = {
-    "env": {"-u", "-C", "-S", "--unset", "--chdir", "--split-string"}, "nice": {"-n", "--adjustment"},
-    "stdbuf": {"-i", "-o", "-e", "--input", "--output", "--error"}, "timeout": {"-s", "-k", "--signal", "--kill-after"},
-    "time": {"-f", "-o", "--format", "--output"}, "exec": {"-a"},
-}
-XARGS_VALUE_OPTS = {"-a", "-d", "-E", "-I", "-L", "-n", "-P", "-s", "--arg-file", "--delimiter", "--eof",
-                    "--max-lines", "--max-args", "--max-procs", "--max-chars", "--process-slot-var"}
-FIND_EXEC = {"-exec", "-execdir", "-ok", "-okdir"}
-MAX_DEPTH = 3  # acima: ask, mas ainda analisa (deny vence) até HARD_DEPTH
+# Above MAX_DEPTH: ask, but the analysis goes on (a deny still wins) up to HARD_DEPTH.
+MAX_DEPTH = 3
+HEREDOC_MARK_RE = re.compile(r"<<-?[ \t]*['\"]?\w+['\"]?")
+SSH_AGENT_EVAL_RE = re.compile(
+    r'(?:^|[;&|]\s*)eval\s+"?(?:\$\(ssh-agent(?: -s)?\)|`ssh-agent(?: -s)?`)"?\s*(?:$|[;&|])'
+)
 HARD_DEPTH = 24
-KEYWORDS = {"{", "}", "!", "then", "do", "else", "elif", "if", "while", "until", "fi", "done"}
-Finding = tuple[str, str]
-DEEP: Finding = ("ask", "comando aninhado fundo demais para analisar")
-PRIV = {"sudo", "su", "doas"}
-SEPARATORS = {";", "&&", "||", "|", "&", "|&", "\n"}
-DISK_RE = re.compile(r"^/dev/(sd[a-z]|nvme\d|hd[a-z]|vd[a-z]|xvd[a-z]|mmcblk\d|disk\d|disk/|dm-\d|mapper/|loop\d|md\d)")
-SAFE_DEV_RE = re.compile(r"^/dev/(null|stdout|stderr|tty|shm/|fd/)")
 POWER_CMDS = {"shutdown", "reboot", "poweroff", "halt"}
 SYSTEMCTL_POWER = {"poweroff", "reboot", "halt", "kexec"}
-CATASTROPHIC_RM = {"", "~", "$HOME", "${HOME}", HOME, "/home", "/usr", "/etc", "/bin", "/sbin",
-                   "/lib", "/lib64", "/boot", "/var", "/opt", "/root", "/srv"}
-SFDISK_READ_FLAGS = {"-l", "--list", "-s", "--show-size", "-d", "--dump", "-J", "--json", "-F", "--list-free",
-                     "-V", "--verify", "-h", "--help"}
-FORK_BOMB_RE = re.compile(r"(\S+)\s*\(\)\s*\{\s*\1\s*\|\s*\1\s*&\s*\}")
-PROTECTED_BRANCHES = {"main", "master"}
+CATASTROPHIC_RM = {
+    "",
+    "~",
+    "$HOME",
+    "${HOME}",
+    HOME,
+    "/home",
+    "/usr",
+    "/etc",
+    "/bin",
+    "/sbin",
+    "/lib",
+    "/lib64",
+    "/boot",
+    "/var",
+    "/opt",
+    "/root",
+    "/srv",
+}
+SFDISK_READ_FLAGS = {
+    "-l",
+    "--list",
+    "-s",
+    "--show-size",
+    "-d",
+    "--dump",
+    "-J",
+    "--json",
+    "-F",
+    "--list-free",
+    "-V",
+    "--verify",
+    "-h",
+    "--help",
+}
+FIND_EXEC = {"-exec", "-execdir", "-ok", "-okdir"}
+XARGS_VALUE_OPTS = {
+    "-I",
+    "-L",
+    "-n",
+    "-P",
+    "-s",
+    "-d",
+    "-E",
+    "-a",
+    "--max-args",
+    "--max-lines",
+    "--max-procs",
+    "--max-chars",
+    "--delimiter",
+    "--arg-file",
+    "--process-slot-var",
+}
+EXPANSION_WORD_RE = re.compile(
+    r"^(\$\w+|\$\{[^}]*\}|__SUBST__|__FETCHSUBST__)$"
+)  # palavra de comando que é expansão
+IFS_RE = re.compile(r"\$\{IFS[^}]*\}|\$IFS\b")
+SHELL_C_RE = re.compile(r"^[-+][A-Za-z]*c[A-Za-z]*$")
 
-SENSITIVE_DIRS = [os.path.join(HOME, d) for d in (".ssh", ".aws", ".gnupg", ".config/gh", ".kube", ".docker")]
+Finding = tuple[str, str]
+
+SENSITIVE_DIRS = [
+    os.path.join(HOME, d)
+    for d in (".ssh", ".aws", ".gnupg", ".config/gh", ".kube", ".docker")
+]
 SENSITIVE_FILES = {
     os.path.join(HOME, p)
     for p in (
@@ -105,210 +221,177 @@ SENSITIVE_FILES = {
     )
 }
 ENV_SAFE_SUFFIXES = (".example", ".sample", ".template", ".dist")
-READ_DENY_DIRS = [os.path.join(HOME, d) for d in (".ssh", ".config/claude-secrets")]
-READ_DENY_FILES = {
-    os.path.join(HOME, p)
-    for p in (
-        ".codex/auth.json",
-        ".config/mcp/secrets.env",
-        ".nycode/agent/auth.json",
-        ".nycode/agent/mcp-auth.json",
-        ".nycode/agent/.credentials.json",
-    )
-}
-CLAUDE_CREDENTIALS_RE = re.compile(r"^" + re.escape(HOME) + r"/\.claude(-[^/]+)?/\.credentials\.json$")
-READ_DENY_ENV_RE = re.compile(r"^\.env(\.local|\.production|\..+\.local)?$")
-# fmt: on
-
-
-# ---------- parsing ----------
-
-
-def tokenize(cmd: str) -> list[str]:
-    try:
-        lex = shlex.shlex(cmd.replace("\n", " ; "), posix=True, punctuation_chars=True)
-        lex.whitespace_split = True
-        lex.commenters = ""
-        return list(lex)
-    except ValueError:  # aspas desbalanceadas: corte grosseiro, melhor que nada
-        return re.findall(r"\|\||&&|[;|&]|[^\s;|&]+", cmd)
-
-
-def segments(tokens: list[str]) -> list[tuple[list[str], bool]]:
-    """Lista de (argv, piped_from_previous). `(`, `)` e, em posição de comando, `{ } ! then do ...` separam."""
-    out: list[tuple[list[str], bool]] = []
-    cur: list[str] = []
-    piped = next_piped = False
-    for t in tokens:
-        sep = t in SEPARATORS
-        if sep or (not cur and t in KEYWORDS) or re.fullmatch(r"[<>]?\(+|\)+", t):
-            if cur:
-                out.append((cur, piped))
-            if sep:
-                next_piped = t in ("|", "|&")
-            elif cur:
-                next_piped = (
-                    False  # agrupamento sem separador antes mantém o pipe pendente
-                )
-            cur, piped = [], False
-            continue
-        if not cur:
-            piped, next_piped = next_piped, False
-        cur.append(t)
-    if cur:
-        out.append((cur, piped))
-    return out
-
-
-def strip_prefixes(argv: list[str]) -> tuple[list[str], bool]:
-    """Remove VAR=x, wrappers e sudo; devolve (argv_real, usou_privilegio)."""
-    priv = False
-    i = 0
-    while i < len(argv):
-        w = argv[i]
-        base = os.path.basename(w)
-        if re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", w):
-            i += 1
-        elif base in PRIV:
-            priv = True
-            i += 1
-            while i < len(argv) and argv[i].startswith("-"):  # flags do sudo
-                flag = argv[i]
-                i += 1
-                if flag in ("-u", "-g", "-C", "-h", "-p", "-c") and base != "su":
-                    i += 1
-                elif base == "su" and flag == "-c":
-                    rest = argv[i:]
-                    return (tokenize(rest[0]) if rest else []), True
-        elif base in WRAPPERS:
-            i += 1
-            values = WRAPPER_VALUE_OPTS.get(base, set())
-            while i < len(argv) and argv[i].startswith("-"):
-                i += 2 if argv[i] in values else 1
-            if base == "timeout":
-                i += 1  # duração
-        else:
-            break
-    return argv[i:], priv
-
-
-def short_flags(args: list[str]) -> set[str]:
-    flags: set[str] = set()
-    for a in args:
-        if a.startswith("--"):
-            flags.add(a)
-        elif a.startswith("-") and len(a) > 1:
-            flags.update("-" + c for c in a[1:])
-    return flags
-
-
-def long_match(flags: set[str], name: str) -> bool:
-    """Opção longa do GNU, inclusive abreviada por prefixo único (`--r` = `--recursive`)."""
-    return any(
-        f.startswith("--") and len(f) > 2 and name.startswith(f.split("=")[0])
-        for f in flags
-    )
-
-
-def norm_path(p: str) -> str:
-    """Normaliza caminho absoluto (`//dev/./sda` -> `/dev/sda`); outros ficam como estão."""
-    return re.sub(r"^/+", "/", os.path.normpath(p)) if p.startswith("/") else p
-
-
-def target_dirs(args: list[str]) -> list[str]:
-    """Valores de -t / --target-directory (cp, mv)."""
-    out = []
-    for i, a in enumerate(args):
-        if a.startswith("--target-directory="):
-            out.append(a.split("=", 1)[1])
-        elif a in ("-t", "--target-directory") and i + 1 < len(args):
-            out.append(args[i + 1])
-    return out
-
-
-def skip_opts(args: list[str], values: set[str]) -> list[str]:
-    """Remove as opções (e seus valores) do início de args; devolve o comando que sobra."""
-    i = 0
-    while i < len(args) and args[i].startswith("-") and args[i] != "--":
-        i += 2 if args[i] in values else 1
-    if i < len(args) and args[i] == "--":
-        i += 1
-    return args[i:]
-
-
-def nested_commands(name: str, args: list[str]) -> tuple[list[str], list[list[str]]]:
-    """Comandos dentro do comando: (scripts de shell para reanalisar, argvs para reanalisar)."""
-    scripts: list[str] = []
-    argvs: list[list[str]] = []
-    if name in SHELLS:
-        for i, a in enumerate(args[:-1]):
-            if re.match(r"^-[a-zA-Z]*c[a-zA-Z]*$", a):
-                scripts.append(args[i + 1])
-                break
-    elif name == "eval" and args:
-        scripts.append(" ".join(args))
-    elif name == "xargs":
-        rest = skip_opts(args, XARGS_VALUE_OPTS)
-        if rest:
-            argvs.append(rest)
-    elif name == "find":
-        for i, a in enumerate(args):
-            if a in FIND_EXEC:
-                end = i + 1
-                while end < len(args) and args[end] not in (";", "+"):
-                    end += 1
-                if end > i + 1:
-                    argvs.append(args[i + 1 : end])
-    return scripts, argvs
+# Segredos ao lado do agente: ask (o bypass ainda promove ask a allow).
+ASK_WRITE_SUFFIXES = (
+    "/.nycode/agent/local.env",
+    "/.nycode/agent/mcp-auth.json",
+    "/.nycode/agent/claude-home/settings.json",
+)
+# Auto-modificação do guard. Deny: o bypass não promove deny a allow.
+PROTECTED_WRITE_SUFFIXES = ("/claude-home/hooks/guard.py",)
 
 
 # ---------- regras bash ----------
 
 
+def shell_script(args: list[str]) -> str | None:
+    """Texto que um shell executa: o argumento de `-c` (inclusive `-lc`) ou a here-string (`<<< texto`).
+    `-o`/`+o` consomem a opção seguinte (`bash -c -o errexit SCRIPT`)."""
+    if "<<<" in args:
+        k = args.index("<<<")
+        return args[k + 1] if k + 1 < len(args) else None
+    for k, a in enumerate(args):
+        if not SHELL_C_RE.match(a):
+            continue
+        i = k + 1
+        while i < len(args):
+            b = args[i]
+            if b in ("-o", "+o") and i + 1 < len(args):
+                i += 2
+                continue
+            if re.fullmatch(
+                r"[-+][\w=-]*", b
+            ):  # only option-shaped words; `+ ; x` is text, judged as a script
+                i += 1
+                continue
+            return b
+        return None
+    return None
+
+
+def xargs_command(args: list[str]) -> list[str]:
+    i = 0
+    while i < len(args) and args[i].startswith("-"):
+        a = args[i]
+        i += 1
+        if a == "--":
+            break
+        if a in XARGS_VALUE_OPTS and i < len(args):
+            i += 1
+    return args[i:]
+
+
+def exec_findings(tokens: list[str], cmd: str, depth: int) -> list[Finding]:
+    """Comando de `find -exec|-execdir|-ok|-okdir CMD {} ;|+`."""
+    cmdv: list[str] = []
+    for k, t in enumerate(tokens):
+        if t in FIND_EXEC or t == ";" or (t == "+" and k > 0 and tokens[k - 1] == "{}"):
+            break
+        cmdv.append(t)
+    return check_segment(cmdv, False, set(), cmd, depth)[0] if cmdv else []
+
+
+def check_find(args: list[str], cmd: str, depth: int) -> list[Finding]:
+    found: list[Finding] = []
+    roots = []
+    for a in args:
+        if a.startswith("-") or a in ("(", "!"):
+            break
+        roots.append(a)
+    if "-delete" in args and any(catastrophic_rm_target(r) for r in roots):
+        found.append(("deny", "find -delete em diretório raiz, home ou sistema"))
+    for k, a in enumerate(args):
+        if a in FIND_EXEC:
+            found.extend(exec_findings(args[k + 1 :], cmd, depth))
+    return found
+
+
+def check_indirection(
+    name: str, args: list[str], cmd: str, depth: int
+) -> list[Finding]:
+    """D1/D2/D4: o comando interno de shell -c, eval, xargs e find -exec recebe a decisão que teria direto."""
+    found: list[Finding] = []
+    pos = [a for a in args if not a.startswith("-")]
+    if name in SHELLS:
+        script = shell_script(args)
+        if script is not None:
+            found.extend(check_bash(script, depth=depth + 1, top=cmd))
+            if (
+                "<<" in script
+            ):  # as the core: a heredoc inside a `-c` script is judged as commands too
+                found.extend(
+                    check_bash(
+                        HEREDOC_MARK_RE.sub("", script), depth=depth + 1, top=cmd
+                    )
+                )
+    elif name == "eval":
+        # Explicit, tested exception (as in the core): the standard ssh-agent bootstrap. Its substitution is still
+        # analysed by the caller; any other eval argument goes through the re-analysis.
+        if not (args == ["__SUBST__"] and SSH_AGENT_EVAL_RE.search(cmd)):
+            found.extend(check_bash(" ".join(args), depth=depth + 1, top=cmd))
+            if any(PLAIN_SUBST in a for a in args):
+                found.append(("ask", "eval de texto montado por substituição"))
+    elif name == "xargs":
+        inner = xargs_command(args)
+        if inner:
+            found.extend(check_segment(inner, False, set(), cmd, depth)[0])
+    elif name == "find":
+        found.extend(check_find(args, cmd, depth))
+    runs_text = (is_interpreter(name) and bool(pos) and FETCH_SUBST in pos[0]) or (
+        name in ("eval", "source", ".") and any(FETCH_SUBST in a for a in args)
+    )
+    if runs_text:
+        found.append(
+            (
+                "deny",
+                "executa texto baixado ou decodificado (curl/wget/base64 -d via $( ) ou <( ))",
+            )
+        )
+    return found
+
+
 def check_segment(
-    argv: list[str],
-    piped: bool,
-    prev_names: set[str],
-    cmd: str = "",
-    depth: int = 0,
-    cwd: str = "",
+    argv: list[str], piped: bool, prev_names: set[str], cmd: str = "", depth: int = 0
 ) -> tuple[list[Finding], str | None]:
-    """Retorna lista de (nivel, motivo) para um segmento."""
-    if depth > HARD_DEPTH:
-        return [DEEP], None
-    found: list[Finding] = [DEEP] if depth > MAX_DEPTH else []
+    """Retorna lista de (nivel, motivo) para um segmento. `cmd` é a linha inteira do shell (auto-kill casa com ela)."""
+    found: list[Finding] = []
     real, priv = strip_prefixes(argv)
     if priv:
         found.append(("ask", "comando com privilégio (sudo/su/doas)"))
     if not real:
+        return found, None
+    if real[0] in FIND_EXEC:  # continuação de `find ... -exec CMD \; -exec CMD2 \;`
+        return found + exec_findings(real[1:], cmd, depth), None
+    if EXPANSION_WORD_RE.match(real[0]):
+        # D3: o comando vem de uma expansão; vale o pior caso `rm` com esses argumentos, senão ask
+        found.extend(
+            f
+            for f in check_segment(["rm", *real[1:]], False, set(), cmd, depth)[0]
+            if f[0] == "deny"
+        )
+        found.append(("ask", "palavra de comando vem de expansão ($VAR, $( ), $IFS)"))
         return found, None
     name = os.path.basename(real[0])
     args = real[1:]
     flags = short_flags(args)
     positional = [a for a in args if not a.startswith("-")]
 
-    if piped and name in SHELLS and prev_names & FETCHERS:
+    if (
+        piped
+        and "<fetch>" in prev_names
+        and (name in SHELLS or (is_interpreter(name) and reads_stdin(args)))
+    ):
         found.append(("deny", "download com pipe direto para shell"))
+    if fetch_tag(real):
+        prev_names.add("<fetch>")
+    found.extend(check_indirection(name, args, cmd, depth))
 
     for i, t in enumerate(argv):
         if (
             t in (">", ">>", ">|", "&>", ">&", "&>>")
             and i + 1 < len(argv)
-            and DISK_RE.match(norm_path(argv[i + 1]))
+            and dev_blocked(argv[i + 1])
         ):
-            found.append(("deny", f"escrita direta em disco {argv[i + 1]}"))
-
-    scripts, argvs = nested_commands(name, args)
-    for script in scripts:
-        found.extend(check_bash(script, cwd, depth + 1, cmd))
-    for sub in argvs:
-        found.extend(check_segment(sub, False, set(), cmd, depth + 1, cwd)[0])
+            found.append(
+                (
+                    "deny",
+                    f"escrita direta em disco {argv[i + 1]}",
+                )
+            )
 
     if name == "rm":
-        rec = bool(flags & {"-r", "-R", "--recursive"}) or long_match(
-            flags, "--recursive"
-        )
-        force = bool(flags & {"-f", "--force"}) or long_match(flags, "--force")
+        rec = bool(flags & {"-r", "-R"}) or long_opt(flags, "--recursive")
+        force = "-f" in flags or long_opt(flags, "--force")
         if rec and force:
             found.append(("deny", "rm recursivo forçado"))
         elif rec:
@@ -317,17 +400,13 @@ def check_segment(
             found.append(("deny", "rm recursivo em diretório raiz, home ou sistema"))
     elif name.startswith("mkfs"):
         found.append(("deny", "formatação de sistema de arquivos"))
-    elif name == "dd" and any(
-        a.startswith("of=/")
-        and norm_path(a[3:]).startswith("/dev/")
-        and not SAFE_DEV_RE.match(norm_path(a[3:]))
-        for a in args
-    ):
+    elif name == "dd" and any(a.startswith("of=") and dev_blocked(a[3:]) for a in args):
         found.append(("deny", "dd escrevendo em dispositivo"))
-    elif name == "tee" and any(DISK_RE.match(norm_path(a)) for a in positional):
+    elif name == "tee" and any(dev_blocked(a) for a in positional):
         found.append(("deny", "tee escrevendo em dispositivo de bloco"))
-    elif name in ("cp", "mv") and any(
-        DISK_RE.match(norm_path(t)) for t in positional[-1:] + target_dirs(args)
+    elif name in ("cp", "mv") and (
+        (positional and dev_blocked(positional[-1]))
+        or any(dev_blocked(t) for t in target_dirs(args))
     ):
         found.append(("deny", f"{name} escrevendo em dispositivo de bloco"))
     elif name == "wipefs" and flags & {"-a", "--all", "-o", "--offset"}:
@@ -358,7 +437,7 @@ def check_segment(
         found.append(("deny", f"{name} desliga/reinicia a máquina"))
     elif name in ("chmod", "chown", "chgrp"):
         rec = bool(flags & {"-R", "--recursive"})
-        if rec and "/" in [norm_path(a) for a in positional]:
+        if rec and any(norm_path(a) == "/" for a in positional):
             found.append(("deny", f"{name} recursivo na raiz"))
         elif rec:
             found.append(("ask", f"{name} recursivo"))
@@ -380,8 +459,24 @@ def check_segment(
     elif name in ("npm", "pnpm", "yarn", "bun") and "publish" in positional:
         found.append(("ask", f"{name} publish"))
     elif name == "git":
-        found.extend(check_git(args, cwd))
+        found.extend(check_git(args, _CWD[0]))
     return found, name
+
+
+def norm_path(p: str) -> str:
+    """Normaliza caminho absoluto (`//dev/./sda` -> `/dev/sda`); outros ficam como estão."""
+    return re.sub(r"^/+", "/", os.path.normpath(p)) if p.startswith("/") else p
+
+
+def target_dirs(args: list[str]) -> list[str]:
+    """Valores de -t / --target-directory (cp, mv)."""
+    out = []
+    for i, a in enumerate(args):
+        if a.startswith("--target-directory="):
+            out.append(a.split("=", 1)[1])
+        elif a in ("-t", "--target-directory") and i + 1 < len(args):
+            out.append(args[i + 1])
+    return out
 
 
 def catastrophic_rm_target(t: str) -> bool:
@@ -401,92 +496,6 @@ def kill_targets(args: list[str]) -> set[str]:
     if i < len(args) and args[i] == "--":
         i += 1
     return set(args[i:])
-
-
-def strip_ref(a: str) -> str:
-    return a.removeprefix("refs/heads/")
-
-
-def deletes_protected(rest: list[str]) -> bool:
-    strip = strip_ref
-    pos = [a for a in rest if not a.startswith("-")]
-    if any(
-        a.lstrip("+").startswith(":") and strip(a.lstrip("+")[1:]) in PROTECTED_BRANCHES
-        for a in pos
-    ):
-        return True
-    return bool(short_flags(rest) & {"--delete", "-d"}) and any(
-        strip(a) in PROTECTED_BRANCHES for a in pos
-    )
-
-
-def current_branch(cwd: str) -> str | None:
-    """Branch atual lendo HEAD (`.git/HEAD` ou o gitdir de worktree) a partir de cwd, sem subprocesso."""
-    d = os.path.abspath(cwd) if cwd else ""
-    try:
-        while d:
-            g = os.path.join(d, ".git")
-            if os.path.isfile(g):
-                with open(g) as f:
-                    first = f.readline().strip()
-                if not first.startswith("gitdir:"):
-                    return None
-                g = os.path.join(d, first[7:].strip())
-            if os.path.isdir(g):
-                with open(os.path.join(g, "HEAD")) as f:
-                    head = f.readline().strip()
-                return (
-                    head.removeprefix("ref: refs/heads/")
-                    if head.startswith("ref: refs/heads/")
-                    else None
-                )
-            parent = os.path.dirname(d)
-            if parent == d:
-                break
-            d = parent
-    except (OSError, UnicodeDecodeError):
-        pass
-    return None
-
-
-def check_git(args: list[str], cwd: str = "") -> list[Finding]:
-    i = 0
-    while i < len(args) and args[i].startswith("-"):
-        if args[i] in ("-C", "--git-dir", "--work-tree"):
-            cwd = ""  # repositório diferente do cwd: branch desconhecida
-        i += 2 if args[i] in ("-C", "-c", "--git-dir", "--work-tree") else 1
-    if i >= len(args):
-        return []
-    sub, rest = args[i], args[i + 1 :]
-    flags = short_flags(rest)
-    if sub == "push":
-        pos = [a for a in rest if not a.startswith("-")]
-        force = (
-            bool(flags & {"-f", "--force", "--mirror"})
-            or any(f.startswith("--force-with-lease") for f in flags)
-            or any(a.startswith("+") for a in rest)
-        )
-        head = current_branch(cwd) or ""
-        targets = {strip_ref(a.split(":")[-1].lstrip("+")) for a in pos}
-        targets |= {head for t in targets if t in ("HEAD", "@")}
-        if deletes_protected(rest):
-            return [("deny", "git push apagando main/master")]
-        if force and ("--mirror" in flags or targets & PROTECTED_BRANCHES):
-            return [("deny", "git push forçado para main/master")]
-        if force and len(pos) <= 1 and current_branch(cwd) in PROTECTED_BRANCHES:
-            return [("deny", "git push forçado da branch main/master")]
-        return [("ask", "git push" + (" --force" if force else ""))]
-    if sub == "reset" and "--hard" in rest:
-        return [("ask", "git reset --hard")]
-    if sub == "clean" and flags & {"-f", "--force"}:
-        return [("ask", "git clean -f")]
-    if sub == "rebase":
-        return [("ask", "git rebase")]
-    if sub == "branch" and flags & {"-D"}:
-        return [("ask", "git branch -D")]
-    if sub == "checkout" and ("--" in rest or "." in rest):
-        return [("ask", "git checkout descartando mudanças")]
-    return []
 
 
 # Opções do pkill/pgrep que consomem o argumento seguinte (procps-ng).
@@ -541,51 +550,13 @@ def matches_self(pattern: str, cmd: str) -> bool:
         re.error,
         OverflowError,
         RecursionError,
-    ):  # padrão inválido ou grande demais: texto literal
+    ):  # invalid or too large pattern: literal text
         return pattern in cmd
 
 
-HEREDOC_RE = re.compile(
-    r"(?<!<)<<[-~]?[ \t]*(['\"]?)(\w+)\1[^\n]*\n(.*?)^[ \t]*\2[ \t]*$",
-    re.DOTALL | re.MULTILINE,
-)
-SHELL_WORD_RE = re.compile(r"(?<![\w.-])(?:ba|z|da|k|fi)?sh\b(?!\.)")
-
-
-def mask_heredocs(cmd: str) -> str:
-    """Mesmo tamanho, corpo de heredoc em branco (quebras de linha mantidas), exceto quando a linha do `<<`
-    tem um shell (`bash <<EOF`, `<<EOF | sh`): ali o texto roda."""
-    out = list(cmd)
-    for m in HEREDOC_RE.finditer(cmd):
-        start = cmd.rfind("\n", 0, m.start()) + 1
-        end = cmd.find("\n", m.start())
-        if not SHELL_WORD_RE.search(cmd[start:end]):
-            for i in range(m.start(3), m.end(3)):
-                if out[i] != "\n":
-                    out[i] = " "
-    return "".join(out)
-
-
-def mask_text(cmd: str) -> str:
-    """Mesmo tamanho, com corpo de heredoc e conteúdo entre aspas trocados: texto citado não é comando.
-    Heredoc lido por um shell (`bash <<EOF`) fica: ali o texto roda.
-    ponytail: aspas após `bash -c` também são mascaradas (falso negativo raro); tratar se aparecer."""
-    out = list(mask_heredocs(cmd))
-    quote: str | None = None
-    for i, c in enumerate(out):
-        if quote:
-            if c == quote and (quote == "'" or out[i - 1] != "\\"):
-                quote = None
-            else:
-                out[i] = "x"
-        elif c in ("'", '"'):
-            quote = c
-    return "".join(out)
-
-
-def check_self_kill(cmd: str) -> list[Finding]:
+def check_self_kill(cmd: str, top: str) -> list[Finding]:
     """pgrep -f cuja saída vai para kill (`| xargs kill`, `kill $(...)`, crases) e casa com o próprio shell.
-    O padrão casa com o comando inteiro (o `bash -c` carrega tudo), mas só conta pgrep/kill fora de texto citado."""
+    O padrão casa com a linha inteira (o `bash -c` carrega tudo), mas só conta pgrep/kill fora de texto citado."""
     found: list[Finding] = []
     masked = mask_text(cmd)
     for m in PGREP_KILL_RE.finditer(masked):
@@ -601,62 +572,68 @@ def check_self_kill(cmd: str) -> list[Finding]:
         except ValueError:
             args = raw.split()
         pattern = full_match_pattern(args)
-        if pattern and matches_self(pattern, cmd):
+        if pattern and matches_self(pattern, top):
             found.append(("deny", SELF_KILL_MSG.format("pgrep")))
     return found
 
 
-def substitutions(cmd: str) -> list[str]:
-    """Corpos de `$(...)` e de crases fora de aspas simples (dentro de aspas duplas também executam)."""
-    out: list[str] = []
-    i, n, quote = 0, len(cmd), ""
-    while i < n:
-        c = cmd[i]
-        if c == "\\":
-            i += 2
+def pkill_self_match(tokens: list[str], top: str) -> list[Finding]:
+    """pkill -f whose pattern matches the shell's own command line. Judged on pieces split only at real command
+    separators: a stray parenthesis inside the pattern text does not hide the pattern."""
+    found: list[Finding] = []
+    piece: list[str] = []
+    for t in [*tokens, ";"]:
+        if t not in SEPARATORS:
+            piece.append(t)
             continue
-        if quote == "'":
-            quote = "" if c == "'" else quote
-        elif c == "'" and not quote:  # dentro de "..." o ' é literal
-            quote = "'"
-        elif c == '"':
-            quote = "" if quote else '"'
-        elif c == "`":
-            j = cmd.find("`", i + 1)
-            j = n if j < 0 else j
-            out.append(cmd[i + 1 : j])
-            i = j
-        elif cmd.startswith("$(", i):
-            depth, j = 1, i + 2
-            while j < n and depth:
-                depth += (cmd[j] == "(") - (cmd[j] == ")")
-                j += 1
-            out.append(cmd[i + 2 : j - 1 if depth == 0 else j])
-            i = j - 1
-        i += 1
-    return out
+        real, _ = strip_prefixes(piece)
+        piece = []
+        if real and real[0] == "pkill":
+            pattern = full_match_pattern(real[1:])
+            if pattern and matches_self(pattern, top):
+                found.append(("deny", SELF_KILL_MSG.format("pkill")))
+    return found
 
 
 def check_bash(
-    cmd: str, cwd: str = "", depth: int = 0, root: str | None = None
+    cmd: str, cwd: str = "", depth: int = 0, top: str | None = None
 ) -> list[Finding]:
+    if cwd:
+        _CWD[0] = cwd
+    top = cmd if top is None else top
     if depth > HARD_DEPTH:
-        return [DEEP]
-    root = cmd if root is None else root
-    cmd = cmd.replace("\\\n", "")  # continuação de linha
-    found: list[Finding] = [DEEP] if depth > MAX_DEPTH else []
-    body_free = mask_heredocs(cmd)  # corpo de heredoc não-shell é texto, não comando
-    if depth == 0:
-        if FORK_BOMB_RE.search(body_free):
-            found.append(("deny", "fork bomb"))
-        found.extend(check_self_kill(cmd))
-    for sub in substitutions(body_free):
-        found.extend(check_bash(sub, cwd, depth + 1, root))
+        return [("ask", f"shell aninhado além de {MAX_DEPTH} níveis")]
+    if len(cmd) > MAX_CMD:
+        return [("ask", f"comando maior que {MAX_CMD // 1024} KB: não analisado")]
+    found: list[Finding] = (
+        [("ask", f"shell aninhado além de {MAX_DEPTH} níveis")]
+        if depth > MAX_DEPTH
+        else []
+    )
+    text = mask_heredocs(
+        join_continuations(cmd)
+    )  # \\\n fora de aspas simples; corpo de heredoc não-shell é texto
+    if fork_bomb(text):
+        found.append(("deny", "fork bomb"))
+    found.extend(check_self_kill(cmd, top))
+    if IFS_RE.search(text):
+        found.append(("ask", "uso de $IFS: o comando pode se montar na execução"))
+        text = IFS_RE.sub(" ", text)  # reavalia com o IFS trocado por espaço
+    text, inners = extract_substitutions(text, fetches)
+    for inner in inners:
+        found.extend(check_bash(inner, depth=depth + 1, top=top))
+        # A heredoc whose terminator line carries the closing `)` is not terminated for the shell: its body is
+        # not data. The outer pass left it unmasked, so judge the inner text with the heredoc markers dropped.
+        if "<<" in inner and mask_heredocs(text) == text:
+            found.extend(
+                check_bash(HEREDOC_MARK_RE.sub("", inner), depth=depth + 1, top=top)
+            )
+    found.extend(pkill_self_match(tokenize(text), top))
     prev_names: set[str] = set()
-    for argv, piped in segments(tokenize(body_free)):
+    for argv, piped in segments(tokenize(text)):
         if not piped:
             prev_names = set()
-        f, name = check_segment(argv, piped, prev_names, root, depth, cwd)
+        f, name = check_segment(argv, piped, prev_names, top, depth)
         found.extend(f)
         if name:
             prev_names.add(name)
@@ -666,119 +643,147 @@ def check_bash(
 # ---------- regras de arquivo ----------
 
 
-def inside(path: str, root: str) -> bool:
-    return bool(root) and (path == root or path.startswith(root.rstrip("/") + "/"))
+def _sensitive_file(path: str) -> tuple[str, str] | None:
+    base = os.path.basename(path)
+    if path.endswith(PROTECTED_WRITE_SUFFIXES):
+        return "deny", f"escrita em arquivo protegido {path}"
+    if path.endswith(ASK_WRITE_SUFFIXES):
+        return "ask", f"arquivo sensível {path}"
+    if (base == ".env" or base.startswith(".env.")) and not base.endswith(
+        ENV_SAFE_SUFFIXES
+    ):
+        return "ask", f"arquivo de segredos {base}"
+    if base.endswith((".pem", ".key", ".p12", ".pfx")) or re.match(
+        r"^id_(rsa|ed25519|ecdsa|dsa)", base
+    ):
+        return "ask", f"chave/certificado {base}"
+    if (
+        base == "auth.json"
+        or path in SENSITIVE_FILES
+        or any(inside(path, d) for d in SENSITIVE_DIRS)
+    ):
+        return "ask", f"arquivo sensível {path}"
+    return None
 
 
 def check_file(path: str, cwd: str, project: str) -> list[Finding]:
     if not path:
         return []
-    p = os.path.abspath(
-        os.path.expanduser(
-            path
-            if os.path.isabs(path) or path.startswith("~")
-            else os.path.join(cwd or os.getcwd(), path)
-        )
+    import tempfile  # só Edit/Write chegam aqui; importar no topo custa ~10 ms em toda chamada
+
+    raw = (
+        path
+        if os.path.isabs(path) or path.startswith("~")
+        else os.path.join(cwd or os.getcwd(), path)
     )
-    base = os.path.basename(p)
-    if (base == ".env" or base.startswith(".env.")) and not base.endswith(
-        ENV_SAFE_SUFFIXES
-    ):
-        return [("ask", f"arquivo de segredos {base}")]
-    if base.endswith((".pem", ".key", ".p12", ".pfx")) or re.match(
-        r"^id_(rsa|ed25519|ecdsa|dsa)", base
-    ):
-        return [("ask", f"chave/certificado {base}")]
-    if (
-        base == "auth.json"
-        or p in SENSITIVE_FILES
-        or any(inside(p, d) for d in SENSITIVE_DIRS)
-    ):
-        return [("ask", f"arquivo sensível {p}")]
+    p = os.path.abspath(os.path.expanduser(raw))
+    real = os.path.realpath(p)
+    candidates = [p] if real == p else [p, real]
+    hits = [hit for c in candidates if (hit := _sensitive_file(c))]
+    if hits:
+        level = "deny" if any(lvl == "deny" for lvl, _ in hits) else "ask"
+        return [(level, hits[0][1])]
     tmp_roots = {"/tmp", tempfile.gettempdir(), "/var/tmp"}
-    if any(inside(p, r) for r in tmp_roots):
+    if all(any(inside(c, r) for r in tmp_roots) for c in candidates):
         return []
     if not (inside(p, project) or inside(p, cwd)):
         return [("ask", f"fora do projeto: {p}")]
     return []
 
 
-def read_denied(p: str) -> bool:
-    return bool(
-        p in READ_DENY_FILES
-        or any(inside(p, d) for d in READ_DENY_DIRS)
-        or CLAUDE_CREDENTIALS_RE.match(p)
-        or READ_DENY_ENV_RE.match(os.path.basename(p))
-    )
-
-
-def check_read(path: str, cwd: str) -> list[Finding]:
-    if not path:
-        return []
-    p = os.path.abspath(
-        os.path.expanduser(
-            path
-            if os.path.isabs(path) or path.startswith("~")
-            else os.path.join(cwd or os.getcwd(), path)
-        )
-    )
-    if any(
-        read_denied(q) for q in (p, os.path.realpath(p))
-    ):  # realpath: link para segredo
-        return [("deny", f"leitura de segredo bloqueada: {p}")]
-    return []
-
-
 # ---------- main ----------
 
 
-def bypass_on() -> bool:
-    return os.environ.get("NYCODE_BYPASS_PERMISSIONS", "").lower() in (
-        "1",
-        "true",
-        "on",
-        "yes",
-    )
+_CWD = [
+    ""
+]  # cwd of the call being judged (one call per process): git push reads the branch from it
 
 
 def decide(payload: dict[str, Any]) -> tuple[str, str] | None:
     tool = payload.get("tool_name", "")
     ti = payload.get("tool_input") or {}
     cwd = payload.get("cwd") or os.getcwd()
+    _CWD[0] = os.path.abspath(cwd)
     project = os.environ.get("CLAUDE_PROJECT_DIR") or cwd
     if tool == "Bash":
-        found = check_bash(ti.get("command") or "", os.path.abspath(cwd))
+        found = check_bash(ti.get("command") or "")
     elif tool in ("Edit", "Write", "MultiEdit"):
         found = check_file(
             ti.get("file_path") or "", os.path.abspath(cwd), os.path.abspath(project)
         )
     elif tool == "Read":
         found = check_read(ti.get("file_path") or "", os.path.abspath(cwd))
+    elif (
+        tool == "Grep"
+    ):  # o nycode reporta o grep do nycode como "Grep", com `path` absoluto ou ausente
+        found = check_grep(ti.get("path"), os.path.abspath(cwd))
+    elif tool == "run":
+        action = ti.get("action")
+        if action == "start":
+            found = check_bash(ti.get("command") or "")
+        elif action in ("list", "tail", "stop", "wait"):
+            found = []
+        else:
+            return ("deny", "ação desconhecida da tool run")
     else:
         return None
     denies = [r for lvl, r in found if lvl == "deny"]
     if denies:
         return "deny", "Bloqueado pelo guard: " + "; ".join(dict.fromkeys(denies))
     asks = [r for lvl, r in found if lvl == "ask"]
+    if os.environ.get("NYCODE_PERMISSION_MODE", "").strip():
+        return decide_with_mode(
+            tool, ti, os.path.abspath(cwd), os.path.abspath(project), asks
+        )
     if asks:
-        if bypass_on():
+        if os.environ.get("NYCODE_BYPASS_PERMISSIONS", "").lower() in (
+            "1",
+            "true",
+            "on",
+            "yes",
+        ):
             return None
         return "ask", "Confirmação necessária: " + "; ".join(dict.fromkeys(asks))
     return None
 
 
+def decide_with_mode(
+    tool: str, ti: dict[str, Any], cwd: str, project: str, asks: list[str]
+) -> tuple[str, str] | None:
+    """Modos locais (NYCODE_PERMISSION_MODE definido): permissions/ decide DEPOIS dos denies legados.
+    Falha do código novo (import, bug) é ASK, nunca allow; o ramo sem modo não passa por aqui."""
+    try:
+        from permissions import modes
+        from permissions.decide import decide_mode
+
+        def read_denied(p: str) -> bool:
+            return bool(check_read(p, cwd))
+
+        mode = modes.current_mode(os.environ)
+        result: tuple[str, str] | None = decide_mode(
+            mode, tool, ti, cwd, project, asks, read_denied, os.environ
+        )
+        return result
+    except Exception as e:  # noqa: BLE001 - falha do código novo é ASK, nunca allow
+        import traceback
+
+        msg = f"guard.py: erro no modo de permissão, pedindo confirmação: {e!r}"
+        print(msg, file=sys.stderr)
+        relatar(17, "guard", "erro-interno", msg, traceback.format_exc())
+        return (
+            "ask",
+            f"Confirmação necessária: erro interno no modo de permissão ({type(e).__name__})",
+        )
+
+
 def main() -> int:
-    tool = ""
-    result: tuple[str, str] | None = None
     try:
         payload = json.loads(sys.stdin.read() or "{}")
-        if isinstance(payload, dict):
-            tool = str(payload.get("tool_name", ""))
-            result = decide(payload)
-    except Exception as e:  # noqa: BLE001  # nunca travar o trabalho por bug do guard
-        print(f"guard.py: erro interno: {e!r}", file=sys.stderr)
-        if tool == "Bash" and not bypass_on():
-            result = ("ask", "guard: erro interno")
+        result = decide(payload) if isinstance(payload, dict) else None
+    except Exception as e:  # noqa: BLE001 - bug do guard fecha (falha_interna)
+        import traceback
+
+        return falha_interna(e, traceback.format_exc())
     if result:
         decision, reason = result
         print(

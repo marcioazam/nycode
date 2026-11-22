@@ -86,7 +86,7 @@ async function startSession(settings: { hooks?: Record<string, unknown> } = {}, 
 describe("default hooks", () => {
 	it("registers the guard, graph context, dispatch and impeccable gate on their events", async () => {
 		const text = await (await startSession()).summary();
-		expect(text).toContain("PreToolUse:\n  [Bash|Edit|Write|Read] command: python3 ");
+		expect(text).toContain("PreToolUse:\n  [Bash|run|Edit|Write|Read|Grep] command: python3 ");
 		expect(text).toContain("SessionStart:\n  [startup|resume|clear|compact] command: python3 ");
 		expect(text).toContain("SubagentStart:\n  [*] command: python3 ");
 		expect(text).toMatch(/PostToolUse:\n {2}\[\*\] command: bash .*hook-dispatch\.sh/);
