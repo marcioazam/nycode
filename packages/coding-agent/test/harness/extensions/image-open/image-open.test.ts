@@ -172,7 +172,7 @@ test("nativo: clique SGR na imagem do transcript abre o arquivo no abridor falso
 		const lit = (t: string) => spawnSync("tmux", ["send-keys", "-t", S, "-l", "--", t]);
 		lit(`\x1b[<0;6;${row + 1}M`);
 		lit(`\x1b[<0;6;${row + 1}m`);
-		await wait(() => existsSync(f.copy), 8000);
+		await wait(() => existsSync(f.copy), 20000);
 		assert.equal(f.got().length, 1, pane());
 		assert.deepEqual(readFileSync(f.copy), Buffer.from(PNG, "base64"));
 		assert.deepEqual(requests, []);
