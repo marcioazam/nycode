@@ -1,5 +1,7 @@
-// Funções puras do sticky-prompt (sem import do tui, fáceis de testar).
-const ZONE_START = /^\x1b\]133;A(?:\x07|\x1b\\)/;
+// Funções puras do sticky-prompt (sem import do @nycode/tui, para testar com node:test).
+// Mensagem de uma linha: o core põe fim e início na mesma linha (`133;B 133;C 133;A texto`), então o A pode vir depois de
+// B/C (dono, 2026-11-19: antes só `^133;A`, e o sticky nunca achava prompt de uma linha).
+const ZONE_START = /^(?:\x1b\]133;[BC](?:\x07|\x1b\\))*\x1b\]133;A(?:\x07|\x1b\\)/;
 const ZONE_END = /\x1b\]133;B(?:\x07|\x1b\\)/;
 
 export interface Sticky {
@@ -19,24 +21,90 @@ export function userMatcher(texts: readonly string[]): (zone: string) => boolean
 	};
 }
 
+interface ZoneIndex {
+	len: number;
+	last: string;
+	starts: number[];
+	ends: number[];
+}
+const zoneIndexes = new WeakMap<readonly string[], ZoneIndex>();
+let memo:
+	| {
+			lines: readonly string[];
+			len: number;
+			last: string;
+			scrollTop: number;
+			isUser: unknown;
+			strip: unknown;
+			result: Sticky | undefined;
+	  }
+	| undefined;
+
+// Suposição: o @nycode/tui (renderCached) entrega um array novo a cada render; para a mesma referência e o mesmo comprimento
+// só a última linha (stream) pode ter mudado, por isso ela entra na chave do índice e do memo.
+function zoneIndex(lines: readonly string[]): ZoneIndex {
+	const len = lines.length,
+		last = lines[len - 1] ?? "";
+	const hit = zoneIndexes.get(lines);
+	if (hit && hit.len === len && hit.last === last) return hit;
+	const idx: ZoneIndex = { len, last, starts: [], ends: [] };
+	for (let i = 0; i < len; i++) {
+		if (ZONE_START.test(lines[i] ?? "")) idx.starts.push(i);
+		if (ZONE_END.test(lines[i] ?? "")) idx.ends.push(i);
+	}
+	zoneIndexes.set(lines, idx);
+	return idx;
+}
+
+/** Primeiro índice de `a` (ordenado) com a[i] >= x. */
+function lowerBound(a: number[], x: number): number {
+	let lo = 0,
+		hi = a.length;
+	while (lo < hi) {
+		const m = (lo + hi) >> 1;
+		if (a[m] < x) lo = m + 1;
+		else hi = m;
+	}
+	return lo;
+}
+
 export function findSticky(
 	lines: readonly string[],
 	scrollTop: number,
 	isUser: (zone: string) => boolean,
 	strip: (s: string) => string,
 ): Sticky | undefined {
-	for (let row = Math.min(scrollTop, lines.length) - 1; row >= 0; row--) {
-		if (!ZONE_START.test(lines[row] ?? "")) continue;
+	const len = lines.length,
+		last = lines[len - 1] ?? "";
+	if (
+		memo &&
+		memo.lines === lines &&
+		memo.len === len &&
+		memo.last === last &&
+		memo.scrollTop === scrollTop &&
+		memo.isUser === isUser &&
+		memo.strip === strip
+	)
+		return memo.result;
+	const { starts, ends } = zoneIndex(lines);
+	let result: Sticky | undefined;
+	for (let i = lowerBound(starts, Math.min(scrollTop, len)) - 1; i >= 0; i--) {
+		const row = starts[i];
+		const e = lowerBound(ends, row);
+		const stop = e < ends.length ? ends[e] : len - 1;
 		const parts: string[] = [];
-		for (let r = row; r < lines.length; r++) {
+		for (let r = row; r <= stop; r++) {
 			const t = strip(lines[r] ?? "").trim();
 			if (t) parts.push(t);
-			if (ZONE_END.test(lines[r] ?? "")) break;
 		}
 		const text = parts.join(" ");
-		if (isUser(text)) return { row, text };
+		if (isUser(text)) {
+			result = { row, text };
+			break;
+		}
 	}
-	return undefined;
+	memo = { lines, len, last, scrollTop, isUser, strip, result };
+	return result;
 }
 
 export function stickyLine(
@@ -46,8 +114,46 @@ export function stickyLine(
 	measure: (s: string) => number,
 	style: (s: string) => string,
 ): string {
-	const body = truncate(`❯ ${text}`, Math.max(1, width - 2), "…");
-	return style(` ${body}${" ".repeat(Math.max(0, width - 1 - measure(body)))}`);
+	// A mensagem já vem com a setinha e a hora do envio (ui-visual): aqui entra só o texto.
+	const lead = width >= 20 ? "   " : " "; // padding interno padrão simétrico (1 + recuo 2 dos dois lados): o ❯ na mesma coluna da mensagem enviada
+	const body = truncate(
+		`❯ ${text.replace(/^[❯>]\s+/, "").replace(/\s{2,}\d\d:\d\d\s*$/, "")}`,
+		Math.max(1, width - 2 * lead.length),
+		"…",
+	);
+	return style(`${lead}${body}${" ".repeat(Math.max(0, width - lead.length - measure(body)))}`);
+}
+
+/** Lab /rolagem desenho 6 "Duas linhas" (dono, 2026-11-19; antes só a faixa com `❯ texto`): em cima, sem fundo, o rótulo
+ * `▎ você · HH:MM` (a hora do envio que a mensagem traz) em accent e dim, uma coluna antes do ❯; embaixo a faixa de sempre. */
+export function stickyLinhas(
+	text: string,
+	width: number,
+	truncate: (s: string, w: number, e: string) => string,
+	measure: (s: string) => number,
+	style: (s: string) => string,
+	fg: (c: "accent" | "dim", s: string) => string,
+): string[] {
+	const hora = /\s{2,}(\d\d:\d\d)\s*$/.exec(text)?.[1];
+	const lead = width >= 20 ? "  " : "";
+	const rotulo = truncate(`${lead}${fg("accent", "▎ você")}${hora ? fg("dim", ` · ${hora}`) : ""}`, width, "");
+	return [
+		rotulo + " ".repeat(Math.max(0, width - measure(rotulo))),
+		stickyLine(text, width, truncate, measure, style),
+	];
+}
+
+/** Coluna e largura da linha fixa: dentro da margem do chat (outputPad), como os demais blocos, e sem a coluna da
+ * barra de rolagem. Estreito demais: a largura toda menos a barra. */
+export function stickyRect(rect: { x: number; width: number }, pad: number): { col: number; width: number } {
+	const free = rect.width - 1;
+	return pad > 0 && free - 2 * pad >= 20
+		? { col: rect.x + pad, width: free - 2 * pad }
+		: { col: rect.x, width: Math.max(1, free) };
+}
+
+export interface StickyLabelTheme {
+	fg(c: "accent" | "dim", s: string): string;
 }
 
 export interface StickyTheme {
@@ -63,6 +169,8 @@ export function stickyStyle(theme: StickyTheme): (s: string) => string {
 			bg = theme.getBgAnsi("selectedBg");
 		const hasFg = fg !== "" && fg !== "\x1b[39m",
 			hasBg = bg !== "" && bg !== "\x1b[49m";
-		return `${hasBg ? bg : ""}${hasFg ? fg : ""}${s}${hasFg ? "\x1b[39m" : ""}${hasBg ? "\x1b[49m" : ""}`;
+		const open = `${hasBg ? bg : ""}${hasFg ? fg : ""}`;
+		const body = open ? s.replace(/\x1b\[0?m/g, (m) => m + open) : s;
+		return `${open}${body}${hasFg ? "\x1b[39m" : ""}${hasBg ? "\x1b[49m" : ""}`;
 	};
 }

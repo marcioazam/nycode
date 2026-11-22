@@ -28,10 +28,10 @@ export default function docsPointerExtension(nycode: ExtensionAPI): void {
 		handler: async (args, ctx) => {
 			const a = args.trim();
 			if (a === "on" || a === "off" || a === "auto") setDocsPointerMode(a);
-			else if (a) return ctx.ui.notify("Usage: /docs-pointer on|off|auto", "warning");
+			else if (a) return ctx.ui.notify("Uso: /docs-pointer on|off|auto", "warning");
 			const mode = getDocsPointerMode();
 			const full = wantsFullDocs(mode, ctx.cwd);
-			ctx.ui.notify(`docs-pointer: ${mode} (${full ? "full docs section" : "compact pointer"})`, "info");
+			ctx.ui.notify(`docs-pointer: ${mode} (${full ? "seção completa de docs" : "ponteiro compacto"})`, "info");
 		},
 	});
 }

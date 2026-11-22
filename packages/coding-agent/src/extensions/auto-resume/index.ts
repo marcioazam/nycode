@@ -5,10 +5,10 @@
  * applies to both.
  *
  * Mechanism: `agent_before_settle` looks at the last assistant message; if it ended in a retryable error (not a context
- * overflow), it waits 30s/90s/3/5/10 min (abortable) and returns an `auto-resume` `custom_message` with
- * `continue: true`. Limit: 5 consecutive attempts (counted by the `auto-resume` messages after the last reply without
- * error); then it gives up with a warning. `harness.autoResume` (NYCODE_AUTO_RESUME wins) switches it off. Fails open:
- * any exception releases the session.
+ * overflow), it waits 30s/90s/3/5/10 min (abortable, with ±20% jitter) and returns an `auto-resume` `custom_message`
+ * with `continue: true`. Limit: 5 consecutive attempts (counted by the `auto-resume` messages after the last reply
+ * without error or user message); then it gives up with a warning. `harness.autoResume` (NYCODE_AUTO_RESUME wins)
+ * switches it off. Fails open: any exception releases the session.
  *
  * The pattern list is a copy of @nycode/ai's retry.js (isRetryableAssistantError) and overflow.js, kept inline.
  *
@@ -25,6 +25,7 @@ import { join } from "node:path";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
 import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { barraOitavos } from "../ui-visual/motion/motion.ts";
 
 type Entry = Record<string, any>;
 export type Decision =
@@ -87,6 +88,8 @@ export function retryable(error: string): boolean {
 const ACCOUNT_LIMIT = /exceed your account'?s rate limit|hit your (?:usage )?limit|usage limit (?:reached|exceeded)/i;
 const LIMIT_MARK = "quota exceeded (account usage limit; auto-resume waits for the reset)";
 export const LIMIT_WAITS = 3;
+/** Marca invisível lida pelo patch de avisos do core (caixaNeutra): caixa com fundo de aviso, como a da trava de modelos. */
+const CAIXA_AVISO = "\u2063\u2063";
 const LIMIT_MARGIN_MS = 60_000;
 const LIMIT_UNKNOWN_MS = 15 * 60_000;
 // The longest window is 7 days; a later reset is bogus and would overflow setTimeout (fires at once past ~24.8 days).
@@ -128,7 +131,71 @@ export function limitReset(headers: Record<string, string>, cache: any, now: num
 	return any.length > 0 ? Math.min(...any) : undefined;
 }
 
-const clock = (ms: number) => new Date(ms).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+/** Atraso para a tela: minutos só quando exatos (90s fica `90s`, não `2 min`). */
+export const delayText = (ms: number): string =>
+	ms >= 60_000 && ms % 60_000 === 0 ? `${ms / 60_000} min` : `${Math.round(ms / 1000)}s`;
+
+const clock = (ms: number) =>
+	new Date(ms).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+
+const SINAL_LIMITE = Symbol.for("nycode-harness:cartao-limite");
+const minutos = (ms: number) => Math.ceil(Math.max(0, ms) / 60_000);
+type TemaCartao = { fg: (cor: string, texto: string) => string; bold: (texto: string) => string };
+
+/** O core desenha este objeto no chat, nunca no histórico de prompts nem no contexto do modelo. */
+function cartaoLimite(erro: string, inicio: number, atraso: number, agora: () => number) {
+	const ascii = process.env.NYCODE_ASCII_ICONS === "1" || /^(?:dumb|linux)$/.test(process.env.TERM ?? "");
+	const fim = inicio + atraso;
+	const provedor = ACCOUNT_LIMIT.exec(erro.slice(LIMIT_MARK.length))?.[0];
+	const progresso = (t: number) => Math.max(0, Math.min(1, (t - inicio) / atraso));
+	let assinatura = "";
+	let final: { retomou: boolean; hora: number } | undefined;
+	return {
+		erro,
+		redesenhar: undefined as (() => void) | undefined,
+		encerrado: () => final !== undefined,
+		linhas(t: TemaCartao) {
+			const titulo = "Limite de uso da conta";
+			const dica = "/model troca de modelo";
+			if (final?.retomou)
+				return [
+					t.fg("success", t.bold(`${titulo} · retomou às ${clock(final.hora)}`)),
+					t.fg("dim", `esperou ${minutos(final.hora - inicio)} min`),
+				];
+			if (final)
+				return [
+					t.fg("dim", `${titulo} · espera cancelada`),
+					t.fg("dim", `${ascii ? "cima" : "↑"} traz o pedido de volta · ${dica}`),
+				];
+			const hora = agora();
+			const barra = barraOitavos(progresso(hora), 6, {
+				ascii,
+				ok: (s) => t.fg("warning", s),
+				resto: (s) => t.fg("borderMuted", s),
+			});
+			return [
+				t.fg("warning", t.bold(titulo)),
+				`${barra} retoma às ${clock(fim)} · faltam ${minutos(fim - hora)} min`,
+				t.fg("dim", `esc cancela · ${dica}`),
+				...(provedor ? [t.fg("dim", `provedor: ${provedor}`)] : []),
+			];
+		},
+		hora: clock(inicio),
+		atualizar() {
+			if (final || !this.redesenhar) return;
+			const t = agora();
+			const proxima = `${Math.round(progresso(t) * (ascii ? 6 : 48))}/${minutos(fim - t)}`;
+			if (proxima === assinatura) return;
+			assinatura = proxima;
+			this.redesenhar();
+		},
+		terminar(retomou: boolean) {
+			final = { retomou, hora: agora() };
+			this.redesenhar?.();
+			this.redesenhar = undefined;
+		},
+	};
+}
 
 function decideLimit(
 	branch: Entry[],
@@ -148,12 +215,13 @@ function decideLimit(
 	for (let i = last; i >= 0; i--) {
 		const e = branch[i];
 		if (e.type === "message" && e.message?.role === "assistant" && e.message.stopReason !== "error") break;
+		if (e.type === "message" && e.message?.role === "user") break; // prompt novo: contagem recomeça
 		if (e.type === "custom_message" && e.customType === "auto-resume-limit") prior++;
 	}
 	if (prior >= LIMIT_WAITS)
 		return {
 			action: "give_up",
-			message: `Auto-resume gave up after ${prior} waits for the account usage limit ("${error.slice(0, MAX_ERR)}").`,
+			message: `Retomada automática desistiu após ${prior} esperas pelo limite de uso da conta ("${error.slice(0, MAX_ERR)}").`,
 		};
 	const until = opts.resetAt === undefined ? opts.now + LIMIT_UNKNOWN_MS : opts.resetAt + LIMIT_MARGIN_MS;
 	return {
@@ -189,12 +257,13 @@ export function decideResume(
 	for (let i = last; i >= 0; i--) {
 		const e = branch[i];
 		if (e.type === "message" && e.message?.role === "assistant" && e.message.stopReason !== "error") break;
+		if (e.type === "message" && e.message?.role === "user") break; // prompt novo: contagem recomeça
 		if (e.type === "custom_message" && e.customType === "auto-resume") prior++;
 	}
 	if (prior >= DELAYS_MS.length) {
 		return {
 			action: "give_up",
-			message: `Auto-resume gave up after ${prior} attempts; the provider is still failing ("${error.slice(0, MAX_ERR)}").`,
+			message: `Retomada automática desistiu após ${prior} tentativas; o provedor continua falhando ("${error.slice(0, MAX_ERR)}").`,
 		};
 	}
 	const attempt = prior + 1;
@@ -207,6 +276,9 @@ export function decideResume(
 			"Continue exactly where you stopped; do not repeat completed tool calls or side effects — check current state first if unsure.",
 	};
 }
+
+/** Delay with ±20% jitter (rand in [0,1)): keeps N children that failed together from coming back at the same instant. */
+export const jitter = (ms: number, rand: () => number = Math.random): number => Math.round(ms * (0.8 + 0.4 * rand()));
 
 /** Waits `ms`; returns false if aborted first. */
 export function sleep(ms: number, signal?: AbortSignal): Promise<boolean> {
@@ -223,6 +295,56 @@ export function sleep(ms: number, signal?: AbortSignal): Promise<boolean> {
 	});
 }
 
+// esc, ctrl+c (cru e no protocolo kitty). ponytail: caps/num lock mudam o modificador do kitty e não casam; a fila e o
+// enviar-agora seguem acordando a espera.
+const TECLA_CANCELA = /^(?:\x1b|\x03|\x1b\[27(?:;1)?(?::[12])?u|\x1b\[99;5(?::[12])?u)$/;
+const POLL_FILA_MS = 250;
+
+/** Sinal próprio da espera. Nesta fase (agent_before_settle) o run do agente já terminou: `ctx.signal` é undefined e o abort
+ * do nycode não acorda ninguém, então a sessão ficava presa até o reset (bug visto pelo dono, 2026-11-14). Acordam a espera:
+ * `ctx.signal` (se houver), esc/ctrl+c, mensagem do usuário na fila e o enviar-agora (`globalThis.__piAutoResumeCancel`). */
+function cancelavel(
+	ctx: any,
+	atualizar?: () => void,
+): { signal: AbortSignal; cancelar: () => void; soltar: () => void } {
+	const own = new AbortController();
+	const abortar = () => own.abort();
+	if (ctx.signal?.aborted) abortar();
+	else ctx.signal?.addEventListener?.("abort", abortar, { once: true });
+	let off: (() => void) | undefined;
+	try {
+		off = ctx.ui?.onTerminalInput?.((data: string) => {
+			if (TECLA_CANCELA.test(data)) abortar();
+			return undefined; // a tecla segue para o nycode
+		});
+	} catch {
+		off = undefined; // sem UI interativa
+	}
+	const poll = setInterval(() => {
+		try {
+			if (ctx.hasPendingMessages?.()) abortar();
+			else atualizar?.();
+		} catch {
+			// contexto encerrado: a espera termina pelo timer
+		}
+	}, POLL_FILA_MS);
+	(globalThis as any).__piAutoResumeCancel = abortar;
+	return {
+		signal: own.signal,
+		cancelar: abortar,
+		soltar() {
+			clearInterval(poll);
+			ctx.signal?.removeEventListener?.("abort", abortar);
+			if ((globalThis as any).__piAutoResumeCancel === abortar) delete (globalThis as any).__piAutoResumeCancel;
+			try {
+				off?.();
+			} catch {
+				// já desligado
+			}
+		},
+	};
+}
+
 function hudCache(): unknown {
 	try {
 		return JSON.parse(
@@ -237,10 +359,13 @@ export default function autoResumeExtension(
 	nycode: ExtensionAPI,
 	wait: typeof sleep = sleep,
 	now: () => number = Date.now,
+	rand: () => number = Math.random,
 ) {
 	// Headers of the last 429: they carry the reset time; a later 200 does not clear them (the settle reads them),
 	// a successful assistant reply does (the limit it described has passed).
 	let limitHeaders: Record<string, string> = {};
+	let cancelarEspera: (() => void) | undefined;
+	nycode.on("session_shutdown", () => cancelarEspera?.());
 	nycode.on("after_provider_response", (event: any) => {
 		if (event?.status !== 429) return;
 		limitHeaders = Object.fromEntries(
@@ -262,44 +387,71 @@ export default function autoResumeExtension(
 		try {
 			if (!resolveNycodeSettings(nycode.getSettings(), process.env).harness.autoResume) return;
 			const t = now();
-			const d = decideResume(ctx.sessionManager.getBranch() as Entry[], process.env, {
-				now: t,
-				resetAt: limitReset(limitHeaders, hudCache(), t),
-				hasUI: Boolean(ctx.hasUI),
-			});
+			const branch = ctx.sessionManager.getBranch() as Entry[];
+			const hasUI = Boolean(ctx.hasUI);
+			let d = decideResume(branch, process.env, { now: t, hasUI });
+			// The HUD cache (file read + parse) only matters for the wait on the account limit.
+			if (d.action === "resume" && d.kind === "limit")
+				d = decideResume(branch, process.env, { now: t, resetAt: limitReset(limitHeaders, hudCache(), t), hasUI });
 			if (d.action === "none") return;
 			if (d.action === "give_up") {
 				if (ctx.ui?.notify) ctx.ui.notify(d.message, "warning");
 				else process.stderr.write(`${d.message}\n`);
 				return;
 			}
+			let cartao: ReturnType<typeof cartaoLimite> | undefined;
+			let status = false;
 			if (d.kind === "limit") {
-				limitHeaders = {}; // consumed by this wait, resumed or cancelled; a new 429 brings fresh ones
+				limitHeaders = {}; // Depois de cancelar, o próximo 429 precisa fornecer os próprios headers.
+				const erro = branch.findLast((e) => e.type === "message" && e.message?.role === "assistant")?.message
+					.errorMessage;
+				cartao = cartaoLimite(String(erro ?? ""), t, d.delayMs, now);
 				const at = clock(t + d.delayMs);
-				ctx.ui?.notify?.(
-					`Account usage limit reached: no retries; the chat resumes by itself at ${at} (Esc cancels).`,
-					"warning",
-				);
-				ctx.ui?.setStatus?.("auto-resume", `⏸ usage limit · resumes ${at}`);
-			} else
+				const ponte = globalThis as Record<symbol, unknown>;
+				ponte[SINAL_LIMITE] = cartao;
+				try {
+					ctx.ui?.notify?.(
+						`${CAIXA_AVISO}Limite de uso da conta atingido\na conversa retoma sozinha às ${at} · esc cancela`,
+						"info",
+					);
+				} finally {
+					delete ponte[SINAL_LIMITE];
+				}
+				status = !cartao.redesenhar; // Sem patch, mantém o aviso e o indicador antigos.
+				if (status)
+					ctx.ui?.setStatus?.("auto-resume", `⏸ limite de uso da conta · retoma sozinho às ${at} · esc cancela`);
+				else cartao.atualizar();
+			} else {
+				status = true;
 				ctx.ui?.setStatus?.(
 					"auto-resume",
-					`auto-resume ${d.attempt}/${DELAYS_MS.length} in ${Math.round(d.delayMs / 1000)}s`,
+					`↻ nova tentativa em ${delayText(d.delayMs)} · ${d.attempt} de ${DELAYS_MS.length} · esc cancela`,
 				);
-			let ok: boolean;
-			try {
-				ok = await wait(d.delayMs, ctx.signal);
-			} finally {
-				ctx.ui?.setStatus?.("auto-resume", undefined);
 			}
-			if (!ok) return;
+			let ok = false;
+			const fim = cancelavel(ctx, cartao ? () => cartao.atualizar() : undefined);
+			cancelarEspera = fim.cancelar;
+			try {
+				ok = await wait(d.kind === "limit" ? d.delayMs : jitter(d.delayMs, rand), fim.signal);
+			} finally {
+				if (cancelarEspera === fim.cancelar) cancelarEspera = undefined;
+				fim.soltar();
+				if (status) ctx.ui?.setStatus?.("auto-resume", undefined);
+				cartao?.terminar(ok);
+			}
+			if (!ok) {
+				// O settle nem sempre marca Esc como aborted; não envie uma notificação de erro após cancelar a espera.
+				if (d.kind === "limit")
+					(globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:retry-cancelado")] = now();
+				return;
+			}
 			const entries = [
 				...event.entries,
 				{
 					type: "custom_message",
 					customType: d.kind === "limit" ? "auto-resume-limit" : "auto-resume",
 					content: d.message,
-					display: true,
+					display: status,
 				},
 			];
 			return { entries, continue: true };
