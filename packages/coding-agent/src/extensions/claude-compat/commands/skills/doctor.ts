@@ -76,8 +76,8 @@ export function skillDoctor(skills: SkillRef[]): string[] {
 			problems.push(`${name}: sem frontmatter`);
 			continue;
 		}
-		// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- k is a fixed frontmatter key from the call sites below
 		const get = (k: string) =>
+			// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- k is a fixed frontmatter key from the call sites below
 			new RegExp(`^${k}:\\s*(.+)$`, "m")
 				.exec(fm)?.[1]
 				?.trim()

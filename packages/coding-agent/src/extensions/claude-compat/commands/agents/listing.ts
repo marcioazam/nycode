@@ -23,8 +23,8 @@ export function readAgentDefs(dir: string): AgentDef[] {
 		.filter((x) => x.endsWith(".md"))
 		.sort()) {
 		const m = /^---\n([\s\S]*?)\n---/.exec(readFileSync(join(dir, f), "utf8"));
-		// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- k is a fixed frontmatter key from the call sites below
 		const get = (k: string) =>
+			// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- k is a fixed frontmatter key from the call sites below
 			new RegExp(`^${k}:\\s*(.+)$`, "m")
 				.exec(m?.[1] ?? "")?.[1]
 				?.trim()
