@@ -982,6 +982,19 @@ claude-home/bin/checks/arg-expansion-check.test.mjs	packages/coding-agent/resour
 claude-home/bin/fonte-icones.py	(ferramenta pessoal do dono para o kitty, fora do produto)	remover	F8	R08
 claude-home/bin/hud/calm-statusline.mjs	packages/coding-agent/resources/statusline/calm-statusline.mjs	converter	F8	R08
 claude-home/bin/hud/tests/calm-statusline.test.mjs	packages/coding-agent/test/harness/statusline/calm-statusline.test.mjs	converter	F8	R08
+claude-home/bin/pi-session	packages/coding-agent/resources/bin/nycode-session	converter	F8	R08
+claude-home/bin/session-transport/bootstrap.py	packages/coding-agent/resources/bin/session-transport/bootstrap.py	converter	F8	R08
+claude-home/bin/session-transport/cli.py	packages/coding-agent/resources/bin/session-transport/cli.py	converter	F8	R08
+claude-home/bin/session-transport/contract.json	packages/coding-agent/resources/bin/session-transport/contract.json	converter	F8	R08
+claude-home/bin/session-transport/tests/support.py	packages/coding-agent/resources/bin/session-transport/tests/support.py	converter	F8	R08
+claude-home/bin/session-transport/tests/test_bootstrap.py	packages/coding-agent/resources/bin/session-transport/tests/test_bootstrap.py	converter	F8	R08
+claude-home/bin/session-transport/tests/test_cli.py	packages/coding-agent/resources/bin/session-transport/tests/test_cli.py	converter	F8	R08
+claude-home/bin/session-transport/tests/test_integration_fix.py	packages/coding-agent/resources/bin/session-transport/tests/test_integration_fix.py	converter	F8	R08
+claude-home/bin/session-transport/tests/test_state.py	packages/coding-agent/resources/bin/session-transport/tests/test_state.py	converter	F8	R08
+claude-home/bin/session-transport/tests/test_tmux_flow.py	packages/coding-agent/resources/bin/session-transport/tests/test_tmux_flow.py	converter	F8	R08
+claude-home/bin/session-transport/transport_state.py	packages/coding-agent/resources/bin/session-transport/transport_state.py	converter	F8	R08
+claude-home/bin/session-transport/transport_tmux.py	packages/coding-agent/resources/bin/session-transport/transport_tmux.py	converter	F8	R08
+claude-home/bin/tests/lifecycle/mcp-header.test.sh	packages/coding-agent/resources/bin/test_mcp_header.py	converter	F8	R08
 claude-home/commands/cancel-ralph.md	packages/coding-agent/resources/commands/cancel-ralph.md	converter	F8	R08
 claude-home/commands/claude-hud-configure.md	packages/coding-agent/resources/commands/claude-hud-configure.md	converter	F8	R08
 claude-home/commands/claude-hud-setup.md	packages/coding-agent/resources/commands/claude-hud-setup.md	converter	F8	R08

@@ -104,7 +104,7 @@ class PiHarnessAgent(Pi):  # type: ignore[misc]
         await self.exec_as_root(
             environment,
             f"mkdir -p {_HOME} && tar -xzf {_REMOTE_BUNDLE} -C {_HOME} && rm {_REMOTE_BUNDLE} "
-            f"&& chmod -R a+rwX {_HOME}",
+            f"&& chmod -R a+rX {_HOME} && mkdir -p {_HOME}/.nycode/agent/diag && chmod 1777 {_HOME}/.nycode/agent/diag",
         )
         await self.exec_as_agent(
             environment,
