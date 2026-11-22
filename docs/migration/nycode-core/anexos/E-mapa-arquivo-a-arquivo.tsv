@@ -1054,6 +1054,17 @@ claude-home/hooks/test_graph_context.py	packages/coding-agent/test/harness/hooks
 claude-home/hooks/test_guard.py	packages/coding-agent/test/harness/hooks/test_guard.py	converter	F8	R10
 claude-home/hooks/test_hook_budget.py	packages/coding-agent/test/harness/hooks/test_hook_budget.py	converter	F8	R10
 claude-home/hooks/test_impeccable_gate.py	packages/coding-agent/test/harness/hooks/test_impeccable_gate.py	converter	F8	R10
+claude-home/hooks/permissions/__init__.py	packages/coding-agent/resources/hooks/permissions/__init__.py	converter	F8	R11
+claude-home/hooks/permissions/decide.py	packages/coding-agent/resources/hooks/permissions/decide.py	converter	F8	R11
+claude-home/hooks/permissions/modes.py	packages/coding-agent/resources/hooks/permissions/modes.py	converter	F8	R11
+claude-home/hooks/permissions/parse.py	packages/coding-agent/resources/hooks/permissions/parse.py	converter	F8	R11
+claude-home/hooks/permissions/paths.py	packages/coding-agent/resources/hooks/permissions/paths.py	converter	F8	R11
+claude-home/hooks/permissions/rules.py	packages/coding-agent/resources/hooks/permissions/rules.py	converter	F8	R11
+claude-home/hooks/permissions/shell.py	packages/coding-agent/resources/hooks/permissions/shell.py	converter	F8	R11
+claude-home/hooks/permissions/tests/test_guard_bypass.py	packages/coding-agent/test/harness/hooks/permissions/test_guard_bypass.py	converter	F8	R11
+claude-home/hooks/permissions/tests/test_guard_modes.py	packages/coding-agent/test/harness/hooks/permissions/test_guard_modes.py	converter	F8	R11
+claude-home/hooks/permissions/tests/test_hardening.py	packages/coding-agent/test/harness/hooks/permissions/test_hardening.py	converter	F8	R11
+claude-home/hooks/permissions/tests/test_units.py	packages/coding-agent/test/harness/hooks/permissions/test_units.py	converter	F8	R11
 claude-home/lite/APPEND.md	packages/coding-agent/resources/instructions/lite.md	converter	F8	R03
 claude-home/lite/settings.json	packages/coding-agent/resources/instructions/lite.settings.json	converter	F8	R04
 claude-home/patches/pi-code/commands-print.patch	packages/coding-agent/src/extensions/commands/	absorver	F5	P02

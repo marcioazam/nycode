@@ -33,3 +33,4 @@ bench/metrics/README.md | sed -i | produto-externo | names `sed -i` as a write c
 bench/runners.py | .pi/agent | produto-externo | runner of the nycode-harness arm (run_pi.py)
 bench/tests/* | .pi/agent | produto-externo | tests of the pi arms and Harbor agents
 bench/tools/test_tools.sh | .pi/agent | produto-externo | test of the api/nycode-harness arm stage
+packages/coding-agent/test/harness/hooks/permissions/* | sed -i | produto-externo | guard test fixtures: `sed -i` is the command the guard classifies as an edit

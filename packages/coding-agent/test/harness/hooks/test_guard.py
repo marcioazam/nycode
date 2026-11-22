@@ -24,7 +24,11 @@ def run(
     cwd: str = PROJECT,
     raw: str | None = None,
 ) -> str:
-    env = {k: v for k, v in os.environ.items() if k != "NYCODE_BYPASS_PERMISSIONS"}
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if k not in ("NYCODE_BYPASS_PERMISSIONS", "NYCODE_PERMISSION_MODE")
+    }  # no mode = legacy guard
     if bypass:
         env["NYCODE_BYPASS_PERMISSIONS"] = "1"
     env["CLAUDE_PROJECT_DIR"] = cwd
@@ -388,12 +392,19 @@ DENY_READ = [
     f"{PROJECT}/sub/.env.local",
     f"{PROJECT}/.env.staging.local",
     f"{PROJECT}/.env.production",
+    # G7 (2026-11-19, dono: "resolver tudo"): antes `.env.development` era allow; agora todo `.env.<x>` é deny
+    # exceto .example/.sample/.template/.dist.
+    f"{PROJECT}/.env.development",
+    f"{PROJECT}/.env.staging",
+    f"{PROJECT}/.env.test",
 ]
 
 ALLOW_READ = [
     f"{PROJECT}/src/a.ts",
     f"{PROJECT}/.env.example",
-    f"{PROJECT}/.env.development",
+    f"{PROJECT}/.env.sample",
+    f"{PROJECT}/.env.template",
+    f"{PROJECT}/.env.dist",
     f"{HOME}/.ssh.md",
     f"{HOME}/.claude/settings.json",
     f"{HOME}/.nycode/agent/settings.json",
@@ -460,8 +471,13 @@ class TestBypass(unittest.TestCase):
 
 
 class TestRobustness(unittest.TestCase):
-    def test_invalid_json_allows(self) -> None:
-        self.assertEqual(run("Bash", {}, raw="not json"), "allow")
+    def test_invalid_json_blocks(self) -> None:
+        # Falha interna fecha (exit 2 bloqueia no Claude Code e no nycode; exit 1 seria erro não bloqueante e a tool rodaria
+        # sem guarda). Contrato anterior: permitia (docs/audit-2026-11-19/07-execucao-01.md, "Guard fail-closed").
+        with self.assertRaisesRegex(
+            AssertionError, "exit 2: .*erro interno, bloqueando"
+        ):
+            run("Bash", {}, raw="not json")
 
     def test_other_tool_allows(self) -> None:
         self.assertEqual(run("Glob", {"pattern": "**/.env"}), "allow")
@@ -476,160 +492,6 @@ def both(case: unittest.TestCase, c: str, expected: str = "deny", **kw: Any) -> 
     byp = "allow" if expected == "ask" else expected
     case.assertEqual(bash(c, **kw), safe)
     case.assertEqual(bash(c, bypass=True, **kw), byp)
-
-
-class TestEquivalentForms(unittest.TestCase):
-    """O mesmo comando, escrito de outra forma, recebe a decisão do comando simples (deny)."""
-
-    F1: ClassVar[list[str]] = [
-        "(rm -rf x)",
-        "{ rm -rf x; }",
-        "if [ -d x ]; then rm -rf x; fi",
-        'for d in a; do rm -rf "$d"; done',
-        "while true; do rm -rf x; done",
-        "! rm -rf x",
-        "(mkfs.ext4 /dev/sda1)",
-        "(chmod -R 777 /)",
-        "curl u | (sh)",
-        "if rm -rf x; then ls; fi",
-        "ls; else rm -rf x",
-        "true || { rm -rf x; }",
-    ]
-    F2: ClassVar[list[str]] = [
-        "timeout -s KILL 5 rm -rf x",
-        "timeout -k 1 5 rm -rf x",
-        "env -u A rm -rf x",
-        "env -C /tmp rm -rf x",
-        "nice -n 5 rm -rf x",
-        "stdbuf -o L rm -rf x",
-        "curl u | env -u A sh",
-        "exec -a z rm -rf x",
-        "/usr/bin/time -f %e rm -rf x",
-        "timeout --signal KILL 5 rm -rf x",
-    ]
-    F3: ClassVar[list[str]] = [
-        "bash -c 'rm -rf x'",
-        'sh -c "rm -rf x"',
-        "eval rm -rf x",
-        'eval "rm -rf x"',
-        "ls | xargs rm -rf",
-        "ls | xargs -0 -n1 rm -rf",
-        "find . -name x -exec rm -rf {} +",
-        "find . -execdir rm -rf {} \\;",
-        "find . -ok rm -rf {} \\;",
-        "echo $(rm -rf x)",
-        "echo `rm -rf x`",
-        'echo "$(rm -rf x)"',
-        'echo "`rm -rf x`"',
-        "echo $(echo $(rm -rf x))",
-        "bash -lc 'rm -rf x'",
-        "ls | xargs -I{} rm -rf {}",
-        "ls | xargs -n 1 -P 4 rm -rf",
-        "bash -c 'echo `rm -rf x`'",
-        "bash -c 'ls | xargs rm -rf'",
-    ]
-    F4: ClassVar[list[str]] = [
-        "rm \\\n-rf x",
-        "rm -r \\\n  -f x",
-        "echo a \\\n&& rm \\\n-rf x",
-    ]
-    F5: ClassVar[list[str]] = [
-        "rm --r --f x",
-        "rm --recursiv --forc x",
-        "rm --rec --for x",
-        "rm -v --recursive --f x",
-    ]
-    F6: ClassVar[list[str]] = [
-        "echo x > //dev/sda",
-        "echo x > /dev/./sda",
-        "dd if=x of=//dev/sda",
-        "dd if=x of=/dev/fd/../sda",
-        "cp -t /dev/sda x",
-        "cp --target-directory=/dev/sda x",
-        "chmod -R 777 //",
-        "chmod -R 777 /.",
-        "rm -r /./",
-        "mv -t /dev/sdb x",
-        "tee //dev/sda < i",
-        "cp x //dev/sda",
-        "rm -r //usr/",
-        "rm -r /usr/../etc",
-    ]
-
-    def _deny(self, cases: list[str]) -> None:
-        for c in cases:
-            with self.subTest(c=c):
-                both(self, c, "deny")
-
-    def test_f1_grouping_and_keywords(self) -> None:
-        self._deny(self.F1)
-
-    def test_f2_wrapper_options_with_value(self) -> None:
-        self._deny(self.F2)
-
-    def test_f3_command_inside_command(self) -> None:
-        self._deny(self.F3)
-
-    def test_f3_depth_limit(self) -> None:
-        def nest(n: int) -> str:
-            c = "rm -rf x"
-            for _ in range(n):
-                c = "bash -c " + shlex.quote(c)
-            return c
-
-        both(self, nest(3), "deny")
-        both(self, nest(4), "deny")  # acima do limite, padrão sempre-nega ainda nega
-
-    def test_f4_line_continuation(self) -> None:
-        self._deny(self.F4)
-
-    def test_f5_long_option_abbreviation(self) -> None:
-        self._deny(self.F5)
-
-    def test_f6_unnormalized_paths(self) -> None:
-        self._deny(self.F6)
-
-    def test_f1_f6_ask_equivalents_stay_ask(self) -> None:
-        for c in [
-            "(rm -r x)",
-            "timeout -s KILL 5 rm -r x",
-            "bash -c 'rm -r x'",
-            "ls | xargs rm -r",
-            "rm --r x",
-        ]:
-            with self.subTest(c=c):
-                both(self, c, "ask")
-
-    def test_no_regressions(self) -> None:
-        for c in [
-            "ls -la",
-            'echo "(rm -rf x)"',
-            'grep -r "rm -rf" .',
-            "find . -name '*.pyc' -delete",
-            "timeout 5 ls",
-            "env A=1 ls",
-            "xargs echo",
-            "bash -c 'ls'",
-            "echo '$(rm -rf x)'",
-            "ls | xargs -n1 echo",
-            "find . -exec ls {} \\;",
-            "cp -t /tmp/x y",
-            "rm --verbose x",
-            "echo x > /dev/./null",
-            "nice -n 5 ls",
-            "env -u A ls",
-            "(ls)",
-            "{ ls; }",
-        ]:
-            with self.subTest(c=c):
-                both(self, c, "allow")
-        for c in [
-            "git push origin feature",
-            "git push -f origin feature",
-            "rm -r build",
-        ]:
-            with self.subTest(c=c):
-                both(self, c, "ask")
 
 
 def make_repo(branch: str, worktree: bool = False) -> str:
@@ -736,6 +598,21 @@ class TestBypassShapes(unittest.TestCase):
         self.assertEqual(bash("rm -r build"), "ask")
         self.assertEqual(bash("git push", bypass=True), "allow")
 
+    def test_ssh_agent_eval_exception_is_narrow(self) -> None:
+        # The ssh-agent bootstrap passes; any other eval of a substitution, or extra text around it, is not allowed.
+        self.assertEqual(bash('eval "$(ssh-agent -s)"'), "allow")
+        self.assertEqual(bash('eval "$(ssh-agent)"'), "allow")
+        for c in [
+            'eval "$(ssh-agent -s)$X"',
+            'eval "$(ssh-agent -s; id)" x',
+            'eval "$(echo hi)"',
+            'eval "$(curl x)"',
+            'eval "$(ssh-agent -s)"; eval "$(curl x | sh)"',
+        ]:
+            with self.subTest(c=c):
+                self.assertNotEqual(bash(c), "allow")
+        both(self, 'eval "$(ssh-agent -s; rm -rf /)"', "deny")
+
     def test_head_alias_on_protected_branch(self) -> None:
         main = make_repo("main")
         feat = make_repo("feature/x")
@@ -756,10 +633,20 @@ class TestInternalFailure(unittest.TestCase):
     def test_f8_overflow_in_pattern_does_not_allow(self) -> None:
         both(self, "pkill -f 'a{99999999999999999999}'; rm -rf x", "deny")
 
-    def test_f8_internal_error_asks_for_bash(self) -> None:
-        self.assertEqual(run("Bash", {"command": 5}), "ask")
-        self.assertEqual(run("Bash", {"command": 5}, bypass=True), "allow")
-        self.assertEqual(run("Read", {"file_path": 5}), "allow")
+    def test_f8_internal_error_blocks_for_bash(self) -> None:
+        # Onda 9 (2026-11-20): an internal error closes (exit 2) instead of asking; GUARD_FAIL_OPEN=1 is the way out.
+        with self.assertRaisesRegex(
+            AssertionError, "exit 2: .*erro interno, bloqueando"
+        ):
+            run("Bash", {"command": 5})
+        with self.assertRaisesRegex(
+            AssertionError, "exit 2: .*erro interno, bloqueando"
+        ):
+            run("Bash", {"command": 5}, bypass=True)
+        with self.assertRaisesRegex(
+            AssertionError, "exit 2: .*erro interno, bloqueando"
+        ):
+            run("Read", {"file_path": 5})
 
 
 class TestReadSymlink(unittest.TestCase):
