@@ -38,7 +38,7 @@ Today the Nycode binary is the terminal agent described above, version 1.6.0, wi
 
 It also has the typed settings keys the harness will use (`harness.*`, `plan.gate`, `subagent.respawn`, `hooks`, `statusLine`, `permissions.bypass`, each with a `NYCODE_*` variable; see [settings](packages/coding-agent/docs/settings.md)) and a benchmark runner in [`bench/`](bench/) with a `nycode` arm. The settings keys only store configuration: the features they configure are not in the binary yet.
 
-**Not in the binary yet** (the Nycode harness is being moved into the core; what is left of it still lives under [`import/ny-pi/`](import/ny-pi/)): sub-agents, plan mode, goal mode, todo, hooks, the agents and skills of the harness, its extensions, and the permission engine. They arrive in phases F5 to F9 of the migration plan in [`docs/migration/nycode-core/`](docs/migration/nycode-core/); the benchmark of the finished binary is F10. Until a phase lands, do not assume its feature exists.
+**Not in the binary yet** (the Nycode harness is being moved into the core): sub-agents, plan mode, goal mode, todo, hooks, the agents and skills of the harness, its extensions, and the permission engine. They arrive in phases F5 to F9 of the migration plan in [`docs/migration/nycode-core/`](docs/migration/nycode-core/); the benchmark of the finished binary is F10. Until a phase lands, do not assume its feature exists.
 
 ## Getting started
 

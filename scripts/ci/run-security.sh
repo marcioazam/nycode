@@ -131,20 +131,18 @@ semgrep_scan() {
     --env SEMGREP_SEND_METRICS=off --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory --env GIT_CONFIG_VALUE_0=/src \
     "$SEMGREP_IMAGE" semgrep scan --error --metrics=off --disable-version-check --quiet \
     --config p/default --config p/python --config p/typescript --config p/command-injection --config p/github-actions \
-    --exclude scripts/fixtures/leak --exclude import --exclude nycode-arquivo "${args[@]}" . || rc=$?
+    --exclude scripts/fixtures/leak --exclude nycode-arquivo "${args[@]}" . || rc=$?
   [ "$mode" = rw ] && rm -r "$src"
   return "$rc"
 }
 
-# import/ (history imported from nycode-harness, removed in F12) is outside every gate except the leak scan: the semgrep
-# and osv-scanner runs exclude it (no other directory of the repository is named "import").
 # docs/migration/nycode-arquivo (verbatim nycode-harness archive, not maintained or executed, owner decision 2026-11-21) is
 # outside semgrep too; the leak scan still covers it.
 # osv-scanner has no severity threshold flag: fail on any group with CVSS >= 7 (HIGH/CRITICAL) or
 # no score at all (unknown is not assumed safe). Exceptions live in scripts/ci/osv-scanner.toml with owner+expiry.
 osv_scan() {
   local out="$TMP/osv.json" rc=0
-  osv-scanner scan source --config scripts/ci/osv-scanner.toml --recursive --x-exclude import --format json --output-file "$out" . || rc=$?
+  osv-scanner scan source --config scripts/ci/osv-scanner.toml --recursive --format json --output-file "$out" . || rc=$?
   # exit 128 = no packages found (never silent: the repo has npm lockfiles); 1 = vulnerabilities found
   [ "$rc" -le 1 ] || {
     echo "osv-scanner error (exit $rc)"

@@ -1,4 +1,4 @@
-// Ported from import/ny-pi/claude-home/bin/tests/plan-gate.test.ts (node:test), same cases and expectations.
+// Ported from the pre-migration harness: claude-home/bin/tests/plan-gate.test.ts (node:test), same cases and expectations.
 import { strict as assert } from "node:assert";
 import { test } from "vitest";
 import type { ExtensionAPI, MessageRenderOptions } from "../../../../src/core/extensions/types.ts";

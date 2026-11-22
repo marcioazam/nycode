@@ -40,8 +40,6 @@ from bench.power import sim as power_sim
 BENCH = Path(__file__).resolve().parent
 REPO = BENCH.parent
 HARBOR_DIR = BENCH / "harbor"  # Harbor agents and bundle scripts of every arm (09 §2.2)
-# The omp arm is outside the measurements (D-26); its agent stays under import/ until the arm is removed (F12).
-OMP_DIR = REPO / "import/nycode-harness/claude-home/bin/evals/harbor"
 NOT_VERIFIED_EXIT = 5
 MAX_ERROR_SHARE = (
     0.10  # a stage with more errored runs than this ends the round (infra, not a score)
@@ -275,7 +273,7 @@ def _harbor_step(
     ws = os.environ.get("BENCH_ANTHROPIC_WORKSPACE_ID")
     nyc = arm == "nycode"
     agent_args, extra, tok_name = runners.harbor_agent(
-        arm, model, OMP_DIR if arm == "omp" else HARBOR_DIR, api=bool(kf), workspace=ws
+        arm, model, HARBOR_DIR, api=bool(kf), workspace=ws
     )
     if kf:
         env = {"ANTHROPIC_API_KEY": read_api_key(kf), **extra}
@@ -310,14 +308,6 @@ def _harbor_step(
             check=True, capture_output=True, env={**os.environ, "HOME": str(stage)},
         )  # fmt: skip
         env[var] = str(bundle)
-    if (
-        arm == "omp"
-    ):  # fetch and checksum the pinned binaries the agent uploads (idempotent)
-        subprocess.run(
-            ["bash", str(OMP_DIR / "omp-release.sh")],
-            check=True,
-            capture_output=True,
-        )
     excl = (
         runners.load_excluded(BENCH / cfg["excluded_file"])
         if cfg.get("excluded_file")

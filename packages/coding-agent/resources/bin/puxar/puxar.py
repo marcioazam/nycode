@@ -33,6 +33,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 import time
 import uuid
 from datetime import UTC, datetime
@@ -554,14 +555,27 @@ def write_session(
         "cwd": cwd,
     }
     entries[0]["data"]["lines"] = len(entries) + 1
-    tmp = dest_dir / f".{target.name}.tmp"
-    with tmp.open("w", encoding="utf-8") as fh:
-        for rec in [header, *entries]:
-            fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
-    os.utime(
-        tmp, (mtime, mtime)
-    )  # /resume ordena pela atividade real, não pela hora da importação
-    os.replace(tmp, target)
+    # S9: temporário único por escrita (duas execuções para a mesma sessão não se pisam); removido se a escrita falha.
+    with tempfile.NamedTemporaryFile(
+        "w",
+        encoding="utf-8",
+        dir=dest_dir,
+        prefix=f".{target.name}.",
+        suffix=".tmp",
+        delete=False,
+    ) as fh:
+        tmp = Path(fh.name)
+        try:
+            for rec in [header, *entries]:
+                fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            fh.flush()
+            os.utime(
+                tmp, (mtime, mtime)
+            )  # /resume ordena pela atividade real, não pela hora da importação
+            os.replace(tmp, target)
+        except BaseException:
+            tmp.unlink(missing_ok=True)
+            raise
     return target
 
 

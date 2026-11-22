@@ -48,3 +48,22 @@ test('payload.model.provider wins without reading the session; invalid values fa
     assert.equal(activeModelProvider({ transcript_path: '/nonexistent', model: { id: 'm1', provider: bad } }), undefined, String(bad));
   }
 });
+
+test('U19: lê de trás para frente em blocos de 64 KB e para no 1º model_change (não lê o arquivo inteiro)', () => {
+  const filler = '{"type":"message","text":"' + 'x'.repeat(1000) + '"}';
+  const tail = Array(50).fill(filler);
+  const head = Array(4000).fill(filler); // ~4 MB antes do model_change
+  const file = session('e.jsonl', [change('anthropic', 'old'), ...head, change('openai-codex', 'gpt-5.5'), ...tail]);
+  const real = fs.readSync;
+  let bytes = 0;
+  fs.readSync = (...a) => { const n = real(...a); bytes += n; return n; };
+  try {
+    assert.equal(activeModelProvider(payload(file, 'gpt-5.5')), 'openai-codex');
+  } finally {
+    fs.readSync = real;
+  }
+  assert.ok(bytes <= 256 * 1024, `leu ${bytes} bytes`);
+  // linha que cruza a fronteira de dois blocos continua inteira
+  const long = '{"type":"model_change","provider":"p-split","modelId":"m","pad":"' + 'y'.repeat(100_000) + '"}';
+  assert.equal(activeModelProvider(payload(session('f.jsonl', [long, filler]), 'm')), 'p-split');
+});

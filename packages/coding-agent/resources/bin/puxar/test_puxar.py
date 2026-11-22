@@ -435,5 +435,45 @@ class RefreshTest(Base):
         self.assertEqual(len(list((self.nycode_dir / NYCODE_ENC).glob("*.jsonl"))), 2)
 
 
+class WriteSessionTest(Base):
+    def entries(self) -> list[dict[str, object]]:
+        return [
+            {"type": "custom", "customType": puxar.IMPORT_TYPE, "data": {}},
+            {"type": "message"},
+        ]
+
+    def test_s9_failed_write_leaves_no_temp_and_no_target(self) -> None:
+        dest = self.nycode_dir / "d"
+        with (
+            mock.patch.object(
+                puxar.json, "dumps", side_effect=["{}", OSError("disco cheio")]
+            ),
+            self.assertRaises(OSError),
+        ):
+            puxar.write_session(
+                dest, "id1", "/x", self.entries(), 1_700_000_000_000, 1000.0
+            )
+        self.assertEqual(list(dest.iterdir()), [])
+
+    def test_s9_two_writes_to_the_same_target_use_distinct_temps(self) -> None:
+        dest = self.nycode_dir / "d"
+        seen: list[str] = []
+        real = os.replace
+
+        def record(a: str, b: str) -> None:
+            seen.append(str(a))
+            real(a, b)
+
+        with mock.patch.object(puxar.os, "replace", side_effect=record):
+            puxar.write_session(
+                dest, "id1", "/x", self.entries(), 1_700_000_000_000, 1000.0
+            )
+            puxar.write_session(
+                dest, "id1", "/x", self.entries(), 1_700_000_000_000, 1000.0
+            )
+        self.assertEqual(len(set(seen)), 2, seen)
+        self.assertEqual(len(list(dest.iterdir())), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

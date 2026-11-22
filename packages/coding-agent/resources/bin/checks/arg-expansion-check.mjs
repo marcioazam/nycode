@@ -49,7 +49,7 @@ export function findAccidental(content) {
   return hits
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(fs.realpathSync(process.argv[1])).href) {
   const targets = process.argv.length > 2 ? process.argv.slice(2) : files()
   const report = []
   for (const f of targets) {

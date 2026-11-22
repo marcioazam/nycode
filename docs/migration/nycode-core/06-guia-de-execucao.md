@@ -570,10 +570,10 @@ permissão atrás de chave.
 6. **K6 e K13:** `core/resource-loader.ts` ganha o escopo `builtin` de menor precedência (K6; o `:1254-1268` já resolve
    `SYSTEM.md` e `APPEND_SYSTEM.md`); `packages/coding-agent/package.json` `files` (`:23-30`) recebe `"resources"`
    (K13). Testes: precedência (usuário > projeto > embarcado, 02 §6) e `npm pack --dry-run` lista `resources/`.
-7. **Motor nativo, fase B (K11, D-08):** `core/permissions/` com `permissions.engine` (`"script"` padrão, `"native"`
-   opcional) e gancho em `tool_call`. Teste diferencial: o corpus de `claude-home/hooks/test_guard.py` e o fuzz
-   `fuzz/test_guard_fuzz.py` rodam nos dois motores com **semente fixa** e exigem veredito igual em 100%. O padrão só
-   vira `native` depois do `security-reviewer`. Falha ao iniciar o motor escolhido: a chamada é **negada**.
+7. **Motor nativo, fase B (K11, D-08):** `core/permissions/` com `permissions.engine` (`"native"` padrão desde a D-60,
+   `"script"` opcional) e gancho em `tool_call`. Teste diferencial: o corpus de `claude-home/hooks/test_guard.py` e o fuzz
+   `fuzz/test_guard_fuzz.py` rodam nos dois motores com **semente fixa** e exigem veredito igual em 100%. O padrão virou
+   `native` na D-60, depois do diferencial a 100% e da revisão de segurança (#362). Falha ao iniciar o motor escolhido: a chamada é **negada**.
 
 **Lints a passar com os caminhos novos** (também por `scripts/ci/run-static.sh`): `scripts/ci/lint/core_scope.py`
 (confere `docs/specs/0005` contra skills, agentes e extensões entregues; só passa depois dos passos 2 a 4 e de F7),
@@ -592,7 +592,7 @@ ele lê essa variável: [evidência F8](evidencias/F8.md#correção-da-verifica�
 
 **Evidência:** contagens (17 agentes, 30 skills, 17 comandos, 21 arquivos de hooks), saída de cada lint, concordância
 do teste diferencial (alvo 100% do corpus e do fuzz), laudo do `security-reviewer`, P-1 e P-4 fechados. **Reversão:**
-`permissions.engine: "script"` (padrão) desliga o motor nativo sem reverter código; recursos por `git revert`.
+`permissions.engine: "script"` desliga o motor nativo sem reverter código; recursos por `git revert`.
 
 <a id="f9"></a>
 

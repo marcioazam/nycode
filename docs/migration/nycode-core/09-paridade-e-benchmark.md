@@ -140,7 +140,7 @@ Teste diferencial: o corpus de `test_guard.py` (41 testes) e a geração semeada
 semeado, orçamento de 2 s por entrada de até 4 KB, sem lançar exceção) alimentam os dois motores (o script e
 `core/permissions/`, K11) e comparam o veredito. Critério de D-08, sem folga: mesmo veredito em 100% do corpus e do
 fuzz com semente fixa, mais revisão de segurança, antes de `permissions.engine` mudar o padrão de `"script"` para
-`"native"`. Se o motor escolhido falhar ao iniciar, a chamada é negada: teste próprio.
+`"native"` (feito na D-60: diferencial a 100% e revisão de segurança no #362). Se o motor escolhido falhar ao iniciar, a chamada é negada: teste próprio.
 
 O que ainda não está definido: o número de casos dentro de `test_guard.py` (só o de funções, 41), a semente e o número
 de

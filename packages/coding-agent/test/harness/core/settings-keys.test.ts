@@ -322,7 +322,7 @@ describe("settings keys of 02 section 5", () => {
 	});
 
 	it("permissions.engine defaults to script, accepts native and keeps an unknown value for the gate to deny", () => {
-		expect(SettingsManager.inMemory().getNycodeSettings().permissions.engine).toBe("script");
+		expect(SettingsManager.inMemory().getNycodeSettings().permissions.engine).toBe("native");
 		const native = { permissions: { engine: "native" as const } };
 		expect(validator.Check(native)).toBe(true);
 		expect(SettingsManager.inMemory(native).getNycodeSettings().permissions.engine).toBe("native");

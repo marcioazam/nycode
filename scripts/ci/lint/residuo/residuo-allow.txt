@@ -1,6 +1,6 @@
 # residuo.py exceptions (D-45): `glob | regex | class | reason`. A regex covers only the spans it matches; `*` covers the
 # whole file. A line that covers no hit is stale and fails: the list only shrinks. Fixed exemptions (LICENSE, NOTICE,
-# CHANGELOG.md, README.md, from-pi migration, docs/fork, docs/migration, docs/harness, import/) live in residuo.py.
+# CHANGELOG.md, README.md, from-pi migration, docs/fork, docs/migration, docs/harness) live in residuo.py.
 
 # bench: the arms nycode-harness and pi-vanilla and the Harbor agents name the product the benchmark measures (D-31, 05 section 6).
 bench/* | * | produto-externo | arms, runners, metrics and contract of the benchmark that measures the pi as a product
@@ -9,8 +9,6 @@ docs/bench/* | * | produto-externo | baselines and runbook of the benchmark that
 # the fork's own machinery spells the words it renames and bans.
 scripts/fork/* | * | ferramenta-fork | rename.py, its tests, post scripts and seams list hold the words by design
 scripts/ci/lint/criterio2/* | * | ferramenta-fork | the criterio2 gate lists the pi paths it bans and the migration it allows
-scripts/ci/lint/core_scope.py | import/ny-pi | transicao | the pieces still waiting in import/ny-pi (C-F12-05)
-scripts/ci/lint/test_core_scope.py | import/ny-pi | transicao | fixture tree that mirrors import/ny-pi
 scripts/ci/lint/test_gerar_mapa.py | * | ferramenta-fork | tests of the migration map generator (docs/migration/nycode-core)
 
 # records written about the nycode-harness origin, kept as written.
@@ -38,8 +36,7 @@ packages/coding-agent/test/harness/core/settings-env.test.ts | from-pi | migraca
 packages/coding-agent/src/utils/changelog.ts | earendil-works\)\\/pi-mono | upstream | legacy repository the changelog links are normalized from
 scripts/release-notes.mjs | earendil-works\)\\/pi-mono | upstream | legacy repository the release-note links are normalized from
 
-# references to the trees the migration keeps: the origin harness under import/ (C-F12-05) and the migration records.
-packages/coding-agent/* | import/ny-pi | transicao | tests and comments that port a piece still read from import/ny-pi
+# references to the records the migration keeps.
 packages/coding-agent/* | (claude-home/)?docs/pi-[\w.-]+\.md | migracao | pointers to records written about the origin harness
 
 # packages, hosts and repositories owned by someone else, named as they are. The workspace names `@earendil-works/pi-<x>`

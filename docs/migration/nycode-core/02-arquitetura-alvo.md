@@ -39,7 +39,7 @@ nycode/
 │   │   ├── resources/          N3 (novo)
 │   │   │   ├── agents/         17 agentes
 │   │   │   ├── commands/       17 comandos
-│   │   │   ├── hooks/          guard.py, graph_context.py, dispatch/, claims/
+│   │   │   ├── hooks/          guard.py (motor script), dispatch/, claims/
 │   │   │   ├── instructions/   contrato de trabalho (ex-CLAUDE.md), headless, lite
 │   │   │   ├── rules/          safety.md e rules-ref/
 │   │   │   └── skills/         30 skills
@@ -206,7 +206,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | Hoje (harness Nycode) | Chave em `settings.json` | Variável | Padrão |
 |---|---|---|---|
 | `PI_BYPASS_PERMISSIONS`, `--bypass`, `--safe` | `permissions.bypass` | `NYCODE_BYPASS_PERMISSIONS` | `false` |
-| (novo, K11) escolha do motor de permissão | `permissions.engine` | — (sem variável) | `"script"` (`guard.py`); `"native"` liga o motor TypeScript. valor desconhecido nega. **Só global** (`~/.nycode/agent/settings.json`; o do projeto é ignorado, como em `permissions.bypass`; C-F8-13). O padrão só muda após `security-reviewer` e benchmark (D-29) |
+| (novo, K11) escolha do motor de permissão | `permissions.engine` | — (sem variável) | `"native"` (motor TypeScript, padrão desde a D-60); `"script"` volta ao `guard.py` pelo `PreToolUse`. Valor desconhecido nega. **Só global** (`~/.nycode/agent/settings.json`; o do projeto é ignorado, como em `permissions.bypass`; C-F8-13). Um motor por vez: com `native` o `guard.py` não é registrado |
 | `--no-approve` injetado pelo wrapper | `defaultProjectTrust` (já existe) | — | `"never"` |
 | `--exclude-tools web_search` | extensão `web` desligada (**superada por D-52**) | `NYCODE_KEEP_WEB_SEARCH=1` mantém `web_search` | `web_fetch` ligado, `web_search` ausente |
 | `PI_COMPACT_AT` | `compaction.maxContextTokens` | `NYCODE_COMPACT_AT` | `250000` |
@@ -239,6 +239,7 @@ retrocompatibilidade não pedida); a conversão é feita uma vez por `nycode mig
 | `PI_RESTART_WRAPPER_PID`, `PI_RESTART_REQUEST_FILE`, `PI_LIFECYCLE_ROOT_PID` | — | `NYCODE_RESTART_WRAPPER_PID`, `NYCODE_RESTART_REQUEST_FILE`, `NYCODE_LIFECYCLE_ROOT_PID` | definidos pelo supervisor nativo do core (`core/lifecycle/supervisor.ts`, K24) para `/restart`; fora de uma sessão interativa em terminal o comando recusa (D-56) |
 | `PI_RESTART_MAX` | — | `NYCODE_RESTART_MAX` | limite de reinícios do supervisor (1 a 100, padrão 10) |
 | `PI_PERMISSION_MODE`, `PI_BYPASS_ELIGIBLE`, `PI_BYPASS_OPTIN` | — (estado do controlador de modos de permissão da extensão `claude-compat`) | `NYCODE_PERMISSION_MODE`, `NYCODE_BYPASS_ELIGIBLE`, `NYCODE_BYPASS_OPTIN` | vazio (D-56) |
+| `GUARD_FAIL_OPEN` | — (saída de emergência quando o próprio guard falha) | `NYCODE_GUARD_FAIL_OPEN` | vazio: falha interna do guard bloqueia (`guard.py` sai com 2; o motor nativo nega) (D-58, D-60) |
 | `NO_COLOR`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | — | `NO_COLOR` (padrão externo), `NYCODE_DISABLE_TERMINAL_TITLE` | — |
 | `PI_KNOWLEDGE_VAULT`, `PI_GRAPHS_VAULT` | `knowledge.vault`, `knowledge.graphsVault` | `NYCODE_KNOWLEDGE_VAULT`, `NYCODE_GRAPHS_VAULT` | vazio |
 | `CODEGRAPH_AUTO_ROOT`, `_BIN`, `_STATUS_TTL`, `_AUTO_STATE` | `codegraph.{autoRoot,bin,statusTtl,autoState}` | iguais (são do codegraph) | vazio |
@@ -276,6 +277,8 @@ sempre carregado não pode crescer com a mudança de lugar.
 Hooks, fase A (F8): os scripts Python e shell rodam como hoje, lançados pela extensão `hooks`. Dependência de
 execução: `python3` e `jq` na máquina. Fase B (F8): `guard.py` ganha equivalente nativo em `core/permissions/`
 (K11), sem Python no caminho de toda chamada de ferramenta; o script fica como referência e oráculo de teste.
+
+Tipo de hook `internal` (D-60): a extensão `hooks` aceita `{ "type": "internal", "name": "graph-context" }`, que roda uma função do core no próprio processo (registro em `src/extensions/hooks/internal/registry.ts`) e devolve o que um hook de comando devolveria (código, stdout, stderr), com `timeout` e `onFailure` como nos outros tipos. Nome desconhecido é erro de configuração (aviso na carga, hook ignorado, nunca silencioso). `graph-context` (SessionStart e SubagentStart) é o primeiro; o `graph_context.py` saiu. Com isso o `python3` deixa de ser necessário para os hooks padrão (restam `jq` e `bash` no `hook-dispatch.sh`); continua necessário para o motor `"script"` opcional (`guard.py`) e para os scripts das skills.
 
 ## 7. Pacotes opcionais
 

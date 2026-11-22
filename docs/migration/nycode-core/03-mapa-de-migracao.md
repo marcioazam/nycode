@@ -186,7 +186,6 @@ ligada; `remove` não migra. A especificação migra para `docs/specs/` em F2 e 
 | extension | up-dequeue | ui | Seta para cima restaura a fila |
 | hook | claims | core | Afirmação sem evidência |
 | hook | dispatch | core | Despachante dos hooks |
-| hook | graph_context.py | optional | Exige codegraph |
 | hook | guard.py | core | Bloqueio de comando destrutivo |
 | hook | impeccable_gate.sh | optional | Serve uma skill de design que o repositório não traz |
 | command | cancel-ralph | core | Laço de prompt (par do `/loop` do Claude Code) |

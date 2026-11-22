@@ -10,7 +10,7 @@ const RES = "${NYCODE_RESOURCES}";
 const hook = (command: string, timeout: number) => ({ type: "command", command, timeout }) as const;
 /** The guard fails closed (D-08): an interpreter that cannot run it (python3 missing, a broken import) blocks the call. */
 const guardHook = { ...hook(`python3 "${RES}/hooks/guard.py"`, 30), onFailure: "block" } as const;
-const graphContext = hook(`python3 "${RES}/hooks/graph_context.py"`, 10);
+const graphContext = { type: "internal", name: "graph-context", timeout: 10 } as const;
 const dispatch = hook(`bash "${RES}/hooks/dispatch/hook-dispatch.sh"`, 10);
 /** The embedded ralph-loop Stop hook (D-54). Inert without a loop state file; the guard skips a resources root that lacks
  * the script, and an `if` (not `&&`) keeps the hook's own exit code. Needs bash, and jq once a loop is active. */
@@ -91,7 +91,7 @@ export const SETTINGS_DEFAULTS = {
 	fullscreenCopyOnSelect: true,
 	fullscreenWheelScrollLines: "auto",
 	// nycode keys (docs/migration/nycode-core/02-arquitetura-alvo.md section 5); read by the extensions that own them.
-	permissions: { bypass: false, engine: "script" },
+	permissions: { bypass: false, engine: "native" },
 	harness: {
 		effortSandwich: { enabled: false, turns: 1 },
 		headless: { lean: true, trim: true, tools: "lean", floor: true },
@@ -105,7 +105,7 @@ export const SETTINGS_DEFAULTS = {
 	plan: { gate: true },
 	notify: { sound: true },
 	// nycode: K4 hooks, statusLine and env defaults
-	// Hooks registered by default, run by the `hooks` extension (needs python3 and jq). A `hooks` entry in settings.json
+	// Hooks registered by default, run by the `hooks` extension (the dispatch hook needs jq; python3 only for the opt-in `script` guard engine). A `hooks` entry in settings.json
 	// replaces the default list of that event; `"PreToolUse": []` turns the guard off. The embedded ralph-loop Stop hook
 	// (D-54) is the only Stop hook; the optional impeccable_gate.sh is not registered (onda 9).
 	hooks: {
