@@ -190,6 +190,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | web | core | `web_fetch` ligado por padrão como no nycode-harness; `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1` (D-52; era `optional`, desligada, e o `no-web-search` do nycode-harness, que a 03 listava como `core`, foi removido pela D-10 e substituído por essa regra) |
 | hook | claims | core | Afirmação sem evidência |
 | hook | dispatch | core | Despachante dos hooks |
+| hook | diag.py | core | Relato de falhas dos hooks para a caixa de diagnóstico |
 | hook | graph_context.py | optional | Exige codegraph |
 | hook | guard.py | core | Bloqueio de comando destrutivo |
 | hook | impeccable_gate.sh | optional | Serve uma skill de design que o repositório não traz |

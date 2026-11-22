@@ -1026,6 +1026,8 @@ claude-home/docs/third-party/mattpocock-skills/LICENSE	docs/harness/third-party/
 claude-home/docs/third-party/obra-superpowers/LICENSE	docs/harness/third-party/obra-superpowers/LICENSE	converter	F8	D02
 claude-home/hooks/claims/claims.py	packages/coding-agent/resources/hooks/claims/claims.py	converter	F8	R11
 claude-home/hooks/claims/patterns.ere	packages/coding-agent/resources/hooks/claims/patterns.ere	converter	F8	R11
+claude-home/hooks/claims/test_claims.py	packages/coding-agent/test/harness/hooks/claims/test_claims.py	converter	F8	R11
+claude-home/hooks/diag.py	packages/coding-agent/resources/hooks/diag.py	converter	F8	R11
 claude-home/hooks/dispatch/hook-dispatch.sh	packages/coding-agent/resources/hooks/dispatch/hook-dispatch.sh	converter	F8	R11
 claude-home/hooks/dispatch/test_dispatch.py	packages/coding-agent/test/harness/hooks/dispatch/test_dispatch.py	converter	F8	R10
 claude-home/hooks/fixtures/pi-code-1.7.0/PostToolUse-Agent.json	packages/coding-agent/test/harness/hooks/fixtures/PostToolUse-Agent.json	mover	F8	R09
