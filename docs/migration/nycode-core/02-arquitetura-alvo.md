@@ -189,6 +189,7 @@ Lista fechada. Cada linha é uma costura no upstream e entra em [08](08-sincroni
 | K17 | `interactive-mode.ts`, `components/status-indicator.ts`, `components/assistant-message.ts`, `components/compaction-summary-message.ts` (em `modes/interactive`) | Uma chamada ao módulo `modes/interactive/avisos` por ponto de gancho (avisos em pt-BR); `NYCODE_AVISOS=0` devolve os textos do upstream | `avisos` | F12 |
 | K18 | `packages/coding-agent/src/core/settings-manager.ts` | `getCompactionReserveTokens` aplica o limite de compactação por sessão (`/contexto`, módulo `core/compaction/session-limit.ts`) | `compact-at-400k.ts`, patch `contexto-reserve` (D-58) | F12 |
 | K19 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | `updateEditorBorderColor()` instala os controles de interface (`/focus`, `/color`; módulo `modes/interactive/ui-controls`) | `claude-compat/interface`, patch `ui-controls` (D-58) | F12 |
+| K20 | `packages/coding-agent/src/modes/interactive/interactive-mode.ts` | O `handleResumeSession` mostra o divisor da sessão retomada (módulo `modes/interactive/retomada`) no lugar do `showStatus` | patch `retomada` (D-58) | F12 |
 
 <a id="5-configuracao-e-variaveis-de-ambiente"></a>
 

@@ -196,6 +196,7 @@ import { editInExternalEditor } from "./external-editor.ts";
 import { refreshModelCatalogs } from "./model-catalog-refresh.ts";
 import { getModelSearchText } from "./model-search.ts";
 import { type BlockedStatus, ProgramStatusReporter } from "./program-status-reporter.ts";
+import { mostrarRetomada, type ResumeHost } from "./retomada/index.ts";
 import { shareSession } from "./session-share.ts";
 import { initialThemeSetting } from "./theme/nycode-themes.ts";
 import {
@@ -6025,7 +6026,7 @@ export class InteractiveMode {
 			if (result.cancelled) {
 				return result;
 			}
-			this.showStatus("Resumed session");
+			mostrarRetomada(this as unknown as ResumeHost); // nycode: K20
 			return result;
 		} catch (error: unknown) {
 			if (error instanceof MissingSessionCwdError) {

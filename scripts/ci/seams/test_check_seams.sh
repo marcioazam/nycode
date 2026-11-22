@@ -13,7 +13,7 @@ fail() {
   echo "FAIL: $1" >&2
   exit 1
 }
-# K1..K19 pending on a file that does not exist, then override single lines.
+# K1..K20 pending on a file that does not exist, then override single lines.
 mklist() { # extra lines replacing K1 and K2
   {
     printf '# comment\n\n%s\n%s\n' "$1" "$2"
