@@ -15,6 +15,8 @@ import { loadSkills } from "../../../../src/core/skills.ts";
 import { collectCommands, commandDirs } from "../../../../src/extensions/commands/expand.ts";
 import { discoverAgents } from "../../../../src/extensions/subagent/registry/agents.ts";
 import { convertSettings } from "../../../../src/migrations/from-pi-convert.ts";
+import { THEME_RENAMES } from "../../../../src/migrations/from-pi-personal.ts";
+import { NYCODE_THEME_NAMES } from "../../../../src/modes/interactive/theme/nycode-themes.ts";
 import { type Home, makeHome, SECRET } from "../from-pi-fixture.ts";
 
 afterEach(() => vi.unstubAllEnvs());
@@ -105,6 +107,10 @@ describe("migrate from-pi personal layer", () => {
 		expect(convert("tokyo-night").settings.theme).toBe("tokyo-night");
 		expect(convert("tokyo-night").themeRenamed).toBeUndefined();
 		expect(convert("my-pi-claro").settings.theme).toBe("my-pi-claro");
+	});
+
+	it("converts only to themes the package embeds", () => {
+		for (const pi of Object.keys(THEME_RENAMES)) expect(NYCODE_THEME_NAMES).toContain(THEME_RENAMES[pi]);
 	});
 
 	it("notes the theme conversion in the plan", async () => {
