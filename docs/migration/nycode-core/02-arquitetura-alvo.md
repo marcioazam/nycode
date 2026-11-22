@@ -129,6 +129,7 @@ ganha a atribuição e o commit de origem.
 | `folha` | `~/.pi/agent/extensions/folha/` (camada local) | N2 | Confirmações seguras em português, saídas `/context /memory /agents /hooks` em folha e `/painel`; depende de `ui/a11y.ts` (`movimento`) (D-56) | F12 |
 | `chat-margin` | `~/.pi/agent/extensions/chat-margin/` (camada local) | N2 | Todo bloco com fundo do chat respeita a margem do texto (`outputPad`); embrulha `render`/`handleMouse` dos componentes do chat; usa `isImageLine` do `@nycode/tui` (K15) (D-56) | F12 |
 | `travar-modelos` | `~/.pi/agent/extensions/travar-modelos/` (camada local) | N2 | `/travar-modelos`: obriga a sessão a usar só os modelos e esforços escolhidos; separada do roteamento de subagentes (só reaproveita o seletor `subagent/routing/setup-ui.ts`) (D-56) | F12 |
+| `code-blocks` | `~/.pi/agent/extensions/code-blocks/` (camada local) | N2 | Blocos de código sem cerca e sem borda, com fundo tingido pela cor da linguagem, realce por highlight.js e botão de copiar clicável (fullscreen) (D-56) | F12 |
 | `claude-compat` (base) | `~/.pi/agent/extensions/claude-compat/` (`aliases`, `fleet`, `permissions/*`, `vim/*`) | N2 | Só a base de que `ui/editor.ts` depende; biblioteca sem fábrica, ainda não registrada (D-56, parte 1 de 5) | F12 |
 | `footer` | `extensions/footer-no-stats.ts` | N2 | UI | F7 |
 | `headless-lean` | `extensions/headless-lean/` | N2 | Só no modo `print` | F7 |
