@@ -73,6 +73,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+Embedded third-party components (D-54)
+--------------------------------------
+
+Estes componentes vêm dentro do nycode, ligados por padrão, num commit fixo; o
+LICENSE do autor está no diretório de cada um.
+
+- ponytail: licença MIT, Copyright (c) 2026 DietrichGebert. Fork
+  https://github.com/marcioazam/ponytail (ramo nycode, commit
+  a75382edeb22ec2917cdfa487c6202d8b6f26c99) de
+  https://github.com/DietrichGebert/ponytail v4.10.3 (ef8ca48), com patches.
+  Embutidos: as 6 skills em packages/coding-agent/resources/skills/ponytail*
+  (sem alteração) e a extensão, portada de JavaScript para TypeScript em
+  packages/coding-agent/src/extensions/ponytail/ (hooks/ponytail-config.js,
+  hooks/ponytail-instructions.js e pi-extension/index.js). LICENSE em
+  packages/coding-agent/resources/ponytail/.
+- ralph-loop: licença Apache-2.0 (https://www.apache.org/licenses/LICENSE-2.0),
+  Anthropic. Fork https://github.com/marcioazam/ralph-loop (commit
+  9e7f895c7a806e4648b172d18b2d3bd8d39101df) do diretório plugins/ralph-loop de
+  https://github.com/anthropics/claude-plugins-official (893173f), com
+  alterações. Embutidos: o Stop hook e os dois scripts em
+  packages/coding-agent/resources/ralph-loop/, com LICENSE e NOTICE.
+
 Optional packages (installed from source, not bundled)
 ------------------------------------------------------
 
@@ -80,14 +102,6 @@ Estes pacotes não fazem parte do nycode nem são distribuídos com ele: o usuá
 os instala com `nycode install` num commit fixo (packages/coding-agent/docs/
 optional-packages.md). Cada repositório traz o próprio LICENSE.
 
-- ponytail: licença MIT, Copyright (c) 2026 DietrichGebert. Fork
-  https://github.com/marcioazam/ponytail (ramo nycode, commit a75382e) de
-  https://github.com/DietrichGebert/ponytail v4.10.3 (ef8ca48), com patches.
-- ralph-loop: licença Apache-2.0 (https://www.apache.org/licenses/LICENSE-2.0),
-  Anthropic. Fork https://github.com/marcioazam/ralph-loop (commit 9e7f895) do
-  diretório plugins/ralph-loop de
-  https://github.com/anthropics/claude-plugins-official (893173f), com
-  alterações.
 - pr-review-toolkit: licença Apache-2.0, Anthropic. Diretório
   plugins/pr-review-toolkit de
   https://github.com/anthropics/claude-plugins-official, commit 893173f, sem

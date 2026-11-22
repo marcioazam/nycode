@@ -4,7 +4,7 @@ disable-model-invocation: true
 ---
 
 <!-- Porte para o nycode (2026-11-11) do /ralph-loop:help (ralph-loop 1.0.1); renomeado para não colidir com ajudas do nycode.
-Pacote opcional: o Stop hook vem do pacote ralph-loop (optional). -->
+Embutido (D-54): o Stop hook vem registrado por padrão. -->
 
 Explique ao usuário, em português, sem usar ferramentas:
 
@@ -18,8 +18,8 @@ intercepta e devolve o prompt, e ele continua de onde os arquivos estão, até c
 ## Commands no nycode
 
 - `/ralph-loop PROMPT [--max-iterations N] [--completion-promise TEXTO]`: inicia o loop nesta sessão. Grava o estado em
-  `.claude/ralph-loop.local.md` no diretório atual; o Stop hook (do pacote opcional ralph-loop; você o registra em
-  `hooks.Stop` de `~/.nycode/agent/settings.json`, veja `docs/optional-packages.md`) devolve o prompt até achar
+  `.claude/ralph-loop.local.md` no diretório atual; o Stop hook (embutido; registrado por padrão em `hooks.Stop`, antes do
+  impeccable gate) devolve o prompt até achar
   `<promise>TEXTO</promise>` na última resposta ou chegar ao limite. Exemplo:
   `/ralph-loop "Corrija o refresh de token em auth.ts. Escreva <promise>FIXED</promise> quando os testes passarem."
   --completion-promise "FIXED" --max-iterations 10`

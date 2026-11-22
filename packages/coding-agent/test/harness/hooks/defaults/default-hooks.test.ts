@@ -1,6 +1,7 @@
 // The hooks nycode registers by default (settings-defaults.ts `hooks`): the hooks extension, started on default
 // settings, resolves every command to a file under the embedded resources, and the guard blocks a catastrophic command.
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -90,8 +91,9 @@ describe("default hooks", () => {
 		expect(text).toContain("SubagentStart:\n  [*] command: python3 ");
 		expect(text).toMatch(/PostToolUse:\n {2}\[\*\] command: bash .*hook-dispatch\.sh/);
 		expect(text).toMatch(/\[Edit\|Write\] command: sh .*impeccable_gate\.sh" hook/);
-		expect(text).toMatch(/Stop:\n {2}\[\*\] command: sh .*impeccable_gate\.sh" hook/);
-		expect(text).not.toContain("ralph-loop");
+		// D-54: the ralph-loop Stop hook (embedded) runs first, the impeccable gate second, in one group.
+		expect(text).toMatch(/Stop:\n {2}\[\*\] command: if \[ -f .*ralph-loop\/hooks\/stop-hook\.sh" \]/);
+		expect(text.split("Stop:")[1]).toMatch(/impeccable_gate\.sh" hook/);
 	});
 
 	it("every default command names a script that exists under the embedded resources", () => {
@@ -99,7 +101,7 @@ describe("default hooks", () => {
 		const commands = Object.values(SETTINGS_DEFAULTS.hooks)
 			.flatMap((matchers) => matchers.flatMap((matcher) => matcher.hooks))
 			.map((hook) => hook.command);
-		expect(commands.length).toBe(8);
+		expect(commands.length).toBe(9);
 		for (const command of commands) {
 			const script = /"([^"]+)"/.exec(resolveResourcesMarker(command, root))?.[1] ?? "";
 			expect(script.startsWith(root), command).toBe(true);
@@ -162,18 +164,61 @@ describe("default hooks", () => {
 		expect(text).toContain("SessionStart:");
 	});
 
-	// F9 (C-F9-04): the ralph-loop Stop hook is not registered by `nycode install`; the settings snippet of
-	// docs/optional-packages.md is the way in, so the test loads that very snippet.
-	it("registers the ralph-loop Stop hook from the optional-packages snippet and keeps the impeccable gate", async () => {
-		const doc = readFileSync(new URL("../../../../docs/optional-packages.md", import.meta.url), "utf8");
-		const snippet = /```json\n(\{\n {2}"hooks"[\s\S]*?)\n```/.exec(doc)?.[1] ?? "";
-		const settings = JSON.parse(snippet) as { hooks: Record<string, unknown> };
-		const text = await (await startSession(settings)).summary();
-		const stop = text.split("Stop:")[1] ?? "";
-		expect(stop).toContain(
-			'[*] command: bash "$HOME/.nycode/agent/git/github.com/marcioazam/ralph-loop/hooks/stop-hook.sh"',
-		);
-		expect(stop).toMatch(/impeccable_gate\.sh" hook/);
+	// D-54 (supersedes D-11 for ralph-loop): the Stop hook is a default; it is inert without a loop state file, and a
+	// missing script (resources root without ralph-loop/) is skipped instead of failing every stop.
+	describe("ralph-loop Stop hook", () => {
+		const [group] = SETTINGS_DEFAULTS.hooks.Stop;
+		const command = group?.hooks[0]?.command ?? "";
+		let work: string;
+		beforeEach(() => {
+			work = mkdtempSync(join(tmpdir(), "ralph-"));
+		});
+		afterEach(() => rmSync(work, { recursive: true }));
+		const run = (resources: string, input: object) =>
+			spawnSync("bash", ["-c", command], {
+				cwd: work,
+				input: JSON.stringify(input),
+				encoding: "utf8",
+				env: { ...process.env, NYCODE_RESOURCES: resources },
+			});
+
+		it("is the first Stop hook, ahead of the impeccable gate", () => {
+			expect(
+				group?.hooks.map((h) => h.command.includes("ralph-loop") || h.command.includes("impeccable_gate")),
+			).toEqual([true, true]);
+			expect(command).toContain("ralph-loop/hooks/stop-hook.sh");
+		});
+
+		it("exits 0 and prints nothing when the script is absent from the resources root", () => {
+			const result = run(work, {});
+			expect([result.status, result.stdout, result.stderr]).toEqual([0, "", ""]);
+		});
+
+		it("exits 0 and prints nothing without a loop state file", () => {
+			const result = run(getBuiltinResourcesRoot(), { session_id: "s1" });
+			expect([result.status, result.stdout, result.stderr]).toEqual([0, "", ""]);
+		});
+
+		it("returns the prompt of an active loop as a block decision, and cancels at the iteration limit", () => {
+			mkdirSync(join(work, ".claude"));
+			const state = (iteration: number) =>
+				`---\nactive: true\niteration: ${iteration}\nsession_id: s1\nmax_iterations: 2\ncompletion_promise: null\nstarted_at: "x"\n---\nKeep going\n`;
+			writeFileSync(join(work, ".claude", "ralph-loop.local.md"), state(1));
+			const transcript = join(work, "t.jsonl");
+			writeFileSync(
+				transcript,
+				`${JSON.stringify({ role: "assistant", message: { content: [{ type: "text", text: "x" }] } })}\n`,
+			);
+			const first = run(getBuiltinResourcesRoot(), { session_id: "s1", transcript_path: transcript });
+			expect(first.status).toBe(0);
+			expect(JSON.parse(first.stdout)).toMatchObject({ decision: "block", reason: "Keep going" });
+			writeFileSync(join(work, ".claude", "ralph-loop.local.md"), state(2));
+			const last = run(getBuiltinResourcesRoot(), { session_id: "s1", transcript_path: transcript });
+			expect(last.status).toBe(0);
+			expect(last.stdout).toContain("Max iterations (2) reached");
+			expect(last.stdout).not.toContain("decision");
+			expect(existsSync(join(work, ".claude", "ralph-loop.local.md"))).toBe(false);
+		});
 	});
 
 	it("an empty PreToolUse in the GLOBAL settings turns the guard off and warns once", async () => {

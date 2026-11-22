@@ -40,6 +40,12 @@
     "packages/coding-agent/resources/skills/loop-engineering/SKILL.md": 76,
     "packages/coding-agent/resources/skills/perplexity-urls/SKILL.md": 65,
     "packages/coding-agent/resources/skills/plan-workflow/SKILL.md": 93,
+    "packages/coding-agent/resources/skills/ponytail-audit/SKILL.md": 128,
+    "packages/coding-agent/resources/skills/ponytail-debt/SKILL.md": 124,
+    "packages/coding-agent/resources/skills/ponytail-gain/SKILL.md": 100,
+    "packages/coding-agent/resources/skills/ponytail-help/SKILL.md": 69,
+    "packages/coding-agent/resources/skills/ponytail-review/SKILL.md": 145,
+    "packages/coding-agent/resources/skills/ponytail/SKILL.md": 252,
     "packages/coding-agent/resources/skills/pr-review/SKILL.md": 70,
     "packages/coding-agent/resources/skills/property-based-testing/SKILL.md": 71,
     "packages/coding-agent/resources/skills/quality-gates/SKILL.md": 72,
@@ -53,6 +59,6 @@
     "packages/coding-agent/resources/skills/to-questionnaire/SKILL.md": 77,
     "packages/coding-agent/resources/skills/variant-analysis/SKILL.md": 173
   },
-  "total": 7803,
+  "total": 8621,
   "version": 1
 }

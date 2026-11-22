@@ -13,11 +13,21 @@ Checa, no texto que chega ao modelo (comentários HTML de bloco removidos, como 
 - comandos `/x` citados em código existem (nycode, extensões, resources/commands, /skill:);
 - vocabulário só do Claude Code numa linha sem negação ("no", "not", "never", "Claude"...);
 - `$1`, `$@`, `${1:-x}` acidentais em skills e commands, que o nycode expandiria na invocação
-  (arg-expansion-check.mjs, com a função real do nycode; corrigir escapando: `\$1`).
+  (arg-expansion-check.mjs, com a função real do nycode; corrigir escapando: `\$1`);
+- divergência: o sha256 de cada fonte do Claude (~/.claude: CLAUDE.md, rules, hooks portados) bate com o
+  manifesto `instructions.sources.json` do diretório de configuração do usuário (~/.nycode/agent, ou
+  ${NYCODE_CODING_AGENT_DIR}); fonte mudada = porta pendente. Sem nenhuma fonte em ~/.claude a checagem é pulada.
+Atualização guiada quando uma fonte muda:
+  1. check-instructions.py --diff        mostra o diff de cada fonte contra o snapshot da última porta
+     (`instructions.sources/`, ao lado do manifesto) e o arquivo do nycode que a porta, para aplicar a mudança à mão;
+  2. portar a mudança no arquivo do nycode (adaptando, não copiando);
+  3. check-instructions.py --accept-sources   grava hashes e snapshot novos.
 Saída: uma linha por problema e um resumo; exit 1 se houver problema.
-Uso: check-instructions.py [--refresh]
+Uso: check-instructions.py [--refresh] [--diff] [--accept-sources]
 """
 
+import difflib
+import hashlib
 import json
 import os
 import re
@@ -25,6 +35,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -43,6 +54,62 @@ CODING_AGENT = PACKAGE
 EXT_DIRS = [CODING_AGENT / "src/extensions", HOME / ".nycode/agent/extensions"]
 SLASH_DOC = CODING_AGENT / "docs/slash-commands.md"
 ARG_CHECK = Path(__file__).resolve().parent / "arg-expansion-check.mjs"
+
+# Manifesto e snapshot das fontes do Claude: dados da máquina do usuário, não do repositório.
+AGENT_DIR = Path(os.environ.get("NYCODE_CODING_AGENT_DIR") or HOME / ".nycode/agent")
+MANIFEST = AGENT_DIR / "instructions.sources.json"
+SNAPSHOT = AGENT_DIR / "instructions.sources"
+_NOT_PORTED_TELEMETRY = (
+    "não portado: custo x benefício; equivalente offline "
+    "resources/bin/telemetry/nycode_telemetry.py (docs/harness/pi-hooks-port.md)"
+)
+_NOT_PORTED_ROUTE = (
+    "não portado: custo x benefício (dicas seguidas ~38% no Claude, sem prova causal; "
+    "docs/harness/pi-hooks-port.md)"
+)
+# Fonte do Claude -> arquivo(s) do nycode que a portam (mostrado pelo --diff). Caminhos relativos a
+# packages/coding-agent (resources/ e src/).
+PORTS: dict[Path, str] = {
+    HOME / ".claude/CLAUDE.md": "resources/instructions/contract.md",
+    HOME / ".claude/hooks/graph_context.py": "resources/hooks/graph_context.py",
+    HOME / ".claude/hooks/plan/plan_gate.py": "src/extensions/plan-gate/index.ts",
+    HOME / ".claude/hooks/sound-notify.py": "src/extensions/sound-notify/index.ts",
+    HOME
+    / ".claude/hooks/claims/claims.py": "resources/hooks/claims/claims.py (cópia literal)",
+    HOME
+    / ".claude/hooks/claims/patterns.ere": "resources/hooks/claims/patterns.ere (cópia literal)",
+    HOME / ".claude/hooks/hook-dispatch.sh": (
+        "resources/hooks/dispatch/hook-dispatch.sh (só notas e lembretes; sem ledger e auditoria)"
+    ),
+    HOME / ".claude/hooks/lib/telemetry_io.py": _NOT_PORTED_TELEMETRY,
+    HOME / ".claude/hooks/subagent_telemetry.py": _NOT_PORTED_TELEMETRY,
+    HOME / ".claude/hooks/tool_use_telemetry.py": _NOT_PORTED_TELEMETRY,
+    HOME / ".claude/hooks/route_hint.py": _NOT_PORTED_ROUTE,
+    HOME / ".claude/hooks/route_hints.json": _NOT_PORTED_ROUTE,
+    HOME / ".claude/hooks/claims/cade_o_print.py": _NOT_PORTED_TELEMETRY,
+    HOME / ".claude/hooks/context-mode-cache-heal.mjs": (
+        "não se aplica (nycode sem context-mode; docs/harness/pi-hooks-port.md)"
+    ),
+    HOME / ".claude/rules/safety.md": "resources/rules/safety.md",
+    # Sob demanda: fora do preâmbulo fixo.
+    **{
+        HOME / ".claude/rules" / n: f"resources/rules/ref/{n}"
+        for n in (
+            "docs-and-knowledge.md",
+            "harness-economy.md",
+            "research-and-tools.md",
+        )
+    },
+}
+SOURCES = list(PORTS)
+# Pseudo-fonte: inventário dos hooks do Claude (settings.json + plugins), para um hook novo ou mudado virar porta pendente.
+INVENTORY = "~/.claude/settings.json#hooks"
+HOOK_SUFFIXES = {".py", ".sh", ".mjs", ".js", ".json"}
+HOOK_SKIP_DIRS = {"tests", "__pycache__", ".pytest_cache", ".ruff_cache"}
+# Arquivos em ~/.claude/hooks que não são hooks a portar (plan_gate.py já é fonte via PORTS).
+HOOK_NOT_PORTED = {
+    HOME / ".claude/hooks/claims/replay.py"
+}  # replay offline dos streams de eval do Claude
 
 # Nomes kebab-case em código que não são skill nem agente (scripts, timers, workflows citados como inexistentes...).
 OTHER_NAMES = {
@@ -264,6 +331,175 @@ def check_file(
     return probs
 
 
+def _json_or_none(path: Path) -> Any:
+    try:
+        return json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def _plugin_hooks(install: Path) -> dict[str, Any]:
+    """hooks.json e `hooks` do plugin.json; caminhos relativos viram {caminho: JSON lido}."""
+    manifest = _json_or_none(install / ".claude-plugin/plugin.json")
+    decl = manifest.get("hooks") if isinstance(manifest, dict) else None
+    if isinstance(decl, str) or (
+        isinstance(decl, list) and all(isinstance(x, str) for x in decl)
+    ):
+        decl = {
+            x: _json_or_none(install / x)
+            for x in ([decl] if isinstance(decl, str) else decl)
+        }
+    return {
+        "hooks.json": _json_or_none(install / "hooks/hooks.json"),
+        "plugin.json hooks": decl,
+    }
+
+
+def hook_inventory() -> str:
+    """Texto canônico dos hooks do settings.json e dos plugins habilitados; erro de leitura vira null."""
+    settings = _json_or_none(HOME / ".claude/settings.json")
+    settings = settings if isinstance(settings, dict) else {}
+    installed = _json_or_none(HOME / ".claude/plugins/installed_plugins.json")
+    plugins: dict[str, Any] = {}
+    enabled = settings.get("enabledPlugins")
+    for name, on in enabled.items() if isinstance(enabled, dict) else []:
+        try:
+            install = Path(installed["plugins"][name][0]["installPath"])
+        except (TypeError, KeyError, IndexError):
+            continue
+        if on is True:
+            info = _plugin_hooks(install)
+            if any(v is not None for v in info.values()):
+                plugins[name] = info
+    data = {"settings_hooks": settings.get("hooks"), "plugins": plugins}
+    return json.dumps(data, indent=1, sort_keys=True, ensure_ascii=False) + "\n"
+
+
+def _tilde(path: Path) -> str:
+    return str(path).replace(str(HOME), "~")
+
+
+def source_hashes() -> tuple[dict[str, str | None], list[str]]:
+    """sha256 de cada fonte (None se ausente), do inventário de hooks, e as rules do Claude sem porta."""
+    hashes: dict[str, str | None] = {
+        _tilde(p): hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
+        for p in SOURCES
+    }
+    hashes[INVENTORY] = hashlib.sha256(hook_inventory().encode()).hexdigest()
+    extra = sorted(
+        _tilde(p) for p in (HOME / ".claude/rules").glob("*.md") if p not in SOURCES
+    )
+    return hashes, extra
+
+
+def new_hooks() -> list[str]:
+    root = HOME / ".claude/hooks"
+    return sorted(
+        _tilde(p)
+        for p in root.rglob("*")
+        if p.is_file()
+        and p.suffix in HOOK_SUFFIXES
+        and not HOOK_SKIP_DIRS & set(p.relative_to(root).parts)
+        and p not in SOURCES
+        and p not in HOOK_NOT_PORTED
+    )
+
+
+def snapshot_of(path: Path) -> Path:
+    return SNAPSHOT / str(path.relative_to(HOME)).replace("/", "__")
+
+
+def inventory_snapshot() -> Path:
+    return SNAPSHOT / (INVENTORY.replace("~/", "").replace("/", "__") + ".json")
+
+
+def show_inventory_diff() -> None:
+    snap = inventory_snapshot()
+    old = snap.read_text().splitlines(keepends=True) if snap.exists() else []
+    print(
+        "\n### inventário de hooks do Claude -> porta: docs/harness/pi-hooks-port.md (registro das portas)"
+    )
+    if not snap.exists():
+        print(
+            "(sem snapshot do inventário anterior: compare o inventário inteiro com docs/harness/pi-hooks-port.md)"
+        )
+    sys.stdout.writelines(
+        difflib.unified_diff(
+            old,
+            hook_inventory().splitlines(keepends=True),
+            "inventário anterior",
+            "inventário atual",
+            n=2,
+        )
+    )
+
+
+def show_diff(path: Path) -> None:
+    snap = snapshot_of(path)
+    old = snap.read_text().splitlines(keepends=True) if snap.exists() else []
+    new = path.read_text().splitlines(keepends=True) if path.exists() else []
+    print(f"\n### {path} -> porta: packages/coding-agent/{PORTS[path]}")
+    if not snap.exists():
+        print("(sem snapshot da porta anterior: compare a fonte inteira com a porta)")
+    sys.stdout.writelines(
+        difflib.unified_diff(
+            old, new, f"porta anterior/{path.name}", f"atual/{path.name}", n=2
+        )
+    )
+
+
+def check_sources(accept: bool, diff: bool = False) -> list[str]:
+    """Problemas de divergência das fontes do Claude contra o manifesto; `accept` grava manifesto e snapshot.
+
+    Sem nenhuma fonte em ~/.claude (outra máquina, CI) não há o que comparar e `accept` não grava nada.
+    """
+    if not any(p.exists() for p in SOURCES):
+        print(
+            f"fontes: nenhuma fonte do Claude em {HOME / '.claude'}; checagem de divergência pulada"
+        )
+        return []
+    hashes, extra = source_hashes()
+    if accept:
+        MANIFEST.parent.mkdir(parents=True, exist_ok=True)
+        MANIFEST.write_text(json.dumps(hashes, indent=2) + "\n")
+        SNAPSHOT.mkdir(exist_ok=True)
+        for path in SOURCES:
+            if path.exists():
+                snapshot_of(path).write_bytes(path.read_bytes())
+        inventory_snapshot().write_text(hook_inventory())
+        print(f"manifesto e snapshot gravados: {MANIFEST}, {SNAPSHOT}")
+    probs = [f"rule nova no Claude, sem porta: {p}" for p in extra]
+    probs += [
+        f"hook novo no Claude, sem porta: {p} (docs/harness/pi-hooks-port.md)"
+        for p in new_hooks()
+    ]
+    if not MANIFEST.exists():
+        return probs + [
+            f"manifesto ausente: {MANIFEST} (rode --accept-sources depois de conferir a porta)"
+        ]
+    saved = json.loads(MANIFEST.read_text())
+    for key, digest in hashes.items():
+        if key not in saved:
+            probs.append(
+                f"fonte sem registro no manifesto: {key} (conferir a porta, depois --accept-sources)"
+            )
+        elif saved[key] != digest and key == INVENTORY:
+            probs.append(
+                "inventário de hooks do Claude mudou: ~/.claude/settings.json e plugins habilitados "
+                "(--diff, portar o hook novo ou mudado para o nycode, docs/harness/pi-hooks-port.md, "
+                "depois --accept-sources)"
+            )
+            if diff:
+                show_inventory_diff()
+        elif saved[key] != digest:
+            probs.append(
+                f"fonte mudou desde a porta: {key} (--diff, portar a mudança, depois --accept-sources)"
+            )
+            if diff:
+                show_diff(Path(os.path.expanduser(key)))
+    return probs
+
+
 def check_arg_expansion() -> list[str]:
     try:
         out = subprocess.run(
@@ -328,6 +564,9 @@ def main() -> int:
         total += len(set(probs))
     for p in check_arg_expansion() + check_skills():
         print(p)
+        total += 1
+    for p in check_sources("--accept-sources" in sys.argv, "--diff" in sys.argv):
+        print(f"fontes: {p}")
         total += 1
     print(
         f"{len(files)} arquivos, {total} problema(s); sempre carregado (contract.md + rules): {nbytes} bytes"

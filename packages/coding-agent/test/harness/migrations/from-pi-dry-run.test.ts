@@ -31,11 +31,11 @@ describe("migrate from-pi dry run", () => {
 		expect([...h.out, ...h.err].join("\n")).not.toContain(SECRET);
 	});
 
-	it("reports ponytail as a package to install and skips auth in dry run", async () => {
+	it("reports ponytail as embedded and skips auth in dry run", async () => {
 		const h = makeHome();
 		await h.run([]);
 		const text = h.out.join("\n");
-		expect(text).toMatch(/ponytail/);
+		expect(text).toMatch(/ponytail is embedded/);
 		expect(text).toMatch(/auth\.json.*(--apply|interactive)/);
 	});
 

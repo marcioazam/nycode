@@ -26,6 +26,7 @@ import notifyExtension from "./notify/index.ts";
 import outputStylesExtension from "./output-styles/index.ts";
 import planGateExtension from "./plan-gate/index.ts";
 import planModeExtension from "./plan-mode/index.ts";
+import ponytailExtension from "./ponytail/index.ts";
 import prefixCache1hExtension from "./prefix-cache-1h/index.ts";
 import questionExtension from "./question/index.ts";
 import runExtension from "./run/index.ts";
@@ -79,6 +80,8 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "web", factory: webExtension, builtin: true },
 	// Embedded nycode-lsp: a settings package listed right after nycode in nycode-harness, so it loads before the nycode-harness extensions.
 	{ name: "lsp", factory: lspExtension, builtin: true },
+	// Embedded ponytail (D-54): the settings package listed after nycode-lsp in nycode-harness, on by default.
+	{ name: "ponytail", factory: ponytailExtension, builtin: true },
 	// Embedded nycode-harness extensions, in nycode-harness's load order (after nycode, by source file name).
 	{ name: "auto-resume", factory: autoResumeExtension, builtin: true },
 	// nycode: K11 the logic lives with the permission engine in core/permissions/, this line only registers it.
