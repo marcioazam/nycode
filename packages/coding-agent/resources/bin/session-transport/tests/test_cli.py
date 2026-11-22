@@ -173,7 +173,7 @@ class StartErrorTests(support.Env):
             "set-clipboard"
         )  # OSC 52 fica no cliente; o servidor não guarda o clipboard
         self.assertEqual(
-            argv[i - 2 : i + 2], ["set-option", "-s", "set-clipboard", "external"]
+            argv[i - 3 : i + 2], ["set-option", "-q", "-s", "set-clipboard", "external"]
         )
 
 

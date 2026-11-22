@@ -8,6 +8,8 @@ import tempfile
 import unittest
 from typing import Any
 
+# The private tmux socket path must fit sun_path (about 108 bytes): a runner's TMPDIR is often longer than that allows.
+SHORT_TMP = "/tmp" if os.path.isdir("/tmp") else None
 HERE = os.path.dirname(os.path.realpath(__file__))
 CODE = os.path.dirname(HERE)
 sys.path.insert(0, CODE)
@@ -56,7 +58,7 @@ def write_exec(path: Any, text: Any) -> None:
 
 class Env(unittest.TestCase):
     def setUp(self) -> None:
-        self.tmp = tempfile.mkdtemp(prefix="pst-")
+        self.tmp = tempfile.mkdtemp(prefix="pst-", dir=SHORT_TMP)
         os.chmod(self.tmp, 0o700)
         self.addCleanup(shutil.rmtree, self.tmp, True)
         self.home = os.path.join(self.tmp, "h")

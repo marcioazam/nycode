@@ -59,7 +59,8 @@ def server_args(tmux_bin: Any, sock: Any, tid: Any, rdir: Any, code_dir: Any) ->
     ]
     argv = [tmux_bin, "-S", sock, "-f", "/dev/null", "start-server"]
     for flag, name, value in opts:
-        argv += [SEP, "set-option", flag, name, value]
+        # -q: an option an older tmux does not know (extended-keys-format is 3.5+) must not abort the whole start
+        argv += [SEP, "set-option", "-q", flag, name, value]
     argv += [
         SEP,
         "new-session",
