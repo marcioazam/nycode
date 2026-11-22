@@ -149,6 +149,8 @@ test("segurança 12: diretório recusado não derruba o clique nem abre nada", a
 
 // Nativo: o nycode construído (dist/bundle) em tmux (env -i, CLI direto, provedor falso 127.0.0.1 sem requests, fullscreen). Prova que o Image da extensão
 // é o mesmo do bundle e que o clique SGR no transcript chega ao handleMouse.
+// The row is found by the fixture's own text: the footer shows the cwd, whose path (`.../nycode-image-open-.../work`) also
+// contains "image", and a frame drawn before the message made the click land on the footer.
 // The child runs under `env -i` (TERM=xterm-256color, no KITTY_*/TERM_PROGRAM), so the image always renders as its text
 // fallback line; that line is what the click targets. Budget: up to 40 s to settle, 30 s for the opener, plus startup.
 test(
@@ -208,21 +210,13 @@ test(
 			const imageRow = () =>
 				pane()
 					.split("\n")
-					.findIndex((l) => /image/i.test(l));
+					.findIndex((l) => l.includes("[Image: fixture.png"));
 			// The click only counts once the app has switched mouse reporting on; the image row is read right before it.
 			const mouseOn = () =>
 				spawnSync("tmux", ["display-message", "-p", "-t", S, "#{mouse_any_flag}"], {
 					encoding: "utf8",
 				}).stdout.trim() === "1";
-			// The first frame may still move (header, footer, model line): click only when the row has held still.
-			let still = 0;
-			let last = -1;
-			await wait(() => {
-				const now = imageRow();
-				still = now >= 0 && now === last && mouseOn() ? still + 1 : 0;
-				last = now;
-				return still >= 5;
-			}, 40000);
+			await wait(() => imageRow() >= 0 && mouseOn(), 40000);
 			const row = imageRow();
 			assert.ok(row >= 0, `sem linha de imagem\n${trace()}`);
 			assert.ok(mouseOn(), `o app não ligou o mouse\n${trace()}`);
