@@ -225,7 +225,7 @@ chaves novas.
 | Skills | `claude-home/skills/*/` (30 pastas, 227 arquivos) | `resources/skills/` | idem; `core`, `ui` ou `optional` segundo a 0005 |
 | Comandos | `claude-home/commands/*.md` (17) | `resources/commands/` | idem |
 | Hooks | `claude-home/hooks/` (21 arquivos) | `resources/hooks/` | Registrados por padrão em `hooks` de `settings-defaults.ts` |
-| Temas | `themes/tokyo-night.json`, `themes/mono.json` | `src/modes/interactive/theme/` (tema padrão `tokyo-night`; D-37) | Junto de `dark` e `light` do upstream |
+| Temas | `themes/tokyo-night.json`, `themes/mono.json`, `nycode-claro`, `nycode-escuro`, `nycode-noite` (D-56) | `src/modes/interactive/theme/` (tema padrão `tokyo-night`; D-37) | Junto de `dark` e `light` do upstream |
 | Linha de status | `claude-home/plugins/claude-hud/` + `bin/hud/` | `resources/statusline/` | `statusLine` padrão |
 
 Os caminhos dentro dos textos mudam de `$CLAUDE_CONFIG_DIR/...` e `~/.pi/agent/claude-home/...` para um marcador

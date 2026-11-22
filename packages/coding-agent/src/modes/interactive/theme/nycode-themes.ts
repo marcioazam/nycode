@@ -1,12 +1,12 @@
-// The nycode themes shipped next to dark.json and light.json (seam K4): tokyo-night, the default, and mono, which the
-// ui extension applies under NO_COLOR.
+// The nycode themes shipped next to dark.json and light.json (seam K4): tokyo-night, the default, mono, which the ui
+// extension applies under NO_COLOR, and nycode-claro, nycode-escuro and nycode-noite (D-56).
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { getThemesDir } from "../../../config.ts";
 import { stripBom } from "../../../utils/text.ts";
 import type { ValidatedThemeJson } from "./theme-schema.ts";
 
-export const NYCODE_THEME_NAMES = ["tokyo-night", "mono"] as const;
+export const NYCODE_THEME_NAMES = ["tokyo-night", "mono", "nycode-claro", "nycode-escuro", "nycode-noite"] as const;
 
 export const DEFAULT_THEME = "tokyo-night";
 

@@ -1,6 +1,6 @@
 # Customize Nycode with themes
 
-Themes control the colors Nycode uses in interactive mode and HTML exports. Nycode includes the `system`, `dark`, and `light` themes. You can select one theme, follow your terminal's light or dark appearance, or create your own palette.
+Themes control the colors Nycode uses in interactive mode and HTML exports. Nycode includes the `system`, `dark`, `light`, `tokyo-night` (the default), `mono`, `nycode-claro`, `nycode-escuro`, and `nycode-noite` themes. You can select one theme, follow your terminal's light or dark appearance, or create your own palette.
 
 ## Use your terminal's colors
 

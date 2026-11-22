@@ -32,6 +32,13 @@ describe("nycode themes", () => {
 		expect(getThemeByName("mono")?.name).toBe("mono");
 	});
 
+	it("lists nycode-claro, nycode-escuro and nycode-noite, each loadable under its own name", () => {
+		for (const name of ["nycode-claro", "nycode-escuro", "nycode-noite"]) {
+			expect(getAvailableThemes()).toContain(name);
+			expect(getThemeByName(name)?.name).toBe(name);
+		}
+	});
+
 	it("NO_COLOR makes the a11y extension apply mono without a warning", () => {
 		process.env.NO_COLOR = "1";
 		let handler: ((event: unknown, ctx: unknown) => void) | undefined;
