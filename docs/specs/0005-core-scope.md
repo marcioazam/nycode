@@ -137,6 +137,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | agent | claim-verifier | optional | Papel do `deep-search` |
 | extension | auto-resume | core | Retoma após erro transitório do provedor |
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
+| extension | claude-compat | core | Base de modos de permissão, vim e aliases do editor; biblioteca ainda sem fábrica (D-56, parte 1) |
 | extension | commands | core | Comandos de barra do Claude Code |
 | extension | completion-gate | core | Verificação antes de encerrar |
 | extension | context-imports | core | Imports @ do CLAUDE.md |
