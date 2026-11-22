@@ -53,6 +53,7 @@ KEEP_SCOPE = (
 
 FORK_HEAD_MASKS = [
     re.compile(r"import/ny-pi"),  # path of the tree F12 removes
+    re.compile(r"marcioazam/ny-pi"),  # the repository exists until D-22 (D-48)
     re.compile(
         r"ny-pi-(?:arquivo|core)"
     ),  # directories of the plan under docs/migration
@@ -113,8 +114,8 @@ masks = [
 
 REPO = r"(?:earendil-works|badlogic)/pi(?:-mono)?(?![\w-])"
 FORK_PRE = [
-    # ny-pi (the origin harness) and pi-code (its extension pack) are not the pi: they get their own names
-    (re.compile(r"(?<![\w-])ny-pi(?![\w])"), "ny-harness"),
+    # ny-pi (the origin harness) and pi-code (its extension pack) are not the pi: both become nycode (D-48)
+    (re.compile(r"(?<![\w-])ny-pi(?![\w])"), "nycode"),
     (re.compile(r"(?<![\w-])pi-code(?![A-Za-z0-9])"), "nycode"),
     # statements about the upstream agent stay true: "pi 1.5.2" -> "upstream 1.5.2"
     (re.compile(r"(?<![\w-])[pP]i(?= v?\d+\.\d)"), "upstream"),

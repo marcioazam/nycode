@@ -5,7 +5,7 @@ do modelo é outro pull request, medido no gate (K3c), porque mexe em custo e ac
 
 ## Pergunta
 
-O ny-pi deve trazer só peças generalistas, como um harness "vanilla", e deixar as de domínio, de serviço ou de gosto
+O nycode-harness deve trazer só peças generalistas, como um harness "vanilla", e deixar as de domínio, de serviço ou de gosto
 pessoal como opção?
 
 ## Evidência (fontes primárias lidas em 2026-11-16)
@@ -36,12 +36,12 @@ Custo de peças a mais no contexto do modelo:
 - Carregar todas as definições custa caro: 58 ferramentas consomem cerca de 55 mil tokens. Com busca de ferramentas, a
   escolha certa sobe de 49% para 74% no Opus 4. As falhas mais comuns são ferramenta errada e nomes parecidos
   ([Anthropic, advanced tool use](https://www.anthropic.com/engineering/advanced-tool-use)).
-- No ny-pi: 26 skills visíveis custam cerca de 3,5 mil tokens por turno, e houve 0 leituras de `SKILL.md` em 265 sessões
+- No nycode-harness: 26 skills visíveis custam cerca de 3,5 mil tokens por turno, e houve 0 leituras de `SKILL.md` em 265 sessões
   de benchmark (K3c, registro do follow-up A).
 
 ## Conclusão
 
-Sim, núcleo generalista, mas não "virgem". O ny-pi segue o padrão comum: ferramentas e subagentes genéricos e um
+Sim, núcleo generalista, mas não "virgem". O nycode-harness segue o padrão comum: ferramentas e subagentes genéricos e um
 conjunto pequeno de skills de engenharia que valem para qualquer linguagem e projeto. Ficam fora do núcleo as peças de
 domínio, as que exigem um serviço, conta ou MCP específico e as de gosto pessoal. Essas peças ficam como opção ou nem
 entram no repositório. Uma skill de marketing não entra nem como opção.
@@ -69,7 +69,7 @@ entram no repositório. Uma skill de marketing não entra nem como opção.
 
 Tipos: `skill` (`packages/coding-agent/resources/skills/<nome>/`), `agent` (`packages/coding-agent/resources/agents/<nome>.md`), `extension`
 (`packages/coding-agent/src/extensions/<nome>/`), `hook` (`packages/coding-agent/resources/hooks/<nome>`, fora testes e `fixtures`),
-`command` (`packages/coding-agent/resources/commands/<nome>.md`) e `plugin` (`claude-home/plugins/<nome>/` no ny-pi; no nycode a linha de status
+`command` (`packages/coding-agent/resources/commands/<nome>.md`) e `plugin` (`claude-home/plugins/<nome>/` no nycode-harness; no nycode a linha de status
 vai para `packages/coding-agent/resources/statusline/`). Os caminhos são os de destino do mapa de migração (`docs/migration/nycode-core/`); as peças
 chegam por fase e o `core_scope.py` é convertido em F3.
 

@@ -6,7 +6,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 ## F0. Preparação e congelamento
 
 - [x] C-F0-01 Decisões D-01 a D-28 lidas pelo dono; as "aguarda o dono" (D-15, D-16, D-17, D-22) respondidas. Prova: registro datado em `evidencias/F0.md`.
-- [x] C-F0-02 SHA de congelamento do ny-pi registrado. Prova: `git -C ny-pi rev-parse origin/main`.
+- [x] C-F0-02 SHA de congelamento do nycode-harness registrado. Prova: `git -C ny-pi rev-parse origin/main`.
 - [x] C-F0-03 Linha de base do destino: `npm ci --ignore-scripts`, `npm run build`, `npm run check` com saída 0. Prova: códigos de saída.
 - [x] C-F0-04 `./test.sh` no destino; falhas conhecidas listadas (hoje: `@nycode/env`, falta `cargo`). Prova: resumo do teste.
 - [x] C-F0-05 Anexos A, B, C, D regerados se algum commit novo entrou. Prova: SHAs no cabeçalho dos anexos.
@@ -23,11 +23,11 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 
 ## F1. Importação do histórico
 
-- [x] C-F1-01 Clone novo do ny-pi filtrado para `import/ny-pi/`. Prova: `git ls-files | grep -vc '^import/ny-pi/'` devolve 0 no clone.
+- [x] C-F1-01 Clone novo do nycode-harness filtrado para `import/ny-pi/`. Prova: `git ls-files | grep -vc '^import/ny-pi/'` devolve 0 no clone.
 - [x] C-F1-02 Verificação de vazamento no histórico do clone filtrado. Prova: saída 0 de `check-leaks.sh --history`.
 - [x] C-F1-03 Fusão com `--allow-unrelated-histories` num PR com método merge. Prova: commit com dois pais em `main`.
 - [x] C-F1-04 1485 arquivos sob `import/ny-pi/`. Prova: `git ls-files import/ny-pi | wc -l`.
-- [x] C-F1-05 Histórico preservado. Prova: `git log --follow --oneline import/ny-pi/extensions/plan-gate.ts` mostra commits do ny-pi.
+- [x] C-F1-05 Histórico preservado. Prova: `git log --follow --oneline import/ny-pi/extensions/plan-gate.ts` mostra commits do `marcioazam/ny-pi`.
 - [x] C-F1-06 `import/` fora de `workspaces`, Biome, `tsconfig`, pacote publicado. Prova: `npm run check` igual à linha de base.
 - [x] C-F1-07 Nenhum arquivo fora de `import/ny-pi/` mudou no merge. Prova: `git diff --stat <pai1> <merge> -- . ':!import'` vazio (exceto as exclusões de C-F1-06).
 
@@ -48,7 +48,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F2-13 `.editorconfig`, `.gitattributes`, `.gitignore` fundidos; `.gitleaks.toml`, `.leak-allow` presentes; `.gitleaksignore` reconciliado.
 - [x] C-F2-14 `.husky/pre-commit` roda a verificação de vazamento nos arquivos preparados.
 - [x] C-F2-15 `AGENTS.md` e `CONTRIBUTING.md` reconciliados segundo a tabela de [04](04-regras-do-repositorio.md).
-- [x] C-F2-16 `NOTICE` cita ny-pi e pi-code com licença e commit.
+- [x] C-F2-16 `NOTICE` cita nycode-harness e pi-code com licença e commit.
 - [x] C-F2-17 Especificações 0001 a 0009 em `docs/specs/`, com caminhos atualizados.
 - [x] C-F2-18 Configuração de merge do repositório aplicada. Prova: `gh api repos/marcioazam/nycode` mostra os 8 campos alvo.
 - [x] C-F2-19 14 rótulos criados. Prova: `gh api .../labels` com 26 ou mais.
@@ -64,7 +64,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F3-06 Job `merge-policy` presente (D-07).
 - [x] C-F3-07 `bench/` no destino; testes do bench passam; `bench/suites` fora dos lints.
 - [x] C-F3-08 Tier `smoke` criado (D-27) e modo de paridade (D-28); braço `nycode` definido em `bench/arms.toml`; `bench run --arm nycode --tier smoke` roda.
-- [x] C-F3-09 Braço temporário `ny-pi@1.6.0` medido (D-25). Prova: `runs.jsonl` e veredito guardados. Feito sob a D-39, sem modelo: contrato 25 ok/2 falhas/4 pulados, caso a caso igual ao `ny-pi` sobre o pi 1.5.2; 7 de 7 cenários de falha; velocidade e plano `--dry-run`. Sem `runs.jsonl` nem veredito de gate (exigem modelo, D-29), ver [F10-paridade](evidencias/F10-paridade.md).
+- [x] C-F3-09 Braço temporário `nycode-harness@1.6.0` medido (D-25). Prova: `runs.jsonl` e veredito guardados. Feito sob a D-39, sem modelo: contrato 25 ok/2 falhas/4 pulados, caso a caso igual ao `nycode-harness` sobre o pi 1.5.2; 7 de 7 cenários de falha; velocidade e plano `--dry-run`. Sem `runs.jsonl` nem veredito de gate (exigem modelo, D-29), ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F3-10 Verificador `bench-pr` apontado para o nycode; classifica mudança não funcional (D-21). Prova: status em um PR de documentação. Feito sob a D-39: `bench/run.py affects` classifica o PR #285 (`f2e5fb7b5`, só `docs/`) como `non-functional` e o status que seria publicado (`success`, "não funcional, sem rodada") foi mostrado em `--dry-run`; **nenhum status foi publicado** (o poster é da máquina do dono, P-16), ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F3-11 PR de teste com os 10 checks obrigatórios verdes. Prova: `gh pr checks`.
 - [x] C-F3-12 Ruleset `main` criado e ativo; JSON versionado em `.github/rulesets/main.json` igual ao aplicado. Prova: comparação.
@@ -76,7 +76,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F4-01 K1 no fonte; teste portado verde.
 - [x] C-F4-02 K2 no fonte; teste portado verde.
 - [x] C-F4-03 K3: quatro flags aceitas; `nycode --help` as lista.
-- [x] C-F4-04 K4: chaves novas no esquema; esquema JSON regenerado; padrões do ny-pi (`defaultProjectTrust`, `quietStartup`, `retry`, `shellCommandPrefix`).
+- [x] C-F4-04 K4: chaves novas no esquema; esquema JSON regenerado; padrões do nycode-harness (`defaultProjectTrust`, `quietStartup`, `retry`, `shellCommandPrefix`).
 - [x] C-F4-05 Cada linha da tabela de variáveis de [02, seção 5](02-arquitetura-alvo.md#5-configuracao-e-variaveis-de-ambiente) com teste de leitura da variável e da chave.
 - [x] C-F4-06 K12: `nycode migrate from-pi` em modo de simulação por padrão; nunca apaga a origem; credenciais só com confirmação. Prova: teste com `HOME` descartável.
 - [x] C-F4-07 Exemplos `mcp`, `models`, `lsp` em `examples/config/`; teste do exemplo de modelos verde.
@@ -98,7 +98,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
   `package-version.ts`, `status-line`, em F6, D-34; consumidor desde o #249).
 - [x] C-F5-27 `settings.json` novo não precisa de `packages`. Prova: sessão em `HOME` vazio com os recursos presentes.
 - [x] C-F5-28 `NOTICE` com a atribuição do pi-code.
-- [x] C-F5-29 Smoke do benchmark não inferior à referência `ny-pi@1.6.0`. Feito sob a D-39, sem modelo: o `nycode` repete o `ny-pi@1.6.0` nos casos comuns do contrato e em 7 de 7 cenários de falha; acerto e custo por tarefa seguem sem medida, ver [F10-paridade](evidencias/F10-paridade.md).
+- [x] C-F5-29 Smoke do benchmark não inferior à referência `nycode-harness@1.6.0`. Feito sob a D-39, sem modelo: o `nycode` repete o `nycode-harness@1.6.0` nos casos comuns do contrato e em 7 de 7 cenários de falha; acerto e custo por tarefa seguem sem medida, ver [F10-paridade](evidencias/F10-paridade.md).
 
 ## F6. Orquestração embutida
 
@@ -106,18 +106,18 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F6-11 `subagent` registrada como embutida.
 - [x] C-F6-12 `plan-mode` embutida; `plan-done-rule.test.ts` e `plan-sota.test.ts` verdes.
 - [x] C-F6-13 `goal` embutida, sem portão de confiança; `goal.test.ts` e `goal-lifecycle.test.ts` verdes.
-- [x] C-F6-14 Suítes `bench/suites/plan` e `multi` não inferiores à referência. Feito sob a D-39, sem modelo e só até onde há camada: `plan` com os casos `plano/*` (2 de 2 ok, iguais ao `ny-pi`) e `/plan`; `multi` sem camada de comportamento sem modelo, só o registro de `/agents`, `/tasks` e `/team` e os testes de F6 (C-F6-01 a 10, 15). O acerto das duas suítes não foi medido, ver [F10-paridade](evidencias/F10-paridade.md).
+- [x] C-F6-14 Suítes `bench/suites/plan` e `multi` não inferiores à referência. Feito sob a D-39, sem modelo e só até onde há camada: `plan` com os casos `plano/*` (2 de 2 ok, iguais ao `nycode-harness`) e `/plan`; `multi` sem camada de comportamento sem modelo, só o registro de `/agents`, `/tasks` e `/team` e os testes de F6 (C-F6-01 a 10, 15). O acerto das duas suítes não foi medido, ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F6-15 Aninhamento até a profundidade 3 e limite de 4 escritores preservados. Prova: teste de aninhamento.
 - [x] C-F6-16 `scripts/check-patch-stack.sh` e `claude-home/patches/pi-code/` removidos de `import/`.
 - [x] C-F6-17 Primeira sincronização com o upstream depois de F6 feita e medida.
 
 ## F7. Extensões próprias
 
-- [x] C-F7-01 a C-F7-23 Uma por unidade da tabela 3.2 de [02](02-arquitetura-alvo.md#32-vindas-de-extensions-do-ny-pi): migrada, absorvida ou removida conforme a tabela, com o teste indicado no mapa. `permissions` é F8 pela tabela e fecha em C-F8-10.
+- [x] C-F7-01 a C-F7-23 Uma por unidade da tabela 3.2 de [02](02-arquitetura-alvo.md#32-vindas-de-extensions-do-nycode-harness): migrada, absorvida ou removida conforme a tabela, com o teste indicado no mapa. `permissions` é F8 pela tabela e fecha em C-F8-10.
 - [x] C-F7-24 K8, K9 no core com teste (K7 vai a F8, D-36).
 - [x] C-F7-25 K10: API pública no `@nycode/tui`; nenhuma extensão embutida lê campo privado. Prova: busca por acesso a propriedade privada vazia.
 - [x] C-F7-26 Temas `tokyo-night` e `mono` embarcados; `tokyo-night` é o padrão; `NO_COLOR` troca para `mono`.
-- [x] C-F7-27 Nenhuma diferença visual em relação ao ny-pi. Prova: portões `pi-ui-final-gate.sh` e `terminal-sota` verdes.
+- [x] C-F7-27 Nenhuma diferença visual em relação ao nycode-harness. Prova: portões `pi-ui-final-gate.sh` e `terminal-sota` verdes.
 - [x] C-F7-28 22 arquivos de teste de `extensions/` com equivalente verde.
 
 ## F8. Recursos embarcados e permissões
@@ -153,9 +153,9 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F10-02 `pi-vanilla` e `cc-vanilla` medidos uma vez (D-14). Feito sob a D-39, sem modelo: contrato (11/1/1 e 8/4/8) e falhas (6 de 7) dos dois, ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F10-03 As 11 dimensões com medida ou marcadas "sem medida". Feito sob a D-39: 2 com medida (velocidade, robustez), 2 em parte (contexto, segurança) e 7 "sem medida" por exigirem modelo, cada uma com a fonte, ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F10-04 Relatório de paridade em `evidencias/F10-paridade.md`, perdas ao lado dos ganhos. Feito sob a D-39: o relatório, sem modelo; falta a assinatura do dono (F10).
-- [x] C-F10-05 `docs/bench/baseline-main/` regravado por PR (linha sem modelo, D-39). Feito sob a D-39: contrato e falhas do `nycode` e do `ny-pi` em `docs/bench/baseline-main/sem-modelo/`; `runs.jsonl`, `verdict.json` e `meta.json` intactos, ver [F10-paridade](evidencias/F10-paridade.md).
+- [x] C-F10-05 `docs/bench/baseline-main/` regravado por PR (linha sem modelo, D-39). Feito sob a D-39: contrato e falhas do `nycode` e do `nycode-harness` em `docs/bench/baseline-main/sem-modelo/`; `runs.jsonl`, `verdict.json` e `meta.json` intactos, ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F10-06 Segunda sincronização com o upstream feita e medida (critério global 7). Fecha em F12 (D-43): o upstream não publicou commit novo desde `780bf31fc`. Feita em 2026-11-22: `9c4652688`, PR #313, merge `75e0842d7`, `merge-policy` verde ([sync-2026-11-22](evidencias/sync-2026-11-22.md)).
-- [x] C-F10-07 Todos os testes do ny-pi com equivalente verde ou justificativa no mapa (critério global 3). Feito: 280 de 280, ver [F10-testes](evidencias/F10-testes.md) (#289).
+- [x] C-F10-07 Todos os testes do nycode-harness com equivalente verde ou justificativa no mapa (critério global 3). Feito: 280 de 280, ver [F10-testes](evidencias/F10-testes.md) (#289).
 - [x] C-F10-08 Busca do critério global 2 vazia fora de `import/`, `docs/`, do comando de migração e das exceções declaradas em `scripts/ci/lint/criterio2/criterio2-allow.txt`, cada uma com classe e motivo; o passo `criterio2` do ci-static falha em linha nova (D-41). Prova: `python3 scripts/ci/lint/criterio2/criterio2.py` termina em `criterio2 OK: 223 lines covered by 21 exceptions` (produto-externo 16 exceções e 91 linhas, upstream 3 e 121, ferramenta-fork 1 e 10, migracao 1 e 1); sobre a `main` anterior (239 linhas) a mesma lista falha com 16 linhas sem cobertura, os 16 defeitos corrigidos (comentários, dados de teste e `delete process.env.CLAUDE_CONFIG_DIR` morto em 6 testes).
 
 ## F11. Distribuição

@@ -1,9 +1,9 @@
-# Guia de execução da migração ny-pi para o core do nycode
+# Guia de execução da migração nycode-harness para o core do nycode
 
 Estado: **plano, nada executado**. Os comandos são para um executor futuro; ao escrever só se rodaram leituras (`rg`,
 `git show`, `git ls-tree`, `npm view`, versões). Identificadores (F0 a F12, D-01 a D-25, K1 a K14, P-1 a P-8) vêm de
 [00](00-mega-plano.md), [02](02-arquitetura-alvo.md) e [11](11-decisoes-e-pendencias.md). Fatos de origem:
-[anexo A](anexos/A-inventario-ny-pi.md) (`ny-pi@e4f8729`); de destino: [anexo B](anexos/B-mapa-core-nycode.md)
+[anexo A](anexos/A-inventario-nycode-harness.md) (`marcioazam/ny-pi`@e4f8729`); de destino: [anexo B](anexos/B-mapa-core-nycode.md)
 (`nycode@fb05db936`). Reversões detalhadas: [10](10-riscos-e-rollback.md). Checklist: [12](12-checklist-mestre.md).
 Cada "não verificado" é um item aberto. **[AUTORIZAÇÃO]** marca ação que escreve no GitHub ou no npm: só o
 `git-delivery` ou o dono a executa, com a autorização do dono na tarefa.
@@ -50,7 +50,7 @@ O working tree de `$ORIG` está sujo (351 entradas): nunca é lido nem tocado.
 
 ```markdown
 # Evidência F<n>: <nome>
-## Objetivo | SHAs (nycode main antes, ny-pi congelado, PRs com sha de merge)
+## Objetivo | SHAs (nycode main antes, nycode-harness congelado, PRs com sha de merge)
 ## Comandos e saídas (com código de saída) | Itens do checklist fechados (12-checklist-mestre.md, com prova)
 ## Desvios (o que diferiu, por quê, quem autorizou) | Não verificado
 ```
@@ -80,7 +80,7 @@ De F2 em diante, para arquivo já em `import/ny-pi/` (a cópia do pi-code, em F5
 
 ## F0. Preparação e congelamento
 
-**Objetivo:** fechar as decisões, medir a linha de base do destino, congelar o ny-pi e limpar o destino.
+**Objetivo:** fechar as decisões, medir a linha de base do destino, congelar o nycode-harness e limpar o destino.
 
 **Pré-condições:** `git -C "$DEST" status --porcelain | wc -l` devolve 0;
 `gh pr list -R "$UP" --state open --json number --jq length` devolve 0 (anexo D §6).
@@ -99,9 +99,9 @@ De F2 em diante, para arquivo já em `import/ny-pi/` (a cópia do pi-code, em F5
    ./test.sh 2>&1 | tee /tmp/f0-test.log | tail -20
    ```
 
-3. **Congelar o ny-pi:** `git -C "$ORIG" fetch origin && git -C "$ORIG" rev-parse origin/main` (hoje
+3. **Congelar o nycode-harness:** `git -C "$ORIG" fetch origin && git -C "$ORIG" rev-parse origin/main` (hoje
    `e4f8729bfab57e9e2b222f020710c85d0a578c8d`). Esse é o "SHA de congelamento": até F12 só correção de segurança entra
-   em `ny-pi/main`; o resto se vê com `git -C "$ORIG" log <sha>..origin/main --oneline`.
+   em `marcioazam/ny-pi` `main`; o resto se vê com `git -C "$ORIG" log <sha>..origin/main --oneline`.
 4. **Ramos remotos e PRs abertos** (leitura): `git ls-remote --heads origin | sed 's#.*refs/heads/##' | sort >
    /tmp/f0-heads.txt` (esperado: 213, anexo D §6; guardar também os SHAs em `/tmp/f0-heads-sha.txt`);
    `cut -d/ -f1 /tmp/f0-heads.txt | sort | uniq -c | sort -rn`; PRs abertos:
@@ -141,9 +141,9 @@ D-15, D-16, D-17 e D-22, `npm view`, SHA da etiqueta. **Reversão:** F0 não alt
 
 <a id="f1"></a>
 
-## F1. Importação do histórico do ny-pi
+## F1. Importação do histórico do `marcioazam/ny-pi`
 
-**Objetivo:** trazer o histórico do ny-pi para `import/ny-pi/` num único PR com merge commit.
+**Objetivo:** trazer o histórico do `marcioazam/ny-pi` para `import/ny-pi/` num único PR com merge commit.
 
 **Pré-condições:** `evidencias/F0.md` existe; `gh api repos/$UP --jq .allow_merge_commit` devolve `true`;
 `gh api repos/$UP/rulesets --jq length` devolve `0` (o ruleset de F3 ainda não existe).
@@ -167,7 +167,7 @@ D-15, D-16, D-17 e D-22, `npm view`, SHA da etiqueta. **Reversão:** F0 não alt
    Achado real (segredo, identificador pessoal) **bloqueia**: tratar com o dono e reescrever o clone
    (`git filter-repo --replace-text`). `.gitleaks.toml` e `.leak-allow` ficam em `import/ny-pi/`: comparar os achados
    com elas.
-3. **Fundir no destino**, em worktree limpo da `main` (`--no-tags` não traz as etiquetas do ny-pi):
+3. **Fundir no destino**, em worktree limpo da `main` (`--no-tags` não traz as etiquetas do nycode-harness):
 
    ```bash
    cd "$DEST" && git remote add ny-pi-import /tmp/ny-pi-import && git fetch --no-tags ny-pi-import \
@@ -213,7 +213,7 @@ saída do `git log --follow`, os quatro arquivos editados. **Reversão:** `git r
 **Passos:** conteúdo e reconciliação em [04](04-regras-do-repositorio.md) (30 linhas de regra) e
 [05](05-marca-e-readme.md). Ordem dos PRs (`git mv` de `import/ny-pi/...` quando o arquivo existe lá):
 
-1. `docs: add CODEOWNERS, dependabot, release and zizmor config` (o `dependabot.yml` do ny-pi cobre `/` e `/npm`:
+1. `docs: add CODEOWNERS, dependabot, release and zizmor config` (o `dependabot.yml` do nycode-harness cobre `/` e `/npm`:
    ajustar aos diretórios do destino).
 2. `docs: add PR and discussion templates` (mantém os modelos de issue).
 3. `docs: add CODE_OF_CONDUCT and SUPPORT` (perfil de comunidade de 71% a 100%).
@@ -262,12 +262,12 @@ com 1 ocorrência; `gh api repos/$UP/community/profile --jq .health_percentage` 
    `actionlint .github/workflows/*.yml` e `zizmor --min-severity medium .github/workflows`.
 3. **`bench/`:** `git mv import/ny-pi/bench bench` e `git mv import/ny-pi/docs/bench docs/bench` (o destino não tem
    `bench/`). A mudança de raiz quebra `bench/arms/nycode-harness:12` (`repo=$(cd "$here/../.." && pwd)`, que usa `install.sh`,
-   `npm/package.json` e `publish.list` da raiz do ny-pi, só em `import/ny-pi/`): apontar `repo` para
+   `npm/package.json` e `publish.list` da raiz do nycode-harness, só em `import/ny-pi/`): apontar `repo` para
    `<raiz>/import/ny-pi` enquanto ele existir; idem `bench/arms/overlay-sha.sh` e `bench/tools/bench-pr.sh` (não lidos
    linha a linha: não verificado). O poller é a unidade systemd `bench/tools/systemd/bench-pr.{service,timer}`
    com `~/.config/ny-pi/bench.env` (`BENCH_REPO=$UP`): etapa manual do dono, fora do repositório.
-4. **Braço `ny-pi@1.6.0` (D-14, D-25):** em `bench/arms.toml`, braço `nycode-harness-pi160` (mesmo `bin` de `arms/nycode-harness`, base pi
-   1.6.0). O `bin/pi` do ny-pi usa `PI_HARNESS_PI_VERSION:-1.5.2` e os 2 patches de `dist` só aplicam nessa versão
+4. **Braço `nycode-harness@1.6.0` (D-14, D-25):** em `bench/arms.toml`, braço `nycode-harness-pi160` (mesmo `bin` de `arms/nycode-harness`, base pi
+   1.6.0). O `bin/pi` do nycode-harness usa `PI_HARNESS_PI_VERSION:-1.5.2` e os 2 patches de `dist` só aplicam nessa versão
    (anexo A §1 item 10): o braço mede "ny-pi sem os 2 patches de core sobre o pi 1.6.0", e isso entra no resultado. O
    instalador confere sha256 dos artefatos de 1.5.2 (`scripts/install-lib.sh:6-9`); os de 1.6.0 vêm de
    `https://pi.dev/api/installer/releases/1.6.0/` e o executor os confere (não verificado). Simulação sem custo:
@@ -284,7 +284,7 @@ com 1 ocorrência; `gh api repos/$UP/community/profile --jq .health_percentage` 
    `gh api repos/$UP/rulesets --jq '.[] | [.name, .enforcement] | @tsv'` (esperado `main  active`).
 7. **Remover a proteção clássica [AUTORIZAÇÃO]**, com o ruleset ativo (guardar antes a saída de
    `gh api repos/$UP/branches/main/protection`): `gh api -X DELETE repos/$UP/branches/main/protection` (depois, a
-   mesma leitura devolve 404). Alinhar ao ny-pi (anexo D §1): `delete_branch_on_merge`, `allow_auto_merge`,
+   mesma leitura devolve 404). Alinhar ao nycode-harness (anexo D §1): `delete_branch_on_merge`, `allow_auto_merge`,
    `allow_update_branch` em `true` (`gh api -X PATCH repos/$UP -F ...`; nomes dos campos: não verificado);
    `allow_merge_commit` fica `true` (D-07).
 
@@ -304,7 +304,7 @@ resultado ou pendência da rodada `nycode-harness-pi160`, decisão sobre `smoke`
 
 **Pré-condições:** `gh api repos/$UP/rulesets --jq length` devolve 1 (F3); linha de base de F0 sem falha nova.
 
-Um PR por costura. Linhas conferidas com `rg` em `fb05db936`; reconferir antes de editar. O teste do ny-pi vira o teste
+Um PR por costura. Linhas conferidas com `rg` em `fb05db936`; reconferir antes de editar. O teste do nycode-harness vira o teste
 da costura, reescrito em vitest em `packages/coding-agent/test/harness/` (K2: `packages/mcp/test/`).
 
 ### K1. `piSameContextMessage` em `core/sdk.ts`
@@ -338,7 +338,7 @@ da costura, reescrito em vitest em `packages/coding-agent/test/harness/` (K2: `p
 - `core/settings-schema.ts:206` (`SettingsSchema`; `quietStartup` `:265`, `defaultProjectTrust` `:271`) e
   `core/settings-defaults.ts:18` (`retry`), `:29` (`quietStartup: false`), `:30` (`defaultProjectTrust: "ask"`).
 - Mudanças: `defaultProjectTrust` padrão `"never"`; `quietStartup` padrão `"header"` (o tipo atual é boolean: ampliar
-  o tipo ou manter boolean e registrar o desvio); `retry` do ny-pi (`enabled`, `maxRetries 10`, `baseDelayMs 2000`,
+  o tipo ou manter boolean e registrar o desvio); `retry` do nycode-harness (`enabled`, `maxRetries 10`, `baseDelayMs 2000`,
   `maxAgentDelayMs 60000`); blocos `permissions` e `harness` e as chaves da tabela de 02 §5, cada uma com sua `NYCODE_*`
   (documentar em `packages/coding-agent/docs/environment-variables.md`); chave `hooks` (ausente do schema:
   `rg -n "hooks" packages/coding-agent/src/core/settings-schema.ts`). Regenerar `packages/coding-agent/schemas`.
@@ -507,7 +507,7 @@ e das rodadas reais, desvios de ordem. **Reversão:** `git revert` do PR do item
 
 ## F7. Extensões próprias
 
-**Objetivo:** migrar as 23 unidades de `extensions/` do ny-pi conforme [02](02-arquitetura-alvo.md) §3.2.
+**Objetivo:** migrar as 23 unidades de `extensions/` do nycode-harness conforme [02](02-arquitetura-alvo.md) §3.2.
 
 **Pré-condições:** F5 concluída (para `plan-gate`, também F6). Lista real de testes:
 `git -C "$ORIG" ls-tree -r --name-only origin/main extensions claude-home/bin/tests | grep test` devolve 22 `.test.ts`
@@ -777,7 +777,7 @@ serviço, não verificado). A remoção do Nix e o `release.mjs` novo revertem p
 
 ## F12. Corte e descomissionamento
 
-**Objetivo:** migrar os dados do dono, conviver por um período, arquivar o ny-pi e remover `import/ny-pi/`.
+**Objetivo:** migrar os dados do dono, conviver por um período, arquivar `marcioazam/ny-pi` e remover `import/ny-pi/`.
 
 **Pré-condições:** F11 fechada; `nycode --version` instalado pelo canal de F11; resposta de D-22.
 
@@ -793,15 +793,15 @@ serviço, não verificado). A remoção do Nix e o `release.mjs` novo revertem p
 
    Compatibilidade dos arquivos de sessão do pi 1.5.2 com o 1.6.0: não verificado (abrir uma sessão antiga).
 2. **Convivência:** trocar o `pi` do dia a dia por `nycode`, mantendo o wrapper `~/.local/bin/pi` por um período de
-   observação do dono (sugestão: 2 semanas, **proposta**); falhas vão a `evidencias/F12.md`. O ny-pi segue congelado.
-3. **[AUTORIZAÇÃO] D-22, arquivar o ny-pi (não apagar).** Antes, um PR no ny-pi (exceção ao congelamento) com o
-   aviso abaixo no topo do `README.md`. O ruleset do ny-pi exige `ci-static`, `ci-security`, `instruction-budget` e
+   observação do dono (sugestão: 2 semanas, **proposta**); falhas vão a `evidencias/F12.md`. O nycode-harness segue congelado.
+3. **[AUTORIZAÇÃO] D-22, arquivar `marcioazam/ny-pi` (não apagar).** Antes, um PR no `marcioazam/ny-pi` (exceção ao congelamento) com o
+   aviso abaixo no topo do `README.md`. O ruleset do `marcioazam/ny-pi` exige `ci-static`, `ci-security`, `instruction-budget` e
    `bench-pr` (anexo A §6); `bench-pr` é postado localmente, então o poller fica ligado até o merge.
 
    ```markdown
-   > **Este repositório está arquivado.** O ny-pi foi incorporado ao core do
+   > **Este repositório está arquivado.** O nycode-harness foi incorporado ao core do
    > [nycode](https://github.com/marcioazam/nycode). Baixe o binário em <https://github.com/marcioazam/nycode/releases>.
-   > **This repository is archived.** ny-pi now lives in the core of nycode.
+   > **This repository is archived.** nycode-harness now lives in the core of nycode.
    ```
 
    Depois do merge: `gh api -X PATCH repos/$ORIGREPO -F archived=true` (campo: não verificado; alternativa
@@ -817,7 +817,7 @@ serviço, não verificado). A remoção do Nix e o `release.mjs` novo revertem p
 **Verificação de saída:** `gh api repos/$ORIGREPO --jq .archived` devolve `true`; `test ! -d import/ny-pi`;
 `git log --follow --oneline packages/coding-agent/src/extensions/plan-gate/index.ts | tail -1` mostra o commit original.
 
-**Evidência:** dry-run e aplicação (sem segredos), datas da convivência, SHA do PR de aviso no ny-pi, resposta de
+**Evidência:** dry-run e aplicação (sem segredos), datas da convivência, SHA do PR de aviso no `marcioazam/ny-pi`, resposta de
 `.archived`, SHA da remoção de `import/ny-pi/`, checklist fechado. **Reversão:** desarquivar é ação do dono
 (`archived=false`); `import/ny-pi/` volta por `git revert` do PR de remoção.
 

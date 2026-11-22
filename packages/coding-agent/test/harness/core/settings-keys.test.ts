@@ -1,4 +1,4 @@
-// One case set per row of docs/migration/nycode-core/02-arquitetura-alvo.md section 5 (C-F4-05) plus the ny-harness
+// One case set per row of docs/migration/nycode-core/02-arquitetura-alvo.md section 5 (C-F4-05) plus the nycode-harness
 // defaults of K4 (C-F4-04): default, schema validation and environment override (the variable wins over settings.json).
 import { join } from "node:path";
 import { Compile } from "typebox/compile";
@@ -176,7 +176,7 @@ const rows: Row[] = [
 	{
 		key: "notify.sound",
 		env: "NYCODE_SOUND_NOTIFY",
-		def: true, // ny-harness parity: sound-notify was on unless NYCODE_SOUND_NOTIFY=0
+		def: true, // nycode-harness parity: sound-notify was on unless NYCODE_SOUND_NOTIFY=0
 		set: false,
 		invalid: "loud",
 		envRaw: "0",
@@ -350,7 +350,7 @@ describe("settings keys of 02 section 5", () => {
 	});
 });
 
-describe("ny-harness defaults (K4, C-F4-04)", () => {
+describe("nycode-harness defaults (K4, C-F4-04)", () => {
 	it("starts untrusted for project files", () => {
 		expect(SettingsManager.inMemory().getDefaultProjectTrust()).toBe("never");
 	});
@@ -359,7 +359,7 @@ describe("ny-harness defaults (K4, C-F4-04)", () => {
 		expect(SettingsManager.inMemory().getQuietStartup()).toBe("header");
 	});
 
-	it("retries ten times with the ny-harness backoff", () => {
+	it("retries ten times with the nycode-harness backoff", () => {
 		expect(SettingsManager.inMemory().getRetrySettings()).toEqual({
 			enabled: true,
 			maxRetries: 10,

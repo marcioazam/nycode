@@ -11,7 +11,7 @@ vivo e devolver um identificador.
 
 ## Comportamento
 
-Com `PI_BASH_TIMEOUT_BG=1`, o hook `tool_call` de `extensions/bash-timeout` (ny-pi; no nycode absorvido em `packages/coding-agent/src/core/tools/bash.ts`, K8, F7) reescreve o comando do `bash`
+Com `PI_BASH_TIMEOUT_BG=1`, o hook `tool_call` de `extensions/bash-timeout` (nycode-harness; no nycode absorvido em `packages/coding-agent/src/core/tools/bash.ts`, K8, F7) reescreve o comando do `bash`
 (sem tocar no pi):
 
 1. T = `decide(timeout)` (padrão 600 s, teto 1800 s, como no T1); `timeout` do pi passa a T + 60 s, folga para o pi
@@ -22,7 +22,7 @@ Com `PI_BASH_TIMEOUT_BG=1`, o hook `tool_call` de `extensions/bash-timeout` (ny-
 4. Estouro: o trap imprime os últimos 4000 bytes do log e `[bash-timeout] Still running after T s: left running in
    the background (pid P, log L). Do not start another copy. ...`, e sai com 0; o comando continua vivo.
    A mensagem sugere esperar com `while kill -0 P 2>/dev/null; do sleep 2; done`, que volta assim que o job
-   acaba: no TB o ny-pi pedia 173 s de `sleep` fixo por sessão contra 41,5 s do Claude Code (mesmas tarefas).
+   acaba: no TB o nycode-harness pedia 173 s de `sleep` fixo por sessão contra 41,5 s do Claude Code (mesmas tarefas).
 5. Não embrulha comando vazio, terminado em `&` nem iniciado pela palavra `sleep`.
 
 Sem a env o comportamento é o de antes, byte a byte; `TIMEOUT_HINT` segue valendo nesse caminho.
@@ -44,6 +44,6 @@ critério falhar, a opção continua desligada.
 
 ## Testes
 
-`extensions/bash-timeout/index.test.ts` (ny-pi; no nycode, teste ao lado do `bash.ts`, definido em F7): saída e exit code (0 e 3), heredoc e aspas, estouro (retorno em cerca de T s,
+`extensions/bash-timeout/index.test.ts` (nycode-harness; no nycode, teste ao lado do `bash.ts`, definido em F7): saída e exit code (0 e 3), heredoc e aspas, estouro (retorno em cerca de T s,
 pid e log na mensagem, processo vivo e terminando depois), stderr, env desligada, hook (T + 60, `&`, `sleep`), nos
 shells `sh`, `dash` e `bash` quando existem.

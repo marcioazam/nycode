@@ -5,7 +5,7 @@ migra tem linha.
 
 ## 1. Cinco fontes de coisas a migrar
 
-O ny-pi não está todo no seu repositório. Parte do que roda hoje vem de fora e só existe na máquina depois da
+O nycode-harness não está todo no seu repositório. Parte do que roda hoje vem de fora e só existe na máquina depois da
 instalação. O mapa cobre as cinco fontes:
 
 | # | Fonte | Quantidade | Onde está o mapa |
@@ -16,11 +16,11 @@ instalação. O mapa cobre as cinco fontes:
 | 4 | Configuração do GitHub (não é arquivo) | 60 regras (R01 a R60) | [04-regras-do-repositorio.md](04-regras-do-repositorio.md) |
 | 5 | Dados na máquina do usuário (`~/.pi/agent`) | configuração, sessões, credenciais | Seção 5 |
 
-## 2. Arquivos do repositório ny-pi
+## 2. Arquivos do repositório `marcioazam/ny-pi`
 
 Cada um dos 1485 arquivos casa com exatamente uma regra de [anexos/gerar-mapa.py](anexos/gerar-mapa.py). O script
 falha se um arquivo ficar sem regra; a execução de 2026-11-20 terminou com 0 sem regra e todas as 104 regras usadas.
-Para regerar depois de um novo commit no ny-pi:
+Para regerar depois de um novo commit no `marcioazam/ny-pi`:
 
 ```bash
 git -C ~/source/ny-pi ls-tree -r --name-only origin/main \
@@ -67,19 +67,19 @@ Dos 1312 "converter", 869 são `bench/` (784 deles são tarefas de teste em `ben
 | `scripts/check-patch-stack.sh`, `claude-home/patches/pi-code/zzzzzzz-subagent-model-effort/replay.test.ts` | Não há mais pilha de patches; o teste só reverte e reaplica essa pilha (o comportamento de roteamento tem `render.test.ts` e `tracker.test.ts` no destino) | — |
 | `extensions/cache-prefix-probe/index.ts`, `claude-home/bin/telemetry/cache_probe_join.py`, seu teste, `cache-remeasure.sh` | Diagnóstico marcado como temporário | D-10 |
 | `extensions/no-web-search.ts`, `extensions/no-context-files-covers-claude-md.ts`, `scripts/compaction-400k.py` | Contornos de um acoplamento que acaba | D-10 |
-| `claude-home/bin/evals/plan_ab.py`, `plan_ab_cases.jsonl`, `test_plan_ab.py`, `claude-home/bin/evals/harbor/run.sh`, `harbor/README.md` | Nada em `bench/`, `scripts/` ou `packages/` os referencia. `run.sh` e o README descreviam a execução manual do braço `ny-pi` com as credenciais do dono (`~/.claude-2`); `bench/run.py` a substituiu. Os agentes de Harbor (`pi_harness_agent.py`, `pi_vanilla_api_agent.py`, o `bundle.sh` do ny-pi como `pi_bundle.sh`) e os dois testes foram convertidos para `bench/harbor/` e `bench/tests/harbor/`; `structure.py` e seu teste para `scripts/ci/lint/structure/` | — |
+| `claude-home/bin/evals/plan_ab.py`, `plan_ab_cases.jsonl`, `test_plan_ab.py`, `claude-home/bin/evals/harbor/run.sh`, `harbor/README.md` | Nada em `bench/`, `scripts/` ou `packages/` os referencia. `run.sh` e o README descreviam a execução manual do braço `nycode-harness` com as credenciais do dono (`~/.claude-2`); `bench/run.py` a substituiu. Os agentes de Harbor (`pi_harness_agent.py`, `pi_vanilla_api_agent.py`, o `bundle.sh` do nycode-harness como `pi_bundle.sh`) e os dois testes foram convertidos para `bench/harbor/` e `bench/tests/harbor/`; `structure.py` e seu teste para `scripts/ci/lint/structure/` | — |
 | `third-party.json` | Terceiros embutidos ou pacotes opcionais | D-11 |
 | `pi-code-installed.SHA256SUMS` (`import/ny-pi/`) | Lista de checksums da cópia congelada do pi-code; a referência é o tarball de sha1 conferido. Sai junto com `import/` em C-F12-05 | D-02, D-47 |
 | `install.sh`, `publish.list`, `scripts/install-lib.sh`, `scripts/test_install.sh`, `npm/package.json`, `npm/package-lock.json` | Instalação e publicação do fork | — |
 
-Testes do ny-pi que o nycode não repete caso a caso (C-F10-07, detalhe em
+Testes do nycode-harness que o nycode não repete caso a caso (C-F10-07, detalhe em
 [evidencias/F10-testes.md](evidencias/F10-testes.md)):
 
-- `bench/tests/classify/test_affects.py`, `test_more_ui`. O ny-pi tratava `sound-notify`, `dev-commands`, `up-dequeue` e
+- `bench/tests/classify/test_affects.py`, `test_more_ui`. O nycode-harness tratava `sound-notify`, `dev-commands`, `up-dequeue` e
   `puxar` como UI pura e, por isso, não funcionais. O nycode é deliberadamente mais estreito: a UI pura é só `ui`,
   `ui-visual`, `footer`, `sticky-prompt` e os temas e a linha de status embarcados (09 §3.2, D-21), e o resto falha
   fechado como funcional. O teste `test_functional` afirma agora `sound-notify`, `dev-commands`, `up-dequeue` e
-  `import-claude-session` (o `puxar` do ny-pi) como funcionais.
+  `import-claude-session` (o `puxar` do nycode-harness) como funcionais.
 - `todo-collapse.test.ts`: 7 casos (atalho, linha recolhida, glifos, clique, roda, estouro e `allDone`) testavam o
   widget de todos acima do editor. Desde que a lista passou à seção Plan, esse widget renderizava `[]`: sem linhas não
   tem caixa de clique nem de roda, e `ctrl+shift+t` alternava um estado invisível. O código (`TodoOverlay`, o atalho e
@@ -211,7 +211,7 @@ ligada; `remove` não migra. A especificação migra para `docs/specs/` em F2 e 
 ## 3. pi-code 1.7.0 remendado
 
 O que roda hoje é o tarball `pi-code@1.7.0` mais 19 patches e um `sed`. Essa árvore tem 159 arquivos em
-`extensions/` e é a fonte de F5 e F6. Nenhum desses arquivos está no repositório ny-pi; o repositório só tem os
+`extensions/` e é a fonte de F5 e F6. Nenhum desses arquivos está no repositório `marcioazam/ny-pi`; o repositório só tem os
 patches.
 
 ### 3.1 Como obter a árvore de referência
@@ -226,7 +226,7 @@ sed -i 's|^\(\s*\)if (!trusted) return TRUST_GATE|\1// if (!trusted) return TRUS
 diff -r /tmp/pi-code-ref/package/extensions ~/.pi/agent/npm/node_modules/pi-code/extensions && echo IGUAL
 ```
 
-O `sed` reproduz o passo 9 do boot do wrapper ([anexo A](anexos/A-inventario-ny-pi.md), seção 1); a expressão exata
+O `sed` reproduz o passo 9 do boot do wrapper ([anexo A](anexos/A-inventario-nycode-harness.md), seção 1); a expressão exata
 deve ser copiada de `bin/pi` na hora, não deste documento. O `diff -r` vazio prova que a referência é o que foi
 medido. Só então a cópia entra no repositório.
 
@@ -294,7 +294,7 @@ unidade 0 avulsa não existe: a cópia congelada do #231 e o commit 1 do PR cump
 | `pr-review-toolkit` | claude-plugins-official `893173f` | Apache-2.0 | nenhum | Pacote opcional instalado da origem com SHA fixo (`893173f`; o instalador clona o repositório inteiro e os agentes ficam em `plugins/pr-review-toolkit/agents/`). Feito em F9 | F9 |
 | `claude-red` | git `a8de813` | MIT | nenhum | Pacote opcional (já era opcional), instalado da origem com SHA fixo; a pasta `Skills/` pede a entrada `skills` em `settings.json` (79 skills). Feito em F9 | F9 |
 
-Arquivos do ny-pi que referenciam estes componentes e mudam junto: `claude-home/commands/ralph-loop.md`,
+Arquivos do nycode-harness que referenciam estes componentes e mudam junto: `claude-home/commands/ralph-loop.md`,
 `ralph-help.md`, `cancel-ralph.md`, `review-pr.md` (comandos que só funcionam com o pacote instalado: ficam marcados
 `(optional)` e `check-refs.py` aceita), `claude-home/hooks` no bloco `Stop` (`vendor/ralph-loop/hooks/stop-hook.sh`
 deixa de ser padrão; o instalador não registra hooks, então o `hooks.Stop` é uma entrada manual de `settings.json`, documentada em `packages/coding-agent/docs/optional-packages.md`).
@@ -321,7 +321,7 @@ faria.
 
 ## 6. Conferência cruzada com o inventário
 
-Cada contagem do [anexo A](anexos/A-inventario-ny-pi.md) tem de fechar com o mapa:
+Cada contagem do [anexo A](anexos/A-inventario-nycode-harness.md) tem de fechar com o mapa:
 
 | Item do inventário | Contagem | Regras do mapa | Fecha |
 |---|---:|---|---|

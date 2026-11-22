@@ -2,7 +2,7 @@
 # whole file. A line that covers no hit is stale and fails: the list only shrinks. Fixed exemptions (LICENSE, NOTICE,
 # CHANGELOG.md, README.md, from-pi migration, docs/fork, docs/migration, docs/harness, import/) live in residuo.py.
 
-# bench: the arms ny-pi and pi-vanilla and the Harbor agents name the product the benchmark measures (D-31, 05 section 6).
+# bench: the arms nycode-harness and pi-vanilla and the Harbor agents name the product the benchmark measures (D-31, 05 section 6).
 bench/* | * | produto-externo | arms, runners, metrics and contract of the benchmark that measures the pi as a product
 docs/bench/* | * | produto-externo | baselines and runbook of the benchmark that measures the pi
 
@@ -13,8 +13,8 @@ scripts/ci/lint/core_scope.py | import/ny-pi | transicao | the pieces still wait
 scripts/ci/lint/test_core_scope.py | import/ny-pi | transicao | fixture tree that mirrors import/ny-pi
 scripts/ci/lint/test_gerar_mapa.py | * | ferramenta-fork | tests of the migration map generator (docs/migration/nycode-core)
 
-# records written about the ny-harness origin, kept as written.
-docs/specs/* | * | migracao | specs 0001-0009 describe the port from the ny-harness, written before the rename
+# records written about the nycode-harness origin, kept as written.
+docs/specs/* | * | migracao | specs 0001-0009 describe the port from the nycode-harness, written before the rename
 apps/p3/docs/archive/* | * | upstream | archived design material, not maintained
 
 # session fixtures recorded from the upstream agent: the text is the data under test.
@@ -24,7 +24,7 @@ packages/coding-agent/test/harness/hooks/fixtures/* | * | upstream | hook payloa
 # links to issues and pull requests of the upstream repositories: stable targets, not the brand.
 packages/* | (earendil-works|badlogic)/pi(-mono)?(/(issues|pull|discussions)/\d+|#\d+) | upstream | upstream issue and PR links cited by regression tests and docs
 
-# the migration from the ny-harness: its tests carry the origin names on purpose (the code itself is exempt in residuo.py).
+# the migration from the nycode-harness: its tests carry the origin names on purpose (the code itself is exempt in residuo.py).
 packages/coding-agent/test/harness/migrations/* | * | migracao | tests and fixture of `nycode migrate from-pi`: origin paths, scopes and package names under test
 packages/coding-agent/test/extensions-discovery.test.ts | @mariozechner/pi-coding-agent | compat | proves the legacy module name is not resolved
 packages/coding-agent/test/suite/regressions/11156-nycode-ai-models-virtual-module.test.ts | @mariozechner | compat | proves the legacy scope is gone

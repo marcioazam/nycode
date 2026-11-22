@@ -21,7 +21,7 @@ bash scripts/ci/local.sh --mutation # mais a mutação dos .py alterados
 - **Exit:** 0 tudo verde, 1 algum gate reprovou, 124 limite de tempo.
 - **Limite de tempo:** 15 min para a execução inteira (`CI_LOCAL_MAX_S`, default 900). Passar disso é falha.
 - **Base da comparação:** `BASE_SHA` (default `origin/main`); rode `git fetch origin` antes.
-- **Cache:** `CI_LOCAL_CACHE` (default `~/.cache/ny-harness-ci`) guarda os binários e o venv; a primeira execução instala.
+- **Cache:** `CI_LOCAL_CACHE` (default `~/.cache/nycode-ci`) guarda os binários e o venv; a primeira execução instala.
 - **Histórico de segredos:** só o histórico do `HEAD` é varrido (`LEAKS_LOG_OPTS=HEAD`), porque um clone compartilhado
   guarda branches de outros trabalhos.
 

@@ -55,9 +55,9 @@ para nenhuma decisão; onde aparecem, estão marcadas.
 | `git subtree` contra `filter-repo` | A página do `git-subtree` devolveu 404; comparação feita por conhecimento próprio | D-03 |
 | Tokens clássicos do npm revogados em 2025-12-09 | Só trecho do changelog do GitHub | F11 |
 | `npm trust` exige npm 11.15.0 | Não aberta | F11 |
-| Fila de merge exige o gatilho `merge_group` nos workflows | Dois provedores concordam por trecho; página não aberta. Os workflows do ny-pi já têm o gatilho | 07 |
+| Fila de merge exige o gatilho `merge_group` nos workflows | Dois provedores concordam por trecho; página não aberta. Os workflows do nycode-harness já têm o gatilho | 07 |
 | Nível SLSA obtido com `attest-build-provenance` | A página lida não afirma o nível | 07 |
-| zizmor, harden-runner, `min-release-age` do npm | Páginas não abertas; o ny-pi já usa os dois primeiros | 07 |
+| zizmor, harden-runner, `min-release-age` do npm | Páginas não abertas; o nycode-harness já usa os dois primeiros | 07 |
 | Testes de equivalência (TOST), barras de erro pareadas | Não abertas; a regra de decisão usada é a do `bench/gate.py` | 09 |
 | Prazo para despublicar um pacote no npm | Não verificado | [10](10-riscos-e-rollback.md) |
 
