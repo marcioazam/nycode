@@ -16,7 +16,7 @@
 
 Nycode is a terminal coding agent with its harness built in: extensions, hooks, skills, agents, themes, a status line and a native TypeScript permission engine ship inside one standalone binary. It reads and edits files, runs shell commands, talks to many model providers, and can be driven [interactively](packages/coding-agent/docs/usage.md), in [print or JSON mode](packages/coding-agent/docs/cli.md), over [RPC](packages/coding-agent/docs/rpc.md) or from the [TypeScript SDK](packages/coding-agent/docs/sdk.md).
 
-Nycode is in **beta**. The latest [GitHub Release](https://github.com/marcioazam/nycode/releases/latest) is the beta to install. Behavior can still change. Version numbers stay `2.0.x`.
+Nycode is in **beta**. The latest [GitHub Release](https://github.com/marcioazam/nycode/releases/latest) is the beta to install. Behavior can still change. Versions stay on `2.0.x`, the line opened by `2.0.0` when nycode broke from pi 1.x. Beta is the product stage, not part of the version: a `0.x` number or a `-beta` suffix would sort below the releases already published, and `nycode update` would ignore it.
 
 It is a fork of the pi coding agent that absorbed the former `ny-pi` harness. Everything the harness used to add from outside (a wrapper script, runtime patches, a separate config directory) is now part of the product.
 

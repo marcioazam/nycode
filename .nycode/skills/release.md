@@ -11,7 +11,7 @@ Run repository commands from the repo root (two directories above this skill), u
 
 The repository is the only channel: a GitHub Release of `marcioazam/nycode` with self-contained binaries, `SHA256SUMS` and a provenance attestation. Nothing is published to npm and no long-lived token exists.
 
-Nycode is in beta. Publish the Release with the title `vX.Y.Z (Beta)`. `scripts/release-notes.mjs extract` opens the notes with the beta line. Leave the GitHub prerelease flag unset. GitHub omits prereleases from `/releases/latest`, and that URL is how the README and `nycode update` find the release, so the beta stays the latest release.
+Nycode is in beta. Publish the Release with the title `vX.Y.Z (Beta)`. `scripts/release-notes.mjs extract` opens the notes with the beta line. Leave the GitHub prerelease flag unset. GitHub omits prereleases from `/releases/latest`, and that URL is how the README and `nycode update` find the release, so the beta stays the latest release. The version itself stays `X.Y.Z` on the `2.0` line opened by `2.0.0` (D-13, the break from the pi 1.x line). Do not renumber a beta to `0.x` and do not add a `-beta` suffix: either one compares below the releases already published, so `nycode update` would not offer it.
 
 1. **Update CHANGELOGs**: ask the user whether they ran the `/cl` prompt on the latest commit on `main`. If not, they must run `/cl` first to audit and update each package's `[Unreleased]` section before releasing.
 
