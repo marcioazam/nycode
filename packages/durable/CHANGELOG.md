@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed JSON assignment so `__proto__`, `constructor` and `prototype` are stored by those names instead of a dynamic property write
+
 ## [2.0.2] - 2026-11-23
 
 ## [2.0.1] - 2026-11-23

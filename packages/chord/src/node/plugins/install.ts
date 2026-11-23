@@ -112,7 +112,11 @@ function targetName(source: PluginSource): string {
 	if (source.kind === "git") {
 		option(source.git, "repository");
 		option(source.ref, "ref");
-		const name = basename(source.git.replace(/\/+$/, "")).replace(/\.git$/, "");
+		// A trailing-slash regex is polynomial on a long run of `/`.
+		let git = source.git;
+		while (git.endsWith("/")) git = git.slice(0, -1);
+		const base = basename(git);
+		const name = base.endsWith(".git") ? base.slice(0, -4) : base;
 		if (name === "" || name.startsWith(".") || name.startsWith("-")) {
 			throw new Error(`installPlugin: "${source.git}" names no repository directory`);
 		}
