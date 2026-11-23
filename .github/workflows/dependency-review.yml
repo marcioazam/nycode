@@ -18,7 +18,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      # Dependency-graph compare and PR comment (api.github.com), plus OpenSSF Scorecard levels (api.securityscorecards.dev).
+      # Dependency-graph compare and PR comment (api.github.com), OpenSSF Scorecard (api.securityscorecards.dev), and deps.dev metadata (api.deps.dev).
       - name: Harden runner
         uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
         with:
@@ -28,6 +28,7 @@ jobs:
           allowed-endpoints: >
             github.com:443
             api.github.com:443
+            api.deps.dev:443
             api.securityscorecards.dev:443
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
