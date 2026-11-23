@@ -47,12 +47,12 @@ mudanças não commitadas), em `/tmp/pi-harness-snap-20261122` com `MANIFEST.sha
 | `hooks/`: `guard.py` e `permissions/` (motor `script`) | — | feito | #359 |
 | `lifecycle/supervisor.sh` (restart) | 1 | fora: substituído pelo supervisor nativo (K24, D-59) | #360 |
 | Motor nativo de permissão com paridade ao `guard.py` (D-60, parte 1) | — | feito | #362 |
-| Motor nativo como padrão (D-60, parte 2) | — | em curso | — |
-| Hooks em TypeScript (`graph-context` interno, D-60) | — | em curso | — |
+| Motor nativo como padrão (D-60, parte 2) | — | feito | #364 |
+| Hooks em TypeScript (`graph-context` interno, D-60) | — | feito | #370 |
 | `bin/` parte 1: `hud` (`calm`, usage), `checks`, `puxar`, `mcp-header.sh`, `fonte-icones.py` | 18/20 | feito | #363 |
-| `bin/` parte 2: `session-transport` (`nycode-session`), `evals/harbor`, `mcp-header` testado, testes de display e roteamento | — | em curso | — |
-| Remoção de `import/ny-pi/` e do braço `omp` do bench | — | em curso | — |
-| Testes nativos em tmux (`native-harness`, `native-frame`, `native-panels`, `native-cli-e2e`) | 4/4 | feito: `test/harness/ui-display/native/` | — |
+| `bin/` parte 2: `session-transport` (`nycode-session`), `evals/harbor`, `mcp-header` testado, testes de display e roteamento | — | feito | #365 |
+| Remoção de `import/ny-pi/` e do braço `omp` do bench | — | feito | #366 |
+| Testes nativos em tmux (`native-harness`, `native-frame`, `native-panels`, `native-cli-e2e`) | 4/4 | feito: `test/harness/ui-display/native/` | #381 |
 | `docs/` | 2/10 | só o que um texto embarcado cita (coberto por #349 e #351) | — |
 
 ## Fora, com o motivo
@@ -67,6 +67,16 @@ mudanças não commitadas), em `/tmp/pi-harness-snap-20261122` com `MANIFEST.sha
 
 ## Pendências
 
-- O motor TypeScript de permissão cobria menos que o `guard.py` até o #362 (modos, reanálise recursiva, baixar-e-executar, `$X` como comando, `/dev/*`, credenciais, `Grep`, `.env.*`, 256 KB, falha fechada); a paridade está no diferencial, e o padrão `native` ainda não vale (parte 2 da D-60).
-- Testes intermitentes sob carga: o de SIGTERM do `subagent-extension` (a fixture grava o pid antes da mensagem), o de `agent-session-mcp` e o clique nativo do `image-open` (corrigido no #361).
-- Destinos do E: resolvido. O gerador voltou a ser a única fonte do TSV (lista da onda 9 em `--onda9`, regras R18 a R20 e exceções para renomeações e subpastas), e `test_gerar_mapa.py` falha se uma linha for editada à mão ou se um destino não existir.
+Nenhuma. Fechadas em 2026-11-22:
+
+- Paridade do motor TypeScript de permissão com o `guard.py` (#362) e `native` como padrão (#364).
+- Testes intermitentes, cada um pela causa: SIGTERM do `subagent-extension`, fixture gravava o pid antes do handler e da
+  mensagem (#374); porta do callback OAuth do MCP escolhida e fechada antes do bind (#378); clique nativo do
+  `image-open`, regex `/image/i` casava o cwd do rodapé (#377); `tiling.test.ts` do chord, trabalho de CPU contra o teto
+  padrão de 5 s (#379); glifo animado da frota nos testes de exibição (#380); saída perdida no pipe depois da saída do
+  programa no daemon do `packages/env` (P-21, K25, #382); esperas fixas em `routines.test.ts` e `http.test.ts` do chord
+  (#384).
+- Costura K5 com teste (#383): `check-seams.sh --strict` passa com 25 de 25.
+- Destinos do E: o gerador voltou a ser a única fonte do TSV (#375), e `test_gerar_mapa.py` falha se uma linha for
+  editada à mão ou se um destino não existir.
+- Testes `native-*` em tmux portados para o CLI construído (#381).
