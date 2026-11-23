@@ -34,3 +34,18 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+      # Biome 2.6.x introduces new lint errors across upstream files; upgrade with upstream syncs.
+      - dependency-name: "@biomejs/*"
+        update-types:
+          - "version-update:semver-minor"
+      # quickjs-wasi 3.7.0 breaks codemode OOM containment (agent-session-codemode.test.ts:608); upgrade with upstream.
+      - dependency-name: "quickjs-wasi"
+        update-types:
+          - "version-update:semver-minor"
+      # vitest-evals 0.18.x requires peer vitest >=5 <6 while the workspace is on vitest 4.x.
+      - dependency-name: "vitest-evals"
+        update-types:
+          - "version-update:semver-minor"
+      - dependency-name: "@vitest-evals/*"
+        update-types:
+          - "version-update:semver-minor"
