@@ -17,6 +17,7 @@
 - `nycode migrate from-pi` now carries the harness overlay `claude-home/rules/personal.md` into `~/.nycode/agent/AGENTS.md`, with the pi names converted
 - `nycode migrate from-pi` points the personal `/conta` extension's `pi-conta` helper at `~/.nycode/agent`; before, switching accounts in nycode rewrote `~/.pi/agent/auth.json`
 - The agent directory's CLAUDE.md is not injected twice when nycode already loads it as the global context file
+- An expired or revoked OAuth login (`invalid_grant` on token refresh) is reported as an account problem with `/login` as the action, instead of "Algo falhou no nycode" with `/bug`
 
 ## [2.0.2] - 2026-11-23
 

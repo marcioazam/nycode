@@ -624,6 +624,7 @@ describe("AgentSessionRuntime characterization", () => {
 					services,
 					sessionManager,
 					sessionStartEvent,
+					model: faux.getModel(),
 				})),
 				services,
 				diagnostics: services.diagnostics,
@@ -637,6 +638,8 @@ describe("AgentSessionRuntime characterization", () => {
 		cleanups.push(async () => {
 			await otherRuntime.dispose();
 		});
+		// Never a provider picked from the developer's environment keys: that is a real, billed network call.
+		expect(otherRuntime.session.model?.provider).toBe(faux.getModel().provider);
 		await otherRuntime.session.prompt("other");
 		const otherSessionFile = otherRuntime.session.sessionFile!;
 

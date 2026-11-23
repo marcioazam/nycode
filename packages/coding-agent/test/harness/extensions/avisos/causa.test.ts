@@ -48,6 +48,13 @@ const TABELA: Array<[string, string, string, string, string]> = [
 	],
 	[
 		"conta",
+		'OAuth refresh failed for anthropic: HTTP request failed. status=400; body={"error": "invalid_grant", "error_description": "Refresh token not found or invalid"}; stack=Error',
+		"conta não reconhecida pelo provedor",
+		"O provedor não reconheceu a sua conta",
+		"/login entra de novo",
+	],
+	[
+		"conta",
 		"permission_error: sem acesso",
 		"conta não reconhecida pelo provedor",
 		"O provedor não reconheceu a sua conta",

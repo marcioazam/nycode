@@ -113,6 +113,7 @@ test('launcher feeds the translated transcript to the HUD (end to end)', async (
     call('t1', 'bash', { command: 'ls' }), result('t1', 'bash', 'ok'),
   ]);
   fs.mkdirSync(path.join(dir, 'plugins', 'claude-hud'), { recursive: true });
+  fs.symlinkSync(cache, path.join(dir, 'plugins', 'cache')); // o launcher só procura o HUD no diretório do nycode (#404)
   fs.writeFileSync(path.join(dir, 'plugins', 'claude-hud', 'config.json'), JSON.stringify({ display: { showTools: true, showTodos: true } }));
   const { execFileSync } = await import('node:child_process');
   const payload = JSON.stringify({ model: { display_name: 'Opus' }, cwd: dir, context_window: { used_percentage: 1, context_window_size: 200000 }, transcript_path: source });

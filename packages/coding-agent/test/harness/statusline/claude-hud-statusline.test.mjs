@@ -40,6 +40,11 @@ test('NO_COLOR não vazio tira todas as cores SGR', { skip: !hudInstalled }, () 
 // a API de uso não é lida (desde 2026-11-18 ela entra junto com o header da anthropic).
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'hudstatus-'));
 after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+// O launcher só procura o HUD no diretório do nycode (#404): o diretório isolado aponta para a cópia instalada.
+if (hudInstalled) {
+  fs.mkdirSync(path.join(tmp, 'plugins'));
+  fs.symlinkSync(cache, path.join(tmp, 'plugins', 'cache'));
+}
 const hud = (provider, rate_limits, modelId = 'm1') => {
   const session = path.join(tmp, `${provider}.jsonl`);
   fs.writeFileSync(session, JSON.stringify({ type: 'model_change', provider, modelId }) + '\n');

@@ -50,7 +50,7 @@ const POR_STATUS: Record<string, CausaId> = {
 };
 const PALAVRAS: Array<[CausaId, string[]]> = [
 	["limite", ["rate_limit", "rate limit"]],
-	["conta", ["authentication", "unauthorized", "permission_error"]],
+	["conta", ["authentication", "unauthorized", "permission_error", "invalid_grant"]],
 	["pedido", ["invalid_request"]],
 	["fora", ["overloaded"]],
 	["rede", ["econnrefused", "econnreset", "enotfound", "etimedout", "fetch failed", "network", "socket"]],

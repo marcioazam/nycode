@@ -51,7 +51,7 @@ Entrada: o texto do erro como o pi o mostra (`Error: <status>: <json>` ou texto 
 | id | Casa com | `rotulo` (régua, notificação, painel) | `titulo` (1ª linha do erro) | `acao` (3ª linha) |
 |---|---|---|---|---|
 | `limite` | 429, `rate_limit`, `rate limit` | limite de uso do provedor | O provedor está limitando o uso | ↑ traz o pedido de volta · /model troca de modelo |
-| `conta` | 401, 403, `authentication`, `unauthorized`, `permission_error` | conta não reconhecida pelo provedor | O provedor não reconheceu a sua conta | /login entra de novo |
+| `conta` | 401, 403, `authentication`, `unauthorized`, `permission_error`, `invalid_grant` (login OAuth expirado ou revogado) | conta não reconhecida pelo provedor | O provedor não reconheceu a sua conta | /login entra de novo |
 | `pedido` | 400, 404, 413, 422, `invalid_request` | pedido recusado pelo provedor | O provedor recusou o pedido | ↑ traz o pedido de volta · /bug relata ao pi |
 | `fora` | 5xx, `overloaded` | provedor fora do ar | O provedor está fora do ar | ↑ traz o pedido de volta |
 | `rede` | `ECONNREFUSED`, `ECONNRESET`, `ENOTFOUND`, `ETIMEDOUT`, `fetch failed`, `network`, `socket` | sem conexão com o provedor | Sem conexão com o provedor | ↑ traz o pedido de volta |
