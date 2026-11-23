@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed subscript and superscript normalization so a long run of spaces cannot make the scan take polynomial time
+- `replaceScrollToEndIndicator`'s restore function is a no-op once the TUI reference no longer points at a fullscreen renderer, instead of throwing
 
 ## [2.0.2] - 2026-11-23
 
