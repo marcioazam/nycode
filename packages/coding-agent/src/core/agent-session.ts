@@ -193,13 +193,30 @@ export interface ParsedSkillBlock {
  * Returns null if the text doesn't contain a skill block.
  */
 export function parseSkillBlock(text: string): ParsedSkillBlock | null {
-	const match = text.match(/^<skill name="([^"]+)" location="([^"]+)">\n([\s\S]*?)\n<\/skill>(?:\n\n([\s\S]+))?$/);
-	if (!match) return null;
+	// The old regex backtracked on a long run of `</skill>` lines. Scan once.
+	const nameOpen = '<skill name="';
+	if (!text.startsWith(nameOpen)) return null;
+	const nameEnd = text.indexOf('"', nameOpen.length);
+	if (nameEnd < 0) return null;
+	const locationOpen = '" location="';
+	if (!text.startsWith(locationOpen, nameEnd)) return null;
+	const locationStart = nameEnd + locationOpen.length;
+	const locationEnd = text.indexOf('"', locationStart);
+	if (locationEnd < 0 || !text.startsWith('">\n', locationEnd)) return null;
+	const contentStart = locationEnd + 3;
+	const closeAt = text.indexOf("\n</skill>", contentStart);
+	if (closeAt < 0) return null;
+	const rest = text.slice(closeAt + "\n</skill>".length);
+	let userMessage: string | undefined;
+	if (rest !== "") {
+		if (!rest.startsWith("\n\n") || rest.length === 2) return null;
+		userMessage = rest.slice(2).trim() || undefined;
+	}
 	return {
-		name: match[1],
-		location: match[2],
-		content: match[3],
-		userMessage: match[4]?.trim() || undefined,
+		name: text.slice(nameOpen.length, nameEnd),
+		location: text.slice(locationStart, locationEnd),
+		content: text.slice(contentStart, closeAt),
+		userMessage,
 	};
 }
 
