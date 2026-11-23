@@ -68,7 +68,30 @@ const OVERFLOW_PATTERNS = [
 	/^(?:[\w -]+ API error \(413\):|413(?:\s|:|$))/i,
 ];
 
-const CEREBRAS_BODYLESS_OVERFLOW_PATTERN = /^4(?:00|13)\s*(?:status code)?\s*\(no body\)/i;
+/** Cerebras reports a bodyless 400 or 413. Two `\s*` around the optional words backtrack on a long run of spaces. */
+function isCerebrasBodylessOverflow(message: string): boolean {
+	const lower = message.toLowerCase();
+	if (!lower.startsWith("400") && !lower.startsWith("413")) return false;
+	let index = 3;
+	while (index < lower.length && isOverflowSpace(lower[index]!)) index++;
+	const words = "status code";
+	if (lower.startsWith(words, index)) {
+		index += words.length;
+		while (index < lower.length && isOverflowSpace(lower[index]!)) index++;
+	}
+	return lower.startsWith("(no body)", index);
+}
+
+function isOverflowSpace(character: string): boolean {
+	return (
+		character === " " ||
+		character === "\t" ||
+		character === "\n" ||
+		character === "\r" ||
+		character === "\f" ||
+		character === "\v"
+	);
+}
 
 /**
  * Patterns that indicate non-overflow errors (e.g. rate limiting, server errors).
@@ -150,7 +173,7 @@ export function isContextOverflow(message: AssistantMessage, contextWindow?: num
 			if (OVERFLOW_PATTERNS.some((p) => p.test(message.errorMessage!))) {
 				return true;
 			}
-			if (message.provider === "cerebras" && CEREBRAS_BODYLESS_OVERFLOW_PATTERN.test(message.errorMessage)) {
+			if (message.provider === "cerebras" && isCerebrasBodylessOverflow(message.errorMessage)) {
 				return true;
 			}
 		}

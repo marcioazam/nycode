@@ -136,6 +136,11 @@ describe("isContextOverflow", () => {
 		const errorMessage = "400 status code (no body)";
 		expect(isContextOverflow(createErrorMessage(errorMessage, "cerebras"), 131072)).toBe(true);
 		expect(isContextOverflow(createErrorMessage(errorMessage, "opencode-go"), 1000000)).toBe(false);
+		expect(isContextOverflow(createErrorMessage("413 (no body)", "cerebras"))).toBe(true);
+		expect(isContextOverflow(createErrorMessage("400STATUS CODE (no body)", "cerebras"))).toBe(true);
+		const started = Date.now();
+		expect(isContextOverflow(createErrorMessage(`400 ${" ".repeat(100_000)}`, "cerebras"))).toBe(false);
+		expect(Date.now() - started).toBeLessThan(1000);
 	});
 
 	it("does not treat Bedrock throttling 'Too many tokens' as overflow", () => {
