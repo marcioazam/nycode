@@ -21,6 +21,7 @@ import { Sessions, SidebarSettings } from "../../plugins/sessions/contract.ts";
 import { folderKey, projectKey } from "../../plugins/sessions/sidebar/model.ts";
 import { Browser, browserTests, COMPOSER, setComposer } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 /** Each rollup's key, then its sessions' titles, or its groups' names with their sessions' titles. */
 const SECTIONS = `[...document.querySelectorAll('.sidebar-section')].map(s=>[s.dataset.key,s.querySelector('.sidebar-group')?[...s.querySelectorAll('.sidebar-group')].map(g=>[g.querySelector('.group-link').textContent,[...g.querySelectorAll('.session-main .session-title')].map(e=>e.textContent)]):[...s.querySelectorAll('.session-main .session-title')].map(e=>e.textContent)])`;
@@ -33,21 +34,21 @@ const clickInSheet = (text: string) =>
 	`[...document.querySelectorAll('[role=dialog] button')].find(e=>e.textContent.trim()===${JSON.stringify(text)}).click()`;
 
 const setInput = (selector: string, value: string) =>
-	`(() => { const input=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(input.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(value)});input.dispatchEvent(new Event('input',{bubbles:true})); })()`;
+	`(() => { const input=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(input.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(input,${jsLiteral(value)});input.dispatchEvent(new Event('input',{bubbles:true})); })()`;
 
 /** A selector for the element with `attribute` equal to `value`, quoted for any value. */
-const withAttribute = (attribute: string, value: string) => `[${attribute}=${JSON.stringify(value)}]`;
+const withAttribute = (attribute: string, value: string) => `[${attribute}=${jsLiteral(value)}]`;
 
 /** The sidebar's session item titled `title` (its `.session-row`). */
 const itemTitled = (title: string) =>
-	`[...document.querySelectorAll('.sidebar-nav .session-row')].find(e=>e.querySelector('.session-title').textContent===${JSON.stringify(title)})`;
+	`[...document.querySelectorAll('.sidebar-nav .session-row')].find(e=>e.querySelector('.session-title').textContent===${jsLiteral(title)})`;
 
 /** The open command menu's chip and its row titles, as expressions. */
 const CHIP = `document.querySelector('.command-menu .command-chip')?.textContent`;
 const TITLES = `[...document.querySelectorAll('.command-menu [role=option] .command-title')].map((e) => e.textContent)`;
 /** The open command menu's row titled `title`, as an expression. */
 const option = (title: string) =>
-	`[...document.querySelectorAll('.command-menu [role=option]')].find((o) => o.querySelector('.command-title')?.textContent === ${JSON.stringify(title)})`;
+	`[...document.querySelectorAll('.command-menu [role=option]')].find((o) => o.querySelector('.command-title')?.textContent === ${jsLiteral(title)})`;
 /** The middle of the element `expression` evaluates to, as an expression. */
 const middle = (expression: string) =>
 	`(() => { const r = (${expression}).getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`;

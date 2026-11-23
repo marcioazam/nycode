@@ -648,13 +648,9 @@ export async function startServer(options: ServerOptions = {}): Promise<P2Server
 			await watcher.reload(command.plugins);
 			const state = watcher.status();
 			return { ok: true, message: state.message ?? "Reloaded", plugins: state.plugins };
-		} catch (error) {
-			if (command.action === "restart")
-				watcher.notify({
-					ok: false,
-					message: `Restart refused: ${error instanceof Error ? error.message : String(error)}`,
-				});
-			return { ok: false, message: watcher.status().message ?? String(error) };
+		} catch {
+			if (command.action === "restart") watcher.notify({ ok: false, message: "Restart refused" });
+			return { ok: false, message: watcher.status().message ?? "Dev command failed" };
 		}
 	};
 	const onDevMessage = (message: unknown): void => {
@@ -790,8 +786,8 @@ export async function startServer(options: ServerOptions = {}): Promise<P2Server
 							}
 							const result = await execute(command);
 							sendJson(response, result.ok ? 200 : 409, result);
-						} catch (error) {
-							sendJson(response, 400, { ok: false, message: String(error) });
+						} catch {
+							sendJson(response, 400, { ok: false, message: "Dev command failed" });
 						}
 					} else {
 						sendJson(response, 200, watcher ? { ...watcher.status(), hasLogs: plugins.includes("logs") } : null);

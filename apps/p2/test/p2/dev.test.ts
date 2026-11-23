@@ -15,6 +15,7 @@ import type { Host } from "../../src/runtime/chord.ts";
 import type { DevCommand, DevStatus } from "../../src/runtime/dev-protocol.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { clientHost, holdIn, http, type LocalOwner, localOwner, poll, until, webAssets } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 /** Local owner sessions of a dev server by port (each restart listens on a new one), signed in on first use. */
 function localOwners(dataDir: string): (port: number) => Promise<LocalOwner> {
@@ -83,12 +84,12 @@ import { defineFacet, local } from "@p2/app/v1";
 import { Routes } from "@p2/app/v1/server";
 import { Probe, ServerProbe } from "./contract.ts";
 import { label } from "./nested/label.ts";
-const Eager = local(${JSON.stringify(`test.${name}.lifecycle`)}, { version: 1, params: {}, members: {} });
+const Eager = local(${jsLiteral(`test.${name}.lifecycle`)}, { version: 1, params: {}, members: {} });
 export default defineFacet((host) => {
  const probe = () => ({ variant: "reader" as const, members: { label: async () => label, pid: async () => process.pid } });
  host.serve(${kind === "server" ? "ServerProbe" : "Probe"}, probe);
  host.serve(Eager, (_params, self) => {
-  ${kind === "server" ? `self.contribute(Routes, { ${JSON.stringify(`GET ${route}`)}: (_request, response) => response.end(${JSON.stringify(name)}) });` : ""}
+  ${kind === "server" ? `self.contribute(Routes, { ${JSON.stringify(`GET ${route}`)}: (_request, response) => response.end(${jsLiteral(name)}) });` : ""}
   self.open(async () => null, () => writeFileSync(join(${JSON.stringify(directory)}, ${JSON.stringify(`${name}-disposed-`)} + process.pid), "closed"));
   return {};
  });

@@ -20,16 +20,17 @@ import { Hosts } from "../../src/runtime/server.ts";
 import { bigSessionEntries } from "../fixtures/big-session.ts";
 import { Browser, browserTests, COMPOSER, composerText, setComposer } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const live = (view: ConversationView | null | undefined) => view?.docs["nycode.live"] as LiveState | undefined;
 const answered = (text: string) => (view: ConversationView | null | undefined) =>
 	JSON.stringify(view?.entries ?? []).includes(text) && !live(view)?.run;
 const input = (selector: string, value: string) =>
-	`(() => { const e=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event('input',{bubbles:true})); })()`;
+	`(() => { const e=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(e,${jsLiteral(value)});e.dispatchEvent(new Event('input',{bubbles:true})); })()`;
 const messages = "(document.querySelector('.messages')?.textContent ?? '')";
 /** The texts of the people's messages shown (a compaction summary may quote old answers; bubbles are exact). */
 const bubbles = "[...document.querySelectorAll('.messages .user .bubble')].map((e) => e.textContent.trim())";
-const shows = (text: string) => `${bubbles}.some((t) => t.endsWith(${JSON.stringify(text)}))`;
+const shows = (text: string) => `${bubbles}.some((t) => t.endsWith(${jsLiteral(text)}))`;
 /**
  * Which of the test's messages the whole transcript shows, sorted: it renders only the rows near the viewport, so this scrolls
  * from the top to the bottom in half viewports and collects what each position shows.
@@ -344,7 +345,7 @@ describe("Nycode Mobile audit fixes in the browser", { skip: !browserTests }, ()
 			await browser.wait(`document.querySelector('output.notice.stopped')`);
 			// Another conversation, then back: the notice belonged to that stop, not to every later visit.
 			const row = (title: string) =>
-				`[...document.querySelectorAll('.drawer .session-main')].find((e) => e.querySelector('.session-title')?.textContent === ${JSON.stringify(title)})`;
+				`[...document.querySelectorAll('.drawer .session-main')].find((e) => e.querySelector('.session-title')?.textContent === ${jsLiteral(title)})`;
 			await browser.evaluate(`${row("Elsewhere")}.click()`);
 			await browser.wait(`location.pathname === '/s/${second.id}'`);
 			await browser.evaluate(`${row("Stopped here")}.click()`);
@@ -382,7 +383,7 @@ describe("Nycode Mobile audit fixes in the browser", { skip: !browserTests }, ()
 			);
 		const tap = async (scope: string, session: string) => {
 			await browser.evaluate(`document.activeElement?.blur()`);
-			const { x, y } = await point(`document.querySelector(${JSON.stringify(row(scope, session))})`);
+			const { x, y } = await point(`document.querySelector(${jsLiteral(row(scope, session))})`);
 			await browser.call("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y }] });
 			await browser.call("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 			await arrive(session);

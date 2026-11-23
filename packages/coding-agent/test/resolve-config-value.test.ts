@@ -9,6 +9,16 @@ import {
 } from "../src/core/resolve-config-value.ts";
 import * as shellModule from "../src/utils/shell.ts";
 
+function shellPath(value: string): string {
+	let result = "";
+	for (const character of value) {
+		if (character === "\\") result += "/";
+		else if (character === '"') result += '\\"';
+		else result += character;
+	}
+	return result;
+}
+
 describe("resolveConfigValue", () => {
 	let tempDir: string;
 
@@ -64,7 +74,7 @@ describe("resolveConfigValue", () => {
 	test("caches successful and failed commands until explicitly cleared", () => {
 		const counterFile = join(tempDir, "counter");
 		writeFileSync(counterFile, "0");
-		const escapedPath = counterFile.replace(/\\/g, "/").replace(/"/g, '\\"');
+		const escapedPath = shellPath(counterFile);
 		const success = `!sh -c 'count=$(cat "${escapedPath}"); echo $((count + 1)) > "${escapedPath}"; echo value'`;
 
 		expect(resolveConfigValue(success)).toBe("value");
@@ -95,7 +105,7 @@ describe("resolveConfigValue", () => {
 	test("uncached resolution executes a command on every call", () => {
 		const counterFile = join(tempDir, "uncached-counter");
 		writeFileSync(counterFile, "0");
-		const escapedPath = counterFile.replace(/\\/g, "/").replace(/"/g, '\\"');
+		const escapedPath = shellPath(counterFile);
 		const command = `!sh -c 'count=$(cat "${escapedPath}"); echo $((count + 1)) > "${escapedPath}"; echo value'`;
 		expect(resolveConfigValueUncached(command)).toBe("value");
 		expect(resolveConfigValueUncached(command)).toBe("value");

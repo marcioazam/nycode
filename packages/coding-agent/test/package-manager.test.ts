@@ -938,7 +938,7 @@ Content`,
 				.spyOn(packageManager as any, "runCommand")
 				.mockImplementation(async (...callArgs: unknown[]) => {
 					const [command, args] = callArgs as [string, string[]];
-					if (command === "git" && args[0] === "clone") {
+					if (command === "git" && args.includes("clone")) {
 						mkdirSync(targetDir, { recursive: true });
 						writeFileSync(join(targetDir, "package.json"), JSON.stringify({ name: "repo", version: "1.0.0" }));
 					}
@@ -960,7 +960,7 @@ Content`,
 			const targetDir = join(agentDir, "git", "github.com", "user", "repo");
 			vi.spyOn(packageManager as any, "runCommand").mockImplementation(async (...callArgs: unknown[]) => {
 				const [command, args] = callArgs as [string, string[]];
-				if (command === "git" && args[0] === "clone") {
+				if (command === "git" && args.includes("clone")) {
 					mkdirSync(targetDir, { recursive: true });
 					throw new Error("simulated git clone failure");
 				}
@@ -976,7 +976,7 @@ Content`,
 			const targetDir = join(agentDir, "git", "github.com", "user", "repo");
 			vi.spyOn(packageManager as any, "runCommand").mockImplementation(async (...callArgs: unknown[]) => {
 				const [command, args] = callArgs as [string, string[]];
-				if (command === "git" && args[0] === "clone") {
+				if (command === "git" && args.includes("clone")) {
 					mkdirSync(targetDir, { recursive: true });
 					writeFileSync(join(targetDir, "package.json"), JSON.stringify({ name: "repo", version: "1.0.0" }));
 					return;
@@ -1096,7 +1096,7 @@ Content`,
 				.spyOn(packageManager as any, "runCommand")
 				.mockImplementation(async (...callArgs: unknown[]) => {
 					const [command, args] = callArgs as [string, string[]];
-					if (command === "git" && args[0] === "clone") {
+					if (command === "git" && args.includes("clone")) {
 						mkdirSync(targetDir, { recursive: true });
 						writeFileSync(join(targetDir, "package.json"), JSON.stringify({ name: "repo", version: "1.0.0" }));
 					}
@@ -1134,7 +1134,7 @@ Content`,
 				.spyOn(packageManager as any, "runCommand")
 				.mockImplementation(async (...callArgs: unknown[]) => {
 					const [command, args] = callArgs as [string, string[]];
-					if (command === "git" && args[0] === "clone") {
+					if (command === "git" && args.includes("clone")) {
 						mkdirSync(targetDir, { recursive: true });
 						writeFileSync(join(targetDir, "package.json"), JSON.stringify({ name: "repo", version: "1.0.0" }));
 					}
@@ -1497,7 +1497,14 @@ Content`,
 
 			await expect(packageManager.install(source)).rejects.toThrow("simulated git clone failure");
 
-			expect(runCommand).toHaveBeenCalledWith("git", ["clone", source, expect.any(String)]);
+			expect(runCommand).toHaveBeenCalledWith("git", [
+				"-c",
+				"protocol.ext.allow=never",
+				"clone",
+				"--",
+				source,
+				expect.any(String),
+			]);
 			expect(events.some((e) => e.type === "start" && e.action === "install")).toBe(true);
 		});
 

@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
+- Fixed argument substitution, skill-block parsing and diff-line parsing so a long crafted string cannot make those scans take polynomial time
+
 ## [2.0.2] - 2026-11-23
 
 ### Fixed
