@@ -11,6 +11,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { RESOURCES_MARKER } from "../../../../src/core/builtin-resources.ts";
 import { loadSkills } from "../../../../src/core/skills.ts";
 import { collectCommands, commandDirs } from "../../../../src/extensions/commands/expand.ts";
 import { discoverAgents } from "../../../../src/extensions/subagent/registry/agents.ts";
@@ -43,7 +44,13 @@ function personalSource(h: Home): void {
 	write(join(s, "checkpoints", "x.jsonl"), "checkpoint\n");
 	write(
 		join(s, "extensions", "conta.ts"),
-		"import type { A } from '@earendil-works/pi-coding-agent'\nconst D = process.env.PI_CODING_AGENT_DIR ?? path.join(os.homedir(), '.pi', 'agent')\n",
+		[
+			"import type { A } from '@earendil-works/pi-coding-agent'",
+			"const DIR = path.join(process.env.PI_CODING_AGENT_DIR ?? path.join(os.homedir(), '.pi', 'agent'), 'accounts')",
+			"description: 'Alterna a conta Claude sem sair do pi',",
+			"const r = await pi.exec(BIN, cmd, { timeout: 30_000 })",
+			"",
+		].join("\n"),
 	);
 	const home = join(s, "claude-home");
 	write(join(home, "skills", EMBEDDED_SKILL, "SKILL.md"), skill(EMBEDDED_SKILL));
@@ -168,7 +175,18 @@ describe("migrate from-pi personal layer", () => {
 		expect(copied).toContain("@nycode/coding-agent");
 		expect(copied).toContain("NYCODE_CODING_AGENT_DIR");
 		expect(copied).toContain("'.nycode', 'agent'");
-		expect(copied).not.toContain("PI_CODING_AGENT_DIR");
+		expect(copied).not.toContain("process.env.PI_CODING_AGENT_DIR");
+		expect(copied).toContain("sem sair do nycode");
+	});
+
+	it("points the pi-conta helper at the nycode agent dir, not ~/.pi/agent", async () => {
+		const h = makeHome();
+		personalSource(h);
+		await h.run(["--apply"]);
+		const copied = readFileSync(join(h.agentDir, "extensions", "conta.ts"), "utf8");
+		// pi-conta rewrites $PI_CODING_AGENT_DIR/auth.json and defaults to ~/.pi/agent.
+		expect(copied).toContain(`pi.exec('env', [\`PI_CODING_AGENT_DIR=\${path.dirname(DIR)}\`, BIN, ...cmd], {`);
+		expect(copied).not.toContain("pi.exec(BIN, cmd,");
 	});
 
 	it("dry run lists the personal items and writes nothing", async () => {
@@ -222,28 +240,82 @@ describe("migrate from-pi mcp-auth.json", () => {
 	});
 });
 
+describe("personal overlay of claude-home", () => {
+	const overlay = [
+		"Bypass: `PI_BYPASS_PERMISSIONS=1` in `~/.pi/agent/local.env`; `pi --safe` turns it off.",
+		"Checks: `python3 ~/.pi/agent/claude-home/bin/checks/check-instructions.py` as in `rules-ref/harness-economy.md`.",
+		"Providers: `~/.pi/agent/claude-home/skills/deep-search/references/providers.md`; mine: `~/.pi/agent/claude-home/skills/mine/x.py`.",
+		"Overrides rules/safety.md and rules-ref/research-and-tools.md.",
+		"Delivery drives `~/.claude/bin/git-deliver`.",
+		"",
+	].join("\n");
+
+	it("appends rules/personal.md to the copied AGENTS.md with the pi names converted", async () => {
+		const h = makeHome();
+		write(join(h.source, "AGENTS.md"), "# personal instructions\n");
+		write(join(h.source, "claude-home", "rules", "personal.md"), overlay);
+		expect(await h.run(["--apply"])).toBe(0);
+		const merged = readFileSync(join(h.agentDir, "AGENTS.md"), "utf8");
+		expect(merged.startsWith("# personal instructions\n\n")).toBe(true);
+		expect(merged).toContain(
+			"`NYCODE_BYPASS_PERMISSIONS=1` in `~/.nycode/agent/local.env`; `nycode --safe` turns it off.",
+		);
+		expect(merged).toContain(
+			`\`python3 ${RESOURCES_MARKER}/bin/checks/check-instructions.py\` as in \`${RESOURCES_MARKER}/rules/ref/harness-economy.md\``,
+		);
+		expect(merged).toContain(
+			`\`${RESOURCES_MARKER}/skills/deep-search/references/providers.md\`; mine: \`~/.nycode/agent/skills/mine/x.py\``,
+		);
+		expect(merged).toContain(
+			`Overrides ${RESOURCES_MARKER}/rules/safety.md and ${RESOURCES_MARKER}/rules/ref/research-and-tools.md.`,
+		);
+		expect(merged).toContain(`Delivery drives \`${RESOURCES_MARKER}/bin/git-deliver\`.`);
+		expect(merged).not.toMatch(/\.pi\/agent|\bPI_|claude-home|\.claude/);
+		expect(text(h)).toMatch(/create\s+AGENTS\.md.*rules\/personal\.md/);
+	});
+
+	it("is the whole AGENTS.md when the pi directory has none, and an existing destination is kept", async () => {
+		const h = makeHome();
+		write(join(h.source, "claude-home", "rules", "personal.md"), overlay);
+		expect(await h.run(["--apply"])).toBe(0);
+		expect(readFileSync(join(h.agentDir, "AGENTS.md"), "utf8")).toContain("`nycode --safe`");
+		const kept = makeHome();
+		write(join(kept.source, "claude-home", "rules", "personal.md"), overlay);
+		write(join(kept.agentDir, "AGENTS.md"), "destination instructions\n");
+		expect(await kept.run(["--apply"])).toBe(0);
+		expect(readFileSync(join(kept.agentDir, "AGENTS.md"), "utf8")).toBe("destination instructions\n");
+	});
+});
+
 describe("precedence that makes the personal layer useful", () => {
-	it("a skill in <agent dir>/skills wins over the same name in ~/.claude/skills and the embedded one", () => {
+	it("a skill in <agent dir>/skills wins over the embedded one of the same name", () => {
 		const h = makeHome();
 		write(join(h.agentDir, "skills", "dup", "SKILL.md"), skill("dup").replace("body of dup", "from-nycode"));
-		write(join(h.home, ".claude", "skills", "dup", "SKILL.md"), skill("dup").replace("body of dup", "from-claude"));
+		write(join(h.home, "embedded", "dup", "SKILL.md"), skill("dup").replace("body of dup", "embedded"));
 		const result = loadSkills({
 			cwd: h.home,
 			agentDir: h.agentDir,
-			skillPaths: [join(h.home, ".claude", "skills")],
+			skillPaths: [join(h.home, "embedded")],
 			includeDefaults: true,
 		});
 		const winner = result.skills.find((s) => s.name === "dup");
 		expect(winner?.filePath).toBe(join(h.agentDir, "skills", "dup", "SKILL.md"));
 	});
 
-	it("an agent in <agent dir>/agents wins over the same name in ~/.claude/agents", () => {
+	it("agents and commands come from <agent dir>, never from the home directory of another tool (D-62)", () => {
 		const h = makeHome();
 		vi.stubEnv("NYCODE_CODING_AGENT_DIR", h.agentDir);
-		write(join(h.agentDir, "agents", "dup.md"), agent("dup", "from-nycode"));
-		write(join(h.home, ".claude", "agents", "dup.md"), agent("dup", "from-claude"));
-		const found = discoverAgents(h.home, "user").agents.find((a) => a.name === "dup");
-		expect(found?.systemPrompt).toContain("from-nycode");
+		vi.stubEnv("HOME", h.home);
+		write(join(h.agentDir, "agents", "mine.md"), agent("mine", "from-nycode"));
+		write(join(h.home, ".claude", "agents", "other.md"), agent("other", "elsewhere"));
+		write(join(h.agentDir, "commands", "x.md"), "x");
+		write(join(h.home, ".claude", "commands", "y.md"), "y");
+		const names = discoverAgents(h.home, "both").agents.map((a) => a.name);
+		expect(names).toContain("mine");
+		expect(names).not.toContain("other");
+		const dirs = commandDirs(h.home, true, h.agentDir);
+		expect(dirs).toContain(join(h.agentDir, "commands"));
+		expect(dirs).not.toContain(join(h.home, ".claude", "commands"));
 	});
 
 	it("an agent in <agent dir>/agents replaces an embedded agent of the same name", () => {
@@ -254,26 +326,10 @@ describe("precedence that makes the personal layer useful", () => {
 		expect(found?.systemPrompt).toContain("personal version");
 	});
 
-	it("nycode reads <agent dir>/commands, after ~/.claude/commands and the embedded ones", () => {
+	it("a command in <agent dir>/commands wins over the embedded one of the same name", () => {
 		const h = makeHome();
-		write(join(h.agentDir, "commands", "x.md"), "x");
-		write(join(h.home, ".claude", "commands", "y.md"), "y");
-		const dirs = commandDirs(h.home, h.home, false, h.agentDir);
-		const claude = dirs.indexOf(join(h.home, ".claude", "commands"));
-		const agent = dirs.indexOf(join(h.agentDir, "commands"));
-		expect(claude).toBeGreaterThanOrEqual(0);
-		expect(agent).toBeGreaterThan(claude);
-	});
-
-	it("a command in <agent dir>/commands wins over ~/.claude/commands and the embedded one of the same name", () => {
-		const h = makeHome();
-		write(join(h.agentDir, "commands", "dup.md"), "from-nycode");
-		write(join(h.home, ".claude", "commands", "dup.md"), "from-claude");
 		write(join(h.agentDir, "commands", `${EMBEDDED_COMMAND}.md`), "personal commit");
-		const found = new Map(
-			collectCommands(commandDirs(h.home, h.home, false, h.agentDir)).map((c) => [c.name, c.filePath]),
-		);
-		expect(found.get("dup")).toBe(join(h.agentDir, "commands", "dup.md"));
+		const found = new Map(collectCommands(commandDirs(h.home, false, h.agentDir)).map((c) => [c.name, c.filePath]));
 		expect(found.get(EMBEDDED_COMMAND)).toBe(join(h.agentDir, "commands", `${EMBEDDED_COMMAND}.md`));
 	});
 });

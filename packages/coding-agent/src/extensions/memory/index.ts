@@ -21,7 +21,7 @@ import { withFileMutationQueue } from "../../core/tools/file-mutation-queue.ts";
 import { addPromptSection } from "../_shared/commands/prompt-options.ts";
 import { isProjectApprovedSilently } from "../_shared/project/project-approval.ts";
 import { repoRoot } from "../_shared/project/project-root.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { claudeSettingsChain, readSettingsChain } from "../_shared/settings/settings-chain.ts";
 import { atomicWriteFile } from "../_shared/util/atomic-write.ts";
@@ -438,8 +438,8 @@ export function readMemorySettings(
  * An absent file starts from an empty object so the toggle still lands. A file that is
  * PRESENT but unparseable is refused, not overwritten: clobbering it would destroy the
  * user's hooks, env and permissions config. The caller surfaces the returned failure. */
-export function setAutoMemoryEnabledSetting(home: string, value: boolean): { ok: true } | { ok: false; error: string } {
-	const dir = claudeConfigDir(home);
+export function setAutoMemoryEnabledSetting(value: boolean): { ok: true } | { ok: false; error: string } {
+	const dir = userConfigDir();
 	const file = path.join(dir, "settings.json");
 	let current: Record<string, unknown> = {};
 	let raw: string | undefined;
@@ -623,9 +623,9 @@ export default function memoryExtension(nycode: ExtensionAPI): void {
 			const home = os.homedir();
 			const arg = args.trim().toLowerCase();
 
-			if (arg === "on" || arg === "off") return toggleAutoMemory(ctx, home, arg === "on");
+			if (arg === "on" || arg === "off") return toggleAutoMemory(ctx, arg === "on");
 
-			if (arg === "edit") return editMemoryFile(ctx, home);
+			if (arg === "edit") return editMemoryFile(ctx);
 
 			if (arg.length > 0) {
 				ctx.ui.notify("Usage: /memory [edit|on|off]", "error");
@@ -638,10 +638,10 @@ export default function memoryExtension(nycode: ExtensionAPI): void {
 }
 
 /** /memory on|off: write autoMemoryEnabled to the user settings file. */
-function toggleAutoMemory(ctx: ExtensionCommandContext, home: string, next: boolean): void {
+function toggleAutoMemory(ctx: ExtensionCommandContext, next: boolean): void {
 	let result: { ok: true } | { ok: false; error: string };
 	try {
-		result = setAutoMemoryEnabledSetting(home, next);
+		result = setAutoMemoryEnabledSetting(next);
 	} catch (error) {
 		ctx.ui.notify(`Could not update auto memory: ${errorMessage(error)}`, "error");
 		return;
@@ -651,7 +651,7 @@ function toggleAutoMemory(ctx: ExtensionCommandContext, home: string, next: bool
 		return;
 	}
 	ctx.ui.notify(
-		`Auto memory ${next ? "enabled" : "disabled"} in ${path.join(claudeConfigDir(home), "settings.json")} (applies next session).`,
+		`Auto memory ${next ? "enabled" : "disabled"} in ${path.join(userConfigDir(), "settings.json")} (applies next session).`,
 		"info",
 	);
 }
@@ -668,7 +668,7 @@ function showMemoryLocations(ctx: ExtensionCommandContext, home: string): void {
 		`  Auto memory: ${isEnabled ? "on" : "off"}`,
 		`  Store:       ${store}`,
 		`  Index:       ${path.join(store, INDEX_FILE)}`,
-		...memoryFiles(ctx.cwd, home).map(({ label, file }) => `  ${label}: ${file}`),
+		...memoryFiles(ctx.cwd).map(({ label, file }) => `  ${label}: ${file}`),
 		"Edit one with /memory edit. Toggle with /memory on or /memory off.",
 	];
 	ctx.ui.notify(lines.join("\n"), "info");
@@ -676,12 +676,12 @@ function showMemoryLocations(ctx: ExtensionCommandContext, home: string): void {
 
 /**
  * The CLAUDE.md locations /memory lists and edits. Claude's /memory lists every documented
- * location, including files that do not exist yet. The user file is read from the
- * configured directory, which is always <home>/.claude.
+ * location, including files that do not exist yet. The user file is nycode's own global context file in the agent
+ * directory (D-62).
  */
-function memoryFiles(cwd: string, home: string): Array<{ label: string; file: string }> {
+function memoryFiles(cwd: string): Array<{ label: string; file: string }> {
 	return [
-		{ label: "User memory (CLAUDE.md)", file: path.join(claudeConfigDir(home), "CLAUDE.md") },
+		{ label: "User memory (AGENTS.md)", file: path.join(userConfigDir(), "AGENTS.md") },
 		{ label: "Project memory (CLAUDE.md)", file: path.join(cwd, "CLAUDE.md") },
 		{ label: "Project memory (CLAUDE.local.md)", file: path.join(cwd, "CLAUDE.local.md") },
 		{ label: "Project memory (alternate)", file: path.join(cwd, ".claude", "CLAUDE.md") },
@@ -706,12 +706,12 @@ function pickerEntry({ label, file }: { label: string; file: string }): string {
  * normalises CRLF and tabs and trims, and a read-then-write would overwrite a change made
  * meanwhile. The command is nycode's own choice: its externalEditor setting, then VISUAL, EDITOR.
  */
-async function editMemoryFile(ctx: ExtensionCommandContext, home: string): Promise<void> {
+async function editMemoryFile(ctx: ExtensionCommandContext): Promise<void> {
 	if (!ctx.hasUI) {
 		ctx.ui.notify("/memory edit needs the interactive UI", "error");
 		return;
 	}
-	const files = memoryFiles(ctx.cwd, home);
+	const files = memoryFiles(ctx.cwd);
 	const options = files.map(pickerEntry);
 	const choice = await ctx.ui.select("Edit which memory file?", options);
 	const picked = files[options.indexOf(choice ?? "")];

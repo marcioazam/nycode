@@ -74,7 +74,7 @@ const AGENT_GROUPS: Record<string, string> = {
 	project: "Do projeto",
 	plugin: "De plugins",
 };
-const AGENTS_HINT = "Add agents as markdown files under ~/.claude/agents (user) or .claude/agents (project).";
+const AGENTS_HINT = "Add agents as markdown files under ~/.nycode/agent/agents (user) or .nycode/agents (project).";
 
 // subagent/registry-text.ts:151 agentsListText
 function parseAgents(message: string, home: string): SheetModel | undefined {

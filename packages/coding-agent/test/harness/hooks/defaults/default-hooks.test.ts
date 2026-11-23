@@ -21,7 +21,7 @@ let savedHome: string | undefined;
 beforeEach(() => {
 	savedHome = process.env.HOME;
 	home = mkdtempSync(join(tmpdir(), "defhooks-"));
-	process.env.HOME = home; // no ~/.claude settings reach the chain
+	process.env.HOME = home; // the user settings of the chain are this home's ~/.nycode/agent/settings.json
 });
 
 afterEach(() => {
@@ -35,8 +35,6 @@ interface SessionOptions {
 	global?: Record<string, unknown>;
 	/** A project directory with this `.claude/settings.json`, trusted by the user. */
 	projectClaude?: Record<string, unknown>;
-	/** `~/.claude/settings.json`. */
-	userClaude?: Record<string, unknown>;
 	/** Keep the default permission engine (native) instead of choosing the guard.py script. */
 	nativeEngine?: boolean;
 }
@@ -61,7 +59,6 @@ async function startSession(settings: { hooks?: Record<string, unknown> } = {}, 
 	const notify = vi.fn();
 	const global = options.nativeEngine ? options.global : { permissions: { engine: "script" }, ...options.global };
 	if (global) writeJson(join(home, ".nycode", "agent", "settings.json"), global);
-	if (options.userClaude) writeJson(join(home, ".claude", "settings.json"), options.userClaude);
 	const project = join(home, "project");
 	if (options.projectClaude) writeJson(join(project, ".claude", "settings.json"), options.projectClaude);
 	const trusted = options.projectClaude !== undefined;
@@ -255,7 +252,7 @@ describe("default hooks", () => {
 		const project = await startSession({}, { projectClaude: { disableAllHooks: true } });
 		expect(await project.toolCall("rm -rf /")).toMatchObject({ block: true });
 		expect(await project.summary()).not.toContain("SessionStart:");
-		const user = await startSession({}, { userClaude: { disableAllHooks: true } });
+		const user = await startSession({}, { global: { disableAllHooks: true } });
 		expect(await user.toolCall("rm -rf /")).toBeUndefined();
 	});
 });

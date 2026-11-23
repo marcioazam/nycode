@@ -492,7 +492,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 		// user-scoped and never reads the project settings chain (see installedPlugins).
 		const plugins = pluginCommands(installedPlugins(os.homedir()));
 		const invocable: SlashCommandEntry[] = [];
-		for (const command of [...collectCommands(commandDirs(ctx.cwd, os.homedir(), trusted)), ...plugins]) {
+		for (const command of [...collectCommands(commandDirs(ctx.cwd, trusted)), ...plugins]) {
 			let parsed: ParsedCommand;
 			try {
 				parsed = parseCommandFile(fs.readFileSync(command.filePath, "utf-8"));

@@ -2,6 +2,8 @@
 
 This guide exists to save both sides time.
 
+Nycode is in beta. The latest GitHub Release is the current beta.
+
 ## Philosophy
 
 First things first: **nycode's core is minimal**.

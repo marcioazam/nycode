@@ -25,6 +25,8 @@ const GPT: ModelInfo = { id: "gpt-5.6", name: "GPT 5.6", provider: "openai-codex
 
 const tmp = mkdtempSync(join(tmpdir(), "nycode-statusline-provider-"));
 const home = join(tmp, "home");
+const agentDir = join(home, ".nycode", "agent");
+process.env.NYCODE_CODING_AGENT_DIR = agentDir;
 const cwd = join(tmp, "cwd");
 const out = join(tmp, "payload.json");
 const savedHome = process.env.HOME;
@@ -59,9 +61,9 @@ const fire = (name: string, event: unknown = {}): void => {
 
 beforeAll(() => {
 	mkdirSync(cwd, { recursive: true });
-	mkdirSync(join(home, ".claude"), { recursive: true });
+	mkdirSync(agentDir, { recursive: true });
 	writeFileSync(
-		join(home, ".claude", "settings.json"),
+		join(agentDir, "settings.json"),
 		JSON.stringify({ statusLine: { type: "command", command: `cat > '${out}'` } }),
 	);
 	process.env.HOME = home; // not vi.stubEnv: the vitest config unstubs envs before every test

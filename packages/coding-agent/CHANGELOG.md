@@ -2,10 +2,19 @@
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- The user scope is `~/.nycode/agent` only (D-62): the user's CLAUDE.md, rules, skills, agents, commands, output styles, plugins and Claude-format settings keys (`hooks`, `env`, `disableAllHooks`, `outputStyle`, ...) are read from there, and the home directories of other tools (`~/.claude`, `~/.agents`) are no longer read. The home directory is never treated as a project. Managed policy moves to `/etc/nycode/managed-settings.json` (`/Library/Application Support/Nycode/`, `C:\Program Files\Nycode\`)
+
 ### Fixed
 
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
 - Fixed argument substitution, skill-block parsing and diff-line parsing so a long crafted string cannot make those scans take polynomial time
+- Hooks, plugins, rules, CLAUDE.md, skills and agents of another tool's home directory no longer run or reach the prompt in nycode sessions; the HUD config and usage cache are read from `~/.nycode/agent/plugins/claude-hud`
+- A skill path declared in `settings.json` no longer reports a startup collision with a lower-precedence copy of the same skill
+- `nycode migrate from-pi` now carries the harness overlay `claude-home/rules/personal.md` into `~/.nycode/agent/AGENTS.md`, with the pi names converted
+- `nycode migrate from-pi` points the personal `/conta` extension's `pi-conta` helper at `~/.nycode/agent`; before, switching accounts in nycode rewrote `~/.pi/agent/auth.json`
+- The agent directory's CLAUDE.md is not injected twice when nycode already loads it as the global context file
 
 ## [2.0.2] - 2026-11-23
 

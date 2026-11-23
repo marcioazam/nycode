@@ -1,6 +1,5 @@
 /** Asking one question: the answer sources (overlay, remote responder, dialogs) and the text the model gets back. */
 
-import * as os from "node:os";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { readUserSetting } from "../_shared/settings/settings-chain.ts";
@@ -28,13 +27,12 @@ export function parseAskUserQuestionTimeout(value: unknown): number | undefined 
 /** Claude scopes askUserQuestionTimeout to "User or managed": a project's own
  * settings.json cannot set it, so a checked-out repository can never make the
  * user's own dialogs auto-answer themselves. Managed wins over the user's file, as
- * every managed setting does. `home` defaults to the real one and is a parameter
- * only so a test can point it at a fixture without mocking node:os. */
-export function askUserQuestionTimeoutMs(home: string = os.homedir()): number | undefined {
+ * every managed setting does. */
+export function askUserQuestionTimeoutMs(): number | undefined {
 	const managed = readManagedSettings() as { askUserQuestionTimeout?: unknown };
 	const fromManaged = parseAskUserQuestionTimeout(managed.askUserQuestionTimeout);
 	if (fromManaged !== undefined) return fromManaged;
-	return parseAskUserQuestionTimeout(readUserSetting(home, "askUserQuestionTimeout"));
+	return parseAskUserQuestionTimeout(readUserSetting("askUserQuestionTimeout"));
 }
 
 /** ui.custom() is terminal-only: with a UI but no terminal (RPC mode) it resolves

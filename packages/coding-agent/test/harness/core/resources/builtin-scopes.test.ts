@@ -10,10 +10,16 @@ import { parseCommandFile } from "../../../../src/extensions/_shared/commands/co
 import claudeRulesExtension from "../../../../src/extensions/claude-rules/index.ts";
 import { agentOmitsClaudeMd } from "../../../../src/extensions/claude-rules/omit-claude-md.ts";
 import { collectCommands, commandDirs, expandCommand } from "../../../../src/extensions/commands/expand.ts";
-import { discoverableSkillPaths, skillDirs } from "../../../../src/extensions/skills-compat/index.ts";
+import {
+	discoverableSkillPaths,
+	shadowingSkillPaths,
+	skillDirs,
+} from "../../../../src/extensions/skills-compat/index.ts";
 import { discoverAgents } from "../../../../src/extensions/subagent/registry/agents.ts";
 import { createResourcesFixture, type ResourcesFixture } from "./fixture.ts";
 
+/** The user config directory: the nycode agent directory the fixture points at (D-62). */
+const userDir = (): string => process.env.NYCODE_CODING_AGENT_DIR as string;
 const agent = (name: string, body: string) => `---\nname: ${name}\ndescription: ${body}\n---\n${body}\n`;
 
 let fx: ResourcesFixture;
@@ -38,9 +44,9 @@ describe("agents", () => {
 	it("a user agent and a project agent each replace the embedded one of the same name", () => {
 		fx.write("agents/Explore.md", agent("Explore", "embedded"));
 		fx.write("agents/Plan.md", agent("Plan", "embedded"));
-		const userDir = join(home, ".claude", "agents");
-		mkdirSync(userDir, { recursive: true });
-		writeFileSync(join(userDir, "Explore.md"), agent("Explore", "user"));
+		const agentsDir = join(userDir(), "agents");
+		mkdirSync(agentsDir, { recursive: true });
+		writeFileSync(join(agentsDir, "Explore.md"), agent("Explore", "user"));
 		const projectDir = join(cwd, CONFIG_DIR_NAME, "agents");
 		mkdirSync(projectDir, { recursive: true });
 		writeFileSync(join(projectDir, "Plan.md"), agent("Plan", "project"));
@@ -80,32 +86,32 @@ describe("commands", () => {
 
 	it("an embedded command loads with the marker resolved", async () => {
 		fx.write("commands/ship.md", body(`run ${RESOURCES_MARKER}/skills/x`));
-		expect(await loadBody(commandDirs(cwd, home, false), "ship")).toBe(`run ${fx.resources}/skills/x`);
+		expect(await loadBody(commandDirs(cwd, false), "ship")).toBe(`run ${fx.resources}/skills/x`);
 	});
 
 	it("a personal command replaces the embedded one, and a project command replaces both", async () => {
 		fx.write("commands/ship.md", body("embedded"));
 		fx.write("commands/lint.md", body("embedded"));
-		mkdirSync(join(home, ".claude", "commands"), { recursive: true });
-		writeFileSync(join(home, ".claude", "commands", "ship.md"), body("personal"));
+		mkdirSync(join(userDir(), "commands"), { recursive: true });
+		writeFileSync(join(userDir(), "commands", "ship.md"), body("personal"));
 		mkdirSync(join(cwd, ".claude", "commands"), { recursive: true });
 		writeFileSync(join(cwd, ".claude", "commands", "lint.md"), body("project"));
-		const dirs = commandDirs(cwd, home, true);
+		const dirs = commandDirs(cwd, true);
 		expect(dirs[0]).toBe(join(fx.resources, "commands"));
 		expect(await loadBody(dirs, "ship")).toBe("personal");
 		expect(await loadBody(dirs, "lint")).toBe("project");
 	});
 
 	it("a missing resources directory embeds nothing", () => {
-		expect(commandDirs(cwd, home, true)).toEqual([]);
+		expect(commandDirs(cwd, true)).toEqual([]);
 	});
 });
 
 describe("skill roots", () => {
 	it("the embedded skills come last, so any other root wins a first-match lookup", () => {
 		fx.write("skills/alpha/SKILL.md", "---\nname: alpha\ndescription: d\n---\n");
-		mkdirSync(join(home, ".claude", "skills"), { recursive: true });
-		expect(skillDirs(cwd, home, false)).toEqual([join(home, ".claude", "skills"), join(fx.resources, "skills")]);
+		mkdirSync(join(userDir(), "skills"), { recursive: true });
+		expect(skillDirs(cwd, home, false)).toEqual([join(userDir(), "skills"), join(fx.resources, "skills")]);
 	});
 
 	it("discovers only direct one-level skills, skips nested non-skill trees, and omits skills shadowed by nycode agentDir", () => {
@@ -116,17 +122,50 @@ describe("skill roots", () => {
 			"---\nname: shared-skill\ndescription: nycode\n---\n",
 		);
 
-		const claudeSkills = join(home, ".claude", "skills");
-		mkdirSync(join(claudeSkills, "valid-skill"), { recursive: true });
-		writeFileSync(join(claudeSkills, "valid-skill", "SKILL.md"), "---\nname: valid-skill\ndescription: ok\n---\n");
-		mkdirSync(join(claudeSkills, "shared-skill"), { recursive: true });
+		const otherSkills = join(home, "other-skills");
+		mkdirSync(join(otherSkills, "valid-skill"), { recursive: true });
+		writeFileSync(join(otherSkills, "valid-skill", "SKILL.md"), "---\nname: valid-skill\ndescription: ok\n---\n");
+		mkdirSync(join(otherSkills, "shared-skill"), { recursive: true });
 		writeFileSync(
-			join(claudeSkills, "shared-skill", "SKILL.md"),
+			join(otherSkills, "shared-skill", "SKILL.md"),
 			"---\nname: shared-skill\ndescription: claude\n---\n",
 		);
-		mkdirSync(join(claudeSkills, "claude-red", "Skills", "broken"), { recursive: true });
-		writeFileSync(join(claudeSkills, "claude-red", "Skills", "broken", "SKILL.md"), "---\nname: broken\n---\n");
-		expect(discoverableSkillPaths([claudeSkills], [agentSkills])).toEqual([join(claudeSkills, "valid-skill")]);
+		mkdirSync(join(otherSkills, "claude-red", "Skills", "broken"), { recursive: true });
+		writeFileSync(join(otherSkills, "claude-red", "Skills", "broken", "SKILL.md"), "---\nname: broken\n---\n");
+		expect(discoverableSkillPaths([otherSkills], [agentSkills])).toEqual([join(otherSkills, "valid-skill")]);
+	});
+
+	it("omits a Claude skill shadowed by a skill path declared in settings.json, so startup shows no collision", () => {
+		const skill = (dir: string, name: string) => {
+			mkdirSync(dir, { recursive: true });
+			writeFileSync(join(dir, "SKILL.md"), `---\nname: ${name}\ndescription: d\n---\n`);
+		};
+		skill(join(home, ".cua-driver", "skills", "cua-driver"), "cua-driver");
+		skill(join(home, "roots", "from-root"), "from-root");
+		const otherSkills = join(home, "other-skills");
+		for (const name of ["cua-driver", "from-root", "claude-only"]) skill(join(otherSkills, name), name);
+		const agentDir = process.env.NYCODE_CODING_AGENT_DIR as string;
+		writeFileSync(
+			join(agentDir, "settings.json"),
+			JSON.stringify({ skills: ["~/.cua-driver/skills/cua-driver", join(home, "roots")] }),
+		);
+		expect(discoverableSkillPaths([otherSkills], shadowingSkillPaths(cwd, false))).toEqual([
+			join(otherSkills, "claude-only"),
+		]);
+	});
+
+	it("a settings skills list with a pattern shadows nothing, so a skill the pattern disables keeps its Claude copy", () => {
+		const otherSkills = join(home, "other-skills");
+		mkdirSync(join(otherSkills, "cua-driver"), { recursive: true });
+		writeFileSync(join(otherSkills, "cua-driver", "SKILL.md"), "---\nname: cua-driver\ndescription: d\n---\n");
+		const own = join(home, "own", "cua-driver");
+		mkdirSync(own, { recursive: true });
+		writeFileSync(join(own, "SKILL.md"), "---\nname: cua-driver\ndescription: d\n---\n");
+		const agentDir = process.env.NYCODE_CODING_AGENT_DIR as string;
+		writeFileSync(join(agentDir, "settings.json"), JSON.stringify({ skills: [own, "!**/cua-driver"] }));
+		expect(discoverableSkillPaths([otherSkills], shadowingSkillPaths(cwd, false))).toEqual([
+			join(otherSkills, "cua-driver"),
+		]);
 	});
 });
 
@@ -163,8 +202,8 @@ describe("rules", () => {
 	it("a user rule file of the same name replaces the embedded one; the others stay, embedded first", async () => {
 		fx.write("rules/safety.md", rule("embedded safety"));
 		fx.write("rules/style.md", rule("embedded style"));
-		mkdirSync(join(home, ".claude", "rules"), { recursive: true });
-		writeFileSync(join(home, ".claude", "rules", "safety.md"), rule("user safety"));
+		mkdirSync(join(userDir(), "rules"), { recursive: true });
+		writeFileSync(join(userDir(), "rules", "safety.md"), rule("user safety"));
 		const prompt = await rulesPrompt();
 		expect(prompt).not.toContain("embedded safety");
 		expect(prompt.indexOf("embedded style")).toBeGreaterThan(-1);

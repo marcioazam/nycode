@@ -58,7 +58,7 @@ Set `disable-model-invocation: true` in frontmatter when a skill should be avail
 
 Place the skill in your user or project skills directory. Directories containing `SKILL.md` are discovered recursively.
 
-Nycode also supports the Agent Skills locations `~/.agents/skills/` and `.agents/skills/`. Project `.agents/skills/` directories are discovered from the working directory through its ancestors, stopping at the repository root when one exists.
+Nycode also supports the project Agent Skills location `.agents/skills/`. It does not read skills from other tools' home directories (such as `~/.agents/skills/`): user skills live in `~/.nycode/agent/skills/`. Project `.agents/skills/` directories are discovered from the working directory through its ancestors, stopping at the repository root when one exists.
 
 Nycode accepts some standalone Markdown skills, but a directory containing `SKILL.md` is the portable form and should be preferred. See [Settings](settings.md#resources) and [Nycode Packages](packages.md) for additional locations.
 

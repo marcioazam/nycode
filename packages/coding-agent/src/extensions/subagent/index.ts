@@ -464,7 +464,7 @@ export default function subagentExtension(nycode: ExtensionAPI) {
 				"Delegate tasks to specialized subagents with isolated context.",
 				"Modes: single (agent + task), parallel (tasks array), chain (sequential with {previous} placeholder).",
 				"In the interactive root session every delegation (single, parallel, chain) runs in the background by default so the user keeps the main prompt: it returns at once and the result arrives as a message when it finishes (do not poll); pass background: false to wait for the result. Elsewhere (nested, non-interactive) calls run in the foreground and background: true is single mode only. {status: true} lists runs.",
-				`Agents come from ~/.claude/agents and ~/${CONFIG_DIR_NAME}/agent/agents, plus project .claude/agents and ${CONFIG_DIR_NAME}/agents once the project is trusted.`,
+				`Agents come from ~/${CONFIG_DIR_NAME}/agent/agents, plus project .claude/agents and ${CONFIG_DIR_NAME}/agents once the project is trusted.`,
 				'agentScope: "user" or "project" narrows to one source.',
 				...(sendEnabled()
 					? [
