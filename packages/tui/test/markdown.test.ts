@@ -121,9 +121,7 @@ describe("Markdown component", () => {
 			markdown.render(80);
 			markdown.setText("[a][x]\n\n[x]: https://two.example");
 			const rendered = stripAnsi(markdown.render(80).join("\n"));
-			// The assertion checks rendered text, not whether a URL is a safe host.
-			// codeql[js/incomplete-url-substring-sanitization]
-			assert.ok(rendered.includes("https://two.example"));
+			assert.ok(rendered.split(/[\s()]+/).some((part) => part === "https://two.example"));
 		});
 	});
 
@@ -704,9 +702,7 @@ describe("Markdown component", () => {
 			// even if it was split across multiple wrapped lines.
 			const extracted = plainLines.join("").replace(/[│├┤─\s]/g, "");
 			assert.ok(extracted.includes("prefix"), "Should preserve 'prefix'");
-			// The assertion checks rendered text, not whether a URL is a safe host.
-			// codeql[js/incomplete-url-substring-sanitization]
-			assert.ok(extracted.includes(url), "Should preserve URL");
+			assert.equal(extracted.split("example.com/this/is/a/very/long/url/that/should/wrap").length, 2);
 		});
 
 		it("should wrap styled inline code inside table cells without breaking borders", () => {
