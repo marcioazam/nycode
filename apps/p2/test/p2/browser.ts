@@ -177,10 +177,10 @@ export class Browser {
 	}
 	async click(selector: string): Promise<void> {
 		await this.wait(
-			`(() => { const e=document.querySelector(${JSON.stringify(selector)});if(!e||e.disabled)return false;for(let p=e;p;p=p.parentElement)if(p.getAnimations().some(a=>a.playState==='running'&&a.effect?.getTiming().iterations!==Infinity))return false;const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return r.width>0&&r.height>0&&e.contains(hit); })()`,
+			`(() => { const e=document.querySelector(${jsLiteral(selector)});if(!e||e.disabled)return false;for(let p=e;p;p=p.parentElement)if(p.getAnimations().some(a=>a.playState==='running'&&a.effect?.getTiming().iterations!==Infinity))return false;const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return r.width>0&&r.height>0&&e.contains(hit); })()`,
 		);
 		const point = await this.evaluate<{ x: number; y: number }>(
-			`(() => {const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`,
+			`(() => {const r=document.querySelector(${jsLiteral(selector)}).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`,
 		);
 		await this.clickPoint(point.x, point.y);
 	}

@@ -69,6 +69,29 @@ test("serves Nycode user agents the catalog for their version", () => {
 		nycodeVersion: "0.84.4",
 		representation: "legacy",
 	});
+	assert.deepEqual(parseModelCatalogRequest("https://catalog.example.test/api/models", "Nycode/1.0.0 (a; b; c; d)"), {
+		kind: "catalog",
+		nycodeVersion: "1.0.0",
+		representation: "legacy",
+	});
+	assert.deepEqual(parseModelCatalogRequest("https://catalog.example.test/api/models", "nycode/1.0.0 (a;b)"), {
+		kind: "catalog",
+		nycodeVersion: "1.0.0",
+		representation: "legacy",
+	});
+	assert.deepEqual(parseModelCatalogRequest("https://catalog.example.test/api/models", "nycode/1.0.0 (a;)"), {
+		kind: "catalog",
+		nycodeVersion: undefined,
+		representation: "legacy",
+	});
+	const started = Date.now();
+	const attack = `nycode/! (';${" ".repeat(20_000)}`;
+	assert.deepEqual(parseModelCatalogRequest("https://catalog.example.test/api/models", attack), {
+		kind: "catalog",
+		nycodeVersion: undefined,
+		representation: "legacy",
+	});
+	assert.ok(Date.now() - started < 200);
 });
 
 test("serves explicit and unversioned catalog requests", () => {

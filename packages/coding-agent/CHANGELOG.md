@@ -9,6 +9,8 @@
 ### Fixed
 
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
+- Git fetch of a pinned ref passes `--` before the remote and the ref, including when the checkout already exists, so the ref cannot be read as a git option
+- The built-in Mistral default is `codestral-latest`. The live catalog no longer includes `devstral-medium-latest`
 - Fixed argument substitution, skill-block parsing and diff-line parsing so a long crafted string cannot make those scans take polynomial time
 - Hooks, plugins, rules, CLAUDE.md, skills and agents of another tool's home directory no longer run or reach the prompt in nycode sessions; the HUD config and usage cache are read from `~/.nycode/agent/plugins/claude-hud`
 - A skill path declared in `settings.json` no longer reports a startup collision with a lower-precedence copy of the same skill
