@@ -46,8 +46,8 @@ afterEach(() => {
 });
 
 function writeChannel(value: string): void {
-	mkdirSync(join(home, ".claude"), { recursive: true });
-	writeFileSync(join(home, ".claude", "settings.json"), JSON.stringify({ preferredNotifChannel: value }));
+	mkdirSync(join(home, ".nycode", "agent"), { recursive: true });
+	writeFileSync(join(home, ".nycode", "agent", "settings.json"), JSON.stringify({ preferredNotifChannel: value }));
 }
 
 /** Loads the extension; run() plays one finished turn and returns what went to stdout. */

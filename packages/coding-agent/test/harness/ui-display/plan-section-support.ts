@@ -14,7 +14,9 @@ import { fleetTestEnv } from "../subagent/fleet-env.ts";
 
 export const { tmp } = fleetTestEnv("interactive-display-plan-");
 export const home = join(tmp, "home");
-mkdirSync(join(home, ".claude"), { recursive: true });
+export const agentDir = join(home, ".nycode", "agent");
+process.env.NYCODE_CODING_AGENT_DIR = agentDir;
+mkdirSync(agentDir, { recursive: true });
 process.env.HOME = home;
 delete process.env.NYCODE_SUBAGENT;
 
@@ -194,7 +196,7 @@ export const rec = () =>
 	}) as any;
 export async function boot(command: string | undefined, records: any[]) {
 	writeFileSync(
-		join(home, ".claude", "settings.json"),
+		join(agentDir, "settings.json"),
 		JSON.stringify(command ? { statusLine: { type: "command", command } } : {}),
 	);
 	const editor = fakeEditor();

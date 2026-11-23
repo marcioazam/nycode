@@ -11,7 +11,6 @@ import {
 } from "../_shared/commands/command-file.ts";
 import { claudeEffortLevel } from "../_shared/model/effort.ts";
 import { ancestorDirs, checkoutRoot } from "../_shared/project/project-root.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
 import { managedSettingsFile, readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { type InstalledPlugin, pluginComponentPath } from "../_shared/settings/plugins.ts";
 import { claudeSettingsChain } from "../_shared/settings/settings-chain.ts";
@@ -41,7 +40,7 @@ export interface VarContext {
  * enterprise directory beside the managed settings file, per "enterprise
  * overrides personal, and personal overrides project". The project directories
  * are included only for approved projects. */
-export function commandDirs(cwd: string, home: string, trusted: boolean, agentDir = getAgentDir()): string[] {
+export function commandDirs(cwd: string, trusted: boolean, agentDir = getAgentDir()): string[] {
 	// K6: the embedded commands come first, the lowest precedence, so any same-named command replaces them.
 	const embedded = builtinResourceDir("commands");
 	const candidates: string[] = embedded ? [embedded] : [];
@@ -49,9 +48,6 @@ export function commandDirs(cwd: string, home: string, trusted: boolean, agentDi
 	// nearest winning an intra-project name clash: root-first with the nearest last.
 	if (trusted) candidates.push(...ancestorDirs(cwd, path.join(".claude", "commands")).reverse());
 	candidates.push(
-		path.join(claudeConfigDir(home), "commands"),
-		// The nycode agent directory wins over ~/.claude, as for skills (core/skills.ts:455-458 loads <agent dir>/skills first,
-		// first name wins) and agents (subagent/registry/agents.ts:480-486, last wins); the enterprise directory still wins.
 		path.join(agentDir, "commands"),
 		path.join(path.dirname(managedSettingsFile()), ".claude", "commands"),
 	);

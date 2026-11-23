@@ -260,7 +260,8 @@ function extractReleaseNotes(options) {
 	const tag = normalizeTag(options.tag ?? version);
 	const changelog = readFileSync(options.changelog, "utf8");
 	const section = extractChangelogSection(changelog, version);
-	const rawNotes = section ? `${section}\n` : `Release ${version}\n`;
+	const betaBanner = "Nycode is in beta. The latest release is the current beta.\n\n";
+	const rawNotes = section ? `${betaBanner}${section}\n` : `${betaBanner}Release ${version}\n`;
 	const { markdown } = normalizeReleaseNoteLinks(rawNotes, { basePath: options.basePath, repo: options.repo, tag });
 	writeOutput(markdown, options.out);
 }

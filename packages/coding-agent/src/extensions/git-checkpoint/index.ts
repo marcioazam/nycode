@@ -18,7 +18,6 @@
  */
 
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
 import { getAgentDir } from "../../config.ts";
 import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "../../core/extensions/types.ts";
@@ -113,7 +112,7 @@ export default function gitCheckpointExtension(nycode: ExtensionAPI) {
 				"warning",
 			);
 		}
-		pruneCheckpointRepos(checkpointsRoot, checkpointRetentionDays(os.homedir()), shadowDir);
+		pruneCheckpointRepos(checkpointsRoot, checkpointRetentionDays(), shadowDir);
 		const check = await nycode.exec("git", ["--git-dir", shadowDir, "rev-parse", "--git-dir"], { cwd: ctx.cwd });
 		if (check.code !== 0) {
 			const init = await nycode.exec("git", ["init", "--bare", "-b", "main", shadowDir], { cwd: ctx.cwd });

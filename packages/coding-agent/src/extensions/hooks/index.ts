@@ -79,7 +79,7 @@
  * `{"hookSpecificOutput": {"permissionDecision": "deny", ...}}` (or the older
  * `{"decision": "block"}`).
  *
- * Config is merged from managed policy settings, ~/.claude/settings.json (always),
+ * Config is merged from managed policy settings, ~/.nycode/agent/settings.json (always),
  * the project's .claude/settings.json and settings.local.json (only when the
  * project is trusted, since hooks execute arbitrary shell), plugins, and invoked
  * skills' frontmatter. Claude's `disableAllHooks` is tiered: at the managed level
@@ -122,6 +122,7 @@ import {
 	type HookMatcher,
 	type HooksConfig,
 	hookFiles,
+	hookSourceFiles,
 	isBackgroundHook,
 	loadHooks,
 	loadManagedHooks,
@@ -473,7 +474,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		// administrator's enabledPlugins entry defeat the user's own escape hatch.
 		if (readSettingsDisableAllHooks(files)) {
 			// nycode: K11 the guard is not a hook a repository may turn off: only the user's own files do (D-08)
-			if (guardEnabled && !readSettingsDisableAllHooks(userSettingsFiles(os.homedir()))) keepGuardHook();
+			if (guardEnabled && !readSettingsDisableAllHooks(userSettingsFiles())) keepGuardHook();
 			return;
 		}
 		if (managedHooksOnly) {
@@ -501,7 +502,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		exportResourcesRoot();
 		for (const [eventName, matchers] of [
 			...Object.entries(loadSettingsHooks(settingsHooks, hookSources, guardEnabled)),
-			...Object.entries(loadHooks(files, hookSources)),
+			...Object.entries(loadHooks(hookSourceFiles(files), hookSources)),
 		])
 			config[eventName] = [...(config[eventName] ?? []), ...matchers];
 		// Plugins are user-installed and enabled by user settings (see installedPlugins),

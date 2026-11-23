@@ -30,8 +30,6 @@ packages/coding-agent/test/harness/extensions/headless-lean/index.test.ts | # Wo
 packages/coding-agent/src/extensions/headless-lean/index.ts | \(pi\)|\(\?:pi|nycode\) | compat | the headless-lean extension still accepts the origin contract title
 packages/coding-agent/test/harness/core/resources/builtin-instructions.test.ts | \(pi\) | compat | same title, tested
 packages/coding-agent/src/main.ts | from-pi | migracao | entry point of `nycode migrate from-pi`
-packages/coding-agent/src/extensions/_shared/settings/config-dir.ts | from-pi | migracao | doc comment naming the migration command
-packages/coding-agent/test/harness/_shared/config-dir.test.ts | from-pi | migracao | comment naming the migration command
 packages/coding-agent/test/harness/core/settings-env.test.ts | from-pi | migracao | comment naming the migration command
 packages/coding-agent/src/utils/changelog.ts | earendil-works\)\\/pi-mono | upstream | legacy repository the changelog links are normalized from
 scripts/release-notes.mjs | earendil-works\)\\/pi-mono | upstream | legacy repository the release-note links are normalized from

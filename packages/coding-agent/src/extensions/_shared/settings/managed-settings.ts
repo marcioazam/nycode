@@ -1,7 +1,7 @@
 /**
- * Managed settings: Claude's enterprise policy file.
+ * Managed settings: the enterprise policy file.
  *
- * Claude Code reads managed-settings.json from an OS-level location that IT
+ * nycode reads managed-settings.json from an OS-level location that IT
  * deploys and that is not user- or repo-writable in the normal flow, so keys
  * sourced from it carry organizational authority (managed `claudeMd`, exclusion
  * lists, MCP allow/deny). Managed-only keys are honored from this file alone:
@@ -14,12 +14,11 @@ import * as path from "node:path";
 
 import { isRecord } from "../util/values.ts";
 
-/** The OS managed-settings.json path Claude Code documents per platform. */
+/** The OS managed-settings.json path of nycode per platform (D-62: no other tool's policy file is read). */
 export function managedSettingsPath(platform: NodeJS.Platform = process.platform): string {
-	if (platform === "darwin") return "/Library/Application Support/ClaudeCode/managed-settings.json";
-	// Claude reads the Windows file from Program Files; the older ProgramData location is not consulted.
-	if (platform === "win32") return String.raw`C:\Program Files\ClaudeCode\managed-settings.json`;
-	return "/etc/claude-code/managed-settings.json";
+	if (platform === "darwin") return "/Library/Application Support/Nycode/managed-settings.json";
+	if (platform === "win32") return String.raw`C:\Program Files\Nycode\managed-settings.json`;
+	return "/etc/nycode/managed-settings.json";
 }
 
 let managedSettingsFileOverride: string | undefined;

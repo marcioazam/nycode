@@ -11,7 +11,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { repoRoot } from "../../_shared/project/project-root.ts";
 import type { AgentRunRequest } from "../../_shared/seams/agent-run.ts";
-import { claudeConfigDir } from "../../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../../_shared/settings/config-dir.ts";
 import { sliceBytes } from "../../_shared/web/output-guard.ts";
 import {
 	autoMemoryEnabled,
@@ -70,14 +70,14 @@ export function buildHookAgent(request: Pick<AgentRunRequest, "model" | "systemP
 const MEMORY_TOOLS = ["read", "write", "edit"];
 
 /** Where an agent's own persistent memory lives, per its `memory:` scope (Claude:
- * user -> ~/.claude/agent-memory/<name>, project -> <root>/.claude/agent-memory/<name>,
+ * user -> ~/.nycode/agent/agent-memory/<name>, project -> <root>/.claude/agent-memory/<name>,
  * local -> <root>/.claude/agent-memory-local/<name>). The name comes from frontmatter
  * a repository can control, so it is sanitized before becoming a path segment. */
-export function agentMemoryDir(scope: AgentMemoryScope, name: string, cwd: string, home: string): string {
+export function agentMemoryDir(scope: AgentMemoryScope, name: string, cwd: string): string {
 	const sanitized = name.replace(/[^\w.-]+/g, "_");
 	// A name of only dots ('.', '..') survives the character filter but still traverses.
 	const segment = /^\.+$/.test(sanitized) ? "_" : sanitized;
-	if (scope === "user") return path.join(claudeConfigDir(home), "agent-memory", segment);
+	if (scope === "user") return path.join(userConfigDir(), "agent-memory", segment);
 	const root = repoRoot(cwd) ?? cwd;
 	return path.join(root, ".claude", scope === "project" ? "agent-memory" : "agent-memory-local", segment);
 }
@@ -116,7 +116,7 @@ export function agentMemoryPromptSection(
 	if (agent.memory !== "user" && !projectApproved) return undefined;
 	const settings = readMemorySettings(memorySettingsFiles(cwd, os.homedir(), projectApproved));
 	if (!autoMemoryEnabled(settings.autoMemoryEnabled, process.env)) return undefined;
-	const dir = agentMemoryDir(agent.memory, agent.name, cwd, os.homedir());
+	const dir = agentMemoryDir(agent.memory, agent.name, cwd);
 	let memoryMd = "";
 	try {
 		memoryMd = fs.readFileSync(path.join(dir, "MEMORY.md"), "utf-8");

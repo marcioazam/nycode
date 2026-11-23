@@ -1,7 +1,6 @@
 /** Checkpoint state, shadow-repo path helpers and rewind text for the git-checkpoint extension. */
 import { createHash } from "node:crypto";
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
 import type { ExtensionCommandContext, ExtensionContext } from "../../core/extensions/types.ts";
 import { readUserSetting } from "../_shared/settings/settings-chain.ts";
@@ -104,8 +103,8 @@ export function firstAdditions(
  * file and the `--settings` flag), which is where a setting about the user's own disk
  * belongs; a non-positive or unreadable value keeps the default rather than sweeping
  * everything away. */
-export function checkpointRetentionDays(home: string = os.homedir()): number {
-	const declared = readUserSetting(home, "cleanupPeriodDays");
+export function checkpointRetentionDays(): number {
+	const declared = readUserSetting("cleanupPeriodDays");
 	if (typeof declared === "number" && Number.isFinite(declared) && declared > 0) return declared;
 	return CHECKPOINT_RETENTION_DAYS;
 }

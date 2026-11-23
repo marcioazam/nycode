@@ -29,7 +29,7 @@ import { parseClaudeFrontmatter } from "../_shared/commands/frontmatter.ts";
 import { addPromptSection, replaceDefaultInstructions } from "../_shared/commands/prompt-options.ts";
 import { isProjectApproved } from "../_shared/project/project-approval.ts";
 import { ancestorDirs } from "../_shared/project/project-root.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { installedPlugins, pluginComponentPath } from "../_shared/settings/plugins.ts";
 import { claudeSettingsChain, localSettingsFile, readSettingsChain } from "../_shared/settings/settings-chain.ts";
@@ -111,8 +111,8 @@ export function applyStyle(systemPrompt: string, style: OutputStyle): string {
  * directory is included only for trusted projects, since its style body is injected
  * verbatim into the system prompt.
  */
-export function styleDirs(cwd: string, home: string, trusted: boolean): string[] {
-	const dirs = [path.join(claudeConfigDir(home), "output-styles")];
+export function styleDirs(cwd: string, trusted: boolean): string[] {
+	const dirs = [path.join(userConfigDir(), "output-styles")];
 	// Claude loads every .claude/output-styles between cwd and the repository root, using
 	// the one closest to cwd for a name clash. loadStyles keys by name and later dirs win,
 	// so the ancestors go farthest first and the nearest lands last.
@@ -238,7 +238,7 @@ export default function outputStylesExtension(nycode: ExtensionAPI) {
 		const trusted = await isProjectApproved(ctx);
 		// Precedence low to high: builtin, plugin, then the user's and project's own
 		// dirs, so a same-named user or project style overrides a plugin's.
-		styles = loadStyles([getBuiltinStylesDir(), ...pluginStyleDirs(home), ...styleDirs(ctx.cwd, home, trusted)]);
+		styles = loadStyles([getBuiltinStylesDir(), ...pluginStyleDirs(home), ...styleDirs(ctx.cwd, trusted)]);
 		// Persist the choice to the file the read chain reads last, so it is read back:
 		// the nearest local file or .claude directory could sit at an intermediate
 		// ancestor the chain never consults.

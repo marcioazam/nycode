@@ -10,7 +10,7 @@
 
 import * as path from "node:path";
 
-import { claudeConfigDir } from "../settings/config-dir.ts";
+import { userConfigDir } from "../settings/config-dir.ts";
 
 export const INSTRUCTIONS_CHANNEL = "nycode:instructions";
 
@@ -58,7 +58,7 @@ export function memoryTypeForPath(filePath: string, home: string, projectRoot: s
 		root.length > 0 && (filePath === root || filePath.startsWith(root + path.sep));
 	// Ahead of the project check: a session rooted at home has the config directory inside its
 	// project root. Only the user's memory there, since a checkout under the config directory is still a project.
-	const config = claudeConfigDir(home);
+	const config = userConfigDir();
 	if (filePath === path.join(config, "CLAUDE.md") || isUnder(path.join(config, "rules"))) return "User";
 	if (isUnder(projectRoot)) return "Project";
 	// Nested repositories: repoRoot stops at the nearest .git, so a session inside a

@@ -1,5 +1,7 @@
 # Getting help
 
+Nycode is in beta. The latest GitHub Release is the current beta, and that is the release this page means by latest.
+
 | You want to | Do this |
 | --- | --- |
 | Ask a question | Use [Discussions](../../discussions) (Q&A). |

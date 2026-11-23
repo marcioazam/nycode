@@ -1,7 +1,6 @@
 // Launcher do claude-hud para o nycode (porte do scripts/statusline.mjs do plugin claude-hud 0.10.0).
 // O /claude-hud-setup copia este arquivo para ~/.nycode/agent/plugins/claude-hud/statusline.mjs.
-// Diferença do original: o nycode não instala plugins do Claude Code, então a instalação mais nova do claude-hud é
-// procurada também nos caches dos perfis do Claude Code (~/.claude/plugins/cache e ~/.claude-*/plugins/cache).
+// Diferença do original: a instalação mais nova do claude-hud é procurada só em ~/.nycode/agent/plugins/cache.
 // A config do HUD continua em ~/.nycode/agent/plugins/claude-hud/config.json (a do nycode, separada da do Claude).
 // O transcript do nycode tem outro formato: antes de chamar o HUD, a sessão do nycode é traduzida (claude-hud-nycode-transcript.mjs)
 // para um transcript no formato do Claude em plugins/claude-hud/nycode-transcripts/, e o transcript_path do stdin aponta
@@ -40,11 +39,8 @@ const list = (dir) => {
     return [];
   }
 };
-const cacheDirs = [
-  path.join(configDir, 'plugins', 'cache'),
-  path.join(home, '.claude', 'plugins', 'cache'),
-  ...list(home).filter((name) => name.startsWith('.claude-')).sort().map((name) => path.join(home, name, 'plugins', 'cache')),
-];
+// D-62: só o diretório do nycode; nenhum diretório de outra ferramenta é lido.
+const cacheDirs = [path.join(configDir, 'plugins', 'cache')];
 const entry = process.versions.bun ? path.join('src', 'index.ts') : path.join('dist', 'index.js');
 const parseVersion = (name) => /^(\d+)\.(\d+)\.(\d+)(?:[-+].*)?$/.exec(name)?.slice(1).map(Number);
 const compare = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];

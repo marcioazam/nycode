@@ -15,7 +15,7 @@ let savedExitCode: typeof process.exitCode;
 
 beforeEach(() => {
 	home = fs.mkdtempSync(path.join(os.tmpdir(), "nycode-commands-print-"));
-	fs.mkdirSync(path.join(home, ".claude", "commands"), { recursive: true });
+	fs.mkdirSync(path.join(home, ".nycode", "agent", "commands"), { recursive: true });
 	vi.stubEnv("HOME", home);
 	vi.stubEnv("USERPROFILE", home);
 	savedExitCode = process.exitCode;
@@ -30,7 +30,10 @@ afterEach(() => {
 });
 
 function writeCommand(name: string, body: string): void {
-	fs.writeFileSync(path.join(home, ".claude", "commands", `${name}.md`), `---\ndescription: test\n---\n${body}\n`);
+	fs.writeFileSync(
+		path.join(home, ".nycode", "agent", "commands", `${name}.md`),
+		`---\ndescription: test\n---\n${body}\n`,
+	);
 }
 
 interface Harness {

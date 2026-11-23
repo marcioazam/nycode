@@ -11,6 +11,8 @@ Run repository commands from the repo root (two directories above this skill), u
 
 The repository is the only channel: a GitHub Release of `marcioazam/nycode` with self-contained binaries, `SHA256SUMS` and a provenance attestation. Nothing is published to npm and no long-lived token exists.
 
+Nycode is in beta. Publish the Release with the title `vX.Y.Z (Beta)`. `scripts/release-notes.mjs extract` opens the notes with the beta line. Leave the GitHub prerelease flag unset. GitHub omits prereleases from `/releases/latest`, and that URL is how the README and `nycode update` find the release, so the beta stays the latest release.
+
 1. **Update CHANGELOGs**: ask the user whether they ran the `/cl` prompt on the latest commit on `main`. If not, they must run `/cl` first to audit and update each package's `[Unreleased]` section before releasing.
 
 2. **Local smoke test**: build an unpublished release and smoke test from outside the repo (so it can't resolve workspace files):
@@ -63,12 +65,13 @@ The repository is the only channel: a GitHub Release of `marcioazam/nycode` with
    git push origin vX.Y.Z
    ```
 
-5. **CI builds and publishes the Release**: pushing the `vX.Y.Z` tag triggers `.github/workflows/publish.yml` (`workflow_dispatch` with the tag recovers a failed run). It builds the 6 binaries, `SHA256SUMS` and the source archive, smoke-tests the binaries on Linux, macOS and Windows, attests the artifacts and publishes the GitHub Release. Follow it with `gh run watch`. The only secret is the run's `GITHUB_TOKEN`.
+5. **CI builds and publishes the Release**: pushing the `vX.Y.Z` tag triggers `.github/workflows/publish.yml` (`workflow_dispatch` with the tag recovers a failed run). It builds the 6 binaries, `SHA256SUMS` and the source archive, smoke-tests the binaries on Linux, macOS and Windows, attests the artifacts and publishes the GitHub Release with the title `vX.Y.Z (Beta)`. Follow it with `gh run watch`. The only secret is the run's `GITHUB_TOKEN`.
 
 6. **Verify and open the next cycle**: confirm the Release and its provenance (`gh` 2.49 or newer):
 
    ```bash
-   gh release view vX.Y.Z -R marcioazam/nycode --json assets,isDraft,isPrerelease
+   gh release view vX.Y.Z -R marcioazam/nycode --json assets,name,isDraft,isPrerelease
+   # name is "vX.Y.Z (Beta)", isDraft is false, isPrerelease is false
    gh release download vX.Y.Z -R marcioazam/nycode -D /tmp/nycode-release
    (cd /tmp/nycode-release && sha256sum -c SHA256SUMS)
    gh attestation verify /tmp/nycode-release/nycode-linux-x64.tar.gz -R marcioazam/nycode

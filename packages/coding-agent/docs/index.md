@@ -2,6 +2,8 @@
 
 Nycode is an extensible AI agent that works from your terminal. Give it a goal and a working folder, and it can inspect files, run commands, edit content, and work through multi-step tasks.
 
+Nycode is in beta. The latest [GitHub Release](https://github.com/marcioazam/nycode/releases/latest) is the beta to install.
+
 Use Nycode for software development, research notes, writing projects, data files, or hobby work. You can use Nycode as is, prompt it to adapt itself to your workflow, or build other applications powered by Nycode using the SDK.
 
 ## Start using Nycode

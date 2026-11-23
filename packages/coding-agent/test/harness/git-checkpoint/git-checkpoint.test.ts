@@ -356,7 +356,7 @@ test("pruneCheckpointRepos: remove repos antigos, mantém recentes, o vivo e arq
 });
 
 test("checkpointRetentionDays: padrão de 30 dias sem configuração do usuário", () => {
-	assert.equal(ckpt.checkpointRetentionDays(mkdtempSync(join(tmpdir(), "nohome-"))), ckpt.CHECKPOINT_RETENTION_DAYS);
+	assert.equal(ckpt.checkpointRetentionDays(), ckpt.CHECKPOINT_RETENTION_DAYS);
 });
 
 test('fluxo real: baseline do primeiro edit, snapshot por prompt e /rewind "Code only" restaura o conteúdo', async () => {

@@ -20,11 +20,10 @@
  * warning on stderr); the main session with a UI waits.
  */
 import { readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { barraOitavos } from "../ui-visual/motion/motion.ts";
 
 type Entry = Record<string, any>;
@@ -347,9 +346,7 @@ function cancelavel(
 
 function hudCache(): unknown {
 	try {
-		return JSON.parse(
-			readFileSync(join(claudeConfigDir(homedir()), "plugins", "claude-hud", "usage-cache.json"), "utf8"),
-		);
+		return JSON.parse(readFileSync(join(userConfigDir(), "plugins", "claude-hud", "usage-cache.json"), "utf8"));
 	} catch {
 		return undefined;
 	}
