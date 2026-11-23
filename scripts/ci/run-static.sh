@@ -59,6 +59,21 @@ for f in "${SH[@]}"; do
   if printf '%s\n' "${SEAM_FILES[@]}" | grep -qxF -- "$f"; then echo "skip (upstream seam): $f"; else SH_CHECKED+=("$f"); fi
 done
 SH=("${SH_CHECKED[@]}")
+# Vendored Supertone helper. This job does not install numpy or onnxruntime, so ruff
+# would reformat the upstream copy and mypy cannot resolve its imports. The emoji
+# strip that replaced the overly-large range lives in emoji_spans.py, which these
+# checks do own. Skipping the helper does not dismiss the CodeQL alert: the regex is
+# gone, and code scanning still analyzes the file.
+VENDORED_PY=(apps/p2/voice-server/supertonic_helper.py)
+PY_CHECKED=()
+for f in "${PY[@]}"; do
+  if printf '%s\n' "${VENDORED_PY[@]}" | grep -qxF -- "$f"; then
+    echo "skip (vendored, no numpy in this job): $f"
+  else
+    PY_CHECKED+=("$f")
+  fi
+done
+PY=("${PY_CHECKED[@]}")
 mapfile -t MD < <(pick '\.md$')
 
 each() { # cmd... -- files...: run cmd once with all files, skip when none
@@ -109,7 +124,8 @@ diff_cover() {
   local base=${BASE_SHA:-}
   case $base in '' | 0000000000000000000000000000000000000000) base=$(git merge-base origin/main HEAD 2>/dev/null || git rev-parse HEAD~1) ;; esac
   diff-cover "$TMP/coverage.xml" --compare-branch="$base" --fail-under 80 \
-    --exclude 'bench/suites/*/*/repo/*' 'bench/suites/*/*/hidden/*' 'bench/suites/*/*/oracle/*'
+    --exclude 'bench/suites/*/*/repo/*' 'bench/suites/*/*/hidden/*' 'bench/suites/*/*/oracle/*' \
+    'apps/p2/voice-server/supertonic_helper.py'
 }
 
 # bench/ comes from its own migration lane: the oracle check runs as soon as the directory exists.

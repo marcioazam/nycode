@@ -30,7 +30,7 @@ ADD https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1
 ADD https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin /models/kokoro/voices-v1.0.bin
 
 WORKDIR /app
-COPY engines.py supertonic_helper.py ./
+COPY engines.py supertonic_helper.py emoji_spans.py ./
 
 # Pocket TTS: weights into the Hugging Face cache, voice prompts exported as ready KV-cache states.
 ENV HF_HOME=/models/hf
