@@ -217,36 +217,36 @@ describe("Google provider stream events", () => {
 		},
 	];
 
-	it.each(adapters)(
-		"forwards each SDK chunk in order before normalizing it for $name",
-		async ({ model, createStream }) => {
-			googleGenAiMock.streamChunks = [
-				{
-					responseId: "resp_google",
-					candidates: [{ content: { parts: [{ text: "hello" }] } }],
-				},
-				{
-					candidates: [{ finishReason: "STOP" }],
-					usageMetadata: { promptTokenCount: 2, candidatesTokenCount: 1, totalTokenCount: 3 },
-				},
-			];
-			const received: unknown[] = [];
-			const eventModels: Model<Api>[] = [];
-			const result = await createStream(async (chunk, eventModel) => {
-				await Promise.resolve();
-				received.push(chunk);
-				eventModels.push(eventModel);
-			}).result();
+	it.each(adapters)("forwards each SDK chunk in order before normalizing it for $name", async ({
+		model,
+		createStream,
+	}) => {
+		googleGenAiMock.streamChunks = [
+			{
+				responseId: "resp_google",
+				candidates: [{ content: { parts: [{ text: "hello" }] } }],
+			},
+			{
+				candidates: [{ finishReason: "STOP" }],
+				usageMetadata: { promptTokenCount: 2, candidatesTokenCount: 1, totalTokenCount: 3 },
+			},
+		];
+		const received: unknown[] = [];
+		const eventModels: Model<Api>[] = [];
+		const result = await createStream(async (chunk, eventModel) => {
+			await Promise.resolve();
+			received.push(chunk);
+			eventModels.push(eventModel);
+		}).result();
 
-			expect(received).toEqual(googleGenAiMock.streamChunks);
-			expect(received[0]).toBe(googleGenAiMock.streamChunks[0]);
-			expect(received[1]).toBe(googleGenAiMock.streamChunks[1]);
-			expect(eventModels).toEqual([model, model]);
-			expect(result.stopReason).toBe("stop");
-			expect(result.responseId).toBe("resp_google");
-			expect(result.content).toEqual([{ type: "text", text: "hello" }]);
-		},
-	);
+		expect(received).toEqual(googleGenAiMock.streamChunks);
+		expect(received[0]).toBe(googleGenAiMock.streamChunks[0]);
+		expect(received[1]).toBe(googleGenAiMock.streamChunks[1]);
+		expect(eventModels).toEqual([model, model]);
+		expect(result.stopReason).toBe("stop");
+		expect(result.responseId).toBe("resp_google");
+		expect(result.content).toEqual([{ type: "text", text: "hello" }]);
+	});
 });
 
 describe("Google Generative AI user agent", () => {

@@ -93,66 +93,67 @@ async function settled(telemetry: InMemoryTelemetryContext): Promise<void> {
 }
 
 describe("AI telemetry", () => {
-	it.each(["stream", "streamSimple", "streamDeferred"] as const)(
-		"observes %s without changing delivered events or results",
-		async (method) => {
-			const telemetry = new InMemoryTelemetryContext();
-			const result = message();
-			const { models, streamEvents } = setup(result);
-			await telemetry.startSpan({ name: "caller" }, async (parent) => {
-				const stream =
-					method === "streamDeferred"
-						? models.streamDeferred(model, handle, { telemetry: parent })
-						: models[method](model, { messages: [] }, { telemetry: parent, reasoning: "high" });
-				const received: AssistantMessageEvent[] = [];
-				for await (const event of stream) received.push(event);
-				expect(received).toEqual(streamEvents);
-				for (const [index, event] of received.entries()) expect(event).toBe(streamEvents[index]);
-				expect(await stream.result()).toBe(result);
-			});
-			await settled(telemetry);
-			const [parent, span] = telemetry.getSpans();
-			expect(span.name).toBe(method === "streamDeferred" ? "nycode.ai.poll" : "nycode.ai.request");
-			expect(span.parentId).toBe(parent.id);
-			expect(span.attributes).toEqual({
-				provider: "test",
-				api: "telemetry-test",
-				model: "model",
-				...(method === "streamDeferred" ? {} : { reasoning: "high" }),
-				stop: "stop",
-				"usage.input": 11,
-				"usage.output": 22,
-				"usage.cache_read": 33,
-				"usage.cache_write": 44,
-				"cost.total": 1,
-				"response.id": "response",
-			});
-			expect(span.events).toEqual([
-				{ name: "nycode.ai.first_chunk", attributes: {} },
-				{ name: "nycode.ai.block", attributes: { type: "text", index: 0, chars: 11 } },
-				{ name: "nycode.ai.block", attributes: { type: "thinking", index: 1, chars: 15 } },
-				{ name: "nycode.ai.block", attributes: { type: "tool_call", index: 2, chars: 27, tool: "lookup" } },
-			]);
-			expect(JSON.stringify(span)).not.toMatch(
-				/text-secret|thinking-secret|argument-secret|call-secret|deferred-secret/,
+	it.each([
+		"stream",
+		"streamSimple",
+		"streamDeferred",
+	] as const)("observes %s without changing delivered events or results", async (method) => {
+		const telemetry = new InMemoryTelemetryContext();
+		const result = message();
+		const { models, streamEvents } = setup(result);
+		await telemetry.startSpan({ name: "caller" }, async (parent) => {
+			const stream =
+				method === "streamDeferred"
+					? models.streamDeferred(model, handle, { telemetry: parent })
+					: models[method](model, { messages: [] }, { telemetry: parent, reasoning: "high" });
+			const received: AssistantMessageEvent[] = [];
+			for await (const event of stream) received.push(event);
+			expect(received).toEqual(streamEvents);
+			for (const [index, event] of received.entries()) expect(event).toBe(streamEvents[index]);
+			expect(await stream.result()).toBe(result);
+		});
+		await settled(telemetry);
+		const [parent, span] = telemetry.getSpans();
+		expect(span.name).toBe(method === "streamDeferred" ? "nycode.ai.poll" : "nycode.ai.request");
+		expect(span.parentId).toBe(parent.id);
+		expect(span.attributes).toEqual({
+			provider: "test",
+			api: "telemetry-test",
+			model: "model",
+			...(method === "streamDeferred" ? {} : { reasoning: "high" }),
+			stop: "stop",
+			"usage.input": 11,
+			"usage.output": 22,
+			"usage.cache_read": 33,
+			"usage.cache_write": 44,
+			"cost.total": 1,
+			"response.id": "response",
+		});
+		expect(span.events).toEqual([
+			{ name: "nycode.ai.first_chunk", attributes: {} },
+			{ name: "nycode.ai.block", attributes: { type: "text", index: 0, chars: 11 } },
+			{ name: "nycode.ai.block", attributes: { type: "thinking", index: 1, chars: 15 } },
+			{ name: "nycode.ai.block", attributes: { type: "tool_call", index: 2, chars: 27, tool: "lookup" } },
+		]);
+		expect(JSON.stringify(span)).not.toMatch(
+			/text-secret|thinking-secret|argument-secret|call-secret|deferred-secret/,
+		);
+		const measurements = telemetry.getMetrics();
+		expect(measurements).toHaveLength(7);
+		expect(measurements.filter((measurement) => measurement.kind === "counter").map(({ value }) => value)).toEqual([
+			11, 22, 33, 44, 1,
+		]);
+		for (const measurement of measurements) {
+			expect(Object.keys(measurement.attributes).sort()).toEqual(
+				measurement.name === "nycode.ai.tokens"
+					? ["kind", "model", "provider"]
+					: measurement.name === "nycode.ai.request.duration"
+						? ["model", "provider", "stop"]
+						: ["model", "provider"],
 			);
-			const measurements = telemetry.getMetrics();
-			expect(measurements).toHaveLength(7);
-			expect(measurements.filter((measurement) => measurement.kind === "counter").map(({ value }) => value)).toEqual(
-				[11, 22, 33, 44, 1],
-			);
-			for (const measurement of measurements) {
-				expect(Object.keys(measurement.attributes).sort()).toEqual(
-					measurement.name === "nycode.ai.tokens"
-						? ["kind", "model", "provider"]
-						: measurement.name === "nycode.ai.request.duration"
-							? ["model", "provider", "stop"]
-							: ["model", "provider"],
-				);
-				if (measurement.kind === "histogram") expect(measurement.context).toEqual(span.context);
-			}
-		},
-	);
+			if (measurement.kind === "histogram") expect(measurement.context).toEqual(span.context);
+		}
+	});
 
 	it.each(["error", "aborted"] as const)("reports %s status without error attributes or events", async (reason) => {
 		const telemetry = new InMemoryTelemetryContext();
@@ -342,19 +343,19 @@ describe("AI telemetry", () => {
 		expect(metrics.slice(0, 2).every((measurement) => measurement.context !== null)).toBe(true);
 	});
 
-	it.each(["pending", "deferred", "stop", "error"] as const)(
-		"records usage for a %s poll only when final",
-		async (reason) => {
-			const telemetry = new InMemoryTelemetryContext();
-			const { models } = setup(message(reason));
-			await telemetry.startSpan({ name: "caller" }, (span) =>
-				models.fetchDeferred(model, handle, { telemetry: span }),
-			);
-			await settled(telemetry);
-			const counters = telemetry.getMetrics().filter((metric) => metric.kind === "counter");
-			expect(counters).toHaveLength(reason === "pending" || reason === "deferred" ? 0 : 5);
-		},
-	);
+	it.each([
+		"pending",
+		"deferred",
+		"stop",
+		"error",
+	] as const)("records usage for a %s poll only when final", async (reason) => {
+		const telemetry = new InMemoryTelemetryContext();
+		const { models } = setup(message(reason));
+		await telemetry.startSpan({ name: "caller" }, (span) => models.fetchDeferred(model, handle, { telemetry: span }));
+		await settled(telemetry);
+		const counters = telemetry.getMetrics().filter((metric) => metric.kind === "counter");
+		expect(counters).toHaveLength(reason === "pending" || reason === "deferred" ? 0 : 5);
+	});
 
 	it("creates instruments once per metrics object across root and child requests", async () => {
 		const telemetry = new InMemoryTelemetryContext();

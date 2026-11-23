@@ -68,17 +68,14 @@ describe("execCommand", () => {
 		["stderr", "€", 1, ""],
 		["stdout", "a€🙂", 5, "a€"],
 		["stderr", "a€🙂", 5, "a€"],
-	] as const)(
-		"keeps complete UTF-8 characters from %s output %s capped at %i bytes",
-		async (stream, output, maxBuffer, expected) => {
-			const script = `process.${stream}.write(${JSON.stringify(output)})`;
-			const result = await execCommand(process.execPath, ["-e", script], process.cwd(), { maxBuffer });
+	] as const)("keeps complete UTF-8 characters from %s output %s capped at %i bytes", async (stream, output, maxBuffer, expected) => {
+		const script = `process.${stream}.write(${JSON.stringify(output)})`;
+		const result = await execCommand(process.execPath, ["-e", script], process.cwd(), { maxBuffer });
 
-			expect(result).toMatchObject({ [stream]: expected, truncated: true, killed: true });
-			expect(result.code).not.toBe(0);
-			expect(Buffer.byteLength(result.stdout) + Buffer.byteLength(result.stderr)).toBeLessThanOrEqual(maxBuffer);
-		},
-	);
+		expect(result).toMatchObject({ [stream]: expected, truncated: true, killed: true });
+		expect(result.code).not.toBe(0);
+		expect(Buffer.byteLength(result.stdout) + Buffer.byteLength(result.stderr)).toBeLessThanOrEqual(maxBuffer);
+	});
 
 	it("still flushes incomplete UTF-8 at normal EOF when output was not truncated", async () => {
 		const script = "process.stdout.write(Buffer.from([0xe2])); process.stderr.write(Buffer.from([0xf0]));";

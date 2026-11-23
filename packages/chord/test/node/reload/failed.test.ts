@@ -25,43 +25,43 @@ describe.skipIf(CHROMIUM === undefined)("a reload whose new code fails", () => {
 		await browser?.close();
 	});
 
-	it.each(["build", "evaluation", "setup"] as const)(
-		"keeps a worker plugin whose new %s fails on its old code, the page untouched",
-		async (broken) => {
-			const placement = "worker";
-			const app = await startReloadApp({
-				latch: LATCH_PLUGIN,
-				counter: counterPlugin({ code: "v1", placement }),
-				alpha: webPlugin({ name: "alpha", code: "1", counter: { placement, contract: "v1" } }),
-			});
-			try {
-				await page.signIn(app, ["alpha"]);
-				expect(await page.result(await page.call("alpha", "add", 2))).toEqual(ok("v1:2"));
-				await page.waitText("alpha", ".label", "v1:2");
-				await page.type("alpha", ".draft", "half-typed");
-				const settled = (await page.states("alpha")).length;
-				const frames = (await page.frames("alpha")).length;
+	it.each([
+		"build",
+		"evaluation",
+		"setup",
+	] as const)("keeps a worker plugin whose new %s fails on its old code, the page untouched", async (broken) => {
+		const placement = "worker";
+		const app = await startReloadApp({
+			latch: LATCH_PLUGIN,
+			counter: counterPlugin({ code: "v1", placement }),
+			alpha: webPlugin({ name: "alpha", code: "1", counter: { placement, contract: "v1" } }),
+		});
+		try {
+			await page.signIn(app, ["alpha"]);
+			expect(await page.result(await page.call("alpha", "add", 2))).toEqual(ok("v1:2"));
+			await page.waitText("alpha", ".label", "v1:2");
+			await page.type("alpha", ".draft", "half-typed");
+			const settled = (await page.states("alpha")).length;
+			const frames = (await page.frames("alpha")).length;
 
-				const result = await editAndApply(app, "counter", counterPlugin({ code: "v2", placement, broken }));
-				// Reported to the app: the worker kept the plugin's old code, and it stays dirty for the next apply.
-				expect(rolloutFailures(result)).toEqual(["project/project|p1: @test/counter"]);
-				expect(app.app.plugins.state.value.dirty).toContain("@test/counter");
+			const result = await editAndApply(app, "counter", counterPlugin({ code: "v2", placement, broken }));
+			// Reported to the app: the worker kept the plugin's old code, and it stays dirty for the next apply.
+			expect(rolloutFailures(result)).toEqual(["project/project|p1: @test/counter"]);
+			expect(app.app.plugins.state.value.dirty).toContain("@test/counter");
 
-				// The page: nothing moved, calls answered by the old code, the document as it was.
-				expect(await page.result(await page.call("alpha", "code"))).toEqual(ok("v1"));
-				expect(await page.result(await page.call("alpha", "add", 1))).toEqual(ok("v1:3"));
-				await page.waitText("alpha", ".label", "v1:3");
-				expect((await page.states("alpha")).slice(settled)).toEqual([]);
-				expect((await page.frames("alpha")).slice(frames)).toEqual(["v1:3"]);
-				expect(await page.result(await page.call("alpha", "visits"))).toEqual(ok(2));
-				expect(await page.value("alpha", ".draft")).toBe("half-typed");
-				expect(await page.loads()).toBe(1);
-			} finally {
-				await app.app.close(context);
-			}
-		},
-		120_000,
-	);
+			// The page: nothing moved, calls answered by the old code, the document as it was.
+			expect(await page.result(await page.call("alpha", "code"))).toEqual(ok("v1"));
+			expect(await page.result(await page.call("alpha", "add", 1))).toEqual(ok("v1:3"));
+			await page.waitText("alpha", ".label", "v1:3");
+			expect((await page.states("alpha")).slice(settled)).toEqual([]);
+			expect((await page.frames("alpha")).slice(frames)).toEqual(["v1:3"]);
+			expect(await page.result(await page.call("alpha", "visits"))).toEqual(ok(2));
+			expect(await page.value("alpha", ".draft")).toBe("half-typed");
+			expect(await page.loads()).toBe(1);
+		} finally {
+			await app.app.close(context);
+		}
+	}, 120_000);
 
 	/** The app with the counter, a web plugin `alpha` showing it and a web plugin `beta`, alpha's inputs typed in. */
 	async function webApp() {

@@ -151,25 +151,26 @@ describe("openai-completions prompt caching", () => {
 		expect(payload?.prompt_cache_retention).toBeUndefined();
 	});
 
-	it.each([undefined, "short", "long"] as const)(
-		"sends a stable cache key through an opted-in proxy with retention %s",
-		async (cacheRetention) => {
-			const model = createModel({
-				baseUrl: "https://proxy.example.com/v1",
-				compat: { promptCacheKeyMode: "enabled", supportsLongCacheRetention: false },
-			});
-			const options = { cacheRetention, sessionId: "session-proxy" };
-			const first = await captureRequest(options, model);
-			const repeated = await captureRequest(options, model);
-			const other = await captureRequest({ ...options, sessionId: "other-session" }, model);
+	it.each([
+		undefined,
+		"short",
+		"long",
+	] as const)("sends a stable cache key through an opted-in proxy with retention %s", async (cacheRetention) => {
+		const model = createModel({
+			baseUrl: "https://proxy.example.com/v1",
+			compat: { promptCacheKeyMode: "enabled", supportsLongCacheRetention: false },
+		});
+		const options = { cacheRetention, sessionId: "session-proxy" };
+		const first = await captureRequest(options, model);
+		const repeated = await captureRequest(options, model);
+		const other = await captureRequest({ ...options, sessionId: "other-session" }, model);
 
-			expect(first.payload?.prompt_cache_key).toBe("session-proxy");
-			expect(repeated.payload?.prompt_cache_key).toBe(first.payload?.prompt_cache_key);
-			expect(other.payload?.prompt_cache_key).toBe("other-session");
-			expect(first.payload?.prompt_cache_retention).toBeUndefined();
-			expect(first.headers.session_id).toBeUndefined();
-		},
-	);
+		expect(first.payload?.prompt_cache_key).toBe("session-proxy");
+		expect(repeated.payload?.prompt_cache_key).toBe(first.payload?.prompt_cache_key);
+		expect(other.payload?.prompt_cache_key).toBe("other-session");
+		expect(first.payload?.prompt_cache_retention).toBeUndefined();
+		expect(first.headers.session_id).toBeUndefined();
+	});
 
 	it.each([undefined, "auto"] as const)("preserves default proxy behavior with mode %s", async (mode) => {
 		const model = createModel({
@@ -255,15 +256,15 @@ describe("openai-completions prompt caching", () => {
 		expect(headers["x-session-affinity"]).toBe("session-affinity");
 	});
 
-	it.each(["accounts/fireworks/models/glm-5p3", "accounts/fireworks/routers/glm-5p3-fast"] as const)(
-		"sends Fireworks session affinity for %s",
-		async (modelId) => {
-			const model = getModel("fireworks", modelId);
-			const { headers } = await captureRequest({ sessionId: "fireworks-session" }, model);
+	it.each([
+		"accounts/fireworks/models/glm-5p3",
+		"accounts/fireworks/routers/glm-5p3-fast",
+	] as const)("sends Fireworks session affinity for %s", async (modelId) => {
+		const model = getModel("fireworks", modelId);
+		const { headers } = await captureRequest({ sessionId: "fireworks-session" }, model);
 
-			expect(headers["x-session-affinity"]).toBe("fireworks-session");
-		},
-	);
+		expect(headers["x-session-affinity"]).toBe("fireworks-session");
+	});
 
 	it("sends Baseten session affinity for built-in catalog models", async () => {
 		const model = getModel("baseten", "zai-org/GLM-5.2");

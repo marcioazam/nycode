@@ -11,9 +11,9 @@ import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { BACKGROUND_CONTEXT as context } from "../../../src/context/index.ts";
+import { jsLiteral } from "../js-literal.ts";
 import { Browser, CHROMIUM } from "./browser.ts";
 import { freePort, signIn, versionedEntry, webApp } from "./support.ts";
-import { jsLiteral } from "../js-literal.ts";
 
 /**
  * A web plugin contributing a part `<p id="<id>">` with `text`, of the CSS module's class `css` names first; `throws`

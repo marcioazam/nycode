@@ -112,17 +112,18 @@ describe("sampling params", () => {
 	});
 
 	// Model defaults must apply to direct stream()/complete() calls, not only streamSimple() (#9506)
-	it.each(["openai-completions", "openai-responses", "azure-openai-responses"] as const)(
-		"applies model-level sampling params with request keys taking precedence for %s",
-		async (api) => {
-			const payload = await capturePayload(makeModel(api, { top_p: 0.95, min_p: 0.05 }), {
-				samplingParams: { top_p: 0.5 },
-			});
+	it.each([
+		"openai-completions",
+		"openai-responses",
+		"azure-openai-responses",
+	] as const)("applies model-level sampling params with request keys taking precedence for %s", async (api) => {
+		const payload = await capturePayload(makeModel(api, { top_p: 0.95, min_p: 0.05 }), {
+			samplingParams: { top_p: 0.5 },
+		});
 
-			expect(payload.top_p).toBe(0.5);
-			expect(payload.min_p).toBe(0.05);
-		},
-	);
+		expect(payload.top_p).toBe(0.5);
+		expect(payload.min_p).toBe(0.05);
+	});
 
 	it("passes request sampling params through streamSimple", async () => {
 		const payload = await captureSimplePayload(makeModel("openai-completions"), {
@@ -174,45 +175,46 @@ describe("sampling params", () => {
 		expect(payload.top_p).toBe(0.5);
 	});
 
-	it.each(["openai-completions", "openai-responses", "azure-openai-responses"] as const)(
-		"applies thinking-level params between model and request params for %s",
-		async (api) => {
-			const payload = await capturePayload(
-				makeModel(
-					api,
-					{ temperature: 1, top_p: 0.95 },
-					{
-						reasoning: true,
-						samplingParamsByThinkingLevel: { low: { temperature: 0.6, top_k: 64 } },
-					},
-				),
-				{ reasoningEffort: "low", samplingParams: { top_p: 0.5 } },
-			);
-
-			expect(payload.temperature).toBe(0.6);
-			expect(payload.top_p).toBe(0.5);
-			expect(payload.top_k).toBe(64);
-		},
-	);
-
-	it.each(["openai-responses", "azure-openai-responses"] as const)(
-		"uses medium sampling params for summary-only %s requests",
-		async (api) => {
-			const payload = await capturePayload(
-				makeModel(api, undefined, {
+	it.each([
+		"openai-completions",
+		"openai-responses",
+		"azure-openai-responses",
+	] as const)("applies thinking-level params between model and request params for %s", async (api) => {
+		const payload = await capturePayload(
+			makeModel(
+				api,
+				{ temperature: 1, top_p: 0.95 },
+				{
 					reasoning: true,
-					samplingParamsByThinkingLevel: {
-						off: { temperature: 0.7 },
-						medium: { temperature: 0.8 },
-					},
-				}),
-				{ reasoningSummary: "auto" },
-			);
+					samplingParamsByThinkingLevel: { low: { temperature: 0.6, top_k: 64 } },
+				},
+			),
+			{ reasoningEffort: "low", samplingParams: { top_p: 0.5 } },
+		);
 
-			expect(payload.reasoning?.effort).toBe("medium");
-			expect(payload.temperature).toBe(0.8);
-		},
-	);
+		expect(payload.temperature).toBe(0.6);
+		expect(payload.top_p).toBe(0.5);
+		expect(payload.top_k).toBe(64);
+	});
+
+	it.each([
+		"openai-responses",
+		"azure-openai-responses",
+	] as const)("uses medium sampling params for summary-only %s requests", async (api) => {
+		const payload = await capturePayload(
+			makeModel(api, undefined, {
+				reasoning: true,
+				samplingParamsByThinkingLevel: {
+					off: { temperature: 0.7 },
+					medium: { temperature: 0.8 },
+				},
+			}),
+			{ reasoningSummary: "auto" },
+		);
+
+		expect(payload.reasoning?.effort).toBe("medium");
+		expect(payload.temperature).toBe(0.8);
+	});
 
 	it("overrides named request fields", async () => {
 		const payload = await capturePayload(makeModel("openai-completions"), {

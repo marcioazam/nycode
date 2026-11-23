@@ -315,24 +315,24 @@ describe("client metadata documents", () => {
 		listsRedirectUrl: (redirectUrl) => redirectUrl === ROUTE,
 	};
 
-	it.each(["auto", "cimd"] as const)(
-		"refreshes the tokens of a document that lists only an https route (%s)",
-		async (clientRegistration) => {
-			const server = await startAuthorizationServer({ cimd: true, issParameter: true });
-			const options = signInOptions(server, { clientMetadataDocuments: routeDocuments }, { clientRegistration });
-			const authorization = await signIn(options);
-			expect(new URL(authorization.authorizationUrl).searchParams.get("client_id")).toBe(
-				"https://app.example/oauth/client.json",
-			);
-			expect((await options.store.load())?.clientInformation).toBeUndefined();
+	it.each([
+		"auto",
+		"cimd",
+	] as const)("refreshes the tokens of a document that lists only an https route (%s)", async (clientRegistration) => {
+		const server = await startAuthorizationServer({ cimd: true, issParameter: true });
+		const options = signInOptions(server, { clientMetadataDocuments: routeDocuments }, { clientRegistration });
+		const authorization = await signIn(options);
+		expect(new URL(authorization.authorizationUrl).searchParams.get("client_id")).toBe(
+			"https://app.example/oauth/client.json",
+		);
+		expect((await options.store.load())?.clientInformation).toBeUndefined();
 
-			expect(await startMcpSignIn(options)).toEqual({ kind: "authorized" });
-			expect(server.authorizations).toHaveLength(1);
-			expect(server.tokenRequests[1].get("grant_type")).toBe("refresh_token");
-			expect(server.tokenRequests[1].get("client_id")).toBe("https://app.example/oauth/client.json");
-			expect((await options.store.load())?.tokens?.access_token).toBe("access-2");
-		},
-	);
+		expect(await startMcpSignIn(options)).toEqual({ kind: "authorized" });
+		expect(server.authorizations).toHaveLength(1);
+		expect(server.tokenRequests[1].get("grant_type")).toBe("refresh_token");
+		expect(server.tokenRequests[1].get("client_id")).toBe("https://app.example/oauth/client.json");
+		expect((await options.store.load())?.tokens?.access_token).toBe("access-2");
+	});
 
 	it("fails with cimd when the server does not support documents", async () => {
 		const server = await startAuthorizationServer({ issParameter: true });

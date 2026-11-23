@@ -43,21 +43,21 @@ function recordingStreams(capture: (options: StreamOptions | undefined) => void)
 
 describe("OpenCode provider headers", () => {
 	// Regression test for https://github.com/earendil-works/pi/issues/9326
-	it.each(["stream", "streamSimple"] as const)(
-		"maps sessionId for %s requests even without cache retention",
-		(method) => {
-			let captured: StreamOptions | undefined;
-			const streams = withOpenCodeSessionHeader(
-				recordingStreams((options) => {
-					captured = options;
-				}),
-			);
+	it.each([
+		"stream",
+		"streamSimple",
+	] as const)("maps sessionId for %s requests even without cache retention", (method) => {
+		let captured: StreamOptions | undefined;
+		const streams = withOpenCodeSessionHeader(
+			recordingStreams((options) => {
+				captured = options;
+			}),
+		);
 
-			streams[method](model, context, { sessionId: "conversation-1", cacheRetention: "none" });
+		streams[method](model, context, { sessionId: "conversation-1", cacheRetention: "none" });
 
-			expect(captured?.headers).toEqual({ "x-opencode-session": "conversation-1" });
-		},
-	);
+		expect(captured?.headers).toEqual({ "x-opencode-session": "conversation-1" });
+	});
 
 	it.each([
 		{ headers: { "X-OpenCode-Session": "caller-value" }, expected: { "X-OpenCode-Session": "caller-value" } },

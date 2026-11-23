@@ -73,13 +73,19 @@ describe("bypass precedence", () => {
 		expect(bypass(["--dangerously-skip-permissions"])).toBe(true);
 	});
 
-	it.each([["no"], ["off"], ["FALSE"], ["Off"], [""], ["  "], ["yes please"], ["2"]])(
-		"fails closed on the unrecognised or false value %j over settings bypass true",
-		(value) => {
-			vi.stubEnv("NYCODE_BYPASS_PERMISSIONS", value);
-			expect(bypass([], manager({ permissions: { bypass: true } }))).toBe(false);
-		},
-	);
+	it.each([
+		["no"],
+		["off"],
+		["FALSE"],
+		["Off"],
+		[""],
+		["  "],
+		["yes please"],
+		["2"],
+	])("fails closed on the unrecognised or false value %j over settings bypass true", (value) => {
+		vi.stubEnv("NYCODE_BYPASS_PERMISSIONS", value);
+		expect(bypass([], manager({ permissions: { bypass: true } }))).toBe(false);
+	});
 
 	it.each([["YES"], ["On"], ["TRUE"], [" 1 "]])("accepts %j as true regardless of case", (value) => {
 		vi.stubEnv("NYCODE_BYPASS_PERMISSIONS", value);

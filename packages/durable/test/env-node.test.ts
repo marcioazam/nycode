@@ -608,28 +608,25 @@ describe("NodeExecutionEnv shell", () => {
 			{ NYCODE_SESSION_FILE: "/sessions/current.jsonl" },
 			"x:/sessions/current.jsonl",
 		],
-	] as const)(
-		"applies string shell environment overrides when %s",
-		async (_description, overrides, expectedSessionFile) => {
-			const root = createTempDir();
-			const env = new NodeExecutionEnv({
-				cwd: root,
-				shellEnv: {
-					NYCODE_SESSION_FILE: "/stale/parent.jsonl",
-					NYCODE_CODING_AGENT: "true",
-					NYCODE_NODE_ENV_PRESERVED_TEST: "preserved",
-				},
-			});
-			const collected = await collectShellOutput(
-				env,
-				`printf '%s:%s|%s|%s' "\${NYCODE_SESSION_FILE+x}" "\${NYCODE_SESSION_FILE-}" "$NYCODE_CODING_AGENT" "$NYCODE_NODE_ENV_PRESERVED_TEST"`,
-				{ env: overrides },
-				BACKGROUND_CONTEXT,
-			);
-			getOrThrow(collected.result);
-			expect(collected.output).toBe(`${expectedSessionFile}|true|preserved`);
-		},
-	);
+	] as const)("applies string shell environment overrides when %s", async (_description, overrides, expectedSessionFile) => {
+		const root = createTempDir();
+		const env = new NodeExecutionEnv({
+			cwd: root,
+			shellEnv: {
+				NYCODE_SESSION_FILE: "/stale/parent.jsonl",
+				NYCODE_CODING_AGENT: "true",
+				NYCODE_NODE_ENV_PRESERVED_TEST: "preserved",
+			},
+		});
+		const collected = await collectShellOutput(
+			env,
+			`printf '%s:%s|%s|%s' "\${NYCODE_SESSION_FILE+x}" "\${NYCODE_SESSION_FILE-}" "$NYCODE_CODING_AGENT" "$NYCODE_NODE_ENV_PRESERVED_TEST"`,
+			{ env: overrides },
+			BACKGROUND_CONTEXT,
+		);
+		getOrThrow(collected.result);
+		expect(collected.output).toBe(`${expectedSessionFile}|true|preserved`);
+	});
 
 	it("can replace rather than inherit the default shell environment", async () => {
 		const root = createTempDir();

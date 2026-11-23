@@ -162,23 +162,20 @@ describe("Qwen Token Plan models", () => {
 		["qwen-token-plan-cn", "QWEN_TOKEN_PLAN_TEAM_CN_API_KEY", "QWEN_TOKEN_PLAN_CN_API_KEY"],
 		["qwen-token-plan-individual", "QWEN_TOKEN_PLAN_INDIVIDUAL_API_KEY", "QWEN_TOKEN_PLAN_API_KEY"],
 		["qwen-token-plan-individual-cn", "QWEN_TOKEN_PLAN_INDIVIDUAL_CN_API_KEY", "QWEN_TOKEN_PLAN_CN_API_KEY"],
-	] as const)(
-		"prefers the per-plan key on %s and falls back to the shared one",
-		async (provider, planVar, sharedVar) => {
-			const resolve = async (env: Record<string, string>) => {
-				const models = createModels({
-					authContext: { env: async (name) => env[name], fileExists: async () => false },
-				});
-				models.setProvider(QWEN_PROVIDERS[provider]());
-				return (await models.getAuth(provider))?.auth.apiKey;
-			};
+	] as const)("prefers the per-plan key on %s and falls back to the shared one", async (provider, planVar, sharedVar) => {
+		const resolve = async (env: Record<string, string>) => {
+			const models = createModels({
+				authContext: { env: async (name) => env[name], fileExists: async () => false },
+			});
+			models.setProvider(QWEN_PROVIDERS[provider]());
+			return (await models.getAuth(provider))?.auth.apiKey;
+		};
 
-			expect(await resolve({ [planVar]: "plan", [sharedVar]: "shared" })).toBe("plan");
-			expect(await resolve({ [sharedVar]: "shared" })).toBe("shared");
-			expect(getEnvApiKey(provider, { [planVar]: "plan", [sharedVar]: "shared" })).toBe("plan");
-			expect(getEnvApiKey(provider, { [sharedVar]: "shared" })).toBe("shared");
-		},
-	);
+		expect(await resolve({ [planVar]: "plan", [sharedVar]: "shared" })).toBe("plan");
+		expect(await resolve({ [sharedVar]: "shared" })).toBe("shared");
+		expect(getEnvApiKey(provider, { [planVar]: "plan", [sharedVar]: "shared" })).toBe("plan");
+		expect(getEnvApiKey(provider, { [sharedVar]: "shared" })).toBe("shared");
+	});
 
 	it("keeps a per-plan key away from the other plan", () => {
 		expect(findEnvKeys("qwen-token-plan", { QWEN_TOKEN_PLAN_INDIVIDUAL_API_KEY: "test" })).toBeUndefined();
@@ -200,56 +197,56 @@ describe("Qwen Token Plan models", () => {
 	});
 
 	// docs: https://modelstudio.console.alibabacloud.com/ap-southeast-1?tab=api&commonbuy=1#/api/?type=model&url=3016807
-	it.each(QWEN_THINKING_MODEL_CASES)(
-		"sends Qwen thinking fields for $provider/$modelId",
-		async ({ provider, modelId }) => {
-			const model = getModels(provider).find((candidate) => candidate.id === modelId);
-			expect(model).toBeDefined();
-			if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
+	it.each(QWEN_THINKING_MODEL_CASES)("sends Qwen thinking fields for $provider/$modelId", async ({
+		provider,
+		modelId,
+	}) => {
+		const model = getModels(provider).find((candidate) => candidate.id === modelId);
+		expect(model).toBeDefined();
+		if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
 
-			let payload: unknown;
-			await streamSimple(
-				model,
-				{
-					messages: [
-						{
-							role: "user",
-							content: "Hi",
-							timestamp: Date.now(),
-						},
-					],
-				},
-				{
-					apiKey: "test",
-					reasoning: "high",
-					onPayload: (params) => {
-						payload = params;
+		let payload: unknown;
+		await streamSimple(
+			model,
+			{
+				messages: [
+					{
+						role: "user",
+						content: "Hi",
+						timestamp: Date.now(),
 					},
+				],
+			},
+			{
+				apiKey: "test",
+				reasoning: "high",
+				onPayload: (params) => {
+					payload = params;
 				},
-			).result();
+			},
+		).result();
 
-			expect(payload).toHaveProperty("enable_thinking", true);
-			expect(payload).not.toHaveProperty("thinking");
-		},
-	);
+		expect(payload).toHaveProperty("enable_thinking", true);
+		expect(payload).not.toHaveProperty("thinking");
+	});
 
-	it.each(QWEN_REASONING_EFFORT_MODEL_CASES)(
-		"exposes Qwen reasoning_effort levels for $provider/$modelId",
-		({ provider, modelId }) => {
-			const model = getModels(provider).find((candidate) => candidate.id === modelId);
-			expect(model).toBeDefined();
-			if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
+	it.each(QWEN_REASONING_EFFORT_MODEL_CASES)("exposes Qwen reasoning_effort levels for $provider/$modelId", ({
+		provider,
+		modelId,
+	}) => {
+		const model = getModels(provider).find((candidate) => candidate.id === modelId);
+		expect(model).toBeDefined();
+		if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
 
-			expect(model.thinkingLevelMap).toMatchObject({
-				minimal: null,
-				low: modelId === "glm-5.3" ? "low" : null,
-				medium: null,
-				high: "high",
-				xhigh: null,
-				max: "max",
-			});
-		},
-	);
+		expect(model.thinkingLevelMap).toMatchObject({
+			minimal: null,
+			low: modelId === "glm-5.3" ? "low" : null,
+			medium: null,
+			high: "high",
+			xhigh: null,
+			max: "max",
+		});
+	});
 
 	it("exposes glm-5.3 reasoning_effort levels for qwen-token-plan-individual", () => {
 		const model = getModels("qwen-token-plan-individual").find((candidate) => candidate.id === "glm-5.3");
@@ -266,23 +263,23 @@ describe("Qwen Token Plan models", () => {
 		});
 	});
 
-	it.each(QWEN38_MODEL_CASES)(
-		"exposes qwen3.8 reasoning_effort levels for $provider/$modelId",
-		({ provider, modelId }) => {
-			const model = getModels(provider).find((candidate) => candidate.id === modelId);
-			expect(model).toBeDefined();
-			if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
+	it.each(QWEN38_MODEL_CASES)("exposes qwen3.8 reasoning_effort levels for $provider/$modelId", ({
+		provider,
+		modelId,
+	}) => {
+		const model = getModels(provider).find((candidate) => candidate.id === modelId);
+		expect(model).toBeDefined();
+		if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
 
-			expect(model.thinkingLevelMap).toMatchObject({
-				minimal: null,
-				low: "low",
-				medium: "medium",
-				high: null,
-				xhigh: "xhigh",
-				max: null,
-			});
-		},
-	);
+		expect(model.thinkingLevelMap).toMatchObject({
+			minimal: null,
+			low: "low",
+			medium: "medium",
+			high: null,
+			xhigh: "xhigh",
+			max: null,
+		});
+	});
 
 	it.each([
 		"qwen-token-plan",
@@ -297,69 +294,69 @@ describe("Qwen Token Plan models", () => {
 		}
 	});
 
-	it.each(QWEN_REASONING_EFFORT_MODEL_CASES)(
-		"sends Qwen reasoning_effort for $provider/$modelId",
-		async ({ provider, modelId }) => {
-			const model = getModels(provider).find((candidate) => candidate.id === modelId);
-			expect(model).toBeDefined();
-			if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
+	it.each(QWEN_REASONING_EFFORT_MODEL_CASES)("sends Qwen reasoning_effort for $provider/$modelId", async ({
+		provider,
+		modelId,
+	}) => {
+		const model = getModels(provider).find((candidate) => candidate.id === modelId);
+		expect(model).toBeDefined();
+		if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
 
-			let payload: unknown;
-			await streamSimple(
-				model,
-				{
-					messages: [
-						{
-							role: "user",
-							content: "Hi",
-							timestamp: Date.now(),
-						},
-					],
-				},
-				{
-					apiKey: "test",
-					reasoning: "high",
-					onPayload: (params) => {
-						payload = params;
+		let payload: unknown;
+		await streamSimple(
+			model,
+			{
+				messages: [
+					{
+						role: "user",
+						content: "Hi",
+						timestamp: Date.now(),
 					},
+				],
+			},
+			{
+				apiKey: "test",
+				reasoning: "high",
+				onPayload: (params) => {
+					payload = params;
 				},
-			).result();
+			},
+		).result();
 
-			expect(payload).toHaveProperty("reasoning_effort", "high");
-		},
-	);
+		expect(payload).toHaveProperty("reasoning_effort", "high");
+	});
 
-	it.each(QWEN38_MODEL_CASES)(
-		"sends qwen3.8 xhigh reasoning_effort for $provider/$modelId",
-		async ({ provider, modelId }) => {
-			const model = getModels(provider).find((candidate) => candidate.id === modelId);
-			expect(model).toBeDefined();
-			if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
+	it.each(QWEN38_MODEL_CASES)("sends qwen3.8 xhigh reasoning_effort for $provider/$modelId", async ({
+		provider,
+		modelId,
+	}) => {
+		const model = getModels(provider).find((candidate) => candidate.id === modelId);
+		expect(model).toBeDefined();
+		if (!model) throw new Error(`Missing model: ${provider}/${modelId}`);
 
-			let payload: unknown;
-			await streamSimple(
-				model,
-				{
-					messages: [
-						{
-							role: "user",
-							content: "Hi",
-							timestamp: Date.now(),
-						},
-					],
-				},
-				{
-					apiKey: "test",
-					reasoning: "xhigh",
-					onPayload: (params) => {
-						payload = params;
+		let payload: unknown;
+		await streamSimple(
+			model,
+			{
+				messages: [
+					{
+						role: "user",
+						content: "Hi",
+						timestamp: Date.now(),
 					},
+				],
+			},
+			{
+				apiKey: "test",
+				reasoning: "xhigh",
+				onPayload: (params) => {
+					payload = params;
 				},
-			).result();
+			},
+		).result();
 
-			expect(payload).toHaveProperty("enable_thinking", true);
-			expect(payload).toHaveProperty("reasoning_effort", "xhigh");
-			expect(payload).not.toHaveProperty("thinking");
-		},
-	);
+		expect(payload).toHaveProperty("enable_thinking", true);
+		expect(payload).toHaveProperty("reasoning_effort", "xhigh");
+		expect(payload).not.toHaveProperty("thinking");
+	});
 });

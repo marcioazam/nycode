@@ -40,30 +40,30 @@ describe("Fireworks models", () => {
 		expect(fast.thinkingLevelMap).toEqual(base.thinkingLevelMap);
 	});
 
-	it.each(["accounts/fireworks/models/glm-5p3", "accounts/fireworks/routers/glm-5p3-fast"] as const)(
-		"omits unsupported long cache retention for %s",
-		async (modelId) => {
-			const model = getModel("fireworks", modelId);
-			let payload: Record<string, unknown> | undefined;
-			const response = streamSimple(
-				model,
-				{ messages: [{ role: "user", content: "test", timestamp: 0 }] },
-				{
-					apiKey: "test-fireworks-key",
-					cacheRetention: "long",
-					sessionId: "test-fireworks-session",
-					onPayload: (value) => {
-						payload = value as Record<string, unknown>;
-						throw new Error("payload captured");
-					},
+	it.each([
+		"accounts/fireworks/models/glm-5p3",
+		"accounts/fireworks/routers/glm-5p3-fast",
+	] as const)("omits unsupported long cache retention for %s", async (modelId) => {
+		const model = getModel("fireworks", modelId);
+		let payload: Record<string, unknown> | undefined;
+		const response = streamSimple(
+			model,
+			{ messages: [{ role: "user", content: "test", timestamp: 0 }] },
+			{
+				apiKey: "test-fireworks-key",
+				cacheRetention: "long",
+				sessionId: "test-fireworks-session",
+				onPayload: (value) => {
+					payload = value as Record<string, unknown>;
+					throw new Error("payload captured");
 				},
-			);
-			await response.result();
+			},
+		);
+		await response.result();
 
-			expect(payload).toBeDefined();
-			expect(payload?.prompt_cache_retention).toBeUndefined();
-		},
-	);
+		expect(payload).toBeDefined();
+		expect(payload?.prompt_cache_retention).toBeUndefined();
+	});
 
 	it("routes Kimi K3 through the OpenAI-compatible API with native effort controls", async () => {
 		const base = getModel("fireworks", "accounts/fireworks/models/kimi-k3");

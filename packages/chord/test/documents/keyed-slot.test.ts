@@ -455,44 +455,41 @@ describe("cold keyed loads on the line", () => {
 	it.each([
 		["a newer version", 2, { title: str(), n: str() }, "stored at version 2, newer than the code's 1"],
 		["another fingerprint at its version", 1, { title: str(), n: str() }, "stored with another schema at version 1"],
-	])(
-		"tx.retire of a cold key stored at %s fails the owner broken as a read would and keeps it (R15, audit)",
-		async (_, version, schema, message) => {
-			const store = await freshStore();
-			// Written by other code: a newer version, or the same version with another schema.
-			const Other = defineState("notes.note", {
-				schema: obj(schema),
-				version,
-				initial: () => ({ title: "", n: "" }),
-				keyed: true,
-				persist: true,
-				checkpointWhen: () => false,
-			});
-			const writer = await storeRestartable(
-				objects,
-				(_, self) => {
-					void self
-						.state(Other)
-						.change("a", (draft) => void Object.assign(draft, { title: "kept", n: "1" }), context);
-				},
-				{ store },
-			);
-			await flushed();
-			await writer.host.close(context);
-			const { host, notes, errors, reference } = await persisted(store);
-			expect(await rejection(notes().retire("a", context))).toMatchObject({
-				message: expect.stringContaining(message),
-			});
-			expect(errors.map(({ kind }) => kind)).toEqual(["object_failed"]);
-			expect(reference.state.value).toMatchObject({ kind: "failed", cause: { kind: "broken" } });
-			await host.close(context);
-			const reader = await storeRestartable(objects, (_, self) => void self.state(Other), { store });
-			expect(await store.read((executor) => executor.all("SELECT key FROM chord_documents"), context)).toEqual([
-				{ key: "a" },
-			]);
-			await reader.host.close(context);
-		},
-	);
+	])("tx.retire of a cold key stored at %s fails the owner broken as a read would and keeps it (R15, audit)", async (_, version, schema, message) => {
+		const store = await freshStore();
+		// Written by other code: a newer version, or the same version with another schema.
+		const Other = defineState("notes.note", {
+			schema: obj(schema),
+			version,
+			initial: () => ({ title: "", n: "" }),
+			keyed: true,
+			persist: true,
+			checkpointWhen: () => false,
+		});
+		const writer = await storeRestartable(
+			objects,
+			(_, self) => {
+				void self
+					.state(Other)
+					.change("a", (draft) => void Object.assign(draft, { title: "kept", n: "1" }), context);
+			},
+			{ store },
+		);
+		await flushed();
+		await writer.host.close(context);
+		const { host, notes, errors, reference } = await persisted(store);
+		expect(await rejection(notes().retire("a", context))).toMatchObject({
+			message: expect.stringContaining(message),
+		});
+		expect(errors.map(({ kind }) => kind)).toEqual(["object_failed"]);
+		expect(reference.state.value).toMatchObject({ kind: "failed", cause: { kind: "broken" } });
+		await host.close(context);
+		const reader = await storeRestartable(objects, (_, self) => void self.state(Other), { store });
+		expect(await store.read((executor) => executor.all("SELECT key FROM chord_documents"), context)).toEqual([
+			{ key: "a" },
+		]);
+		await reader.host.close(context);
+	});
 
 	it("a retirement cut by its attempt's seal while it finds the document fails no successor (audit)", async () => {
 		const store = await freshStore();

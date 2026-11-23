@@ -21,17 +21,13 @@ describe("delta tracker retention across GC jobs", () => {
 		"adopted-changes-flat",
 		"abandoned-draft-released",
 		"tracker-with-open-draft",
-	])(
-		"validates %s retention semantics",
-		(scenario) => {
-			const child = spawnSync(
-				process.execPath,
-				["--expose-gc", fileURLToPath(new URL("./retention.worker.ts", import.meta.url)), scenario],
-				{ encoding: "utf8", timeout: 60_000 },
-			);
-			expect(child.error, child.stderr).toBeUndefined();
-			expect(child.status, `${child.stdout}\n${child.stderr}`).toBe(0);
-		},
-		65_000,
-	);
+	])("validates %s retention semantics", (scenario) => {
+		const child = spawnSync(
+			process.execPath,
+			["--expose-gc", fileURLToPath(new URL("./retention.worker.ts", import.meta.url)), scenario],
+			{ encoding: "utf8", timeout: 60_000 },
+		);
+		expect(child.error, child.stderr).toBeUndefined();
+		expect(child.status, `${child.stdout}\n${child.stderr}`).toBe(0);
+	}, 65_000);
 });

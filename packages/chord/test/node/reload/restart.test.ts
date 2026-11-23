@@ -95,34 +95,33 @@ describe.skipIf(CHROMIUM === undefined)("a reload restarting an object with nati
 		}, 120_000);
 	});
 
-	it.each<Placement>(["worker", "server"])(
-		"cuts a running call off at the reload drain bound on the %s, then runs the waiting call on the new code",
-		async (placement) => {
-			const app = await startReloadApp({
-				latch: LATCH_PLUGIN,
-				counter: counterPlugin({ code: "v1", placement, native: true }),
-				alpha: webPlugin({ name: "alpha", code: "1", counter: { placement, contract: "v1" } }),
-			});
-			try {
-				await page.signIn(app, ["alpha"]);
-				await page.waitText("alpha", ".state", "live");
-				const hand = await latches(app, placement);
-				const stuck = await page.call("alpha", "slow", "stuck");
-				await hand.entered("stuck");
-				const started = Date.now();
-				await editAndApply(app, "counter", counterPlugin({ code: "v2", placement, native: true }));
-				const arriving = await page.call("alpha", "code");
-				const cut = await page.result(stuck);
-				// The kit passes `reloadDrainTimeout` to the server and the workers: the cut comes before `closeTimeout`.
-				expect(Date.now() - started).toBeGreaterThanOrEqual(TIMEOUTS.reloadDrainTimeout - 100);
-				expect(Date.now() - started).toBeLessThan(TIMEOUTS.closeTimeout);
-				expect(cut).toMatchObject({ status: "error", code: "released" });
-				expect(await page.result(arriving)).toEqual(ok("v2"));
-				await page.waitText("alpha", ".state", "live");
-			} finally {
-				await app.app.close(context);
-			}
-		},
-		120_000,
-	);
+	it.each<Placement>([
+		"worker",
+		"server",
+	])("cuts a running call off at the reload drain bound on the %s, then runs the waiting call on the new code", async (placement) => {
+		const app = await startReloadApp({
+			latch: LATCH_PLUGIN,
+			counter: counterPlugin({ code: "v1", placement, native: true }),
+			alpha: webPlugin({ name: "alpha", code: "1", counter: { placement, contract: "v1" } }),
+		});
+		try {
+			await page.signIn(app, ["alpha"]);
+			await page.waitText("alpha", ".state", "live");
+			const hand = await latches(app, placement);
+			const stuck = await page.call("alpha", "slow", "stuck");
+			await hand.entered("stuck");
+			const started = Date.now();
+			await editAndApply(app, "counter", counterPlugin({ code: "v2", placement, native: true }));
+			const arriving = await page.call("alpha", "code");
+			const cut = await page.result(stuck);
+			// The kit passes `reloadDrainTimeout` to the server and the workers: the cut comes before `closeTimeout`.
+			expect(Date.now() - started).toBeGreaterThanOrEqual(TIMEOUTS.reloadDrainTimeout - 100);
+			expect(Date.now() - started).toBeLessThan(TIMEOUTS.closeTimeout);
+			expect(cut).toMatchObject({ status: "error", code: "released" });
+			expect(await page.result(arriving)).toEqual(ok("v2"));
+			await page.waitText("alpha", ".state", "live");
+		} finally {
+			await app.app.close(context);
+		}
+	}, 120_000);
 });

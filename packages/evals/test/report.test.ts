@@ -104,13 +104,14 @@ async function readObservation(assertion: ReportAssertion = {}) {
 }
 
 describe("readTaskObservation", () => {
-	it.each(["skipped", "todo", "disabled"] as const)(
-		"preserves a skipped outcome for %s cases without harness runs",
-		async (status) => {
-			const { observation } = await readObservation({ status });
-			expect(observation).toMatchObject({ outcome: "skipped" });
-		},
-	);
+	it.each([
+		"skipped",
+		"todo",
+		"disabled",
+	] as const)("preserves a skipped outcome for %s cases without harness runs", async (status) => {
+		const { observation } = await readObservation({ status });
+		expect(observation).toMatchObject({ outcome: "skipped" });
+	});
 
 	it("preserves a pending outcome when no harness run exists", async () => {
 		const { observation } = await readObservation({ status: "pending" });

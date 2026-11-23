@@ -1045,37 +1045,36 @@ forEachCodec(() => {
 			expect(notes.state.value).toEqual({ kind: "live" });
 		});
 
-		it.each([0, 1200])(
-			"detach a reference failed too_large from its route; retry %i ms after the drop places it anew, a new hold",
-			async (wait) => {
-				const workers: RawPeer[] = [];
-				const relay = await relayed({ resolve: rawWorkers(workers, { limits: { part: 50 } }) });
-				const notes = relay.server.hold(PlacedNotes, { session: "S1" }, context);
-				const first = await workerAt(workers);
-				const held = await first.next("hold");
-				const members = [
-					{ member: EDITOR.state.notes!, value: jsonPart([{ text: "z".repeat(60) }]) },
-					{ member: EDITOR.state.count!, value: jsonPart(1) },
-				];
-				first.send({ kind: "bound", holds: [{ hold: held.hold, variant: EDITOR.variant, members, failed: [] }] });
-				expect(await first.next("release")).toMatchObject({ hold: held.hold });
-				expect(notes.state.value).toMatchObject({ kind: "failed", cause: { error: { code: "too_large" } } });
-				// The worker's link drops: nothing holds the address, so nothing resolves it again for this reference.
-				first.close();
-				await new Promise((resolve) => setTimeout(resolve, wait));
-				await transported();
-				expect(workers).toHaveLength(1);
-				// The route forgot the address: the retry places the reference anew, resolves it and holds it.
-				notes.retry();
-				expect(notes.state.value.kind).toBe("loading");
-				for (let tries = 0; workers.length < 2 && tries < 30; tries++) await new Promise((r) => setTimeout(r, 100));
-				const second = await workerAt(workers, 1);
-				bindPlaced(second, await second.next("hold"), 2);
-				await transported();
-				expect(notes.state.value).toEqual({ kind: "live" });
-				expect(notes.count.value).toBe(2);
-			},
-		);
+		it.each([
+			0, 1200,
+		])("detach a reference failed too_large from its route; retry %i ms after the drop places it anew, a new hold", async (wait) => {
+			const workers: RawPeer[] = [];
+			const relay = await relayed({ resolve: rawWorkers(workers, { limits: { part: 50 } }) });
+			const notes = relay.server.hold(PlacedNotes, { session: "S1" }, context);
+			const first = await workerAt(workers);
+			const held = await first.next("hold");
+			const members = [
+				{ member: EDITOR.state.notes!, value: jsonPart([{ text: "z".repeat(60) }]) },
+				{ member: EDITOR.state.count!, value: jsonPart(1) },
+			];
+			first.send({ kind: "bound", holds: [{ hold: held.hold, variant: EDITOR.variant, members, failed: [] }] });
+			expect(await first.next("release")).toMatchObject({ hold: held.hold });
+			expect(notes.state.value).toMatchObject({ kind: "failed", cause: { error: { code: "too_large" } } });
+			// The worker's link drops: nothing holds the address, so nothing resolves it again for this reference.
+			first.close();
+			await new Promise((resolve) => setTimeout(resolve, wait));
+			await transported();
+			expect(workers).toHaveLength(1);
+			// The route forgot the address: the retry places the reference anew, resolves it and holds it.
+			notes.retry();
+			expect(notes.state.value.kind).toBe("loading");
+			for (let tries = 0; workers.length < 2 && tries < 30; tries++) await new Promise((r) => setTimeout(r, 100));
+			const second = await workerAt(workers, 1);
+			bindPlaced(second, await second.next("hold"), 2);
+			await transported();
+			expect(notes.state.value).toEqual({ kind: "live" });
+			expect(notes.count.value).toBe(2);
+		});
 
 		it("let a tab without a compressor inflate the worker's deflated parts asynchronously, in order", async () => {
 			const relay = await relayed({ compression: { worker: nodeCompression, server: nodeCompression } });

@@ -53,7 +53,7 @@ function artifactKind(kind: "html" | "md", title: string): ArtifactKind {
 				list?.flatMap((each) =>
 					each.kind === kind ? [{ id: each.id, title: each.title, updated: each.updated }] : [],
 				),
-			[list, kind],
+			[list],
 		);
 	};
 	return {

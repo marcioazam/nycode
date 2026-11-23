@@ -1282,60 +1282,60 @@ describe("agentLoop with AgentMessage", () => {
 		expect(ordering.slice(-3)).toEqual(["message_end:toolResult", "finishTurn", "turn_end"]);
 	});
 
-	it.each(["error", "aborted"] as const)(
-		"runs finishTurn for a %s assistant before turn_end without changing the hard exit",
-		async (reason) => {
-			const ordering: string[] = [];
-			let providerCalls = 0;
-			let steeringPolls = 0;
-			let followUpPolls = 0;
-			await runAgentLoop(
-				[createUserMessage("run")],
-				{ messages: [], tools: [] },
-				{
-					model: createModel(),
-					convertToLlm: identityConverter,
-					finishTurn: ({ message }) => {
-						expect(message.stopReason).toBe(reason);
-						ordering.push("finishTurn");
-						return { action: "continue" };
-					},
-					getSteeringMessages: async () => {
-						steeringPolls++;
-						return [];
-					},
-					getFollowUpMessages: async () => {
-						followUpPolls++;
-						return [createUserMessage("queued")];
-					},
+	it.each([
+		"error",
+		"aborted",
+	] as const)("runs finishTurn for a %s assistant before turn_end without changing the hard exit", async (reason) => {
+		const ordering: string[] = [];
+		let providerCalls = 0;
+		let steeringPolls = 0;
+		let followUpPolls = 0;
+		await runAgentLoop(
+			[createUserMessage("run")],
+			{ messages: [], tools: [] },
+			{
+				model: createModel(),
+				convertToLlm: identityConverter,
+				finishTurn: ({ message }) => {
+					expect(message.stopReason).toBe(reason);
+					ordering.push("finishTurn");
+					return { action: "continue" };
 				},
-				(event) => {
-					if (event.type === "turn_end") ordering.push("turn_end");
+				getSteeringMessages: async () => {
+					steeringPolls++;
+					return [];
 				},
-				undefined,
-				() => {
-					providerCalls++;
-					const stream = createAssistantMessageEventStream();
-					queueMicrotask(() => {
-						stream.push({
-							type: "error",
-							reason,
-							error: {
-								...createAssistantMessage([], reason),
-								errorMessage: reason,
-							},
-						});
+				getFollowUpMessages: async () => {
+					followUpPolls++;
+					return [createUserMessage("queued")];
+				},
+			},
+			(event) => {
+				if (event.type === "turn_end") ordering.push("turn_end");
+			},
+			undefined,
+			() => {
+				providerCalls++;
+				const stream = createAssistantMessageEventStream();
+				queueMicrotask(() => {
+					stream.push({
+						type: "error",
+						reason,
+						error: {
+							...createAssistantMessage([], reason),
+							errorMessage: reason,
+						},
 					});
-					return stream;
-				},
-			);
+				});
+				return stream;
+			},
+		);
 
-			expect(ordering).toEqual(["finishTurn", "turn_end"]);
-			expect(providerCalls).toBe(1);
-			expect(steeringPolls).toBe(1);
-			expect(followUpPolls).toBe(0);
-		},
-	);
+		expect(ordering).toEqual(["finishTurn", "turn_end"]);
+		expect(providerCalls).toBe(1);
+		expect(steeringPolls).toBe(1);
+		expect(followUpPolls).toBe(0);
+	});
 
 	it("action:end skips queue polling and next-turn preparation", async () => {
 		const toolSchema = obj({});

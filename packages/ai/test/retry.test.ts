@@ -20,12 +20,12 @@ const codexConnectionLimitError =
 
 describe("provider retry classification", () => {
 	// Regression for #12124: the Codex WebSocket lifetime limit is recoverable on a fresh connection.
-	it.each([codexConnectionLimitError, "Codex error: websocket_connection_limit_reached"])(
-		"matches the Codex websocket connection lifetime limit: %s",
-		(errorMessage) => {
-			expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(true);
-		},
-	);
+	it.each([
+		codexConnectionLimitError,
+		"Codex error: websocket_connection_limit_reached",
+	])("matches the Codex websocket connection lifetime limit: %s", (errorMessage) => {
+		expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(true);
+	});
 
 	it("does not match a generic connection limit", () => {
 		expect(
@@ -93,20 +93,21 @@ describe("provider retry classification", () => {
 		expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(true);
 	});
 
-	it.each(["Invalid value EXECONNRESET", "Unknown field ETIMEDOUTX", "Invalid key ERR_EPIPE_ID"])(
-		"does not match socket error codes inside longer identifiers: %s",
-		(errorMessage) => {
-			expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(false);
-		},
-	);
+	it.each([
+		"Invalid value EXECONNRESET",
+		"Unknown field ETIMEDOUTX",
+		"Invalid key ERR_EPIPE_ID",
+	])("does not match socket error codes inside longer identifiers: %s", (errorMessage) => {
+		expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(false);
+	});
 
-	it.each(["The pending stream has been canceled", "The pending stream has been canceled (caused by: socket closed)"])(
-		"matches HTTP/2 pending stream cancellation: %s",
-		(errorMessage) => {
-			// Regression for #10379.
-			expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(true);
-		},
-	);
+	it.each([
+		"The pending stream has been canceled",
+		"The pending stream has been canceled (caused by: socket closed)",
+	])("matches HTTP/2 pending stream cancellation: %s", (errorMessage) => {
+		// Regression for #10379.
+		expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(true);
+	});
 
 	it.each([
 		// Regression for #10965 (provider unknown, no status code in the message).
@@ -152,12 +153,12 @@ describe("provider retry classification", () => {
 		expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(true);
 	});
 
-	it.each(["Provider unavailable for this model", "The provider is unavailable in your region"])(
-		"does not match lasting provider unavailable wording: %s",
-		(errorMessage) => {
-			expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(false);
-		},
-	);
+	it.each([
+		"Provider unavailable for this model",
+		"The provider is unavailable in your region",
+	])("does not match lasting provider unavailable wording: %s", (errorMessage) => {
+		expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(false);
+	});
 
 	it("matches gateway wording for a closed connection", () => {
 		// Regression for #12064.

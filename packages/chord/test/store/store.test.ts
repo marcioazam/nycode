@@ -199,29 +199,26 @@ describe("refusals and unknown outcomes (D4)", () => {
 		["BEGIN IMMEDIATE", undefined],
 		["COMMIT", undefined],
 		["ROLLBACK", BROKEN],
-	] as const)(
-		"a failed %s is an unknown outcome: the store stops storage_failed, its host told once",
-		async (at, write) => {
-			const { store, fail } = await faultyStore();
-			const told: unknown[] = [];
-			store.attach({ failed: (error) => told.push(error), batch: new Batch(() => {}, undefined) });
-			fail(at);
-			const writes = write === undefined ? [createDocument(ADDRESS, BASE, "{}")] : [write];
-			expect(await rejection(store.commit(writes, recording().fence, context))).toMatchObject({
-				code: "unavailable",
-				reason: "storage_failed",
-			});
-			expect(
-				await rejection(store.commit([createDocument(ADDRESS, BASE, "{}")], recording().fence, context)),
-			).toMatchObject({
-				reason: "storage_failed",
-			});
-			expect(await rejection(store.read(async () => 1, context))).toMatchObject({ reason: "storage_failed" });
-			expect(told.length).toBe(1);
-			await store.close(context);
-			await store.close(context);
-		},
-	);
+	] as const)("a failed %s is an unknown outcome: the store stops storage_failed, its host told once", async (at, write) => {
+		const { store, fail } = await faultyStore();
+		const told: unknown[] = [];
+		store.attach({ failed: (error) => told.push(error), batch: new Batch(() => {}, undefined) });
+		fail(at);
+		const writes = write === undefined ? [createDocument(ADDRESS, BASE, "{}")] : [write];
+		expect(await rejection(store.commit(writes, recording().fence, context))).toMatchObject({
+			code: "unavailable",
+			reason: "storage_failed",
+		});
+		expect(
+			await rejection(store.commit([createDocument(ADDRESS, BASE, "{}")], recording().fence, context)),
+		).toMatchObject({
+			reason: "storage_failed",
+		});
+		expect(await rejection(store.read(async () => 1, context))).toMatchObject({ reason: "storage_failed" });
+		expect(told.length).toBe(1);
+		await store.close(context);
+		await store.close(context);
+	});
 
 	it("an adopt that throws stops the store, an empty commit's too; a conditional update on another revision is refused", async () => {
 		const store = await memoryStore();
@@ -611,26 +608,23 @@ describe("a commit series", () => {
 		["BEGIN IMMEDIATE", undefined],
 		["COMMIT", undefined],
 		["ROLLBACK", BROKEN],
-	] as const)(
-		"a failed %s is an unknown outcome: nothing is received, the store stops storage_failed",
-		async (at, write) => {
-			const { store, fail } = await faultyStore();
-			const told: unknown[] = [];
-			store.attach({ failed: (error) => told.push(error), batch: new Batch(() => {}, undefined) });
-			fail(at);
-			const receipts: number[] = [];
-			const second = write ?? createDocument({ ...ADDRESS, key: "b" }, BASE, "{}");
-			const series = store.commitSeries(
-				[unchecked([createDocument(ADDRESS, BASE, "{}")]), unchecked([second])],
-				(index) => receipts.push(index),
-				context,
-			);
-			expect(await rejection(series)).toMatchObject({ code: "unavailable", reason: "storage_failed" });
-			expect([receipts, store.lastSeq, told.length]).toEqual([[], 0, 1]);
-			const after = store.commitSeries([unchecked([createDocument(ADDRESS, BASE, "{}")])], () => {}, context);
-			expect(await rejection(after)).toMatchObject({ reason: "storage_failed" });
-		},
-	);
+	] as const)("a failed %s is an unknown outcome: nothing is received, the store stops storage_failed", async (at, write) => {
+		const { store, fail } = await faultyStore();
+		const told: unknown[] = [];
+		store.attach({ failed: (error) => told.push(error), batch: new Batch(() => {}, undefined) });
+		fail(at);
+		const receipts: number[] = [];
+		const second = write ?? createDocument({ ...ADDRESS, key: "b" }, BASE, "{}");
+		const series = store.commitSeries(
+			[unchecked([createDocument(ADDRESS, BASE, "{}")]), unchecked([second])],
+			(index) => receipts.push(index),
+			context,
+		);
+		expect(await rejection(series)).toMatchObject({ code: "unavailable", reason: "storage_failed" });
+		expect([receipts, store.lastSeq, told.length]).toEqual([[], 0, 1]);
+		const after = store.commitSeries([unchecked([createDocument(ADDRESS, BASE, "{}")])], () => {}, context);
+		expect(await rejection(after)).toMatchObject({ reason: "storage_failed" });
+	});
 
 	it("lets a later commit see the table records an earlier one changed; a rollback leaves the catalog as it was", async () => {
 		const store = await memoryStore();
@@ -939,28 +933,25 @@ describe("group commit", () => {
 		["BEGIN IMMEDIATE", undefined],
 		["COMMIT", undefined],
 		["ROLLBACK", BROKEN],
-	] as const)(
-		"a failed %s of a group is an unknown outcome: every commit rejects storage_failed, the host told once",
-		async (at, write) => {
-			const { store, fail } = await faultyStore();
-			const told: unknown[] = [];
-			store.attach({ failed: (error) => told.push(error), batch: new Batch(() => {}, undefined) });
-			const held = holdNextCommit(store);
-			// Armed after the held step's `COMMIT`, before the group's turn: the group's statement fails.
-			const running = store.commit([create("a")], { admit: () => true, adopt: () => fail(at) }, context);
-			await held.entered;
-			const group = [
-				store.commit([create("b")], recording().fence, context),
-				store.commit([write ?? create("c")], recording().fence, context),
-			];
-			held.release();
-			expect(await running).toBe(1);
-			for (const commit of group) {
-				expect(await rejection(commit)).toMatchObject({ code: "unavailable", reason: "storage_failed" });
-			}
-			expect([told.length, store.lastSeq]).toEqual([1, 1]);
-		},
-	);
+	] as const)("a failed %s of a group is an unknown outcome: every commit rejects storage_failed, the host told once", async (at, write) => {
+		const { store, fail } = await faultyStore();
+		const told: unknown[] = [];
+		store.attach({ failed: (error) => told.push(error), batch: new Batch(() => {}, undefined) });
+		const held = holdNextCommit(store);
+		// Armed after the held step's `COMMIT`, before the group's turn: the group's statement fails.
+		const running = store.commit([create("a")], { admit: () => true, adopt: () => fail(at) }, context);
+		await held.entered;
+		const group = [
+			store.commit([create("b")], recording().fence, context),
+			store.commit([write ?? create("c")], recording().fence, context),
+		];
+		held.release();
+		expect(await running).toBe(1);
+		for (const commit of group) {
+			expect(await rejection(commit)).toMatchObject({ code: "unavailable", reason: "storage_failed" });
+		}
+		expect([told.length, store.lastSeq]).toEqual([1, 1]);
+	});
 
 	it("stops the store when an adoption in a group throws: it and the ones after it reject, the ones before stand", async () => {
 		const store = await memoryStore();

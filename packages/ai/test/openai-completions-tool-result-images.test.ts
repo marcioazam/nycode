@@ -150,41 +150,42 @@ describe("openai-completions convertMessages", () => {
 	});
 
 	// Whitespace-only cases: https://github.com/earendil-works/pi/issues/8720
-	it.each(["", "\r\n", " \n\t"])(
-		"uses '(no tool output)' placeholder for tool result text %j without images",
-		(text) => {
-			const { compat: _compat, ...baseModel } = getModel("openai", "gpt-4o-mini");
-			const model: Model<"openai-completions"> = {
-				...baseModel,
-				api: "openai-completions",
-				input: ["text", "image"],
-			};
+	it.each([
+		"",
+		"\r\n",
+		" \n\t",
+	])("uses '(no tool output)' placeholder for tool result text %j without images", (text) => {
+		const { compat: _compat, ...baseModel } = getModel("openai", "gpt-4o-mini");
+		const model: Model<"openai-completions"> = {
+			...baseModel,
+			api: "openai-completions",
+			input: ["text", "image"],
+		};
 
-			const now = Date.now();
-			const assistantMessage: AssistantMessage = {
-				role: "assistant",
-				content: [{ type: "toolCall", id: "tool-1", name: "bash", arguments: { command: "true" } }],
-				api: model.api,
-				provider: model.provider,
-				model: model.id,
-				usage: emptyUsage,
-				stopReason: "toolUse",
-				timestamp: now,
-			};
+		const now = Date.now();
+		const assistantMessage: AssistantMessage = {
+			role: "assistant",
+			content: [{ type: "toolCall", id: "tool-1", name: "bash", arguments: { command: "true" } }],
+			api: model.api,
+			provider: model.provider,
+			model: model.id,
+			usage: emptyUsage,
+			stopReason: "toolUse",
+			timestamp: now,
+		};
 
-			const context = normalizeContext({
-				messages: [
-					{ role: "user", content: "Run the command", timestamp: now - 1 },
-					assistantMessage,
-					buildEmptyToolResult("tool-1", now + 1, text),
-				],
-			});
+		const context = normalizeContext({
+			messages: [
+				{ role: "user", content: "Run the command", timestamp: now - 1 },
+				assistantMessage,
+				buildEmptyToolResult("tool-1", now + 1, text),
+			],
+		});
 
-			const messages = convertMessages(model, context, compat);
-			const toolMessage = messages.find((m) => m.role === "tool") as { role: "tool"; content: string } | undefined;
-			expect(toolMessage).toBeTruthy();
-			expect(toolMessage?.content).toBe("(no tool output)");
-			expect(toolMessage?.content).not.toContain("see attached image");
-		},
-	);
+		const messages = convertMessages(model, context, compat);
+		const toolMessage = messages.find((m) => m.role === "tool") as { role: "tool"; content: string } | undefined;
+		expect(toolMessage).toBeTruthy();
+		expect(toolMessage?.content).toBe("(no tool output)");
+		expect(toolMessage?.content).not.toContain("see attached image");
+	});
 });

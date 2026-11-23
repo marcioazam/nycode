@@ -203,14 +203,17 @@ describe("native permission engine against guard.py", () => {
 		expect(firstMismatch(fileCases(paths, "/tmp"), false)).toBeUndefined();
 	});
 
-	it.each(["default", "acceptEdits", "plan", "bypassPermissions", "bogus"])(
-		"agrees under the %s permission mode",
-		(mode) => {
-			expect(firstMismatch(bashCases([...literals, ...random.slice(0, 400)], PROJECT), false, mode)).toBeUndefined();
-			expect(firstMismatch(bashCases(literals.slice(0, 150), PROJECT), true, mode)).toBeUndefined();
-			expect(firstMismatch(fileCases(literals, PROJECT), false, mode)).toBeUndefined();
-		},
-	);
+	it.each([
+		"default",
+		"acceptEdits",
+		"plan",
+		"bypassPermissions",
+		"bogus",
+	])("agrees under the %s permission mode", (mode) => {
+		expect(firstMismatch(bashCases([...literals, ...random.slice(0, 400)], PROJECT), false, mode)).toBeUndefined();
+		expect(firstMismatch(bashCases(literals.slice(0, 150), PROJECT), true, mode)).toBeUndefined();
+		expect(firstMismatch(fileCases(literals, PROJECT), false, mode)).toBeUndefined();
+	});
 
 	it("agrees on Grep and on the run tool", () => {
 		const grepPaths = [
