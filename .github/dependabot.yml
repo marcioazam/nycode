@@ -13,6 +13,9 @@ updates:
         patterns: ["*"]
   # Workspaces (packages/*, apps/*) resolve from the root package-lock.json.
   # packages/coding-agent/install-lock/ is generated from it; do not target it.
+  # Group only minor/patch version updates and ignore major version bumps: breaking majors
+  # (provider SDKs, test runners, Node types) arrive via upstream syncs so the fork does not
+  # diverge on upstream adapters. Security updates are unaffected by version-update ignore rules.
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -22,4 +25,12 @@ updates:
     labels: ["dependencies"]
     groups:
       npm:
+        applies-to: version-updates
         patterns: ["*"]
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
