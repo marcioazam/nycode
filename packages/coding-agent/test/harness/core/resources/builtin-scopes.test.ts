@@ -10,7 +10,7 @@ import { parseCommandFile } from "../../../../src/extensions/_shared/commands/co
 import claudeRulesExtension from "../../../../src/extensions/claude-rules/index.ts";
 import { agentOmitsClaudeMd } from "../../../../src/extensions/claude-rules/omit-claude-md.ts";
 import { collectCommands, commandDirs, expandCommand } from "../../../../src/extensions/commands/expand.ts";
-import { skillDirs } from "../../../../src/extensions/skills-compat/index.ts";
+import { discoverableSkillPaths, skillDirs } from "../../../../src/extensions/skills-compat/index.ts";
 import { discoverAgents } from "../../../../src/extensions/subagent/registry/agents.ts";
 import { createResourcesFixture, type ResourcesFixture } from "./fixture.ts";
 
@@ -106,6 +106,15 @@ describe("skill roots", () => {
 		fx.write("skills/alpha/SKILL.md", "---\nname: alpha\ndescription: d\n---\n");
 		mkdirSync(join(home, ".claude", "skills"), { recursive: true });
 		expect(skillDirs(cwd, home, false)).toEqual([join(home, ".claude", "skills"), join(fx.resources, "skills")]);
+	});
+
+	it("discovers only direct one-level skills and skips nested non-skill trees", () => {
+		const claudeSkills = join(home, ".claude", "skills");
+		mkdirSync(join(claudeSkills, "valid-skill"), { recursive: true });
+		writeFileSync(join(claudeSkills, "valid-skill", "SKILL.md"), "---\nname: valid-skill\ndescription: ok\n---\n");
+		mkdirSync(join(claudeSkills, "claude-red", "Skills", "broken"), { recursive: true });
+		writeFileSync(join(claudeSkills, "claude-red", "Skills", "broken", "SKILL.md"), "---\nname: broken\n---\n");
+		expect(discoverableSkillPaths([claudeSkills])).toEqual([join(claudeSkills, "valid-skill")]);
 	});
 });
 

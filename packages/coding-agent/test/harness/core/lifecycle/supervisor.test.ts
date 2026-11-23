@@ -362,6 +362,61 @@ if (process.argv.length === 2) {
 		expect(entries(dir)).toEqual([{ eligible: "1" }, { eligible: "0" }]);
 	});
 
+	it("honors --bypass, --safe, global settings.json permissions.bypass and local.env for eligibility", async () => {
+		const dir = tmp();
+		const script = join(dir, "env.mjs");
+		const log = JSON.stringify(join(dir, "log.jsonl"));
+		writeFileSync(
+			script,
+			`import { appendFileSync } from "node:fs"; appendFileSync(${log}, JSON.stringify({ eligible: process.env.NYCODE_BYPASS_ELIGIBLE }) + "\\n");`,
+		);
+
+		// 1. --bypass flag makes the launch eligible even without NYCODE_BYPASS_PERMISSIONS
+		const withFlag = depsFor(script);
+		delete withFlag.env.NYCODE_BYPASS_ELIGIBLE;
+		expect(await run(withFlag, ["--bypass"])).toBe(0);
+
+		// 2. --safe overrides NYCODE_BYPASS_PERMISSIONS=1 and settings.json
+		const agentDir = tmp();
+		writeFileSync(join(agentDir, "settings.json"), JSON.stringify({ permissions: { bypass: true } }));
+		const withSafe = depsFor(script);
+		delete withSafe.env.NYCODE_BYPASS_ELIGIBLE;
+		withSafe.env.NYCODE_BYPASS_PERMISSIONS = "1";
+		withSafe.env.NYCODE_CODING_AGENT_DIR = agentDir;
+		expect(await run(withSafe, ["--safe"])).toBe(0);
+
+		// 3. settings.json permissions.bypass: true makes the launch eligible
+		const fromSettings = depsFor(script);
+		delete fromSettings.env.NYCODE_BYPASS_ELIGIBLE;
+		fromSettings.env.NYCODE_CODING_AGENT_DIR = agentDir;
+		expect(await run(fromSettings, [])).toBe(0);
+
+		// 4. NYCODE_BYPASS_PERMISSIONS=0 overrides settings.json permissions.bypass: true
+		const envOff = depsFor(script);
+		delete envOff.env.NYCODE_BYPASS_ELIGIBLE;
+		envOff.env.NYCODE_BYPASS_PERMISSIONS = "0";
+		envOff.env.NYCODE_CODING_AGENT_DIR = agentDir;
+		expect(await run(envOff, [])).toBe(0);
+
+		// 5. local.env (mode 0600) with NYCODE_BYPASS_PERMISSIONS=1 makes the launch eligible
+		const localEnvDir = tmp();
+		const localEnvFile = join(localEnvDir, "local.env");
+		writeFileSync(localEnvFile, "NYCODE_BYPASS_PERMISSIONS=1\n", { mode: 0o600 });
+		chmodSync(localEnvFile, 0o600);
+		const fromLocalEnv = depsFor(script);
+		delete fromLocalEnv.env.NYCODE_BYPASS_ELIGIBLE;
+		fromLocalEnv.env.NYCODE_CODING_AGENT_DIR = localEnvDir;
+		expect(await run(fromLocalEnv, [])).toBe(0);
+
+		expect(entries(dir)).toEqual([
+			{ eligible: "1" },
+			{ eligible: "0" },
+			{ eligible: "1" },
+			{ eligible: "0" },
+			{ eligible: "1" },
+		]);
+	});
+
 	it("runs in this process when it is not on a terminal", async () => {
 		const dir = tmp();
 		expect(await run(depsFor(fakeCli(dir, { restarts: 1 }), { isTty: () => false }), [])).toBe(-1);

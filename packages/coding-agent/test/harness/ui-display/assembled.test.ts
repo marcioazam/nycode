@@ -65,7 +65,7 @@ async function boot(command: string | undefined, records: any[]) {
 		on: (n: string, h: any) => handlers.set(n, [...(handlers.get(n) ?? []), h]),
 		events: { on: () => () => {} },
 		registerCommand() {},
-		getSettings: () => ({}),
+		getSettings: () => (command === undefined ? { statusLine: { type: "command", command: "" } } : {}),
 		registerShortcut() {},
 	};
 	const below = new Map<string, { render(w: number): string[] }>();

@@ -3,7 +3,17 @@
 // wrapper supervisor.sh: headless runs are never supervised, Ctrl+C reaches only the child, a SIGTERM or SIGHUP to the
 // supervisor is forwarded and ends it with 143 or 129, and the number of restarts is bounded.
 import { type ChildProcess, spawn } from "node:child_process";
-import { closeSync, lstatSync, mkdtempSync, openSync, readSync, rmdirSync, rmSync } from "node:fs";
+import {
+	closeSync,
+	lstatSync,
+	mkdtempSync,
+	openSync,
+	readFileSync,
+	readSync,
+	rmdirSync,
+	rmSync,
+	statSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { isatty } from "node:tty";
@@ -24,6 +34,74 @@ const HEADLESS_PREFIXES = ["--mode=", "--export=", "--list-models="];
 const TRUE_VALUES = new Set(["1", "true", "on", "yes"]);
 const DEFAULT_MAX_RESTARTS = 10;
 const CONFIRM_TIMEOUT_MS = 30_000;
+
+function unquoteEnvValue(value: string): string {
+	const quote = value[0];
+	if (value.length > 2 && (quote === '"' || quote === "'") && value.endsWith(quote)) return value.slice(1, -1);
+	return value;
+}
+
+function resolveAgentDirFromEnv(env: NodeJS.ProcessEnv): string | undefined {
+	const override = env.NYCODE_CODING_AGENT_DIR?.trim();
+	if (override) {
+		if (override === "~") return env.HOME || undefined;
+		if (override.startsWith("~/")) return env.HOME ? join(env.HOME, override.slice(2)) : undefined;
+		return override;
+	}
+	return env.HOME ? join(env.HOME, ".nycode", "agent") : undefined;
+}
+
+function readLocalEnvBypass(agentDir: string, env: NodeJS.ProcessEnv, uid: number | undefined): string | undefined {
+	const override = env.NYCODE_LOCAL_ENV?.trim();
+	const file = override
+		? override.startsWith("~/") && env.HOME
+			? join(env.HOME, override.slice(2))
+			: override
+		: join(agentDir, "local.env");
+	try {
+		const st = statSync(file);
+		if (!st.isFile()) return undefined;
+		if (process.platform !== "win32") {
+			const bits = (st.mode & 0o777).toString(8);
+			if (bits !== "600" && bits !== "400") return undefined;
+			if (uid !== undefined && st.uid !== uid) return undefined;
+		}
+		for (const raw of readFileSync(file, "utf8").split("\n")) {
+			const line = raw.endsWith("\r") ? raw.slice(0, -1) : raw;
+			if (line.startsWith("NYCODE_BYPASS_PERMISSIONS=")) {
+				return unquoteEnvValue(line.slice("NYCODE_BYPASS_PERMISSIONS=".length));
+			}
+		}
+	} catch {
+		return undefined;
+	}
+	return undefined;
+}
+
+function resolveInitialBypass(args: string[], env: NodeJS.ProcessEnv, uid: number | undefined): boolean {
+	let flag: boolean | undefined;
+	for (const a of args) {
+		if (a === "--") break;
+		if (a === "--bypass" || a === "--dangerously-skip-permissions") flag = true;
+		else if (a === "--safe" || a === "--no-bypass") flag = false;
+	}
+	if (flag !== undefined) return flag;
+	if (env.NYCODE_BYPASS_PERMISSIONS !== undefined) {
+		return TRUE_VALUES.has(env.NYCODE_BYPASS_PERMISSIONS.trim().toLowerCase());
+	}
+	const agentDir = resolveAgentDirFromEnv(env);
+	if (!agentDir) return false;
+	const localEnvVal = readLocalEnvBypass(agentDir, env, uid);
+	if (localEnvVal !== undefined) return TRUE_VALUES.has(localEnvVal.trim().toLowerCase());
+	try {
+		const parsed = JSON.parse(readFileSync(join(agentDir, "settings.json"), "utf8")) as {
+			permissions?: { bypass?: unknown };
+		};
+		return parsed?.permissions?.bypass === true;
+	} catch {
+		return false;
+	}
+}
 
 /** Everything the supervisor touches outside itself, injectable so the tests need no terminal, model or credential. */
 export interface SupervisorDeps {
@@ -184,7 +262,7 @@ export async function superviseIfInteractive(args: string[], deps: SupervisorDep
 			// not empty or gone
 		}
 	};
-	const bypass0 = TRUE_VALUES.has((deps.env.NYCODE_BYPASS_PERMISSIONS ?? "").toLowerCase());
+	const bypass0 = resolveInitialBypass(args, deps.env, deps.uid);
 	// Eligibility is fixed at the original launch, as the controller reads it: an explicit value wins, otherwise a launch
 	// with bypass on is eligible. The request can only lower it.
 	const eligible0 = deps.env.NYCODE_BYPASS_ELIGIBLE === undefined ? bypass0 : deps.env.NYCODE_BYPASS_ELIGIBLE === "1";

@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed the default status line launcher (`resources/statusline/statusline.mjs`) rendering nothing without a `plugins/claude-hud/config.json` file; it now uses the built-in `calm` HUD renderer by default (with context sparkline history, git cache, and background usage refresh) unless `"renderer": "claude-hud"` is explicitly configured
+- Fixed a missing or failing `statusLine` command inherited from `~/.claude/settings.json` wiping out the HUD instead of falling back to Nycode's built-in status line launcher (an explicit empty `statusLine.command` in Nycode's `settings.json` still turns it off)
+- Fixed the native interactive supervisor (`core/lifecycle/supervisor.ts`) forcing `NYCODE_BYPASS_ELIGIBLE="0"` before `main.ts` read `--bypass`, `local.env`, or `permissions.bypass` from `settings.json`, which silently turned bypass off at startup (`--safe` and `NYCODE_BYPASS_PERMISSIONS=0` still disable it)
+- Fixed `skills-compat` handing raw `~/.claude/skills` directories to recursive skill discovery, which crawled nested non-skill repositories and flooded startup with validation warnings; it now passes only direct one-level Claude skill directories and root `.md` files
+
 ## [2.0.1] - 2026-11-23
 
 ### New Features

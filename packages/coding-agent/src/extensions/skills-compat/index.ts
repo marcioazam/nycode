@@ -99,6 +99,45 @@ export function skillDirs(cwd: string, home: string, trusted: boolean): string[]
 	return dirs;
 }
 
+/** Direct one-level skill entries under `dirs` (matching Claude Code's `<root>/<skill>/SKILL.md` and direct `.md`
+ * files), so non-skill nested repositories placed inside `~/.claude/skills` are not recursively crawled. */
+export function discoverableSkillPaths(dirs: string[]): string[] {
+	const paths: string[] = [];
+	for (const root of dirs) {
+		let entries: fs.Dirent[];
+		try {
+			entries = fs.readdirSync(root, { withFileTypes: true });
+		} catch {
+			continue;
+		}
+		for (const entry of entries) {
+			if (entry.name.startsWith(".") || entry.name === "node_modules") continue;
+			const fullPath = path.join(root, entry.name);
+			let isDir = entry.isDirectory();
+			let isFile = entry.isFile();
+			if (entry.isSymbolicLink()) {
+				try {
+					const st = fs.statSync(fullPath);
+					isDir = st.isDirectory();
+					isFile = st.isFile();
+				} catch {
+					continue;
+				}
+			}
+			if (isFile && entry.name.endsWith(".md")) {
+				paths.push(fullPath);
+			} else if (isDir) {
+				try {
+					if (fs.statSync(path.join(fullPath, "SKILL.md")).isFile()) paths.push(fullPath);
+				} catch {
+					// Not a direct skill directory; skip instead of recursing into nested subtrees.
+				}
+			}
+		}
+	}
+	return paths;
+}
+
 interface FoundSkill {
 	filePath: string;
 	baseDir: string;
@@ -155,7 +194,7 @@ export default function skillsExtension(nycode: ExtensionAPI) {
 		if (process.env.NYCODE_SUBAGENT_NO_SKILLS === "1") return undefined;
 		// resources_discover fires after session_start, so the approval is already
 		// resolved; reading it silently keeps a second trust dialog off the screen.
-		const skillPaths = skillDirs(ctx.cwd, os.homedir(), isProjectApprovedSilently(ctx));
+		const skillPaths = discoverableSkillPaths(skillDirs(ctx.cwd, os.homedir(), isProjectApprovedSilently(ctx)));
 		return skillPaths.length > 0 ? { skillPaths } : undefined;
 	});
 
