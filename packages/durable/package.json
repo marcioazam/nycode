@@ -1,6 +1,6 @@
 {
 	"name": "@nycode/durable",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Durable conversation, task, and document runtime for Nycode",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -164,11 +164,11 @@
 		"node": ">=22.19.0"
 	},
 	"dependencies": {
-		"@nycode/chord": "2.0.0",
-		"@nycode/ai": "2.0.0",
-		"@nycode/codemode": "2.0.0",
-		"@nycode/schema": "2.0.0",
-		"@nycode/telemetry": "2.0.0",
+		"@nycode/chord": "2.0.1",
+		"@nycode/ai": "2.0.1",
+		"@nycode/codemode": "2.0.1",
+		"@nycode/schema": "2.0.1",
+		"@nycode/telemetry": "2.0.1",
 		"@silvia-odwyer/photon": "0.3.3",
 		"diff": "8.0.4"
 	},

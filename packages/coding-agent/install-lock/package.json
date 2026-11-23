@@ -1,10 +1,10 @@
 {
 	"name": "@nycode/coding-agent-install",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"private": true,
 	"description": "Lockfile root used by the Nycode installer and updater.",
 	"dependencies": {
-		"@nycode/coding-agent": "2.0.0"
+		"@nycode/coding-agent": "2.0.1"
 	},
 	"overrides": {
 		"protobufjs": "7.6.6"
