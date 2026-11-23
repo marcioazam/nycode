@@ -22,8 +22,8 @@ import { PluginWatcher } from "../../../src/node/plugins/watcher.ts";
 import { changesOf, flushed, rejection } from "../../support.ts";
 import { send } from "../http/support.ts";
 import { gitRepository, writePlugin } from "../plugins/support.ts";
-import {
 import { jsLiteral } from "../js-literal.ts";
+import {
 	ECHO_SERVER,
 	NOTES_PLUGIN,
 	Notes,

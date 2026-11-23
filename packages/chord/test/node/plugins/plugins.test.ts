@@ -31,8 +31,8 @@ import {
 	transported,
 	valuesOf,
 } from "../../support.ts";
-import {
 import { jsLiteral } from "../js-literal.ts";
+import {
 	gitRepository,
 	HOST_PACKAGES,
 	kindsOf,
