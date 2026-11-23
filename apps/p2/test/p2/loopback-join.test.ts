@@ -10,9 +10,10 @@ import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Sharing } from "../../plugins/sharing/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, http, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const setInput = (selector: string, value: string) =>
-	`(() => { const input=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(input.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(value)});input.dispatchEvent(new Event('input',{bubbles:true})); })()`;
+	`(() => { const input=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(input.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(input,${jsLiteral(value)});input.dispatchEvent(new Event('input',{bubbles:true})); })()`;
 
 const cookieOf = (headers: Record<string, string | string[] | undefined>, name: string): string | undefined =>
 	[headers["set-cookie"] ?? []]

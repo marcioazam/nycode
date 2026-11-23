@@ -13,6 +13,7 @@ import { Devices } from "../../plugins/devices/contract.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { browserTests, COMPOSER, setComposer } from "./browser.ts";
 import { type Fixture, holdIn, http, poll, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const termux = process.env.PREFIX !== undefined;
 const chromium =
@@ -230,7 +231,7 @@ describe("Nycode Mobile UI regressions", { skip: !browserTests }, () => {
 		await browser.evaluate("document.querySelector(\"button[aria-label='Type a path']\").click()");
 		await browser.wait('Boolean(document.querySelector("input[aria-label=Directory]"))');
 		await browser.evaluate(
-			`(() => { const input = document.querySelector("input[aria-label=Directory]"); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(input, ${JSON.stringify(fixture.workspace)}); input.dispatchEvent(new Event("input", { bubbles: true })); })()`,
+			`(() => { const input = document.querySelector("input[aria-label=Directory]"); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(input, ${jsLiteral(fixture.workspace)}); input.dispatchEvent(new Event("input", { bubbles: true })); })()`,
 		);
 		await browser.evaluate('document.querySelector("input[aria-label=Directory]").form.requestSubmit()');
 		await browser.wait(

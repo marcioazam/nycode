@@ -9,9 +9,10 @@ import type { EnvConfig } from "../../plugins/envs/schema.ts";
 import { Catalog } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests, COMPOSER } from "./browser.ts";
 import { type Fixture, startFixture } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const input = (selector: string, value: string) =>
-	`(()=>{const e=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`;
+	`(()=>{const e=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(e,${jsLiteral(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`;
 const button = (text: string) =>
 	`[...document.querySelectorAll('[role=dialog] button')].find(e => e.textContent.trim() === ${JSON.stringify(text)})`;
 

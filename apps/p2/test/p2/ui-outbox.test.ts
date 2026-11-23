@@ -12,6 +12,7 @@ import { Models } from "../../plugins/models/contract.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests, COMPOSER, composerText, setComposer } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 /**
  * The page's WebSockets, with a switch: `__goOffline()` closes them and fails every new one (the app keeps retrying),
@@ -37,7 +38,7 @@ const SWITCH = `(() => {
 })()`;
 /** How many people's messages end with `text`. */
 const bubbles = (text: string) =>
-	`[...document.querySelectorAll('.messages .user .bubble')].filter((e) => e.textContent.trim().endsWith(${JSON.stringify(text)})).length`;
+	`[...document.querySelectorAll('.messages .user .bubble')].filter((e) => e.textContent.trim().endsWith(${jsLiteral(text)})).length`;
 const inputs = (view: ConversationView | null | undefined, text: string) =>
 	(view?.entries ?? []).filter((entry) => entry.kind === "p2.input" && JSON.stringify(entry.data).includes(text))
 		.length;
@@ -181,12 +182,12 @@ describe("offline in the browser", { skip: !browserTests }, () => {
 		const gone = "00000000-0000-4000-8000-000000000000#1";
 		// Written and read back in one transaction: the open page may forget it right after (what this test checks).
 		const written = await browser.evaluate<string[]>(
-			`new Promise((resolve) => { const open = indexedDB.open("p2-conversations"); open.onsuccess = () => { const tx = open.result.transaction("kept", "readwrite"); const store = tx.objectStore("kept"); store.put({ key: ${JSON.stringify(gone)}, savedAt: Date.now(), view: { entries: [], docs: {} }, history: undefined, sizes: [] }); const all = store.getAllKeys(); tx.oncomplete = () => resolve(all.result); }; })`,
+			`new Promise((resolve) => { const open = indexedDB.open("p2-conversations"); open.onsuccess = () => { const tx = open.result.transaction("kept", "readwrite"); const store = tx.objectStore("kept"); store.put({ key: ${jsLiteral(gone)}, savedAt: Date.now(), view: { entries: [], docs: {} }, history: undefined, sizes: [] }); const all = store.getAllKeys(); tx.oncomplete = () => resolve(all.result); }; })`,
 		);
 		assert.ok(written.includes(gone));
 		await browser.open(page);
 		await browser.wait(
-			`${keys}.then((all) => !all.includes(${JSON.stringify(gone)}) && all.includes(${JSON.stringify(`${session.id}#1`)}))`,
+			`${keys}.then((all) => !all.includes(${jsLiteral(gone)}) && all.includes(${jsLiteral(`${session.id}#1`)}))`,
 		);
 	});
 

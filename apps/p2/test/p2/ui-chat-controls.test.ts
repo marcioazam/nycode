@@ -9,9 +9,10 @@ import { Chat } from "../../plugins/chat/contract.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests, COMPOSER, setComposer } from "./browser.ts";
 import { type Fixture, holdIn, poll, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const input = (selector: string, value: string) =>
-	`(()=>{const e=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`;
+	`(()=>{const e=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(e,${jsLiteral(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`;
 /** The draft as the composer keeps it for the tab. */
 const DRAFT = `JSON.parse(sessionStorage.getItem('p2-draft') ?? '{"text":""}').text`;
 describe("chat control parity", { skip: !browserTests }, () => {

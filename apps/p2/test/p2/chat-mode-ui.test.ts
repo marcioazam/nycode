@@ -6,9 +6,10 @@ import { BACKGROUND_CONTEXT } from "@p2/app/v1";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const input = (selector: string, value: string) =>
-	`(()=>{const e=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`;
+	`(()=>{const e=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(e,${jsLiteral(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`;
 
 describe("chat mode in the browser", { skip: !browserTests }, () => {
 	let fixture: Fixture;

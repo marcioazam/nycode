@@ -19,6 +19,7 @@ import { Subagents } from "../../plugins/subagents/contract.ts";
 import type { Host, RefIn } from "../../src/runtime/chord.ts";
 import { Browser, browserTests, COMPOSER } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 /** What the open menu shows, or null while it is closed. */
 type MenuState = {
@@ -160,7 +161,7 @@ describe("command menu: sharing and artifacts", { skip: !browserTests }, () => {
 		await guest.open(`${base}${new URL(url).pathname}`);
 		await guest.wait(`document.querySelector('#join #name') && document.querySelector('#join button')`);
 		await guest.evaluate(
-			`(() => { const input = document.querySelector('#name'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(name)}); input.dispatchEvent(new Event('input', { bubbles: true })); })()`,
+			`(() => { const input = document.querySelector('#name'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${jsLiteral(name)}); input.dispatchEvent(new Event('input', { bubbles: true })); })()`,
 		);
 		await guest.click("#join button");
 		await guest.wait(

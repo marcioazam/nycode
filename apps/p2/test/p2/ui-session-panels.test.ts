@@ -10,6 +10,7 @@ import { Chat } from "../../plugins/chat/contract.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 describe("panels per session", { skip: !browserTests }, () => {
 	let fixture: Fixture, browser: Browser;
@@ -37,7 +38,7 @@ describe("panels per session", { skip: !browserTests }, () => {
 
 	const url = (title: string) => `http://127.0.0.1:${fixture.server.port}/s/${ids[title]}`;
 	const row = (title: string) =>
-		`[...document.querySelectorAll('.drawer .session-main')].find((e) => e.querySelector('.session-title')?.textContent === ${JSON.stringify(title)})`;
+		`[...document.querySelectorAll('.drawer .session-main')].find((e) => e.querySelector('.session-title')?.textContent === ${jsLiteral(title)})`;
 	const shown = {
 		workspace: `Boolean(document.querySelector('.workspace'))`,
 		terminal: `Boolean(document.querySelector('.terminal-panel'))`,

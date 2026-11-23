@@ -11,12 +11,13 @@ import { Sessions } from "../../plugins/sessions/contract.ts";
 import { fileReferences } from "../../src/runtime/references.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const EDITOR = ".composer .draft-editor";
 /** The draft as the composer keeps it (it persists it for the tab). */
 const DRAFT = `JSON.parse(sessionStorage.getItem('p2-draft') ?? '{"text":""}').text`;
 /** Pastes PNGs named `names` into the editor (a 1x1 image each). */
-const PASTE = `window.pastePng=(names)=>{const png=Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='),c=>c.charCodeAt(0));const d=new DataTransfer();for(const name of names)d.items.add(new File([png],name,{type:'image/png'}));document.querySelector(${JSON.stringify(EDITOR)}).dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:d}))}`;
+const PASTE = `window.pastePng=(names)=>{const png=Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='),c=>c.charCodeAt(0));const d=new DataTransfer();for(const name of names)d.items.add(new File([png],name,{type:'image/png'}));document.querySelector(${jsLiteral(EDITOR)}).dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:d}))}`;
 
 describe("draft editor", { skip: !browserTests }, () => {
 	let fixture: Fixture, browser: Browser, id: string;
@@ -100,7 +101,7 @@ describe("draft editor", { skip: !browserTests }, () => {
 		// Dragging the second pill to the start of the text moves its file there; the words stay.
 		const from = await center(pill(1));
 		const box = await browser.evaluate<{ x: number; y: number }>(
-			`(()=>{const r=document.querySelector(${JSON.stringify(EDITOR)}).getBoundingClientRect();return {x:r.left+1,y:r.top+8}})()`,
+			`(()=>{const r=document.querySelector(${jsLiteral(EDITOR)}).getBoundingClientRect();return {x:r.left+1,y:r.top+8}})()`,
 		);
 		await browser.call("Input.dispatchMouseEvent", { type: "mousePressed", ...from, button: "left", clickCount: 1 });
 		for (let step = 1; step <= 5; step++)
@@ -134,14 +135,14 @@ describe("draft editor", { skip: !browserTests }, () => {
 		await browser.wait(`!document.querySelector('.draft-pill-menu')`);
 
 		// Focus given back from code returns the caret where it was; a click puts it where it lands.
-		const caret = `(()=>{const e=document.querySelector(${JSON.stringify(EDITOR)});const r=getSelection().getRangeAt(0);const p=document.createRange();p.setStart(e,0);p.setEnd(r.startContainer,r.startOffset);return p.toString().replaceAll('\\u200B','').length})()`;
+		const caret = `(()=>{const e=document.querySelector(${jsLiteral(EDITOR)});const r=getSelection().getRangeAt(0);const p=document.createRange();p.setStart(e,0);p.setEnd(r.startContainer,r.startOffset);return p.toString().replaceAll('\\u200B','').length})()`;
 		await browser.evaluate(`document.querySelector(${JSON.stringify(EDITOR)}).blur()`);
 		await browser.evaluate(`document.querySelector(${JSON.stringify(EDITOR)}).focus()`);
 		const kept = await browser.evaluate<number>(caret);
 		assert(kept > 0, "the caret is not sent to the start");
 		await browser.evaluate(`document.querySelector(${JSON.stringify(EDITOR)}).blur()`);
 		const start = await browser.evaluate<{ x: number; y: number }>(
-			`(()=>{const r=document.createRange();r.setStart(document.querySelector(${JSON.stringify(EDITOR)}).firstChild,1);const b=r.getClientRects()[0];return {x:b.left,y:b.top+b.height/2}})()`,
+			`(()=>{const r=document.createRange();r.setStart(document.querySelector(${jsLiteral(EDITOR)}).firstChild,1);const b=r.getClientRects()[0];return {x:b.left,y:b.top+b.height/2}})()`,
 		);
 		await browser.clickPoint(start.x, start.y);
 		assert.equal(await browser.evaluate<number>(caret), 1);

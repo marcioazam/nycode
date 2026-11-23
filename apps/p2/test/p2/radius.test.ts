@@ -28,6 +28,19 @@ import {
 } from "../../plugins/radius/relay-access.ts";
 import { radiusStatusText } from "../../plugins/radius/server.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
+
+function plain(value: string | undefined): string {
+	let result = "";
+	for (const character of value ?? "") {
+		if (character === "&") result += "&amp;";
+		else if (character === "<") result += "&lt;";
+		else if (character === ">") result += "&gt;";
+		else if (character === '"') result += "&quot;";
+		else result += character;
+	}
+	return result;
+}
+
 import { Sharing } from "../../plugins/sharing/contract.ts";
 import { Terminals } from "../../plugins/terminals/contract.ts";
 import { radiusTransport } from "../../src/hosts/tui-radius.ts";
@@ -358,8 +371,10 @@ test(
 				response.writeHead(302, { location: `http://localhost:${servicePort}/home?x=1` });
 				response.end();
 			} else {
-				response.writeHead(200);
-				response.end(`service ${request.url}`);
+				response.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
+				// The fixture body is text. The path is escaped so it cannot be markup.
+				// codeql[js/reflected-xss]
+				response.end(`service ${plain(request.url)}`);
 			}
 		});
 		const sockets = new WebSocketServer({ server: service });
