@@ -31,7 +31,6 @@ export const MODEL_CATALOG_INDEX_KEY = `${MODEL_CATALOG_PREFIX}/index.json`;
 export const MODEL_CATALOG_REVISION_RE = /^sha256-[0-9a-f]{64}$/;
 
 const NYCODE_VERSION_RE = /^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/;
-const NYCODE_USER_AGENT_RE = /^nycode\/([^\s()]+)(?: \([^;()]+(?:;\s*[^;()]+(?:;\s*[^()]+)?)?\))?$/i;
 const MODEL_TYPE_RE = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 
 type ParsedNycodeVersion = readonly [major: number, minor: number, patch: number, prerelease: string];
@@ -93,6 +92,80 @@ export function parseModelCatalogRepresentation(
 	return "typed";
 }
 
+/** A User-Agent space, the same set as a JavaScript `\s` without the `u` flag. */
+function isUserAgentSpace(character: string): boolean {
+	switch (character) {
+		case " ":
+		case "\t":
+		case "\n":
+		case "\r":
+		case "\v":
+		case "\f":
+		case "\u00a0":
+		case "\u1680":
+		case "\u2028":
+		case "\u2029":
+		case "\u202f":
+		case "\u205f":
+		case "\u3000":
+		case "\ufeff":
+			return true;
+		default: {
+			const code = character.charCodeAt(0);
+			return code >= 0x2000 && code <= 0x200a;
+		}
+	}
+}
+
+/**
+ * Version token of a Nycode User-Agent (`nycode/<version>` plus an optional comment).
+ *
+ * The comment has at most three semicolon-separated fields. A nested regex over
+ * that comment is polynomial in the spaces after a semicolon.
+ */
+function nycodeUserAgentVersion(userAgent: string): string | undefined {
+	const prefix = "nycode/";
+	if (userAgent.length < prefix.length || userAgent.slice(0, prefix.length).toLowerCase() !== prefix) {
+		return undefined;
+	}
+	let index = prefix.length;
+	const versionStart = index;
+	while (index < userAgent.length) {
+		const character = userAgent[index];
+		if (character === "(" || character === ")" || isUserAgentSpace(character)) break;
+		index += 1;
+	}
+	if (index === versionStart) return undefined;
+	const version = userAgent.slice(versionStart, index);
+	if (index === userAgent.length) return version;
+	if (userAgent[index] !== " " || userAgent[index + 1] !== "(") return undefined;
+	index += 2;
+
+	const readToken = (allowSemicolon: boolean): boolean => {
+		const start = index;
+		while (index < userAgent.length) {
+			const character = userAgent[index];
+			if (character === "(" || character === ")" || (!allowSemicolon && character === ";")) break;
+			index += 1;
+		}
+		return index > start;
+	};
+
+	if (!readToken(false)) return undefined;
+	if (userAgent[index] === ";") {
+		index += 1;
+		while (index < userAgent.length && isUserAgentSpace(userAgent[index] ?? "")) index += 1;
+		if (!readToken(false)) return undefined;
+		if (userAgent[index] === ";") {
+			index += 1;
+			while (index < userAgent.length && isUserAgentSpace(userAgent[index] ?? "")) index += 1;
+			if (!readToken(true)) return undefined;
+		}
+	}
+	if (userAgent[index] !== ")" || index !== userAgent.length - 1) return undefined;
+	return version;
+}
+
 /**
  * Decide how to answer a catalog request from its URL and User-Agent.
  *
@@ -111,7 +184,7 @@ export function parseModelCatalogRequest(url: string | URL, userAgent: string | 
 
 	const nycodeVersion = requestUrl.searchParams.get("nycode-version");
 	if (nycodeVersion === null) {
-		const userAgentVersion = NYCODE_USER_AGENT_RE.exec(userAgent ?? "")?.[1];
+		const userAgentVersion = nycodeUserAgentVersion(userAgent ?? "");
 		if (userAgentVersion !== undefined && isValidModelCatalogNycodeVersion(userAgentVersion)) {
 			return { kind: "catalog", nycodeVersion: userAgentVersion, representation };
 		}

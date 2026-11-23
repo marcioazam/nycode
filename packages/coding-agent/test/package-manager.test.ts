@@ -1005,7 +1005,7 @@ Content`,
 
 			await packageManager.install(source);
 
-			expect(runCommandSpy).toHaveBeenCalledWith("git", ["fetch", "origin", "v2"], { cwd: targetDir });
+			expect(runCommandSpy).toHaveBeenCalledWith("git", ["fetch", "--", "origin", "v2"], { cwd: targetDir });
 			expect(runCommandSpy).toHaveBeenCalledWith("git", ["reset", "--hard", "FETCH_HEAD^{commit}"], {
 				cwd: targetDir,
 			});
@@ -1017,6 +1017,19 @@ Content`,
 					cwd: targetDir,
 				},
 			);
+		});
+
+		it("should refuse a pinned ref that selects a git option before fetching an existing checkout", async () => {
+			const source = "git:github.com/user/option-repo@--upload-pack=evil";
+			const targetDir = join(agentDir, "git", "github.com", "user", "option-repo");
+			mkdirSync(targetDir, { recursive: true });
+			const managerWithInternals = packageManager as unknown as PackageManagerInternals;
+			const runCommandSpy = vi.spyOn(managerWithInternals, "runCommand").mockResolvedValue(undefined);
+
+			await expect(packageManager.install(source)).rejects.toThrow(
+				"Refusing a git operand that selects an option or the ext:: transport",
+			);
+			expect(runCommandSpy).not.toHaveBeenCalled();
 		});
 
 		it("should reconcile an existing git checkout to its update target when installing without a ref", async () => {
