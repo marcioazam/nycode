@@ -612,7 +612,49 @@ function replaceCharacters(value: string, replacements: Readonly<Record<string, 
 }
 
 function normalizeScriptValue(value: string): string {
-	return value.trim().replace(/\s*([=+-])\s*/g, "$1");
+	// `\s*([=+-])\s*` backtracks on a long run of spaces. Drop the spaces around `=`, `+` and `-` in one pass.
+	const trimmed = value.trim();
+	let result = "";
+	let index = 0;
+	while (index < trimmed.length) {
+		if (isScriptSpace(trimmed[index]!)) {
+			let next = index;
+			while (next < trimmed.length && isScriptSpace(trimmed[next]!)) next++;
+			if (next < trimmed.length && isScriptOperator(trimmed[next]!)) {
+				result += trimmed[next];
+				index = next + 1;
+				while (index < trimmed.length && isScriptSpace(trimmed[index]!)) index++;
+				continue;
+			}
+			result += trimmed.slice(index, next);
+			index = next;
+			continue;
+		}
+		if (isScriptOperator(trimmed[index]!)) {
+			result += trimmed[index];
+			index++;
+			while (index < trimmed.length && isScriptSpace(trimmed[index]!)) index++;
+			continue;
+		}
+		result += trimmed[index];
+		index++;
+	}
+	return result;
+}
+
+function isScriptOperator(character: string): boolean {
+	return character === "=" || character === "+" || character === "-";
+}
+
+function isScriptSpace(character: string): boolean {
+	return (
+		character === " " ||
+		character === "\t" ||
+		character === "\n" ||
+		character === "\r" ||
+		character === "\f" ||
+		character === "\v"
+	);
 }
 
 function formatUnicodeScript(value: string, kind: "sub" | "sup"): string | undefined {

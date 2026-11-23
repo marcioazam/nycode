@@ -506,6 +506,12 @@ R\left(\frac{\nycode}{4}\right)
 		assert.strictEqual(renderLatex(String.raw`x + \unknown{y}`), undefined);
 	});
 
+	it("drops spaces around a script operator without scanning a long space run twice", () => {
+		const started = Date.now();
+		assert.strictEqual(renderLatex(`x^{${" ".repeat(100_000)}2}`), "x²");
+		assert.ok(Date.now() - started < 1000);
+	});
+
 	it("returns undefined for malformed groups and environments", () => {
 		const malformed = [String.raw`\frac{1}{x`, "x}", String.raw`\begin{matrix}1 & 2`, "x\\"];
 		for (const source of malformed) {
