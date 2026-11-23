@@ -49,7 +49,12 @@ async function startServer(t, { refsSha = sha, uploadBody, releaseStatus = 201, 
 		for await (const chunk of req) body += chunk;
 		requests.push({ method: req.method, url: req.url, authorization: req.headers.authorization, body });
 		const url = new URL(req.url, "http://localhost");
-		if (url.pathname === "/token") return res.end(JSON.stringify({ value: `oidc-for-${url.searchParams.get("audience")}` }));
+		res.setHeader("content-type", "application/json; charset=utf-8");
+		if (url.pathname === "/token") {
+			// The body is JSON for the test double. The audience is not written as HTML.
+			// codeql[js/reflected-xss]
+			return res.end(JSON.stringify({ value: `oidc-for-${url.searchParams.get("audience")}` }));
+		}
 		if (url.pathname.startsWith(REPO_API)) {
 			const response = github[url.pathname.slice(REPO_API.length)];
 			res.statusCode = response ? 200 : 404;

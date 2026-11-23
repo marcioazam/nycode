@@ -18,6 +18,15 @@ import {
 	checkVersions,
 } from "../scripts/build-release.ts";
 
+/** A literal for `new RegExp`. A dot-only replace leaves a backslash able to escape the next character. */
+function regExpText(value: string): string {
+	let result = "";
+	for (const character of value) {
+		result += "\\^$|?*+()[].{}".includes(character) ? `\\${character}` : character;
+	}
+	return result;
+}
+
 describe("the release build", () => {
 	let dir: string;
 	let built: Built;
@@ -213,7 +222,7 @@ describe("the build's guards", () => {
 		] as const) {
 			assert.throws(
 				() => checkLean(bundle([...imports], [...inputs]), "worker.js"),
-				new RegExp(`worker\\.js holds the server's .*${named.replace(/[.]/g, "\\.")}`),
+				new RegExp(`worker\\.js holds the server's .*${regExpText(named)}`),
 			);
 		}
 		assert.throws(() => checkLean(bundle([], []), "supervisor.js"), /no output supervisor\.js/);
