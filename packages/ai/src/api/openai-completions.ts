@@ -39,6 +39,7 @@ import { formatProviderError, normalizeProviderError } from "../utils/error-body
 import { AssistantMessageEventStream } from "../utils/event-stream.ts";
 import { shortHash } from "../utils/hash.ts";
 import { headersToRecord } from "../utils/headers.ts";
+import { baseUrlHostHasLabelPrefix, baseUrlHostIs } from "../utils/host.ts";
 import { type ClientIdentity, getIdentityHeaders } from "../utils/identity.ts";
 import {
 	applyOpenRouterReportedCost,
@@ -809,7 +810,7 @@ function buildParams(
 	const supportsPromptCacheKey =
 		promptCacheKeyMode === "enabled" ||
 		(promptCacheKeyMode === "auto" &&
-			(model.baseUrl.includes("api.openai.com") ||
+			(baseUrlHostIs(model.baseUrl, "api.openai.com") ||
 				(cacheRetention === "long" && compat.supportsLongCacheRetention)));
 
 	const params: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
@@ -1598,37 +1599,41 @@ function detectCompat(model: Model<"openai-completions">): ResolvedOpenAIComplet
 	const isZai =
 		provider === "zai" ||
 		provider === "zai-coding-cn" ||
-		baseUrl.includes("api.z.ai") ||
-		baseUrl.includes("open.bigmodel.cn");
+		baseUrlHostIs(baseUrl, "api.z.ai") ||
+		baseUrlHostIs(baseUrl, "open.bigmodel.cn");
 	const isTogether =
-		provider === "together" || baseUrl.includes("api.together.ai") || baseUrl.includes("api.together.xyz");
-	const isMoonshot = provider === "moonshotai" || provider === "moonshotai-cn" || baseUrl.includes("api.moonshot.");
-	const isOpenRouter = provider === "openrouter" || baseUrl.includes("openrouter.ai");
-	const isCloudflareWorkersAI = provider === "cloudflare-workers-ai" || baseUrl.includes("api.cloudflare.com");
-	const isCloudflareAiGateway = provider === "cloudflare-ai-gateway" || baseUrl.includes("gateway.ai.cloudflare.com");
-	const isNvidia = provider === "nvidia" || baseUrl.includes("integrate.api.nvidia.com");
-	const isAntLing = provider === "ant-ling" || baseUrl.includes("api.ant-ling.com");
-	const isCerebras = provider === "cerebras" || baseUrl.includes("cerebras.ai");
-	const isDeepSeek = provider === "deepseek" || baseUrl.toLowerCase().includes("deepseek.com");
+		provider === "together" ||
+		baseUrlHostIs(baseUrl, "api.together.ai") ||
+		baseUrlHostIs(baseUrl, "api.together.xyz");
+	const isMoonshot =
+		provider === "moonshotai" || provider === "moonshotai-cn" || baseUrlHostHasLabelPrefix(baseUrl, "api.moonshot.");
+	const isOpenRouter = provider === "openrouter" || baseUrlHostIs(baseUrl, "openrouter.ai");
+	const isCloudflareWorkersAI = provider === "cloudflare-workers-ai" || baseUrlHostIs(baseUrl, "api.cloudflare.com");
+	const isCloudflareAiGateway =
+		provider === "cloudflare-ai-gateway" || baseUrlHostIs(baseUrl, "gateway.ai.cloudflare.com");
+	const isNvidia = provider === "nvidia" || baseUrlHostIs(baseUrl, "integrate.api.nvidia.com");
+	const isAntLing = provider === "ant-ling" || baseUrlHostIs(baseUrl, "api.ant-ling.com");
+	const isCerebras = provider === "cerebras" || baseUrlHostIs(baseUrl, "cerebras.ai");
+	const isDeepSeek = provider === "deepseek" || baseUrlHostIs(baseUrl, "deepseek.com");
 
 	const isNonStandard =
 		isNvidia ||
 		isCerebras ||
 		provider === "xai" ||
-		baseUrl.includes("api.x.ai") ||
+		baseUrlHostIs(baseUrl, "api.x.ai") ||
 		isTogether ||
-		baseUrl.includes("chutes.ai") ||
+		baseUrlHostIs(baseUrl, "chutes.ai") ||
 		isDeepSeek ||
 		isZai ||
 		isMoonshot ||
 		provider === "opencode" ||
-		baseUrl.includes("opencode.ai") ||
+		baseUrlHostIs(baseUrl, "opencode.ai") ||
 		isCloudflareWorkersAI ||
 		isCloudflareAiGateway ||
 		isAntLing;
 
 	const useMaxTokens =
-		baseUrl.includes("chutes.ai") ||
+		baseUrlHostIs(baseUrl, "chutes.ai") ||
 		isDeepSeek ||
 		isMoonshot ||
 		isCloudflareAiGateway ||
@@ -1637,10 +1642,10 @@ function detectCompat(model: Model<"openai-completions">): ResolvedOpenAIComplet
 		isAntLing ||
 		isZai;
 
-	const isGrok = provider === "xai" || baseUrl.includes("api.x.ai");
+	const isGrok = provider === "xai" || baseUrlHostIs(baseUrl, "api.x.ai");
 	// The developer role is OpenAI's. Other hosts' chat templates often reject it (#10741),
 	// and every host accepts system, so only OpenAI's own API gets developer by default.
-	const isOpenAI = provider === "openai" || baseUrl.includes("api.openai.com");
+	const isOpenAI = provider === "openai" || baseUrlHostIs(baseUrl, "api.openai.com");
 	const cacheControlFormat = provider === "openrouter" && model.id.startsWith("anthropic/") ? "anthropic" : undefined;
 
 	return {
