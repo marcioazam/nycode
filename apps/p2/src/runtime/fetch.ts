@@ -23,11 +23,13 @@ const client = (origin: string | URL, options: object): Dispatcher =>
  * process exits. Over HTTP/1.1 a failed connection is dropped and the next request opens another.
  * Call once per process, before any provider request.
  */
-export function configureFetch(): void {
+/** `ca` trusts an extra certificate. The test server's certificate is the only caller. */
+export function configureFetch(tls?: { ca: string }): void {
 	setGlobalDispatcher(
 		quiet(
 			new Agent({
 				allowH2: false,
+				...(tls === undefined ? {} : { connect: { ca: tls.ca } }),
 				factory: (origin, options) =>
 					(options as Pool.Options).connections === 1
 						? client(origin, options)

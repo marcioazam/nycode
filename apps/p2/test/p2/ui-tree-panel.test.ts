@@ -10,6 +10,7 @@ import { Sessions } from "../../plugins/sessions/contract.ts";
 import { SessionTree } from "../../plugins/tree/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const idle = (view: { docs: Record<string, unknown> } | null | undefined) =>
 	!(view?.docs["nycode.live"] as { run?: unknown } | undefined)?.run;
@@ -101,7 +102,7 @@ describe("the tree panel", { skip: !browserTests }, () => {
 		await browser.wait(`document.querySelectorAll('[data-testid=tree-panel] .tree-toc a').length === 9`);
 		const choose = (text: string) =>
 			browser.evaluate(
-				`[...document.querySelectorAll('[data-testid=tree-panel] .tree-toc a')].find((link) => link.querySelector('.tree-text').textContent === ${JSON.stringify(text)}).click()`,
+				`[...document.querySelectorAll('[data-testid=tree-panel] .tree-toc a')].find((link) => link.querySelector('.tree-text').textContent === ${jsLiteral(text)}).click()`,
 			);
 		const marked = (text: string) =>
 			browser.wait(

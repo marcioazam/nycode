@@ -33,8 +33,8 @@ export async function serveDevChannel(dataDir: string, execute: (command: DevCom
 				if (request.method !== "POST" || request.url !== "/") throw new Error("POST / required");
 				const result = await execute(await readDevCommand(request));
 				sendJson(response, result.ok ? 200 : 409, result);
-			} catch (error) {
-				sendJson(response, 400, { ok: false, message: error instanceof Error ? error.message : String(error) });
+			} catch {
+				sendJson(response, 400, { ok: false, message: "Dev command failed" });
 			}
 		})();
 	});
@@ -96,8 +96,8 @@ export function sendDevCommand(dataDir: string, command: DevCommand, signal?: Ab
 						)
 							throw new Error("Invalid dev result");
 						resolve(value as DevResult);
-					} catch (error) {
-						reject(error);
+					} catch {
+						reject(new Error("Invalid dev result"));
 					}
 				});
 			},

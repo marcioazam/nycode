@@ -25,6 +25,7 @@ import { encodeFrame } from "../../plugins/terminals/protocol.ts";
 import type { Host, RefIn } from "../../src/runtime/chord.ts";
 import { Browser, browserTests, COMPOSER, composerText } from "./browser.ts";
 import { APP, type Fixture, holdIn, poll, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 type Platform = "mac" | "other";
 
@@ -663,7 +664,7 @@ describe("command menu", { skip: !browserTests }, () => {
 			const hovered = await create("Hovered one");
 			await openSession(open, "Open one");
 			await browser.wait(`document.querySelector(${JSON.stringify(sidebarRow(hovered))})`);
-			await hover(`document.querySelector(${JSON.stringify(sidebarRow(hovered))})`);
+			await hover(`document.querySelector(${jsLiteral(sidebarRow(hovered))})`);
 			await openMenu();
 			assert.equal((await menu())?.chip, "Session · Hovered one");
 			// Its commands act on that row's session, not on the open one.
@@ -691,7 +692,7 @@ describe("command menu", { skip: !browserTests }, () => {
 				until(status.statuses, (states) => states?.[session]?.busy.toSorted().join() === conversations.join());
 			await busy([]);
 			const sub = await holdIn(owner, Chat, { session, conversation: helper.conversationId }, "participant");
-			const sessionItem = `document.querySelector(${JSON.stringify(sidebarRow(session))})`;
+			const sessionItem = `document.querySelector(${jsLiteral(sidebarRow(session))})`;
 			const helperItem = `[...document.querySelectorAll('.session-row[data-session="${session}"] .conversation-row')].find((e) => e.querySelector('.session-title')?.textContent === 'helper')`;
 			/** Long-presses the item `expression` evaluates to and waits for the menu on `chip`, its rows settled. */
 			const longPress = async (expression: string, chip: string) => {
@@ -712,7 +713,7 @@ describe("command menu", { skip: !browserTests }, () => {
 			};
 			/** Taps the open menu's row `title` once it shows. */
 			const choose = async (title: string) => {
-				const option = `[...document.querySelectorAll('.command-menu [role=option]')].find((o) => o.querySelector('.command-title')?.textContent === ${JSON.stringify(title)})`;
+				const option = `[...document.querySelectorAll('.command-menu [role=option]')].find((o) => o.querySelector('.command-title')?.textContent === ${jsLiteral(title)})`;
 				await browser.wait(option);
 				await browser.evaluate(`${option}.click()`);
 				await browser.wait(CLOSED);

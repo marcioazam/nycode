@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { WebSocket } from "ws";
 import { buildBrowserScript } from "../../src/hosts/bundles.ts";
 import { poll } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 export const chromium =
 	process.env.CHROMIUM_BIN ?? (process.env.PREFIX ? `${process.env.PREFIX}/lib/chromium/chrome` : "/usr/bin/chromium");
@@ -20,10 +21,10 @@ export const browserTests =
 /** The composer's editor (plugins/chat/draft-editor.tsx), a contenteditable element. */
 export const COMPOSER = ".composer .draft-editor";
 /** An expression: the composer's text as shown (file pills as their labels, caret slots left out). */
-export const composerText = `document.querySelector(${JSON.stringify(COMPOSER)}).textContent.replaceAll('\u200B','')`;
+export const composerText = `document.querySelector(${jsLiteral(COMPOSER)}).textContent.replaceAll('\u200B','')`;
 /** An expression that replaces the composer's text with `text`, as typing would (an `input` event), the caret at its end. */
 export const setComposer = (text: string): string =>
-	`(()=>{const e=document.querySelector(${JSON.stringify(COMPOSER)});e.focus();e.textContent=${JSON.stringify(text)};const s=getSelection();s.selectAllChildren(e);s.collapseToEnd();e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));})()`;
+	`(()=>{const e=document.querySelector(${jsLiteral(COMPOSER)});e.focus();e.textContent=${jsLiteral(text)};const s=getSelection();s.selectAllChildren(e);s.collapseToEnd();e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));})()`;
 
 export class Browser {
 	readonly process: ChildProcess;
@@ -190,7 +191,7 @@ export class Browser {
 	async openSettings(label: string): Promise<void> {
 		await this.wait(`document.querySelector('.drawer-foot .settings-open')`);
 		await this.evaluate(`document.querySelector('.drawer-foot .settings-open').click()`);
-		const item = `[...document.querySelectorAll('.settings-nav-item')].find((e) => e.textContent === ${JSON.stringify(label)})`;
+		const item = `[...document.querySelectorAll('.settings-nav-item')].find((e) => e.textContent === ${jsLiteral(label)})`;
 		await this.wait(item);
 		await this.evaluate(`${item}.click()`);
 		await this.wait(`document.querySelector('.settings-pane > .settings-page')`);

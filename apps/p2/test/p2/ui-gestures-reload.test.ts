@@ -15,11 +15,12 @@ import { Models } from "../../plugins/models/contract.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const live = (view: ConversationView | null | undefined) => view?.docs["nycode.live"] as LiveState | undefined;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const center = (selector: string) =>
-	`(() => { const r = document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; })()`;
+	`(() => { const r = document.querySelector(${jsLiteral(selector)}).getBoundingClientRect(); return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; })()`;
 const sheet = "document.querySelector('[data-testid=activity-sheet]')";
 
 describe("phone gestures across a live plugin reload", { skip: !browserTests }, () => {

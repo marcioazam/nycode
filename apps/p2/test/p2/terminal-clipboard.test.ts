@@ -8,6 +8,7 @@ import { connectTerminalHost } from "../../plugins/terminals/detached.ts";
 import { encodeFrame } from "../../plugins/terminals/protocol.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { APP, holdIn, startFixture } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 let unavailable: string | undefined;
 try {
@@ -130,7 +131,7 @@ test(
 			await delay(100);
 			const pasted = "first\nsecond\u001bthird";
 			await page.evaluate(
-				`(()=>{const data=new DataTransfer();data.setData('text/plain',${JSON.stringify(pasted)});document.querySelector('.terminal-input').dispatchEvent(new ClipboardEvent('paste',{clipboardData:data,bubbles:true,cancelable:true}));})()`,
+				`(()=>{const data=new DataTransfer();data.setData('text/plain',${jsLiteral(pasted)});document.querySelector('.terminal-input').dispatchEvent(new ClipboardEvent('paste',{clipboardData:data,bubbles:true,cancelable:true}));})()`,
 			);
 			assert.equal(
 				await page.evaluate<string>("new TextDecoder().decode(new Uint8Array(window.terminalBytes.at(-1)))"),

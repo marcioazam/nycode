@@ -11,6 +11,7 @@ import { Models } from "../../plugins/models/contract.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 describe("the scope prompt", { skip: !browserTests }, () => {
 	let fixture: Fixture;
@@ -46,7 +47,7 @@ describe("the scope prompt", { skip: !browserTests }, () => {
 
 		const centre = (selector: string) =>
 			browser.evaluate<{ x: number; y: number }>(
-				`(() => {const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`,
+				`(() => {const r=document.querySelector(${jsLiteral(selector)}).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`,
 			);
 		const move = async (selector: string, modifiers = 0) => {
 			const { x, y } = await centre(selector);
@@ -183,7 +184,7 @@ describe("the scope prompt", { skip: !browserTests }, () => {
 	const mode = `document.querySelector('.scope-mode')`;
 	const move = async (selector: string) => {
 		const { x, y } = await browser.evaluate<{ x: number; y: number }>(
-			`(() => {const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`,
+			`(() => {const r=document.querySelector(${jsLiteral(selector)}).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`,
 		);
 		await browser.call("Input.dispatchMouseEvent", { type: "mouseMoved", x, y });
 	};
@@ -225,7 +226,7 @@ describe("the scope prompt", { skip: !browserTests }, () => {
 			await browser.wait(shown(".topbar .scope-toggle"));
 			const tap = async (selector: string) => {
 				const point = await browser.evaluate<{ x: number; y: number }>(
-					`(() => {const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`,
+					`(() => {const r=document.querySelector(${jsLiteral(selector)}).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`,
 				);
 				await browser.call("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ ...point, id: 1 }] });
 				await browser.call("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
