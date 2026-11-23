@@ -3,7 +3,7 @@
  *
  * Claude Code lets any settings scope carry an `env` object whose keys are exported
  * into the session's environment. This extension applies that chain to process.env:
- * managed-settings.json (enterprise policy), ~/.claude/settings.json (user), the
+ * managed-settings.json (enterprise policy), ~/.nycode/agent/settings.json (user), the
  * project's .claude/settings.json plus settings.local.json, and the `--settings` flag
  * (internal/cli-settings).
  *

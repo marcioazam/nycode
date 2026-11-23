@@ -357,7 +357,8 @@ Content`,
 			expect(skill?.metadata.baseDir).toBe(projectBaseDir);
 		});
 
-		it("should use ~/.agents as baseDir for user .agents skills", async () => {
+		// D-62: nycode reads no other tool's home directory; the user skills live in the agent directory.
+		it("does not load skills from the home directory's .agents", async () => {
 			const previousHome = process.env.HOME;
 			process.env.HOME = tempDir;
 
@@ -368,11 +369,7 @@ Content`,
 				writeFileSync(skillPath, "---\nname: user-agents\ndescription: user agents\n---\n");
 
 				const result = await packageManager.resolve();
-				const skill = result.skills.find((r) => r.path === skillPath);
-
-				expect(skill?.metadata.source).toBe("auto");
-				expect(skill?.metadata.scope).toBe("user");
-				expect(skill?.metadata.baseDir).toBe(agentsBaseDir);
+				expect(result.skills.find((r) => r.path === skillPath)).toBeUndefined();
 			} finally {
 				if (previousHome === undefined) {
 					delete process.env.HOME;
@@ -500,7 +497,8 @@ Content`,
 			expect(result.skills.some((r) => r.path === deeplyNestedMarkdownSkill && r.enabled)).toBe(true);
 		});
 
-		it("should keep ~/.agents/skills user-scoped when cwd is under home in a non-git directory", async () => {
+		// D-62: not as a user skill, and not as a project one when cwd is under home in a non-git directory.
+		it("does not load ~/.agents/skills when cwd is under home in a non-git directory", async () => {
 			const previousHome = process.env.HOME;
 			process.env.HOME = tempDir;
 
@@ -522,11 +520,7 @@ Content`,
 				});
 
 				const result = await pm.resolve();
-				const matchingSkills = result.skills.filter((r) => r.path === homeSkill);
-				expect(matchingSkills).toHaveLength(1);
-				expect(matchingSkills[0]?.enabled).toBe(true);
-				expect(matchingSkills[0]?.metadata.scope).toBe("user");
-				expect(matchingSkills[0]?.metadata.source).toBe("auto");
+				expect(result.skills.filter((r) => r.path === homeSkill)).toHaveLength(0);
 			} finally {
 				if (previousHome === undefined) {
 					delete process.env.HOME;

@@ -10,10 +10,10 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { repoRoot } from "../project/project-root.ts";
+import { isHome, repoRoot } from "../project/project-root.ts";
 import { isRecord } from "../util/values.ts";
 import { type CliSettings, cliSettings, type SettingSource } from "./cli-settings.ts";
-import { claudeConfigDir } from "./config-dir.ts";
+import { userConfigDir } from "./config-dir.ts";
 
 /** Whether every path given exists and belongs to the user running this process.
  * A path that is absent is not someone else's, so it does not disqualify the root. */
@@ -76,11 +76,12 @@ export function claudeSettingsSources(
 	cli: CliSettings = cliSettings(),
 ): SettingsSource[] {
 	const sources: SettingsSource[] = [];
-	if (cli.sources.has("user"))
-		sources.push({ file: path.join(claudeConfigDir(home), "settings.json"), scope: "user" });
-	if (includeProject && cli.sources.has("project"))
+	if (cli.sources.has("user")) sources.push({ file: path.join(userConfigDir(), "settings.json"), scope: "user" });
+	// D-62: the home directory is never a project (localSettingsDir is cwd there).
+	const project = includeProject && !isHome(cwd);
+	if (project && cli.sources.has("project"))
 		sources.push({ file: path.join(cwd, ".claude", "settings.json"), scope: "project" });
-	if (includeProject && cli.sources.has("local")) {
+	if (project && cli.sources.has("local")) {
 		// Compared as the directory the placement rule returned, not re-derived from a
 		// joined path: path.join normalizes separators, so a cwd given POSIX-style on
 		// Windows would never equal its own joined form and the legacy entry would repeat.
@@ -108,9 +109,9 @@ export function claudeSettingsChain(
  * notification channel, a question timeout, a retention period, plugin enablement):
  * the user settings.json unless `--setting-sources` excludes it, then the `--settings`
  * snapshot, which Claude lets set "any key your user settings file can set". */
-export function userSettingsFiles(home: string, cli: CliSettings = cliSettings()): string[] {
+export function userSettingsFiles(cli: CliSettings = cliSettings()): string[] {
 	const files: string[] = [];
-	if (cli.sources.has("user")) files.push(path.join(claudeConfigDir(home), "settings.json"));
+	if (cli.sources.has("user")) files.push(path.join(userConfigDir(), "settings.json"));
 	if (cli.settingsFile !== undefined) files.push(cli.settingsFile);
 	return files;
 }
@@ -130,9 +131,9 @@ export function localSettingsFile(
 /** The last value the user-level files (userSettingsFiles) set for `key`, or
  * undefined when none does: for the settings a repository must not influence (a
  * notification channel, a question timeout, a retention period). */
-export function readUserSetting(home: string, key: string, cli: CliSettings = cliSettings()): unknown {
+export function readUserSetting(key: string, cli: CliSettings = cliSettings()): unknown {
 	let found: unknown;
-	for (const settings of readSettingsChain(userSettingsFiles(home, cli))) {
+	for (const settings of readSettingsChain(userSettingsFiles(cli))) {
 		if (key in settings) found = settings[key];
 	}
 	return found;

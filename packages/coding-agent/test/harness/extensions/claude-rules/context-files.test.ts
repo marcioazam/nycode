@@ -29,8 +29,8 @@ beforeEach(() => {
 	savedHome = process.env.HOME;
 	savedDisable = process.env[DISABLE];
 	home = mkdtempSync(join(tmpdir(), "ctxfiles-"));
-	mkdirSync(join(home, ".claude", "rules"), { recursive: true });
-	writeFileSync(join(home, ".claude", "rules", "style.md"), `${RULE_BODY}\n`);
+	mkdirSync(join(home, ".nycode", "agent", "rules"), { recursive: true });
+	writeFileSync(join(home, ".nycode", "agent", "rules", "style.md"), `${RULE_BODY}\n`);
 	process.env.HOME = home; // read when the factory runs, not at import
 	delete process.env[DISABLE];
 });
@@ -129,7 +129,7 @@ describe("omitClaudeMd and --no-context-files (ex no-context-files-covers-claude
 
 	it("subagent child: the name comes from --system-prompt; outside a subagent it does not", () => {
 		const src = agentsDir();
-		const agents = join(home, ".claude", "agents");
+		const agents = join(home, ".nycode", "agent", "agents");
 		mkdirSync(agents, { recursive: true });
 		copyFileSync(join(src, "Explore.md"), join(agents, "Explore.md"));
 		copyFileSync(join(src, "worker.md"), join(agents, "worker.md"));

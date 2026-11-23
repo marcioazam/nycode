@@ -17,7 +17,6 @@
  */
 
 import { execFile } from "node:child_process";
-import * as os from "node:os";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 
 import { readUserSetting } from "../_shared/settings/settings-chain.ts";
@@ -64,8 +63,8 @@ export function shouldNotify(
 /** The `preferredNotifChannel` from the user's settings. This is a personal terminal
  * preference, so only the user-level files are read (the user file and the `--settings`
  * flag); a checked-out repo does not get to silence or change your notifications. */
-function readPreferredNotifChannel(home: string): unknown {
-	return readUserSetting(home, "preferredNotifChannel");
+function readPreferredNotifChannel(): unknown {
+	return readUserSetting("preferredNotifChannel");
 }
 
 function windowsToastScript(title: string, body: string): string {
@@ -140,7 +139,7 @@ export default function notifyExtension(nycode: ExtensionAPI) {
 	});
 
 	nycode.on("session_start", (_event, _ctx) => {
-		channel = resolveNotifChannel(readPreferredNotifChannel(os.homedir()));
+		channel = resolveNotifChannel(readPreferredNotifChannel());
 		lastInputAt = undefined;
 		pending = false;
 	});

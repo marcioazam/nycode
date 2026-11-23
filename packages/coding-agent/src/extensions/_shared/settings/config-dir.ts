@@ -1,12 +1,12 @@
 /**
- * The home-scope Claude config directory. nycode does not read Claude Code's config-directory override (D-09: that
- * variable is converted once by `nycode migrate from-pi`), so every consumer sees `<home>/.claude`. A project's own
- * `.claude/` directory is unaffected.
+ * The user-scope configuration directory (D-62): the nycode agent directory. nycode reads no other tool's home
+ * directory: the user's instructions, rules, skills, agents, commands, output styles, plugins and settings all live in
+ * `~/.nycode/agent`. A project's own configuration directories are unaffected.
  */
 
-import * as path from "node:path";
+import { getAgentDir } from "../../../config.ts";
 
-/** The home-scope Claude config directory: always `<home>/.claude`. */
-export function claudeConfigDir(home: string): string {
-	return path.join(home, ".claude");
+/** The user-scope config directory: the nycode agent directory (`~/.nycode/agent` or `NYCODE_CODING_AGENT_DIR`). */
+export function userConfigDir(): string {
+	return getAgentDir();
 }

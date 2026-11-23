@@ -7,6 +7,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { SETTINGS_DEFAULTS } from "../../core/settings-defaults.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { type InstalledPlugin, pluginComponentPath, substitutePluginVars } from "../_shared/settings/plugins.ts";
 import { claudeSettingsChain, readSettingsChain } from "../_shared/settings/settings-chain.ts";
@@ -87,6 +88,13 @@ export type HooksConfig = Record<string, HookMatcher[]>;
  * from the repository root, as Claude places them. */
 export function hookFiles(cwd: string, home: string, trusted: boolean): string[] {
 	return claudeSettingsChain(cwd, home, trusted);
+}
+
+/** The chain files whose `hooks` loadHooks reads: all but nycode's own settings.json, the user-scope file (D-62),
+ * whose hooks loadSettingsHooks already merges over the defaults. */
+export function hookSourceFiles(files: string[]): string[] {
+	const own = path.join(userConfigDir(), "settings.json");
+	return files.filter((file) => file !== own);
 }
 
 /** Claude's `disableAllHooks` setting: the escape hatch a user reaches for when a
@@ -478,6 +486,6 @@ export function formatHooksSummary(config: HooksConfig, sources?: Map<HookMatche
 		if (entryLines.length > 0) lines.push(`${event}:`, ...entryLines);
 	}
 	if (lines.length === 0)
-		return 'No hooks configured. Add a "hooks" section to ~/.claude/settings.json or .claude/settings.json.';
+		return 'No hooks configured. Add a "hooks" section to ~/.nycode/agent/settings.json or .claude/settings.json.';
 	return lines.join("\n");
 }

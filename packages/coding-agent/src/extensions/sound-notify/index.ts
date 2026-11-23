@@ -1,5 +1,5 @@
 /**
- * Plays a local sound when the nycode turn finally ends (port of ~/.claude/hooks/sound-notify.py, itself from
+ * Plays a local sound when the nycode turn finally ends (port of the harness hook sound-notify.py, itself from
  * ~/.codex/bin/codex-sound-notify).
  *
  * `agent_settled` is the real end: after retries, compaction and continuations (/goal, plan gate), so a turn plays

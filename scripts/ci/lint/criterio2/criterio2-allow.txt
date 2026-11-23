@@ -14,6 +14,9 @@ packages/coding-agent/test/fixtures/*.jsonl | .pi/agent,sed -i | upstream | sess
 scripts/fork/* | sed -i | ferramenta-fork | the fork rename machinery that rewrites the upstream tree (08)
 # migracao
 packages/coding-agent/src/migrations/from-pi.ts | .pi/agent | migracao | help text of nycode migrate from-pi (origin directory)
+packages/coding-agent/src/migrations/from-pi-personal.ts | .pi/agent | migracao | the personal pi-conta helper defaults to the origin directory; the migration repoints it
+packages/coding-agent/test/harness/migrations/personal/from-pi-personal.test.ts | .pi/agent | migracao | origin paths the personal-layer migration converts
+README.md | .pi/agent | migracao | the migration section names the origin directory of nycode migrate from-pi
 # produto-externo: claude-hud honours CLAUDE_CONFIG_DIR (C-F8-07)
 packages/coding-agent/resources/statusline/*.mjs | CLAUDE_CONFIG_DIR | produto-externo | the launcher points the claude-hud plugin at the nycode config dir
 packages/coding-agent/resources/commands/claude-hud-setup.md | CLAUDE_CONFIG_DIR | produto-externo | the claude-hud installer reads its config dir from the variable

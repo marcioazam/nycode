@@ -5,10 +5,9 @@
  * Record: docs/nycode-agents-ui-teams-sota-2026-11-13.md (A4).
  */
 import { readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
 
-import { claudeConfigDir } from "../../../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../../../_shared/settings/config-dir.ts";
 
 import type { UiTheme } from "../panel.ts";
 
@@ -34,7 +33,7 @@ const BASE_ROLE: Record<string, string> = { task: "accent", cost: "dim" };
 export const SPINNER = ["·", "•", "●", "●", "•", "·"];
 export const SPINNER_MS = 200;
 
-const CONFIG = join(claudeConfigDir(homedir()), "plugins", "claude-hud", "config.json");
+const CONFIG = join(userConfigDir(), "plugins", "claude-hud", "config.json");
 
 export const noColor = (): boolean => (process.env.NO_COLOR ?? "") !== "";
 export const motionEnabled = (): boolean => !noColor() && process.env.NYCODE_REDUCED_MOTION !== "1";

@@ -23,7 +23,7 @@ ativo no nycode e sugira `/claude-hud-setup` antes; continue só se o usuário q
 
 A config efetiva é a base com o override por cima: objetos aninhados se fundem chave a chave; arrays e escalares são
 substituídos. Chaves ausentes usam os padrões da tabela de configuração do README do plugin (o mais novo em
-`~/.claude*/plugins/cache/*/claude-hud/*/README.md`). Use os valores efetivos ao descrever o estado atual.
+`~/.nycode/agent/plugins/cache/*/claude-hud/*/README.md`). Use os valores efetivos ao descrever o estado atual.
 
 ## Perguntar
 
