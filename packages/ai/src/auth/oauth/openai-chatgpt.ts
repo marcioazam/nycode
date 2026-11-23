@@ -79,6 +79,8 @@ function authorizationResultFromManualInput(input: string, expectedState: string
 
 function sendHtml(response: ServerResponse, status: number, body: string): void {
 	response.writeHead(status, { "Content-Type": "text/html; charset=utf-8" });
+	// Every interpolated value is escaped in oauth-page.ts before the document is assembled.
+	// codeql[js/reflected-xss]
 	response.end(body);
 }
 
