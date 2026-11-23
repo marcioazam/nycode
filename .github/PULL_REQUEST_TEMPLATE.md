@@ -2,6 +2,11 @@
 
 <!-- One or two sentences. Link the issue: Closes #123 -->
 
+## Risk
+
+- [ ] Normal change
+- [ ] High risk (auth, credentials, permissions boundary, destructive migration, breaking contract, release/CI security): describe trust boundary and rollback below
+
 ## Evidence
 
 - [ ] Bug fix: a test that fails before the fix (red) and passes after (green); paste both results
@@ -9,17 +14,15 @@
 - [ ] `./test.sh` result, or the specific test files run: <!-- rc and last line -->
 - [ ] Checks not run or only verified in CI: <!-- list, or "none" -->
 
-## Effect on the benchmark
+## Residual risk and rollback
 
-<!-- Does it change the always-loaded prompt, turns or cost per task? The `bench-pr` gate runs on this PR; say what you expect, or "none". -->
-
-## How to revert
-
-<!-- e.g. delete the extension directory, or revert this commit. State anything that is not reversible. -->
+<!-- What could still go wrong, and how to undo or forward-fix it. "None" is a valid answer. -->
 
 ## Checklist
 
 - [ ] Docs updated where behavior, configuration or a contract changed
 - [ ] No secrets, credentials, personal identifiers or absolute home paths in the diff (gitleaks runs in the pre-commit hook and in CI)
-- [ ] Workflow changes: actions pinned to full SHAs, minimal `permissions:`
+- [ ] New dependencies verified (exact pin, maintainer, license, lockfile diff and `install-lock`)
+- [ ] Workflow changes: actions pinned to full SHAs, minimal `permissions:`, no untrusted `${{ }}` in `run:`
 - [ ] Breaking change marked with `!` in the title and described above
+- [ ] AI assistance disclosed (`Co-Authored-By:` or here), if any
