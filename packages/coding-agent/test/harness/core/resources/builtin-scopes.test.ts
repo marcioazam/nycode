@@ -108,13 +108,25 @@ describe("skill roots", () => {
 		expect(skillDirs(cwd, home, false)).toEqual([join(home, ".claude", "skills"), join(fx.resources, "skills")]);
 	});
 
-	it("discovers only direct one-level skills and skips nested non-skill trees", () => {
+	it("discovers only direct one-level skills, skips nested non-skill trees, and omits skills shadowed by nycode agentDir", () => {
+		const agentSkills = join(process.env.NYCODE_CODING_AGENT_DIR as string, "skills");
+		mkdirSync(join(agentSkills, "shared-skill"), { recursive: true });
+		writeFileSync(
+			join(agentSkills, "shared-skill", "SKILL.md"),
+			"---\nname: shared-skill\ndescription: nycode\n---\n",
+		);
+
 		const claudeSkills = join(home, ".claude", "skills");
 		mkdirSync(join(claudeSkills, "valid-skill"), { recursive: true });
 		writeFileSync(join(claudeSkills, "valid-skill", "SKILL.md"), "---\nname: valid-skill\ndescription: ok\n---\n");
+		mkdirSync(join(claudeSkills, "shared-skill"), { recursive: true });
+		writeFileSync(
+			join(claudeSkills, "shared-skill", "SKILL.md"),
+			"---\nname: shared-skill\ndescription: claude\n---\n",
+		);
 		mkdirSync(join(claudeSkills, "claude-red", "Skills", "broken"), { recursive: true });
 		writeFileSync(join(claudeSkills, "claude-red", "Skills", "broken", "SKILL.md"), "---\nname: broken\n---\n");
-		expect(discoverableSkillPaths([claudeSkills])).toEqual([join(claudeSkills, "valid-skill")]);
+		expect(discoverableSkillPaths([claudeSkills], [agentSkills])).toEqual([join(claudeSkills, "valid-skill")]);
 	});
 });
 

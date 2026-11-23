@@ -374,11 +374,7 @@ export default function statusLine(nycode: ExtensionAPI) {
 			// A footer status is one row (footer.js sanitizeStatusText joins newlines), so 2+ rows
 			// go to a widget below the editor instead; the footer then keeps the built-in segment.
 			let parsed = statusRows(result.stdout, config.padding);
-			const failed =
-				result.code !== 0 ||
-				result.spawnFailed ||
-				result.timedOut ||
-				(parsed.rows.length === 0 && parsed.footer === undefined);
+			const failed = result.code !== 0 || result.spawnFailed || result.timedOut;
 			if (failed && fallbackCommand) {
 				const fallbackResult = await runHookCommand(fallbackCommand, payload, COMMAND_TIMEOUT_MS, {
 					onChild: (kill) => {
@@ -387,6 +383,10 @@ export default function statusLine(nycode: ExtensionAPI) {
 				});
 				if (rerunQueued) return;
 				parsed = statusRows(fallbackResult.stdout, 0);
+				if (parsed.rows.length > 0 || parsed.footer !== undefined) {
+					config = { ...config, command: fallbackCommand, padding: 0 };
+					fallbackCommand = undefined;
+				}
 			}
 			commandLine = parsed.footer;
 			scriptRows = parsed.rows;
