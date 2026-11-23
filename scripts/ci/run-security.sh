@@ -95,7 +95,10 @@ leaks() {
 }
 
 trufflehog_history() {
-  trufflehog git "file://$PWD" --only-verified --fail --no-update --no-color \
+  # Product binaries are Git LFS pointers. Smudge asks the LFS media host, which this
+  # hardened runner does not allow. Those bytes are still normal git blobs in earlier
+  # commits, and the history scan still reads them.
+  GIT_LFS_SKIP_SMUDGE=1 trufflehog git "file://$PWD" --only-verified --fail --no-update --no-color \
     --exclude-paths=<(printf '%s\n' 'scripts/fixtures/leak/')
 }
 
@@ -136,7 +139,7 @@ semgrep_scan() {
   return "$rc"
 }
 
-# docs/migration/nycode-arquivo (verbatim nycode-harness archive, not maintained or executed, owner decision 2026-11-21) is
+# docs/migration/nycode-arquivo (verbatim Nycode archive, not maintained or executed, owner decision 2026-11-21) is
 # outside semgrep too; the leak scan still covers it.
 # osv-scanner has no severity threshold flag: fail on any group with CVSS >= 7 (HIGH/CRITICAL) or
 # no score at all (unknown is not assumed safe). Exceptions live in scripts/ci/osv-scanner.toml with owner+expiry.
