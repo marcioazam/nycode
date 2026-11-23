@@ -9,6 +9,7 @@ import { Sessions, SessionTransfer } from "../../plugins/sessions/contract.ts";
 import { bigSessionEntries } from "../fixtures/big-session.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 /** Counts what the page's WebSockets receive (`window.__received`, characters). */
 const COUNT_RECEIVED = `(() => {
@@ -66,7 +67,7 @@ describe("long conversation in the browser", { skip: !browserTests }, () => {
 		// Another session and back: the held view and its pages are still there, nothing is sent again.
 		const before = await browser.evaluate<number>("window.__received");
 		const row = (title: string) =>
-			`[...document.querySelectorAll('.session-row button')].find((button) => button.textContent.includes(${JSON.stringify(title)}))?.click() ?? true`;
+			`[...document.querySelectorAll('.session-row button')].find((button) => button.textContent.includes(${jsLiteral(title)}))?.click() ?? true`;
 		await browser.evaluate(row("Other one"));
 		await browser.wait(`document.querySelector('.topbar h1')?.textContent === 'Other one'`);
 		await browser.evaluate(row("Long one"));

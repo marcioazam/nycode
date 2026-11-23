@@ -13,9 +13,10 @@ import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Views } from "../../plugins/views/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, poll, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const input = (selector: string, value: string) =>
-	`(()=>{const e=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`;
+	`(()=>{const e=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(e,${jsLiteral(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`;
 describe("search, viewers, artifacts and cost parity", { skip: !browserTests }, () => {
 	let fixture: Fixture, browser: Browser, id: string;
 	before(async () => {

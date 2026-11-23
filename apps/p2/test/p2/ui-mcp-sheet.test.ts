@@ -10,6 +10,7 @@ import { Mcp } from "../../plugins/mcp/contract.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const FIXTURE = fileURLToPath(new URL("../fixtures/mcp-server.mjs", import.meta.url));
 
@@ -27,7 +28,7 @@ const SOCKETS = `(() => {
 })();`;
 
 const navItem = (label: string) =>
-	`[...document.querySelectorAll('.settings-nav-item')].find((e) => e.textContent === ${JSON.stringify(label)})`;
+	`[...document.querySelectorAll('.settings-nav-item')].find((e) => e.textContent === ${jsLiteral(label)})`;
 const PAGE = `document.querySelector('.settings-page[aria-label="MCP servers"]')`;
 const LISTED = `${PAGE}?.querySelector('.mcp-server strong')?.textContent === 'fixture' && ${PAGE}.textContent.includes('Connected')`;
 

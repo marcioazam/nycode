@@ -7,6 +7,7 @@ import { processLogs } from "../../src/runtime/logs.ts";
 import { ServerNatives } from "../../src/runtime/server.ts";
 import { Browser, browserTests, COMPOSER } from "./browser.ts";
 import { holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 test(
 	"owner Logs sheet filters worker sources, follows live lines, copies the filtered text and restores its locator",
@@ -39,7 +40,7 @@ test(
 		}
 		await browser.wait(`document.querySelector('[role=dialog] [aria-label=Logs] #logs-source')`);
 		await browser.evaluate(
-			`(()=>{const e=document.querySelector('#logs-source');Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value').set.call(e,${JSON.stringify(worker)});e.dispatchEvent(new Event('change',{bubbles:true}));})()`,
+			`(()=>{const e=document.querySelector('#logs-source');Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value').set.call(e,${jsLiteral(worker)});e.dispatchEvent(new Event('change',{bubbles:true}));})()`,
 		);
 		await browser.wait(`document.querySelector('.logs-output')?.textContent.includes('worker-start-failure')`);
 		const visible = await browser.evaluate<string>("document.querySelector('.logs-output').textContent");
