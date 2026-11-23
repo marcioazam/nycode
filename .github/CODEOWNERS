@@ -1,1 +1,5 @@
-* @marcioazam
+# Last matching pattern wins.
+*                    @marcioazam
+/.github/            @marcioazam
+/SECURITY.md         @marcioazam
+/scripts/ci/         @marcioazam

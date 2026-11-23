@@ -2,9 +2,18 @@
   <img src="docs/assets/nycode-pixel.svg" alt="Nycode" width="480">
 </p>
 
+<p align="center">
+  <a href="https://github.com/marcioazam/nycode/releases/latest"><img src="https://img.shields.io/github/v/release/marcioazam/nycode?style=flat-square" alt="Latest Release"></a>
+  <a href="https://github.com/marcioazam/nycode/actions/workflows/ci.yml"><img src="https://github.com/marcioazam/nycode/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/marcioazam/nycode/actions/workflows/ci-security.yml"><img src="https://github.com/marcioazam/nycode/actions/workflows/ci-security.yml/badge.svg" alt="Security"></a>
+  <a href="https://github.com/marcioazam/nycode/actions/workflows/codeql.yml"><img src="https://github.com/marcioazam/nycode/actions/workflows/codeql.yml/badge.svg" alt="CodeQL"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/marcioazam/nycode"><img src="https://api.scorecard.dev/projects/github.com/marcioazam/nycode/badge" alt="OpenSSF Scorecard"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License"></a>
+</p>
+
 # Nycode
 
-Nycode is a terminal coding agent. It reads and edits files, runs shell commands and talks to many model providers. You shape it with [extensions](packages/coding-agent/docs/extensions.md), [skills](packages/coding-agent/docs/skills.md), [prompt templates](packages/coding-agent/docs/prompt-templates.md) and [themes](packages/coding-agent/docs/themes.md), and you can bundle them as [Nycode packages](packages/coding-agent/docs/packages.md) to share via npm or git.
+Nycode is a terminal coding agent with an embedded harness (extensions, hooks, skills, agents, themes, and a native TypeScript permission engine). It reads and edits files, runs shell commands and talks to many model providers. You shape it with [extensions](packages/coding-agent/docs/extensions.md), [skills](packages/coding-agent/docs/skills.md), [prompt templates](packages/coding-agent/docs/prompt-templates.md) and [themes](packages/coding-agent/docs/themes.md), and you can bundle them as [Nycode packages](packages/coding-agent/docs/packages.md) to share via git.
 
 Use it [interactively](packages/coding-agent/docs/usage.md), automate it in [print or JSON mode](packages/coding-agent/docs/cli.md), control it over [RPC](packages/coding-agent/docs/rpc.md), or build apps with the [Nycode TypeScript SDK](packages/coding-agent/docs/sdk.md).
 
@@ -12,10 +21,10 @@ This README states what is measured and what is not. Where a number is a loss, i
 
 ## Contents
 
-- [The proposal](#the-proposal) · [What exists today and what is in migration](#what-exists-today-and-what-is-in-migration)
+- [The proposal](#the-proposal) · [What is built in](#what-is-built-in)
 - [Getting started](#getting-started) · [Packages](#packages) · [Permissions and containerization](#permissions-and-containerization)
 - [Benchmarks](#benchmarks)
-- [Contributing](#contributing) · [Development](#development) · [Building standalone binaries](#building-standalone-binaries) · [Supply-chain hardening](#supply-chain-hardening) · [License](#license)
+- [Contributing](#contributing) · [Development](#development) · [Building standalone binaries](#building-standalone-binaries) · [Security and quality gates](#security-and-quality-gates) · [Supply-chain hardening](#supply-chain-hardening) · [License](#license)
 
 ## The proposal
 
@@ -28,23 +37,25 @@ What the measurement shows today, with the same model (Claude Sonnet 5.5) for ev
 
 - **Against Pi Vanilla:** it solves more tasks (+3.8 points on 42 tasks, +7.9 points on 72 Terminal-Bench 2.0 tasks, both with 90% intervals above zero), at about 1.2x to 1.3x the cost per task. It is not as cheap as Pi Vanilla.
 - **Against Claude Code:** it costs less (0.57x per task on 42 tasks, 0.82x on 12 harder tasks, 0.77x on Terminal-Bench 2.0). In tasks solved it is **not inferior** on Terminal-Bench 2.0 (+1.4 points, 90% interval -3.2 to +6.0) but **not shown ahead** (probability of being ahead 0.68, below the 0.80 threshold); on the 42 tasks the difference is +2.6 points with an interval of -1.4 to +9.9. On Terminal-Bench 2.0 it is slower (225 s against 207 s per run). No measurement here supports "more accurate than Claude Code".
-- **Where the numbers come from:** they were measured on the **Nycode harness** (`nycode-harness`, the harness before it moved into the core), running on pi 1.5.2. They were **not** measured on the Nycode binary. That measurement is pending by the owner's decision of 2026-11-20 (D-29): no benchmark round runs until after the migration. Until then, treat these figures as the target and the baseline, not as a property of this repository's binary.
+- **Where the numbers come from:** they were measured on the **Nycode harness** (`nycode-harness`, the harness before it moved into the core), running on pi 1.5.2. They were **not** re-measured on the post-migration Nycode binary yet (pending by owner decision D-29 / D-49). Until a post-migration round runs, treat these figures as the baseline measured on the harness prior to embedding.
 
 Details, intervals, sample sizes and limits are in [Benchmarks](#benchmarks).
 
-## What exists today and what is in migration
+## What is built in
 
-Today the Nycode binary is the terminal agent described above, version 1.6.0, with four built-in extensions (`llama.cpp`, `codemode`, `tool-search` and `mcp`, in [`packages/coding-agent/src/extensions/`](packages/coding-agent/src/extensions/)).
+Nycode `2.0.x` ships the full embedded harness in the standalone binary ([migration plan and evidence](docs/migration/nycode-core/)):
 
-It also has the typed settings keys the harness will use (`harness.*`, `plan.gate`, `subagent.respawn`, `hooks`, `statusLine`, `permissions.bypass`, each with a `NYCODE_*` variable; see [settings](packages/coding-agent/docs/settings.md)) and a benchmark runner in [`bench/`](bench/) with a `nycode` arm. The settings keys only store configuration: the features they configure are not in the binary yet.
-
-**Not in the binary yet** (the Nycode harness is being moved into the core): sub-agents, plan mode, goal mode, todo, hooks, the agents and skills of the harness, its extensions, and the permission engine. They arrive in phases F5 to F9 of the migration plan in [`docs/migration/nycode-core/`](docs/migration/nycode-core/); the benchmark of the finished binary is F10. Until a phase lands, do not assume its feature exists.
+- **Terminal UI, HUD and themes:** `ui`, `ui-visual` (animated header wordmark, tool cards, compact/diff views, motion controls), `folha`, `chat-margin`, `sticky-prompt` with jump-to-end indicator, resumed-session divider, built-in `calm` status line HUD (`status-line`), and built-in themes (`nycode-claro`, `nycode-escuro`, `nycode-noite`, `tokyo-night`, `mono`).
+- **Native permission engine (on by default):** TypeScript permission engine (`permissions.engine: "native"`) with full rule parity to `guard.py` (orthogonal Ask/Auto/Plan modes, recursive shell re-parsing, download-and-execute blocking, `.env.*` and credential protection, `Grep` gating, fail-closed on internal errors), plus internal TypeScript `graph-context` hook so default hooks need no `python3`.
+- **Agent harness extensions:** `subagent` (with fleet UI and routing), `plan-mode`, `plan-gate`, `goal`, `todo`, `hooks`, `memory`, `git-checkpoint`, `contexto` (per-session compaction limit), `travar-modelos`, `hook-msgs`, `image-open`, `code-blocks`, `avisos` (pt-BR core notices), `diagnostico` (`/diagnostico`, `/doctor`), `comandos`, `ponytail`, `ralph-loop`, `web` (`web_fetch`, `/puxar`), `lsp`, `mcp`, `codemode`, `tool-search`, `llama.cpp`, and `claude-compat` (aliases, Vim editor mode, `/focus`, `/color`, `/cd`, send-now `Ctrl+Enter`, queue keys).
+- **Native lifecycle supervisor:** built-in supervisor for `/restart` and `/update` with no external wrapper script.
+- **Bundled resources and migration:** rules, agents, skills, commands, and helper scripts under `resources/` (lowest precedence so user and project files override them cleanly), plus `nycode migrate from-pi` to import existing pi configuration and personal layers with backups.
 
 ## Getting started
 
-Nycode is distributed as self-contained binaries (no Node.js and no `npm install`) attached to the [GitHub Releases](https://github.com/marcioazam/nycode/releases) of this repository. Nycode is not published to npm. The first release is `2.0.0`; until it is published, build from source (below).
+Nycode is distributed as self-contained binaries (no Node.js and no `npm install`) attached to the [GitHub Releases](https://github.com/marcioazam/nycode/releases) of this repository. Nycode is not published to npm.
 
-Download the archive for your platform (`darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `windows-x64`, `windows-arm64`) together with `SHA256SUMS`, check the hash and unpack it (Linux x64 shown; Windows ships `nycode-<platform>.zip`):
+Download the archive for your platform (`darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `windows-x64`, `windows-arm64`) together with `SHA256SUMS`, verify the hash, unpack it, and link `nycode` onto your `PATH` (Linux x64 shown; Windows ships `nycode-<platform>.zip`):
 
 ```bash
 b=https://github.com/marcioazam/nycode/releases/latest/download
@@ -52,10 +63,26 @@ curl -fsSLO "$b/nycode-linux-x64.tar.gz"
 curl -fsSLO "$b/SHA256SUMS"
 grep " nycode-linux-x64.tar.gz\$" SHA256SUMS | sha256sum -c -
 tar -xzf nycode-linux-x64.tar.gz
-./nycode/nycode --version
+mkdir -p ~/.local/share/nycode ~/.local/bin
+mv nycode ~/.local/share/nycode/current
+ln -sfn ~/.local/share/nycode/current/nycode ~/.local/bin/nycode
+nycode --version
 ```
 
-Optionally verify the build provenance with the [GitHub CLI](https://cli.github.com/) 2.49 or newer: `gh attestation verify nycode-linux-x64.tar.gz -R marcioazam/nycode`. Put the `nycode` directory somewhere on your `PATH`. `nycode update` does not replace a binary: it prints the Releases URL to download the new one from.
+Optionally verify the build provenance with the [GitHub CLI](https://cli.github.com/) 2.49 or newer:
+
+```bash
+gh attestation verify nycode-linux-x64.tar.gz -R marcioazam/nycode
+```
+
+`nycode update` does not overwrite a standalone binary in place: it prints the Releases URL to download the new release from.
+
+**Migrating from pi** (dry-run by default; `--apply` backs up existing files first and asks confirmation before copying credentials):
+
+```bash
+nycode migrate from-pi          # preview plan without writing
+nycode migrate from-pi --apply  # apply with backups
+```
 
 **Build from source** (requires Node.js 22.19 or newer; a normal installation does not need dependency lifecycle scripts, so `--ignore-scripts` is safe):
 
@@ -67,7 +94,7 @@ npm run build
 node packages/coding-agent/dist/bundle/cli.js
 ```
 
-To run it from sources without building, use `./nycode-test.sh` from the repository root. Replace `node packages/coding-agent/dist/bundle/cli.js` with `nycode` if you put the command on your `PATH`, for example with `npm link` in `packages/coding-agent`.
+To run it from sources without building, use `./nycode-test.sh` from the repository root.
 
 Start Nycode in the directory where you want it to work:
 
@@ -76,7 +103,7 @@ cd /path/to/project
 nycode
 ```
 
-For a built-in AI provider, run `/login` inside Nycode to connect a subscription or API key. Then give Nycode a task.
+For a built-in AI provider, run `/login` inside Nycode (or `nycode auth login <provider>`) to connect a subscription or API key. Then give Nycode a task.
 
 See the [documentation](packages/coding-agent/docs/) for full setup and usage instructions.
 
@@ -100,14 +127,13 @@ This monorepo contains the Nycode CLI and its supporting libraries.
 
 ## Permissions and containerization
 
-**Nycode has no permission engine yet.** No tool call is checked or blocked: it runs with the permissions of the user and process that launched it, and it does not ask for approval before each call ([security](packages/coding-agent/docs/security.md)).
+Nycode ships a **native TypeScript permission engine** (`permissions.engine: "native"`, on by default; the Python `script` engine backed by `guard.py` remains selectable via settings) that evaluates tool calls before execution and fails closed on internal errors ([security](packages/coding-agent/docs/security.md), [SECURITY.md](SECURITY.md)):
 
-The permission switches already exist but change nothing today:
+- **Orthogonal modes and bypass:** interactive sessions run in `ask` (default), `auto`, or `plan` mode. Bypass (`--bypass` / `--dangerously-skip-permissions`, `--safe` / `--no-bypass`, `NYCODE_BYPASS_PERMISSIONS`, or global `permissions.bypass`; precedence: flag > env > `local.env` > global `settings.json` > `false`, fail-closed on unrecognised values) auto-approves `ask` prompts without disabling catastrophic deny rules.
+- **Always-deny safety net:** destructive filesystem commands (including recursive shell re-parsing of `bash -c`, `eval`, `$()`), download-and-execute pipelines, disk device writes, force-push to `main`, and reads of `.env.*` or credential files stay blocked even under bypass.
+- **Not a kernel sandbox:** a permission engine guards against mistakes, not adversarial containment. When you need hard isolation, containerize or sandbox Nycode.
 
-- The flags `--bypass` (alias `--dangerously-skip-permissions`) and `--safe` (alias `--no-bypass`), the variable `NYCODE_BYPASS_PERMISSIONS` and the global setting `permissions.bypass` are parsed and resolved (flag, then variable, then setting, default off; an unrecognised variable value fails closed to off).
-- Nothing reads the result yet. They take effect when the engine lands (phase F8: the Nycode harness guard hook first, a native engine later).
-
-If you need boundaries now, containerize or sandbox Nycode. See [packages/coding-agent/docs/containerization.md](packages/coding-agent/docs/containerization.md) for four patterns:
+See [packages/coding-agent/docs/containerization.md](packages/coding-agent/docs/containerization.md) for four isolation patterns:
 
 - **Gondolin extension**: keep `nycode` and provider auth on the host while routing built-in tools and `!` commands into a local Linux micro-VM.
 - **Plain Docker**: run the whole `nycode` process in a local container for simple isolation.
@@ -116,7 +142,7 @@ If you need boundaries now, containerize or sandbox Nycode. See [packages/coding
 
 ## Benchmarks
 
-**Read this first.** Every number in this section was measured on the **Nycode harness** (`nycode-harness`, the harness before it moved into the core), running on pi 1.5.2. None of it was measured on the Nycode binary. The Nycode measurement is pending by the owner's decision D-29 (no benchmark round runs during the migration); it will replace these figures, not sit beside them.
+**Read this first.** Every number in this section was measured on the **Nycode harness** (`nycode-harness`, the harness before it moved into the core), running on pi 1.5.2. None of it has been re-measured on the post-migration Nycode binary yet (pending by owner decision D-29 / D-49); a post-migration benchmark round will replace these figures, not sit beside them.
 
 Names used below:
 
@@ -241,12 +267,11 @@ What changed: the `nycode-harness` arm ran on a `main` that includes the 2026-11
 - One model, one machine, Python-heavy tasks. No task was solved by `nycode-harness` alone.
 - Terminal-Bench 2.0: against Claude Code the interval crosses zero, so non-inferiority is shown and a lead is not. The references were not interleaved with the re-run. The auth modes differ between arms (subscription login for `nycode-harness` and Claude Code, API key for Pi Vanilla), which no analysis here controls.
 - The `nycode-harness` arm is the harness plus the maintainer's untracked personal layer (personal rules of about 2,500 tokens, settings, local environment, vendored packages), frozen by hash. Without the personal rules (2026-11-18, 42 tasks, one round, not interleaved): same accuracy (40 of 42 both ways) and 17% lower cost (90% interval 0.69x to 1.04x). Without the rest of the layer, and on Terminal-Bench, it has not been benchmarked.
-- Nycode itself is not measured: the Nycode build has no harness features yet, and the migration may change behavior, cost and speed.
+- The post-migration Nycode binary ships the embedded harness, and a benchmark round on it has not been run yet (D-29 / D-49); embedding may change behavior, cost and speed relative to `nycode-harness`.
 
-Known weaknesses of the harness that are not in the tables:
+Historical weaknesses of the pre-migration `nycode-harness` that are not in the tables:
 
-- The Nycode harness guard hook does not recognise every indirect shell form: some destructive commands wrapped in a subshell, `bash -c`, `xargs` or `find -exec` pass its always-deny list (independent audit of 2026-11-15; a fix was prepared and not merged at the source's date). Treat it as a guard against mistakes, not as a sandbox.
-- In the Nycode harness, leaving plan mode turns permission bypass on in a session that started in safe mode (by design, not yet reflected in its safety documentation).
+- In the 2026-11-15 `nycode-harness` snapshot, the guard hook did not recognise every indirect shell form (`bash -c`, subshells, `xargs`, `find -exec`) and leaving plan mode turned bypass on in safe mode. Both have since been addressed in Nycode's native TypeScript permission engine (recursive shell re-parsing and orthogonal Ask/Auto/Plan + bypass modes). Treat any permission engine as a guard against mistakes, not as a kernel sandbox.
 - Wall-clock time is not gated (it depends on API and machine load); local start-up and hook overhead is not measured by any check yet.
 
 ### An older, worse round (2026-11-14)
@@ -362,12 +387,30 @@ npm run hydrate:model-data
 
 The script builds the executable with its runtime assets for the platform you name (`darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `windows-x64`, `windows-arm64`; all of them when `--platform` is omitted). Pass `--offline-model-data` to use the bundled model data instead of refreshing it. `./scripts/create-source-archive.sh --version <version> --ref <git-ref> --out <archive.tar.gz>` creates the deterministic source archive that releases carry.
 
+## Security and quality gates
+
+Every pull request and push to `main` is verified by SHA-pinned, least-privilege GitHub Actions workflows:
+
+| Workflow | What it verifies |
+| --- | --- |
+| [`ci.yml`](.github/workflows/ci.yml) | Offline/online build, Biome lint/format, `tsc --noEmit`, pinned deps, entry-graph budgets, `install-lock` sync, changelog immutability, full workspace test suites (`coding-agent`, `chord`, `durable`, `other` including Rust `nycode-env` daemon) and MCP conformance |
+| [`ci-static.yml`](.github/workflows/ci-static.yml) | Python (`ruff`, `mypy --strict`, `pytest` + `diff-cover >= 80%`), Shell (`shellcheck`, `shfmt`), Markdown (`markdownlint`), fork seam inventory (`seams 25/25 --strict`), residue/scope gates, structure budgets and mutation checks |
+| [`ci-security.yml`](.github/workflows/ci-security.yml) | Hardened runner (`egress-policy: block`) running `gitleaks`, `trufflehog`, `semgrep`, `osv-scanner`, `actionlint` and `zizmor` |
+| [`codeql.yml`](.github/workflows/codeql.yml) | GitHub CodeQL SAST across `javascript-typescript`, `python` and `actions` |
+| [`dependency-review.yml`](.github/workflows/dependency-review.yml) | GitHub Dependency Review on pull requests (fails on `high`+ advisories) |
+| [`scorecard.yml`](.github/workflows/scorecard.yml) | OpenSSF Scorecard supply-chain score with SARIF upload and published results |
+| [`npm-audit.yml`](.github/workflows/npm-audit.yml) | Daily production dependency audit, `npm audit signatures --omit=dev` and recursive OSV scan |
+| [`publish.yml`](.github/workflows/publish.yml) | Deterministic source archive, 6-platform standalone binaries, cross-OS smoke tests (Linux, macOS, Windows), `SHA256SUMS` and keyless SLSA build-provenance attestations |
+| [`merge-policy.yml`](.github/workflows/merge-policy.yml) | Enforces squash merges for normal PRs and merge commits only for upstream syncs (D-07) |
+
+See [SECURITY.md](SECURITY.md) for the threat model, scope and private vulnerability reporting, and [SUPPORT.md](SUPPORT.md) for where to get help.
+
 ## Supply-chain hardening
 
 We treat npm dependency changes as reviewed code changes.
 
-- Direct external dependencies are pinned to exact versions. Internal workspace packages remain version-ranged.
-- `.npmrc` sets `save-exact=true` and `min-release-age=2` to avoid same-day dependency releases during npm resolution.
+- Direct external and internal workspace dependencies are pinned to exact versions, enforced by `npm run check:pinned-deps`.
+- `.npmrc` sets `save-exact=true` and `min-release-age=2` to avoid same-day dependency releases during npm resolution; `.github/dependabot.yml` applies a 7-day cooldown and groups only `minor`/`patch` npm updates (breaking majors arrive via upstream syncs; security updates stay enabled).
 - `package-lock.json` is the dependency ground truth. Pre-commit blocks accidental lockfile commits unless `NYCODE_ALLOW_LOCKFILE_CHANGE=1` is set.
 - `npm run check` verifies pinned direct deps, native TypeScript import compatibility, and the generated coding-agent install lock.
 - `packages/coding-agent/install-lock/` is generated from the root lockfile to pin transitive dependencies for release installs, and `npm run check` fails when it is out of date. The npm package does not pin transitive dependencies.
