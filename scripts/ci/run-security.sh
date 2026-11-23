@@ -130,8 +130,11 @@ semgrep_scan() {
     mode=rw
     ;;
   esac
+  # GIT_LFS_SKIP_SMUDGE: baseline checkout must not fetch the product binaries. This runner
+  # cannot reach the LFS media host, and a failed smudge makes semgrep exit 2.
   docker run --rm --volume "$src:/src:$mode" --workdir /src \
-    --env SEMGREP_SEND_METRICS=off --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory --env GIT_CONFIG_VALUE_0=/src \
+    --env SEMGREP_SEND_METRICS=off --env GIT_LFS_SKIP_SMUDGE=1 \
+    --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory --env GIT_CONFIG_VALUE_0=/src \
     "$SEMGREP_IMAGE" semgrep scan --error --metrics=off --disable-version-check --quiet \
     --config p/default --config p/python --config p/typescript --config p/command-injection --config p/github-actions \
     --exclude scripts/fixtures/leak --exclude nycode-arquivo "${args[@]}" . || rc=$?
