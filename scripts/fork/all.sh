@@ -25,7 +25,7 @@ head -1 "$log/rename.log"
 bash "$here/post.sh" .
 # post2.sh repeats the last two seds of post.sh (idempotent); it has no `cd`.
 bash "$here/post2.sh"
-npm install --package-lock-only --ignore-scripts >"$log/lock.log" 2>&1 || {
+node "$here/update-lock.mjs" >"$log/lock.log" 2>&1 || {
   tail -20 "$log/lock.log" >&2
   exit 1
 }

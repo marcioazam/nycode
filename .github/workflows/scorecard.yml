@@ -27,6 +27,7 @@ jobs:
       id-token: write # sign the results published to the OpenSSF API
     steps:
       - name: Checkout
+        # LFS stays off. This job reads the git objects; smudging would put the product binaries back in the tree it scans.
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
