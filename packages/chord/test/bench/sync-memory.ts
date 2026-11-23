@@ -110,17 +110,20 @@ async function connect(url: string): Promise<Inspector> {
 		ws.once("error", reject);
 	});
 	let id = 0;
-	const pending = new Map<number, (value: never) => void>();
+	const pending = new Map<number, { resolve: (value: never) => void }>();
 	ws.on("message", (raw) => {
 		const message = JSON.parse(String(raw)) as { id?: number };
-		if (message.id !== undefined) pending.get(message.id)?.(message as never);
-		pending.delete(message.id ?? -1);
+		const slotId = message.id;
+		if (typeof slotId !== "number") return;
+		const slot = pending.get(slotId);
+		if (slot !== undefined) slot.resolve(message as never);
+		pending.delete(slotId);
 	});
 	const inspector: Inspector = {
 		call: (method) =>
 			new Promise((resolve) => {
 				const n = ++id;
-				pending.set(n, resolve as (value: never) => void);
+				pending.set(n, { resolve: resolve as (value: never) => void });
 				ws.send(JSON.stringify({ id: n, method }));
 			}),
 		close: () => ws.close(),

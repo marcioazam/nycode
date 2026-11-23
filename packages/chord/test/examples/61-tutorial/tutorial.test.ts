@@ -30,6 +30,14 @@ type Block = {
 
 const BLOCKS = blocksOf(BOOK);
 
+/** The text of a one-line `<!-- … -->` marker. A regex here is a tag filter that misses a marker with a newline. */
+function markerOf(line: string): string | undefined {
+	const open = "<!-- ";
+	const close = " -->";
+	if (!line.startsWith(open) || !line.endsWith(close) || line.length <= open.length + close.length) return undefined;
+	return line.slice(open.length, -close.length);
+}
+
 /** Every fenced block of `book`, with the `<!-- … -->` marker on the line before its opening fence. */
 function blocksOf(book: string): Block[] {
 	const lines = book.split("\n");
@@ -38,7 +46,7 @@ function blocksOf(book: string): Block[] {
 		const open = /^```(\w*)$/.exec(lines[n]!);
 		if (open === null) continue;
 		const end = lines.indexOf("```", n + 1);
-		const marker = /^<!-- (.+) -->$/.exec(lines[n - 1] ?? "")?.[1];
+		const marker = markerOf(lines[n - 1] ?? "");
 		found.push({ lang: open[1]!, marker, text: lines.slice(n + 1, end).join("\n"), line: n + 1 });
 		n = end;
 	}
