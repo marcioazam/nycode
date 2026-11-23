@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+### New Features
+
+- **Complete built-in terminal UI and themes**: updated `ui` and `ui-visual` with animated header wordmark, `folha`, `chat-margin`, `nycode-claro`/`nycode-escuro`/`nycode-noite` themes, resumed-session divider, and sticky-prompt jump-to-end indicator.
+- **Native TypeScript permission engine by default**: `permissions.engine` now defaults to `"native"` with full rule parity to `guard.py` (orthogonal modes, recursive shell parsing, download-and-execute blocking, `.env.*` and credential protection, `Grep` gating, fail-closed on internal errors), and `graph-context` runs as an internal TypeScript hook with no `python3` required for default hooks.
+- **Native `/restart` and `/update` supervisor**: the core supervises process restarts directly without an external wrapper script.
+- **Embedded harness extensions and `claude-compat`**: added `travar-modelos`, `hook-msgs`, `image-open`, `code-blocks`, `avisos` (pt-BR core notices), `diagnostico`, `comandos`, `ponytail`, `ralph-loop`, `/contexto`, `/cd`, `/focus`, `/color`, Vim editor mode, send-now (`Ctrl+Enter`), and queue management shortcuts.
+
+### Added
+
+- Added the `nycode-claro`, `nycode-escuro` and `nycode-noite` themes, updated `ui` and `ui-visual` with animated header wordmark, `folha`, `chat-margin`, resumed-session divider, and jump-to-end indicator in `sticky-prompt` ([#325](https://github.com/marcioazam/nycode/pull/325), [#326](https://github.com/marcioazam/nycode/pull/326), [#330](https://github.com/marcioazam/nycode/pull/330), [#333](https://github.com/marcioazam/nycode/pull/333), [#354](https://github.com/marcioazam/nycode/pull/354), [#373](https://github.com/marcioazam/nycode/pull/373))
+- Added built-in extensions `travar-modelos`, `hook-msgs`, `image-open`, `code-blocks`, `avisos` (with pt-BR core notices), `diagnostico`, `comandos`, `ponytail` and `ralph-loop` ([#323](https://github.com/marcioazam/nycode/pull/323), [#329](https://github.com/marcioazam/nycode/pull/329), [#334](https://github.com/marcioazam/nycode/pull/334), [#335](https://github.com/marcioazam/nycode/pull/335), [#336](https://github.com/marcioazam/nycode/pull/336), [#339](https://github.com/marcioazam/nycode/pull/339), [#340](https://github.com/marcioazam/nycode/pull/340), [#342](https://github.com/marcioazam/nycode/pull/342))
+- Added full `claude-compat` support: aliases, fleet status, permission slot, Vim editor mode, commands, services, runbooks, lifecycle, interface/UI controls (`/focus`, `/color`) and `/cd` ([#327](https://github.com/marcioazam/nycode/pull/327), [#346](https://github.com/marcioazam/nycode/pull/346), [#348](https://github.com/marcioazam/nycode/pull/348), [#350](https://github.com/marcioazam/nycode/pull/350), [#357](https://github.com/marcioazam/nycode/pull/357))
+- Added `/contexto` per-session compaction token limit, send-now (`Ctrl+Enter`) and queued message keys (`Shift+Up`, `Shift+Down`, `Shift+Backspace`) ([#347](https://github.com/marcioazam/nycode/pull/347), [#356](https://github.com/marcioazam/nycode/pull/356))
+- Added native process supervisor in core for `/restart` and `/update` ([#360](https://github.com/marcioazam/nycode/pull/360))
+- Added full `guard.py` rule parity to the native TypeScript permission engine and added an internal TypeScript hook type with `graph-context` ([#362](https://github.com/marcioazam/nycode/pull/362), [#370](https://github.com/marcioazam/nycode/pull/370))
+- Enabled `web_fetch` and `/puxar` by default, added `local.env` loading at startup, restored the six optional skills to model context, shipped harness scripts under `resources/bin/` (`hud`, `calm` statusline, `nycode-session`, `puxar`, `mcp-header`, `checks`, `evals/harbor`), and merged the wave 9 agents, skills, commands, hooks and settings ([#319](https://github.com/marcioazam/nycode/pull/319), [#321](https://github.com/marcioazam/nycode/pull/321), [#322](https://github.com/marcioazam/nycode/pull/322), [#349](https://github.com/marcioazam/nycode/pull/349), [#351](https://github.com/marcioazam/nycode/pull/351), [#352](https://github.com/marcioazam/nycode/pull/352), [#353](https://github.com/marcioazam/nycode/pull/353), [#359](https://github.com/marcioazam/nycode/pull/359), [#363](https://github.com/marcioazam/nycode/pull/363), [#365](https://github.com/marcioazam/nycode/pull/365))
+- Extended `nycode migrate from-pi` to migrate the personal agent layer (`AGENTS.md`, skills, agents, commands and themes) ([#324](https://github.com/marcioazam/nycode/pull/324))
+
+### Changed
+
+- Changed the default `permissions.engine` from `"script"` to `"native"`; the Python `script` engine remains selectable via settings ([#364](https://github.com/marcioazam/nycode/pull/364))
+- Disabled `impeccable_gate` in default hooks and updated `auto-resume`, `sticky-prompt`, `up-dequeue`, `sound-notify`, `docs-pointer`, `footer`, `syntax-check`, `bash-main-guard`, orthogonal bypass modes and `plan-gate` ([#343](https://github.com/marcioazam/nycode/pull/343), [#344](https://github.com/marcioazam/nycode/pull/344), [#345](https://github.com/marcioazam/nycode/pull/345), [#352](https://github.com/marcioazam/nycode/pull/352))
+
+### Fixed
+
+- Fixed the fullscreen scrollbar cell being omitted on Kitty inline image lines ([#355](https://github.com/marcioazam/nycode/pull/355))
+- Fixed `diagnostico` intercepting console output outside interactive TUI mode so RPC mode preserves runtime diagnostics on stderr ([#342](https://github.com/marcioazam/nycode/pull/342))
+- Fixed the `env` daemon dropping trailing pipe/terminal output after process exit when a reader was not scheduled within the 100 ms grace window ([#382](https://github.com/marcioazam/nycode/pull/382))
+
 ## [2.0.0] - 2026-11-21
 
 ### Breaking Changes

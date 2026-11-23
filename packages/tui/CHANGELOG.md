@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added `isImageLine()` helper to detect inline terminal image lines ([#330](https://github.com/marcioazam/nycode/pull/330))
+- Added `Editor.runEditorAction()` and `Editor.withUndoGroup()` for modal editing extensions such as Vim mode ([#332](https://github.com/marcioazam/nycode/pull/332))
+- Added `TuiAltScreen` scroll-position hooks to support the jump-to-end indicator in `sticky-prompt` ([#373](https://github.com/marcioazam/nycode/pull/373))
+
+### Fixed
+
+- Fixed the fullscreen scrollbar cell being omitted on Kitty inline image lines ([#355](https://github.com/marcioazam/nycode/pull/355))
+
 ## [2.0.0] - 2026-11-21
 
 ### Fixed
