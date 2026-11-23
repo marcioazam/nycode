@@ -1,30 +1,30 @@
 ---
-description: Configura o claude-hud como statusLine do nycode (segmento no rodapé), reaproveitando a instalação do plugin do Claude Code
+description: Configura o claude-hud como statusLine do nycode (segmento no rodapé), a partir do plugin em ~/.nycode/agent/plugins/cache
 allowed-tools: Bash, Read, AskUserQuestion
 disable-model-invocation: true
 ---
 
 <!-- Porte para o nycode (2026-11-11) do /claude-hud:setup (claude-hud 0.10.0). O nycode honra o `statusLine` do
-~/.nycode/agent/settings.json, mas não instala plugins do Claude Code: o launcher do nycode
-(${NYCODE_RESOURCES}/statusline/claude-hud-statusline.mjs) acha o claude-hud nos caches de ~/.claude*. Testado em 2026-11-11: o HUD
+~/.nycode/agent/settings.json; o launcher do nycode
+(${NYCODE_RESOURCES}/statusline/claude-hud-statusline.mjs) acha o claude-hud só em ~/.nycode/agent/plugins/cache (D-62). Testado em 2026-11-11: o HUD
 roda com o payload do nycode; com 2+ linhas o nycode as mostra acima do rodapé; o launcher traduz a sessão do nycode para o
 formato de transcript do Claude (${NYCODE_RESOURCES}/statusline/claude-hud-nycode-transcript.mjs), então as linhas de atividade (tools,
 agents, todos, skills, MCP) funcionam. -->
 
-Configure o claude-hud como status line do nycode. Nada aqui mexe no `~/.claude`: a config do nycode fica em
+Configure o claude-hud como status line do nycode. Tudo fica no diretório do nycode: a config fica em
 `${NYCODE_RESOURCES}`.
 
 ## Passo 1: runtime e instalação
 
 ```bash
-command -v node; ls -d ~/.claude*/plugins/cache/*/claude-hud/*/scripts/setup.mjs 2>/dev/null | awk -F/ '{print $(NF-2) "\t" \$0}' | sort -V | tail -1 | cut -f2
+command -v node; ls -d ~/.nycode/agent/plugins/cache/*/claude-hud/*/scripts/setup.mjs 2>/dev/null | awk -F/ '{print $(NF-2) "\t" \$0}' | sort -V | tail -1 | cut -f2
 ```
 
 - Sem `node`: pare e diga que o nycode precisa do Node.js no PATH para rodar o HUD (Node LTS em <https://nodejs.org>).
-- Sem `setup.mjs`: pare e diga que o claude-hud não está instalado em nenhum perfil do Claude Code; instale lá com
-  `/plugin install claude-hud` e rode `/claude-hud-setup` de novo.
+- Sem `setup.mjs`: pare e diga que o claude-hud não está em `~/.nycode/agent/plugins/cache/<marketplace>/claude-hud/<versão>/`;
+  o renderer padrão (`calm`) não precisa dele. Com o plugin copiado para lá, rode `/claude-hud-setup` de novo.
 
-A saída é `{RUNTIME}` (primeira linha) e `{SETUP}` (segunda: o `setup.mjs` da versão mais nova entre todos os perfis).
+A saída é `{RUNTIME}` (primeira linha) e `{SETUP}` (segunda: o `setup.mjs` da versão mais nova).
 
 ## Passo 2: inspecionar a config atual
 

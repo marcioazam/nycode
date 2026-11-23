@@ -183,7 +183,7 @@ export function tasksStatusText(runs: ReadonlyArray<BackgroundRunView>): string 
  * lets a later source win a name clash. */
 const AGENT_SOURCE_ORDER: ReadonlyArray<AgentSource> = ["builtin", "plugin", "user", "project"];
 
-const AGENTS_DIR_HINT = "Add agents as markdown files under ~/.claude/agents (user) or .claude/agents (project).";
+const AGENTS_DIR_HINT = "Add agents as markdown files under ~/.nycode/agent/agents (user) or .nycode/agents (project).";
 
 /** The /agents listing: the discovered roster grouped by source, with file paths.
  * A pure formatter so it tests against a sample roster. */

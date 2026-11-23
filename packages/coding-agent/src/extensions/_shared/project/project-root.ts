@@ -11,6 +11,7 @@
  */
 
 import * as fs from "node:fs";
+import * as os from "node:os";
 import * as path from "node:path";
 
 /** The project root marker. `.git` is a file in worktrees and submodules, a directory
@@ -39,8 +40,8 @@ export function checkoutRoot(from: string): string {
 }
 
 /** Whether two paths are the same file or directory once symlinks resolve. A session at
- * `$HOME` finds the user's own `~/.claude/{rules,agents,CLAUDE.md}` as its "project" ones;
- * comparing by realpath also catches a stow-style symlinked `~/.claude`. */
+ * `$HOME` is compared with the user config directory; comparing by realpath also catches a
+ * stow-style symlinked directory. */
 export function sameLocation(a: string, b: string): boolean {
 	const resolve = (target: string): string => {
 		try {
@@ -120,6 +121,17 @@ function pointsBackAt(worktreeDir: string, dotGit: string): boolean {
 	}
 }
 
+/** D-62: the home directory is never a project, so a walk that reaches it (a session started there, or a dotfiles
+ * repository rooted there) finds no project configuration in it; the user scope is the nycode agent directory. */
+export function isHome(dir: string): boolean {
+	return path.resolve(dir) === path.resolve(os.homedir());
+}
+
+/** The stat of `relative` under `dir` for a project walk, null when absent or when `dir` is the home directory. */
+function projectStat(dir: string, relative: string): fs.Stats | null {
+	return isHome(dir) ? null : statOf(path.join(dir, relative));
+}
+
 function statOf(target: string): fs.Stats | null {
 	try {
 		return fs.statSync(target);
@@ -132,9 +144,8 @@ function findNearest(cwd: string, relative: string, wantDir: boolean): string | 
 	const boundary = gitRoot(cwd) ?? cwd;
 	let currentDir = cwd;
 	while (true) {
-		const candidate = path.join(currentDir, relative);
-		const stat = statOf(candidate);
-		if (stat && (wantDir ? stat.isDirectory() : stat.isFile())) return candidate;
+		const stat = projectStat(currentDir, relative);
+		if (stat && (wantDir ? stat.isDirectory() : stat.isFile())) return path.join(currentDir, relative);
 
 		if (currentDir === boundary) return null;
 		const parentDir = path.dirname(currentDir);
@@ -161,8 +172,7 @@ export function ancestorDirs(cwd: string, relative: string): string[] {
 	const found: string[] = [];
 	let currentDir = cwd;
 	while (true) {
-		const candidate = path.join(currentDir, relative);
-		if (statOf(candidate)?.isDirectory()) found.push(candidate);
+		if (projectStat(currentDir, relative)?.isDirectory()) found.push(path.join(currentDir, relative));
 		if (currentDir === boundary) break;
 		const parentDir = path.dirname(currentDir);
 		if (parentDir === currentDir) break;
@@ -178,8 +188,7 @@ export function ancestorFiles(cwd: string, relative: string): string[] {
 	const found: string[] = [];
 	let currentDir = cwd;
 	while (true) {
-		const candidate = path.join(currentDir, relative);
-		if (statOf(candidate)?.isFile()) found.push(candidate);
+		if (projectStat(currentDir, relative)?.isFile()) found.push(path.join(currentDir, relative));
 		if (currentDir === boundary) break;
 		const parentDir = path.dirname(currentDir);
 		if (parentDir === currentDir) break;

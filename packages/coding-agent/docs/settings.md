@@ -237,17 +237,17 @@ To turn hooks off or replace them:
   the exception: with `permissions.engine` `"script"` the guard always runs, and the entries of the user's or the
   project's `settings.json` add to it. Only the global `~/.nycode/agent/settings.json` can drop the guard, with
   `"hooks": { "PreToolUse": [] }`; nycode then warns once per session. The same entry in a project file does nothing.
-- Every hook: set `"disableAllHooks": true` in a Claude settings file. In `~/.claude/settings.json` (or the
-  `--settings` file) it turns every hook off, the guard included. In the project's `.claude/settings.json` or
-  `settings.local.json` it turns the other hooks off and the guard keeps running.
+- Every hook: set `"disableAllHooks": true`. In `~/.nycode/agent/settings.json` (or the `--settings` file) it turns
+  every hook off, the guard included. In the project's `.claude/settings.json` or `settings.local.json` it turns the
+  other hooks off and the guard keeps running.
 
 The ralph-loop `Stop` hook is embedded and runs before the impeccable gate; the `ponytail` variables (`PONYTAIL_QUIET_STARTUP`,
 `PONYTAIL_SUBAGENT_MATCHER`) are in the default `env`. See [Optional Packages](optional-packages.md#embedded-ponytail-and-ralph-loop).
 
 The default `statusLine` runs `node "${NYCODE_RESOURCES}/statusline/statusline.mjs"`, the claude-hud launcher. It prints
-nothing until the claude-hud plugin is installed in a Claude Code profile (`/claude-hud-setup`), and then the built-in
-footer segment is all that shows. A `statusLine` in a Claude settings file replaces the default, and one in nycode's
-`settings.json` replaces both. `"statusLine": { "type": "command", "command": "" }` turns it off.
+the built-in `calm` HUD; the claude-hud renderer (`"renderer": "claude-hud"`) is looked up only under
+`~/.nycode/agent/plugins/cache` (`/claude-hud-setup`). A `statusLine` in a project settings file replaces the default,
+and one in nycode's `settings.json` replaces both. `"statusLine": { "type": "command", "command": "" }` turns it off.
 
 ## Updates, telemetry, and warnings
 

@@ -7,6 +7,8 @@
 
 # Nycode
 
+Nycode is in beta. The latest GitHub Release is the current beta.
+
 Nycode is a minimal, extensible agent harness that you can make your own.
 
 Adapt Nycode to your workflows, not the other way around. Customize Nycode with [extensions](docs/extensions.md), [skills](docs/skills.md), [prompt templates](docs/prompt-templates.md), and [themes](docs/themes.md). Bundle them as [Nycode packages](docs/packages.md) and share via npm or git.

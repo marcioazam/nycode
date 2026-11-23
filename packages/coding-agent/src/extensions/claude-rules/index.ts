@@ -3,7 +3,7 @@
  *
  * Replicates Claude Code's rules loading:
  * - Unscoped rules are inlined in full into the system prompt, global
- *   (~/.claude/rules/*.md) and approved-project (.claude/rules/*.md) alike:
+ *   (~/.nycode/agent/rules/*.md) and approved-project (.claude/rules/*.md) alike:
  *   Claude loads rules without `paths:` frontmatter at launch with the same
  *   priority as .claude/CLAUDE.md. Where the runtime builds the prompt from its
  *   options they go in as context files, one per rule file, so a provider that
@@ -30,7 +30,7 @@ import { isProjectApproved } from "../_shared/project/project-approval.ts";
 import { findNearestDir, sameLocation } from "../_shared/project/project-root.ts";
 import { type CompiledGlob, compileGlobs, matchesCompiledGlobs } from "../_shared/rules/path-rules.ts";
 import { fileToolTarget } from "../_shared/rules/tool-target.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { stripBlockComments } from "../_shared/shell/strip-comments.ts";
 import { realpathOr } from "../_shared/util/values.ts";
@@ -370,7 +370,7 @@ function rulesDisabled(): boolean {
 /** The project rules directory, or null when the project is not approved. Nearest
  * at-or-above cwd, so a subdirectory session still reads the rules the approval walk
  * gated on. Not the user's own rules dir: from $HOME (or under a dotfiles repo rooted
- * there) the nearest one is ~/.claude/rules, which the global load already read. */
+ * there) the nearest one is the home directory's, which is never a project (D-62). */
 function projectRulesDirFor(cwd: string, approved: boolean, globalRulesDir: string): string | null {
 	const nearestRulesDir = approved ? findNearestDir(cwd, path.join(".claude", "rules")) : null;
 	return nearestRulesDir !== null && sameLocation(nearestRulesDir, globalRulesDir) ? null : nearestRulesDir;
@@ -438,7 +438,7 @@ export default function claudeRulesExtension(nycode: ExtensionAPI) {
 	setBuiltinInstructions(true);
 	// Same load point: every process (interactive, print, child subagents, which inherit the env) loads this extension
 	exportResourcesRoot();
-	const globalRulesDir = path.join(claudeConfigDir(os.homedir()), "rules");
+	const globalRulesDir = path.join(userConfigDir(), "rules");
 	const globalRulesBase = userRulesBase(globalRulesDir, os.homedir());
 	let rules: PromptRules = NO_PROMPT_RULES;
 	// Scoped rules still awaiting a matching touch. An attached rule leaves the

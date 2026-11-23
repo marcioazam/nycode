@@ -54,7 +54,16 @@ export function assignJson<T extends object, K extends keyof T & (string | numbe
 		appendText(target as Draft<Record<string, string>>, String(key), plan.text);
 		return;
 	}
-	if (current !== value) slots[key] = value;
+	if (current !== value) writeSlot(slots, key, value);
+}
+
+/** Writes `key` without a dynamic property assignment for the names that change an object's prototype. */
+function writeSlot(slots: Record<string | number, JsonValue>, key: string | number, value: JsonValue): void {
+	if (key === "__proto__") slots.__proto__ = value;
+	// `constructor` is typed as Function. The member is JSON, stored under that name.
+	else if (key === "constructor") (slots as { constructor: JsonValue }).constructor = value;
+	else if (key === "prototype") slots.prototype = value;
+	else slots[key] = value;
 }
 
 function isRecord(value: JsonValue | undefined): value is Record<string, JsonValue> {

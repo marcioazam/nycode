@@ -12,7 +12,7 @@
  *
  * It also loads the Claude Code memory locations nycode's own loader misses, each
  * through the same exclude/strip/announce/import pipeline: the user-scope
- * ~/.claude/CLAUDE.md (the user's own file, no approval gate, @imports at
+ * ~/.nycode/agent/CLAUDE.md (the user's own file, no approval gate, @imports at
  * user-config roots), the project-scope alternate ./.claude/CLAUDE.md (nearest at
  * or above cwd, approval-gated, deduped against nycode's native blocks, @imports at
  * project roots), and the enterprise managed CLAUDE.md file deployed beside
@@ -37,7 +37,7 @@
  *
  * Security: context files can come from an untrusted project, so imports are
  * confined (after resolving symlinks) to the working directory plus its
- * repository root, and for user-config importers the user's own ~/.claude and
+ * repository root, and for user-config importers the user's own ~/.nycode/agent and
  * ~/.pi config roots. An import that escapes those roots (absolute paths,
  * ~/.ssh, ../.. traversal, symlinks) is ignored, so a hostile CLAUDE.md, or a
  * home-level context file whose own directory is $HOME, cannot read arbitrary
@@ -71,6 +71,7 @@
  */
 
 import { createHash } from "node:crypto";
+import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
@@ -79,6 +80,7 @@ import {
 	memoryTypeForPath,
 	publishInstructionLoad,
 } from "../_shared/events/instruction-events.ts";
+import { AGENTS_FILE_NAMES } from "../_shared/project/context-files.ts";
 import {
 	externalImportDecision,
 	externalImportKey,
@@ -92,7 +94,7 @@ import {
 import { ancestorFiles, checkoutRoot, findNearestFile, sameLocation } from "../_shared/project/project-root.ts";
 import { fileToolTarget } from "../_shared/rules/tool-target.ts";
 import { ADD_DIR_FLAG, ADD_DIR_FLAG_OPTIONS, setAddDirReader } from "../_shared/seams/add-dir-flag.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { stripBlockComments } from "../_shared/shell/strip-comments.ts";
 import { statToken } from "../_shared/util/stat-token.ts";
@@ -165,7 +167,7 @@ function buildImportMemoKey(input: {
 
 export default function contextImportsExtension(nycode: ExtensionAPI) {
 	let localContexts: Array<{ path: string; content: string }> = [];
-	// ~/.claude/CLAUDE.md, Claude's user-scope memory (all projects). The user's own
+	// ~/.nycode/agent/CLAUDE.md, the user-scope memory (all projects). The user's own
 	// file, so it needs no project approval; read once at session start like the
 	// locals, so a mid-session body edit applies next session, matching Claude.
 	let userContext: { path: string; content: string } | undefined;
@@ -318,10 +320,13 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 	}> {
 		if (process.env.CLAUDE_CODE_DISABLE_CLAUDE_MDS === "1") return { localContexts: [] };
 
-		// ~/.claude/CLAUDE.md, Claude's user-scope memory. The user's own file, so no
+		// ~/.nycode/agent/CLAUDE.md, the user-scope memory. The user's own file, so no
 		// project approval is required; a missing file simply leaves it unset.
-		const userClaudeMd = path.join(claudeConfigDir(os.homedir()), "CLAUDE.md");
-		const userContent = readContextFile(userClaudeMd);
+		const userClaudeMd = path.join(userConfigDir(), "CLAUDE.md");
+		// The user config directory is nycode's agent directory (D-62), whose context file nycode loads itself: without
+		// an AGENTS file there, that file is this CLAUDE.md, and a second block would repeat it.
+		const nativeLoadsIt = ![...AGENTS_FILE_NAMES].some((name) => fs.existsSync(path.join(userConfigDir(), name)));
+		const userContent = nativeLoadsIt ? undefined : readContextFile(userClaudeMd);
 		const memory: {
 			userContext?: { path: string; content: string };
 			localContexts: Array<{ path: string; content: string }>;
@@ -341,7 +346,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 		const candidates = ancestorFiles(ctx.cwd, "CLAUDE.local.md");
 		const nearestDotClaudeMd = findNearestFile(ctx.cwd, path.join(".claude", "CLAUDE.md"));
 		// From $HOME (or under a dotfiles repo rooted there) the nearest one is the user's own
-		// ~/.claude/CLAUDE.md, already loaded above as User memory: not a project file, so no
+		// ~/.nycode/agent/CLAUDE.md, already loaded above as User memory: not a project file, so no
 		// second block and nothing to approve.
 		const dotClaudeMd =
 			nearestDotClaudeMd !== null && sameLocation(nearestDotClaudeMd, userClaudeMd) ? null : nearestDotClaudeMd;
@@ -535,7 +540,7 @@ export default function contextImportsExtension(nycode: ExtensionAPI) {
 				extras,
 				imported,
 			},
-			{ config: claudeConfigDir(home), cwd },
+			{ config: userConfigDir(), cwd },
 		);
 		if (deliverThroughOptions(event, entries, memoryNotices(budget, refusedNotice))) return;
 		if (!changed && addition.length === 0) return;

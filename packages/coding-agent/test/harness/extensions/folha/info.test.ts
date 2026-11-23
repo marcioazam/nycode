@@ -30,7 +30,7 @@ const MEMORY = [
 ].join("\n");
 // subagent/registry-text.ts:151 agentsListText
 const AGENTS =
-	"builtin:\n  Explore - /opt/nycode/agents/Explore.md\nuser:\n  swarm-worker - /home/u/.claude/agents/swarm-worker.md\n  gate-runner - /home/u/.claude/agents/gate-runner.md\nproject:\n  local - /srv/app/.claude/agents/local.md\n\nAdd agents as markdown files under ~/.claude/agents (user) or .claude/agents (project).";
+	"builtin:\n  Explore - /opt/nycode/agents/Explore.md\nuser:\n  swarm-worker - /home/u/.claude/agents/swarm-worker.md\n  gate-runner - /home/u/.claude/agents/gate-runner.md\nproject:\n  local - /srv/app/.claude/agents/local.md\n\nAdd agents as markdown files under ~/.nycode/agent/agents (user) or .nycode/agents (project).";
 // hooks/config.ts:351 formatHooksSummary
 const HOOKS =
 	"PreToolUse:\n  [Bash] command: guard.py (/home/u/.claude/settings.json)\n  [.*] command: log.sh\nStop:\n  [*] http: https://x.test/h";
@@ -106,8 +106,8 @@ test("fora do formato → undefined", () => {
 		"Context usage: recalculating the token count (e.g. right after a compaction).",
 		"Context usage\n  Used:   x tokens",
 		"Memory\n  qualquer coisa",
-		"No agents discovered.\nAdd agents as markdown files under ~/.claude/agents (user) or .claude/agents (project).",
-		'No hooks configured. Add a "hooks" section to ~/.claude/settings.json or .claude/settings.json.',
+		"No agents discovered.\nAdd agents as markdown files under ~/.nycode/agent/agents (user) or .nycode/agents (project).",
+		'No hooks configured. Add a "hooks" section to ~/.nycode/agent/settings.json or .claude/settings.json.',
 		"Nota:\ntexto livre\noutro",
 		"Context usage\n  Used:   4,800 tokens\nsobra",
 	])

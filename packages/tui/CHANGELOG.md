@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed subscript and superscript normalization so a long run of spaces cannot make the scan take polynomial time
+
 ## [2.0.2] - 2026-11-23
 
 ## [2.0.1] - 2026-11-23

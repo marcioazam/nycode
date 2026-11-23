@@ -5,7 +5,7 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CONFIG_DIR_NAME, getAgentDir, getBuiltinAgentsDir } from "../../../config.ts";
+import { CONFIG_DIR_NAME, getBuiltinAgentsDir } from "../../../config.ts";
 import { builtinResourceDir, resolveResourcesMarker } from "../../../core/builtin-resources.ts";
 import { stripFrontmatter } from "../../../utils/frontmatter.ts";
 // The same mapping a command's `allowed-tools` gets: an agent's `tools:` is the same
@@ -14,9 +14,9 @@ import { stripFrontmatter } from "../../../utils/frontmatter.ts";
 import { coerceGrantItems, parseToolGrants } from "../../_shared/commands/command-file.ts";
 import { parseClaudeFrontmatter } from "../../_shared/commands/frontmatter.ts";
 import { findModel } from "../../_shared/model/model-lookup.ts";
-import { ancestorDirs, findNearestDir, sameLocation } from "../../_shared/project/project-root.ts";
+import { ancestorDirs, findNearestDir } from "../../_shared/project/project-root.ts";
 import { sharedSlot } from "../../_shared/seams/shared-slot.ts";
-import { claudeConfigDir } from "../../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../../_shared/settings/config-dir.ts";
 import { installedPlugins, pluginComponentPath } from "../../_shared/settings/plugins.ts";
 import { errorMessage } from "../../_shared/util/values.ts";
 
@@ -462,22 +462,16 @@ function pluginAgentDirs(home: string): Array<{ dir: string; pluginName: string 
 }
 
 export function discoverAgents(cwd: string, scope: AgentScope): AgentDiscoveryResult {
-	const userDir = path.join(getAgentDir(), "agents");
-	const claudeUserDir = path.join(claudeConfigDir(os.homedir()), "agents");
+	const userDir = path.join(userConfigDir(), "agents");
 	const projectNycodeDir = findNearestDir(cwd, path.join(CONFIG_DIR_NAME, "agents"));
 	const resourceAgentsDir = builtinResourceDir("agents");
 	// Claude scans every .claude/agents between cwd and the repository root, the
 	// definition closest to cwd winning a name clash; root-first load order makes
 	// the nearer directory's entry overwrite in the map below.
-	// The user's own directory is not a project one: at $HOME, or under a dotfiles repo
-	// rooted there, the walk reaches ~/.claude/agents and would gate the user's agents as
-	// repo-controlled.
-	const projectClaudeDirs = ancestorDirs(cwd, path.join(".claude", "agents"))
-		.filter((dir) => !sameLocation(dir, claudeUserDir))
-		.reverse();
+	const projectClaudeDirs = ancestorDirs(cwd, path.join(".claude", "agents")).reverse();
 
 	// Plugins load after builtins and before the user's own dirs, so a user agent
-	// wins a name clash with a plugin's, and ~/.nycode/agent/agents wins over ~/.claude.
+	// wins a name clash with a plugin's.
 	const userAgents =
 		scope === "project"
 			? []
@@ -488,7 +482,6 @@ export function discoverAgents(cwd: string, scope: AgentScope): AgentDiscoveryRe
 					...pluginAgentDirs(os.homedir()).flatMap((entry) =>
 						loadAgentsFromDir(entry.dir, "plugin", entry.pluginName),
 					),
-					...loadAgentsFromDir(claudeUserDir, "user"),
 					...loadAgentsFromDir(userDir, "user"),
 				];
 	// project .claude/agents loads first so project .nycode/agents wins on name conflicts

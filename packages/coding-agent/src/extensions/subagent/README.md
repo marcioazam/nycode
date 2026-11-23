@@ -53,7 +53,7 @@ This tool executes a separate `nycode` subprocess with a delegated system prompt
 
 **Project-local agents** (`.nycode/agents/*.md`) are repo-controlled prompts that can instruct the model to read files, run bash commands, etc.
 
-**Default behavior:** Loads the bundled builtin agents (Explore, Plan, general-purpose) plus **user-level agents** from `~/.claude/agents` and `~/.nycode/agent/agents`. A user or project agent with the same name overrides a builtin. Discovered agents and their descriptions are listed in the system prompt each turn, so the model can pick one itself; project agent descriptions appear only once the project is approved.
+**Default behavior:** Loads the bundled builtin agents (Explore, Plan, general-purpose) plus **user-level agents** from `~/.nycode/agent/agents`. A user or project agent with the same name overrides a builtin. Discovered agents and their descriptions are listed in the system prompt each turn, so the model can pick one itself; project agent descriptions appear only once the project is approved.
 
 Project-local agents (`.claude/agents`, `.nycode/agents`) load once the project is approved: a default call resolves `agentScope` to `"both"` for an approved project and `"user"` otherwise, and an explicit `agentScope` still narrows or widens it. Every invocation passes the project-agent gate either way.
 
@@ -152,7 +152,7 @@ but does not police commands that navigate back out, which Claude additionally
 enforces per call.
 
 **Locations:**
-- `~/.claude/agents/*.md`, `~/.nycode/agent/agents/*.md` - User-level (always loaded; `~/.nycode` wins a name conflict)
+- `~/.nycode/agent/agents/*.md` - User-level (always loaded)
 - `.claude/agents/*.md`, `.nycode/agents/*.md` - Project-level (an approved project, or an explicit `agentScope` of `"project"`/`"both"`; `.nycode` wins a name conflict)
 
 Project agents override user agents with the same name when both scopes are in play.

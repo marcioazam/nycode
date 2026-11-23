@@ -3,6 +3,8 @@
 This document should guide you about understanding the security concept behind
 Nycode and also where the boundaries are.
 
+Nycode is in beta. The boundaries below apply during beta.
+
 In general Nycode is a coding agent that runs locally within the security boundary
 of the user that is running it.  It's the responsibility of the user to monitor
 its operations or to contain it within a container, virtual machine or other

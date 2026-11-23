@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { CONFIG_DIR_NAME } from "../../config.ts";
 import type { ExtensionContext } from "../../core/extensions/types.ts";
 import { checkoutRoot, repoRoot } from "../_shared/project/project-root.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { type Fence, fenceMarker, stepFence, stripBlockComments } from "../_shared/shell/strip-comments.ts";
 import { realpathOr } from "../_shared/util/values.ts";
 import { sliceBytes } from "../_shared/web/output-guard.ts";
@@ -245,15 +245,15 @@ export function collectImports(
  * A file under the user's own config may import from anywhere: Claude's user-scope memory
  * files "are files you wrote yourself", and it loads their imports without the dialog and
  * trusts them like the rest of the user's configuration. A project file may not, so a cloned
- * repo's `CLAUDE.md` cannot read `~/.claude` (`.credentials.json`, global settings, every
+ * repo's `CLAUDE.md` cannot read the user config directory `~/.nycode/agent` (`.credentials.json`, global settings, every
  * project's transcripts) into the system prompt.
  *
  * "Under the user's config" is judged by the path nycode reported as well as its realpath: a
- * dotfiles manager such as GNU stow links `~/.claude/CLAUDE.md` to a repository, so the
- * real path is outside `~/.claude` although the user put the link there.
+ * dotfiles manager such as GNU stow links `~/.nycode/agent/CLAUDE.md` to a repository, so the
+ * real path is outside `~/.nycode/agent` although the user put the link there.
  */
 export function rootsForImporter(importer: string, home: string, cwd: string, externalApproved = false): string[] {
-	const userConfig = [claudeConfigDir(home), path.join(home, CONFIG_DIR_NAME)];
+	const userConfig = [userConfigDir(), path.join(home, CONFIG_DIR_NAME)];
 	const [real] = realRoots([importer]);
 	const fromUserConfig =
 		isUnder(path.resolve(importer), userConfig) || (real !== undefined && isUnder(real, realRoots(userConfig)));

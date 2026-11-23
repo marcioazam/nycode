@@ -25,6 +25,8 @@ import * as path from "node:path";
 import { CONFIG_DIR_NAME, getAgentDir } from "../../config.ts";
 import { builtinResourceDir } from "../../core/builtin-resources.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
+import { SettingsManager } from "../../core/settings-manager.ts";
+import { resolvePath } from "../../utils/paths.ts";
 import { parseCommandFile } from "../_shared/commands/command-file.ts";
 import { parseClaudeFrontmatter } from "../_shared/commands/frontmatter.ts";
 import { sessionHasTurns, sessionMailbox } from "../_shared/events/session-mailbox.ts";
@@ -32,7 +34,7 @@ import { SKILL_HOOKS_CHANNEL } from "../_shared/events/skill-hooks.ts";
 import { isProjectApprovedSilently } from "../_shared/project/project-approval.ts";
 import { ancestorDirs } from "../_shared/project/project-root.ts";
 import { runAgent } from "../_shared/seams/agent-run.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { managedSettingsFile } from "../_shared/settings/managed-settings.ts";
 import { installedPlugins, pluginComponentPath } from "../_shared/settings/plugins.ts";
 import { claudeSettingsChain, readSettingsChain } from "../_shared/settings/settings-chain.ts";
@@ -62,7 +64,7 @@ export function skillDirs(cwd: string, home: string, trusted: boolean): string[]
 		process.env.CLAUDE_CODE_DISABLE_POLICY_SKILLS === "1"
 			? []
 			: [path.join(path.dirname(managedSettingsFile()), ".claude", "skills")];
-	const candidates = [...enterprise, path.join(claudeConfigDir(home), "skills")];
+	const candidates = [...enterprise, path.join(userConfigDir(), "skills")];
 	// Enabled plugins contribute their skills directories. nycode's loader names a
 	// skill by its directory, so a plugin skill registers without Claude's
 	// /plugin: prefix; a rename-free approximation, disclosed in the README.
@@ -113,6 +115,16 @@ function directSkillName(filePath: string, fallbackName: string): string {
 
 function collectDirectSkillNames(roots: string[], target: Set<string>): void {
 	for (const root of roots) {
+		// A settings.json entry may name one skill (its directory or a .md file) instead of a root of skills.
+		if (root.endsWith(".md") && fs.existsSync(root)) {
+			target.add(directSkillName(root, path.basename(root, ".md")));
+			continue;
+		}
+		const own = skillAt(path.dirname(root), path.basename(root));
+		if (own) {
+			target.add(own.name);
+			continue;
+		}
 		let entries: fs.Dirent[];
 		try {
 			entries = fs.readdirSync(root, { withFileTypes: true });
@@ -187,6 +199,31 @@ export function discoverableSkillPaths(dirs: string[], shadowedRoots: string[] =
 	return paths;
 }
 
+/** What nycode's own loader reads before the paths this extension hands over: the agentDir skill directory, the
+ * project's `.nycode/skills` and `.agents/skills` when trusted, and the plain `skills` entries of the
+ * global and (trusted) project settings.json, resolved as the loader resolves them. A scope whose list carries a
+ * pattern is left out: the pattern may disable an entry, and shadowing a skill nycode did not load would drop the
+ * Claude copy instead of a duplicate. */
+export function shadowingSkillPaths(cwd: string, trusted: boolean): string[] {
+	const home = os.homedir();
+	const settings = SettingsManager.create(cwd, getAgentDir(), { projectTrusted: trusted });
+	const declared = (entries: string[] | undefined, baseDir: string) =>
+		!entries || entries.some((e) => /^[!+-]|[*?]/.test(e))
+			? []
+			: entries.map((e) => resolvePath(e, baseDir, { homeDir: home, trim: true }));
+	return [
+		path.join(getAgentDir(), "skills"),
+		...declared(settings.getGlobalSettings().skills, getAgentDir()),
+		...(trusted
+			? [
+					...ancestorDirs(cwd, path.join(CONFIG_DIR_NAME, "skills")),
+					...ancestorDirs(cwd, path.join(".agents", "skills")),
+					...declared(settings.getProjectSettings().skills, path.join(cwd, CONFIG_DIR_NAME)),
+				]
+			: []),
+	];
+}
+
 interface FoundSkill {
 	filePath: string;
 	baseDir: string;
@@ -244,11 +281,10 @@ export default function skillsExtension(nycode: ExtensionAPI) {
 		// resources_discover fires after session_start, so the approval is already
 		// resolved; reading it silently keeps a second trust dialog off the screen.
 		const trusted = isProjectApprovedSilently(ctx);
-		const shadowed = [
-			path.join(getAgentDir(), "skills"),
-			...(trusted ? ancestorDirs(ctx.cwd, path.join(CONFIG_DIR_NAME, "skills")) : []),
-		];
-		const skillPaths = discoverableSkillPaths(skillDirs(ctx.cwd, os.homedir(), trusted), shadowed);
+		const skillPaths = discoverableSkillPaths(
+			skillDirs(ctx.cwd, os.homedir(), trusted),
+			shadowingSkillPaths(ctx.cwd, trusted),
+		);
 		return skillPaths.length > 0 ? { skillPaths } : undefined;
 	});
 

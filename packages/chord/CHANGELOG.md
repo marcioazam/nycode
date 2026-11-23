@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed plugin install names and stack-position mapping so a long run of `/` or `!` cannot make those scans take polynomial time
+
 ## [2.0.2] - 2026-11-23
 
 ## [2.0.1] - 2026-11-23

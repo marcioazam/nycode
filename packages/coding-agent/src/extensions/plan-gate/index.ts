@@ -1,7 +1,7 @@
 /**
  * Plan gate do nycode: um plano aprovado roda até o fim e fecha com o `plan-reviewer`.
  *
- * Porta de ~/.claude/hooks/plan/plan_gate.py. No Claude, o hook guarda estado em arquivos e lê um ledger de edições;
+ * Porta do hook plan/plan_gate.py do harness. No Claude, o hook guarda estado em arquivos e lê um ledger de edições;
  * no nycode tudo já está no ramo da sessão, então o estado é derivado dele:
  * - aprovação: a última mensagem `plan-mode-execute` (plan-mode, "Execute the plan");
  * - veredito: a linha `PLAN_REVIEW: complete|incomplete` no resultado de um `subagent` que chamou `plan-reviewer`

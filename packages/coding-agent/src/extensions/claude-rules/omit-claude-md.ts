@@ -6,20 +6,14 @@
  */
 
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
-import { getAgentDir } from "../../config.ts";
 import { builtinResourceDir } from "../../core/builtin-resources.ts";
-import { claudeConfigDir } from "../_shared/settings/config-dir.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 
 /** User directories first, the embedded agents last: the first file with the name decides, as in discoverAgents. */
 function agentDirs(): string[] {
 	const embedded = builtinResourceDir("agents");
-	return [
-		path.join(claudeConfigDir(os.homedir()), "agents"),
-		path.join(getAgentDir(), "agents"),
-		...(embedded ? [embedded] : []),
-	];
+	return [path.join(userConfigDir(), "agents"), ...(embedded ? [embedded] : [])];
 }
 
 /** The name (sanitized as the subagent tool does) of the agent this child process runs, or undefined. */

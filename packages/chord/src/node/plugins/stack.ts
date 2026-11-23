@@ -58,7 +58,7 @@ const SOURCE_MAP = /\/\/# sourceMappingURL=data:application\/json;base64,([A-Za-
 export function mapStack(error: unknown): string {
 	const stack = error instanceof Error ? error.stack : undefined;
 	if (stack === undefined) return String(error);
-	return stack.replace(POSITION, (whole, filename: string, line: string, column: string) => {
+	return rewritePositions(stack, (filename, line, column, whole) => {
 		const script = scripts.get(filename);
 		if (script === undefined) return whole;
 		const entry = mapOf(script)?.findEntry(Number(line) - 1, Number(column) - 1);
@@ -75,5 +75,71 @@ function mapOf(script: Registered): SourceMap | undefined {
 	return script.map.map;
 }
 
-/** A position in a stack line: `filename:line:column`, the filename being anything up to it (spaces included). */
-const POSITION = /([^\s()]+):(\d+):(\d+)/g;
+/**
+ * Rewrites each `filename:line:column` in `stack`. The filename is a run without spaces or parentheses.
+ * A regex for that shape backtracks on a long run of `!`.
+ */
+function rewritePositions(
+	stack: string,
+	replace: (filename: string, line: string, column: string, whole: string) => string,
+): string {
+	let result = "";
+	let index = 0;
+	while (index < stack.length) {
+		if (isStackBreak(stack[index]!)) {
+			result += stack[index];
+			index++;
+			continue;
+		}
+		const start = index;
+		while (index < stack.length && !isStackBreak(stack[index]!)) index++;
+		result += rewriteToken(stack.slice(start, index), replace);
+	}
+	return result;
+}
+
+function rewriteToken(
+	token: string,
+	replace: (filename: string, line: string, column: string, whole: string) => string,
+): string {
+	let colon = -1;
+	let line = "";
+	let column = "";
+	let end = 0;
+	for (let index = 1; index < token.length; index++) {
+		if (token[index] !== ":") continue;
+		let cursor = index + 1;
+		const lineStart = cursor;
+		while (cursor < token.length && isStackDigit(token[cursor]!)) cursor++;
+		if (cursor === lineStart || token[cursor] !== ":") continue;
+		const lineEnd = cursor;
+		cursor++;
+		const columnStart = cursor;
+		while (cursor < token.length && isStackDigit(token[cursor]!)) cursor++;
+		if (cursor === columnStart) continue;
+		colon = index;
+		line = token.slice(lineStart, lineEnd);
+		column = token.slice(columnStart, cursor);
+		end = cursor;
+	}
+	if (colon < 0) return token;
+	const whole = token.slice(0, end);
+	return replace(token.slice(0, colon), line, column, whole) + token.slice(end);
+}
+
+function isStackBreak(character: string): boolean {
+	return (
+		character === " " ||
+		character === "\t" ||
+		character === "\n" ||
+		character === "\r" ||
+		character === "\f" ||
+		character === "\v" ||
+		character === "(" ||
+		character === ")"
+	);
+}
+
+function isStackDigit(character: string): boolean {
+	return character >= "0" && character <= "9";
+}

@@ -14,7 +14,9 @@ import { fleetTestEnv } from "../subagent/fleet-env.ts";
 
 const { tmp } = fleetTestEnv("interactive-display-assembled-");
 const home = join(tmp, "home");
-mkdirSync(join(home, ".claude"), { recursive: true });
+const agentDir = join(home, ".nycode", "agent");
+process.env.NYCODE_CODING_AGENT_DIR = agentDir;
+mkdirSync(agentDir, { recursive: true });
 process.env.HOME = home;
 delete process.env.NYCODE_SUBAGENT;
 process.env.NO_COLOR = ""; // palette keeps color codes: ANSI correctness is part of the check
@@ -57,7 +59,7 @@ const rec = (over: Record<string, unknown> = {}) =>
 /** Boots both extensions in registration order (fleet, then status line) on a fake host. */
 async function boot(command: string | undefined, records: any[]) {
 	writeFileSync(
-		join(home, ".claude", "settings.json"),
+		join(agentDir, "settings.json"),
 		JSON.stringify(command ? { statusLine: { type: "command", command } } : {}),
 	);
 	const handlers = new Map<string, Array<(e: any, c: any) => void>>();

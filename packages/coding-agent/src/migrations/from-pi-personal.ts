@@ -1,9 +1,9 @@
-// The personal layer of `nycode migrate from-pi` (D-55): AGENTS.md, subagent routing, themes, the claude-home skills,
+// The personal layer of `nycode migrate from-pi` (D-55, D-62): AGENTS.md with the claude-home overlay, subagent routing, themes, the claude-home skills,
 // agents and commands the package does not embed, and the personal conta.ts extension. Everything is copied by content
 // (symlinks are resolved) and never over an existing destination file: that entry is `keep` with the reason in its label.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, extname, join } from "node:path";
-import { builtinResourceDir } from "../core/builtin-resources.ts";
+import { builtinResourceDir, RESOURCES_MARKER } from "../core/builtin-resources.ts";
 import { parsePolicy } from "../extensions/subagent/routing/policy.ts";
 import { NYCODE_THEME_NAMES } from "../modes/interactive/theme/nycode-themes.ts";
 import type { PlanFile } from "./from-pi-plan.ts";
@@ -24,6 +24,10 @@ const CONTA_REPLACEMENTS: [RegExp, string][] = [
 	[/@earendil-works\/pi-coding-agent/g, "@nycode/coding-agent"],
 	[/PI_CODING_AGENT_DIR/g, "NYCODE_CODING_AGENT_DIR"],
 	[/'\.pi', 'agent'/g, "'.nycode', 'agent'"],
+	[/sem sair do pi\b/g, "sem sair do nycode"],
+	[/AuthStorage do pi\b/g, "AuthStorage do nycode"],
+	// The pi-conta helper rewrites $PI_CODING_AGENT_DIR/auth.json and defaults to ~/.pi/agent: point it at nycode's dir.
+	[/pi\.exec\(BIN, cmd, \{/g, `pi.exec('env', [\`PI_CODING_AGENT_DIR=\${path.dirname(DIR)}\`, BIN, ...cmd], {`],
 ];
 
 export interface PersonalSink {
@@ -93,9 +97,38 @@ function embeddedNames(kind: "skills" | "agents" | "commands"): Set<string> {
 	);
 }
 
+/** The harness overlay (`claude-home/rules/personal.md`) in nycode's names: the contract places it in the agent
+ * directory's AGENTS.md, and its paths name the agent directory and the embedded resources instead of `~/.pi`. */
+function convertOverlay(text: string): string {
+	const embeddedSkills = embeddedNames("skills");
+	return text
+		.replace(/~\/\.pi\/agent\/claude-home\/skills\/([\w.-]+)/g, (_m, name: string) =>
+			embeddedSkills.has(name) ? `${RESOURCES_MARKER}/skills/${name}` : `~/.nycode/agent/skills/${name}`,
+		)
+		.replace(/~\/\.pi\/agent\/claude-home\/bin\/|~\/\.claude\/bin\//g, `${RESOURCES_MARKER}/bin/`)
+		.replace(/~\/\.pi\/agent\//g, "~/.nycode/agent/")
+		.replace(/(^|[\s`(])rules-ref\//g, `$1${RESOURCES_MARKER}/rules/ref/`)
+		.replace(/(^|[\s`(])rules\/safety\.md/g, `$1${RESOURCES_MARKER}/rules/safety.md`)
+		.replace(/\bPI_([A-Z][A-Z0-9_]*)/g, "NYCODE_$1")
+		.replace(/`pi (--?[a-z])/g, "`nycode $1")
+		.replace(/\bpi package\b/g, "nycode package")
+		.replace(/`claude-home\/rules\/personal\.md`/g, "`~/.nycode/agent/AGENTS.md`");
+}
+
 function addRootFiles(source: string, sink: PersonalSink): void {
-	if (kindOf(join(source, "AGENTS.md")) === "file") {
-		push(sink, { rel: "AGENTS.md", label: "agent instructions", from: join(source, "AGENTS.md") });
+	const agents = join(source, "AGENTS.md");
+	const overlay = join(source, "claude-home", "rules", "personal.md");
+	const hasAgents = kindOf(agents) === "file";
+	if (kindOf(overlay) === "file") {
+		const head = hasAgents ? `${readFileSync(agents, "utf8").trimEnd()}\n\n` : "";
+		push(sink, {
+			rel: "AGENTS.md",
+			label: `agent instructions${hasAgents ? " with" : " from"} claude-home/rules/personal.md; pi names converted`,
+			from: overlay,
+			data: head + convertOverlay(readFileSync(overlay, "utf8")),
+		});
+	} else if (hasAgents) {
+		push(sink, { rel: "AGENTS.md", label: "agent instructions", from: agents });
 	}
 	const routing = join(source, "subagent-routing.json");
 	if (kindOf(routing) === "file") {

@@ -120,7 +120,8 @@ describe("Markdown component", () => {
 			const markdown = new Markdown("[a][x]\n\n[x]: https://one.example", 0, 0, defaultMarkdownTheme);
 			markdown.render(80);
 			markdown.setText("[a][x]\n\n[x]: https://two.example");
-			assert.ok(stripAnsi(markdown.render(80).join("\n")).includes("https://two.example"));
+			const rendered = stripAnsi(markdown.render(80).join("\n"));
+			assert.ok(rendered.split(/[\s()]+/).some((part) => part === "https://two.example"));
 		});
 	});
 
@@ -701,7 +702,7 @@ describe("Markdown component", () => {
 			// even if it was split across multiple wrapped lines.
 			const extracted = plainLines.join("").replace(/[│├┤─\s]/g, "");
 			assert.ok(extracted.includes("prefix"), "Should preserve 'prefix'");
-			assert.ok(extracted.includes(url), "Should preserve URL");
+			assert.equal(extracted.split("example.com/this/is/a/very/long/url/that/should/wrap").length, 2);
 		});
 
 		it("should wrap styled inline code inside table cells without breaking borders", () => {

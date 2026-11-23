@@ -1,7 +1,7 @@
 /**
  * Discovery for installed Claude Code plugins.
  *
- * Marketplace installs live under ~/.claude/plugins/cache/<marketplace>/<name>/
+ * Marketplace installs live under ~/.nycode/agent/plugins/cache/<marketplace>/<name>/
  * <version>/, with an optional .claude-plugin/plugin.json manifest, and are
  * active only when `enabledPlugins` in the settings chain says true, under the
  * bare name or the marketplace-qualified `name@marketplace`. Only an explicit
@@ -11,7 +11,7 @@
  * not marked `.orphaned_at`, since an update leaves the old version in the cache
  * for a grace period and some directories are named by commit sha.
  * The persistent data directory (${CLAUDE_PLUGIN_DATA}) survives updates at
- * ~/.claude/plugins/data/<id>, id being the qualified name folded to dashes.
+ * ~/.nycode/agent/plugins/data/<id>, id being the qualified name folded to dashes.
  */
 
 import * as crypto from "node:crypto";
@@ -19,7 +19,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { statToken } from "../util/stat-token.ts";
 import { errorMessage, isRecord } from "../util/values.ts";
-import { claudeConfigDir } from "./config-dir.ts";
+import { userConfigDir } from "./config-dir.ts";
 import { readManagedSettings } from "./managed-settings.ts";
 import { userSettingsFiles } from "./settings-chain.ts";
 
@@ -110,8 +110,8 @@ function newestVersion(versions: string[]): string | undefined {
  * Maps each id to its recorded directories, user scope first: enablement here is the
  * user's own, and a project or local install is another project's copy. Undefined when the
  * file is absent or unusable, which leaves the directory walk to decide. */
-function readInstallIndex(home: string): Map<string, string[]> | undefined {
-	const file = path.join(claudeConfigDir(home), "plugins", "installed_plugins.json");
+function readInstallIndex(): Map<string, string[]> | undefined {
+	const file = path.join(userConfigDir(), "plugins", "installed_plugins.json");
 	const plugins = readJson(file).plugins;
 	if (plugins === null || typeof plugins !== "object") return undefined;
 	const installs = new Map<string, string[]>();
@@ -260,10 +260,10 @@ function pluginFingerprint(
  * because any settings edit or cache-tree change invalidates it.
  */
 export function installedPlugins(home: string, extraSettingsFiles: string[] = []): InstalledPlugin[] {
-	const cacheDir = path.join(claudeConfigDir(home), "plugins", "cache");
-	const settingsFiles = [...userSettingsFiles(home), ...extraSettingsFiles];
+	const cacheDir = path.join(userConfigDir(), "plugins", "cache");
+	const settingsFiles = [...userSettingsFiles(), ...extraSettingsFiles];
 	const key = [home, ...extraSettingsFiles].join("\n");
-	const index = readInstallIndex(home);
+	const index = readInstallIndex();
 	const fingerprint = pluginFingerprint(cacheDir, settingsFiles, index);
 	const cached = pluginCache.get(key);
 	if (cached?.fingerprint === fingerprint) return cached.plugins;
@@ -272,7 +272,7 @@ export function installedPlugins(home: string, extraSettingsFiles: string[] = []
 	const plugins: InstalledPlugin[] = [];
 	for (const marketplace of listDirs(cacheDir)) {
 		for (const pluginDir of listPluginDirs(path.join(cacheDir, marketplace))) {
-			const plugin = resolvePlugin(home, cacheDir, marketplace, pluginDir, enabled, configs, index);
+			const plugin = resolvePlugin(cacheDir, marketplace, pluginDir, enabled, configs, index);
 			if (plugin) plugins.push(plugin);
 		}
 	}
@@ -319,7 +319,6 @@ function pluginEnabled(
 /** Resolve one cached plugin directory into an enabled InstalledPlugin, or null to skip
  * it: turned off by managed/user settings or defaultEnabled, or no version yet. */
 function resolvePlugin(
-	home: string,
 	cacheDir: string,
 	marketplace: string,
 	pluginDir: string,
@@ -340,7 +339,7 @@ function resolvePlugin(
 	return {
 		name,
 		root,
-		dataDir: path.join(claudeConfigDir(home), "plugins", "data", id),
+		dataDir: path.join(userConfigDir(), "plugins", "data", id),
 		manifest,
 		enablementKeys: { qualified, directory: pluginDir },
 		...(userConfig ? { userConfig } : {}),
