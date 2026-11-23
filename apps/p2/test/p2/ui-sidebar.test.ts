@@ -31,7 +31,7 @@ const PAGE = `[...document.querySelectorAll('.list-page .list-group-link, .list-
 
 /** Clicks the button of the open sheet whose text is `text`. */
 const clickInSheet = (text: string) =>
-	`[...document.querySelectorAll('[role=dialog] button')].find(e=>e.textContent.trim()===${JSON.stringify(text)}).click()`;
+	`[...document.querySelectorAll('[role=dialog] button')].find(e=>e.textContent.trim()===${jsLiteral(text)}).click()`;
 
 const setInput = (selector: string, value: string) =>
 	`(() => { const input=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(input.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(input,${jsLiteral(value)});input.dispatchEvent(new Event('input',{bubbles:true})); })()`;
@@ -207,7 +207,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 			assert.deepEqual(await browser.evaluate(PAGE), ["Pinned old", "Plain old aged"]);
 			// Dimmed: the aged row's title is another colour than the relevant one's.
 			const color = (selector: string) =>
-				browser.evaluate<string>(`getComputedStyle(document.querySelector(${JSON.stringify(selector)})).color`);
+				browser.evaluate<string>(`getComputedStyle(document.querySelector(${jsLiteral(selector)})).color`);
 			assert.notEqual(
 				await color(".list-page .session-row.aged .session-title"),
 				await color(".list-page .session-row:not(.aged) .session-title"),
@@ -228,18 +228,18 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 		await createIn("Kept", place, "kept");
 		const group = groupOf("kept");
 		await browser.open(`http://127.0.0.1:${fixture.server.port}/new`);
-		await browser.wait(`document.querySelector(${JSON.stringify(`${group} .session-main`)})`);
+		await browser.wait(`document.querySelector(${jsLiteral(`${group} .session-main`)})`);
 		// A group's row shows or hides its sessions; the choice is kept on the server.
 		await browser.click(`${group} .group-link`);
 		await until(settings.collapsed, (collapsed) => collapsed?.[projectKey("kept")] === true);
-		await browser.wait(`!document.querySelector(${JSON.stringify(`${group} .session-main`)})`);
+		await browser.wait(`!document.querySelector(${jsLiteral(`${group} .session-main`)})`);
 		// A project without sessions: its row turns its chevron only, nothing below it takes room.
 		const unused = groupOf("unused");
-		const height = `Math.round(document.querySelector(${JSON.stringify(unused)}).getBoundingClientRect().height)`;
+		const height = `Math.round(document.querySelector(${jsLiteral(unused)}).getBoundingClientRect().height)`;
 		const open = await browser.evaluate<number>(height);
 		await browser.click(`${unused} .group-link`);
 		await until(settings.collapsed, (collapsed) => collapsed?.[projectKey("unused")] === true);
-		await browser.wait(`document.querySelector(${JSON.stringify(`${unused} .group-link`)}).ariaExpanded==='false'`);
+		await browser.wait(`document.querySelector(${jsLiteral(`${unused} .group-link`)}).ariaExpanded==='false'`);
 		assert.equal(await browser.evaluate<number>(height), open);
 		// A rollup collapses to its row; so is that kept.
 		await browser.click(".sidebar-section[data-key=projects] .section-toggle");
@@ -275,7 +275,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 		await browser.evaluate(clickInSheet("Create"));
 		await until(projects.projects, (list) => list?.some((project) => project.name === "fresh"));
 		await browser.wait(
-			`!document.querySelector('[role=dialog]') && document.querySelector(${JSON.stringify(`.sidebar-group${withAttribute("data-key", projectKey("fresh"))}`)})`,
+			`!document.querySelector('[role=dialog]') && document.querySelector(${jsLiteral(`.sidebar-group${withAttribute("data-key", projectKey("fresh"))}`)})`,
 		);
 	});
 
@@ -296,7 +296,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 		const created = rows?.find((row) => row.title.startsWith("Project start"));
 		assert.equal(created?.cwd, place);
 		await until(projects.sessions, (members) => members?.[created!.id] === "zebra");
-		await browser.wait(`document.querySelector(${JSON.stringify(`${groupOf("zebra")} .session-main`)})`);
+		await browser.wait(`document.querySelector(${jsLiteral(`${groupOf("zebra")} .session-main`)})`);
 		// The next new session joins no project.
 		await browser.click(".new-session");
 		await browser.wait(
@@ -325,10 +325,10 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 		);
 		// A collapsed group counts its working sessions.
 		await settings.setCollapsed({ key: projectKey("work"), collapsed: true }, BACKGROUND_CONTEXT);
-		await browser.wait(`Boolean(document.querySelector(${JSON.stringify(`${group} .group-row .working-count`)}))`);
+		await browser.wait(`Boolean(document.querySelector(${jsLiteral(`${group} .group-row .working-count`)}))`);
 		// Done and unread: the collapsed group and the menu badge count it.
 		await browser.wait(
-			`document.querySelector(${JSON.stringify(`${group} .group-row .unread-count`)})?.textContent==='1' && !document.querySelector(${JSON.stringify(`${group} .working-count`)})`,
+			`document.querySelector(${jsLiteral(`${group} .group-row .unread-count`)})?.textContent==='1' && !document.querySelector(${jsLiteral(`${group} .working-count`)})`,
 		);
 		await browser.wait(`document.querySelector('.topbar .sidebar-open .menu-badge')?.textContent==='1'`);
 		// A collapsed rollup counts too.
@@ -405,11 +405,11 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 	};
 	/** Moves the mouse onto a project's row, then clicks its ⋯, and waits for its menu. */
 	const projectMenu = async (name: string) => {
-		const row = `document.querySelector(${JSON.stringify(`${groupOf(name)} .group-row`)})`;
+		const row = `document.querySelector(${jsLiteral(`${groupOf(name)} .group-row`)})`;
 		await browser.wait(row);
 		await browser.call("Input.dispatchMouseEvent", { type: "mouseMoved", ...(await browser.evaluate(middle(row))) });
-		await browser.click(`${groupOf(name)} button[aria-label=${JSON.stringify(`${name} options`)}]`);
-		await browser.wait(`${CHIP}===${JSON.stringify(`Project · ${name}`)}`);
+		await browser.click(`${groupOf(name)} button[aria-label=${jsLiteral(`${name} options`)}]`);
+		await browser.wait(`${CHIP}===${jsLiteral(`Project · ${name}`)}`);
 	};
 	const shownProjects = `[...document.querySelectorAll('.sidebar-group[data-project]')].map((e) => e.dataset.project).join()`;
 	const names = () => projects.projects.value?.map((project) => project.name).join();
@@ -420,7 +420,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 		await browser.open(`http://127.0.0.1:${fixture.server.port}/new`);
 		await browser.wait(`${shownProjects}==='alpha,beta,gamma'`);
 		// The ⋯ shows on hover only.
-		const options = `document.querySelector(${JSON.stringify(`${groupOf("beta")} .group-options`)})`;
+		const options = `document.querySelector(${jsLiteral(`${groupOf("beta")} .group-options`)})`;
 		assert.equal(await browser.evaluate(`getComputedStyle(${options}).opacity`), "0");
 		await projectMenu("beta");
 		assert.deepEqual(
@@ -522,7 +522,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 					buttons: 1,
 				});
 			await browser.wait(
-				`document.querySelector('.sidebar-drag-ghost') && document.querySelector(${JSON.stringify(mark)})`,
+				`document.querySelector('.sidebar-drag-ghost') && document.querySelector(${jsLiteral(mark)})`,
 			);
 			await browser.call("Input.dispatchMouseEvent", {
 				type: "mouseReleased",
@@ -536,7 +536,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 			);
 		};
 		const header = (title: string) => `${itemTitled(title)}.querySelector('.session-header')`;
-		const groupRow = (name: string) => `document.querySelector(${JSON.stringify(`${groupOf(name)} .group-row`)})`;
+		const groupRow = (name: string) => `document.querySelector(${jsLiteral(`${groupOf(name)} .group-row`)})`;
 		// A session onto a project's group joins it; the drop opens nothing.
 		await drag(header("Loose"), groupRow("beta"), `${groupOf("beta")}.drop-into`);
 		await until(projects.sessions, (members) => members?.[loose.id] === "beta");
@@ -602,7 +602,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 			await still();
 			const from = await browser.evaluate<{ x: number; y: number }>(middle(title));
 			const to = await browser.evaluate<{ x: number; y: number }>(
-				middle(`document.querySelector(${JSON.stringify(`${groupOf("alpha")} .group-row`)})`),
+				middle(`document.querySelector(${jsLiteral(`${groupOf("alpha")} .group-row`)})`),
 			);
 			await touch("touchStart", from);
 			await pause(700);
@@ -614,7 +614,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 				await pause(16);
 			}
 			await browser.wait(
-				`document.querySelector('.sidebar-drag-ghost')?.textContent==='Touch me' && document.querySelector(${JSON.stringify(`${groupOf("alpha")}.drop-into`)})`,
+				`document.querySelector('.sidebar-drag-ghost')?.textContent==='Touch me' && document.querySelector(${jsLiteral(`${groupOf("alpha")}.drop-into`)})`,
 			);
 			await touch("touchEnd");
 			await until(projects.sessions, (members) => members?.[free.id] === "alpha");
@@ -626,7 +626,7 @@ describe("sidebar rollups", { skip: !browserTests }, () => {
 			// A project's row: released without moving, its menu.
 			await still();
 			const project = await browser.evaluate<{ x: number; y: number }>(
-				middle(`document.querySelector(${JSON.stringify(`${groupOf("beta")} .group-row .session-title`)})`),
+				middle(`document.querySelector(${jsLiteral(`${groupOf("beta")} .group-row .session-title`)})`),
 			);
 			await touch("touchStart", project);
 			await pause(700);

@@ -2124,11 +2124,17 @@ export class DefaultPackageManager implements PackageManager {
 		}
 	}
 
+	/** Fetch args for a pinned ref. `--` ends options, so the ref cannot select `--upload-pack`. */
+	private pinnedRefFetchArgs(ref: string): string[] {
+		this.refuseGitOperand(ref);
+		return ["fetch", "--", "origin", ref];
+	}
+
 	private async installGit(source: GitSource, scope: SourceScope): Promise<void> {
 		const targetDir = this.getGitInstallPath(source, scope);
 		if (existsSync(targetDir)) {
 			if (source.ref) {
-				await this.ensureGitRef(targetDir, ["fetch", "origin", source.ref], "FETCH_HEAD");
+				await this.ensureGitRef(targetDir, this.pinnedRefFetchArgs(source.ref), "FETCH_HEAD");
 				return;
 			}
 			const target = await this.getLocalGitUpdateTarget(targetDir);
@@ -2168,7 +2174,7 @@ export class DefaultPackageManager implements PackageManager {
 		}
 
 		if (source.ref) {
-			await this.ensureGitRef(targetDir, ["fetch", "origin", source.ref], "FETCH_HEAD");
+			await this.ensureGitRef(targetDir, this.pinnedRefFetchArgs(source.ref), "FETCH_HEAD");
 			return;
 		}
 
