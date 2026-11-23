@@ -1,5 +1,5 @@
 # p2 speech service (server.py). Models are downloaded at build time into /models; the service runs offline.
-FROM python:3.12-slim
+FROM python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
 
 RUN pip install --no-cache-dir sherpa-onnx==1.13.8 onnxruntime==1.31.0 numpy==2.5.4 aiohttp==3.14.5 \
 	kokoro-onnx==0.6.1 soundfile==0.13.1
