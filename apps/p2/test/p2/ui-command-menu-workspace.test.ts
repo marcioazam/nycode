@@ -18,6 +18,7 @@ import { encodeFrame } from "../../plugins/terminals/protocol.ts";
 import type { RefIn } from "../../src/runtime/chord.ts";
 import { Browser, browserTests, COMPOSER } from "./browser.ts";
 import { APP, type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 /** Whether the menu is open or closed, as expressions. */
 const OPEN = `Boolean(document.querySelector('.command-menu'))`;
@@ -131,7 +132,7 @@ describe("command menu: workspace, terminal and folders", { skip: !browserTests 
 
 	/** Opens the location picker's browser row of the folder `name`. */
 	const pickFolder = async (name: string) => {
-		const row = `[...document.querySelectorAll('.location-browse .location-link')].find((e) => e.textContent.trim() === ${JSON.stringify(name)})`;
+		const row = `[...document.querySelectorAll('.location-browse .location-link')].find((e) => e.textContent.trim() === ${jsLiteral(name)})`;
 		await browser.wait(row);
 		await browser.evaluate(`${row}.click()`);
 		await browser.wait(

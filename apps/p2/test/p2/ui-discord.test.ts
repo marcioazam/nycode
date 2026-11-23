@@ -12,6 +12,7 @@ import { Sessions } from "../../plugins/sessions/contract.ts";
 import { processLogs } from "../../src/runtime/logs.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { holdIn, poll, startFixture } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const LEGACY = "MTIzNDU2Nzg5MDEyMzQ1Njc4.legacy-0.discord-token-sentinel";
 const ADDED = "MTIzNDU2Nzg5MDEyMzQ1Njc4.added-0.discord-token-sentinel";
@@ -55,7 +56,7 @@ test(
 			`document.querySelector('[role=dialog] [aria-label="Add bot"] input[aria-label="Bot token"]')`,
 		);
 		await browser.evaluate(
-			`(()=>{const e=document.querySelector('input[aria-label="Bot token"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(e,${JSON.stringify(ADDED)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`,
+			`(()=>{const e=document.querySelector('input[aria-label="Bot token"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(e,${jsLiteral(ADDED)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`,
 		);
 		await browser.click("[role=dialog] button[type=submit]");
 		await browser.wait(`${dialog}?.querySelector('.notice.error')`);

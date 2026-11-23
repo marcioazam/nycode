@@ -11,6 +11,7 @@ import { Models } from "../../plugins/models/contract.ts";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const live = (view: ConversationView | null | undefined) => view?.docs["nycode.live"] as LiveState | undefined;
 /** The kinds of the transcript's rows after the first message: "user", "text", "activity", "thought", "answer". */
@@ -99,7 +100,7 @@ describe("detail in the browser", { skip: !browserTests }, () => {
 			`document.querySelector('.rows [data-testid=activity]') && !${ROWS}.split(',').some((kind) => kind === 'thought' || kind === 'text')`,
 		);
 		const row = (title: string) =>
-			`[...document.querySelectorAll('.drawer .session-title')].find((e) => e.textContent === ${JSON.stringify(title)})`;
+			`[...document.querySelectorAll('.drawer .session-title')].find((e) => e.textContent === ${jsLiteral(title)})`;
 		// Away to another chat and back: from the moment its rows show, no thought or text row (detail 3's) ever does.
 		await browser.evaluate(`${row("Other")}.click()`);
 		await browser.wait(`location.pathname === '/s/${other}'`);
