@@ -6,7 +6,7 @@ For native Windows setup, read [Windows Setup](windows.md). For Android, read [T
 
 ## 1. Install Nycode
 
-Nycode is in beta. Download the latest release, which is the current beta, for your platform (`darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `windows-x64`, `windows-arm64`) from <https://github.com/marcioazam/nycode/releases/latest>. The binary is self-contained: it needs no Node.js and no `npm install`. Nycode is not published to npm. Releases stay on `2.0.x`.
+Nycode is in beta. Download the latest release, which is the current beta, for your platform (`darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `windows-x64`, `windows-arm64`) from <https://github.com/marcioazam/nycode/releases/latest>. The binary is self-contained: it needs no Node.js and no `npm install`. Nycode is not published to npm. The version stays on `2.0.x` (the line opened at `2.0.0`); beta is the product stage, not a `0.x` number.
 
 Check the download against `SHA256SUMS` from the same release and unpack it (Linux x64 shown; Windows ships `nycode-<platform>.zip`):
 
