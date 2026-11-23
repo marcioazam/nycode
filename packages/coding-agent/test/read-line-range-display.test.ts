@@ -27,7 +27,7 @@ interface HtmlViewer {
 // Runs the exported viewer's real data loading and renderers, stopping before DOM initialization.
 function loadHtmlViewer(html: string): HtmlViewer {
 	const sessionData = html.match(/<script id="session-data" type="application\/json">([^<]+)<\/script>/)?.[1];
-	const script = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].at(-1)?.[1];
+	const script = [...html.matchAll(/<script>([\s\S]*?)<\/script>/gi)].at(-1)?.[1];
 	if (!sessionData || !script) throw new Error("Missing exported session data or viewer script");
 	return runInNewContext(
 		script.replace(
