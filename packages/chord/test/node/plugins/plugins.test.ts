@@ -31,6 +31,7 @@ import {
 	transported,
 	valuesOf,
 } from "../../support.ts";
+import { jsLiteral } from "../js-literal.ts";
 import {
 	gitRepository,
 	HOST_PACKAGES,
@@ -63,7 +64,7 @@ function itemSource(dir: string, label: string): string {
 	return [
 		'import { constant, defineFacet, local, str } from "@nycode/chord";',
 		`const Item = local("test.${dir}", { version: 1, params: {}, members: { label: str() } });`,
-		`export default defineFacet((host) => host.serve(Item, () => ({ label: constant(${JSON.stringify(label)}) })));`,
+		`export default defineFacet((host) => host.serve(Item, () => ({ label: constant(${jsLiteral(label)}) })));`,
 	].join("\n");
 }
 
@@ -541,7 +542,7 @@ describe("plugins whose files move, and removed plugins (slice 12 fix round 2, S
 			[
 				'import { constant, defineFacet, local, str } from "@nycode/chord";',
 				'const Item = local("test.hello", { version: 1, params: {}, members: { label: str() } });',
-				`export default defineFacet((host) => host.serve(Item, () => ({ label: constant(${JSON.stringify(label)}) })));`,
+				`export default defineFacet((host) => host.serve(Item, () => ({ label: constant(${jsLiteral(label)}) })));`,
 			].join("\n");
 		await writeFiles(root, { "hello.worker.ts": facet("from a file") });
 		const { plugins } = await component(root);
