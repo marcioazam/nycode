@@ -13,6 +13,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { BACKGROUND_CONTEXT as context } from "../../../src/context/index.ts";
 import { Browser, CHROMIUM } from "./browser.ts";
 import { freePort, signIn, versionedEntry, webApp } from "./support.ts";
+import { jsLiteral } from "../js-literal.ts";
 
 /**
  * A web plugin contributing a part `<p id="<id>">` with `text`, of the CSS module's class `css` names first; `throws`
@@ -28,7 +29,7 @@ function partPlugin(id: string, text: string, css: string, throws = false): Reco
 			'import styles from "./part.module.css";',
 			...(throws ? ['if (!(globalThis as Record<string, unknown>).partReady) throw new Error("not ready");'] : []),
 			"export default defineFacet((_host, self) =>",
-			`\tself.contribute(Parts, () => createElement("p", { id: ${JSON.stringify(id)}, className: styles.${name} }, ${JSON.stringify(text)})),`,
+			`\tself.contribute(Parts, () => createElement("p", { id: ${jsLiteral(id)}, className: styles.${name} }, ${jsLiteral(text)})),`,
 			");",
 		].join("\n"),
 		"part.module.css": css,
@@ -44,7 +45,7 @@ function sharedPlugin(id: string, css: string): Record<string, string> {
 			'import { createElement } from "react";',
 			'import "./shared.css";',
 			"export default defineFacet((_host, self) =>",
-			`\tself.contribute(Parts, () => createElement("p", { id: ${JSON.stringify(id)}, className: "shared" }, "shared")),`,
+			`\tself.contribute(Parts, () => createElement("p", { id: ${jsLiteral(id)}, className: "shared" }, "shared")),`,
 			");",
 		].join("\n"),
 		"shared.css": css,
@@ -68,7 +69,7 @@ function objectPlugin(id: string, text: string, css: string): Record<string, str
 			"\tself.onLive(async (ctx) => {",
 			'\t\tawait new Promise((resolve) => ctx.abortSignal.addEventListener("abort", () => setTimeout(resolve, 1000), { once: true }));',
 			"\t});",
-			`\tself.contribute(Parts, () => createElement("p", { id: ${JSON.stringify(id)}, className: styles.${name} }, ${JSON.stringify(text)}));`,
+			`\tself.contribute(Parts, () => createElement("p", { id: ${jsLiteral(id)}, className: styles.${name} }, ${jsLiteral(text)}));`,
 			"\treturn {};",
 			"}));",
 		].join("\n"),
@@ -151,7 +152,7 @@ describe.skipIf(CHROMIUM === undefined)("a page's plugin stylesheets", () => {
 	/** Records in every frame the text and colour of the element with `id` (`none` without one) into `frames`. */
 	async function recordFrames(id: string): Promise<void> {
 		await browser.evaluate(
-			`globalThis.frames = []; globalThis.recording = true; (function frame() { if (!recording) return; const element = document.getElementById(${JSON.stringify(id)}); frames.push(element === null ? "none" : element.textContent + " " + getComputedStyle(element).color); requestAnimationFrame(frame); })()`,
+			`globalThis.frames = []; globalThis.recording = true; (function frame() { if (!recording) return; const element = document.getElementById(${jsLiteral(id)}); frames.push(element === null ? "none" : element.textContent + " " + getComputedStyle(element).color); requestAnimationFrame(frame); })()`,
 		);
 	}
 

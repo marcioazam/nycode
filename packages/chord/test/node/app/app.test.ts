@@ -23,6 +23,7 @@ import { changesOf, flushed, rejection } from "../../support.ts";
 import { send } from "../http/support.ts";
 import { gitRepository, writePlugin } from "../plugins/support.ts";
 import {
+import { jsLiteral } from "../js-literal.ts";
 	ECHO_SERVER,
 	NOTES_PLUGIN,
 	Notes,
@@ -387,7 +388,7 @@ describe("base code", () => {
 					'const owner = await fetch(new URL(started.ownerLink()).origin + "/_chord/owner");',
 					'console.log("answered", owner.status);',
 					// The pipe is fed from now on: each read of it (the scan's, the watcher's first comparison) gets the file.
-					`let feeding = true; void (async () => { while (feeding) { try { const fd = openSync(${JSON.stringify(join(dir, "held.mjs"))}, constants.O_WRONLY | constants.O_NONBLOCK); writeSync(fd, "export {};"); closeSync(fd); } catch {} await new Promise((resolve) => setTimeout(resolve, 10)); } })();`,
+					`let feeding = true; void (async () => { while (feeding) { try { const fd = openSync(${jsLiteral(join(dir, "held.mjs"))}, constants.O_WRONLY | constants.O_NONBLOCK); writeSync(fd, "export {};"); closeSync(fd); } catch {} await new Promise((resolve) => setTimeout(resolve, 10)); } })();`,
 					"await started.baseWatched;",
 					"feeding = false;",
 					'console.log("scanned");',

@@ -5,6 +5,8 @@
 // a latch by name: the method marks it entered, then waits until the test opens it. Latches live on `globalThis`, so
 // old and new code of a plugin and the latch plugin share them within a process.
 
+import { jsLiteral } from "../../js-literal.ts";
+
 /** Where the counter runs: a project's worker (`p1`), or the server. */
 export type Placement = "server" | "worker";
 
@@ -95,7 +97,7 @@ export function counterPlugin(code: CounterCode): Record<string, string> {
  * count document and the visits table, and the counter the page holds, its label naming the code.
  */
 function counterFacet(code: CounterCode, contract: ContractVersion): string {
-	const v = JSON.stringify(code.code);
+	const v = jsLiteral(code.code);
 	const label = contract === "v2" ? `({ text: \`${code.code}:\${n}\`, code: ${v} })` : `\`${code.code}:\${n}\``;
 	const add =
 		contract === "v2"
@@ -188,7 +190,7 @@ export type WebCode = {
 
 /** A web plugin's files: its view (the counter's label, count and state, a draft and a kept input) and contract copy. */
 export function webPlugin(code: WebCode): Record<string, string> {
-	const name = JSON.stringify(code.name);
+	const name = jsLiteral(code.name);
 	const counter = code.counter;
 	const lines = [
 		`// The ${code.name} web plugin, code ${code.code}.`,
@@ -271,7 +273,7 @@ export function summaryPlugin(code: string): Record<string, string> {
 			'\treturn { variant: "main", members: {',
 			`\t\tlabel: self.derive([counter.count], ([count]) => \`${code}(\${count})\`),`,
 			"\t\tcount: self.derive([counter.count], ([count]) => count),",
-			`\t\tcode: async () => ${JSON.stringify(code)},`,
+			`\t\tcode: async () => ${jsLiteral(code)},`,
 			"\t} };",
 			"}));",
 		].join("\n"),
@@ -295,7 +297,7 @@ export const Tasks = remote("reload.tasks", {
  * native, so a reload restarts it. The page reaches it through `Tasks`.
  */
 export function tasksPlugin(code: string, native = false): Record<string, string> {
-	const v = JSON.stringify(code);
+	const v = jsLiteral(code);
 	return {
 		"contract.ts": TASKS_CONTRACT,
 		"worker.ts": [

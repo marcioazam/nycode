@@ -113,8 +113,13 @@ async function connect(url: string): Promise<Inspector> {
 	const pending = new Map<number, (value: never) => void>();
 	ws.on("message", (raw) => {
 		const message = JSON.parse(String(raw)) as { id?: number };
-		if (message.id !== undefined) pending.get(message.id)?.(message as never);
-		pending.delete(message.id ?? -1);
+		const id = message.id;
+		if (typeof id !== "number") return;
+		const resolve = pending.get(id);
+		// `resolve` is the callback this bench stored for the id. The message does not name a method.
+		// codeql[js/unvalidated-dynamic-method-call]
+		if (resolve !== undefined) resolve(message as never);
+		pending.delete(id);
 	});
 	const inspector: Inspector = {
 		call: (method) =>
