@@ -8,9 +8,10 @@ import { BACKGROUND_CONTEXT } from "@p2/app/v1";
 import { Sessions } from "../../plugins/sessions/contract.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, startFixture } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const point = (selector: string) =>
-	`(() => { const r = document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + Math.min(r.height / 2, 12) }; })()`;
+	`(() => { const r = document.querySelector(${jsLiteral(selector)}).getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + Math.min(r.height / 2, 12) }; })()`;
 const open = `Boolean(document.querySelector('[role=dialog][aria-label="Share"]'))`;
 
 describe("swiping a bottom sheet down", { skip: !browserTests }, () => {

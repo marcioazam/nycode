@@ -6,9 +6,33 @@ import { theme } from "../theme/theme.ts";
  * Format: "+123 content" or "-123 content" or " 123 content" or "     ..."
  */
 function parseDiffLine(line: string): { prefix: string; lineNum: string; content: string } | null {
-	const match = line.match(/^([+-\s])(\s*\d*)\s(.*)$/);
-	if (!match) return null;
-	return { prefix: match[1], lineNum: match[2], content: match[3] };
+	// `(\s*\d*)\s` backtracks on a long run of spaces. Scan the line once.
+	const prefix = line[0];
+	if (prefix === undefined || (prefix !== "+" && prefix !== "-" && !isDiffSpace(prefix))) return null;
+	let index = 1;
+	const numberStart = index;
+	while (index < line.length && isDiffSpace(line[index]!)) index++;
+	const digitsStart = index;
+	while (index < line.length && line[index]! >= "0" && line[index]! <= "9") index++;
+	if (index < line.length && isDiffSpace(line[index]!)) {
+		return { prefix, lineNum: line.slice(numberStart, index), content: line.slice(index + 1) };
+	}
+	// No digits: the last whitespace of the run is the separator, and the earlier ones are the line number.
+	if (digitsStart > numberStart && index === digitsStart) {
+		return { prefix, lineNum: line.slice(numberStart, digitsStart - 1), content: line.slice(digitsStart) };
+	}
+	return null;
+}
+
+function isDiffSpace(character: string): boolean {
+	return (
+		character === " " ||
+		character === "\t" ||
+		character === "\n" ||
+		character === "\r" ||
+		character === "\f" ||
+		character === "\v"
+	);
 }
 
 /**

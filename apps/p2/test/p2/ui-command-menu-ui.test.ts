@@ -15,6 +15,7 @@ import { Views } from "../../plugins/views/contract.ts";
 import type { Host, RefIn } from "../../src/runtime/chord.ts";
 import { Browser, browserTests, COMPOSER } from "./browser.ts";
 import { type Fixture, holdIn, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const OPEN = `Boolean(document.querySelector('.command-menu'))`;
 const CLOSED = `!document.querySelector('.command-menu')`;
@@ -28,7 +29,7 @@ const GROUPS = `[...document.querySelectorAll('.command-menu .command-group')].f
 const RECENTS = "p2-command-recents-v1";
 /** Whether the view titled `title` is the shown tab of its area. */
 const front = (title: string) =>
-	`[...document.querySelectorAll('.views-tab.on')].some((e) => e.textContent === ${JSON.stringify(title)})`;
+	`[...document.querySelectorAll('.views-tab.on')].some((e) => e.textContent === ${jsLiteral(title)})`;
 
 const KEYS: Record<string, { code: string; keyCode: number }> = {
 	Enter: { code: "Enter", keyCode: 13 },
@@ -67,7 +68,7 @@ describe("command menu: app and views commands", { skip: !browserTests }, () => 
 		await browser.call("Emulation.setUserAgentOverride", { userAgent, platform: "MacIntel" });
 		await browser.open(`${base}/s/${id}`);
 		await browser.evaluate(
-			`(() => { for (const key of [${JSON.stringify(RECENTS)}, 'nycode-theme', 'nycode-sidebar-collapsed']) localStorage.removeItem(key); })()`,
+			`(() => { for (const key of [${jsLiteral(RECENTS)}, 'nycode-theme', 'nycode-sidebar-collapsed']) localStorage.removeItem(key); })()`,
 		);
 		await browser.open(`${base}/s/${id}`);
 		await browser.wait(`document.querySelector('${COMPOSER}') && !document.querySelector('.offline')`);
@@ -292,7 +293,7 @@ describe("command menu: app and views commands", { skip: !browserTests }, () => 
 			const row = `.sidebar-section[data-key=other] .nav-row:has(> a.session-main[href="/s/${other}"])`;
 			await browser.wait(`document.querySelector(${JSON.stringify(row)})`);
 			const point = await browser.evaluate<{ x: number; y: number }>(
-				`(() => { const r = document.querySelector(${JSON.stringify(row)}).getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`,
+				`(() => { const r = document.querySelector(${jsLiteral(row)}).getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`,
 			);
 			await browser.call("Input.dispatchMouseEvent", { type: "mouseMoved", ...point });
 			await openMenu();

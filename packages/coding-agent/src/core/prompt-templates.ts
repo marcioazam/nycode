@@ -91,36 +91,110 @@ export function parseCommandArgs(argsString: string): string[] {
  */
 export function substituteArgs(content: string, args: string[]): string {
 	const allArgs = args.join(" ");
+	let result = "";
+	let index = 0;
+	while (index < content.length) {
+		const substituted = content[index] === "$" ? substitutePlaceholder(content, index, args, allArgs) : undefined;
+		if (substituted === undefined) {
+			result += content[index] ?? "";
+			index++;
+			continue;
+		}
+		result += substituted.value;
+		index = substituted.next;
+	}
+	return result;
+}
 
-	return content.replace(
-		/\$\{(\d+|ARGUMENTS|@):-([^}]*)\}|\$\{@:(\d+)(?::(\d+))?\}|\$(ARGUMENTS|@|\d+)/g,
-		(_match, defaultTarget, defaultValue, sliceStart, sliceLength, simple) => {
-			if (defaultTarget) {
-				const value =
-					defaultTarget === "@" || defaultTarget === "ARGUMENTS" ? allArgs : args[parseInt(defaultTarget, 10) - 1];
-				return value ? value : defaultValue;
-			}
+/** One placeholder at `index`, which points at `$`. The three forms are tried in the old alternation order. */
+function substitutePlaceholder(
+	content: string,
+	index: number,
+	args: string[],
+	allArgs: string,
+): { value: string; next: number } | undefined {
+	const withDefault = readDefaultPlaceholder(content, index);
+	if (withDefault) {
+		const value =
+			withDefault.target === "@" || withDefault.target === "ARGUMENTS"
+				? allArgs
+				: args[parseInt(withDefault.target, 10) - 1];
+		return { value: value ? value : withDefault.fallback, next: withDefault.next };
+	}
+	const slice = readSlicePlaceholder(content, index);
+	if (slice) {
+		let start = parseInt(slice.start, 10) - 1;
+		if (start < 0) start = 0;
+		const taken =
+			slice.length === undefined ? args.slice(start) : args.slice(start, start + parseInt(slice.length, 10));
+		return { value: taken.join(" "), next: slice.next };
+	}
+	const simple = readSimplePlaceholder(content, index);
+	if (!simple) return undefined;
+	if (simple.target === "ARGUMENTS" || simple.target === "@") return { value: allArgs, next: simple.next };
+	return { value: args[parseInt(simple.target, 10) - 1] ?? "", next: simple.next };
+}
 
-			if (sliceStart) {
-				let start = parseInt(sliceStart, 10) - 1; // Convert to 0-indexed (user provides 1-indexed)
-				// Treat 0 as 1 (bash convention: args start at 1)
-				if (start < 0) start = 0;
+function readDefaultPlaceholder(
+	content: string,
+	index: number,
+): { target: string; fallback: string; next: number } | undefined {
+	if (!content.startsWith("${", index)) return undefined;
+	let cursor = index + 2;
+	let target: string;
+	if (content.startsWith("ARGUMENTS", cursor)) {
+		target = "ARGUMENTS";
+		cursor += "ARGUMENTS".length;
+	} else if (content[cursor] === "@") {
+		target = "@";
+		cursor += 1;
+	} else {
+		const start = cursor;
+		while (cursor < content.length && isDigit(content[cursor]!)) cursor++;
+		if (cursor === start) return undefined;
+		target = content.slice(start, cursor);
+	}
+	if (!content.startsWith(":-", cursor)) return undefined;
+	const fallbackStart = cursor + 2;
+	const end = content.indexOf("}", fallbackStart);
+	if (end < 0) return undefined;
+	return { target, fallback: content.slice(fallbackStart, end), next: end + 1 };
+}
 
-				if (sliceLength) {
-					const length = parseInt(sliceLength, 10);
-					return args.slice(start, start + length).join(" ");
-				}
-				return args.slice(start).join(" ");
-			}
+function readSlicePlaceholder(
+	content: string,
+	index: number,
+): { start: string; length?: string; next: number } | undefined {
+	if (!content.startsWith("${@:", index)) return undefined;
+	let cursor = index + 4;
+	const startAt = cursor;
+	while (cursor < content.length && isDigit(content[cursor]!)) cursor++;
+	if (cursor === startAt) return undefined;
+	const start = content.slice(startAt, cursor);
+	let length: string | undefined;
+	if (content[cursor] === ":") {
+		const lengthAt = cursor + 1;
+		cursor = lengthAt;
+		while (cursor < content.length && isDigit(content[cursor]!)) cursor++;
+		if (cursor === lengthAt || content[cursor] !== "}") return undefined;
+		length = content.slice(lengthAt, cursor);
+	}
+	if (content[cursor] !== "}") return undefined;
+	return { start, length, next: cursor + 1 };
+}
 
-			if (simple === "ARGUMENTS" || simple === "@") {
-				return allArgs;
-			}
+function readSimplePlaceholder(content: string, index: number): { target: string; next: number } | undefined {
+	if (content.startsWith("$ARGUMENTS", index)) return { target: "ARGUMENTS", next: index + "$ARGUMENTS".length };
+	if (content.startsWith("$@", index)) return { target: "@", next: index + 2 };
+	let cursor = index + 1;
+	const start = cursor;
+	while (cursor < content.length && isDigit(content[cursor]!)) cursor++;
+	if (cursor === start) return undefined;
+	return { target: content.slice(start, cursor), next: cursor };
+}
 
-			const index = parseInt(simple, 10) - 1;
-			return args[index] ?? "";
-		},
-	);
+function isDigit(character: string): boolean {
+	return character >= "0" && character <= "9";
 }
 
 function loadTemplateFromFile(

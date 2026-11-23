@@ -80,13 +80,9 @@ export function devControl<T>(options: {
 						message: result.plugins.length ? `Reloaded ${result.plugins.join(", ")}` : "No dirty plugins",
 					});
 					return result.value;
-				} catch (error) {
-					notify({
-						ok: false,
-						plugins: names,
-						message: `Reload refused: ${error instanceof Error ? error.message : String(error)}`,
-					});
-					throw error;
+				} catch {
+					notify({ ok: false, plugins: names, message: "Reload refused" });
+					throw new Error("Reload refused");
 				}
 			})();
 			try {

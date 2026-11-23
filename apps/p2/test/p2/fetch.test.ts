@@ -33,16 +33,12 @@ test("configureFetch installs an HTTP/1.1 fetch that decodes compressed response
 	});
 	server.listen(0, "127.0.0.1");
 	await once(server, "listening");
-	const previousTls = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
-	process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 	t.after(async () => {
-		if (previousTls === undefined) delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
-		else process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousTls;
 		server.close();
 		await once(server, "close");
 	});
 	const bundled = globalThis.fetch;
-	configureFetch();
+	configureFetch({ ca: cert });
 	assert.notEqual(globalThis.fetch, bundled);
 	const { port } = server.address() as AddressInfo;
 	for (const path of ["/a", "/b"]) {

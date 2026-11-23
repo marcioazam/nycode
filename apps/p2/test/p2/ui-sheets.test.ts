@@ -17,6 +17,7 @@ import { Sharing } from "../../plugins/sharing/contract.ts";
 import type { ServerResourceOptions } from "../../src/runtime/server.ts";
 import { browserTests, COMPOSER } from "./browser.ts";
 import { type Fixture, poll, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 const termux = process.env.PREFIX !== undefined;
 const chromium =
@@ -73,7 +74,7 @@ describe("sheet parity", { skip: !browserTests }, () => {
 	const openSettings = async (label: string) => {
 		await wait(`document.querySelector('.drawer-foot .settings-open')`);
 		await evaluate(`document.querySelector('.drawer-foot .settings-open').click()`);
-		const item = `[...document.querySelectorAll('.settings-nav-item')].find((e) => e.textContent === ${JSON.stringify(label)})`;
+		const item = `[...document.querySelectorAll('.settings-nav-item')].find((e) => e.textContent === ${jsLiteral(label)})`;
 		await wait(item);
 		await evaluate(`${item}.click()`);
 	};

@@ -16,6 +16,7 @@ import { Views } from "../../plugins/views/contract.ts";
 import type { RefIn } from "../../src/runtime/chord.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, poll, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 /**
  * A small glyph editor: three points; clicking one selects it (`setState` with a function, and `select`), the agent's
@@ -42,7 +43,7 @@ document.getElementById('points').addEventListener('click', (event) => {
 </script></body></html>`;
 
 const tabCentre = (title: string) =>
-	`(() => {const t=[...document.querySelectorAll('.views-tab')].find(e=>e.textContent===${JSON.stringify(title)});const r=t.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`;
+	`(() => {const t=[...document.querySelectorAll('.views-tab')].find(e=>e.textContent===${jsLiteral(title)});const r=t.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`;
 
 describe("views in Chromium", { skip: !browserTests }, () => {
 	let fixture: Fixture;

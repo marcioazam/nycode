@@ -61,7 +61,13 @@ describe("ModelRegistry", () => {
 	}
 
 	function toShPath(value: string): string {
-		return value.replace(/\\/g, "/").replace(/"/g, '\\"');
+		let result = "";
+		for (const character of value) {
+			if (character === "\\") result += "/";
+			else if (character === '"') result += '\\"';
+			else result += character;
+		}
+		return result;
 	}
 
 	/** Create a baseUrl-only override (no custom models) */

@@ -14,6 +14,7 @@ import { Sharing } from "../../plugins/sharing/contract.ts";
 import type { RefIn } from "../../src/runtime/chord.ts";
 import { Browser, browserTests } from "./browser.ts";
 import { type Fixture, holdIn, poll, startFixture, until } from "./helpers.ts";
+import { jsLiteral } from "./js-literal.ts";
 
 type Shown = { id: string; title: string; kind: "html" | "md"; content: string };
 
@@ -33,7 +34,7 @@ document.getElementById('add').addEventListener('click', () => {
 </script></body></html>`;
 
 const setInput = (selector: string, value: string) =>
-	`(() => { const input=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(value)});input.dispatchEvent(new Event('input',{bubbles:true})); })()`;
+	`(() => { const input=document.querySelector(${jsLiteral(selector)});Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,${jsLiteral(value)});input.dispatchEvent(new Event('input',{bubbles:true})); })()`;
 const card = (id: string) => `document.querySelector('.artifact-inline[data-artifact="${id}"]')`;
 const frame = (id: string) => `${card(id)}?.querySelector('iframe')`;
 

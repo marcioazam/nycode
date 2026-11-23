@@ -1980,13 +1980,11 @@ export class DefaultPackageManager implements PackageManager {
 	}
 
 	private parseNpmSpec(spec: string): { name: string; version?: string } {
-		const match = spec.match(/^(@?[^@]+(?:\/[^@]+)?)(?:@(.+))?$/);
-		if (!match) {
-			return { name: spec };
-		}
-		const name = match[1] ?? spec;
-		const version = match[2];
-		return { name, version };
+		// A regex with nested quantifiers over `/` and `@` is polynomial on a long `?/` string.
+		const slash = spec.startsWith("@") ? spec.indexOf("/") : -1;
+		const versionAt = spec.lastIndexOf("@");
+		if (versionAt <= (slash === -1 ? 0 : slash) || versionAt === spec.length - 1) return { name: spec };
+		return { name: spec.slice(0, versionAt), version: spec.slice(versionAt + 1) };
 	}
 
 	private assertProjectTrustedForScope(scope: SourceScope): void {
@@ -2110,6 +2108,22 @@ export class DefaultPackageManager implements PackageManager {
 		await this.runNpmCommand(args);
 	}
 
+	/** Git reads a leading `-` as an option, and `--upload-pack` or `ext::` runs a command. */
+	private refuseGitOperand(value: string): void {
+		let decoded: string;
+		try {
+			decoded = decodeURIComponent(value);
+		} catch {
+			throw new Error("Refusing a git operand that is not valid percent-encoding");
+		}
+		for (const candidate of [value, decoded]) {
+			const lower = candidate.toLowerCase();
+			if (candidate.startsWith("-") || lower.includes("upload-pack") || lower.includes("ext::")) {
+				throw new Error("Refusing a git operand that selects an option or the ext:: transport");
+			}
+		}
+	}
+
 	private async installGit(source: GitSource, scope: SourceScope): Promise<void> {
 		const targetDir = this.getGitInstallPath(source, scope);
 		if (existsSync(targetDir)) {
@@ -2129,8 +2143,10 @@ export class DefaultPackageManager implements PackageManager {
 		rmSync(this.getGitUpdateMarkerPath(targetDir), { force: true });
 
 		try {
-			await this.runCommand("git", ["clone", source.repo, targetDir]);
+			this.refuseGitOperand(source.repo);
+			await this.runCommand("git", ["-c", "protocol.ext.allow=never", "clone", "--", source.repo, targetDir]);
 			if (source.ref) {
+				this.refuseGitOperand(source.ref);
 				await this.runCommand("git", ["checkout", source.ref], { cwd: targetDir });
 			}
 			const packageJsonPath = join(targetDir, "package.json");
