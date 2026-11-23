@@ -93,7 +93,7 @@ async function translatedStdin() {
     const usage = [path.join(here, 'claude-hud-usage.mjs'), path.join(resources, 'statusline', 'claude-hud-usage.mjs')].find((file) => fs.existsSync(file));
     if (usage) {
       const { withUsage } = await import(pathToFileURL(usage).href);
-      await withUsage(payload, { provider, cacheFile: path.join(configDir, 'plugins', 'claude-hud', 'usage-cache.json') });
+      await withUsage(payload, { provider, refresh: 'background', cacheFile: path.join(configDir, 'plugins', 'claude-hud', 'usage-cache.json') });
     }
     return JSON.stringify(payload);
   } catch {
@@ -102,7 +102,7 @@ async function translatedStdin() {
   return raw;
 }
 
-// "renderer": "calm" na config troca o claude-hud pelo desenho próprio do nycode (calm-statusline.mjs).
+// Desenho próprio do nycode (calm-statusline.mjs) é o padrão; "renderer": "claude-hud" na config opta pelo plugin externo.
 const readConfig = () => {
   try {
     return JSON.parse(fs.readFileSync(path.join(configDir, 'plugins', 'claude-hud', 'config.json'), 'utf8'));
@@ -111,14 +111,16 @@ const readConfig = () => {
   }
 };
 const config = readConfig();
-const calmFile = config.renderer !== 'calm' ? undefined
+const calmFile = config.renderer === 'claude-hud' ? undefined
   : [path.join(path.dirname(fileURLToPath(import.meta.url)), 'calm-statusline.mjs')].find((file) => fs.existsSync(file));
 
 if (calmFile) {
   const input = await translatedStdin();
   if (input !== null) {
-    const { render } = await import(pathToFileURL(calmFile).href);
-    process.stdout.write(render(JSON.parse(input), { columns: columns > 0 ? columns - 4 : 120, level: config.level }).join('\n') + '\n');
+    const { render, ctxHistory } = await import(pathToFileURL(calmFile).href);
+    const payload = JSON.parse(input);
+    const history = ctxHistory?.(payload, path.join(configDir, 'plugins', 'claude-hud', 'ctx-historico.json')) ?? [];
+    process.stdout.write(render(payload, { columns: columns > 0 ? columns - 4 : 120, level: config.level, history, gitCacheFile: path.join(configDir, 'plugins', 'claude-hud', 'git-cache.json') }).join('\n') + '\n');
   }
 } else if (latest) {
   const input = await translatedStdin();

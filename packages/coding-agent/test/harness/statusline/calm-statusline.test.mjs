@@ -307,3 +307,17 @@ test('effort: (nível) colado ao modelo, cor pela intensidade', () => {
   }
   assert.ok(plain(render(base({ effort: undefined }), opts))[0].startsWith('Fable 5.2 · nycode-harness'), 'sem effort: sem parênteses');
 });
+
+test('statusline.mjs usa renderer calm por padrão sem config.json', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'calm-default-'));
+  const proj = path.join(dir, 'proj');
+  fs.mkdirSync(proj);
+  after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const script = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'resources', 'statusline', 'statusline.mjs');
+  const input = JSON.stringify({ ...base(), cwd: proj, workspace: { current_dir: proj }, rate_limits: undefined });
+  const r = spawnSync(process.execPath, [script], { input, encoding: 'utf8', env: { ...process.env, HOME: dir, COLUMNS: '100', NO_COLOR: '1', NYCODE_CODING_AGENT_DIR: dir }, timeout: 20_000 });
+  assert.equal(r.status, 0, r.stderr);
+  const [l1, l2] = r.stdout.split('\n');
+  assert.equal(l1, 'Fable 5.2 (medium) · proj │ 12m · $1.08');
+  assert.equal(l2, 'ctx ━━━━━━━━ 9%');
+});

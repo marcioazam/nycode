@@ -22,6 +22,7 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { CONFIG_DIR_NAME, getAgentDir } from "../../config.ts";
 import { builtinResourceDir } from "../../core/builtin-resources.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import { parseCommandFile } from "../_shared/commands/command-file.ts";
@@ -99,6 +100,93 @@ export function skillDirs(cwd: string, home: string, trusted: boolean): string[]
 	return dirs;
 }
 
+function directSkillName(filePath: string, fallbackName: string): string {
+	try {
+		const content = fs.readFileSync(filePath, "utf-8");
+		const declared = parseClaudeFrontmatter<Record<string, unknown>>(content).frontmatter.name;
+		if (typeof declared === "string" && declared.trim()) return declared.trim();
+	} catch {
+		// Malformed frontmatter: nycode's loader falls back to the directory/file name too.
+	}
+	return fallbackName;
+}
+
+function collectDirectSkillNames(roots: string[], target: Set<string>): void {
+	for (const root of roots) {
+		let entries: fs.Dirent[];
+		try {
+			entries = fs.readdirSync(root, { withFileTypes: true });
+		} catch {
+			continue;
+		}
+		for (const entry of entries) {
+			if (entry.name.startsWith(".") || entry.name === "node_modules") continue;
+			const fullPath = path.join(root, entry.name);
+			let isDir = entry.isDirectory();
+			let isFile = entry.isFile();
+			if (entry.isSymbolicLink()) {
+				try {
+					const st = fs.statSync(fullPath);
+					isDir = st.isDirectory();
+					isFile = st.isFile();
+				} catch {
+					continue;
+				}
+			}
+			if (isFile && entry.name.endsWith(".md")) {
+				target.add(directSkillName(fullPath, entry.name.slice(0, -3)));
+			} else if (isDir) {
+				const skill = skillAt(root, entry.name);
+				if (skill) target.add(skill.name);
+			}
+		}
+	}
+}
+
+/** Direct one-level skill entries under `dirs` (matching Claude Code's `<root>/<skill>/SKILL.md` and direct `.md`
+ * files), skipping nested non-skill subtrees and skills already defined in higher-precedence `shadowedRoots` or
+ * earlier entries of `dirs` (prevents expected override collisions from flooding startup diagnostics). */
+export function discoverableSkillPaths(dirs: string[], shadowedRoots: string[] = []): string[] {
+	const seen = new Set<string>();
+	collectDirectSkillNames(shadowedRoots, seen);
+	const paths: string[] = [];
+	for (const root of dirs) {
+		let entries: fs.Dirent[];
+		try {
+			entries = fs.readdirSync(root, { withFileTypes: true });
+		} catch {
+			continue;
+		}
+		for (const entry of entries) {
+			if (entry.name.startsWith(".") || entry.name === "node_modules") continue;
+			const fullPath = path.join(root, entry.name);
+			let isDir = entry.isDirectory();
+			let isFile = entry.isFile();
+			if (entry.isSymbolicLink()) {
+				try {
+					const st = fs.statSync(fullPath);
+					isDir = st.isDirectory();
+					isFile = st.isFile();
+				} catch {
+					continue;
+				}
+			}
+			if (isFile && entry.name.endsWith(".md")) {
+				const name = directSkillName(fullPath, entry.name.slice(0, -3));
+				if (seen.has(name)) continue;
+				seen.add(name);
+				paths.push(fullPath);
+			} else if (isDir) {
+				const skill = skillAt(root, entry.name);
+				if (!skill || seen.has(skill.name)) continue;
+				seen.add(skill.name);
+				paths.push(fullPath);
+			}
+		}
+	}
+	return paths;
+}
+
 interface FoundSkill {
 	filePath: string;
 	baseDir: string;
@@ -155,7 +243,12 @@ export default function skillsExtension(nycode: ExtensionAPI) {
 		if (process.env.NYCODE_SUBAGENT_NO_SKILLS === "1") return undefined;
 		// resources_discover fires after session_start, so the approval is already
 		// resolved; reading it silently keeps a second trust dialog off the screen.
-		const skillPaths = skillDirs(ctx.cwd, os.homedir(), isProjectApprovedSilently(ctx));
+		const trusted = isProjectApprovedSilently(ctx);
+		const shadowed = [
+			path.join(getAgentDir(), "skills"),
+			...(trusted ? ancestorDirs(ctx.cwd, path.join(CONFIG_DIR_NAME, "skills")) : []),
+		];
+		const skillPaths = discoverableSkillPaths(skillDirs(ctx.cwd, os.homedir(), trusted), shadowed);
 		return skillPaths.length > 0 ? { skillPaths } : undefined;
 	});
 

@@ -31,7 +31,9 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { exportResourcesRoot } from "../../core/builtin-resources.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
+import { SETTINGS_DEFAULTS } from "../../core/settings-defaults.ts";
 import { isPlanModeState, PLAN_MODE_CHANNEL } from "../_shared/events/plan-mode-state.ts";
 import { claudeEffortLevel } from "../_shared/model/effort.ts";
 import { approvalRecheck, isProjectApprovedSilently } from "../_shared/project/project-approval.ts";
@@ -117,6 +119,7 @@ export default function statusLine(nycode: ExtensionAPI) {
 	setThinkingSource(() => nycode.getThinkingLevel?.());
 	let turnCount = 0;
 	let config: StatusLineConfig | undefined;
+	let fallbackCommand: string | undefined;
 	let sessionCtx: ExtensionContext | undefined;
 	let commandLine: string | undefined;
 	let widgetShown = false;
@@ -357,7 +360,8 @@ export default function statusLine(nycode: ExtensionAPI) {
 			// Everything below can touch ctx after an await, and every ctx getter throws
 			// once the session is disposed. This promise is started from a timer with no
 			// awaiter, so an escaping rejection becomes an uncaughtException and exits nycode.
-			const result = await runHookCommand(config.command, buildPayload(ctx), COMMAND_TIMEOUT_MS, {
+			const payload = buildPayload(ctx);
+			const result = await runHookCommand(config.command, payload, COMMAND_TIMEOUT_MS, {
 				onChild: (kill) => {
 					killInflight = kill;
 				},
@@ -369,7 +373,21 @@ export default function statusLine(nycode: ExtensionAPI) {
 			// Claude: "Your script can output multiple lines to create a richer display."
 			// A footer status is one row (footer.js sanitizeStatusText joins newlines), so 2+ rows
 			// go to a widget below the editor instead; the footer then keeps the built-in segment.
-			const parsed = statusRows(result.stdout, config.padding);
+			let parsed = statusRows(result.stdout, config.padding);
+			const failed = result.code !== 0 || result.spawnFailed || result.timedOut;
+			if (failed && fallbackCommand) {
+				const fallbackResult = await runHookCommand(fallbackCommand, payload, COMMAND_TIMEOUT_MS, {
+					onChild: (kill) => {
+						killInflight = kill;
+					},
+				});
+				if (rerunQueued) return;
+				parsed = statusRows(fallbackResult.stdout, 0);
+				if (parsed.rows.length > 0 || parsed.footer !== undefined) {
+					config = { ...config, command: fallbackCommand, padding: 0 };
+					fallbackCommand = undefined;
+				}
+			}
 			commandLine = parsed.footer;
 			scriptRows = parsed.rows;
 			setRows(ctx, parsed.rows);
@@ -517,8 +535,14 @@ export default function statusLine(nycode: ExtensionAPI) {
 		const files = hookFiles(ctx.cwd, os.homedir(), trusted);
 		// Claude's disableAllHooks also turns off the custom statusLine command; the
 		// built-in segment still renders as the fallback.
+		exportResourcesRoot();
 		const own: unknown = nycode.getSettings().statusLine;
+		const resolveFallback = (): string | undefined =>
+			own === undefined && config && config.command !== SETTINGS_DEFAULTS.statusLine.command
+				? SETTINGS_DEFAULTS.statusLine.command
+				: undefined;
 		config = activeStatusLine(files, undefined, own);
+		fallbackCommand = resolveFallback();
 		// Re-armed rather than armed once: a refreshInterval added or changed mid-session
 		// had no effect until the next session, though Claude applies a settings change as
 		// soon as the file is saved.
@@ -540,6 +564,7 @@ export default function statusLine(nycode: ExtensionAPI) {
 			const previousCommand = config?.command;
 			const liveFiles = hookFiles(watchCwd, os.homedir(), trusted && stillApproved());
 			config = activeStatusLine(liveFiles, undefined, own);
+			fallbackCommand = resolveFallback();
 			armRefresh();
 			// With the setting gone nothing runs again, so the last script output would stay.
 			// Only a removal resets the segment: with no statusLine before either, the built-in
