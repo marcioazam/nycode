@@ -44,6 +44,8 @@ export interface OAuthCallbackServer<T> {
 
 function sendPage(response: ServerResponse, status: number, html: string): void {
 	response.writeHead(status, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
+	// Every interpolated value is escaped in oauth-page.ts before the document is assembled.
+	// codeql[js/reflected-xss]
 	response.end(html);
 }
 

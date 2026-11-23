@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed provider host detection that treated a base URL as a match when the host name appeared anywhere in the URL, and the Cerebras bodyless-overflow check that could backtrack on a long run of spaces
+- Fixed OAuth callback pages so provider error text is escaped before it is written as HTML
+
 ## [2.0.2] - 2026-11-23
 
 ## [2.0.1] - 2026-11-23

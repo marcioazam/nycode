@@ -41,6 +41,7 @@ import { withCauseDetail } from "../utils/error-body.ts";
 import { AssistantMessageEventStream } from "../utils/event-stream.ts";
 import { shortHash } from "../utils/hash.ts";
 import { headersToRecord } from "../utils/headers.ts";
+import { baseUrlHostIs } from "../utils/host.ts";
 import { type ClientIdentity, getIdentityHeaders } from "../utils/identity.ts";
 import { parseJsonWithRepair } from "../utils/json-parse.ts";
 import {
@@ -231,7 +232,7 @@ function shouldUseServerSideFallbackBeta(model: Model<"anthropic-messages">): bo
 }
 
 function getAnthropicCompat(model: Model<"anthropic-messages">) {
-	const isOpenRouter = model.provider === "openrouter" || model.baseUrl.includes("openrouter.ai");
+	const isOpenRouter = model.provider === "openrouter" || baseUrlHostIs(model.baseUrl, "openrouter.ai");
 	return {
 		supportsEagerToolInputStreaming: model.compat?.supportsEagerToolInputStreaming ?? true,
 		supportsLongCacheRetention: model.compat?.supportsLongCacheRetention ?? true,
@@ -246,7 +247,7 @@ function getAnthropicCompat(model: Model<"anthropic-messages">) {
 		// Gateways that drop unknown request fields would silently turn a `continue` into a request
 		// without the earlier conversation, so the default is limited to Anthropic's own endpoint.
 		// Widen or remove this restriction once proxies generally forward the `thread` field.
-		supportsMessageThreads: model.compat?.supportsMessageThreads ?? model.baseUrl.includes("api.anthropic.com"),
+		supportsMessageThreads: model.compat?.supportsMessageThreads ?? baseUrlHostIs(model.baseUrl, "api.anthropic.com"),
 	};
 }
 
