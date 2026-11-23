@@ -95,7 +95,10 @@ leaks() {
 }
 
 trufflehog_history() {
-  trufflehog git "file://$PWD" --only-verified --fail --no-update --no-color \
+  # Product binaries are Git LFS pointers. Smudge asks the LFS media host, which this
+  # hardened runner does not allow. Those bytes are still normal git blobs in earlier
+  # commits, and the history scan still reads them.
+  GIT_LFS_SKIP_SMUDGE=1 trufflehog git "file://$PWD" --only-verified --fail --no-update --no-color \
     --exclude-paths=<(printf '%s\n' 'scripts/fixtures/leak/')
 }
 
@@ -127,8 +130,11 @@ semgrep_scan() {
     mode=rw
     ;;
   esac
+  # GIT_LFS_SKIP_SMUDGE: baseline checkout must not fetch the product binaries. This runner
+  # cannot reach the LFS media host, and a failed smudge makes semgrep exit 2.
   docker run --rm --volume "$src:/src:$mode" --workdir /src \
-    --env SEMGREP_SEND_METRICS=off --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory --env GIT_CONFIG_VALUE_0=/src \
+    --env SEMGREP_SEND_METRICS=off --env GIT_LFS_SKIP_SMUDGE=1 \
+    --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory --env GIT_CONFIG_VALUE_0=/src \
     "$SEMGREP_IMAGE" semgrep scan --error --metrics=off --disable-version-check --quiet \
     --config p/default --config p/python --config p/typescript --config p/command-injection --config p/github-actions \
     --exclude scripts/fixtures/leak --exclude nycode-arquivo "${args[@]}" . || rc=$?
@@ -136,7 +142,7 @@ semgrep_scan() {
   return "$rc"
 }
 
-# docs/migration/nycode-arquivo (verbatim nycode-harness archive, not maintained or executed, owner decision 2026-11-21) is
+# docs/migration/nycode-arquivo (verbatim Nycode archive, not maintained or executed, owner decision 2026-11-21) is
 # outside semgrep too; the leak scan still covers it.
 # osv-scanner has no severity threshold flag: fail on any group with CVSS >= 7 (HIGH/CRITICAL) or
 # no score at all (unknown is not assumed safe). Exceptions live in scripts/ci/osv-scanner.toml with owner+expiry.

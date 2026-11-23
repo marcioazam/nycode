@@ -1,9 +1,8 @@
 # p2 speech service (server.py). Models are downloaded at build time into /models; the service runs offline.
 FROM python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
 
-RUN pip install --no-cache-dir sherpa-onnx==1.13.8 onnxruntime==1.31.0 numpy==2.5.4 aiohttp==3.14.5 \
-	kokoro-onnx==0.6.1 soundfile==0.13.1
-RUN pip install --no-cache-dir torch==2.14.1 pocket-tts==3.3.0 --extra-index-url https://download.pytorch.org/whl/cpu
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir --require-hashes -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 # Speech to text: Silero VAD + Parakeet TDT 0.6B v3 (int8).
 ADD https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_vad.onnx /models/silero_vad.onnx
