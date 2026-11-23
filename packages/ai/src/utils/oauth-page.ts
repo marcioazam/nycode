@@ -1,12 +1,13 @@
 const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" aria-hidden="true"><path fill="#F09082" d="M165.29 165.29H517.36V400H400V282.65H165.29Z"/><path fill="#4D9ABF" d="M165.29 282.65H282.65V400H400V517.36H282.65V634.72H165.29Z"/><path fill="#F1BE58" d="M517.36 400H634.72V634.72H517.36Z"/></svg>`;
 
 function escapeHtml(value: string): string {
-	return value
-		.replaceAll("&", "&amp;")
-		.replaceAll("<", "&lt;")
-		.replaceAll(">", "&gt;")
-		.replaceAll('"', "&quot;")
-		.replaceAll("'", "&#39;");
+	return value.replace(/[&<>"']/g, (character) => {
+		if (character === "&") return "&amp;";
+		if (character === "<") return "&lt;";
+		if (character === ">") return "&gt;";
+		if (character === '"') return "&quot;";
+		return "&#39;";
+	});
 }
 
 function renderPage(options: { title: string; heading: string; message: string; details?: string }): string {
