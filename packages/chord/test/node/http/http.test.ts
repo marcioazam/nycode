@@ -406,11 +406,13 @@ describe("routes and wraps failing", () => {
 describe("reloads and close", () => {
 	it("a reload swapping a route leaves a running request on the old router; the next uses the new one", async () => {
 		const gate = Promise.withResolvers<void>();
+		const entered = Promise.withResolvers<void>();
 		const old = contributing({
 			routes: {
 				"GET /v": {
 					public: true,
 					handler: async () => {
+						entered.resolve();
 						await gate.promise;
 						return { kind: "html", body: "old" };
 					},
@@ -419,7 +421,8 @@ describe("reloads and close", () => {
 		});
 		const server = await served({ "@app/v": old });
 		const running = send(server.port, "GET", "/v");
-		await new Promise((resolve) => setTimeout(resolve, 50));
+		// The request is inside the old router when the reload starts: under load it could otherwise still be on its way.
+		await entered.promise;
 		const next = contributing({
 			routes: { "GET /v": { public: true, handler: async () => ({ kind: "html", body: "new" }) } },
 		});
@@ -432,6 +435,9 @@ describe("reloads and close", () => {
 
 	it("close refuses new requests (503), waits for running ones up to closeTimeout, then seals them (503)", async () => {
 		let sealed: AbortSignal | undefined;
+		const quickEntered = Promise.withResolvers<void>();
+		const quickGate = Promise.withResolvers<void>();
+		const stuckEntered = Promise.withResolvers<void>();
 		const server = await served(
 			{
 				"@app/slow": contributing({
@@ -439,7 +445,8 @@ describe("reloads and close", () => {
 						"GET /quick": {
 							public: true,
 							handler: async () => {
-								await new Promise((resolve) => setTimeout(resolve, 30));
+								quickEntered.resolve();
+								await quickGate.promise;
 								return { kind: "html", body: "done" };
 							},
 						},
@@ -447,19 +454,23 @@ describe("reloads and close", () => {
 							public: true,
 							handler: async (_request, ctx: Ctx) => {
 								sealed = ctx.abortSignal;
+								stuckEntered.resolve();
 								return new Promise(() => {});
 							},
 						},
 					},
 				}),
 			},
-			{ config: { listen: { host: "127.0.0.1", port: 0 }, closeTimeout: 100 } },
+			{ config: { listen: { host: "127.0.0.1", port: 0 }, closeTimeout: 1_000 } },
 		);
 		const quick = send(server.port, "GET", "/quick");
 		const stuck = send(server.port, "GET", "/stuck");
-		await new Promise((resolve) => setTimeout(resolve, 10));
+		// Both are running when close begins: under load a request could otherwise still be on its way and be refused.
+		await Promise.all([quickEntered.promise, stuckEntered.promise]);
 		const closing = server.http.close(context);
 		expect((await server.http.fetch(loopback("/quick"), LOOPBACK)).status).toBe(503);
+		// The running request finishes only now, well inside closeTimeout, whatever the load.
+		quickGate.resolve();
 		expect((await quick).body.toString()).toBe("done");
 		await closing;
 		expect(sealed?.aborted).toBe(true);

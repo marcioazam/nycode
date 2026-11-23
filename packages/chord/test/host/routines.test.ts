@@ -189,7 +189,7 @@ describe("on", () => {
 		await ref.bump(context);
 		await ref.bump(context);
 		gate.resolve();
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(3), { timeout: 2_000 });
 		expect(calls.map(([value]) => value)).toEqual([{ n: 0 }, { n: 1 }, { n: 3 }]);
 		expect(calls[2]![1]).toEqual([["s", ["n"], 3]]);
 		expect({ overlapped, aborted }).toEqual({ overlapped: false, aborted: false });
@@ -445,7 +445,7 @@ describe("on", () => {
 		for (let i = 0; i < 3; i++) await ref.bump(context);
 		await flushed();
 		gate.resolve();
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 2_000 });
 		expect(calls).toEqual([
 			[{ n: 0 }, [["r", { n: 0 }]]],
 			[{ n: 3 }, [["s", ["n"], 3]]],
@@ -482,7 +482,7 @@ describe("on", () => {
 		advance({ kind: "value", value: { n: 0 }, ops: [], retired: true });
 		advance({ kind: "value", value: { n: 5 }, ops: [["r", { n: 5 }]], retired: false });
 		gate.resolve();
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 2_000 });
 		advance({ kind: "value", value: { n: 6 }, ops: [["s", ["n"], 6]], retired: false });
 		await flushed();
 		expect(calls).toEqual([
@@ -507,7 +507,7 @@ describe("on", () => {
 		source.set("c");
 		await flushed();
 		gate.resolve();
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 2_000 });
 		expect(calls).toEqual(["a", "c"]);
 	});
 
@@ -520,7 +520,7 @@ describe("on", () => {
 				if (value === 0) for (let n = 1; n <= 20; n++) source.set(n);
 			});
 		});
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 2_000 });
 		expect(calls).toEqual([0, 20]);
 		const gate = Promise.withResolvers<void>();
 		const later = writable(0);
@@ -535,7 +535,7 @@ describe("on", () => {
 		for (let n = 1; n <= 20; n++) later.source.set(n);
 		// No flush in between: the watch still holds the values when the call ends.
 		gate.resolve();
-		await settled();
+		await vi.waitFor(() => expect(seen).toHaveLength(2), { timeout: 2_000 });
 		expect(seen).toEqual([0, 20]);
 	});
 
@@ -646,10 +646,11 @@ describe("on", () => {
 		await set!(2);
 		await set!(-1);
 		gate.resolve();
+		await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 2_000 });
 		await settled();
 		expect(calls).toEqual([0, 1]);
 		await set!(3);
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(3), { timeout: 2_000 });
 		expect(calls).toEqual([0, 1, 3]);
 		expect(reports(errors)).toEqual([]);
 	});
@@ -685,7 +686,7 @@ describe("on", () => {
 		await settled();
 		expect(calls).toEqual([]);
 		await failing.set(2, context);
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(1), { timeout: 2_000 });
 		expect(calls).toEqual([[2, [["r", 2]]]]);
 		expect(errors.map(({ kind }) => kind)).toEqual(["derive_failed"]);
 		viewer.release();
@@ -743,7 +744,7 @@ describe("on", () => {
 		await flushed();
 		source.set("b");
 		source.set("c");
-		await settled();
+		await vi.waitFor(() => expect(calls).toHaveLength(3), { timeout: 2_000 });
 		expect(calls).toEqual([
 			{ kind: "value", value: "a" },
 			{ kind: "value", value: "b" },
@@ -976,7 +977,7 @@ describe("routines and the end", () => {
 		// the call's commit may land while `on 0` runs, and a call after a busy one waits for the settling turn.
 		await item.state.watch(context).then((watch) => watch.stop());
 		await bumped;
-		await settled();
+		await vi.waitFor(() => expect(order).toHaveLength(4), { timeout: 2_000 });
 		expect(order).toEqual(["bump", "onLive", "on 0", "on 1"]);
 	});
 
@@ -1173,7 +1174,14 @@ describe("routine spans (slice 9)", () => {
 			{ telemetry },
 		);
 		await flushed();
-		await settled();
+		await vi.waitFor(
+			() => {
+				const done = telemetry.getSpans().filter(({ name }) => name === "chord.routine");
+				expect(done.some(({ attributes }) => attributes.routine === "onLive")).toBe(true);
+				expect(done.some(({ status }) => status.status === "error")).toBe(true);
+			},
+			{ timeout: 2_000 },
+		);
 		expect(seen).toContain(1);
 		const routines = telemetry.getSpans().filter(({ name }) => name === "chord.routine");
 		const live = routines.find(({ attributes }) => attributes.routine === "onLive")!;
@@ -1210,7 +1218,10 @@ describe("routine spans (slice 9)", () => {
 		await flushed();
 		await telemetry.startSpan({ name: "request" }, (span) => ref.bump(withTelemetry(span, context)));
 		await flushed();
-		await settled();
+		await vi.waitFor(
+			() => expect(telemetry.getSpans().filter(({ name }) => name === "chord.routine")).toHaveLength(2),
+			{ timeout: 2_000 },
+		);
 		const spans = telemetry.getSpans();
 		const bumped = spans.find(({ name, attributes }) => name === "chord.method" && attributes.member === "bump")!;
 		const calls = spans.filter(({ name }) => name === "chord.routine");
