@@ -64,3 +64,6 @@ __pycache__/
 *.pyc
 *.bak*
 nycode-transcripts/
+
+# A path built from an undefined value (TMPDIR="undefined" in a test once); never versioned.
+undefined/

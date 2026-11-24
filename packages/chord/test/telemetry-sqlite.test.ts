@@ -5,6 +5,7 @@ import type {
 	TelemetryCarrier,
 	TelemetrySpan,
 } from "@nycode/telemetry";
+import { telemetryNow } from "@nycode/telemetry";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createTelemetryAdapterConformance } from "../../telemetry/src/testing/index.ts";
 import type { SqliteDatabase } from "../src/sqlite/index.ts";
@@ -111,7 +112,14 @@ describe("SQLite telemetry buffering and aggregation", () => {
 
 	it("stores span times in whole microseconds of telemetryNow, read back as milliseconds", async () => {
 		vi.spyOn(Date, "now").mockReturnValue(20_001);
-		const clock = vi.spyOn(performance, "now").mockReturnValue(500);
+		// telemetryNow keeps its wall-clock anchor across tests and re-anchors only past 10 ms. The Date.now-only test above
+		// leaves 20_001 - performance.now(); in a worker ~500 ms old that sits within 10 ms of this test's clock and shifted
+		// every time here (gate 2026-11-24). A clock far off forces the re-anchor first.
+		const clock = vi.spyOn(performance, "now").mockReturnValue(497.027);
+		telemetryNow(); // the stale anchor of a 497 ms old worker
+		clock.mockReturnValue(-1e9);
+		telemetryNow();
+		clock.mockReturnValue(500);
 		await using f = await fixture();
 		await f.telemetry.startSpan({ name: "root" }, async (span) => {
 			clock.mockReturnValue(500.125);
