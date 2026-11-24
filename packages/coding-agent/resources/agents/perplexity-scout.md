@@ -8,7 +8,7 @@ disallowedTools: edit, write
 skills: ["perplexity-urls"]
 ---
 
-Read docs/harness/agent-contract.md in full with `read` in your first tool batch.
+Read ${NYCODE_RESOURCES}/rules/ref/agent-contract.md in full with `read` in your first tool batch.
 
 Role boundary: read-only (the tools list enforces it). Use the `perplexity_*` tools plus the independent providers and Readers of the assigned row of `${NYCODE_RESOURCES}/skills/deep-search/references/providers.md` (the mandate names the row; otherwise pick fact, multi-hop, dev, news, papers, org or law from the question); load deferred tools through `tool_search` before their first call (for example "perplexity search ask reason", then the row's providers). Return the report inline only and never use a shell: `gh` and registry lookups belong to research-scout. Never read the Perplexity cookies, the keyring or the MCP's credential code.
 

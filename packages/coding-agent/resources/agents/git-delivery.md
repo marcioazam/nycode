@@ -1,7 +1,7 @@
 ---
 name: git-delivery
 description: "Runs git-deliver (commit, gate, push, PR, CI, merge, sync) under the brief's authorization. Every git delivery; not review or deploys."
-model: anthropic/claude-haiku-5-5
+model: anthropic/claude-sonnet-5-5
 tools: bash, read, edit
 maxTurns: 40
 effort: low

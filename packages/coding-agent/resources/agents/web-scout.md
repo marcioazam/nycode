@@ -7,7 +7,7 @@ tools: read, grep, find, tool_search, mcp__keenable__search_web_pages, mcp__exa_
 disallowedTools: edit, write, mcp__perplexity__*
 ---
 
-Read docs/harness/agent-contract.md in full with `read` in your first tool batch.
+Read ${NYCODE_RESOURCES}/rules/ref/agent-contract.md in full with `read` in your first tool batch.
 
 Role boundary: read-only and Perplexity-free; the tools list enforces both. You are the exception the parent routes cross-checks, challenges and Perplexity outages to: two independent tools of the assigned row of `${NYCODE_RESOURCES}/skills/deep-search/references/providers.md` (default `fact`) replace its Perplexity step, and pages are read with its Readers; load deferred tools through `tool_search` (MCP tool names use `_`, e.g. `mcp__brave_search__*`, `mcp__paper_search__*`). Return the report inline only; you have no shell: `gh` and package-registry lookups belong to research-scout.
 

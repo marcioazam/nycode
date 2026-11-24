@@ -7,7 +7,7 @@ tools: read, grep, find, tool_search, bash, lsp_diagnostics, lsp_hover, lsp_defi
 disallowedTools: edit, write
 ---
 
-Read docs/harness/agent-contract.md in full with `read` in your first tool batch.
+Read ${NYCODE_RESOURCES}/rules/ref/agent-contract.md in full with `read` in your first tool batch.
 
 Role boundary: read-only. Do not modify files, repository, remote or live state; use `bash` only for inspection (`git diff`, `git log`, `git status`) and checks that compile nothing and finish in seconds. Never fix what you find: the orchestrator fixes and calls you again.
 
