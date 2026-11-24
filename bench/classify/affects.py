@@ -4,7 +4,8 @@ Fail closed: any path not proven non-functional is functional. The lists are the
 docs/migration/nycode-core/09 §3.2 (D-21); the rule record is docs/bench/RUNBOOK.md.
 
 non-functional = docs, repo tooling (CI, hooks, release checks), the benchmark's own infra, tests, licence and dotfiles,
-`apps/**` (outside the gates, D-23) and pure-UI paths (themes, statusline, visual extensions).
+`apps/**` (outside the gates, D-23) and pure-UI paths (themes, statusline, the TUI package, interactive mode, HTML
+export, visual extensions; D-64).
 functional on purpose = `packages/*/src/**` (minus the UI extensions), everything under
 `packages/*/resources/{agents,skills,commands,rules,instructions,hooks}/` (prompts, even markdown), package.json and
 the lockfile (dependencies). A package.json diff that only adds or removes `files` entries is non-functional when
@@ -20,14 +21,31 @@ from typing import Any
 
 PROMPT_DIRS = ("agents", "skills", "commands", "rules", "instructions", "hooks")
 PROMPTS = tuple(f"packages/*/resources/{d}/*" for d in PROMPT_DIRS)
-# Pure UI: what the user sees, never what the agent is told or can do.
+# Pure UI: what the user sees, never what the agent is told or can do, nor what it sends to the model (D-64: the
+# benchmark runs on prompts, model communication and agent behavior only). `session-title` stays functional: it calls
+# the model.
+UI_EXTENSIONS = (
+    "ui",
+    "ui-visual",
+    "footer",
+    "sticky-prompt",
+    "chat-margin",
+    "code-blocks",
+    "status-line",
+    "image-open",
+    "hook-msgs",
+    "sound-notify",
+    "notify",
+    "avisos",
+    "dev-commands",
+)
 UI = (
     "packages/*/resources/themes/*",
     "packages/*/resources/statusline/*",
-    *(
-        f"packages/*/src/extensions/{d}/*"
-        for d in ("ui", "ui-visual", "footer", "sticky-prompt")
-    ),
+    "packages/tui/*",
+    "packages/coding-agent/src/modes/interactive/*",
+    "packages/coding-agent/src/core/export-html/*",
+    *(f"packages/*/src/extensions/{d}/*" for d in UI_EXTENSIONS),
 )
 DOCS = ("docs/*", "packages/*/docs/*")
 REPO = (
