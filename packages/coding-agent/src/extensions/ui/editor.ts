@@ -108,7 +108,7 @@ export interface EditorUi {
 	warnRgb?: () => [number, number, number] | undefined;
 }
 
-const travado = (): boolean => (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:travado")] === true;
+const travado = (): boolean => (globalThis as Record<symbol, unknown>)[Symbol.for("nycode:travado")] === true;
 export const RESPIRO_MS = 700; // período/2π da respiração da cápsula enquanto o agente trabalha
 
 /** Troca o 1º e o último `─` visíveis (se forem as pontas) pelos cantos da cápsula. */

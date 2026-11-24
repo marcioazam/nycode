@@ -2,7 +2,7 @@
 import type { ExtensionAPI, ExtensionCommandContext } from "../../../core/extensions/types.ts";
 import { completeDirs, resolveTarget } from "./path.ts";
 
-export const MARK = Symbol.for("nycode-harness.session-cwd");
+export const MARK = Symbol.for("nycode.session-cwd");
 type Info = { ok: boolean; cwd?: string; reason?: string; trusted?: boolean; policy?: boolean };
 type Ctx = Pick<
 	ExtensionCommandContext,

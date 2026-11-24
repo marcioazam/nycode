@@ -137,7 +137,7 @@ export const delayText = (ms: number): string =>
 const clock = (ms: number) =>
 	new Date(ms).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 
-const SINAL_LIMITE = Symbol.for("nycode-harness:cartao-limite");
+const SINAL_LIMITE = Symbol.for("nycode:cartao-limite");
 const minutos = (ms: number) => Math.ceil(Math.max(0, ms) / 60_000);
 type TemaCartao = { fg: (cor: string, texto: string) => string; bold: (texto: string) => string };
 
@@ -439,7 +439,7 @@ export default function autoResumeExtension(
 			if (!ok) {
 				// O settle nem sempre marca Esc como aborted; não envie uma notificação de erro após cancelar a espera.
 				if (d.kind === "limit")
-					(globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:retry-cancelado")] = now();
+					(globalThis as Record<symbol, unknown>)[Symbol.for("nycode:retry-cancelado")] = now();
 				return;
 			}
 			const entries = [

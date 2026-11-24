@@ -448,7 +448,7 @@ describe("auto-resume", () => {
 					// The avisos module delivers the card by the global signal read during the synchronous notify.
 					ui: {
 						notify: () => {
-							cartao = (globalThis as Record<symbol, any>)[Symbol.for("nycode-harness:cartao-limite")];
+							cartao = (globalThis as Record<symbol, any>)[Symbol.for("nycode:cartao-limite")];
 							cartao.redesenhar = () => renders++;
 						},
 					},

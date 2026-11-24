@@ -67,5 +67,5 @@ def test_execute_runs_s1_in_one_call_per_k(tmp_path: Path, monkeypatch: MP) -> N
         "k_security": 3,
         "tasks": ["a", "sec-a"],
     }
-    rb.execute("nycode-harness", "pr", "m", 5.0, [step], {}, tmp_path / "o")
+    rb.execute("nycode", "pr", "m", 5.0, [step], {}, tmp_path / "o")
     assert sorted(calls) == [(1, ["a"]), (3, ["sec-a"])]

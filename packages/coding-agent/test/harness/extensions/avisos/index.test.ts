@@ -76,13 +76,13 @@ function cria(cfg: object | undefined, env: Record<string, string> = { VTE_VERSI
 		handlers,
 	};
 }
-const SOM = "nycode-harness:aviso-som";
+const SOM = "nycode:aviso-som";
 const sons = (e: string[]) => e.filter((x) => x === SOM).length;
 
 test("session_start anuncia o dono; sem UI ou em subagente não anuncia nem notifica", () => {
 	const a = cria(undefined);
 	a.h.start();
-	assert.ok(a.emitidos.includes("nycode-harness:notify-owner"));
+	assert.ok(a.emitidos.includes("nycode:notify-owner"));
 	const b = cria(undefined);
 	b.handlers.get("session_start")!({}, { hasUI: false, cwd: "/x" });
 	b.h.turno(msgs(), MIN);
@@ -273,7 +273,7 @@ test("compactação automática entra nos recentes com o tamanho de antes; manua
 });
 
 test("tentativas canceladas por você (marca do core) não é erro: sem aviso, sem som, fora do painel; a marca vale uma vez", () => {
-	const k = Symbol.for("nycode-harness:retry-cancelado");
+	const k = Symbol.for("nycode:retry-cancelado");
 	const t = cria(undefined);
 	t.h.start();
 	(globalThis as any)[k] = Date.now();

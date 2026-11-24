@@ -112,7 +112,7 @@ export function restyleQueue(lines: readonly string[], width: number, st: QueueS
 	return out;
 }
 
-const WRAPPED = Symbol.for("nycode-harness.queue-view");
+const WRAPPED = Symbol.for("nycode.queue-view");
 
 /** Embrulha o render do contêiner de pendências (2º filho do TUI no nycode 1.5.2); sem ele, não faz nada. */
 export function attachQueueView(

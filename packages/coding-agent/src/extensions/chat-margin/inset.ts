@@ -48,7 +48,7 @@ export function padOf(c: { outputPad?: unknown; paddingX?: unknown }): number {
 	return typeof v === "number" && v > 0 ? Math.floor(v) : 0;
 }
 
-const MARK = Symbol.for("nycode-harness.chat-margin.child");
+const MARK = Symbol.for("nycode.chat-margin.child");
 
 export interface MouseLike {
 	x: number;
@@ -111,7 +111,7 @@ export function wrapInstance(
 }
 
 /** Marca o render do hook: `pre` passa os filhos novos por onChild; `prev` é o render que ele encadeia (a compactação das tools usa os dois). */
-export const HOOK = Symbol.for("nycode-harness.chat-margin.hook");
+export const HOOK = Symbol.for("nycode.chat-margin.hook");
 export type HookInfo = { pre: (self: ContainerLike) => void; prev: unknown };
 /** Container da TUI: filhos e render encadeável. */
 export type ContainerLike = { children: unknown[]; render: (this: ContainerLike, width: number) => string[] };

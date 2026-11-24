@@ -7,7 +7,7 @@ import { getAgentDir as getDefaultAgentDir } from "../../config.ts";
 export const MAX_FINDER_FILES = 20000;
 /** Scan limits (mutable only for tests): .jsonl files, directory entries, directories, deadline. */
 export const scanLimits = { maxFiles: MAX_FINDER_FILES, maxEntries: 100000, maxDirs: 5000, deadlineMs: 5000 };
-const FINDERS = Symbol.for("nycode-harness.session-cwd.finders");
+const FINDERS = Symbol.for("nycode.session-cwd.finders");
 const HEADER_BYTES = 64 * 1024;
 
 const incomplete = (why: string) =>

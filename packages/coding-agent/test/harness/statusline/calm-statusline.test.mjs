@@ -11,7 +11,7 @@ const H = 3_600_000;
 const now = 1_800_000_000_000;
 const plain = (lines) => lines.map((l) => l.replace(/\x1b\[[0-9;:]*m/g, ''));
 const base = (over = {}) => ({
-  model: { id: 'fable', display_name: 'Fable 5.2' }, effort: { level: 'medium' }, cwd: '/w/nycode-harness', workspace: { current_dir: '/w/nycode-harness' },
+  model: { id: 'fable', display_name: 'Fable 5.2' }, effort: { level: 'medium' }, cwd: '/w/nycode', workspace: { current_dir: '/w/nycode' },
   cost: { total_cost_usd: 1.08, total_duration_ms: 12 * 60_000 },
   context_window: { context_window_size: 1_000_000, used_percentage: 9, total_input_tokens: 90_000, current_usage: null },
   rate_limits: { five_hour: { used_percentage: 8, resets_at: (now + 4 * H) / 1000 }, seven_day: { used_percentage: 22, resets_at: (now + 4 * 24 * H) / 1000 } },
@@ -36,9 +36,9 @@ test('normal: duas linhas se couber, três no fallback; sem cor de alerta, com b
   assert.equal(roleOf(largo[1], 9), 'ok');
   assert.equal(roleOf(largo[1], 22), 'usage');
   assert.deepEqual(rest, ['↓ 0 ↑ 0'], 'a 3ª linha zerada vem depois das faixas');
-  // Git com ícone, à frente/atrás e +/− (dono, 2026-11-19, /status "Git"): antes 'nycode-harness ⎇ main*'; sujo sem linhas mudadas segue com *.
-  // Effort entre parênteses colado ao modelo (dono, 2026-11-19): antes 'Fable 5.2 · medium · nycode-harness'.
-  assert.equal(l1, 'Fable 5.2 (medium) · nycode-harness · \ue725 main* │ 12m · $1.08');
+  // Git com ícone, à frente/atrás e +/− (dono, 2026-11-19, /status "Git"): antes 'nycode ⎇ main*'; sujo sem linhas mudadas segue com *.
+  // Effort entre parênteses colado ao modelo (dono, 2026-11-19): antes 'Fable 5.2 · medium · nycode'.
+  assert.equal(l1, 'Fable 5.2 (medium) · nycode · \ue725 main* │ 12m · $1.08');
   assert.equal(l2, 'ctx ━━━━━━━━ 9%');
   assert.equal(l3, '5h ━━━━━━━━ 8% renova em 4h · semana ━━━━━━━━ 22% renova em 4d');
   assert.doesNotMatch(raw.join(''), new RegExp([rgb('warn'), rgb('high'), rgb('crit')].join('|'))); // nem atenção, nem alto, nem crítico
@@ -217,13 +217,13 @@ test('U18 gitState: cache de 5-10 s por diretório; no timeout reusa o último v
 test('git: ramo com ícone, à frente/atrás e +/− nas cores; ASCII sem Nerd Font', () => {
   const git = { branch: 'main', dirty: true, ahead: 2, behind: 1, added: 34, removed: 8 };
   const raw = render(base(), { ...opts, git });
-  assert.equal(plain(raw)[0], 'Fable 5.2 (medium) · nycode-harness · \ue725 main ↑2 ↓1 +34 −8 │ 12m · $1.08');
+  assert.equal(plain(raw)[0], 'Fable 5.2 (medium) · nycode · \ue725 main ↑2 ↓1 +34 −8 │ 12m · $1.08');
   assert.match(raw[0], new RegExp(`\\x1b\\[38;2;${rgb('usage')}m\ue725 main`));
   assert.match(raw[0], new RegExp(`\\x1b\\[38;2;${rgb('ok')}m\\+34`));
   assert.match(raw[0], new RegExp(`\\x1b\\[38;2;${rgb('crit')}m−8`));
   const saved = process.env.NYCODE_ASCII_ICONS;
   process.env.NYCODE_ASCII_ICONS = '1';
-  try { assert.equal(plain(render(base(), { ...opts, git: { branch: 'dev', dirty: false } }))[0], 'Fable 5.2 (medium) · nycode-harness · ⎇ dev │ 12m · $1.08') } finally { saved === undefined ? delete process.env.NYCODE_ASCII_ICONS : (process.env.NYCODE_ASCII_ICONS = saved) }
+  try { assert.equal(plain(render(base(), { ...opts, git: { branch: 'dev', dirty: false } }))[0], 'Fable 5.2 (medium) · nycode · ⎇ dev │ 12m · $1.08') } finally { saved === undefined ? delete process.env.NYCODE_ASCII_ICONS : (process.env.NYCODE_ASCII_ICONS = saved) }
 });
 
 test('gitState lê ↑/↓ do cabeçalho e +/− do diff; sem commits o diff falha e fica zero', () => {
@@ -274,10 +274,10 @@ test('effort: (nível) colado ao modelo, cor pela intensidade', () => {
   const cor = { off: 'sec', minimal: 'sec', low: 'ok', medium: 'usage', high: 'high', xhigh: 'crit', max: 'crit' };
   for (const [level, role] of Object.entries(cor)) {
     const l1 = render(base({ effort: { level } }), opts)[0];
-    assert.ok(plain([l1])[0].startsWith(`Fable 5.2 (${level}) · nycode-harness`), plain([l1])[0]);
+    assert.ok(plain([l1])[0].startsWith(`Fable 5.2 (${level}) · nycode`), plain([l1])[0]);
     assert.ok(l1.includes(`\x1b[38;2;${rgb(role)}m(${level})`), `${level} em ${role}`);
   }
-  assert.ok(plain(render(base({ effort: undefined }), opts))[0].startsWith('Fable 5.2 · nycode-harness'), 'sem effort: sem parênteses');
+  assert.ok(plain(render(base({ effort: undefined }), opts))[0].startsWith('Fable 5.2 · nycode'), 'sem effort: sem parênteses');
 });
 
 test('statusline.mjs usa renderer calm por padrão sem config.json', () => {

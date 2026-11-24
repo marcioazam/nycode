@@ -11,7 +11,7 @@ def test_smoke_resolves_to_pr() -> None:
 
 
 def test_smoke_dry_run_prints_the_pr_plan(capsys: CF) -> None:
-    assert rb.main(RA("nycode-harness", "--dry-run", tier="pr", budget="12")) == 0
+    assert rb.main(RA("nycode", "--dry-run", tier="pr", budget="12")) == 0
     pr = capsys.readouterr().out
-    assert rb.main(RA("nycode-harness", "--dry-run", tier="smoke", budget="12")) == 0
+    assert rb.main(RA("nycode", "--dry-run", tier="smoke", budget="12")) == 0
     assert capsys.readouterr().out == pr

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds the nycode Harbor bundle (09 §2.2): the build of THIS checkout plus the owner layer of the arm stage, rooted
 # at the container home (/opt/nycode-home). Usage: HOME=<stage> bundle.sh [OUT]; OUT defaults to
-# /tmp/nycode-harness-bundle.tgz. The checkout must already be built (arms/nycode does `npm ci` + `npm run build`).
+# /tmp/nycode-bundle.tgz. The checkout must already be built (arms/nycode does `npm ci` + `npm run build`).
 # Never includes credentials: only the files of overlay-nycode.list are copied from the stage, and the result is asserted.
 #   .nycode/agent/              owner layer (settings.json, AGENTS.md)
 #   .local/lib/nycode/          packages/coding-agent runtime: package.json, dist/bundle, theme/assets/export-html,
@@ -11,7 +11,7 @@
 set -euo pipefail
 here=$(dirname "$(readlink -f "$0")")
 repo=${NYCODE_REPO:-$(cd "$here/../.." && pwd)}
-OUT=${1:-/tmp/nycode-harness-bundle.tgz}
+OUT=${1:-/tmp/nycode-bundle.tgz}
 pkg=$repo/packages/coding-agent
 # shellcheck source=bench/arms/overlay-sha.sh
 . "$here/../arms/overlay-sha.sh"

@@ -3,8 +3,8 @@
 ## Origem
 
 Em 14 e 15/11 o plano B do harness Nycode era adotar as regras de `~/source/blueprint/base-software-rules` (commit
-`cb9f303`) no repositório `marcioazam/ny-pi`. Esse repositório foi arquivado; o alvo agora é `marcioazam/nycode`.
-O registro original fica em `~/.pi/agent/claude-home/docs/bench/ny-pi-blueprint-adoption-2026-11-14.md`, lido sem
+`cb9f303`) no repositório do Nycode pré-migração. Esse repositório foi arquivado; o alvo agora é `marcioazam/nycode`.
+O registro original fica no registro do mantenedor, lido sem
 alteração. A lista do dono continua valendo acima do blueprint: 80% de cobertura por arquivo de código, E2E primeiro,
 800 linhas por arquivo, 7 arquivos de código por diretório, README.md em todo diretório, DRY, enums no lugar de
 strings e o tempo de CI por PR sem aumentar.

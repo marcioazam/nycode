@@ -161,7 +161,7 @@ function hookEnv(
 /** Um registro por execução no sink de diagnóstico do harness (ausente: não faz nada). Nunca lança. */
 function reportHook(command: string, payload: unknown, t0: number, r: HookRunResult): void {
 	try {
-		const sink = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:diag")];
+		const sink = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode:diag")];
 		if (typeof sink !== "function") return;
 		const ev = (payload as { hook_event_name?: unknown } | null)?.hook_event_name;
 		const evento = typeof ev === "string" && ev ? ev : "hook";

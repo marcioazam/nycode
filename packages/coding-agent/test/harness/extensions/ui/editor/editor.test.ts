@@ -427,7 +427,7 @@ test("Ctrl+X Ctrl+K exige duas confirmações em 3 s e usa somente o fleet da se
 	}
 });
 
-const MODES_SLOT = Symbol.for("nycode-harness.permission-modes");
+const MODES_SLOT = Symbol.for("nycode.permission-modes");
 
 function _withController(cycle: () => unknown, run: () => void) {
 	const g = globalThis as Record<symbol, unknown>;

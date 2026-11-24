@@ -9,7 +9,7 @@
  * notification only when "away").
  *
  * Single owner of the decision: alone, it plays on every end of turn. When the avisos extension announces
- * `nycode-harness:notify-owner`, this extension stops deciding and only plays on `nycode-harness:aviso-som`, which
+ * `nycode:notify-owner`, this extension stops deciding and only plays on `nycode:aviso-som`, which
  * avisos emits for the events in the `som` list of avisos.json (and on "Testar agora").
  */
 
@@ -57,8 +57,8 @@ export function play(
 	}
 }
 
-export const OWNER_CHANNEL = "nycode-harness:notify-owner";
-export const SOUND_CHANNEL = "nycode-harness:aviso-som";
+export const OWNER_CHANNEL = "nycode:notify-owner";
+export const SOUND_CHANNEL = "nycode:aviso-som";
 
 export function setup(
 	nycode: ExtensionAPI,

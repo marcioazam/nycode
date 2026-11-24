@@ -112,6 +112,19 @@ def test_a_hit_the_regex_cannot_see_stays_open() -> None:
     assert residuo.Hit("a", 1, "no word here").spans == [(0, 12)]
 
 
+def test_search_flags_the_retired_nycode_harness_name(tmp_path: Path) -> None:
+    put(tmp_path, "src/a.ts", "// nycode-harness\n")
+    put(tmp_path, "src/b.ts", "// nycode-harnessed nycode\n")  # another word: not a hit
+    hits, _ = residuo.search(tmp_path)
+    assert [(h.path, h.line) for h in hits] == [("src/a.ts", 1)]
+
+
+def test_search_flags_the_ny_pi_name(tmp_path: Path) -> None:
+    put(tmp_path, "src/a.ts", "// ny-pi\n")
+    hits, _ = residuo.search(tmp_path)
+    assert [(h.path, h.line) for h in hits] == [("src/a.ts", 1)]
+
+
 def test_search_skips_exempt_files(tmp_path: Path) -> None:
     put(tmp_path, "src/a.ts", "const x = pi;\n")
     put(tmp_path, "docs/fork/b.sh", "pi\n")

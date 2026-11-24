@@ -155,7 +155,7 @@ describe("notify extension guards", () => {
 
 	it("another extension that owns notifications silences this one", () => {
 		const h = load();
-		h.bus.get("nycode-harness:notify-owner")?.({});
+		h.bus.get("nycode:notify-owner")?.({});
 		expect(h.run()).toEqual([]);
 	});
 

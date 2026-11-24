@@ -76,15 +76,12 @@ def test_dry_run_changes_nothing_and_counts_to_stdout(repo: Path) -> None:
 def internals(tmp_path: Path) -> Path:
     files = {
         "src/a.ts": (
-            "const x = fold(pi); entry?.pi; // the ny-pi harness and pi-code, as pi 1.5.2 did\n"
-            "see marcioazam/ny-pi and import/ny-pi\n"
+            "const x = fold(pi); entry?.pi; // the pi-code pack, as pi 1.5.2 did\n"
             "env PI_CODE_SUBAGENT PI_CODING_AGENT_DIR PI_HOME, dir .pi/skills, upstream pi\n"
             "// Working contract (pi) vs (nycode)\n"
             "`nycode migrate from-pi` reads docs/harness/pi-hooks.md\n"
         ),
         "packages/coding-agent/src/migrations/from-pi.ts": "const dir = '.pi';\n",
-        "bench/arms/ny-pi/run.sh": "pi-vanilla\n",
-        "import/ny-pi/a.sh": "pi\n",
         "docs/specs/0001.md": "pi\n",
         "docs/bench/r.md": "pi\n",
         "README.md": "pi\n",
@@ -102,8 +99,7 @@ def internals(tmp_path: Path) -> Path:
 def test_internals_are_renamed_but_legacy_names_stay(internals: Path) -> None:
     run(internals, "--fork")
     assert (internals / "src/a.ts").read_text() == (
-        "const x = fold(nycode); entry?.nycode; // the nycode harness and nycode, as upstream 1.5.2 did\n"
-        "see marcioazam/ny-pi and import/ny-pi\n"
+        "const x = fold(nycode); entry?.nycode; // the nycode pack, as upstream 1.5.2 did\n"
         "env PI_CODE_SUBAGENT PI_CODING_AGENT_DIR NYCODE_HOME, dir .pi/skills, upstream agent\n"
         "// Working contract (pi) vs (nycode)\n"
         "`nycode migrate from-pi` reads docs/harness/pi-hooks.md\n"
@@ -114,8 +110,6 @@ def test_declared_paths_are_left_untouched(internals: Path) -> None:
     run(internals, "--fork")
     for rel in [
         "packages/coding-agent/src/migrations/from-pi.ts",
-        "bench/arms/ny-pi/run.sh",
-        "import/ny-pi/a.sh",
         "docs/specs/0001.md",
         "docs/bench/r.md",
         "README.md",

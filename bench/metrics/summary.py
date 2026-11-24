@@ -263,7 +263,7 @@ def paired(
     }
 
 
-def compute(rounds: list[Path], focus: str = "nycode-harness") -> dict[str, Any]:
+def compute(rounds: list[Path], focus: str = "nycode") -> dict[str, Any]:
     recs: dict[str, list[Rec]] = defaultdict(list)
     for row in evidence.collect(rounds):
         recs[row["arm"]].append(record(row))

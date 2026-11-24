@@ -274,7 +274,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--arms",
         required=True,
-        help="braços separados por vírgula (ex.: nycode-harness,pi-vanilla)",
+        help="braços separados por vírgula (ex.: nycode,pi-vanilla)",
     )
     parser.add_argument(
         "--reps", type=int, default=7, help="repetições por braço (padrão 7)"

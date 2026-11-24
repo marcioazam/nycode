@@ -18,7 +18,7 @@ afterEach(() => {
 
 const m = __d_index;
 const { lerCaixa } = __d_registro;
-const SINK = Symbol.for("nycode-harness:diag");
+const SINK = Symbol.for("nycode:diag");
 const theme = { fg: (_c: string, s: string) => s, bg: (_c: string, s: string) => s, bold: (s: string) => s };
 
 function cria(env: Record<string, string> = {}, hasUI = true) {

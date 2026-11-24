@@ -1,6 +1,3 @@
-# docs/migration/nycode-arquivo is a frozen archive, excluded from lints and semgrep the same way
-# (scripts/ci/run-static.sh, run-security.sh). apps/p3/docs/archive is a static mockup archive,
-# not a page the app serves.
+# apps/p3/docs/archive is a static mockup archive, not a page the app serves.
 paths-ignore:
-  - docs/migration/nycode-arquivo/**
   - apps/p3/docs/archive/**

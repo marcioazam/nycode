@@ -1,5 +1,5 @@
 [Unit]
-Description=Nightly full-tier benchmark of nycode-harness on main
+Description=Nightly full-tier benchmark of Nycode on main
 
 [Service]
 Type=oneshot

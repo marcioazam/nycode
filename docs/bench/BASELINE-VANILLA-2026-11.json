@@ -7,7 +7,7 @@
     "cc-vanilla": "2.1.323",
     "pi-vanilla": "1.5.2",
     "omp": "18.20.0",
-    "ny-pi": "1.5.2 + overlay 83d8038f5782c040 (ask re-run and tb41: 00cb354716d14d16)"
+    "nycode": "1.5.2 + overlay 83d8038f5782c040 (ask re-run and tb41: 00cb354716d14d16)"
   },
   "results": {
     "sonnet": {
@@ -137,7 +137,7 @@
           }
         }
       },
-      "ny-pi": {
+      "nycode": {
         "runs": 76,
         "passed": 62,
         "pass_rate": 0.816,
@@ -259,7 +259,7 @@
           }
         }
       },
-      "ny-pi": {
+      "nycode": {
         "runs": 22,
         "passed": 20,
         "pass_rate": 0.909,
@@ -350,7 +350,7 @@
           "risk-scorer-replay"
         ]
       },
-      "ny-pi": {
+      "nycode": {
         "runs": 6,
         "passed": 2,
         "pass_rate": 0.333,

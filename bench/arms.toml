@@ -16,27 +16,7 @@ version = "pi 1.5.2"
 effort = "medium"            # --thinking medium
 profile = "empty PI_CODING_AGENT_DIR (no packages/extensions/skills); eval-only flags dropped"
 
-[nycode-harness]
-bin = "arms/nycode-harness"
-runner = "run_pi.py"
-version = "pi 1.5.2 + pi-code 1.7.0 + this checkout"
-effort = "settings.json"     # from the owner overlay
-profile = "throwaway HOME: install.sh --link --apply of this tree + overlay.list; hash in .overlay-sha"
-
-# Temporary arm (D-25, 09 §2.3): the nycode-harness of this tree on pi 1.6.0, to separate the effect of the base from
-# the effect of the migration. Same script as `nycode-harness`; `env` below reaches it (run.py exports it). It needs a pi 1.6.0
-# managed install (BENCH_PI_INSTALL_DIR); without the two pi 1.5.2 core patches (bin/pi skips them on another version).
-# Leaves with F10.
-[nycode-harness-pi160]
-bin = "arms/nycode-harness"
-runner = "run_pi.py"
-version = "1.6.0"
-effort = "settings.json"     # from the owner overlay
-profile = "arms/nycode-harness on pi 1.6.0 (BENCH_PI_VERSION): own stage bench-nycode-harness160-<sha>, core patches skipped"
-stage_prefix = "bench-nycode-harness160"
-env = { BENCH_PI_VERSION = "1.6.0" }
-
-# The product under migration (09 §2.2): the nycode monorepo built from this checkout, no installer, no patches.
+# The measured product (09 §2.2): the nycode monorepo built from this checkout, no installer, no patches.
 [nycode]
 bin = "arms/nycode"
 runner = "run_pi.py"

@@ -25,8 +25,8 @@ export interface Deps {
 	env?: Record<string, string | undefined>;
 }
 
-const MARCA = Symbol.for("nycode-harness:travar-modelos");
-const SINK = Symbol.for("nycode-harness:diag");
+const MARCA = Symbol.for("nycode:travar-modelos");
+const SINK = Symbol.for("nycode:diag");
 /** Ícone do rodapé (R2 da onda 12 escolhe um sem emoji); vazio por ora. Ponto único de troca. */
 const ICONE_TRAVA = "";
 const USO = "uso: /travar-modelos provedor/id:low,medium …";

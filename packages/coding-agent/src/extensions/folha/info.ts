@@ -121,7 +121,7 @@ export function parseInfo(message: string, home: string, t: ThemeLike = plain): 
 	return parseContext(lines, t) ?? parseMemory(lines, home) ?? parseAgents(message, home) ?? parseHooks(lines);
 }
 
-const MARK = Symbol.for("nycode-harness.folha.notify");
+const MARK = Symbol.for("nycode.folha.notify");
 export const OVERLAY = { overlay: true, overlayOptions: { anchor: "bottom-center", width: "100%", maxHeight: "70%" } };
 
 export function installNotify(ui: any, home: string): void {

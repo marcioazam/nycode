@@ -1,6 +1,6 @@
 """Harbor agent that runs the nycode build of this checkout (+ the owner layer) in the task container (09 §2.2).
 
-Sibling of the nycode-harness `pi_harness_agent` (same directory): subclasses Harbor's built-in Pi agent, so the CLI flags, the session-dir
+Subclasses Harbor's built-in Pi agent, so the CLI flags, the session-dir
 trajectory and the cost parsing are inherited (nycode keeps pi's `--print --mode json` contract and session format).
 Only install() (ships the bundle of bundle.sh instead of `npm i -g pi`) and the final invocation differ: the bundled
 `cli.js` runs under Node from nvm, with HOME and NYCODE_CODING_AGENT_DIR inside /opt/nycode-home.
@@ -20,14 +20,14 @@ from harbor.environments.base import BaseEnvironment  # type: ignore[import-not-
 _HOME = "/opt/nycode-home"  # fixed in-container home; independent of the host user
 _AGENT_DIR = f"{_HOME}/.nycode/agent"  # NYCODE_CODING_AGENT_DIR: the owner layer
 _CLI = f"{_HOME}/.local/lib/nycode/dist/bundle/cli.js"
-_REMOTE_BUNDLE = "/tmp/nycode-harness-bundle.tgz"
+_REMOTE_BUNDLE = "/tmp/nycode-bundle.tgz"
 _AGENT_ENV = {
     "HOME": _HOME,
     "NYCODE_CODING_AGENT_DIR": _AGENT_DIR,
     "NYCODE_SKIP_VERSION_CHECK": "1",  # same as bench/arms/nycode: no update check in a measured run
 }
 
-# curl and tar for nvm and the bundle (the bundle needs no python3 or patch, unlike the nycode-harness); fails loudly.
+# curl and tar for nvm and the bundle (the bundle needs no python3 or patch,); fails loudly.
 _ROOT_DEPS = r"""
 set -e
 need=""
@@ -90,9 +90,7 @@ class NycodeAgent(Pi):  # type: ignore[misc]
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        bundle = Path(
-            os.environ.get("NYCODE_HARNESS_BUNDLE", "/tmp/nycode-harness-bundle.tgz")
-        )
+        bundle = Path(os.environ.get("NYCODE_BUNDLE", "/tmp/nycode-bundle.tgz"))
         if not bundle.is_file():
             raise FileNotFoundError(f"{bundle} missing; run bundle.sh first")
         await self.exec_as_root(environment, _ROOT_DEPS)

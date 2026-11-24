@@ -37,7 +37,7 @@ export const DIVISOR_MS = 340;
 const SURGE_MS = 280;
 const PASSO_MS = 110;
 export const RECARGA_MAX_MS = 5000; // a reload mark older than this is ignored
-export const RECARGA = Symbol.for("nycode-harness:recarga");
+export const RECARGA = Symbol.for("nycode:recarga");
 
 /** The reload mark written by the avisos extension on session_shutdown (reason 'reload'). */
 export interface MarcaRecarga {
@@ -297,7 +297,7 @@ export function recarregado(host: object, t: Theme, confianca: boolean): void {
 }
 
 // ---- Reload and start-up notices as chips: rules and memory lines drawn as pills, with the entry animation ----
-export const ABERTURA = Symbol.for("nycode-harness:abertura");
+export const ABERTURA = Symbol.for("nycode:abertura");
 const ESPERA_MS = 1500;
 const CASCATA_MS = 90;
 

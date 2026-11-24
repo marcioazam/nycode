@@ -137,13 +137,11 @@ semgrep_scan() {
     --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory --env GIT_CONFIG_VALUE_0=/src \
     "$SEMGREP_IMAGE" semgrep scan --error --metrics=off --disable-version-check --quiet \
     --config p/default --config p/python --config p/typescript --config p/command-injection --config p/github-actions \
-    --exclude scripts/fixtures/leak --exclude nycode-arquivo "${args[@]}" . || rc=$?
+    --exclude scripts/fixtures/leak "${args[@]}" . || rc=$?
   [ "$mode" = rw ] && rm -r "$src"
   return "$rc"
 }
 
-# docs/migration/nycode-arquivo (verbatim Nycode archive, not maintained or executed, owner decision 2026-11-21) is
-# outside semgrep too; the leak scan still covers it.
 # osv-scanner has no severity threshold flag: fail on any group with CVSS >= 7 (HIGH/CRITICAL) or
 # no score at all (unknown is not assumed safe). Exceptions live in scripts/ci/osv-scanner.toml with owner+expiry.
 osv_scan() {

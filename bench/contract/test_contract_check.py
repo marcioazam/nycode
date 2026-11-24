@@ -12,7 +12,7 @@ from fake_api import Hit
 
 MP = pytest.MonkeyPatch
 
-# A stand-in for bench/arms/nycode-harness: builds a stage from FAKE_TEMPLATE on --version and, for -p, talks to the
+# A stand-in for a pi-layout arm: builds a stage from FAKE_TEMPLATE on --version and, for -p, talks to the
 # baseUrl of the stage's models.json like pi does (one tool call per turn, tool_result sent back).
 FAKE_ARM = r"""#!/usr/bin/env bash
 set -euo pipefail
@@ -261,7 +261,7 @@ def test_nycode_arm_without_agent_dir_exits_2(
 def test_nycode_clean_env_sets_its_offline_switch(tmp_path: Path) -> None:
     env = check.clean_env({"NYCODE_X": "1", "PI_Y": "1", "P": "p"}, tmp_path, "nycode")
     assert env == {"P": "p", "BENCH_STAGE": str(tmp_path), "NYCODE_OFFLINE": "1"}
-    assert "NYCODE_OFFLINE" not in check.clean_env({}, tmp_path, "nycode-harness")
+    assert "NYCODE_OFFLINE" not in check.clean_env({}, tmp_path, "pi-vanilla")
 
 
 @pytest.mark.parametrize(
@@ -290,10 +290,10 @@ def test_environment_problems_exit_2_with_reason(
 def test_shared_stage_is_refused(
     tmp_path: Path, monkeypatch: MP, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    monkeypatch.setenv("BENCH_STAGE", str(tmp_path / "bench-nycode-harness-abc"))
+    monkeypatch.setenv("BENCH_STAGE", str(tmp_path / "bench-nycode-abc"))
     assert check.main(["--arm", "fake"]) == 2
     assert "compartilhado" in capsys.readouterr().err
-    assert not (tmp_path / "bench-nycode-harness-abc").exists()
+    assert not (tmp_path / "bench-nycode-abc").exists()
 
 
 def test_clean_env_drops_session_variables(tmp_path: Path) -> None:

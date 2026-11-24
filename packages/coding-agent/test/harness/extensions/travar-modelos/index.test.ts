@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, test } from "vitest";
 import * as m from "../../../../src/extensions/travar-modelos/index.ts";
 
-const SINK = Symbol.for("nycode-harness:diag");
+const SINK = Symbol.for("nycode:diag");
 const A = { provider: "p", id: "a" };
 const B = { provider: "o", id: "x/y" };
 const C = { provider: "q", id: "c" };

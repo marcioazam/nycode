@@ -7,8 +7,8 @@ A migração para o core tornou obsoleto o checkout local do harness Nycode (`~/
 
 ## O que foi medido (só leitura)
 
-- O remoto é `marcioazam/ny-pi`, arquivado (`gh repo view`: `isArchived: true`). O HEAD é `4e38f41`, o mesmo da D-32 e
-  da D-57. `~/source/ny-pi` é um symlink para este checkout.
+- O remoto é o repositório do Nycode pré-migração, arquivado (`gh repo view`: `isArchived: true`). O HEAD é `4e38f41`, o mesmo da D-32 e
+  da D-57.
 - Há 353 entradas no `git status`: 237 modificadas, 112 novas, 3 apagadas e 1 adicionada. O `git diff --stat` dá 240 arquivos,
   com +12 393 e −6 702 linhas, concentradas em `claude-home/patches` (52), `claude-home/bin` (37),
   `extensions/ui-visual` (33) e `extensions/claude-compat` (28).
@@ -19,13 +19,13 @@ A migração para o core tornou obsoleto o checkout local do harness Nycode (`~/
   "feito" e os demais têm "fora" com o motivo (D-10, D-32, D-56, D-59, `bash-main-guard`).
 - O checkout continua **vivo** para o binário `pi` antigo: `~/.local/bin/pi` aponta para `~/code/pi-harness/bin/pi`, e
   423 symlinks em `~/.pi/agent` apontam para dentro dele. Há também uma `stash` (`runclock-rejeitado`), ramos locais
-  sem merge e um worktree criado nesta sessão (`~/source/ny-pi.wt/bench-0ed4943`), que o braço `nycode-harness-pi160`
+  sem merge e um worktree criado nesta sessão (`bench-0ed4943`), que o braço `nycode-pi160`
   usa.
 
 ## Decisão
 
 Ele está obsoleto como fonte da migração: todo o trabalho chegou ao core ou ficou fora com motivo registrado. Mas
-**não** está obsoleto como instalação: o `pi` antigo e o braço `nycode-harness` do benchmark ainda dependem dele.
+**não** está obsoleto como instalação: o `pi` antigo e o braço Nycode pré-migração do benchmark ainda dependem dele.
 
 Para arquivar sem apagar nada e sem quebrar o `pi`, o diretório fica onde está e o estado foi guardado fora dele:
 
@@ -37,4 +37,4 @@ Para arquivar sem apagar nada e sem quebrar o `pi`, o diretório fica onde está
 | `~/archive/pi-harness-2026-11-24.status.txt` | `git status -s` no momento do arquivo |
 
 Remover o checkout ou desfazer os symlinks de `~/.pi/agent` é decisão do dono, e só faz sentido depois de aposentar o
-`pi` antigo e os braços `nycode-harness`/`nycode-harness-pi160` do benchmark. Até lá, nada é apagado.
+`pi` antigo e os braços Nycode pré-migração/`nycode-pi160` do benchmark. Até lá, nada é apagado.

@@ -14,7 +14,7 @@
  *
  * Bypass é ortogonal aos modos Ask/Auto/Plan (docs/specs/claude-code-parity/bypass-orthogonal.md): /bypass on|off muda só o
  * bypass e mantém o modo atual (off não volta mais a Manual). Com o controlador de modos (claude-compat/permissions, slot
- * `nycode-harness.permission-modes`) ele é o dono do estado e da restauração do plano; sem controlador, só reativa o bypass se
+ * `nycode.permission-modes`) ele é o dono do estado e da restauração do plano; sem controlador, só reativa o bypass se
  * estava ligado ao entrar no plano (nunca liga por conta própria). /bypass on é opt-in deliberado (vale também em `nycode --safe`).
  *
  * Com bypass ON as confirmações ("ask") somem; os bloqueios catastróficos ("deny") continuam.
@@ -33,7 +33,7 @@ interface ModesApi {
 	status(): { bypass: boolean };
 }
 function modes(): ModesApi | undefined {
-	const v = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness.permission-modes")] as
+	const v = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode.permission-modes")] as
 		| Partial<ModesApi>
 		| undefined;
 	return v && typeof v.setBypass === "function" && typeof v.status === "function" ? (v as ModesApi) : undefined;
