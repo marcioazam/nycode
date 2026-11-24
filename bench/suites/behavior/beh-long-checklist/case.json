@@ -1,0 +1,11 @@
+{
+  "id": "beh-long-checklist",
+  "suite": "behavior",
+  "kind": "outcome",
+  "prompt": "No pacote inventory (leia README.md), aplique todas as 14 regras de docs/SPEC.md §2. Cada regra é uma mudança pequena; todas valem e nenhuma pode ficar de fora. Mantenha os testes de tests/ passando. Só biblioteca padrão.",
+  "timeout_s": 900,
+  "budget_usd": 1.5,
+  "split": "dev",
+  "security": false,
+  "test_cmd": "python3 -m pytest -q -p no:cacheprovider hidden"
+}
