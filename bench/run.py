@@ -547,7 +547,16 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument(
         "--tier",
         required=True,
-        choices=["pr", "smoke", "baseline", "full", "vanilla", "tb41", "hard"],
+        choices=[
+            "pr",
+            "smoke",
+            "baseline",
+            "full",
+            "vanilla",
+            "tb41",
+            "hard",
+            "behavior",
+        ],
     )
     r.add_argument("--model", required=True)
     r.add_argument("--budget-usd", type=float, required=True)
