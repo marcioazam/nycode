@@ -1,15 +1,14 @@
 {
-  "arm": "ny-pi",
-  "arm_version": "1.5.2",
+  "arm": "nycode",
+  "arm_version": "2.0.2",
   "model": "claude-sonnet-5-5",
-  "git_sha": "0ed4943c8e9da09dab1041311f8fa54d34340b81",
-  "started": "2026-11-18T05:27:48+00:00",
-  "budget_usd": 60.0,
-  "overlay_sha": "c06e62526c0540fe",
+  "git_sha": "1eeaca75c9444fccb71fd8c36c0f3adc79b4bf4e",
+  "started": "2026-11-24T15:30:03+00:00",
+  "budget_usd": 14.0,
+  "overlay_sha": "4e2b061ce284eb72",
   "tier": "baseline",
   "jobs": 6,
   "not_verified": false,
   "errors": [],
-  "cost_usd": 17.4271,
-  "dropped_infra_rows": 2
+  "cost_usd": 12.585
 }

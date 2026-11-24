@@ -37,6 +37,8 @@ lib=$STAGE/.local/lib/nycode
 mkdir -p "$STAGE/.nycode/agent" "$lib/dist/modes/interactive" "$lib/dist/core" "$lib/node_modules/@silvia-odwyer"
 overlay_copy "$HOME/.nycode/agent" "$STAGE/.nycode/agent" "$here/../arms/overlay-nycode.list"
 cp -a "$pkg/package.json" "$pkg/README.md" "$pkg/CHANGELOG.md" "$pkg/docs" "$pkg/examples" "$lib/"
+# examples/config holds credential-shaped templates (models.json, #224): docs, not runtime; the assert below refuses them.
+[ ! -e "$lib/examples/config" ] || rm -r "$lib/examples/config"
 cp -a "$pkg/dist/bundle" "$lib/dist/bundle"
 cp -a "$pkg/dist/modes/interactive/theme" "$pkg/dist/modes/interactive/assets" "$lib/dist/modes/interactive/"
 cp -a "$pkg/dist/core/export-html" "$lib/dist/core/export-html"

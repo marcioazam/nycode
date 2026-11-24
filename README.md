@@ -425,6 +425,12 @@ Every pull request and push to `main` is verified by SHA-pinned, least-privilege
 | [`publish.yml`](.github/workflows/publish.yml) | Deterministic source archive, 6-platform standalone binaries, cross-OS smoke tests (Linux, macOS, Windows), `SHA256SUMS` and keyless SLSA build-provenance attestations |
 | [`merge-policy.yml`](.github/workflows/merge-policy.yml) | Enforces squash merges for normal PRs and merge commits only for upstream syncs (D-07) |
 
+Branch protection on `main` (ruleset `main`): no deletion, no force push, squash or merge only, conversations resolved,
+and these required checks on the up-to-date head: `build-check`, `test (coding-agent)`, `test (durable)`,
+`test (chord)`, `test (other)`, `mcp-conformance`, `ci-static`, `ci-security` and `instruction-budget`. It requires
+0 approving reviews (owner decision 2026-11-24): this is a single-maintainer repository, so the checks are the gate,
+not a review count nobody else can satisfy.
+
 See [SECURITY.md](SECURITY.md) for the threat model, scope and private vulnerability reporting, and [SUPPORT.md](SUPPORT.md) for where to get help.
 
 ## Supply-chain hardening

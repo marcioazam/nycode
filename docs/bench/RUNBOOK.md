@@ -32,7 +32,7 @@ Pré-requisitos no PATH: `gh` autenticado como o dono do repositório, `git`, `j
 | --- | --- | --- |
 | `BENCH_REPO` | sim | `dono/nome` do repositório no GitHub (nunca fica no código: o repo é público) |
 | `BENCH_CC_CREDENTIALS` | sim | caminho do arquivo de credenciais da conta Claude (o token é lido em tempo de execução e nunca é logado) |
-| `BENCH_BASELINE_MAIN` | não | diretório do baseline do ny-pi na main; sem ele o poster extrai `docs/bench/baseline-main/` da `origin/main` |
+| `BENCH_BASELINE_MAIN` | não | diretório do baseline da main (braço `nycode` desde 2026-11-24); sem ele o poster extrai `docs/bench/baseline-main/` da `origin/main` |
 | `BENCH_STATE` | não | estado e clone (default `~/.local/state/bench`) |
 | `BENCH_NIGHTLY_BUDGET` | não | teto em US$ do nightly (default 30) |
 | `BENCH_MODEL` | não | modelo fixo da rodada (default `claude-sonnet-5-5`) |
@@ -481,7 +481,8 @@ docs/bench/baseline-main/runs.jsonl --sec-grid [--clean-base | --resample-base] 
 
 - `bench/suites.toml` tem o tier `baseline`: as mesmas unidades do tier `pr`, com S1, S4 e S5 em k=12 e S2 em k=4.
 - O `docs/bench/baseline-main/` passa a ser gravado com ele:
-  `python3 bench/run.py run --arm nycode-harness --tier baseline --model <modelo> --budget-usd <teto> --out <dir>` na main.
+  `python3 bench/run.py run --arm nycode --tier baseline --model <modelo> --budget-usd <teto> --out <dir>` na main
+  (braço `nycode` desde 2026-11-24; antes, `nycode-harness`, o ny-pi `0ed4943`).
 - O `bench-nightly.sh` continua rodando o tier `full`; ele não grava o baseline do gate.
 - Um baseline antigo (k=2) ainda carrega no gate, mas o intervalo fica mais largo e a taxa de aprovação medida acima
   não vale para ele.
