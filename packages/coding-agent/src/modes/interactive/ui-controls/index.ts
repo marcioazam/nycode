@@ -64,7 +64,7 @@ export interface Controls {
 	reset(): void;
 }
 
-type Wrap = [ContainerLike, PropertyDescriptor | undefined];
+type Wrap = [ContainerLike, PropertyDescriptor | undefined, ContainerLike["render"]];
 
 /** Controller of one host. Exported for tests; production uses installUiControls. */
 export function createControls(host: ControlsHost): Controls {
@@ -75,8 +75,9 @@ export function createControls(host: ControlsHost): Controls {
 
 	const wrapRender = (container: ContainerLike, make: (orig: ContainerLike["render"]) => ContainerLike["render"]) => {
 		if (wraps.some((w) => w[0] === container)) return;
-		wraps.push([container, Object.getOwnPropertyDescriptor(container, "render")]);
-		container.render = make(container.render);
+		const fn = make(container.render);
+		wraps.push([container, Object.getOwnPropertyDescriptor(container, "render"), fn]);
+		container.render = fn;
 	};
 
 	function ensureEditor(editor: EditorLike | undefined) {
@@ -179,7 +180,13 @@ export function createControls(host: ControlsHost): Controls {
 				release(e);
 				editors.delete(e);
 			}
-			for (const [obj, desc] of wraps.splice(0)) {
+			for (const wrap of wraps.splice(0)) {
+				const [obj, desc, fn] = wrap;
+				// Wrapped over since (the /reload screen): restoring would drop that layer; ours stays, passing through.
+				if (obj.render !== fn) {
+					wraps.push(wrap);
+					continue;
+				}
 				if (desc) Object.defineProperty(obj, "render", desc);
 				else delete (obj as Partial<ContainerLike>).render;
 			}

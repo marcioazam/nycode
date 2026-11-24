@@ -32,10 +32,10 @@ test('normal: duas linhas se couber, três no fallback; sem cor de alerta, com b
   const raw = render(base(), { ...opts, columns: 68 });
   const [l1, l2, l3, ...rest] = plain(raw);
   const largo = render(base(), opts);
-  assert.deepEqual(plain(largo), [l1, 'ctx ━━━━━━━━ 9%    5h ━━━━━━━━ 8% renova em 4h    semana ━━━━━━━━ 22% renova em 4d']);
+  assert.deepEqual(plain(largo), [l1, 'ctx ━━━━━━━━ 9%    5h ━━━━━━━━ 8% renova em 4h    semana ━━━━━━━━ 22% renova em 4d', '↓ 0 ↑ 0']);
   assert.equal(roleOf(largo[1], 9), 'ok');
   assert.equal(roleOf(largo[1], 22), 'usage');
-  assert.equal(rest.length, 0);
+  assert.deepEqual(rest, ['↓ 0 ↑ 0'], 'a 3ª linha zerada vem depois das faixas');
   // Git com ícone, à frente/atrás e +/− (dono, 2026-11-19, /status "Git"): antes 'nycode-harness ⎇ main*'; sujo sem linhas mudadas segue com *.
   // Effort entre parênteses colado ao modelo (dono, 2026-11-19): antes 'Fable 5.2 · medium · nycode-harness'.
   assert.equal(l1, 'Fable 5.2 (medium) · nycode-harness · \ue725 main* │ 12m · $1.08');
@@ -121,7 +121,7 @@ test('estreito: a barra fica; a nota encurta e depois some; só no limite a barr
   assert.equal(row(60), '5h ━━━━━━━━ 8% ↻ 4h · semana ━━━━━━━━ 54% ▲ ↻ 5d 13h');
   assert.equal(row(40), '5h ━━━━━━━━ 8% · semana ━━━━━━━━ 54% ▲');
   assert.equal(row(20), '5h 8% · semana 54% ▲');
-  assert.deepEqual(plain(render(base({ rate_limits: undefined }), { ...opts, git: undefined })).slice(1), ['ctx ━━━━━━━━ 9%']);
+  assert.deepEqual(plain(render(base({ rate_limits: undefined }), { ...opts, git: undefined })).slice(1), ['ctx ━━━━━━━━ 9%', '↓ 0 ↑ 0']);
 });
 
 test('detalhe: painel alinhado com valores absolutos e renovação', () => {
@@ -294,7 +294,9 @@ test('3ª linha: tokens, cache, turno e velocidade abaixo dos medidores; some se
   const p = base({ context_window: { context_window_size: 1e6, used_percentage: 9, total_input_tokens: 90_000, current_usage: { input_tokens: 400, output_tokens: 1_800, cache_read_input_tokens: 102_000, cache_creation_input_tokens: 21_600 } } });
   const lines = plain(render(p, { ...opts, turn: { ms: 42_000, tps: 38 } }));
   assert.equal(lines[2], '↓ 124 mil ↑ 1,8 mil · cache 82% · turno 0:42 · 38 tok/s');
-  assert.equal(plain(render(base(), { ...opts, turn: undefined })).length, 2, 'sem uso nem turno: sem 3ª linha');
+  // Contrato mudado em 2026-11-24 (antes: sem uso nem turno, sem 3ª linha): a linha surgia no 1º turno e empurrava o editor
+  // uma linha para cima no meio da resposta (medido em pty, tmux e kitty). Agora ela existe desde a abertura, com o uso real: zero.
+  assert.deepEqual(plain(render(base(), { ...opts, turn: undefined })).slice(2), ['↓ 0 ↑ 0'], 'sem uso nem turno: 3ª linha zerada');
   assert.equal(plain(render(base(), { ...opts, turn: { ms: 3_725_000, tps: 0 } }))[2], 'turno 1:02:05');
 });
 

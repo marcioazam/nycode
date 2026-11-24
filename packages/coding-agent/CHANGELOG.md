@@ -23,6 +23,14 @@
 - The context sparkline in the status line is hidden while the whole history is at or below 25%; its flat low blocks looked like a broken usage bar
 - Fixed a crash on exit in fullscreen mode (`tui.setScrollToEndIndicator is not a function`) when the sticky-prompt extension restored the jump-to-end label after the renderer had left fullscreen mode
 - The upstream startup header (key hints and "Nycode can explain its own features") and footer no longer flash before the nycode header and footer replace them
+- The startup layout no longer jumps: the editor stays put when the status line arrives (its first run is awaited for up to 250 ms and the logo animation waits for it), and the "Regras" notice appears below the header instead of moving down when it renders
+- `/reload` no longer shows the editor alone for about a second before the status line pushes it up: the UI controls reset kept the reload wrapper that was layered over them
+- A running foreground subagent (single and chain mode) is shown as running; its card read "concluído" while the child was still working
+- The subagent card shows the call's duration for a single agent; a one-turn child read `00:00` because message timestamps mark when each message began
+- A subagent child that fails for a missing API key or an unknown model is not respawned; before, the parent waited 20 s and 60 s for two respawns that failed the same way
+- The editor no longer moves up one row when the first response arrives: the status line's token row (`↓ … ↑ … · turno`) exists from startup as `↓ 0 ↑ 0` instead of appearing with the first turn
+- A nycode started inside another nycode (a `!` shell, a different version) uses its own `resources/` instead of the parent's: an inherited `NYCODE_RESOURCES` that nycode exported (marked by `NYCODE_RESOURCES_AUTO=1`) is replaced, while a value the user set still wins
+- An automatic session title is bounded to the first line of the model's reply without heading marks, at most 80 characters; a provider that ignores the token cap made the whole reply the session name
 
 ## [2.0.2] - 2026-11-23
 

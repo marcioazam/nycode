@@ -190,6 +190,25 @@ test("setFocus filtra só o render, não os filhos reais; off e reset restauram 
 	assert.equal(c.isFocus(), false);
 });
 
+// /reload sem salto (2026-11-24): a /color embrulha o editorContainer no session_start; o /reload embrulha por cima para
+// mostrar `recarregando`; o session_shutdown da sessão velha chamava reset(), que devolvia o descritor antigo e jogava fora a
+// camada do /reload. O editor reaparecia sozinho ~1 s antes do resto da tela, que depois o empurrava para cima.
+test("reset não desfaz um embrulho que outro pôs por cima do nosso; o nosso fica e não embrulha de novo", () => {
+	const host = mkHost();
+	const c = createControls(host as never);
+	c.setPromptColor("red");
+	const nosso = host.editorContainer.render;
+	const recarga = function (this: unknown, w: number) {
+		return ["recarregando", ...nosso.call(this, w)];
+	};
+	host.editorContainer.render = recarga;
+	c.reset();
+	assert.equal(host.editorContainer.render, recarga, "a camada de cima sobrevive ao reset");
+	c.setPromptColor("red");
+	assert.equal(host.editorContainer.render, recarga, "não empilha outro embrulho");
+	assert.equal(host.editorContainer.render(40)[0], "recarregando");
+});
+
 test("foco acompanha streaming: filhos novos entram no próximo render", () => {
 	const host = mkHost({ children: [user("p"), assistant("parcial")] });
 	const c = createControls(host as never);

@@ -58,10 +58,12 @@ import { hudTheme } from "../subagent/fleet-ui/style/palette.ts";
 import { nav } from "../subagent/section-nav/nav.ts";
 import { activeStatusLine, type StatusLineConfig } from "./config.ts";
 import { liveRateLimits, normalizeHeaders, parseRateLimits, type RateLimitSnapshot } from "./rate-limits.ts";
-import { FOOTER_BRIDGE_CHANNEL, hudFooterBridge, renderStatusRows, statusRows } from "./rows.ts";
+import { FOOTER_BRIDGE_CHANNEL, hudFooterBridge, marcarStatusPendente, renderStatusRows, statusRows } from "./rows.ts";
 
 const COMMAND_TIMEOUT_MS = 5_000;
 const DEBOUNCE_MS = 300;
+/** Most the session start waits for the first script run (the calm statusline answers in ~20 ms). */
+const PRIMEIRA_MAX_MS = 250;
 const WIDGET_KEY = "nycode-statusline";
 
 /** Whether cwd sits in a git worktree: `.git` is a file pointing at the main
@@ -493,7 +495,7 @@ export default function statusLine(nycode: ExtensionAPI) {
 		scheduleRefresh();
 	});
 
-	nycode.on("session_start", (_event, ctx) => {
+	nycode.on("session_start", async (_event, ctx) => {
 		// One instance serves every session, so a fresh session must not inherit state.
 		turnCount = 0;
 		commandLine = undefined;
@@ -583,7 +585,16 @@ export default function statusLine(nycode: ExtensionAPI) {
 			else scheduleRefresh();
 		});
 		show(ctx, segmentText(ctx, ctx.ui.theme.fg("dim", "○")));
-		scheduleRefresh();
+		// The first run skips the debounce: there is nothing to batch yet, and the opening waits for it.
+		marcarStatusPendente(!!config);
+		if (!config) return;
+		const primeira = runCommand(ctx).finally(() => marcarStatusPendente(false));
+		// Awaited, bounded, so the widget is in before the ui extension installs the editor above it: landing after the
+		// editor, it pushed the editor up. A slower script still finishes; the opening keeps waiting through statusPendente.
+		if (!ctx.hasUI) return;
+		let limite: ReturnType<typeof setTimeout> | undefined;
+		await Promise.race([primeira, new Promise((resolve) => (limite = setTimeout(resolve, PRIMEIRA_MAX_MS)))]);
+		clearTimeout(limite);
 	});
 
 	nycode.on("turn_start", (_event, ctx) => {

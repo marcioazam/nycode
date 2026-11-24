@@ -41,6 +41,18 @@ test("não respawna erro não retentável do provedor (mensagem ou stderr)", () 
 	assert.equal(r.shouldRespawn({ ...base, messages: [], stderr: "Error: invalid_api_key" }), undefined);
 });
 
+// Medido com um provedor falso (2026-11-24): o filho sem credencial sai em 0,14 s com "No API key found", e o pai esperava
+// 20 s + 60 s por dois respawns que falham igual. Modelo inexistente é o mesmo caso. O texto vem no começo do stderr, antes
+// da ajuda de /login com caminhos longos, então a checagem lê o stderr inteiro, não só a cauda de 300 caracteres.
+test("não respawna falta de credencial nem modelo inexistente, mesmo com a ajuda longa depois", () => {
+	const ajuda = `\n\nUse /login to log into a provider via OAuth or API key. See:\n  ${"/x".repeat(200)}/providers.md\n`;
+	for (const stderr of [
+		`No API key found for anthropic.${ajuda}`,
+		'Error: Model "nope/zzz" not found. Use --list-models',
+	])
+		assert.equal(r.shouldRespawn({ ...base, messages: [], stderr }), undefined, stderr.slice(0, 40));
+});
+
 test("orçamento do lane esgotado = sem respawn; só é chamado quando o resto já decidiu respawnar", () => {
 	let calls = 0;
 	assert.equal(

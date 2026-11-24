@@ -328,7 +328,9 @@ function extraLine(p, turn) {
   const ruim = cache !== undefined && cache < 50 && !fresh;
   if (cache !== undefined) partes.push(ruim ? { warn: `▲ cache ${cache}%` } : `cache ${cache}%`);
   if (turn) partes.push(`turno ${relogio(turn.ms)}`, ...(turn.tps > 0 ? [`${turn.tps} tok/s`] : []));
-  return partes.length ? partes.map((s) => (typeof s === 'string' ? paint('sec', s) : paint('warn', s.warn))).join(dot()) : undefined;
+  // Sem uso ainda: a linha existe zerada, para o painel não crescer no 1º turno e empurrar o editor (2026-11-24).
+  if (!partes.length) partes.push('↓ 0 ↑ 0');
+  return partes.map((s) => (typeof s === 'string' ? paint('sec', s) : paint('warn', s.warn))).join(dot());
 }
 
 function panel(p, ms) {

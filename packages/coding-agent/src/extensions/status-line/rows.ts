@@ -1,5 +1,12 @@
 import { truncateToWidth } from "@nycode/tui";
 
+// The session's first script run: until it lands, the ui-visual opening holds, so the widget does not push the editor up mid-animation.
+let pendente = false;
+export const statusPendente = (): boolean => pendente;
+export function marcarStatusPendente(valor: boolean): void {
+	pendente = valor;
+}
+
 /** stdout split into non-empty trimmed rows: one row goes to the footer segment, 2+ to the
  * widget (left-padded). Nothing lands in both. */
 export function statusRows(stdout: string, padding: number): { footer: string | undefined; rows: string[] } {

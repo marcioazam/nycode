@@ -4,6 +4,7 @@ import { truncateToWidth, visibleWidth } from "@nycode/tui";
 import { VERSION } from "../../config.ts";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 import type { Theme } from "../../modes/interactive/theme/theme.ts";
+import { statusPendente } from "../status-line/rows.ts";
 import { noColor } from "../ui/a11y.ts";
 import { anima, assinarQuadro, esmaecer, safeAnsi } from "./motion/motion.ts";
 import { ABERTURA_MS, MARCA_W, marcaLinhas } from "./motion/nycode.ts";
@@ -136,11 +137,19 @@ export function recarregar(
 }
 
 export default function (nycode: ExtensionAPI) {
+	const g = globalThis as Record<symbol, Abertura | undefined>;
+	// claude-rules loads first and posts the rules notice on its own session_start: the mark exists from load, so it waits.
+	if (process.env.NYCODE_SUBAGENT !== "1" && anima()) g[ABERTURA] = { desde: performance.now() };
 	nycode.on("session_start", (e, ctx) => {
 		if (!ctx.hasUI || process.env.NYCODE_SUBAGENT === "1" || noColor()) return;
+		const marca = g[ABERTURA];
 		const ab: Abertura | undefined =
-			(e as { reason?: string })?.reason !== "reload" && anima() ? { desde: performance.now() } : undefined;
-		(globalThis as Record<symbol, unknown>)[ABERTURA] = ab;
+			(e as { reason?: string })?.reason !== "reload" && anima()
+				? marca && marca.t0 === undefined
+					? marca
+					: { desde: performance.now() }
+				: undefined;
+		g[ABERTURA] = ab;
 		const recarga = (e as { reason?: string })?.reason === "reload" && anima();
 		ctx.ui.setHeader((tui, theme) => {
 			if (ab) subirBase(tui as never, theme, ab);
@@ -175,7 +184,7 @@ export default function (nycode: ExtensionAPI) {
 						);
 					} else if (idade === -1) {
 						calmos = now - visto < CALMA_GAP_MS ? calmos + 1 : 0;
-						if (calmos >= CALMA_QUADROS || now - inicio >= ESPERA_MAX_MS) {
+						if ((calmos >= CALMA_QUADROS && !statusPendente()) || now - inicio >= ESPERA_MAX_MS) {
 							idade = 0;
 							inicio = now;
 							if (ab) ab.t0 = now;

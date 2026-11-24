@@ -301,7 +301,9 @@ export function agentesDe(
 				nome: String(r.agent ?? "agente"),
 				e,
 				...dados(r),
-				durMs: e === "run" ? vivoMs : (spanMs(r) ?? (rs.length === 1 ? durMs : undefined)),
+				// One agent: the call's own duration. Message timestamps mark when each message began, so a
+				// one-turn child spans only ms; they remain the per-agent estimate in parallel and chain.
+				durMs: e === "run" ? vivoMs : rs.length === 1 ? (durMs ?? spanMs(r)) : spanMs(r),
 				linha: linhaDe(r, e),
 			};
 		});

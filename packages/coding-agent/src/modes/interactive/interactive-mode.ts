@@ -274,6 +274,14 @@ function noColorRequested(): boolean {
 	return (process.env.NO_COLOR ?? "") !== "";
 }
 
+/** Draws nothing while `held`: startup holds the chat until the header shows, so a notice posted first does not jump down. */
+export class HeldContainer extends Container {
+	held = false;
+	override render(width: number): readonly string[] {
+		return this.held ? [] : super.render(width);
+	}
+}
+
 /**
  * The built-in header. Clicking its logo (the first two lines, after one column of padding) plays an easter egg.
  * Under NO_COLOR it renders without escape sequences and the click does nothing.
@@ -545,7 +553,7 @@ export class InteractiveMode {
 	private ui: TUI;
 	private mainScreenRenderState: TuiMainScreenRenderState | undefined;
 	private loadedResourcesContainer: Container;
-	private chatContainer: Container;
+	private chatContainer: HeldContainer;
 	private documentContainer: Container;
 	private transcriptScrollView: TuiLayouts.ScrollView | undefined;
 	private fullscreenLayoutRoot: Component | undefined;
@@ -734,7 +742,7 @@ export class InteractiveMode {
 		this.ui.setClearOnShrink(this.settingsManager.getClearOnShrink());
 		this.headerContainer = new Container();
 		this.loadedResourcesContainer = new Container();
-		this.chatContainer = new Container();
+		this.chatContainer = new HeldContainer();
 		this.documentContainer = new Container();
 		this.documentContainer.addChild(this.headerContainer);
 		this.documentContainer.addChild(this.loadedResourcesContainer);
@@ -1197,6 +1205,7 @@ export class InteractiveMode {
 				header.onLogoClick = (column, row) => playNycodeLogo3d(this.renderer, column, row);
 			// The ui-visual extension sets the nycode header on session_start; drawing this one first flashed it.
 			header.hidden = true;
+			this.chatContainer.held = true;
 			this.builtInHeader = header;
 
 			// Setup UI layout
@@ -1231,6 +1240,7 @@ export class InteractiveMode {
 		} finally {
 			// Without an extension header, footer or editor (NO_COLOR, extension disabled) the built-in ones show from here on.
 			if (this.builtInHeader instanceof BuiltInHeader) this.builtInHeader.hidden = false;
+			this.chatContainer.held = false;
 			this.footer.hidden = false;
 			this.defaultEditor.hidden = false;
 		}
@@ -2789,6 +2799,7 @@ export class InteractiveMode {
 		if (factory) {
 			// Create and add custom header
 			this.customHeader = factory(this.ui, theme);
+			this.chatContainer.held = false;
 			if (isExpandable(this.customHeader)) {
 				this.customHeader.setExpanded(this.toolOutputExpanded);
 			}

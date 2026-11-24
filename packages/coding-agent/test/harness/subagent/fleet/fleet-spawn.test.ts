@@ -280,6 +280,7 @@ test("foreground: uso, modelo, erro, stderr e código de saída do filho chegam 
 	await withFleet("ok", async () => {
 		process.argv[1] = fakeRich;
 		const updates: string[] = [];
+		const codes: number[] = [];
 		// Uma tentativa só: o respawn (zz-subagent-respawn.patch) tem testes próprios e reexecutaria o filho que sai com 3.
 		process.env.NYCODE_SUBAGENT_RESPAWN = "0";
 		const res = await runMod
@@ -288,10 +289,15 @@ test("foreground: uso, modelo, erro, stderr e código de saída do filho chegam 
 				agents: [agent],
 				agentName: "fake",
 				task: "go",
-				makeDetails: fakeDetails,
-				onUpdate: (u) => updates.push((u.content[0] as { text: string }).text),
+				makeDetails: (results) => ({ results }) as unknown as SubagentDetails,
+				onUpdate: (u) => {
+					updates.push((u.content[0] as { text: string }).text);
+					codes.push(...(u.details?.results.map((r) => r.exitCode) ?? []));
+				},
 			})
 			.finally(() => delete process.env.NYCODE_SUBAGENT_RESPAWN);
+		// Em curso o card lia exitCode 0 e mostrava "concluído" com o filho rodando (medido 2026-11-24 com provedor falso).
+		assert.ok(codes.length > 0 && codes.every((c) => c === -1), `parciais carregam o sentinela -1: ${codes}`);
 		assert.equal(res.exitCode, 3);
 		assert.equal(res.stderr, "boom on stderr");
 		assert.deepEqual(res.usage, {
