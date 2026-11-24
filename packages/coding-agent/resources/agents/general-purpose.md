@@ -1,7 +1,7 @@
 ---
 name: general-purpose
 model: anthropic/claude-sonnet-5-5
-description: "Last-resort general agent with broad writer tools (search, browser, docs); use only when no specialist fits. swarm-worker is the default writer."
+description: "Last-resort general agent with full capabilities; use only when no specialist fits. swarm-worker is the default writer."
 tools: read, write, edit, bash, grep, find, ls, todo, tool_search, lsp_diagnostics, lsp_hover, lsp_definition, lsp_references, lsp_symbols, mcp__codegraph__*, subagent, web_fetch, mcp__context7__*, mcp__package_version_check__*, mcp__playwright__*, mcp__keenable__search_web_pages, mcp__exa__web_search_exa
 agents: ["Explore", "code-mapper", "gate-runner", "swarm-worker", "research-scout"]
 maxTurns: 150

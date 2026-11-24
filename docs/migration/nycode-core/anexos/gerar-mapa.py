@@ -614,6 +614,14 @@ RULES: list[tuple[str, str, str, str, str]] = [
     ),
     # Documentação (transversal; entra com a fase que usa)
     ("D01", r"^docs/specs/(.+)$", r"docs/specs/\1", "converter", "F2"),
+    # 2026-11-24: the agent contract ships with the package (rules/ref), read through ${NYCODE_RESOURCES}
+    (
+        "D02a",
+        r"^claude-home/docs/agent-contract\.md$",
+        "packages/coding-agent/resources/rules/ref/agent-contract.md",
+        "converter",
+        "F8",
+    ),
     ("D02", r"^claude-home/docs/(.+)$", r"docs/harness/\1", "converter", "F8"),
     # Instalação e publicação (F11)
     (
