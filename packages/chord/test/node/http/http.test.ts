@@ -584,49 +584,49 @@ describe("cancellation", () => {
 
 	// Sol's third recheck: a request aborted while its route returned the `bytes` description got a stream born sealed,
 	// which never errored; the request never finished.
-	it.each(["inside the route", "after the route returned"] as const)(
-		"ends a request whose bytes Response was born sealed (aborted %s)",
-		async (when) => {
-			const abort = new AbortController();
-			const entered = Promise.withResolvers<void>();
-			let reads = 0;
-			let bornSealed: boolean | undefined;
-			const server = await served(
-				{
-					"@app/b": contributing({
-						routes: {
-							"GET /": {
-								public: true,
-								handler: async (_request, ctx) => {
-									entered.resolve();
-									if (when === "inside the route") abort.abort(new Error("client gone"));
-									bornSealed = ctx.abortSignal?.aborted;
-									return {
-										kind: "bytes",
-										mime: "application/octet-stream",
-										read: async () => {
-											reads++;
-											return new Uint8Array([1]);
-										},
-									};
-								},
+	it.each([
+		"inside the route",
+		"after the route returned",
+	] as const)("ends a request whose bytes Response was born sealed (aborted %s)", async (when) => {
+		const abort = new AbortController();
+		const entered = Promise.withResolvers<void>();
+		let reads = 0;
+		let bornSealed: boolean | undefined;
+		const server = await served(
+			{
+				"@app/b": contributing({
+					routes: {
+						"GET /": {
+							public: true,
+							handler: async (_request, ctx) => {
+								entered.resolve();
+								if (when === "inside the route") abort.abort(new Error("client gone"));
+								bornSealed = ctx.abortSignal?.aborted;
+								return {
+									kind: "bytes",
+									mime: "application/octet-stream",
+									read: async () => {
+										reads++;
+										return new Uint8Array([1]);
+									},
+								};
 							},
 						},
-					}),
-				},
-				{ config: { listen: undefined, closeTimeout: 1_000 } },
-			);
-			const answer = server.http.fetch(loopback("/", { signal: abort.signal }), LOOPBACK);
-			await entered.promise;
-			if (when === "after the route returned") abort.abort(new Error("client gone"));
-			await answer;
-			await new Promise((resolve) => setImmediate(resolve));
-			const started = Date.now();
-			await server.http.close(context);
-			expect([Date.now() - started < 500, reads, bornSealed]).toEqual([true, 0, when === "inside the route"]);
-			await server.close();
-		},
-	);
+					},
+				}),
+			},
+			{ config: { listen: undefined, closeTimeout: 1_000 } },
+		);
+		const answer = server.http.fetch(loopback("/", { signal: abort.signal }), LOOPBACK);
+		await entered.promise;
+		if (when === "after the route returned") abort.abort(new Error("client gone"));
+		await answer;
+		await new Promise((resolve) => setImmediate(resolve));
+		const started = Date.now();
+		await server.http.close(context);
+		expect([Date.now() - started < 500, reads, bornSealed]).toEqual([true, 0, when === "inside the route"]);
+		await server.close();
+	});
 
 	// Sol's second recheck B: an aborted `Response` nobody touched again kept its request: close waited its bound.
 	it("ends a request whose bytes Response was aborted and dropped without another read", async () => {

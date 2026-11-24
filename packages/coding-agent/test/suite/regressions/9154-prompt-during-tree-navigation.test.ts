@@ -132,25 +132,25 @@ describe("issue #9154: prompt during tree navigation", () => {
 		await expect(harness.session.navigateTree(targetId)).resolves.toMatchObject({ cancelled: false });
 	});
 
-	it.each(["handled", "rejected"] as const)(
-		"allows navigation after a prompt is %s during preflight",
-		async (outcome) => {
-			const harness = await createHarness({
-				withConfiguredAuth: outcome !== "rejected",
-				extensionFactories: [
-					(nycode) => {
-						if (outcome === "handled") nycode.on("input", async () => ({ action: "handled" }));
-					},
-				],
-			});
-			harnesses.push(harness);
-			const targetId = seedHistory(harness);
-			const prompt = harness.session.prompt("not sent to the model");
-			if (outcome === "handled") await prompt;
-			else await expect(prompt).rejects.toThrow("No API key");
-			await expect(harness.session.navigateTree(targetId)).resolves.toMatchObject({ cancelled: false });
-		},
-	);
+	it.each([
+		"handled",
+		"rejected",
+	] as const)("allows navigation after a prompt is %s during preflight", async (outcome) => {
+		const harness = await createHarness({
+			withConfiguredAuth: outcome !== "rejected",
+			extensionFactories: [
+				(nycode) => {
+					if (outcome === "handled") nycode.on("input", async () => ({ action: "handled" }));
+				},
+			],
+		});
+		harnesses.push(harness);
+		const targetId = seedHistory(harness);
+		const prompt = harness.session.prompt("not sent to the model");
+		if (outcome === "handled") await prompt;
+		else await expect(prompt).rejects.toThrow("No API key");
+		await expect(harness.session.navigateTree(targetId)).resolves.toMatchObject({ cancelled: false });
+	});
 
 	it("keeps navigation blocked when another prompt finishes preflight first", async () => {
 		const started = deferred();

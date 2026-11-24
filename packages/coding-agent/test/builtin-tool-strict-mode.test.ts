@@ -46,65 +46,66 @@ describe("strict built-in tools", () => {
 		}
 	});
 
-	it.each([{ activeTools: [] }, { activeTools: ["read"] }, { activeTools: [...strictToolNames] }])(
-		"allows extensions to re-register tools without strict sampling: $activeTools",
-		async ({ activeTools }) => {
-			const cwd = mkdtempSync(join(tmpdir(), "nycode-non-strict-tools-"));
-			const agentDir = join(cwd, "agent");
-			const settingsManager = SettingsManager.inMemory({ defaultTools: activeTools });
-			const resourceLoader = new DefaultResourceLoader({
+	it.each([
+		{ activeTools: [] },
+		{ activeTools: ["read"] },
+		{ activeTools: [...strictToolNames] },
+	])("allows extensions to re-register tools without strict sampling: $activeTools", async ({ activeTools }) => {
+		const cwd = mkdtempSync(join(tmpdir(), "nycode-non-strict-tools-"));
+		const agentDir = join(cwd, "agent");
+		const settingsManager = SettingsManager.inMemory({ defaultTools: activeTools });
+		const resourceLoader = new DefaultResourceLoader({
+			cwd,
+			agentDir,
+			settingsManager,
+			noExtensions: true,
+			noSkills: true,
+			noPromptTemplates: true,
+			noThemes: true,
+			extensionFactories: [
+				(nycode) => {
+					nycode.on("session_start", () => {
+						const definitions = createAllToolDefinitions(cwd);
+						for (const name of strictToolNames) {
+							nycode.registerTool({ ...definitions[name], constrainedSampling: false });
+						}
+						nycode.setActiveTools(activeTools);
+					});
+				},
+			],
+		});
+		try {
+			await resourceLoader.reload();
+			const { session } = await createAgentSession({
 				cwd,
 				agentDir,
+				model: getModel("anthropic", "claude-sonnet-4-5"),
 				settingsManager,
-				noExtensions: true,
-				noSkills: true,
-				noPromptTemplates: true,
-				noThemes: true,
-				extensionFactories: [
-					(nycode) => {
-						nycode.on("session_start", () => {
-							const definitions = createAllToolDefinitions(cwd);
-							for (const name of strictToolNames) {
-								nycode.registerTool({ ...definitions[name], constrainedSampling: false });
-							}
-							nycode.setActiveTools(activeTools);
-						});
-					},
-				],
+				sessionManager: SessionManager.inMemory(cwd),
+				resourceLoader,
 			});
 			try {
-				await resourceLoader.reload();
-				const { session } = await createAgentSession({
-					cwd,
-					agentDir,
-					model: getModel("anthropic", "claude-sonnet-4-5"),
-					settingsManager,
-					sessionManager: SessionManager.inMemory(cwd),
-					resourceLoader,
-				});
-				try {
-					const originalPrompt = session.systemPrompt;
-					await session.bindExtensions({});
-					expect(session.getActiveToolNames()).toEqual(activeTools);
-					expect(session.systemPrompt).toBe(originalPrompt);
-					for (const name of strictToolNames) {
-						expect(session.getToolDefinition(name)?.constrainedSampling).toBe(false);
-					}
-					for (const tool of session.agent.state.tools) {
-						expect(tool.constrainedSampling).toBe(false);
-					}
-					if (activeTools.includes("read")) {
-						writeFileSync(join(cwd, "sample.txt"), "still works");
-						const read = session.agent.state.tools.find((tool) => tool.name === "read")!;
-						const result = await read.execute("read-test", { path: "sample.txt" });
-						expect(result.content).toEqual([{ type: "text", text: "still works" }]);
-					}
-				} finally {
-					session.dispose();
+				const originalPrompt = session.systemPrompt;
+				await session.bindExtensions({});
+				expect(session.getActiveToolNames()).toEqual(activeTools);
+				expect(session.systemPrompt).toBe(originalPrompt);
+				for (const name of strictToolNames) {
+					expect(session.getToolDefinition(name)?.constrainedSampling).toBe(false);
+				}
+				for (const tool of session.agent.state.tools) {
+					expect(tool.constrainedSampling).toBe(false);
+				}
+				if (activeTools.includes("read")) {
+					writeFileSync(join(cwd, "sample.txt"), "still works");
+					const read = session.agent.state.tools.find((tool) => tool.name === "read")!;
+					const result = await read.execute("read-test", { path: "sample.txt" });
+					expect(result.content).toEqual([{ type: "text", text: "still works" }]);
 				}
 			} finally {
-				rmSync(cwd, { recursive: true, force: true });
+				session.dispose();
 			}
-		},
-	);
+		} finally {
+			rmSync(cwd, { recursive: true, force: true });
+		}
+	});
 });

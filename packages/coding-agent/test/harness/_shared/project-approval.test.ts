@@ -18,13 +18,14 @@ function project(entry: string): { cwd: string; home: string } {
 }
 
 describe("hasClaudeShapedConfig", () => {
-	it.each([[path.join(CONFIG_DIR_NAME, "mcp.json")], [path.join(CONFIG_DIR_NAME, "agents")], [".mcp.json"]])(
-		"gates %s",
-		(entry) => {
-			const { cwd, home } = project(entry);
-			expect(hasClaudeShapedConfig(cwd, home)).toBe(true);
-		},
-	);
+	it.each([
+		[path.join(CONFIG_DIR_NAME, "mcp.json")],
+		[path.join(CONFIG_DIR_NAME, "agents")],
+		[".mcp.json"],
+	])("gates %s", (entry) => {
+		const { cwd, home } = project(entry);
+		expect(hasClaudeShapedConfig(cwd, home)).toBe(true);
+	});
 
 	it.each([[path.join(".pi", "mcp.json")], [path.join(".pi", "agents")]])("no longer looks at %s", (entry) => {
 		const { cwd, home } = project(entry);

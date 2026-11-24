@@ -23,15 +23,14 @@ const cases = [
 ] as const;
 
 describe("built-in tool system prompt contributions", () => {
-	test.each(cases)(
-		"keeps the %s tool definition aligned with its contribution",
-		(_name, contribution, createDefinition) => {
-			const definition = createDefinition("/workspace");
+	test.each(
+		cases,
+	)("keeps the %s tool definition aligned with its contribution", (_name, contribution, createDefinition) => {
+		const definition = createDefinition("/workspace");
 
-			expect(definition.promptSnippet).toBe(contribution.snippet);
-			expect(definition.promptGuidelines ?? []).toEqual(contribution.guidelines);
-		},
-	);
+		expect(definition.promptSnippet).toBe(contribution.snippet);
+		expect(definition.promptGuidelines ?? []).toEqual(contribution.guidelines);
+	});
 
 	test.each([
 		["bash", createBashToolDefinition],

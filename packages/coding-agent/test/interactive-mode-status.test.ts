@@ -391,80 +391,79 @@ describe("InteractiveMode.showExtensionCustom", () => {
 	test.each([
 		{ lowerKind: "capturing", nonCapturing: false },
 		{ lowerKind: "non-capturing", nonCapturing: true },
-	])(
-		"closing a lower $lowerKind overlay custom UI removes its own overlay, not the topmost one",
-		async ({ nonCapturing }) => {
-			const terminal = new VirtualTerminal(80, 24);
-			const ui: TUI = new TuiMainScreen(terminal);
-			const editorContainer = new Container();
-			const editor = new TestFocusableComponent("EDITOR");
-			const lower = new TestFocusableComponent("LOWER");
-			const upper = new TestFocusableComponent("UPPER");
-			let closeLower: (value: string) => void = () => {
-				throw new Error("closeLower was not initialized");
-			};
-			let closeUpper: (value: string) => void = () => {
-				throw new Error("closeUpper was not initialized");
-			};
-			const fakeThis = {
-				editor,
-				editorContainer,
-				keybindings: {},
-				ui,
-				disposeActiveSelector: vi.fn(),
-				...extensionDialogState(),
-			};
-			const showExtensionCustom = <T>(
-				factory: (tui: TUI, theme: unknown, keybindings: unknown, done: (result: T) => void) => Component,
-				options?: { overlay?: boolean; overlayOptions?: { nonCapturing?: boolean } },
-			): Promise<T> =>
-				(InteractiveMode as any).prototype.showExtensionCustom.call(fakeThis, factory, options) as Promise<T>;
+	])("closing a lower $lowerKind overlay custom UI removes its own overlay, not the topmost one", async ({
+		nonCapturing,
+	}) => {
+		const terminal = new VirtualTerminal(80, 24);
+		const ui: TUI = new TuiMainScreen(terminal);
+		const editorContainer = new Container();
+		const editor = new TestFocusableComponent("EDITOR");
+		const lower = new TestFocusableComponent("LOWER");
+		const upper = new TestFocusableComponent("UPPER");
+		let closeLower: (value: string) => void = () => {
+			throw new Error("closeLower was not initialized");
+		};
+		let closeUpper: (value: string) => void = () => {
+			throw new Error("closeUpper was not initialized");
+		};
+		const fakeThis = {
+			editor,
+			editorContainer,
+			keybindings: {},
+			ui,
+			disposeActiveSelector: vi.fn(),
+			...extensionDialogState(),
+		};
+		const showExtensionCustom = <T>(
+			factory: (tui: TUI, theme: unknown, keybindings: unknown, done: (result: T) => void) => Component,
+			options?: { overlay?: boolean; overlayOptions?: { nonCapturing?: boolean } },
+		): Promise<T> =>
+			(InteractiveMode as any).prototype.showExtensionCustom.call(fakeThis, factory, options) as Promise<T>;
 
-			editorContainer.addChild(editor);
-			ui.addChild(editorContainer);
-			ui.setFocus(editor);
-			ui.start();
-			try {
-				const lowerPromise = showExtensionCustom<string>(
-					(_tui, _theme, _keybindings, done) => {
-						closeLower = done;
-						return lower;
-					},
-					{ overlay: true, overlayOptions: { nonCapturing } },
-				);
-				await flushTui(ui, terminal);
-				const upperPromise = showExtensionCustom<string>(
-					(_tui, _theme, _keybindings, done) => {
-						closeUpper = done;
-						return upper;
-					},
-					{ overlay: true },
-				);
-				await flushTui(ui, terminal);
-				expect(upper.focused).toBe(true);
+		editorContainer.addChild(editor);
+		ui.addChild(editorContainer);
+		ui.setFocus(editor);
+		ui.start();
+		try {
+			const lowerPromise = showExtensionCustom<string>(
+				(_tui, _theme, _keybindings, done) => {
+					closeLower = done;
+					return lower;
+				},
+				{ overlay: true, overlayOptions: { nonCapturing } },
+			);
+			await flushTui(ui, terminal);
+			const upperPromise = showExtensionCustom<string>(
+				(_tui, _theme, _keybindings, done) => {
+					closeUpper = done;
+					return upper;
+				},
+				{ overlay: true },
+			);
+			await flushTui(ui, terminal);
+			expect(upper.focused).toBe(true);
 
-				closeLower("lower closed");
-				await expect(lowerPromise).resolves.toBe("lower closed");
-				await flushTui(ui, terminal);
+			closeLower("lower closed");
+			await expect(lowerPromise).resolves.toBe("lower closed");
+			await flushTui(ui, terminal);
 
-				const viewport = terminal.getViewport().join("\n");
-				expect(viewport).toContain("UPPER");
-				expect(viewport).not.toContain("LOWER");
-				terminal.sendInput("x");
-				await flushTui(ui, terminal);
-				expect(upper.inputs).toEqual(["x"]);
-				expect(lower.inputs).toEqual([]);
+			const viewport = terminal.getViewport().join("\n");
+			expect(viewport).toContain("UPPER");
+			expect(viewport).not.toContain("LOWER");
+			terminal.sendInput("x");
+			await flushTui(ui, terminal);
+			expect(upper.inputs).toEqual(["x"]);
+			expect(lower.inputs).toEqual([]);
 
-				closeUpper("upper closed");
-				await expect(upperPromise).resolves.toBe("upper closed");
-				await flushTui(ui, terminal);
-				expect(ui.hasOverlay()).toBe(false);
-				expect(editor.focused).toBe(true);
-			} finally {
-				ui.stop();
-			}
-		},
-	);
+			closeUpper("upper closed");
+			await expect(upperPromise).resolves.toBe("upper closed");
+			await flushTui(ui, terminal);
+			expect(ui.hasOverlay()).toBe(false);
+			expect(editor.focused).toBe(true);
+		} finally {
+			ui.stop();
+		}
+	});
 
 	// Regression: reset hid only the topmost overlay, so lower extension overlays stayed and kept input.
 	test("resetExtensionUI removes every extension overlay but keeps nycode's own overlays", async () => {

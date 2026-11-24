@@ -63,24 +63,16 @@ describe.skipIf(!hasCloudflareWorkersAICredentials())("Cloudflare Workers AI ima
 		"@cf/cloudflare/clef-omni",
 		"typesafe/jev",
 		"typesafe/jev-1.14.0",
-	])(
-		"classifies images with %s",
-		async (id) => {
-			await expectColors("cloudflare-workers-ai", id, {
-				apiKey: process.env.CLOUDFLARE_API_KEY,
-				env: { CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID! },
-			});
-		},
-		60_000,
-	);
+	])("classifies images with %s", async (id) => {
+		await expectColors("cloudflare-workers-ai", id, {
+			apiKey: process.env.CLOUDFLARE_API_KEY,
+			env: { CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID! },
+		});
+	}, 60_000);
 });
 
 describe.skipIf(!process.env.OPENROUTER_API_KEY)("OpenRouter image classification", () => {
-	it.each(["typesafe/jev-1.14", "cloudflare/clef-flash"])(
-		"classifies images with %s",
-		async (id) => {
-			await expectColors("openrouter", id, { apiKey: process.env.OPENROUTER_API_KEY });
-		},
-		60_000,
-	);
+	it.each(["typesafe/jev-1.14", "cloudflare/clef-flash"])("classifies images with %s", async (id) => {
+		await expectColors("openrouter", id, { apiKey: process.env.OPENROUTER_API_KEY });
+	}, 60_000);
 });

@@ -459,34 +459,33 @@ describe("AgentSession MCP integration", () => {
 		expect(getMessageText(result)).toBe("direct guide\ndirect faq");
 	});
 
-	it.each(["direct", "codemode"] as const)(
-		"withdraws and restores %s MCP tools the server changes",
-		async (exposure) => {
-			let tools = SERVER_TOOLS;
-			const { harness, servers } = await setup(exposure, () => tools);
-			harness.setResponses([fauxAssistantMessage("ready")]);
-			await harness.session.prompt("start");
-			// Direct tools are declared to the model, codemode tools are only callable from codemode.
-			const reachable = () =>
-				exposure === "direct" ? harness.session.getActiveToolNames() : nestedToolNames(harness);
-			const listChanged = async () => {
-				await servers[0].send({ jsonrpc: "2.0", method: "notifications/tools/list_changed" });
-				await new Promise((resolve) => setTimeout(resolve, 10));
-			};
-			expect(reachable()).toContain("mcp__docs__fail");
+	it.each([
+		"direct",
+		"codemode",
+	] as const)("withdraws and restores %s MCP tools the server changes", async (exposure) => {
+		let tools = SERVER_TOOLS;
+		const { harness, servers } = await setup(exposure, () => tools);
+		harness.setResponses([fauxAssistantMessage("ready")]);
+		await harness.session.prompt("start");
+		// Direct tools are declared to the model, codemode tools are only callable from codemode.
+		const reachable = () => (exposure === "direct" ? harness.session.getActiveToolNames() : nestedToolNames(harness));
+		const listChanged = async () => {
+			await servers[0].send({ jsonrpc: "2.0", method: "notifications/tools/list_changed" });
+			await new Promise((resolve) => setTimeout(resolve, 10));
+		};
+		expect(reachable()).toContain("mcp__docs__fail");
 
-			tools = SERVER_TOOLS.filter((tool) => tool.name !== "fail");
-			await listChanged();
-			expect(reachable()).not.toContain("mcp__docs__fail");
-			expect(reachable()).toContain("mcp__docs__search");
-			const codemode = harness.session.agent.state.tools.find((tool) => tool.name === "codemode");
-			expect(codemode?.description ?? "").not.toContain("mcp__docs__fail");
+		tools = SERVER_TOOLS.filter((tool) => tool.name !== "fail");
+		await listChanged();
+		expect(reachable()).not.toContain("mcp__docs__fail");
+		expect(reachable()).toContain("mcp__docs__search");
+		const codemode = harness.session.agent.state.tools.find((tool) => tool.name === "codemode");
+		expect(codemode?.description ?? "").not.toContain("mcp__docs__fail");
 
-			tools = SERVER_TOOLS;
-			await listChanged();
-			expect(reachable()).toContain("mcp__docs__fail");
-		},
-	);
+		tools = SERVER_TOOLS;
+		await listChanged();
+		expect(reachable()).toContain("mcp__docs__fail");
+	});
 
 	it("lists and reads resources with Codex's resource tools", async () => {
 		const { harness, calls } = await setup("direct", undefined, { resources: true });
@@ -1226,26 +1225,23 @@ describe("AgentSession MCP tools after resume and reload", () => {
 	it.each([
 		["drops", ["read"], false],
 		["keeps", undefined, true],
-	] as const)(
-		"%s restored tools when an extension sets the loadout before they register",
-		async (_, loadout, kept) => {
-			const first = await setup();
-			await loadDocsSearch(first.harness);
+	] as const)("%s restored tools when an extension sets the loadout before they register", async (_, loadout, kept) => {
+		const first = await setup();
+		await loadDocsSearch(first.harness);
 
-			// Like plan mode restoring its tools, or an extension adding one to the current loadout.
-			const setLoadout: ExtensionFactory = (nycode) => {
-				nycode.on("session_start", () =>
-					nycode.setActiveTools(loadout ? [...loadout] : [...nycode.getActiveTools(), "read"]),
-				);
-			};
-			const second = await setup(first.harness.sessionManager, [setLoadout]);
-			await vi.waitFor(() =>
-				expect(second.harness.session.getAllTools().some((tool) => tool.name === "mcp__docs__search")).toBe(true),
+		// Like plan mode restoring its tools, or an extension adding one to the current loadout.
+		const setLoadout: ExtensionFactory = (nycode) => {
+			nycode.on("session_start", () =>
+				nycode.setActiveTools(loadout ? [...loadout] : [...nycode.getActiveTools(), "read"]),
 			);
+		};
+		const second = await setup(first.harness.sessionManager, [setLoadout]);
+		await vi.waitFor(() =>
+			expect(second.harness.session.getAllTools().some((tool) => tool.name === "mcp__docs__search")).toBe(true),
+		);
 
-			expect(second.harness.session.getActiveToolNames().includes("mcp__docs__search")).toBe(kept);
-		},
-	);
+		expect(second.harness.session.getActiveToolNames().includes("mcp__docs__search")).toBe(kept);
+	});
 
 	// Like extensions that register a loader tool and hide it at session_start: the restore or reload
 	// activates the loader as a tool the branch never recorded, and the extension deactivates it again.

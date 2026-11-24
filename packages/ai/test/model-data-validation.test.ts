@@ -152,17 +152,21 @@ describe("published model catalog hydration", () => {
 		expect(() => hydrateModelCatalog(packageRoot, catalogPath, { validateOnly: true })).toThrow(/missing provider/);
 	});
 
-	it.each([null, [], {}, { "test-provider": [] }, { "test-provider": {} }, { "test-provider": [{ id: "x" }] }])(
-		"rejects incomplete catalogs without replacing existing data: %j",
-		(catalog) => {
-			const { dataDir, packageRoot } = createFixture();
-			const catalogPath = join(packageRoot, "catalog.json");
-			const original = readFileSync(join(dataDir, MODEL_DATA_MANIFEST_FILE), "utf8");
-			writeFileSync(catalogPath, JSON.stringify(catalog));
-			expect(() => hydrateModelCatalog(packageRoot, catalogPath)).toThrow();
-			expect(readFileSync(join(dataDir, MODEL_DATA_MANIFEST_FILE), "utf8")).toBe(original);
-		},
-	);
+	it.each([
+		null,
+		[],
+		{},
+		{ "test-provider": [] },
+		{ "test-provider": {} },
+		{ "test-provider": [{ id: "x" }] },
+	])("rejects incomplete catalogs without replacing existing data: %j", (catalog) => {
+		const { dataDir, packageRoot } = createFixture();
+		const catalogPath = join(packageRoot, "catalog.json");
+		const original = readFileSync(join(dataDir, MODEL_DATA_MANIFEST_FILE), "utf8");
+		writeFileSync(catalogPath, JSON.stringify(catalog));
+		expect(() => hydrateModelCatalog(packageRoot, catalogPath)).toThrow();
+		expect(readFileSync(join(dataDir, MODEL_DATA_MANIFEST_FILE), "utf8")).toBe(original);
+	});
 
 	it.each(["api", "provider", "cost"])("validates model %s before replacing existing data", (field) => {
 		const { dataDir, packageRoot, values } = createFixture();

@@ -88,20 +88,17 @@ describe("failure kinds", () => {
 			},
 			"app.broken(1): no remote configured",
 		],
-	])(
-		"%s fails broken: reported, the get rejects at once with a ChordError, nothing is left",
-		async (_, factory, message) => {
-			const served = vi.fn((_: { id: number }, self: Self) => factory(self) as never);
-			const { host, errors } = await loaded((h) => h.serve(Broken, served));
-			const error = await host.get(Broken, { id: 1 }, context).catch((error: unknown) => error);
-			expect(isChordError(error) && error.message).toBe(message);
-			await expect(host.get(Broken, { id: 1 }, context)).rejects.toThrow(message);
-			expect(served).toHaveBeenCalledTimes(2);
-			expect(failures(errors)).toEqual(["app.broken(1): broken", "app.broken(1): broken"]);
-			// One report per failure: a derive throwing while its attempt activates reports no derive_failed.
-			expect(errors.map(({ kind }) => kind)).toEqual(["activation_failed", "activation_failed"]);
-		},
-	);
+	])("%s fails broken: reported, the get rejects at once with a ChordError, nothing is left", async (_, factory, message) => {
+		const served = vi.fn((_: { id: number }, self: Self) => factory(self) as never);
+		const { host, errors } = await loaded((h) => h.serve(Broken, served));
+		const error = await host.get(Broken, { id: 1 }, context).catch((error: unknown) => error);
+		expect(isChordError(error) && error.message).toBe(message);
+		await expect(host.get(Broken, { id: 1 }, context)).rejects.toThrow(message);
+		expect(served).toHaveBeenCalledTimes(2);
+		expect(failures(errors)).toEqual(["app.broken(1): broken", "app.broken(1): broken"]);
+		// One report per failure: a derive throwing while its attempt activates reports no derive_failed.
+		expect(errors.map(({ kind }) => kind)).toEqual(["activation_failed", "activation_failed"]);
+	});
 
 	it("an open that throws fails transient: reported, the get waits through retries", async () => {
 		const { host, errors } = await loaded((h) =>

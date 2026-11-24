@@ -31,12 +31,13 @@ describe("resolveModelSelection", () => {
 		});
 	});
 
-	it.each([{}, { NYCODE_PROVIDER: "openai-codex" }, { NYCODE_MODEL: "gpt-5.6-sol" }])(
-		"rejects incomplete model selection",
-		(environment) => {
-			expect(() => resolveModelSelection(undefined, environment)).toThrow("Select a harness model explicitly");
-		},
-	);
+	it.each([
+		{},
+		{ NYCODE_PROVIDER: "openai-codex" },
+		{ NYCODE_MODEL: "gpt-5.6-sol" },
+	])("rejects incomplete model selection", (environment) => {
+		expect(() => resolveModelSelection(undefined, environment)).toThrow("Select a harness model explicitly");
+	});
 });
 
 describe("isolateProcessEnvironment", () => {

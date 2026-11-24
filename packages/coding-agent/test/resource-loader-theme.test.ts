@@ -60,29 +60,30 @@ describe("DefaultResourceLoader theme color mode", () => {
 			setting: false,
 			expected: "\x1b[48;5;59mx\x1b[49m",
 		},
-	])(
-		"uses the $setting setting over a $environment environment",
-		async ({ environmentOverride, setting, expected }) => {
-			vi.stubEnv("NYCODE_TRUE_COLOR", environmentOverride);
-			setCapabilityOverrides({});
-			resetCapabilitiesCache();
+	])("uses the $setting setting over a $environment environment", async ({
+		environmentOverride,
+		setting,
+		expected,
+	}) => {
+		vi.stubEnv("NYCODE_TRUE_COLOR", environmentOverride);
+		setCapabilityOverrides({});
+		resetCapabilitiesCache();
 
-			const loader = new DefaultResourceLoader({
-				cwd,
-				agentDir,
-				settingsManager: SettingsManager.inMemory({ terminal: { trueColor: setting } }),
-				additionalThemePaths: [themePath],
-				noExtensions: true,
-				noSkills: true,
-				noPromptTemplates: true,
-				noContextFiles: true,
-			});
-			await loader.reload();
+		const loader = new DefaultResourceLoader({
+			cwd,
+			agentDir,
+			settingsManager: SettingsManager.inMemory({ terminal: { trueColor: setting } }),
+			additionalThemePaths: [themePath],
+			noExtensions: true,
+			noSkills: true,
+			noPromptTemplates: true,
+			noContextFiles: true,
+		});
+		await loader.reload();
 
-			const loadedTheme = loader.getThemes().themes.find((theme) => theme.name === "capability-test");
-			expect(loadedTheme?.bg("userMessageBg", "x")).toBe(expected);
-		},
-	);
+		const loadedTheme = loader.getThemes().themes.find((theme) => theme.name === "capability-test");
+		expect(loadedTheme?.bg("userMessageBg", "x")).toBe(expected);
+	});
 
 	it("returns to automatic detection after an explicit setting is removed", async () => {
 		vi.stubEnv("NYCODE_TRUE_COLOR", "1");

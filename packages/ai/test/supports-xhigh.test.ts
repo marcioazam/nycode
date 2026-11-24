@@ -102,14 +102,18 @@ describe("getSupportedThinkingLevels", () => {
 		expect(getSupportedThinkingLevels(model!)).toContain("xhigh");
 	});
 
-	it.each(["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "gpt-6-sol", "gpt-6-luna", "gpt-6.1-terra"] as const)(
-		"includes xhigh and max for OpenAI %s models",
-		(modelId) => {
-			const model = getModel("openai", modelId);
-			expect(model).toBeDefined();
-			expect(getSupportedThinkingLevels(model!)).toEqual(["off", "low", "medium", "high", "xhigh", "max"]);
-		},
-	);
+	it.each([
+		"gpt-5.6-sol",
+		"gpt-5.6-terra",
+		"gpt-5.6-luna",
+		"gpt-6-sol",
+		"gpt-6-luna",
+		"gpt-6.1-terra",
+	] as const)("includes xhigh and max for OpenAI %s models", (modelId) => {
+		const model = getModel("openai", modelId);
+		expect(model).toBeDefined();
+		expect(getSupportedThinkingLevels(model!)).toEqual(["off", "low", "medium", "high", "xhigh", "max"]);
+	});
 
 	// OpenAI and Codex reject reasoning.effort "none" for GPT-6.1 Sol and GPT-6.2.
 	it.each(["gpt-6.1-sol", "gpt-6.2-astra", "gpt-6.2-sol"] as const)("does not support off for %s", (modelId) => {

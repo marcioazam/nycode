@@ -374,37 +374,37 @@ describe("revocation", () => {
 describe("cancellation", () => {
 	// Astra's recheck R1, Sol's N5: a client gone while its upgrade authenticated left that work running.
 	// Fable's second recheck: only a reset (RST) was seen; a clean disconnect (FIN, a tab closing) was not.
-	it.each(["ends its connection", "resets its connection"] as const)(
-		"aborts an upgrade's authentication when its client %s",
-		async (how) => {
-			const entered = Promise.withResolvers<void>();
-			let signal: AbortSignal | undefined;
-			const server = await served(
-				{ "@app/s": contributing({ sockets: { "/s": () => {} } }) },
-				{
-					authenticate: async (_request, ctx) => {
-						signal = ctx.abortSignal;
-						entered.resolve();
-						return new Promise(() => {});
-					},
+	it.each([
+		"ends its connection",
+		"resets its connection",
+	] as const)("aborts an upgrade's authentication when its client %s", async (how) => {
+		const entered = Promise.withResolvers<void>();
+		let signal: AbortSignal | undefined;
+		const server = await served(
+			{ "@app/s": contributing({ sockets: { "/s": () => {} } }) },
+			{
+				authenticate: async (_request, ctx) => {
+					signal = ctx.abortSignal;
+					entered.resolve();
+					return new Promise(() => {});
 				},
-			);
-			const socket = connect(server.port, "127.0.0.1");
-			socket.on("error", () => {});
-			await once(socket, "connect");
-			socket.write(
-				`GET /s HTTP/1.1\r\nHost: 127.0.0.1:${server.port}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n`,
-			);
-			await entered.promise;
-			const aborted = new Promise((resolve) => signal?.addEventListener("abort", resolve, { once: true }));
-			if (how === "ends its connection") socket.end();
-			else socket.resetAndDestroy();
-			await aborted;
-			expect(signal?.aborted).toBe(true);
-			socket.destroy();
-			await server.close();
-		},
-	);
+			},
+		);
+		const socket = connect(server.port, "127.0.0.1");
+		socket.on("error", () => {});
+		await once(socket, "connect");
+		socket.write(
+			`GET /s HTTP/1.1\r\nHost: 127.0.0.1:${server.port}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n`,
+		);
+		await entered.promise;
+		const aborted = new Promise((resolve) => signal?.addEventListener("abort", resolve, { once: true }));
+		if (how === "ends its connection") socket.end();
+		else socket.resetAndDestroy();
+		await aborted;
+		expect(signal?.aborted).toBe(true);
+		socket.destroy();
+		await server.close();
+	});
 });
 
 describe("heartbeat", () => {

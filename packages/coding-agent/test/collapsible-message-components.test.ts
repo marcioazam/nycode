@@ -136,22 +136,23 @@ describe("collapsible message components", () => {
 						"entry-1",
 					),
 			},
-		])(
-			"runs as $messageType on expanded $kind content without Nycode's header",
-			({ messageType, header, create }) => {
-				seen.length = 0;
-				const component = create();
-				component.setExpanded(true);
+		])("runs as $messageType on expanded $kind content without Nycode's header", ({
+			messageType,
+			header,
+			create,
+		}) => {
+			seen.length = 0;
+			const component = create();
+			component.setExpanded(true);
 
-				const rendered = renderText(component);
-				expect(rendered).toContain(header);
-				expect(rendered).toContain("transformed");
-				expect(rendered).not.toContain("details");
-				expect(seen[0]).toMatchObject({
-					markdown: "details",
-					context: { messageType, messageId: "entry-1" },
-				});
-			},
-		);
+			const rendered = renderText(component);
+			expect(rendered).toContain(header);
+			expect(rendered).toContain("transformed");
+			expect(rendered).not.toContain("details");
+			expect(seen[0]).toMatchObject({
+				markdown: "details",
+				context: { messageType, messageId: "entry-1" },
+			});
+		});
 	});
 });

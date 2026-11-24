@@ -58,18 +58,15 @@ describe("device-code login", () => {
 		[false, false],
 		[true, false],
 		[false, true],
-	] as const)(
-		"honors browser=%s / clipboard=%s provider overrides",
-		async (openBrowserOnConfirm, copyCodeOnConfirm) => {
-			const { dialog } = createDialog();
-			dialog.showDeviceCode({ ...device, openBrowserOnConfirm, copyCodeOnConfirm });
-			dialog.handleInput("\r");
-			await Promise.resolve();
-			expect(openBrowser).toHaveBeenCalledTimes(openBrowserOnConfirm ? 1 : 0);
-			expect(copyToClipboard).toHaveBeenCalledTimes(copyCodeOnConfirm ? 1 : 0);
-			expect(dialog.signal.aborted).toBe(false);
-		},
-	);
+	] as const)("honors browser=%s / clipboard=%s provider overrides", async (openBrowserOnConfirm, copyCodeOnConfirm) => {
+		const { dialog } = createDialog();
+		dialog.showDeviceCode({ ...device, openBrowserOnConfirm, copyCodeOnConfirm });
+		dialog.handleInput("\r");
+		await Promise.resolve();
+		expect(openBrowser).toHaveBeenCalledTimes(openBrowserOnConfirm ? 1 : 0);
+		expect(copyToClipboard).toHaveBeenCalledTimes(copyCodeOnConfirm ? 1 : 0);
+		expect(dialog.signal.aborted).toBe(false);
+	});
 
 	it("clears the previous auth URL copy action when showing a device code", () => {
 		const { dialog } = createDialog();

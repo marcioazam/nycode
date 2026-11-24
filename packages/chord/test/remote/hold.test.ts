@@ -812,108 +812,107 @@ async function flush(): Promise<void> {
 const Missing = local("app.missing", { version: 1, params: {}, members: { n: int() } });
 
 describe("retries across links: the hop budget (audit A5)", () => {
-	it.each([1, 9, 50])(
-		"quiesce after %i concurrent Retries round a waiting ring across hosts: each stops at its budget, no attempt started",
-		async (operations) => {
-			type P = { kind: "server" } | { kind: "worker" };
-			const Server = hostKind("app.retry-server");
-			const Worker = hostKind("app.retry-worker");
-			const LocalA = local("app.a", { version: 1, params: {}, members: { n: int() } });
-			const LocalB = local("app.b", { version: 1, params: {}, members: { n: int() } });
-			const RemoteA = remote("app.remote-a", {
-				version: 1,
-				params: {},
-				hostAddress: () => Server(),
-				variants: { reader: { state: { n: int() } } },
-			});
-			const RemoteB = remote("app.remote-b", {
-				version: 1,
-				params: {},
-				hostAddress: () => Worker(),
-				variants: { reader: { state: { n: int() } } },
-			});
-			const hops: number[] = [];
-			let factories = 0;
-			const count = (link: Link): Link => ({
-				send: (bytes) => {
-					const message = binaryCodec.decode(bytes);
-					if (message.kind === "retry") hops.push(message.hops);
-					link.send(bytes);
-				},
-				onMessage: (listener) => link.onMessage(listener),
-				onClose: (listener) => link.onClose(listener),
-				close: () => link.close(),
-			});
-			const [down, up] = memoryLinkPair();
-			const server = createHost<P>({ address: Server(), principal: { kind: "server" }, onError: () => {} });
-			const worker = createHost<P>({ address: Worker(), principal: { kind: "worker" }, onError: () => {} });
-			server.route(
-				Worker,
-				{
-					authorize: () => true,
-					resolve: async () => ({ link: count(down), principal: { kind: "worker" }, trusted: true }),
-				},
+	it.each([
+		1, 9, 50,
+	])("quiesce after %i concurrent Retries round a waiting ring across hosts: each stops at its budget, no attempt started", async (operations) => {
+		type P = { kind: "server" } | { kind: "worker" };
+		const Server = hostKind("app.retry-server");
+		const Worker = hostKind("app.retry-worker");
+		const LocalA = local("app.a", { version: 1, params: {}, members: { n: int() } });
+		const LocalB = local("app.b", { version: 1, params: {}, members: { n: int() } });
+		const RemoteA = remote("app.remote-a", {
+			version: 1,
+			params: {},
+			hostAddress: () => Server(),
+			variants: { reader: { state: { n: int() } } },
+		});
+		const RemoteB = remote("app.remote-b", {
+			version: 1,
+			params: {},
+			hostAddress: () => Worker(),
+			variants: { reader: { state: { n: int() } } },
+		});
+		const hops: number[] = [];
+		let factories = 0;
+		const count = (link: Link): Link => ({
+			send: (bytes) => {
+				const message = binaryCodec.decode(bytes);
+				if (message.kind === "retry") hops.push(message.hops);
+				link.send(bytes);
+			},
+			onMessage: (listener) => link.onMessage(listener),
+			onClose: (listener) => link.onClose(listener),
+			close: () => link.close(),
+		});
+		const [down, up] = memoryLinkPair();
+		const server = createHost<P>({ address: Server(), principal: { kind: "server" }, onError: () => {} });
+		const worker = createHost<P>({ address: Worker(), principal: { kind: "worker" }, onError: () => {} });
+		server.route(
+			Worker,
+			{
+				authorize: () => true,
+				resolve: async () => ({ link: count(down), principal: { kind: "worker" }, trusted: true }),
+			},
+			context,
+		);
+		worker.connect(count(up), { principal: { kind: "server" }, trusted: true }, context);
+		try {
+			const left = server.load(
+				[
+					{
+						name: "@test/a",
+						facet: defineFacet<P>((h) => {
+							h.serve(LocalA, (_, self) => {
+								factories++;
+								return { n: self.get(RemoteB, {}).n };
+							});
+							h.serve(RemoteA, (_, _principal, self) => {
+								factories++;
+								return { variant: "reader", members: { n: self.get(LocalA, {}).n } };
+							});
+						}),
+					},
+				],
 				context,
 			);
-			worker.connect(count(up), { principal: { kind: "server" }, trusted: true }, context);
-			try {
-				const left = server.load(
-					[
-						{
-							name: "@test/a",
-							facet: defineFacet<P>((h) => {
-								h.serve(LocalA, (_, self) => {
-									factories++;
-									return { n: self.get(RemoteB, {}).n };
-								});
-								h.serve(RemoteA, (_, _principal, self) => {
-									factories++;
-									return { variant: "reader", members: { n: self.get(LocalA, {}).n } };
-								});
-							}),
-						},
-					],
-					context,
-				);
-				const right = worker.load(
-					[
-						{
-							name: "@test/b",
-							facet: defineFacet<P>((h) => {
-								h.serve(LocalB, (_, self) => {
-									factories++;
-									self.get(Missing, {});
-									return { n: self.get(RemoteA, {}).n };
-								});
-								h.serve(RemoteB, (_, _principal, self) => {
-									factories++;
-									return { variant: "reader", members: { n: self.get(LocalB, {}).n } };
-								});
-							}),
-						},
-					],
-					context,
-				);
-				await Promise.all([left, right]);
-				await flush();
-				const a = server.hold(LocalA, {}, context);
-				expect(a.state.value).toMatchObject({ kind: "failed", cause: { kind: "waiting" } });
-				const made = factories;
-				for (let i = 0; i < operations; i++) a.retry();
-				await flush();
-				// Each passed round the ring with one hop less per host (16 from the first), never sent at 0.
-				const lap = Array.from({ length: 16 }, (_, i) => 16 - i);
-				expect(hops.toSorted((x, y) => y - x)).toEqual(lap.flatMap((hop) => Array(operations).fill(hop)));
-				await flush();
-				expect(hops).toHaveLength(16 * operations);
-				// Parked objects only passed it on: no attempt started.
-				expect(factories).toBe(made);
-			} finally {
-				await server.close(context);
-				await worker.close(context);
-			}
-		},
-	);
+			const right = worker.load(
+				[
+					{
+						name: "@test/b",
+						facet: defineFacet<P>((h) => {
+							h.serve(LocalB, (_, self) => {
+								factories++;
+								self.get(Missing, {});
+								return { n: self.get(RemoteA, {}).n };
+							});
+							h.serve(RemoteB, (_, _principal, self) => {
+								factories++;
+								return { variant: "reader", members: { n: self.get(LocalB, {}).n } };
+							});
+						}),
+					},
+				],
+				context,
+			);
+			await Promise.all([left, right]);
+			await flush();
+			const a = server.hold(LocalA, {}, context);
+			expect(a.state.value).toMatchObject({ kind: "failed", cause: { kind: "waiting" } });
+			const made = factories;
+			for (let i = 0; i < operations; i++) a.retry();
+			await flush();
+			// Each passed round the ring with one hop less per host (16 from the first), never sent at 0.
+			const lap = Array.from({ length: 16 }, (_, i) => 16 - i);
+			expect(hops.toSorted((x, y) => y - x)).toEqual(lap.flatMap((hop) => Array(operations).fill(hop)));
+			await flush();
+			expect(hops).toHaveLength(16 * operations);
+			// Parked objects only passed it on: no attempt started.
+			expect(factories).toBe(made);
+		} finally {
+			await server.close(context);
+			await worker.close(context);
+		}
+	});
 });
 
 /** A remote object on the server: a label, a counter and `bump`. */

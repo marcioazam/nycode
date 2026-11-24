@@ -33,74 +33,76 @@ describe("AgentSession compaction model overrides", () => {
 		while (harnesses.length) harnesses.pop()?.cleanup();
 	});
 
-	it.each(["manual", "pre-prompt", "post-run", "overflow"] as const)(
-		"uses model token settings for %s compaction and extension preparation",
-		async (path) => {
-			const preparations: SessionBeforeCompactEvent[] = [];
-			const harness = await createHarness({
-				models: [{ id: "faux-1", contextWindow: 4000 }],
-				tools: [],
-				settings: {
-					compaction: {
-						enabled: path !== "manual",
-						reserveTokens: 10,
-						keepRecentTokens: 20000,
-						modelOverrides: { "faux/faux-1": { reserveTokens: 2000, keepRecentTokens: 150 } },
-					},
+	it.each([
+		"manual",
+		"pre-prompt",
+		"post-run",
+		"overflow",
+	] as const)("uses model token settings for %s compaction and extension preparation", async (path) => {
+		const preparations: SessionBeforeCompactEvent[] = [];
+		const harness = await createHarness({
+			models: [{ id: "faux-1", contextWindow: 4000 }],
+			tools: [],
+			settings: {
+				compaction: {
+					enabled: path !== "manual",
+					reserveTokens: 10,
+					keepRecentTokens: 20000,
+					modelOverrides: { "faux/faux-1": { reserveTokens: 2000, keepRecentTokens: 150 } },
 				},
-				extensionFactories: [
-					(nycode) => {
-						nycode.on("session_before_compact", (event) => {
-							preparations.push(event);
-							return {
-								compaction: {
-									summary: "compacted history",
-									firstKeptEntryId: event.preparation.firstKeptEntryId,
-									tokensBefore: event.preparation.tokensBefore,
-								},
-							};
-						});
-					},
-				],
-			});
-			harnesses.push(harness);
-			const recentUserId = seedHistory(harness, path === "pre-prompt" ? 2500 : 650);
+			},
+			extensionFactories: [
+				(nycode) => {
+					nycode.on("session_before_compact", (event) => {
+						preparations.push(event);
+						return {
+							compaction: {
+								summary: "compacted history",
+								firstKeptEntryId: event.preparation.firstKeptEntryId,
+								tokensBefore: event.preparation.tokensBefore,
+							},
+						};
+					});
+				},
+			],
+		});
+		harnesses.push(harness);
+		const recentUserId = seedHistory(harness, path === "pre-prompt" ? 2500 : 650);
 
-			if (path === "manual") {
-				await harness.session.compact();
-			} else {
-				harness.setResponses(
-					path === "overflow"
-						? [
-								fauxAssistantMessage("", { stopReason: "error", errorMessage: "prompt is too long" }),
-								fauxAssistantMessage("recovered"),
-							]
-						: [fauxAssistantMessage(path === "post-run" ? "z".repeat(8000) : "done")],
-				);
-				await harness.session.prompt("continue");
-			}
-
-			expect(preparations).toHaveLength(1);
-			expect(preparations[0]?.preparation.settings).toEqual({
-				enabled: path !== "manual",
-				reserveTokens: 2000,
-				keepRecentTokens: 150,
-			});
-			expect(preparations[0]?.reason).toBe(
-				path === "manual" ? "manual" : path === "overflow" ? "overflow" : "threshold",
+		if (path === "manual") {
+			await harness.session.compact();
+		} else {
+			harness.setResponses(
+				path === "overflow"
+					? [
+							fauxAssistantMessage("", { stopReason: "error", errorMessage: "prompt is too long" }),
+							fauxAssistantMessage("recovered"),
+						]
+					: [fauxAssistantMessage(path === "post-run" ? "z".repeat(8000) : "done")],
 			);
-			if (path === "manual" || path === "pre-prompt") {
-				expect(preparations[0]?.preparation.firstKeptEntryId).toBe(recentUserId);
-			}
-			expect(harness.eventsOfType("compaction_end")).toHaveLength(1);
-			expect(harness.eventsOfType("compaction_end")[0]).toMatchObject({
-				aborted: false,
-				willRetry: path === "overflow",
-				result: { summary: "compacted history" },
-			});
-			expect(harness.getPendingResponseCount()).toBe(0);
-		},
-	);
+			await harness.session.prompt("continue");
+		}
+
+		expect(preparations).toHaveLength(1);
+		expect(preparations[0]?.preparation.settings).toEqual({
+			enabled: path !== "manual",
+			reserveTokens: 2000,
+			keepRecentTokens: 150,
+		});
+		expect(preparations[0]?.reason).toBe(
+			path === "manual" ? "manual" : path === "overflow" ? "overflow" : "threshold",
+		);
+		if (path === "manual" || path === "pre-prompt") {
+			expect(preparations[0]?.preparation.firstKeptEntryId).toBe(recentUserId);
+		}
+		expect(harness.eventsOfType("compaction_end")).toHaveLength(1);
+		expect(harness.eventsOfType("compaction_end")[0]).toMatchObject({
+			aborted: false,
+			willRetry: path === "overflow",
+			result: { summary: "compacted history" },
+		});
+		expect(harness.getPendingResponseCount()).toBe(0);
+	});
 
 	it("uses the newly selected model without changing ordinary settings", async () => {
 		const harness = await createHarness({

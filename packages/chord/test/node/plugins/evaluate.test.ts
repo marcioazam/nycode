@@ -18,8 +18,8 @@ import {
 } from "../../../src/node/plugins/index.ts";
 import { expectCollected } from "../../support.ts";
 import * as esmHost from "../fixtures/esm-host.ts";
-import { HOST_PACKAGES, KINDS, tempRoot, writeFiles, writePackage, writePlugin } from "./support.ts";
 import { jsLiteral } from "../js-literal.ts";
+import { HOST_PACKAGES, KINDS, tempRoot, writeFiles, writePackage, writePlugin } from "./support.ts";
 
 const HOSTS = { ...HOST_PACKAGES, "esm-host": esmHost, "cjs-host": { named: "cjs named" } };
 

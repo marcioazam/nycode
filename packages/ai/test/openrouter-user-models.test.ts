@@ -99,15 +99,14 @@ describe("personalizeOpenRouterCatalog", () => {
 		expect(result[4]).toBe(classifierModel);
 	});
 
-	it.each([401, 403, 404])(
-		"returns the catalog unchanged when the endpoint rejects the key or is missing (%i)",
-		async (status) => {
-			// For example a proxy configured in models.json that rejects the key or has no /models/user:
-			// the user keeps the full list instead of a failing refresh.
-			stubUserModels(new Response("", { status }));
-			const catalog = [chatModel("a")];
+	it.each([
+		401, 403, 404,
+	])("returns the catalog unchanged when the endpoint rejects the key or is missing (%i)", async (status) => {
+		// For example a proxy configured in models.json that rejects the key or has no /models/user:
+		// the user keeps the full list instead of a failing refresh.
+		stubUserModels(new Response("", { status }));
+		const catalog = [chatModel("a")];
 
-			expect(await personalizeOpenRouterCatalog(catalog, refreshContext())).toBe(catalog);
-		},
-	);
+		expect(await personalizeOpenRouterCatalog(catalog, refreshContext())).toBe(catalog);
+	});
 });

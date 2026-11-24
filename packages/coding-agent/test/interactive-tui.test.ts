@@ -469,30 +469,32 @@ describe("clear-on-shrink status spacing", () => {
 		}
 	});
 
-	it.each<StatusIndicatorKind>(["working", "compaction", "branchSummary", "retry"])(
-		"does not reserve separate status height for an embedded %s indicator",
-		(kind) => {
-			const dispose = vi.fn();
-			const editor: StatusEditor = { embedWorkingStatus: true, setWorkingStatusIndicator: vi.fn() };
-			const context: ClearStatusContext = {
-				activeStatusIndicator: { kind, dispose },
-				activeWorkingIndicatorEmbedded: true,
-				statusContainer: new Container(),
-				defaultEditor: editor,
-				editor,
-				options: { tuiMode: "regular" },
-				ui: { getClearOnShrink: () => true },
-				idleStatus: new Text("", 0, 0),
-				setEditorWorkingStatusIndicator: interactiveModePrototype.setEditorWorkingStatusIndicator,
-			};
+	it.each<StatusIndicatorKind>([
+		"working",
+		"compaction",
+		"branchSummary",
+		"retry",
+	])("does not reserve separate status height for an embedded %s indicator", (kind) => {
+		const dispose = vi.fn();
+		const editor: StatusEditor = { embedWorkingStatus: true, setWorkingStatusIndicator: vi.fn() };
+		const context: ClearStatusContext = {
+			activeStatusIndicator: { kind, dispose },
+			activeWorkingIndicatorEmbedded: true,
+			statusContainer: new Container(),
+			defaultEditor: editor,
+			editor,
+			options: { tuiMode: "regular" },
+			ui: { getClearOnShrink: () => true },
+			idleStatus: new Text("", 0, 0),
+			setEditorWorkingStatusIndicator: interactiveModePrototype.setEditorWorkingStatusIndicator,
+		};
 
-			interactiveModePrototype.clearStatusIndicator.call(context);
+		interactiveModePrototype.clearStatusIndicator.call(context);
 
-			expect(dispose).toHaveBeenCalledOnce();
-			expect(editor.setWorkingStatusIndicator).toHaveBeenCalledWith(undefined);
-			expect(context.statusContainer.children).toHaveLength(0);
-		},
-	);
+		expect(dispose).toHaveBeenCalledOnce();
+		expect(editor.setWorkingStatusIndicator).toHaveBeenCalledWith(undefined);
+		expect(context.statusContainer.children).toHaveLength(0);
+	});
 
 	it("uses the standalone row for a custom editor that has not opted in", () => {
 		for (const [tuiMode, expectedChildren] of [

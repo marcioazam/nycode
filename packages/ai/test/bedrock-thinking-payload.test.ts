@@ -157,17 +157,17 @@ describe("Bedrock thinking payload", () => {
 	});
 
 	// Bedrock rejects block_binding on 4.6 models: "Extra inputs are not permitted" (#10324)
-	it.each(["global.anthropic.claude-opus-4-6-v1", "global.anthropic.claude-sonnet-4-6"] as const)(
-		"omits block_binding for %s",
-		async (modelId) => {
-			const model = getModel("amazon-bedrock", modelId);
+	it.each([
+		"global.anthropic.claude-opus-4-6-v1",
+		"global.anthropic.claude-sonnet-4-6",
+	] as const)("omits block_binding for %s", async (modelId) => {
+		const model = getModel("amazon-bedrock", modelId);
 
-			const payload = await capturePayload(model);
+		const payload = await capturePayload(model);
 
-			expect(payload.additionalModelRequestFields?.thinking).toEqual({ type: "adaptive", display: "summarized" });
-			expect(payload.additionalModelRequestFields?.anthropic_beta).toBeUndefined();
-		},
-	);
+		expect(payload.additionalModelRequestFields?.thinking).toEqual({ type: "adaptive", display: "summarized" });
+		expect(payload.additionalModelRequestFields?.anthropic_beta).toBeUndefined();
+	});
 
 	it("omits display for GovCloud model ids on non-adaptive Claude thinking", async () => {
 		const baseModel = getModel("amazon-bedrock", "us.anthropic.claude-sonnet-4-5-20250929-v1:0");

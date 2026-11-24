@@ -616,67 +616,68 @@ describe("Durable telemetry", () => {
 		await harness.close(context);
 	});
 
-	it.each(["faulted", "failed", "orphaned"] as const)(
-		"records a fixed %s category and a bounded diagnostic",
-		async (status) => {
-			const setup = chatSetup();
-			const telemetry = new InMemoryTelemetryContext();
-			const message = "diagnostic ".repeat(80);
-			const Task = defineTask<null, { phase: "fail" }, null>({
-				name: "test.fault",
-				version: 1,
-				initial: () => ({ phase: "fail" }),
-				phases: {
-					fail: async (_task, runtime, ctx) => {
-						if (status === "faulted") {
-							const error = new Error(message);
-							error.name = "private-exception-name";
-							throw error;
-						}
-						await runtime.commit(
-							() => ({
-								status: "terminal",
-								outcome:
-									status === "orphaned"
-										? { status, reason: message }
-										: { status, error: { message, detail: "private-error-detail" } },
-							}),
-							ctx,
-						);
-					},
+	it.each([
+		"faulted",
+		"failed",
+		"orphaned",
+	] as const)("records a fixed %s category and a bounded diagnostic", async (status) => {
+		const setup = chatSetup();
+		const telemetry = new InMemoryTelemetryContext();
+		const message = "diagnostic ".repeat(80);
+		const Task = defineTask<null, { phase: "fail" }, null>({
+			name: "test.fault",
+			version: 1,
+			initial: () => ({ phase: "fail" }),
+			phases: {
+				fail: async (_task, runtime, ctx) => {
+					if (status === "faulted") {
+						const error = new Error(message);
+						error.name = "private-exception-name";
+						throw error;
+					}
+					await runtime.commit(
+						() => ({
+							status: "terminal",
+							outcome:
+								status === "orphaned"
+									? { status, reason: message }
+									: { status, error: { message, detail: "private-error-detail" } },
+						}),
+						ctx,
+					);
 				},
-				abort: async (_task, runtime, ctx) => {
-					await runtime.commit(() => ({ status: "terminal", outcome: { status: "aborted" } }), ctx);
-				},
+			},
+			abort: async (_task, runtime, ctx) => {
+				await runtime.commit(() => ({ status: "terminal", outcome: { status: "aborted" } }), ctx);
+			},
+		});
+		addTask(setup.registry, Task);
+		const { harness, root } = await openTracked(new MemoryStorage(), setup, telemetry);
+		const id = await root.commit(
+			(tx) => tx.createTask(Task, null, { ownership: { kind: "conversation" }, trace: { unknown: "carrier" } }),
+			context,
+		);
+		const record = await harness.waitForTask(id, context);
+		expect(record.state.outcome).toMatchObject(
+			status === "orphaned" ? { status, reason: message } : { status, error: { message } },
+		);
+		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
+		const span = telemetry.getSpans().find((span) => span.name === "nycode.durable.phase")!;
+		expect(span).toMatchObject({ parentId: null, attributes: { outcome: "faulted" } });
+		expect(span.status).toEqual({
+			status: "error",
+			error: { name: `task_${status}`, message: message.slice(0, 500) },
+		});
+		if (status === "faulted")
+			expect(span.events).toContainEqual({
+				name: "nycode.durable.report",
+				attributes: { type: "task_faulted", reason: "threw", extension: "task:test.fault", "task.id": id },
 			});
-			addTask(setup.registry, Task);
-			const { harness, root } = await openTracked(new MemoryStorage(), setup, telemetry);
-			const id = await root.commit(
-				(tx) => tx.createTask(Task, null, { ownership: { kind: "conversation" }, trace: { unknown: "carrier" } }),
-				context,
-			);
-			const record = await harness.waitForTask(id, context);
-			expect(record.state.outcome).toMatchObject(
-				status === "orphaned" ? { status, reason: message } : { status, error: { message } },
-			);
-			await waitFor(() => telemetry.getSpans().every((span) => span.settled));
-			const span = telemetry.getSpans().find((span) => span.name === "nycode.durable.phase")!;
-			expect(span).toMatchObject({ parentId: null, attributes: { outcome: "faulted" } });
-			expect(span.status).toEqual({
-				status: "error",
-				error: { name: `task_${status}`, message: message.slice(0, 500) },
-			});
-			if (status === "faulted")
-				expect(span.events).toContainEqual({
-					name: "nycode.durable.report",
-					attributes: { type: "task_faulted", reason: "threw", extension: "task:test.fault", "task.id": id },
-				});
-			expect(JSON.stringify(span)).not.toContain("private-exception-name");
-			expect(JSON.stringify(span)).not.toContain("private-error-detail");
-			expect(JSON.stringify({ attributes: span.attributes, events: span.events })).not.toContain("diagnostic");
-			await harness.close(context);
-		},
-	);
+		expect(JSON.stringify(span)).not.toContain("private-exception-name");
+		expect(JSON.stringify(span)).not.toContain("private-error-detail");
+		expect(JSON.stringify({ attributes: span.attributes, events: span.events })).not.toContain("diagnostic");
+		await harness.close(context);
+	});
 
 	it("keeps both interrupted runs and explicit abort handlers at status ok", async () => {
 		const setup = chatSetup();

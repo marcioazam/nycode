@@ -1431,23 +1431,19 @@ describe("delta tracker piece arrays", () => {
 		expect(tracker.value.values[0]).not.toBe(tracker.value.values[1]);
 	});
 
-	it.each(["unshift", "splice"] as const)(
-		"inserts 100,000 items with %s",
-		(method) => {
-			const tracker = track({ values: [-1] });
-			const base = clone(tracker.value);
-			const change = tracker.beginChange();
-			const items = Array.from({ length: 100_000 }, (_, value) => value);
-			if (method === "unshift") Reflect.apply(change.state.values.unshift, change.state.values, items);
-			else Reflect.apply(change.state.values.splice, change.state.values, [1, 0, ...items]);
-			const prepared = change.prepare();
-			expect(prepared.value.values).toHaveLength(100_001);
-			expect(prepared.value.values[method === "unshift" ? 99_999 : 100_000]).toBe(99_999);
-			expect(replay(base, prepared.ops)).toEqual(prepared.value);
-			tracker.adopt(prepared);
-		},
-		30_000,
-	);
+	it.each(["unshift", "splice"] as const)("inserts 100,000 items with %s", (method) => {
+		const tracker = track({ values: [-1] });
+		const base = clone(tracker.value);
+		const change = tracker.beginChange();
+		const items = Array.from({ length: 100_000 }, (_, value) => value);
+		if (method === "unshift") Reflect.apply(change.state.values.unshift, change.state.values, items);
+		else Reflect.apply(change.state.values.splice, change.state.values, [1, 0, ...items]);
+		const prepared = change.prepare();
+		expect(prepared.value.values).toHaveLength(100_001);
+		expect(prepared.value.values[method === "unshift" ? 99_999 : 100_000]).toBe(99_999);
+		expect(replay(base, prepared.ops)).toEqual(prepared.value);
+		tracker.adopt(prepared);
+	}, 30_000);
 });
 
 describe("delta tracker randomized transactions", () => {

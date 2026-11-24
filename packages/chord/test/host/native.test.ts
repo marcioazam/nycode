@@ -117,38 +117,38 @@ describe("opening", () => {
 		await host.close(context);
 	});
 
-	it.each(["end", "close"])(
-		"aborts the opener's context when the object ends while opening; a late value is closed once (%s)",
-		async (reason) => {
-			const opener = Promise.withResolvers<Context>();
-			const late = Promise.withResolvers<string>();
-			const closes: unknown[] = [];
-			const { host } = await loaded((h) =>
-				h.serve(Res, (_, self) => {
-					self.open(
-						async (ctx) => {
-							opener.resolve(ctx);
-							return late.promise;
-						},
-						// The close runs under the object's context, not under the opener's aborted one.
-						(value, reason, ctx) => void closes.push([value, reason.kind, ctx.abortSignal?.aborted]),
-					);
-					return { n: constant(1) };
-				}),
-			);
-			const { context: cancellable, cancel } = withCancel(context);
-			const got = host.get(Res, { id: 1 }, cancellable);
-			const openContext = await opener.promise;
-			if (reason === "end") cancel(new Error("left"));
-			else await host.close(context);
-			await expect(got).rejects.toThrow(reason === "end" ? "left" : "app.res(1): ended");
-			expect(openContext.abortSignal?.aborted).toBe(true);
-			late.resolve("value");
-			await flushed();
-			await host.close(context);
-			expect(closes).toEqual([["value", reason, false]]);
-		},
-	);
+	it.each([
+		"end",
+		"close",
+	])("aborts the opener's context when the object ends while opening; a late value is closed once (%s)", async (reason) => {
+		const opener = Promise.withResolvers<Context>();
+		const late = Promise.withResolvers<string>();
+		const closes: unknown[] = [];
+		const { host } = await loaded((h) =>
+			h.serve(Res, (_, self) => {
+				self.open(
+					async (ctx) => {
+						opener.resolve(ctx);
+						return late.promise;
+					},
+					// The close runs under the object's context, not under the opener's aborted one.
+					(value, reason, ctx) => void closes.push([value, reason.kind, ctx.abortSignal?.aborted]),
+				);
+				return { n: constant(1) };
+			}),
+		);
+		const { context: cancellable, cancel } = withCancel(context);
+		const got = host.get(Res, { id: 1 }, cancellable);
+		const openContext = await opener.promise;
+		if (reason === "end") cancel(new Error("left"));
+		else await host.close(context);
+		await expect(got).rejects.toThrow(reason === "end" ? "left" : "app.res(1): ended");
+		expect(openContext.abortSignal?.aborted).toBe(true);
+		late.resolve("value");
+		await flushed();
+		await host.close(context);
+		expect(closes).toEqual([["value", reason, false]]);
+	});
 });
 
 describe("closing", () => {

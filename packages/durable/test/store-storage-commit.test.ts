@@ -243,30 +243,27 @@ describe("refusals: the batches before the refused one stand", () => {
 				{ type: "document.change", id: 101, content: { kind: "base", version: 1, value: {} } },
 			],
 		],
-	] as const)(
-		"refuses a later batch with %s as Memory does, keeping the prefix (review)",
-		async (_name, malformed) => {
-			const batches: StorageWrite[][] = [
-				[{ type: "conversation", value: { id: idFromNumber<ConversationId>(100) } }],
-				malformed.map((write) => ({ ...write, id: idFromNumber<DocumentId>(write.id) })) as StorageWrite[],
-			];
-			const outcomes = [];
-			for (const storage of [new MemoryStorage(), await openStoreStorage(":memory:")]) {
-				const receipts: number[] = [];
-				const result = await storage.commit(batches, (index) => receipts.push(index), context);
-				const conversation = await storage.conversation(idFromNumber<ConversationId>(100), context);
-				outcomes.push({
-					stored: result.stored,
-					refused: result.kind === "refused" ? String(result.refused) : "undefined",
-					receipts,
-					conversation,
-				});
-				await storage.close(context);
-			}
-			expect(outcomes[0]).toMatchObject({ stored: 1, receipts: [0], conversation: { id: 100 } });
-			expect(outcomes[1]).toEqual(outcomes[0]);
-		},
-	);
+	] as const)("refuses a later batch with %s as Memory does, keeping the prefix (review)", async (_name, malformed) => {
+		const batches: StorageWrite[][] = [
+			[{ type: "conversation", value: { id: idFromNumber<ConversationId>(100) } }],
+			malformed.map((write) => ({ ...write, id: idFromNumber<DocumentId>(write.id) })) as StorageWrite[],
+		];
+		const outcomes = [];
+		for (const storage of [new MemoryStorage(), await openStoreStorage(":memory:")]) {
+			const receipts: number[] = [];
+			const result = await storage.commit(batches, (index) => receipts.push(index), context);
+			const conversation = await storage.conversation(idFromNumber<ConversationId>(100), context);
+			outcomes.push({
+				stored: result.stored,
+				refused: result.kind === "refused" ? String(result.refused) : "undefined",
+				receipts,
+				conversation,
+			});
+			await storage.close(context);
+		}
+		expect(outcomes[0]).toMatchObject({ stored: 1, receipts: [0], conversation: { id: 100 } });
+		expect(outcomes[1]).toEqual(outcomes[0]);
+	});
 
 	it.each([
 		[
@@ -497,70 +494,65 @@ describe("failures: a rollback rejects, an unknown outcome stops the store", () 
 		return messages;
 	}
 
-	it.each(["valid", "refused"] as const)(
-		"rolls a 3-batch call back at a failure of any of its statements, as at a failed COMMIT, and reopens before it (third %s)",
-		async (third) => {
-			// What MemoryStorage makes of the call: the outcome every retry must reach.
-			const memory = new MemoryStorage();
-			await commitWrites(memory, [{ type: "conversation", value: { id: ROOT_CONVERSATION_ID } }], context);
-			await commitWrites(memory, SEED, context);
-			const expected = await outcomeOf(memory, third, 2);
-			expect(expected).toMatchObject(
-				third === "valid" ? { stored: 3, seqs: [1, 2, 3] } : { stored: 2, seqs: [1, 2] },
-			);
-			// The statements of the call's transaction (a read transaction after it would count its own).
-			const probe = await counted();
-			await commitWrites(probe.storage, SEED, context);
-			const result = await probe.storage.commit(batches(third), () => {}, context);
-			const total = probe.counts.statements;
-			// Its cost: no read beyond a batch's checks, the metadata once (statement counts per batch in the cost guard).
-			expect(total).toBe(third === "valid" ? 29 : 23);
-			expect(result.stored).toBe(expected.stored);
-			expect(await stateOf(probe.storage)).toEqual(expected.state);
-			await probe.store.close(context);
-			// Each statement in turn, then the COMMIT.
-			for (let at = 1; at <= total + 1; at++) {
-				const path = await storePath();
-				const opened = await counted(path);
-				await commitWrites(opened.storage, SEED, context);
-				const last = opened.store.lastSeq;
-				const outbox = await outboxSeqs(opened.store);
-				const before = await stateOf(opened.storage);
-				if (at <= total) opened.faults.fail = (_sql, index) => index === at;
-				else opened.faults.commit = true;
-				const receipts: number[] = [];
-				const error = await opened.storage
-					.commit(batches(third), (each) => receipts.push(each), context)
-					.then(
-						() => undefined,
-						(rejection: unknown) => rejection,
-					);
-				expect(receipts).toEqual([]);
-				expect(opened.store.lastSeq).toBe(last);
-				if (at <= total) {
-					// A rollback: the call rejects with its failure, the store goes on.
-					expect(chain(error)).toContain(`injected: statement ${at} failed`);
-					expect(await stateOf(opened.storage)).toEqual(before);
-				} else {
-					expect(error).toMatchObject({ code: "unavailable", reason: "storage_failed" });
-				}
-				await opened.store.close(context);
-				// On disk: as before the call, the seq, the outbox, the records and the allocator.
-				const again = await reopen(path);
-				expect(again.store.lastSeq).toBe(last);
-				expect(await outboxSeqs(again.store)).toEqual(outbox);
-				expect(await stateOf(again.storage)).toEqual(before);
-				expect(await again.storage.mintId<EntryId>()).toBeGreaterThan(100);
-				// A retry reaches MemoryStorage's outcome.
-				expect(await outcomeOf(again.storage, third, last)).toEqual(expected);
-				expect(await outboxSeqs(again.store)).toEqual([...outbox, ...expected.seqs.map((seq) => last + seq)]);
-				await again.store.close(context);
+	it.each([
+		"valid",
+		"refused",
+	] as const)("rolls a 3-batch call back at a failure of any of its statements, as at a failed COMMIT, and reopens before it (third %s)", async (third) => {
+		// What MemoryStorage makes of the call: the outcome every retry must reach.
+		const memory = new MemoryStorage();
+		await commitWrites(memory, [{ type: "conversation", value: { id: ROOT_CONVERSATION_ID } }], context);
+		await commitWrites(memory, SEED, context);
+		const expected = await outcomeOf(memory, third, 2);
+		expect(expected).toMatchObject(third === "valid" ? { stored: 3, seqs: [1, 2, 3] } : { stored: 2, seqs: [1, 2] });
+		// The statements of the call's transaction (a read transaction after it would count its own).
+		const probe = await counted();
+		await commitWrites(probe.storage, SEED, context);
+		const result = await probe.storage.commit(batches(third), () => {}, context);
+		const total = probe.counts.statements;
+		// Its cost: no read beyond a batch's checks, the metadata once (statement counts per batch in the cost guard).
+		expect(total).toBe(third === "valid" ? 29 : 23);
+		expect(result.stored).toBe(expected.stored);
+		expect(await stateOf(probe.storage)).toEqual(expected.state);
+		await probe.store.close(context);
+		// Each statement in turn, then the COMMIT.
+		for (let at = 1; at <= total + 1; at++) {
+			const path = await storePath();
+			const opened = await counted(path);
+			await commitWrites(opened.storage, SEED, context);
+			const last = opened.store.lastSeq;
+			const outbox = await outboxSeqs(opened.store);
+			const before = await stateOf(opened.storage);
+			if (at <= total) opened.faults.fail = (_sql, index) => index === at;
+			else opened.faults.commit = true;
+			const receipts: number[] = [];
+			const error = await opened.storage
+				.commit(batches(third), (each) => receipts.push(each), context)
+				.then(
+					() => undefined,
+					(rejection: unknown) => rejection,
+				);
+			expect(receipts).toEqual([]);
+			expect(opened.store.lastSeq).toBe(last);
+			if (at <= total) {
+				// A rollback: the call rejects with its failure, the store goes on.
+				expect(chain(error)).toContain(`injected: statement ${at} failed`);
+				expect(await stateOf(opened.storage)).toEqual(before);
+			} else {
+				expect(error).toMatchObject({ code: "unavailable", reason: "storage_failed" });
 			}
-		},
-		// About 30 on-disk open, commit, close and reopen cycles: ~100 ms locally, ~400 ms on CI, past vitest's 5 s default
-		// when a shared runner starves the CPU (P-15). 30 s still fails a hang.
-		30_000,
-	);
+			await opened.store.close(context);
+			// On disk: as before the call, the seq, the outbox, the records and the allocator.
+			const again = await reopen(path);
+			expect(again.store.lastSeq).toBe(last);
+			expect(await outboxSeqs(again.store)).toEqual(outbox);
+			expect(await stateOf(again.storage)).toEqual(before);
+			expect(await again.storage.mintId<EntryId>()).toBeGreaterThan(100);
+			// A retry reaches MemoryStorage's outcome.
+			expect(await outcomeOf(again.storage, third, last)).toEqual(expected);
+			expect(await outboxSeqs(again.store)).toEqual([...outbox, ...expected.seqs.map((seq) => last + seq)]);
+			await again.store.close(context);
+		}
+	}, 30_000); // when a shared runner starves the CPU (P-15). 30 s still fails a hang. // About 30 on-disk open, commit, close and reopen cycles: ~100 ms locally, ~400 ms on CI, past vitest's 5 s default
 
 	it("a call on a closed storage, or on a stopped store, rejects and stores nothing", async () => {
 		const { store, storage, faults } = await counted();

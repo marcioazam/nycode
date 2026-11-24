@@ -290,33 +290,37 @@ describe("google-shared convertTools const handling", () => {
 		expect(parameters).toEqual(original);
 	});
 
-	it.each(["properties", "patternProperties", "$defs", "definitions", "dependentSchemas", "dependencies"])(
-		"preserves names while rewriting schemas in %s",
-		(key) => {
-			const parameters = {
-				type: "object",
-				[key]: {
-					["__proto__"]: { const: "x" },
-					const: { const: "y" },
-					properties: { const: "z" },
-				},
-			};
-			const original = structuredClone(parameters);
-			const expected = {
-				type: "object",
-				[key]: {
-					["__proto__"]: { enum: ["x"] },
-					const: { enum: ["y"] },
-					properties: { enum: ["z"] },
-				},
-			};
+	it.each([
+		"properties",
+		"patternProperties",
+		"$defs",
+		"definitions",
+		"dependentSchemas",
+		"dependencies",
+	])("preserves names while rewriting schemas in %s", (key) => {
+		const parameters = {
+			type: "object",
+			[key]: {
+				["__proto__"]: { const: "x" },
+				const: { const: "y" },
+				properties: { const: "z" },
+			},
+		};
+		const original = structuredClone(parameters);
+		const expected = {
+			type: "object",
+			[key]: {
+				["__proto__"]: { enum: ["x"] },
+				const: { enum: ["y"] },
+				properties: { enum: ["z"] },
+			},
+		};
 
-			const result = convertTools([makeTool(parameters)])?.[0]?.functionDeclarations?.[0]?.parametersJsonSchema;
-			expect(result).toEqual(expected);
-			expect(JSON.stringify(result)).toBe(JSON.stringify(expected));
-			expect(parameters).toEqual(original);
-		},
-	);
+		const result = convertTools([makeTool(parameters)])?.[0]?.functionDeclarations?.[0]?.parametersJsonSchema;
+		expect(result).toEqual(expected);
+		expect(JSON.stringify(result)).toBe(JSON.stringify(expected));
+		expect(parameters).toEqual(original);
+	});
 
 	it("rewrites only schema-bearing keywords", () => {
 		const parameters = {

@@ -16,8 +16,8 @@ import {
 	type PluginScript,
 } from "../../../src/node/plugins/index.ts";
 import { rejection } from "../../support.ts";
-import { HOST_PACKAGES, tempRoot, writePlugin } from "./support.ts";
 import { jsLiteral } from "../js-literal.ts";
+import { HOST_PACKAGES, tempRoot, writePlugin } from "./support.ts";
 
 /** Writes plugin `@test/<dir>` serving `test.<dir>` labelled `label` from its worker facet (or `source` as it is). */
 async function plugin(root: string, dir: string, label: string, source?: string): Promise<void> {

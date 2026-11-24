@@ -11,20 +11,20 @@ describe("issue #7269 CLI end-of-options delimiter", () => {
 		harness = undefined;
 	});
 
-	it.each(["- summarize the following points for me", "--answer my question briefly"])(
-		"passes %j as a prompt after --",
-		async (prompt) => {
-			const parsed = parseArgs(["-ne", "--no-session", "-p", "--", prompt]);
-			expect(parsed.messages).toEqual([prompt]);
-			expect(parsed.unknownFlags.size).toBe(0);
-			expect(parsed.diagnostics).toEqual([]);
+	it.each([
+		"- summarize the following points for me",
+		"--answer my question briefly",
+	])("passes %j as a prompt after --", async (prompt) => {
+		const parsed = parseArgs(["-ne", "--no-session", "-p", "--", prompt]);
+		expect(parsed.messages).toEqual([prompt]);
+		expect(parsed.unknownFlags.size).toBe(0);
+		expect(parsed.diagnostics).toEqual([]);
 
-			harness = await createHarness();
-			harness.setResponses([fauxAssistantMessage("ok")]);
-			await harness.session.prompt(parsed.messages[0]);
-			expect(getUserTexts(harness)).toEqual([prompt]);
-		},
-	);
+		harness = await createHarness();
+		harness.setResponses([fauxAssistantMessage("ok")]);
+		await harness.session.prompt(parsed.messages[0]);
+		expect(getUserTexts(harness)).toEqual([prompt]);
+	});
 
 	it("stops parsing options while retaining @file handling", () => {
 		const parsed = parseArgs(["--unknown-flag", "value", "--", "--provider", "openai", "-c", "@prompt.md"]);

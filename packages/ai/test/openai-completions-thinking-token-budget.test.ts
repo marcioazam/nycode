@@ -143,17 +143,17 @@ describe("openai-completions thinking token budget", () => {
 		expect(params.thinking_token_budget).toBe(4096 - 1024);
 	});
 
-	it.each(["thinking_budget", "thinking_budget_tokens"] as const)(
-		"sends %s when thinkingTokenBudgetField is set",
-		async (field) => {
-			const params = await capture(vllmModel({ thinkingFormat: "qwen", thinkingTokenBudgetField: field }), {
-				reasoning: "medium",
-				thinkingBudgets: { medium: 4096 },
-			});
-			expect(params[field]).toBe(4096);
-			expect(params.thinking_token_budget).toBeUndefined();
-		},
-	);
+	it.each([
+		"thinking_budget",
+		"thinking_budget_tokens",
+	] as const)("sends %s when thinkingTokenBudgetField is set", async (field) => {
+		const params = await capture(vllmModel({ thinkingFormat: "qwen", thinkingTokenBudgetField: field }), {
+			reasoning: "medium",
+			thinkingBudgets: { medium: 4096 },
+		});
+		expect(params[field]).toBe(4096);
+		expect(params.thinking_token_budget).toBeUndefined();
+	});
 
 	it("lets thinkingTokenBudgetField win over the boolean alias", async () => {
 		const params = await capture(

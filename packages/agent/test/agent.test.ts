@@ -1068,43 +1068,43 @@ describe("Agent", () => {
 		expect(requests[1]).toContain("follow-up");
 	});
 
-	it.each(["error", "aborted"] as const)(
-		"keeps queues on a %s response even when finishTurn requests continuation",
-		async (stopReason) => {
-			const queuedDuringResponse = createUserMessage("steering");
-			const followUp = createUserMessage("follow-up");
-			const agent = new Agent({
-				finishTurn: () => ({ action: "continue" }),
-				streamFn: () => {
-					const stream = createAssistantMessageEventStream();
-					queueMicrotask(() => {
-						stream.push({
-							type: "error",
-							reason: stopReason,
-							error: {
-								...createAssistantMessage(stopReason),
-								stopReason,
-								errorMessage: stopReason,
-							},
-						});
+	it.each([
+		"error",
+		"aborted",
+	] as const)("keeps queues on a %s response even when finishTurn requests continuation", async (stopReason) => {
+		const queuedDuringResponse = createUserMessage("steering");
+		const followUp = createUserMessage("follow-up");
+		const agent = new Agent({
+			finishTurn: () => ({ action: "continue" }),
+			streamFn: () => {
+				const stream = createAssistantMessageEventStream();
+				queueMicrotask(() => {
+					stream.push({
+						type: "error",
+						reason: stopReason,
+						error: {
+							...createAssistantMessage(stopReason),
+							stopReason,
+							errorMessage: stopReason,
+						},
 					});
-					return stream;
-				},
-			});
-			agent.followUp(followUp);
-			agent.subscribe((event) => {
-				if (event.type === "message_end" && event.message.role === "assistant") {
-					agent.steer(queuedDuringResponse);
-				}
-			});
+				});
+				return stream;
+			},
+		});
+		agent.followUp(followUp);
+		agent.subscribe((event) => {
+			if (event.type === "message_end" && event.message.role === "assistant") {
+				agent.steer(queuedDuringResponse);
+			}
+		});
 
-			await agent.prompt("start");
+		await agent.prompt("start");
 
-			expect(agent.peekQueuedMessages()).toEqual([queuedDuringResponse]);
-			agent.clearSteeringQueue();
-			expect(agent.peekQueuedMessages()).toEqual([followUp]);
-		},
-	);
+		expect(agent.peekQueuedMessages()).toEqual([queuedDuringResponse]);
+		agent.clearSteeringQueue();
+		expect(agent.peekQueuedMessages()).toEqual([followUp]);
+	});
 
 	it("keeps queues when finishTurn ends the run", async () => {
 		const queuedDuringResponse = createUserMessage("steering");

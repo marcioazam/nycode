@@ -315,53 +315,53 @@ describe("RPC prompt response semantics", () => {
 	});
 
 	// #9803: a handler can consume A while independently queueing B; report A's outcome.
-	it.each(["steer", "follow_up"] as const)(
-		"reports %s as handled even when an extension queues another message",
-		async (type) => {
-			const { lineHandler, cleanup } = await startRpcMode({
-				withAuth: true,
-				responseDelayMs: 500,
-				extensionsResult: await createTestExtensionsResult([
-					(nycode) => {
-						nycode.on("input", (event) => {
-							if (event.text === "A" && event.source === "rpc") {
-								nycode.sendUserMessage("B", { deliverAs: type === "steer" ? "steer" : "followUp" });
-								return { action: "handled" };
-							}
-						});
-					},
-				]),
+	it.each([
+		"steer",
+		"follow_up",
+	] as const)("reports %s as handled even when an extension queues another message", async (type) => {
+		const { lineHandler, cleanup } = await startRpcMode({
+			withAuth: true,
+			responseDelayMs: 500,
+			extensionsResult: await createTestExtensionsResult([
+				(nycode) => {
+					nycode.on("input", (event) => {
+						if (event.text === "A" && event.source === "rpc") {
+							nycode.sendUserMessage("B", { deliverAs: type === "steer" ? "steer" : "followUp" });
+							return { action: "handled" };
+						}
+					});
+				},
+			]),
+		});
+
+		try {
+			lineHandler(JSON.stringify({ id: "start", type: "prompt", message: "Start" }));
+			await vi.waitFor(() => expect(getPromptResponses(rpcIo.outputLines, "start")).toHaveLength(1));
+
+			lineHandler(JSON.stringify({ id: "A", type, message: "A" }));
+			await vi.waitFor(() => {
+				expect(parseOutputLines(rpcIo.outputLines)).toContainEqual({
+					id: "A",
+					type: "response",
+					command: type,
+					success: true,
+					data: { disposition: "handled" },
+				});
+				expect(parseOutputLines(rpcIo.outputLines)).toContainEqual({
+					type: "queue_update",
+					steering: type === "steer" ? ["B"] : [],
+					followUp: type === "follow_up" ? ["B"] : [],
+				});
 			});
-
-			try {
-				lineHandler(JSON.stringify({ id: "start", type: "prompt", message: "Start" }));
-				await vi.waitFor(() => expect(getPromptResponses(rpcIo.outputLines, "start")).toHaveLength(1));
-
-				lineHandler(JSON.stringify({ id: "A", type, message: "A" }));
-				await vi.waitFor(() => {
-					expect(parseOutputLines(rpcIo.outputLines)).toContainEqual({
-						id: "A",
-						type: "response",
-						command: type,
-						success: true,
-						data: { disposition: "handled" },
-					});
-					expect(parseOutputLines(rpcIo.outputLines)).toContainEqual({
-						type: "queue_update",
-						steering: type === "steer" ? ["B"] : [],
-						followUp: type === "follow_up" ? ["B"] : [],
-					});
-				});
-				await vi.waitFor(() => {
-					expect(
-						parseOutputLines(rpcIo.outputLines).filter((line) => line.type === "response" && line.id === "A"),
-					).toHaveLength(1);
-				});
-			} finally {
-				await cleanup();
-			}
-		},
-	);
+			await vi.waitFor(() => {
+				expect(
+					parseOutputLines(rpcIo.outputLines).filter((line) => line.type === "response" && line.id === "A"),
+				).toHaveLength(1);
+			});
+		} finally {
+			await cleanup();
+		}
+	});
 
 	it.each(["steer", "follow_up"] as const)("reports %s as queued after input transformation", async (type) => {
 		const { lineHandler, cleanup } = await startRpcMode({

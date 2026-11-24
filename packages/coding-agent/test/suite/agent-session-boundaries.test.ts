@@ -68,62 +68,63 @@ describe("AgentSession actionable boundaries", () => {
 		expect(harness.eventsOfType("agent_settled")).toHaveLength(1);
 	});
 
-	it.each(["steering", "follow-up", "both"] as const)(
-		"preserves %s queue scheduling around a turn_end handoff",
-		async (queueKind) => {
-			let handled = false;
-			const requests: string[] = [];
-			const harness = await createHarness({
-				extensionFactories: [
-					(nycode) => {
-						nycode.on("turn_end", () => {
-							if (handled) return;
-							handled = true;
-							if (queueKind === "steering" || queueKind === "both") {
-								nycode.sendUserMessage("queued steering", { deliverAs: "steer" });
-							}
-							if (queueKind === "follow-up" || queueKind === "both") {
-								nycode.sendUserMessage("queued follow-up", { deliverAs: "followUp" });
-							}
-							return {
-								entries: [{ type: "compaction", summary: "exact handoff", firstKeptEntryId: null }],
-								continue: true,
-							};
-						});
-					},
-				],
-			});
-			harnesses.push(harness);
-			harness.setResponses([
-				fauxAssistantMessage("first"),
-				(context) => {
-					requests.push(JSON.stringify(context.messages));
-					return fauxAssistantMessage("second");
+	it.each([
+		"steering",
+		"follow-up",
+		"both",
+	] as const)("preserves %s queue scheduling around a turn_end handoff", async (queueKind) => {
+		let handled = false;
+		const requests: string[] = [];
+		const harness = await createHarness({
+			extensionFactories: [
+				(nycode) => {
+					nycode.on("turn_end", () => {
+						if (handled) return;
+						handled = true;
+						if (queueKind === "steering" || queueKind === "both") {
+							nycode.sendUserMessage("queued steering", { deliverAs: "steer" });
+						}
+						if (queueKind === "follow-up" || queueKind === "both") {
+							nycode.sendUserMessage("queued follow-up", { deliverAs: "followUp" });
+						}
+						return {
+							entries: [{ type: "compaction", summary: "exact handoff", firstKeptEntryId: null }],
+							continue: true,
+						};
+					});
 				},
-				(context) => {
-					requests.push(JSON.stringify(context.messages));
-					return fauxAssistantMessage("third");
-				},
-			]);
+			],
+		});
+		harnesses.push(harness);
+		harness.setResponses([
+			fauxAssistantMessage("first"),
+			(context) => {
+				requests.push(JSON.stringify(context.messages));
+				return fauxAssistantMessage("second");
+			},
+			(context) => {
+				requests.push(JSON.stringify(context.messages));
+				return fauxAssistantMessage("third");
+			},
+		]);
 
-			await harness.session.prompt("start");
+		await harness.session.prompt("start");
 
-			expect(requests[0]).toContain("exact handoff");
-			if (queueKind === "steering") {
-				expect(harness.faux.state.callCount).toBe(2);
-				expect(requests[0]).toContain("queued steering");
-				expect(requests[0]).not.toContain("queued follow-up");
-			} else if (queueKind === "follow-up") {
-				expect(harness.faux.state.callCount).toBe(2);
-				expect(requests[0]).toContain("queued follow-up");
-			} else {
-				expect(harness.faux.state.callCount).toBe(3);
-				expect(requests[0]).toContain("queued steering");
-				expect(requests[0]).not.toContain("queued follow-up");
-				expect(requests[1]).toContain("queued follow-up");
-			}
-		},
-	);
+		expect(requests[0]).toContain("exact handoff");
+		if (queueKind === "steering") {
+			expect(harness.faux.state.callCount).toBe(2);
+			expect(requests[0]).toContain("queued steering");
+			expect(requests[0]).not.toContain("queued follow-up");
+		} else if (queueKind === "follow-up") {
+			expect(harness.faux.state.callCount).toBe(2);
+			expect(requests[0]).toContain("queued follow-up");
+		} else {
+			expect(harness.faux.state.callCount).toBe(3);
+			expect(requests[0]).toContain("queued steering");
+			expect(requests[0]).not.toContain("queued follow-up");
+			expect(requests[1]).toContain("queued follow-up");
+		}
+	});
 
 	it("keeps a boundary replacement verbatim through threshold compaction", async () => {
 		let handled = false;
