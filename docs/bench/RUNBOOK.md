@@ -65,7 +65,10 @@ Trocar OAuth por API muda o pedido do pi (sem a identidade do Claude Code no sys
    o PR muda o comportamento funcional do produto. Antes do `pending`, `bench run affects` (`bench/classify/affects.py`)
    lê `git diff base...head`. É não funcional: documentação (`docs/**`, `*.md`, `packages/*/docs/**`), ferramental do
    repositório (`.github`, `.husky`, `scripts/ci`, `scripts/check-*`, `bench/**`, licença e dotfiles), testes,
-   `apps/**` (fora dos gates, D-23) e UI pura (`resources/themes`, `resources/statusline`, `src/extensions/{ui,ui-visual,footer,sticky-prompt}`).
+   `apps/**` (fora dos gates, D-23) e UI pura (`resources/themes`, `resources/statusline`, `packages/tui/**`, `src/modes/interactive/**`,
+   `src/core/export-html/**` e as extensões visuais `src/extensions/{ui,ui-visual,footer,sticky-prompt,chat-margin,code-blocks,status-line,image-open,hook-msgs,sound-notify,notify,avisos,dev-commands}`; D-64).
+   O benchmark só roda quando o PR mexe em prompts, na comunicação com o modelo ou no que o agente faz;
+   `session-title` continua funcional porque chama o modelo.
    Se todo arquivo for assim, o status vira `success` com "não funcional, sem rodada" e um comentário lista os
    arquivos; nada roda. Fail closed: caminho desconhecido, `packages/*/src/**`, tudo em
    `packages/*/resources/{agents,skills,commands,rules,instructions,hooks}/**` (prompts, inclusive `.md`),
