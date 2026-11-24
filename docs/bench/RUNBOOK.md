@@ -53,7 +53,7 @@ Trocar OAuth por API muda o pedido do pi (sem a identidade do Claude Code no sys
    forks e outros autores são ignorados, assim como heads que já têm `bench-pr` final (`success` ou `failure`) ou um
    erro que gastou uma rodada (`NOT_COMPARABLE`, `NOT_VERIFIED`): esses esperam uma pessoa e só rerodam com `--pr N`.
 2. Para cada PR elegível: status `pending`; worktree descartável do head em `$BENCH_STATE/wt/<sha>` (clone próprio em
-   `$BENCH_STATE/repo`); `bench run --arm nycode-harness --tier pr --budget-usd 12` dentro dela; `bench gate` contra o baseline
+   `$BENCH_STATE/repo`); `bench run --arm nycode --tier pr --budget-usd 12` dentro dela; `bench gate` contra o baseline
    main; status final; worktree removida. O resumo completo vai como comentário no PR e fica em
    `$BENCH_STATE/runs/<sha>/summary.md`; a descrição do status não leva caminho local. Antes de cada PR da passada o
    estado é reconferido: PR fechado depois da listagem não roda.
