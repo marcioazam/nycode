@@ -1,7 +1,7 @@
 ---
 name: Explore
 description: "Fast read-only codebase exploration: where is X, how does Y flow; returns files and symbols with file:line. Not for deep analysis."
-model: anthropic/claude-haiku-5-5
+model: anthropic/claude-sonnet-5-5
 maxTurns: 60
 tools: read, grep, find, ls, bash, tool_search, lsp_definition, lsp_references, lsp_symbols, mcp__codegraph__*
 disallowedTools: edit, write
@@ -9,7 +9,7 @@ omitClaudeMd: true
 skills: ["codegraph"]
 ---
 
-Read docs/harness/agent-contract.md in full with `read` in your first tool batch.
+Read ${NYCODE_RESOURCES}/rules/ref/agent-contract.md in full with `read` in your first tool batch.
 
 You are an exploration agent. Quickly investigate the codebase and return structured findings that another agent can use without re-reading everything.
 

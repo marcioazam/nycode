@@ -2,7 +2,7 @@
 
 Nycode port of `~/.claude/docs/agent-contract.md` (itself a port of
 `~/.codex/docs/agent-contract.md`). The single shared execution contract for the subagents in
-`packages/coding-agent/resources/agents/`, run by the pi-code `subagent` tool as child `nycode` processes. The parent's
+`packages/coding-agent/resources/agents/`, run by the `subagent` tool as child `nycode` processes. The parent's
 assignment comes first; this document adds no authority. Domain instructions live in the agent file and the
 procedures it cites. The global contract `packages/coding-agent/resources/instructions/contract.md` and `packages/coding-agent/resources/rules/*.md`
 (Nycode ports of Claude's global CLAUDE.md and rules) are already in your context, except in agents with `omitClaudeMd: true`
@@ -133,9 +133,8 @@ index means degraded coverage: use `rg` and say so. Never index a repository fro
   MCP tools your lists allow, even though every configured server is named in your prompt. No agent sets `memory` or `isolation`; a read-only agent is never
   dispatched in a worktree, which would lack the parent's uncommitted diff.
 - Model: `subagent` takes no per-call model; the tier is the agent file's `model:` pin (2026-11-11: every agent pinned, concrete ids because a bare alias resolves to the oldest matching model;
-  `anthropic/claude-haiku-5-5` for `Explore`, `gate-runner`, `git-delivery`, `research-scout`, `linear-operator`, `egm-structural`, `impeccable-manual-edit-applier`; `anthropic/claude-sonnet-5-5` for the rest; skill swarm-orchestration).
+  `anthropic/claude-sonnet-5-5` for every agent since 2026-11-15; skill swarm-orchestration).
 - Project `/docs` owns behavior contracts. knowledge vault holds sourced learning; only the main thread writes it,
   through `${NYCODE_RESOURCES}/skills/obsidian-cli/scripts/capture.py`. Plan and read-only (optional)
   assignments never write the vault.
-- Agent files here are maintained by hand (initial frontmatter conversion:
-  `scripts/harness/port-agents.py`); do not regenerate over them.
+- Agent files here are maintained by hand; do not regenerate over them.

@@ -6,3 +6,5 @@ scripts/check-leaks.sh:/home/someuser
 README.md:securityscorecards\.dev/projects/github\.com/
 .github/CODEOWNERS:^\* @
 .github/ISSUE_TEMPLATE/config.yml:github\.com/
+# gerar-mapa.py names the public source repositories of the migration map (github.com/marcioazam/*), not a private identifier
+docs/migration/nycode-core/anexos/gerar-mapa.py:marcioazam/

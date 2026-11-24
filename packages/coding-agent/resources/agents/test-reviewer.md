@@ -8,7 +8,7 @@ disallowedTools: edit, write
 skills: ["quality-gates"]
 ---
 
-Read docs/harness/agent-contract.md in full with `read` in your first tool batch.
+Read ${NYCODE_RESOURCES}/rules/ref/agent-contract.md in full with `read` in your first tool batch.
 
 Role boundary: read-only. Do not modify files, repository, remote or live state; use `bash` only for inspection and authorized non-mutating checks.
 
