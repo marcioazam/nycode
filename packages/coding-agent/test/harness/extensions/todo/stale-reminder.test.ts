@@ -167,7 +167,7 @@ test("a extensão todo liga o lembrete: NYCODE_TODO_SYNC=1 e lista aberta lembra
 	try {
 		const handlers = new Map<string, (...a: unknown[]) => unknown>();
 		const nycode = new Proxy(
-			{ on: (n: string, h: never) => handlers.set(n, h), events: { emit: () => {} } },
+			{ on: (n: string, h: never) => handlers.set(n, h), events: { emit: () => {}, on: () => {} } },
 			{ get: (t: Record<string, unknown>, k: string) => t[k] ?? (() => {}) },
 		);
 		todoExtension(nycode as never);

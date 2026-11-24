@@ -23,7 +23,14 @@ import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types
 import type { SessionEntry } from "../../core/session-manager.ts";
 import type { Theme } from "../../modes/interactive/theme/theme.ts";
 
+import {
+	isPlanStepsEvent,
+	PLAN_STEPS_CHANNEL,
+	type PlanStepsEvent,
+	TODO_STEP_DONE_CHANNEL,
+} from "../_shared/events/plan-mode-state.ts";
 import { stringEnum } from "../_shared/model/string-enum.ts";
+import { reconcilePlan } from "./plan-link.ts";
 import { registerStaleReminder } from "./stale-reminder.ts";
 
 type TodoStatus = "pending" | "in_progress" | "completed";
@@ -34,6 +41,8 @@ export interface Todo {
 	text: string;
 	status: TodoStatus;
 	activeForm?: string;
+	/** Etapa do plano em execução que o item espelha (todo/plan-link.ts). */
+	planStep?: number;
 }
 
 interface PersistedTodoState {
@@ -55,6 +64,7 @@ export interface LegacyTodo {
 	status?: TodoStatus;
 	activeForm?: string;
 	done?: boolean;
+	planStep?: number;
 }
 
 const TodoParams = Type.Object({
@@ -74,8 +84,9 @@ const TOOL_NAME = "todo";
 const STATE_ENTRY_TYPE = "nycode:todo";
 
 export const normalizeTodo = (raw: LegacyTodo): Todo => {
-	if (raw.status) return { id: raw.id, text: raw.text, status: raw.status, activeForm: raw.activeForm };
-	return { id: raw.id, text: raw.text, status: raw.done ? "completed" : "pending" };
+	const link = typeof raw.planStep === "number" ? { planStep: raw.planStep } : {};
+	if (raw.status) return { id: raw.id, text: raw.text, status: raw.status, activeForm: raw.activeForm, ...link };
+	return { id: raw.id, text: raw.text, status: raw.done ? "completed" : "pending", ...link };
 };
 
 // Sem ícone de estado (dono, 2026-11-15): o nome do estado, na cor dele, numa coluna de largura fixa.
@@ -217,9 +228,33 @@ export default function todoExtension(nycode: ExtensionAPI) {
 			text: t.status === "in_progress" ? (t.activeForm ?? t.text) : t.text,
 			status: t.status,
 		}));
-		setStaleItems(shown);
+		// Itens ligados ao plano andam sozinhos com as etapas: o lembrete de lista parada não cobra por eles.
+		setStaleItems(shown.filter((_t, i) => todos[i]?.planStep === undefined));
 		nycode.events.emit("nycode:todos", shown);
 	};
+
+	/** Último estado do plano desta sessão; reaplicado depois de cada replay, que reconstrói a lista do zero. */
+	let plan: PlanStepsEvent | undefined;
+	let session: string | undefined;
+	const sessionOf = (ctx: ExtensionContext): string | undefined =>
+		(ctx.sessionManager as { getSessionId?: () => string }).getSessionId?.();
+	/** Aplica o plano à lista; grava e publica só quando algo mudou. */
+	const applyPlan = (persist: boolean): void => {
+		if (!plan) return;
+		const r = reconcilePlan(todos, nextId, plan);
+		if (!r.changed) return;
+		todos = r.todos;
+		nextId = r.nextId;
+		if (persist) nycode.appendEntry(STATE_ENTRY_TYPE, { todos: snapshot(), nextId });
+		refresh();
+	};
+	nycode.events.on(PLAN_STEPS_CHANNEL, (data) => {
+		if (!isPlanStepsEvent(data)) return;
+		if (data.session && session && data.session !== session) return; // outra sessão (RPC reaproveita a instância)
+		plan = data;
+		applyPlan(true);
+		if (!data.executing) plan = undefined; // os itens ligados já saíram; um replay posterior não os traz de volta
+	});
 
 	/**
 	 * Reconstruct state from session entries.
@@ -261,11 +296,16 @@ export default function todoExtension(nycode: ExtensionAPI) {
 			if (!isStaleCtxError(e)) throw e;
 		}
 		refresh();
+		applyPlan(true);
 	};
 
 	nycode.on("session_start", (_event, ctx) => {
+		const next = sessionOf(ctx);
+		if (next !== session) plan = plan?.session === next ? plan : undefined;
+		session = next;
 		reconstructState(ctx);
 		refresh();
+		applyPlan(true);
 	});
 	nycode.on("session_tree", (_event, ctx) => replayAndRefresh(ctx));
 	nycode.on("session_compact", (_event, ctx) => replayAndRefresh(ctx));
@@ -321,22 +361,33 @@ export default function todoExtension(nycode: ExtensionAPI) {
 		const todo = todos.find((t) => t.id === params.id);
 		if (!todo) return fail("complete", `#${params.id} not found`);
 		todo.status = "completed";
-		return ok("complete", `Completed #${todo.id}: ${todo.text}`);
+		const result = ok("complete", `Completed #${todo.id}: ${todo.text}`);
+		// Item ligado: conclui a etapa no plano também (mesmo efeito de [DONE:n]); o plano devolve a próxima etapa.
+		if (todo.planStep !== undefined) nycode.events.emit(TODO_STEP_DONE_CHANNEL, { step: todo.planStep });
+		return result;
 	};
 
 	const handleDelete = (params: TodoParamsType) => {
 		if (params.id === undefined) return fail("delete", "id required for delete");
 		const index = todos.findIndex((t) => t.id === params.id);
 		if (index === -1) return fail("delete", `#${params.id} not found`);
+		const step = todos[index].planStep;
+		if (step !== undefined)
+			return fail(
+				"delete",
+				`#${params.id} is plan step ${step}; it leaves when the plan ends (complete it instead)`,
+			);
 		const [removed] = todos.splice(index, 1);
 		return ok("delete", `Deleted #${removed.id}: ${removed.text}`);
 	};
 
 	const handleClear = () => {
-		const count = todos.length;
-		todos = [];
-		nextId = 1;
-		return ok("clear", `Cleared ${count} todos`);
+		// Itens das etapas do plano em execução ficam: só o fim do plano os tira.
+		const kept = todos.filter((t) => t.planStep !== undefined);
+		const count = todos.length - kept.length;
+		todos = kept;
+		if (kept.length === 0) nextId = 1;
+		return ok("clear", `Cleared ${count} todos${kept.length ? ` (kept ${kept.length} plan steps)` : ""}`);
 	};
 
 	const handleList = () => ok("list", plainTodoList(todos));

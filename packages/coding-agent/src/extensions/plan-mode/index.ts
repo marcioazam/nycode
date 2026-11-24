@@ -22,7 +22,7 @@ import { Type } from "typebox";
 import { getAgentDir } from "../../config.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import type { SessionEntry } from "../../core/session-manager.ts";
-import { PLAN_MODE_CHANNEL } from "../_shared/events/plan-mode-state.ts";
+import { PLAN_MODE_CHANNEL, TODO_STEP_DONE_CHANNEL } from "../_shared/events/plan-mode-state.ts";
 import type { UiTheme } from "../subagent/fleet-ui/panel.ts";
 import { hudTheme } from "../subagent/fleet-ui/style/palette.ts";
 import { openPlanFile, planMarkdown } from "./manage.ts";
@@ -43,6 +43,7 @@ import { PlanModal, planTitle } from "./modal.ts";
 import { donePaint, fmtSent } from "./render/done-paint.ts";
 import { renderDoneTags } from "./render/done-view.ts";
 import { PlanSection, setPlanPath } from "./section.ts";
+import { createStepPublisher } from "./sync/todo-sync.ts";
 import {
 	isPlanModeToolAllowed,
 	isSafeCommand,
@@ -116,6 +117,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 	// JSON of the last plan-mode entry written or restored: an identical state is not appended again (D1).
 	let lastPersisted = "";
 	let lastProgress = "";
+	const steps = createStepPublisher(nycode);
 	// Títulos da execução mais recente: endExecution zera todoItems, e as tags já mostradas são redesenhadas depois.
 	let finishedTodos: TodoItem[] = [];
 	// Data/hora do envio das mensagens do assistente (mensagens em streaming não trazem timestamp na 1ª chamada: cacheia a hora real).
@@ -298,6 +300,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 			done: todoItems.filter((t) => t.completed).length,
 			total: todoItems.length,
 		};
+		if (executionMode) steps.publish(lastCtx, todoItems);
 		const json = JSON.stringify(progress);
 		if (json === lastProgress) return;
 		lastProgress = json;
@@ -309,6 +312,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		executionMode = false;
 		finishedTodos = todoItems;
 		todoItems = [];
+		steps.end(lastCtx);
 		restoreTools();
 		updateStatus(ctx);
 		persistState(); // Save cleared state so resume doesn't restore old execution mode
@@ -335,7 +339,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		persistState();
 		const execMessage =
 			todoItems.length > 0
-				? `Execute the plan. Start with: ${todoItems[0].text}\n${DONE_RULE}\n${CANCEL_RULE}\nFirst materialize the plan file ${planFile} into the repository's /docs record (or the task's existing record) before changing code.\n${PLAN_ENDED_NOTE}`
+				? `Execute the plan. Start with: ${todoItems[0].text}\n${DONE_RULE}\nThe plan steps are already in the todo list and follow the tags; do not add them again.\n${CANCEL_RULE}\nFirst materialize the plan file ${planFile} into the repository's /docs record (or the task's existing record) before changing code.\n${PLAN_ENDED_NOTE}`
 				: `Execute the plan you just created.\n${PLAN_ENDED_NOTE}`;
 		nycode.sendMessage(
 			{ customType: "plan-mode-execute", content: execMessage, display: true },
@@ -624,6 +628,7 @@ ${CANCEL_RULE}`,
 		finishedTodos = [];
 		planFromTool = false;
 		planFile = "";
+		steps.reset();
 
 		hold = undefined;
 		if (fromFlag && nycode.getFlag("plan") === true) {
@@ -698,9 +703,24 @@ ${CANCEL_RULE}`,
 		}
 		lastPersisted = planModeEntry ? JSON.stringify(planPayload()) : "";
 		updateStatus(ctx);
+		if (!executionMode) steps.end(ctx); // ramo sem plano em execução: nenhum item ligado fica órfão
 	}
 	nycode.on("session_start", (_event, ctx) => restoreFromBranch(ctx, true));
 	nycode.on("session_tree", (_event, ctx) => restoreFromBranch(ctx, false));
+
+	// Item ligado concluído pela ferramenta todo: mesmo efeito de um [DONE:n] (o fim do plano segue no agent_end).
+	nycode.events.on(TODO_STEP_DONE_CHANNEL, (data) => {
+		const step = (data as { step?: unknown } | undefined)?.step;
+		const item = executionMode ? todoItems.find((t) => t.step === step) : undefined;
+		if (!item || item.completed) return;
+		item.completed = true;
+		try {
+			if (lastCtx) updateStatus(lastCtx);
+		} catch {
+			lastCtx = undefined; // contexto de sessão velho
+		}
+		persistState();
+	});
 
 	// nycode-harness permission-control BEGIN
 	// Controle semântico para Shift+Tab e /permissions plan (claude-compat). Fonte: claude-home/patches/nycode/permission-control.
