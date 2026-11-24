@@ -39,7 +39,7 @@ import {
 	themePalette as themeSyntax,
 } from "./syntax.ts";
 
-const KEY = Symbol.for("nycode-harness.code-blocks");
+const KEY = Symbol.for("nycode.code-blocks");
 const THEME_KEY = Symbol.for("@nycode/coding-agent:theme");
 const SCHEME = "nycode-copy:";
 const MAX_BLOCKS = 500;

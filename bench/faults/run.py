@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fault-robustness eval (layer 2): each arm against the fault-injecting fake API, one scenario per run, no cost.
 
-``python3 bench/faults/run.py --arms nycode-harness,pi-vanilla,claude-vanilla [--scenarios a,b] [--json out.json]``.
+``python3 bench/faults/run.py --arms nycode,pi-vanilla,claude-vanilla [--scenarios a,b] [--json out.json]``.
 Exit 0 = every run measured (failures are results, not errors); 2 = environment or arguments unusable.
 """
 
@@ -38,7 +38,7 @@ __all__ = [
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
 
-ARMS = ("nycode-harness", "nycode", "pi-vanilla", "claude-vanilla")
+ARMS = ("nycode", "pi-vanilla", "claude-vanilla")
 PROMPT = "Read probe.txt with your read tool, then reply with the text you receive. contract-case:{scenario}"
 
 

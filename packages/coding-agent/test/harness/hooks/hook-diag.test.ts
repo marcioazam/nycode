@@ -13,7 +13,7 @@ interface DiagRecord {
 	dados: { durMs: number; evento: string; comando: string; code: number; timedOut: boolean; spawnFailed: boolean };
 }
 
-const KEY = Symbol.for("nycode-harness:diag");
+const KEY = Symbol.for("nycode:diag");
 const slot = globalThis as Record<symbol, unknown>;
 afterEach(() => {
 	delete slot[KEY];

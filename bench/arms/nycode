@@ -3,7 +3,7 @@
 # runs (npm ci --ignore-scripts, npm run build) and executed from packages/coding-agent/dist/bundle/cli.js. No
 # installer, no patches, no wrapper. A run never reads the live ~/.nycode: HOME is the stage (throwaway) and
 # NYCODE_CODING_AGENT_DIR points inside it. The owner layer (overlay-nycode.list) is copied in and hashed into
-# .overlay-sha, like the nycode-harness arm. The stage dir marks "built"; the build output lives in the checkout (ignored by git).
+# .overlay-sha. The stage dir marks "built"; the build output lives in the checkout (ignored by git).
 set -euo pipefail
 here=$(dirname "$(readlink -f "$0")")
 repo=$(cd "$here/../.." && pwd)
@@ -35,7 +35,7 @@ if [ ! -f "$stage/.ready" ] || [ ! -x "$bin" ]; then
   touch "$stage/.ready"
 fi
 # mcp.json: the repo's example, byte for byte (placeholders, no secret, no `exposure`, no `enabled`), never the
-# owner's. It is the file the nycode-harness arm gets from its installer (mcp.json.example), so both arms measure the same
+# owner's. It is the same file for every round, so every round measures the same
 # MCP declarations (D-40): servers without `exposure` make the mcp extension activate `codemode` from the config
 # alone, whether or not a server connects. Written once per stage, also into an already-built one; a function of
 # the checkout, so not part of the layer hash.

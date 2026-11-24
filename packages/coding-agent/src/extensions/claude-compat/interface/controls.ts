@@ -1,5 +1,5 @@
 /** Leitor validado do controlador global do patch ui-controls (docs/specs/claude-code-parity/interface.md §2). */
-export const CONTROLS_KEY = Symbol.for("nycode-harness.ui-controls");
+export const CONTROLS_KEY = Symbol.for("nycode.ui-controls");
 export const COLOR_NAMES = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan"] as const;
 export type ColorName = (typeof COLOR_NAMES)[number];
 

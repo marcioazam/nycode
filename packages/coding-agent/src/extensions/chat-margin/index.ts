@@ -32,7 +32,7 @@ import {
 	wrapInstance,
 } from "./inset.ts";
 
-const KEY = Symbol.for("nycode-harness.chat-margin");
+const KEY = Symbol.for("nycode.chat-margin");
 
 /** Componente do chat como o embrulho o vê: margem, render, mouse e os campos que decidem o recuo. */
 type Alvo = {

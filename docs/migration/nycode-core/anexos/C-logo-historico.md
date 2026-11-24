@@ -1,7 +1,7 @@
 <!-- Anexo C: levantamento bruto de 2026-11-20 do logo do nycode no histórico git. -->
 # Logo do Nycode no histórico git
 
-Repo: /home/marcio/source/nycode-cli. Remoção: c410d670e (2026-11-20). Pai: **9ea437bf7**.
+Repo: ~/source/nycode-cli. Remoção: c410d670e (2026-11-20). Pai: **9ea437bf7**.
 
 ## (a) Assets (únicos Nycode; nenhum PNG jamais existiu)
 
@@ -32,8 +32,8 @@ SVG transparente (sem retângulo preto), blob 95594d45..., idêntico no tip da b
 ## (d) Restauração
 
 ```text
-git -C /home/marcio/source/nycode-cli show 9ea437bf7:docs/assets/nycode-pixel.svg > DEST/nycode-pixel.svg
-git -C /home/marcio/source/nycode-cli show 9ea437bf7:docs/assets/nycode-wordmark-ansi.txt > DEST/nycode-wordmark-ansi.txt
+git -C ~/source/nycode-cli show 9ea437bf7:docs/assets/nycode-pixel.svg > DEST/nycode-pixel.svg
+git -C ~/source/nycode-cli show 9ea437bf7:docs/assets/nycode-wordmark-ansi.txt > DEST/nycode-wordmark-ansi.txt
 ```
 
 sha256: pixel.svg 7269f242f8f7c6dca765f8a780cf72f3a0d471a40e41e2524fc7f705328a9dd2; ansi 22201bcbda73ca8176350bc818ebea4fc70400f3572c507383decf19e836613f

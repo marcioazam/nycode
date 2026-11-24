@@ -27,7 +27,7 @@ export function paraOtlp(spans: Span[], recurso: Record<string, string>): object
 				resource: { attributes: Object.entries(recurso).map(([key, v]) => ({ key, value: { stringValue: v } })) },
 				scopeSpans: [
 					{
-						scope: { name: "nycode-harness.diagnostico" },
+						scope: { name: "nycode.diagnostico" },
 						spans: spans.map((s) => ({
 							traceId: s.traceId,
 							spanId: s.spanId,

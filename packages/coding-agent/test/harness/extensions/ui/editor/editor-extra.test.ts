@@ -129,7 +129,7 @@ test("Shift+Tab aciona somente o plan mode protegido; sem extensão avisa e não
 	assert.deepEqual(seen, ["\x1b[112;6u"]);
 });
 
-const MODES_SLOT = Symbol.for("nycode-harness.permission-modes");
+const MODES_SLOT = Symbol.for("nycode.permission-modes");
 
 function withController(cycle: () => unknown, run: () => void) {
 	const g = globalThis as Record<symbol, unknown>;
@@ -470,8 +470,8 @@ test("placeholder: só com o editor vazio, em dim, na mesma largura", () => {
 // Cápsula (dono, 2026-11-18, /barra variante 2): a borda respira entre a régua e o ciano enquanto o agente trabalha e fica âmbar
 // parada quando o turno está sem resposta; fora do turno, a cor de sempre.
 test("cápsula: respira no trabalho, âmbar sem resposta, cor de sempre ocioso", () => {
-	const FOCO = Symbol.for("nycode-harness:foco"),
-		TRAV = Symbol.for("nycode-harness:travado");
+	const FOCO = Symbol.for("nycode:foco"),
+		TRAV = Symbol.for("nycode:travado");
 	const g = globalThis as Record<symbol, unknown>;
 	const salvo = [g[FOCO], g[TRAV]];
 	let busy = false;
@@ -513,7 +513,7 @@ test("cápsula: respira no trabalho, âmbar sem resposta, cor de sempre ocioso",
 
 // U7: o getter borderColor roda várias vezes por quadro; o texto (join de todas as linhas) e o respiro valem uma vez por render().
 test("U7: render lê o texto e calcula o respiro uma vez por quadro; saída igual", () => {
-	const FOCO = Symbol.for("nycode-harness:foco");
+	const FOCO = Symbol.for("nycode:foco");
 	const g = globalThis as Record<symbol, unknown>;
 	const salvo = g[FOCO];
 	let rgb = 0;

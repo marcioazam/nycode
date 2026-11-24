@@ -21,14 +21,14 @@ export interface Anfitriao {
 export const vista = <T>(host: object): T => host as T;
 
 /** Set by the embedded `avisos` extension when it loads; without it (or with NYCODE_AVISOS=0) the upstream texts stay. */
-const SIMBOLO_ATIVO = Symbol.for("nycode-harness:avisos-ativos");
+const SIMBOLO_ATIVO = Symbol.for("nycode:avisos-ativos");
 export const ativo = (): boolean => process.env.NYCODE_AVISOS !== "0" && lerGlobal<boolean>(SIMBOLO_ATIVO) === true;
 /** Turns the notices on (the avisos extension) or off (tests). */
 export const ligar = (ligado: boolean): void => gravarGlobal(SIMBOLO_ATIVO, ligado);
 
 export const SGR = /\x1b\[[0-9;:]*m/g;
-export const SIMBOLO_TUI = Symbol.for("nycode-harness:tui");
-const SIMBOLO_MOVIMENTO = Symbol.for("nycode-harness:movimento");
+export const SIMBOLO_TUI = Symbol.for("nycode:tui");
+const SIMBOLO_MOVIMENTO = Symbol.for("nycode:movimento");
 
 const global = globalThis as Record<symbol, unknown>;
 export const lerGlobal = <T>(chave: symbol): T | undefined => global[chave] as T | undefined;

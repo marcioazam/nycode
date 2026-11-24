@@ -89,18 +89,18 @@ describe("sound-notify owner", () => {
 		expect(fake({ NYCODE_SUBAGENT: "1" }).handlers.size).toBe(0);
 	});
 
-	it("with avisos as the owner: the end of turn no longer decides; only nycode-harness:aviso-som plays", async () => {
+	it("with avisos as the owner: the end of turn no longer decides; only nycode:aviso-som plays", async () => {
 		const f = fake();
-		f.nycode.events.emit("nycode-harness:notify-owner");
+		f.nycode.events.emit("nycode:notify-owner");
 		await f.settled();
 		expect(f.toques()).toBe(0);
-		f.nycode.events.emit("nycode-harness:aviso-som");
+		f.nycode.events.emit("nycode:aviso-som");
 		expect(f.toques()).toBe(1);
 	});
 
 	it("aviso-som without an announced owner is ignored (a single decider)", () => {
 		const f = fake();
-		f.nycode.events.emit("nycode-harness:aviso-som");
+		f.nycode.events.emit("nycode:aviso-som");
 		expect(f.toques()).toBe(0);
 	});
 

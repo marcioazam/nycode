@@ -15,7 +15,7 @@ afterEach(() => {
 });
 
 const m = __d_index;
-const SINK = Symbol.for("nycode-harness:diag");
+const SINK = Symbol.for("nycode:diag");
 const T0 = Date.parse("2026-11-14T12:00:00Z");
 
 function cria(env: Record<string, string> = {}, pre?: (d: string) => void, colunas?: number) {

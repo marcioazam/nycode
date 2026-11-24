@@ -4,7 +4,7 @@
 import type { ChatChild } from "./focus.ts";
 import { focusLines } from "./focus.ts";
 
-export const KEY = Symbol.for("nycode-harness.ui-controls");
+export const KEY = Symbol.for("nycode.ui-controls");
 // Fixed 256-colour SGR: no external text enters escape sequences.
 export const COLORS = Object.freeze({
 	red: 203,

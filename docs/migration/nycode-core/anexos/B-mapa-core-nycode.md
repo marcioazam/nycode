@@ -1,8 +1,8 @@
 <!-- Anexo B: levantamento bruto de 2026-11-20 (nycode main fb05db936). Fonte de fatos do plano; não editar à mão, regenerar. -->
-<!-- Conferido em F0 (2026-11-20) contra nycode@b92b1af50: entraram f76fb03b9 (#195, só URLs marcioazam/nycode-cli -> marcioazam/nycode em 48 arquivos) e b92b1af50 (#196, só docs/migration). Nenhum fato deste anexo muda além do nome do repositório; o estado do GitHub mudado pela própria F0 está em evidencias/F0.md. -->
+<!-- Conferido em F0 (2026-11-20) contra nycode@b92b1af50: entraram f76fb03b9 (#195, só URLs marcioazam/nycode-cli -> marcioazam/nycode em 48 arquivos) e b92b1af50 (#196, só docs/migration). Nenhum fato deste anexo muda além do nome do repositório; o estado do GitHub mudado pela própria F0 está em registro do mantenedor. -->
 # Mapa do core do Nycode (fork do pi) — somente leitura
 
-Revisão: worktree /home/marcio/source/nycode.wt/migration, HEAD fb05db936 (merge PR #194), `git status --porcelain` = 0 linhas (limpo). Cobertura: literal (`rg`/`git grep`/leitura); codegraph/LSP NÃO usados (degradado). Tudo abaixo "verificado" por leitura, salvo marca "inferido".
+Revisão: worktree ~/source/nycode.wt/migration, HEAD fb05db936 (merge PR #194), `git status --porcelain` = 0 linhas (limpo). Cobertura: literal (`rg`/`git grep`/leitura); codegraph/LSP NÃO usados (degradado). Tudo abaixo "verificado" por leitura, salvo marca "inferido".
 
 ## 1. Monorepo
 

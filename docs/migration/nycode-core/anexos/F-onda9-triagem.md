@@ -1,6 +1,6 @@
 # Triagem da onda 9 (D-56, D-57, D-58)
 
-Fonte: foto congelada em 2026-11-22 de `/home/marcio/code/pi-harness` (ramo `feat/ui-onda9-harness`, HEAD `4e38f41`, mais
+Fonte: foto congelada em 2026-11-22 de `~/code/pi-harness` (ramo `feat/ui-onda9-harness`, HEAD `4e38f41`, mais
 mudanças não commitadas), em `/tmp/pi-harness-snap-20261122` com `MANIFEST.sha256` (960 arquivos). Base da fusão: `40cc6ef`
 (D-57). Estado: `feito` (PR em `main`), `em curso`, `fora` (motivo na coluna).
 
@@ -51,7 +51,7 @@ mudanças não commitadas), em `/tmp/pi-harness-snap-20261122` com `MANIFEST.sha
 | Hooks em TypeScript (`graph-context` interno, D-60) | — | feito | #370 |
 | `bin/` parte 1: `hud` (`calm`, usage), `checks`, `puxar`, `mcp-header.sh`, `fonte-icones.py` | 18/20 | feito | #363 |
 | `bin/` parte 2: `session-transport` (`nycode-session`), `evals/harbor`, `mcp-header` testado, testes de display e roteamento | — | feito | #365 |
-| Remoção de `import/ny-pi/` e do braço `omp` do bench | — | feito | #366 |
+| Remoção de `import/origem/` e do braço `omp` do bench | — | feito | #366 |
 | Testes nativos em tmux (`native-harness`, `native-frame`, `native-panels`, `native-cli-e2e`) | 4/4 | feito: `test/harness/ui-display/native/` | #381 |
 | `docs/` | 2/10 | só o que um texto embarcado cita (coberto por #349 e #351) | — |
 

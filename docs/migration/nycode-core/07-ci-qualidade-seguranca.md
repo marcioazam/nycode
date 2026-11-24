@@ -1,11 +1,11 @@
 # CI, qualidade e segurança
 
-Como os gates de CI do `marcioazam/ny-pi` e os do Nycode viram um conjunto só em F3
+Como os gates de CI do Nycode pré-migração e os do Nycode viram um conjunto só em F3
 ([00](00-mega-plano.md#f3-ci-unificado-gates-e-benchmark)).
 Decisões citadas como D-nn e pendências P-n: [11](11-decisoes-e-pendencias.md). Caminhos de destino: seção 2 de
 [02](02-arquitetura-alvo.md). Benchmark e o check `bench-pr`: [09](09-paridade-e-benchmark.md).
 
-Convenções: "ny-pi" são fatos de `origin/main` de `marcioazam/ny-pi` (levantamento de 2026-11-20, `e4f8729`);
+Convenções: "Nycode pré-migração" são fatos de `origin/main` de Nycode pré-migração (levantamento de 2026-11-20, `e4f8729`);
 "Nycode" são fatos do worktree de migração (`fb05db936`). Texto marcado **proposta** não existe em nenhum dos dois
 repositórios; **não verificado** é o que não pôde ser conferido nos arquivos. Nada deste documento foi executado.
 
@@ -54,7 +54,7 @@ repositórios; **não verificado** é o que não pôde ser conferido nos arquivo
   `scripts/npm-audit.mjs` e `npm audit signatures`.
 
 Fontes: `.github/workflows/*.yml` nos dois repositórios; os 6 contextos obrigatórios do Nycode e os 4 do harness Nycode
-vêm do [anexo D](anexos/D-regras-github-brutas.md) (seções 2 e 3). Observações verificadas:
+vêm do registro do mantenedor (seções 2 e 3). Observações verificadas:
 
 - O `ci-mutation` do harness Nycode é o segundo job de `ci-static.yml`, não um workflow à parte; não é check obrigatório.
 - `concurrency` do harness Nycode: grupo `<workflow>-${{ github.ref }}` e `cancel-in-progress` só em `pull_request`. No Nycode:
@@ -73,7 +73,7 @@ vêm do [anexo D](anexos/D-regras-github-brutas.md) (seções 2 e 3). Observaç�
 ### 2.1 Checks obrigatórios (D-05)
 
 União dos dois conjuntos: 10 contextos no ruleset `main` do Nycode (substituem os 6 da proteção clássica e os 4 do
-ruleset do `marcioazam/ny-pi`). Todos rodam também em `merge_group`.
+ruleset do Nycode pré-migração). Todos rodam também em `merge_group`.
 
 | # | Contexto | Origem | Workflow alvo |
 |---|---|---|---|
@@ -254,7 +254,7 @@ O script falha em PR quando um arquivo de código alterado passa de 800 linhas o
 passa de 7 arquivos de código; o legado não alterado nunca bloqueia. Para o Nycode:
 
 - **Fonte da lista de sufixos de código**. De: `claude-home/bin/structure/structure.py`. Para:
-  `packages/coding-agent/resources/bin/structure/structure.py` (D-53 **supera** `scripts/ci/lint/structure/`; anexo E, regra C09; F10 converteu; a proposta de `scripts/harness/` caiu: as instruções
+  `packages/coding-agent/resources/bin/structure/structure.py` (D-53 **supera** `scripts/ci/lint/structure/`; registro do mantenedor, regra C09; F10 converteu; a proposta de `scripts/harness/` caiu: as instruções
   embarcadas já citavam este caminho). `structure_changed.py` carrega a lista daí e mantém `DEFAULT_SUFFIXES` como cópia,
   fixada por teste.
 - **Alcance do limite (D-06)**. De: todo arquivo alterado. Para: só arquivos criados pelo Nycode (lista em 02, seção 9).
@@ -386,7 +386,7 @@ O job continua não obrigatório (45 min de teto) e roda em PR e `merge_group`; 
 - `gitleaks` mais `trufflehog` via `check-leaks.sh`, e `trufflehog git --only-verified` no histórico.
 - `semgrep` roda pela imagem oficial fixada por digest, não pela roda PyPI: `semgrep/semgrep:1.186.0@sha256:6e1b0434...`
   (`run-security.sh`, `SEMGREP_IMAGE`). A razão registrada no script é que a roda fixa `mcp==1.29.0` e
-  `opentelemetry-api~=1.37.0`, ambos com avisos abertos. A mudança é o PR #66 do `marcioazam/ny-pi` (número vindo da instrução desta
+  `opentelemetry-api~=1.37.0`, ambos com avisos abertos. A mudança é o PR #66 do Nycode pré-migração (número vindo da instrução desta
   frente; o texto do PR **não foi lido**). Regras: `p/default`, `p/python`, `p/typescript`, `p/command-injection`,
   `p/github-actions`. Com `BASE_SHA`, só acha o que é novo desde a base (`--baseline-commit`); sem ele, varre tudo.
   O job exige Docker no runner.
@@ -419,8 +419,8 @@ listas separadas. A implementação (o `.mjs` ler o `.toml`) não foi desenhada 
 
 ### 6.4 CodeQL (D-20) e Scorecard
 
-- O Nycode tem o "default setup" configurado para `actions` e `rust`, semanal ([anexo
-  D](anexos/D-regras-github-brutas.md),
+- O Nycode tem o "default setup" configurado para `actions` e `rust`, semanal (anexo
+  D,
   seção 5). Em F3: levar `codeql.yml` do harness Nycode (matriz `javascript-typescript`, `python`, `actions`,
   `build-mode: none`, `fail-fast: false`) e desligar o default setup, que ficaria preso em `rust`. Como desligar
   (interface
@@ -428,7 +428,7 @@ listas separadas. A implementação (o `.mjs` ler o `.toml`) não foi desenhada 
   executor de F3.
 - `python` continua na matriz porque o `bench/` e os `scripts/` do harness Nycode entram (D-23 deixa `apps/` de fora dos gates).
 - Scorecard: o workflow roda só em push na main, cron e manual; precisa de `id-token: write` para publicar. O harness Nycode tem
-  2 alertas abertos de Scorecard (SAST e CII-Best-Practices, anexo D, seção 5); o critério 8 de [00](00-mega-plano.md)
+  2 alertas abertos de Scorecard (SAST e CII-Best-Practices, registro do mantenedor, seção 5); o critério 8 de [00](00-mega-plano.md)
   pede nenhum alerta que o código possa fechar.
 
 ### 6.5 Publicação com atestação de proveniência pelo repositório (F11)
@@ -451,7 +451,7 @@ listas separadas. A implementação (o `.mjs` ler o `.toml`) não foi desenhada 
 
 O `local.sh` do harness Nycode roda `ci-static`, `ci-security` e `instruction-budget` com os mesmos scripts, binários fixados e
 pacotes Python com hash, num `HOME` descartável (`--mutation` acrescenta `ci-mutation`). Limite de 900 s para o conjunto
-(`CI_LOCAL_MAX_S`), cache em `~/.cache/ny-pi-ci`, base em `BASE_SHA` (padrão `origin/main`), saída 0/1/124. `--post`
+(`CI_LOCAL_MAX_S`), cache em `~/.cache/<origem>-ci`, base em `BASE_SHA` (padrão `origin/main`), saída 0/1/124. `--post`
 publica cada gate como commit status no HEAD, exigindo árvore limpa e HEAD já publicado (exit 2 se não).
 
 No Nycode o script ganha dois gates:

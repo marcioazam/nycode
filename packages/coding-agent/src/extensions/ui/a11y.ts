@@ -29,7 +29,7 @@ export const sanitizarExibicao = (texto: string): string =>
 export const MOVIMENTOS = ["normal", "reduzido", "desligado"] as const;
 export type Movimento = (typeof MOVIMENTOS)[number];
 // Cada extensão tem a própria cópia deste módulo (jiti sem cache): a escolha do dono mora em globalThis.
-const CHAVE = Symbol.for("nycode-harness:movimento");
+const CHAVE = Symbol.for("nycode:movimento");
 const nivel = (v: unknown): number => Math.max(0, MOVIMENTOS.indexOf(v as Movimento));
 /** Chave `movimento` (ui-state.json pelo /movimento, ou settings.json); valor inválido volta a `normal`. */
 export const definirMovimento = (v: unknown): void => {

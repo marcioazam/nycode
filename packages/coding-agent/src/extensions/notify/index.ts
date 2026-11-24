@@ -147,7 +147,7 @@ export default function notifyExtension(nycode: ExtensionAPI) {
 	// extensions/avisos announces itself at session_start as the one that notifies (its own title, body and
 	// OSC 99 id); without it this extension keeps the old behavior.
 	let ownedElsewhere = false;
-	nycode.events?.on("nycode-harness:notify-owner", () => {
+	nycode.events?.on("nycode:notify-owner", () => {
 		ownedElsewhere = true;
 	});
 

@@ -319,17 +319,9 @@ def harbor_agent(
             {},
             "ANTHROPIC_OAUTH_TOKEN",
         )
-    if (
-        arm == "nycode"
-    ):  # bench/harbor/nycode_agent.py; run.py builds its bundle (bench/harbor/bundle.sh) first
-        return (
-            ["-a", "nycode_agent:NycodeAgent", "-m", m],
-            {"PYTHONPATH": str(harbor_dir)},
-            "ANTHROPIC_OAUTH_TOKEN",
-        )
-    # nycode-harness: bench/harbor/pi_harness_agent.py (run.py builds its bundle with bench/harbor/pi_bundle.sh first)
+    # bench/harbor/nycode_agent.py; run.py builds its bundle (bench/harbor/bundle.sh) first
     return (
-        ["-a", "pi_harness_agent:PiHarnessAgent", "-m", m],
+        ["-a", "nycode_agent:NycodeAgent", "-m", m],
         {"PYTHONPATH": str(harbor_dir)},
         "ANTHROPIC_OAUTH_TOKEN",
     )

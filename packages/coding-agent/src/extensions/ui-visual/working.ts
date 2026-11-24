@@ -93,9 +93,9 @@ const fmtTok = (n: number): string =>
 export const tokensTexto = (exatos: number, estimados: number): string =>
 	exatos + estimados <= 0 ? "" : `↓ ${`${estimados > 0 ? "~" : ""}${fmtTok(exatos + estimados)}`.padStart(5)}`;
 
-const DICAS_CHAVE = Symbol.for("nycode-harness:dicas");
+const DICAS_CHAVE = Symbol.for("nycode:dicas");
 /** Turno sem resposta há TRAVA_MS: a cápsula do composer (ui/editor.ts) fica âmbar. */
-export const TRAVADO_CHAVE = Symbol.for("nycode-harness:travado");
+export const TRAVADO_CHAVE = Symbol.for("nycode:travado");
 const marcaTravado = (v: boolean) => {
 	(globalThis as Record<symbol, unknown>)[TRAVADO_CHAVE] = v;
 };

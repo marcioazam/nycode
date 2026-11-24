@@ -21,7 +21,7 @@ export const CALMA_QUADROS = 6,
 // Abertura em sequência (dono, 2026-11-19): quando a marca começa, a linha `nycode versão   atalhos` nasce do fundo em
 // TEXTO_MS (como o divisor do /reload), os avisos de regras e memória abrem depois dela (patch de avisos do core
 // lê globalThis[ABERTURA].t0) e editor, status e rodapé sobem do fundo em BASE_MS. Só na partida, só em movimento normal.
-export const ABERTURA = Symbol.for("nycode-harness:abertura");
+export const ABERTURA = Symbol.for("nycode:abertura");
 export const TEXTO_MS = 340,
 	BASE_MS = 360;
 type Abertura = { desde: number; t0?: number };

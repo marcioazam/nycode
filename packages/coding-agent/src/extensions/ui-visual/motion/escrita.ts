@@ -203,7 +203,7 @@ export type Deps = {
 	redesenha: () => void;
 	agora?: () => number;
 };
-const MARCA = Symbol.for("nycode-harness.escrita");
+const MARCA = Symbol.for("nycode.escrita");
 
 /** Envolve o componente da mensagem do assistente. Idempotente: no /reload só troca as dependências. */
 export function instalarEscrita(d: Deps): void {

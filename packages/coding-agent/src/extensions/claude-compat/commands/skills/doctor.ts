@@ -101,7 +101,7 @@ export function registerDoctor(nycode: ExtensionAPI, dir?: string): void {
 			handler: async (_a, ctx: Ctx) => {
 				const cmds = nycode.getCommands();
 				// Com a extensão diagnostico carregada, o /doctor completo é dela; estas checagens entram como itens.
-				const completo = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:doctor")];
+				const completo = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode:doctor")];
 				if (typeof completo === "function")
 					return completo(ctx, doctorChecks(dir, cmds.length, cmds.filter((c) => c.source === "skill").length));
 				ctx.ui.notify(

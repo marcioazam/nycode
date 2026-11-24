@@ -34,7 +34,6 @@ SKIP_PATH_PREFIXES = (
     "docs/specs/",
     "scripts/fork/",
     "scripts/ci/lint/criterio2/",
-    "scripts/ci/lint/test_gerar_mapa.py",
     "scripts/ci/lint/residuo/",
     "packages/coding-agent/src/migrations/from-pi",
     "packages/coding-agent/test/harness/migrations/from-pi",
@@ -52,11 +51,6 @@ KEEP_SCOPE = (
 )
 
 FORK_HEAD_MASKS = [
-    re.compile(r"import/ny-pi"),  # path of the tree F12 removes
-    re.compile(r"marcioazam/ny-pi"),  # the repository exists until D-22 (D-48)
-    re.compile(
-        r"ny-pi-(?:arquivo|core)"
-    ),  # directories of the plan under docs/migration
     # records under docs/ keep their file names (docs/harness/pi-*.md, docs/research/*-pi-*.md)
     re.compile(r"docs/(?:[\w.-]+/)*[\w.-]*?(?<![A-Za-z0-9])pi[-_][\w.-]+"),
     # the contract title the headless-lean extension still accepts from the origin harness (`# Working contract (pi)`)
@@ -114,8 +108,7 @@ masks = [
 
 REPO = r"(?:earendil-works|badlogic)/pi(?:-mono)?(?![\w-])"
 FORK_PRE = [
-    # ny-pi (the origin harness) and pi-code (its extension pack) are not the pi: both become nycode (D-48)
-    (re.compile(r"(?<![\w-])ny-pi(?![\w])"), "nycode"),
+    # pi-code (the extension pack) is not the pi: it becomes nycode (D-48)
     (re.compile(r"(?<![\w-])pi-code(?![A-Za-z0-9])"), "nycode"),
     # statements about the upstream agent stay true: "pi 1.5.2" -> "upstream 1.5.2"
     (re.compile(r"(?<![\w-])[pP]i(?= v?\d+\.\d)"), "upstream"),

@@ -13,7 +13,7 @@ from typing import Any, override
 
 from harbor.agents.installed.pi import Pi  # type: ignore[import-not-found]
 from harbor.environments.base import BaseEnvironment  # type: ignore[import-not-found]
-from pi_harness_agent import _models_merge
+from nycode_agent import _models_merge
 
 _PRINT = "pi --print --mode json "
 _TAIL = " 2>&1 </dev/null"
@@ -44,7 +44,7 @@ def _dashdash(command: str) -> str:
 
 
 class PiVanillaApiAgent(Pi):  # type: ignore[misc]
-    """Stock pi agent whose `pi --print` gets `-- <instruction>`, as in the nycode-harness arm (pi_harness_agent).
+    """Stock pi agent whose `pi --print` gets `-- <instruction>`, as in the nycode arm (nycode_agent).
 
     Without it an instruction starting with "-" is parsed as a pi option ("Unknown option").
     """

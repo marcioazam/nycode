@@ -26,7 +26,7 @@ const { classify, render, summarize } = __m1;
 
 const IMPECCABLE = `[impeccable@1] Findings marked attribution unknown may predate this session; do not treat them as regressions or broaden the task to chase them.
 
-[impeccable@1] Design hook findings requiring review in code/nycode-harness/docs/designs/onda7-tokens/exemplos/sinais-variantes.html (4 issue(s)):
+[impeccable@1] Design hook findings requiring review in code/nycode/docs/designs/onda7-tokens/exemplos/sinais-variantes.html (4 issue(s)):
 - [low-contrast] [attribution unknown] Low contrast text. Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.
 - [low-contrast] [attribution unknown] Low contrast text.
 - [low-contrast] [attribution unknown] Low contrast text.
@@ -66,7 +66,7 @@ test("summarize: impeccable vira contagem por regra e arquivo; texto livre usa a
 	assert.deepEqual(s.detalhe, [
 		"contraste baixo ×3 · texto abaixo de 4,5:1 (WCAG AA) · pode ser anterior",
 		"espaçamento interno apertado ×1 · texto colado na borda; use 8–16px · pode ser anterior",
-		"arquivo: code/nycode-harness/docs/designs/onda7-tokens/exemplos/sinais-variantes.html",
+		"arquivo: code/nycode/docs/designs/onda7-tokens/exemplos/sinais-variantes.html",
 		"pedido ao agente: corrigir o real; falso positivo medido vai para impeccable hooks ignore-value",
 	]);
 	const livre = summarize("claude-stop-hook", "\n[ralph-loop] Ainda há tarefas abertas no plano.\nitem 3 de 5");

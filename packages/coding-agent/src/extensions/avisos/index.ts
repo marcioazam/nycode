@@ -1,6 +1,6 @@
 /**
  * Dono dos sinais de fim de turno: notificação (título `sessão · pasta`, corpo por desfecho), som (decidido aqui,
- * tocado por sound-notify), progresso na aba do terminal e o painel /avisos. Anuncia `nycode-harness:notify-owner`: o
+ * tocado por sound-notify), progresso na aba do terminal e o painel /avisos. Anuncia `nycode:notify-owner`: o
  * notify.ts do nycode (patch notify-owner) se cala e o sound-notify deixa de decidir sozinho.
  *
  * `precisa` = pergunta aberta (REMOTE_QUESTION_CHANNEL do question.ts do nycode). Pedido de permissão não tem evento
@@ -17,10 +17,10 @@ import { type Aviso, adicionar, PainelAvisos } from "./painel.ts";
 import { criarProgresso } from "./progresso.ts";
 import { ausente, desfechoDe, duracao, tituloSessao } from "./turno.ts";
 
-const RETRY_CANCELADO = Symbol.for("nycode-harness:retry-cancelado");
+const RETRY_CANCELADO = Symbol.for("nycode:retry-cancelado");
 
-export const OWNER_CHANNEL = "nycode-harness:notify-owner";
-export const SOUND_CHANNEL = "nycode-harness:aviso-som";
+export const OWNER_CHANNEL = "nycode:notify-owner";
+export const SOUND_CHANNEL = "nycode:aviso-som";
 export const QUESTION_CHANNEL = "nycode:question:v1";
 
 export interface Deps {
@@ -144,7 +144,7 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 	nycode.on("session_shutdown", (e: { reason?: string }) => {
 		// Reload (dono, 2026-11-19): o core (modes/interactive/avisos) segura os avisos do novo início até o divisor.
 		if (e?.reason === "reload")
-			(globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:recarga")] = {
+			(globalThis as Record<symbol, unknown>)[Symbol.for("nycode:recarga")] = {
 				desde: performance.now(),
 				avisos: [],
 			};

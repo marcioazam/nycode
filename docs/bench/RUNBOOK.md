@@ -1,11 +1,11 @@
 # Runbook do benchmark (bench-pr, nightly, re-teste vanilla)
 
-O que se mede: o benchmark e a eval **deste repositório, o ny-pi** (antes chamado `pi-harness`). O braço `nycode-harness`
-monta o harness a partir do checkout avaliado (head da PR ou main) num HOME descartável. Só a camada pessoal, não
-rastreada e listada em `bench/arms/overlay.list`, vem da máquina do dono. O `~/.pi` local nunca é medido. Os
+O que se mede: o benchmark e a eval **deste repositório, o Nycode**. O braço `nycode`
+monta o produto a partir do checkout avaliado (head da PR ou main) num HOME descartável. Só a camada pessoal, não
+rastreada e listada em `bench/arms/overlay-nycode.list`, vem da máquina do dono. O `~/.nycode` local nunca é medido. Os
 braços `pi-vanilla` e `cc-vanilla` (Claude Code) são as referências fixas.
 
-O gate de benchmark não usa runner self-hosted (L1). Um poster local, na máquina do dono, roda o ny-pi no head de cada
+O gate de benchmark não usa runner self-hosted (L1). Um poster local, na máquina do dono, roda o Nycode pré-migração no head de cada
 PR e publica o commit status obrigatório `bench-pr`. A regra do gate está em "Regra do gate (Precisa)", abaixo; ela
 substitui a regra de acerto D6 do plano `pi-harness-ci-2026-11-13` (registro local, fora deste repositório).
 
@@ -40,11 +40,11 @@ Pré-requisitos no PATH: `gh` autenticado como o dono do repositório, `git`, `j
 | `BENCH_PR_BUDGET` | não | teto em US$ da rodada de PR (default 12) |
 
 O token OAuth da conta de benchmark só é renovado entre braços, nunca durante um braço: a renovação revoga o token que os contêineres em execução copiaram (2026-11-16: 5 execuções do braço Claude Code com 401 "OAuth token revoked").
-Braços ny-pi podem rodar em paralelo: cada rodada grava o próprio pacote em `<out>/pi-harness-bundle.tgz`.
+Braços Nycode podem rodar em paralelo: cada rodada grava o próprio pacote em `<out>/nycode-bundle.tgz`.
 
 Modo chave de API (opcional, todos os braços): `BENCH_API_KEY_FILE=<arquivo com a chave>` cobra o crédito de API em vez do plano e dispensa `BENCH_CC_CREDENTIALS`.
-Vale também para as suítes locais (s1/s4/s5): os braços `nycode-harness`, `pi-vanilla` e `claude-vanilla` leem a chave de `BENCH_API_KEY_FILE` (arquivo vazio ou ilegível aborta), removem os tokens OAuth do ambiente e não chamam `bench_oauth_token`; sem a variável, seguem no OAuth do plano. O workspace vai em `ANTHROPIC_CUSTOM_HEADERS` no `claude-vanilla` e em `providers.anthropic.headers` do `models.json` (mesclado a cada execução, sem tocar no resto) no `pi-vanilla` e no `nycode-harness`; `models.json` não entra no `.overlay-sha`.
-Chave de usuário sem workspace exige `BENCH_ANTHROPIC_WORKSPACE_ID=<id>`, enviado como cabeçalho `anthropic-workspace-id` em toda chamada: o `nycode-harness` grava-o no `models.json` do contêiner; o `cc-vanilla` usa `ANTHROPIC_API_KEY` mais `ANTHROPIC_CUSTOM_HEADERS` (via `--ae` do Harbor), sem `CLAUDE_FORCE_OAUTH`; o `pi-vanilla` roda com `pi_vanilla_api_agent.py`, que mescla o cabeçalho no `models.json` depois da instalação padrão.
+Vale também para as suítes locais (s1/s4/s5): os braços `nycode`, `pi-vanilla` e `claude-vanilla` leem a chave de `BENCH_API_KEY_FILE` (arquivo vazio ou ilegível aborta), removem os tokens OAuth do ambiente e não chamam `bench_oauth_token`; sem a variável, seguem no OAuth do plano. O workspace vai em `ANTHROPIC_CUSTOM_HEADERS` no `claude-vanilla` e em `providers.anthropic.headers` do `models.json` (mesclado a cada execução, sem tocar no resto) no `pi-vanilla` e no `nycode`; `models.json` não entra no `.overlay-sha`.
+Chave de usuário sem workspace exige `BENCH_ANTHROPIC_WORKSPACE_ID=<id>`, enviado como cabeçalho `anthropic-workspace-id` em toda chamada: o `nycode` grava-o no `models.json` do contêiner; o `cc-vanilla` usa `ANTHROPIC_API_KEY` mais `ANTHROPIC_CUSTOM_HEADERS` (via `--ae` do Harbor), sem `CLAUDE_FORCE_OAUTH`; o `pi-vanilla` roda com `pi_vanilla_api_agent.py`, que mescla o cabeçalho no `models.json` depois da instalação padrão.
 Trocar OAuth por API muda o pedido do pi (sem a identidade do Claude Code no system prompt e sem renomear ferramentas): não misture modos dentro de um braço nem de uma comparação.
 
 ## Fluxo do PR
@@ -53,7 +53,7 @@ Trocar OAuth por API muda o pedido do pi (sem a identidade do Claude Code no sys
    forks e outros autores são ignorados, assim como heads que já têm `bench-pr` final (`success` ou `failure`) ou um
    erro que gastou uma rodada (`NOT_COMPARABLE`, `NOT_VERIFIED`): esses esperam uma pessoa e só rerodam com `--pr N`.
 2. Para cada PR elegível: status `pending`; worktree descartável do head em `$BENCH_STATE/wt/<sha>` (clone próprio em
-   `$BENCH_STATE/repo`); `bench run --arm nycode-harness --tier pr --budget-usd 12` dentro dela; `bench gate` contra o baseline
+   `$BENCH_STATE/repo`); `bench run --arm nycode --tier pr --budget-usd 12` dentro dela; `bench gate` contra o baseline
    main; status final; worktree removida. O resumo completo vai como comentário no PR e fica em
    `$BENCH_STATE/runs/<sha>/summary.md`; a descrição do status não leva caminho local. Antes de cada PR da passada o
    estado é reconferido: PR fechado depois da listagem não roda.
@@ -143,12 +143,12 @@ Decisão do dono; substitui a regra de acerto D6. Constantes em `bench/stats.py`
   A/B intercalado na mesma máquina.
 - Lacuna conhecida (pendência): a sobrecarga local (início do processo, hooks, ferramentas) deixa de ser coberta pelo
   gate até existir a checagem de latência sem modelo (API falsa, base e PR intercalados na mesma máquina).
-- Medidor local de sobrecarga (sem modelo): `python3 bench/contract/speed.py --arms nycode-harness,pi-vanilla --reps 7` (`--cold` para stage e cache novos); ver `bench/contract/README.md`.
+- Medidor local de sobrecarga (sem modelo): `python3 bench/contract/speed.py --arms nycode,pi-vanilla --reps 7` (`--cold` para stage e cache novos); ver `bench/contract/README.md`.
 - Cobertura da regra de turnos: a rodada de referência atual só tem turnos em S4 e S5 (22 das 42 tarefas). O S1
   passa a gravar turnos e tokens a partir desta mudança e entra na regra quando a referência for regravada; o S2
   (Harbor) não tem o dado. Até lá, as outras 20 tarefas ficam só com a regra de custo, que cobre as 42.
 
-Medição que justificou a troca (simulação sobre a rodada real do ny-pi, 42 tarefas):
+Medição que justificou a troca (simulação sobre a rodada real do Nycode pré-migração, 42 tarefas):
 
 | regra | aprova PR sem mudança | barra queda de 10 pp | barra queda de 15 pp |
 | --- | --- | --- | --- |
@@ -294,7 +294,7 @@ mudar a regra: nenhuma constante do gate foi alterada.
 #### Poder (#76), regra "empate conta 0"
 
 `python3 bench/run.py power --ny <ny-current> --ref <sonnet/cc-vanilla> --deltas 0,0.05,0.08 --ks 1,2,3 --ns
-24,49,73,100,150,200,300 --sims 2000`: 42 tarefas observadas do ny-pi (rodada `pr` de 2026-11-15) contra o Claude Code
+24,49,73,100,150,200,300 --sims 2000`: 42 tarefas observadas do Nycode pré-migração (rodada `pr` de 2026-11-15) contra o Claude Code
 (`cc-vanilla`, Sonnet 5.5, k ≈ 1,8 por tarefa, rodada de 2026-11), taxas com Beta(0,5; 0,5), 2 000 simulações por
 célula, regra real `stats.prob_superior` (empate conta 0). "À frente" exige P ≥ 0,80; "forte", IC90 > 0.
 
@@ -317,12 +317,12 @@ célula, regra real `stats.prob_superior` (empate conta 0). "À frente" exige P 
   tarefa; esses poderes são conservadores.
 
 **Poder com o modelo B (`bench/power/sim.py`: prior Beta de cada braço por máxima verossimilhança sobre as próprias
-tarefas, `eb=True`; mesmos dados, 2 000 simulações).** O ny-pi já acerta quase tudo nas 42 tarefas e o corte em 1 impede
+tarefas, `eb=True`; mesmos dados, 2 000 simulações).** O Nycode pré-migração já acerta quase tudo nas 42 tarefas e o corte em 1 impede
 subir mais: o Δ alcançável é +4,7 pp (o alvo +8 pp é inalcançável e o simulador avisa; os dois alvos simulam +4,7 pp).
 Com Δ = +4,7 pp, poder P ≥ 0,80 / IC90 > 0: n = 73, k = 3: 0,97 / 0,85; n = 73, k = 2: 0,95 / 0,86; n = 100, k = 1:
 0,94 / 0,85 (menor desenho com os dois ≥ 0,80: n = 100, k = 1, 100 execuções por braço); n = 49, k = 3:
 0,89 / 0,67. Falso positivo (Δ = 0): 0,15–0,19 / ≤ 0,07. Resposta: n = 73, k = 3 detecta +4,7 pp com poder ≥ 80% nos
-dois critérios; +8 pp não é testável com estas tarefas (precisaria de tarefas em que o ny-pi ainda erra).
+dois critérios; +8 pp não é testável com estas tarefas (precisaria de tarefas em que o Nycode pré-migração ainda erra).
 
 ### Regra de segurança mais sensível (pré-registro, 2026-11-18)
 
@@ -485,7 +485,7 @@ docs/bench/baseline-main/runs.jsonl --sec-grid [--clean-base | --resample-base] 
 - `bench/suites.toml` tem o tier `baseline`: as mesmas unidades do tier `pr`, com S1, S4 e S5 em k=12 e S2 em k=4.
 - O `docs/bench/baseline-main/` passa a ser gravado com ele:
   `python3 bench/run.py run --arm nycode --tier baseline --model <modelo> --budget-usd <teto> --out <dir>` na main
-  (braço `nycode` desde 2026-11-24; antes, `nycode-harness`, o ny-pi `0ed4943`).
+  (braço `nycode` desde 2026-11-24; antes, o Nycode pré-migração, o Nycode pré-migração `0ed4943`).
 - O `bench-nightly.sh` continua rodando o tier `full`; ele não grava o baseline do gate.
 - Um baseline antigo (k=2) ainda carrega no gate, mas o intervalo fica mais largo e a taxa de aprovação medida acima
   não vale para ele.
@@ -494,16 +494,16 @@ docs/bench/baseline-main/runs.jsonl --sec-grid [--clean-base | --resample-base] 
 
 - Suíte `s8` (`bench/suites/hard`, contrato em `bench/suites/README.md`): tarefas de vários arquivos, para
   comparar harnesses e medir partes do harness (ablações). Nunca entra no tier `pr`: o tempo e o custo do gate
-  não mudam. Com Sonnet 5.5 ela saturou em acerto (2026-11-15: ny-pi e Claude Code 36 de 36, pi puro 34 de 36):
+  não mudam. Com Sonnet 5.5 ela saturou em acerto (2026-11-15: Nycode pré-migração e Claude Code 36 de 36, pi puro 34 de 36):
   serve para custo, turnos e tempo; diferença de acerto pede tarefas em que o modelo erra.
 - Rodar, um braço por vez, na mesma máquina e com o mesmo `--jobs`:
   `python3 bench/run.py run --arm <braço> --tier hard --model <modelo> --budget-usd <teto> --jobs 6 --out <dir>`.
   Segure a trava do gate para não disputar a máquina com o `bench-pr`: prefixe com `flock "${BENCH_STATE:-$HOME/.local/state/bench}/lock"`.
-- Comparar: `python3 bench/run.py scoreboard --ny <dir do ny-pi> --refs <dir de cada referência>`.
+- Comparar: `python3 bench/run.py scoreboard --ny <dir do Nycode pré-migração> --refs <dir de cada referência>`.
 - Regra de leitura, fixada antes de rodar: nenhuma tarefa sai por causa do resultado (só por defeito da tarefa
   provado sem olhar o braço); "superior em acerto" só com o limite inferior do IC90 pareado acima de zero;
   "não inferior" com o limite acima de -10 pp; fora disso, "inconclusivo".
-- Braços comparados: `nycode-harness`, `pi-vanilla` e `cc-vanilla` (decisão do dono em 2026-11-15: o `omp` saiu das
+- Braços comparados: `nycode`, `pi-vanilla` e `cc-vanilla` (decisão do dono em 2026-11-15: o `omp` saiu das
   medições, dos placares e dos relatórios; os dados antigos dele ficam só como histórico).
 - Toda execução falha é lida (`artifacts/*.test.out`): se o teste oculto cobra algo que nem o prompt nem o SPEC
   pedem, o defeito é da tarefa. Corrija o teste (não o SPEC, para não mudar o que o agente leu) e repontue as
@@ -512,7 +512,7 @@ docs/bench/baseline-main/runs.jsonl --sec-grid [--clean-base | --resample-base] 
   não escreveu os casos confere cada asserção oculta contra o prompt e o SPEC.
 - Custo entre braços: compare a razão por tarefa (média geométrica com intervalo), não a soma. Com `--jobs 6`
   as seis primeiras execuções gravam o prefixo em cache ao mesmo tempo (cerca de US$ 0,3 a 0,4 por rodada do
-  ny-pi, qualquer que seja o tamanho); ao comparar rodadas de tamanhos diferentes, desconte a gravação do
+  Nycode pré-migração, qualquer que seja o tamanho); ao comparar rodadas de tamanhos diferentes, desconte a gravação do
   primeiro turno.
 - Caso novo: escreva `repo/`, `hidden/`, `oracle/` e `case.json`, rode
   `python3 bench/suites/check_oracles.py --suite hard`; ele diz quais casos passam a ser held-out (30%, semente
@@ -520,16 +520,16 @@ docs/bench/baseline-main/runs.jsonl --sec-grid [--clean-base | --resample-base] 
 
 ## Placar do objetivo
 
-`python3 bench/run.py scoreboard --ny <rodada ny-pi> --refs <rodada> [<rodada> ...] [--out arquivo.md]` imprime o
+`python3 bench/run.py scoreboard --ny <rodada Nycode pré-migração> --refs <rodada> [<rodada> ...] [--out arquivo.md]` imprime o
 placar das três regras do objetivo, em Markdown. É informativo: sai sempre com 0.
 
 - Entram as tarefas em comum com cada referência, sem execução com erro.
-- R1 acerto: taxa pontual do ny-pi maior ou igual à do `pi-vanilla`. A tabela traz também a diferença pareada e o
+- R1 acerto: taxa pontual do Nycode pré-migração maior ou igual à do `pi-vanilla`. A tabela traz também a diferença pareada e o
   IC90 contra cada referência.
-- R2 teto de custo: custo do ny-pi menor ou igual ao de cada referência que não seja o `pi-vanilla` (este aparece só
+- R2 teto de custo: custo do Nycode pré-migração menor ou igual ao de cada referência que não seja o `pi-vanilla` (este aparece só
   como informação). Custo = soma do custo médio por tarefa, para comparar rodadas com k diferente.
-- R3 exceção: tarefas exclusivas, com taxa do ny-pi acima de 0,5 e taxa 0 em todas as referências. O placar lista
-  também o inverso (todas as referências acima de 0,5 e ny-pi em 0).
+- R3 exceção: tarefas exclusivas, com taxa do Nycode pré-migração acima de 0,5 e taxa 0 em todas as referências. O placar lista
+  também o inverso (todas as referências acima de 0,5 e Nycode pré-migração em 0).
 - Veredito: `OBJETIVO: cumprido` quando R1 e (R2 ou pelo menos uma tarefa exclusiva); senão `não cumprido`, com as
   regras que falharam.
 - Sem rodada do `pi-vanilla`, a R1 não é avaliada e conta como não cumprida; o mesmo vale para a R2 sem outra
@@ -551,7 +551,7 @@ Faça isso só depois do primeiro `bench-pr` verde e do baseline main commitado;
 
 ## Nightly
 
-`bench-nightly.timer` roda às 03:30 `bench-nightly.sh`: tier full do ny-pi na `origin/main` atual, teto
+`bench-nightly.timer` roda às 03:30 `bench-nightly.sh`: tier full do Nycode pré-migração na `origin/main` atual, teto
 `BENCH_NIGHTLY_BUDGET`, saída em `$BENCH_STATE/nightly/<data>`. Ele não atualiza o baseline: ao terminar com sucesso
 imprime os comandos para preparar o PR de atualização de `docs/bench/baseline-main/` (veja `journalctl --user -u
 bench-nightly`). Revise o veredito antes de abrir esse PR.
@@ -572,16 +572,16 @@ existente nunca é sobrescrito (outra data ou sufixo de hora). Quando um PR toca
 ## NOT_COMPARABLE
 
 O overlay, o modelo ou a versão do braço mudou entre o baseline e o PR. Rode o baseline main de novo com o novo
-contexto: `bench run --arm nycode-harness --tier baseline` na main (veja "Tier baseline"), proponha o novo
+contexto: `bench run --arm nycode --tier baseline` na main (veja "Tier baseline"), proponha o novo
 `docs/bench/baseline-main/` por PR, e só então reroda o PR com `bench-pr.sh --pr N`.
 
-Para a camada pessoal não mudar entre o baseline e os PRs, o braço `nycode-harness` lê uma cópia congelada quando
-`BENCH_OVERLAY_DIR` está definido (sem a variável, lê o `~/.pi/agent` vivo, e qualquer edição ali torna as rodadas
+Para a camada pessoal não mudar entre o baseline e os PRs, o braço `nycode` lê uma cópia congelada quando
+`BENCH_OVERLAY_DIR` está definido (sem a variável, lê o `~/.nycode/agent` vivo, e qualquer edição ali torna as rodadas
 incomparáveis). Crie a cópia junto com cada baseline novo, antes da rodada, e use a mesma em todo PR:
 
 ```bash
 . bench/arms/overlay-sha.sh
-overlay_freeze ~/.pi/agent ~/.local/state/bench/overlay/<data> "$PWD/bench/arms/overlay.list"   # imprime o hash
+overlay_freeze ~/.nycode/agent ~/.local/state/bench/overlay/<data> "$PWD/bench/arms/overlay-nycode.list"   # imprime o hash
 echo 'BENCH_OVERLAY_DIR=<caminho da cópia>' >> ~/.config/nycode/bench.env
 ```
 
@@ -593,7 +593,7 @@ conteúdo dava `f6afa7d59fa0c8f8` em `en_US.UTF-8` e `c06e62526c0540fe` em C. O 
 regravado só nesse campo, sem nova rodada: a cópia congelada é a mesma (conferida pelos dois hashes).
 
 Se a montagem do stage falhar (por exemplo, `npm ci` do `install.sh`), a rodada para antes da primeira execução com
-`ny-pi stage not built: <erro>`; o stage só vale com `.ready`. O braço aponta os diretórios do mise para o HOME
+`nycode stage not built: <erro>`; o stage só vale com `.ready`. O braço aponta os diretórios do mise para o HOME
 real, porque os shims recusam rodar sob o HOME do stage.
 
 ## Diagnóstico
@@ -657,7 +657,7 @@ O `evidence` também classifica cada falha por assinatura (primeira regra que ca
 
 Regra do dono (2026-11-15): `cc-vanilla` e `pi-vanilla` rodam uma vez em cada conjunto de tarefas que nunca rodaram,
 com tudo guardado (`runs.jsonl`, `meta.json`, jobs do Harbor ou artefatos, custo, tokens, turnos, tempo, versão do
-braço, modelo). Gates e benchmarks seguintes rodam só o `nycode-harness` contra a referência guardada; refazer uma referência
+braço, modelo). Gates e benchmarks seguintes rodam só o `nycode` contra a referência guardada; refazer uma referência
 só a pedido explícito do dono ou com um gatilho (2026-11-18): troca do modelo do benchmark, nova versão do
 Claude Code ou do pi nos braços, nova afirmação pública de comparação (braços intercalados nas mesmas tarefas, mesmo
 modo de conta) ou ~1 mês desde a última medição. Nunca misture OAuth e chave de API numa comparação. Os diretórios ficam fora do repositório, no estado local do benchmark
@@ -674,21 +674,16 @@ modo de conta) ou ~1 mês desde a última medição. Nunca misture OAuth e chave
 Decisões de F3 (`docs/migration/nycode-core/09-paridade-e-benchmark.md`):
 
 - Env file do poster e das units: `~/.config/nycode/bench.env` (modo 0600) com `BENCH_REPO=marcioazam/nycode`; `bench-pr.sh`
-  roda `--arm nycode`. `bench-nightly.sh` continua no braço `nycode-harness` até a decisão de F10.
+  roda `--arm nycode`, e o `bench-nightly.sh` também.
 - Braço `nycode` (`bench/arms/nycode`): estágio `bench-nycode-<sha12>[-dirty]` com `HOME` descartável e
   `NYCODE_CODING_AGENT_DIR=<estágio>/.nycode/agent`; `npm ci --ignore-scripts` e `npm run build` na raiz do checkout;
   executa `packages/coding-agent/dist/bundle/cli.js`. Camada do dono em `bench/arms/overlay-nycode.list`
   (`settings.json`, `AGENTS.md` de `~/.nycode/agent` ou `BENCH_OVERLAY_DIR`); o hash vai para `.overlay-sha`. As flags só do
   pi-code (`--settings`, `--mcp-config`, `--setting-sources`, `--add-dir`, `--strict-mcp-config`) são descartadas até F5.
   S2 (Harbor): agente `bench/harbor/nycode_agent.py` (`NycodeAgent`) com o pacote do `bench/harbor/bundle.sh` (build do checkout +
-  camada do dono, em `/opt/nycode-home`; 09 §2.2); a rodada empacota o estágio do checkout antes do `harbor run`, como no ny-pi.
-- Braço `nycode-harness-pi160` (D-25): o mesmo `bench/arms/nycode-harness` com `BENCH_PI_VERSION=1.6.0` (tabela `env` do `arms.toml`),
-  estágio `bench-nycode-harness160-<sha12>`; exige um pi 1.6.0 gerenciado em `BENCH_PI_INSTALL_DIR` (o `~/.pi/agent/install` do
-  dono é 1.5.2 e não serve). Sai com F10.
-- Braço `nycode-harness` (referência): `import/ny-pi` não traz `bin/pi` (F5) nem `install.sh` e `npm/` (F11), então não é mais o
-  padrão. Aponte `BENCH_NYCODE_HARNESS_SRC` para um checkout do repositório ny-pi (ou um `git archive` dele extraído; sem `.git`
-  ali, defina também `BENCH_STAGE`); sem a variável o braço sai 2 pedindo `BENCH_NYCODE_HARNESS_SRC`. Um estágio já montado roda sem
-  a árvore quando `BENCH_STAGE` o aponta.
+  camada do dono, em `/opt/nycode-home`; 09 §2.2); a rodada empacota o estágio do checkout antes do `harbor run`.
+- Os braços pré-migração (o Nycode pré-migração em pi 1.5.2 e o mesmo em pi 1.6.0, rejeitado) foram removidos do benchmark (decisão do dono:
+  "Remover antigo, o que vale é o novo"); as rodadas deles ficam só como registro histórico.
 - Tier `smoke`: apelido do `pr` (`[tier.smoke] alias = "pr"`, D-27); a rodada e o diretório usam o nome `pr`.
 - `bench gate --base <ref> --cand <rodada> --parity` (D-28): compara braços diferentes. Ignora `arm_version` e
   `overlay_sha`; `model` e `jobs` continuam exigindo igualdade; margem de custo 1,10; o `verdict.json` ganha

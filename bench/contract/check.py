@@ -366,7 +366,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         description="Verificador de contrato do harness (sem modelo)."
     )
     parser.add_argument(
-        "--arm", required=True, help="nome do braço em bench/arms (ex.: nycode-harness)"
+        "--arm", required=True, help="nome do braço em bench/arms (ex.: nycode)"
     )
     parser.add_argument(
         "--json", type=Path, help="grava inventário e casos neste arquivo"

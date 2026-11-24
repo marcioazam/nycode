@@ -140,7 +140,7 @@ export class CartaoConfirmar {
 	invalidate(): void {}
 }
 
-const MARK = Symbol.for("nycode-harness.folha.confirm");
+const MARK = Symbol.for("nycode.folha.confirm");
 
 export function installConfirm(ui: any): void {
 	if (!ui || ui[MARK] || typeof ui.select !== "function" || typeof ui.confirm !== "function") return;

@@ -45,7 +45,7 @@ const NAV_SLOT = Symbol.for("nycode.group-nav");
 // `(max)` numa cor só; aqui cada letra ganha uma cor do arco-íris que gira (uma volta a cada ARCO_MS). Movimento reduzido: parado.
 const MAX = /\x1b\[[0-9;]*m\(max\)/g;
 const ARCO_MS = 2400;
-const EMBRULHO = Symbol.for("nycode-harness.footer.arco");
+const EMBRULHO = Symbol.for("nycode.footer.arco");
 const hsl = (h: number): string => {
 	const f = (n: number) => {
 		const k = (n + h * 12) % 12;

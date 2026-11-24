@@ -44,7 +44,7 @@ def test_api_mode_env(tmp_path: Path, monkeypatch: MP, keyfile: Path) -> None:
     monkeypatch.setattr(rb, "oauth_token", _boom)
     monkeypatch.setenv("BENCH_ANTHROPIC_WORKSPACE_ID", "wrkspc_1")
     monkeypatch.setenv("ANTHROPIC_OAUTH_TOKEN", "leak")
-    env = _step(tmp_path, monkeypatch, "nycode-harness").read_text().splitlines()
+    env = _step(tmp_path, monkeypatch, "nycode").read_text().splitlines()
     assert "ANTHROPIC_API_KEY=sk-ant-api-xyz" in env
     assert "ANTHROPIC_WORKSPACE_ID=wrkspc_1" in env
     assert not any(e.startswith("ANTHROPIC_OAUTH_TOKEN=") for e in env)
@@ -53,7 +53,7 @@ def test_api_mode_env(tmp_path: Path, monkeypatch: MP, keyfile: Path) -> None:
 def test_without_variable_keeps_oauth(tmp_path: Path, monkeypatch: MP) -> None:
     monkeypatch.delenv("BENCH_API_KEY_FILE", raising=False)
     monkeypatch.setattr(rb, "oauth_token", lambda: "tok")
-    env = _step(tmp_path, monkeypatch, "nycode-harness").read_text().splitlines()
+    env = _step(tmp_path, monkeypatch, "nycode").read_text().splitlines()
     assert "ANTHROPIC_OAUTH_TOKEN=tok" in env
 
 
@@ -64,7 +64,7 @@ def test_missing_or_empty_key_file_is_explicit_error(tmp_path: Path, monkeypatch
         f.write_text(content)
     monkeypatch.setenv("BENCH_API_KEY_FILE", str(f))
     with pytest.raises(RuntimeError, match="BENCH_API_KEY_FILE"):
-        _step(tmp_path, monkeypatch, "nycode-harness")
+        _step(tmp_path, monkeypatch, "nycode")
 
 
 def _main(monkeypatch: MP, arm: str) -> int:
@@ -76,13 +76,13 @@ def _main(monkeypatch: MP, arm: str) -> int:
 
 
 def test_preflight_accepts_api_mode_without_credentials(monkeypatch: MP, keyfile: Path) -> None:  # fmt: skip
-    assert _main(monkeypatch, "nycode-harness") == 0
+    assert _main(monkeypatch, "nycode") == 0
 
 
 def test_preflight_rejects_empty_key_file(monkeypatch: MP, keyfile: Path) -> None:
     keyfile.write_text("\n")
     with pytest.raises(SystemExit):
-        _main(monkeypatch, "nycode-harness")
+        _main(monkeypatch, "nycode")
 
 
 @pytest.mark.parametrize("arm", ["cc-vanilla", "pi-vanilla"])

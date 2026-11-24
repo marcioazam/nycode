@@ -1,7 +1,7 @@
 /** Slot global do controlador de modos: o UiEditor/outras extensões chamam current()/cycle()/select()/setBypass(). */
 import type { ModeResult, PermissionModes } from "./controller.ts";
 
-export const PERMISSION_MODES_SLOT = Symbol.for("nycode-harness.permission-modes");
+export const PERMISSION_MODES_SLOT = Symbol.for("nycode.permission-modes");
 const g = globalThis as Record<symbol, unknown>;
 
 const isApi = (v: unknown): v is PermissionModes => {

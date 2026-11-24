@@ -53,7 +53,7 @@ test("paraOtlp: forma, ids, nanos via BigInt e status", () => {
 	});
 	const rs = o.resourceSpans[0];
 	assert.deepEqual(rs.resource.attributes, [{ key: "service.name", value: { stringValue: "nycode" } }]);
-	assert.equal(rs.scopeSpans[0].scope.name, "nycode-harness.diagnostico");
+	assert.equal(rs.scopeSpans[0].scope.name, "nycode.diagnostico");
 	const s = rs.scopeSpans[0].spans[0];
 	assert.equal(s.traceId, T);
 	assert.equal(s.parentSpanId, "c".repeat(16));

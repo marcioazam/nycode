@@ -2,8 +2,6 @@
 
 import json
 import shutil
-import subprocess
-import tarfile
 from pathlib import Path
 from typing import Any
 
@@ -218,8 +216,8 @@ def test_harbor_cmd_and_agents(monkeypatch: MP) -> None:
         and cc[1]["CLAUDE_FORCE_OAUTH"]
     )
     assert "version=1.5.2" in rn.harbor_agent("pi-vanilla", "m", Path("/hd"))[0]
-    mp = rn.harbor_agent("nycode-harness", "m", Path("/hd"))
-    assert "pi_harness_agent:PiHarnessAgent" in mp[0] and mp[1] == {"PYTHONPATH": "/hd"}
+    mp = rn.harbor_agent("nycode", "m", Path("/hd"))
+    assert "nycode_agent:NycodeAgent" in mp[0] and mp[1] == {"PYTHONPATH": "/hd"}
     capped = rn.harbor_cmd("ds", [], "j", Path("/o"), ["t"], timeout_mult=0.125)
     assert capped[capped.index("--agent-timeout-multiplier") + 1] == "0.125"
     assert "--agent-timeout-multiplier" not in rn.harbor_cmd(
@@ -532,40 +530,6 @@ def test_s1_case_reps_reads_declared_reps(tmp_path: Path, monkeypatch: MP) -> No
 def test_s1_case_reps_without_cases_dir_uses_k(tmp_path: Path, monkeypatch: MP) -> None:
     monkeypatch.setattr(rn, "EVALS_RUN", tmp_path / "run.py")
     assert rn.s1_case_reps(["x"], 3) == {"x": 3}
-
-
-BUNDLE_SH = BENCH / "harbor/pi_bundle.sh"
-
-
-def test_bundle_dereferences_linked_install(tmp_path: Path) -> None:
-    """bundle.sh: links out of the bundle (a --link install points into the repo) become files; links inside stay."""
-    src = tmp_path / "repo"
-    (src / "extensions").mkdir(parents=True)
-    (src / "extensions/a.ts").write_text("x")
-    (src / "pi").write_text("#!/bin/sh\n")
-    home = tmp_path / "home"
-    (home / ".pi/agent/extensions").mkdir(parents=True)
-    (home / ".local/bin").mkdir(parents=True)
-    (home / ".pi/agent/extensions/a.ts").symlink_to(src / "extensions/a.ts")
-    (home / ".local/bin/pi").symlink_to(src / "pi")
-    # npm's .bin entries are relative links whose script requires siblings: they must stay links.
-    nm = home / ".pi/agent/node_modules"
-    (nm / "pkg/dist").mkdir(parents=True)
-    (nm / "pkg/dist/cli.js").write_text("require('./lib')")
-    (nm / ".bin").mkdir()
-    (nm / ".bin/pkg").symlink_to("../pkg/dist/cli.js")
-    out = tmp_path / "b.tgz"
-    subprocess.run(
-        ["bash", str(BUNDLE_SH), str(out)],
-        env={"HOME": str(home), "PATH": "/usr/bin:/bin"},
-        check=True,
-        capture_output=True,
-    )
-    with tarfile.open(out) as t:
-        links = {m.name: m.linkname for m in t if m.issym()}
-        names = t.getnames()
-    assert ".local/bin/pi" in names and ".pi/agent/extensions/a.ts" in names
-    assert links == {".pi/agent/node_modules/.bin/pkg": "../pkg/dist/cli.js"}
 
 
 def _pi_msg(role: str, **kw: Any) -> str:

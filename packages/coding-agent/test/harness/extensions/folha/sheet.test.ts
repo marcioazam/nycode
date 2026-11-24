@@ -103,7 +103,7 @@ test("Sheet: sem seleção rola com mais de 12 linhas; Enter não faz nada", () 
 test("Sheet: Selection Glide 120Hz ilumina ❯ em tema truecolor ao mover seleção", () => {
 	const term = process.env.TERM;
 	process.env.TERM = "xterm-256color";
-	delete (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:movimento")];
+	delete (globalThis as Record<symbol, unknown>)[Symbol.for("nycode:movimento")];
 	const rgbTheme = {
 		fg: (_c: string, s: string) => s,
 		bg: (_c: string, s: string) => `[${s}]`,

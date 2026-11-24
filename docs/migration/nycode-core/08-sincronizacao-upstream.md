@@ -27,9 +27,9 @@ canônicos do plano; "não verificado" = não foi possível conferir.
 
 ### 1.2 O remoto `upstream` não existe
 
-- `/home/marcio/source/nycode-cli` não é repositório bare: contém só `MOVED.md`, que diz que o diretório foi
-  renomeado para `/home/marcio/source/nycode` (medido: `ls`, `git --git-dir` falhou com "not a git repository").
-- `/home/marcio/source/nycode` e o worktree `nycode.wt/migration` têm apenas `origin`. Não há remoto `upstream` em
+- `~/source/nycode-cli` não é repositório bare: contém só `MOVED.md`, que diz que o diretório foi
+  renomeado para `~/source/nycode` (medido: `ls`, `git --git-dir` falhou com "not a git repository").
+- `~/source/nycode` e o worktree `nycode.wt/migration` têm apenas `origin`. Não há remoto `upstream` em
   nenhum dos dois (medido: `git remote -v`). O objeto do commit base existe porque o histórico do upstream veio junto.
 - O nome do repositório no GitHub é `marcioazam/nycode`; o registro do fork ainda diz `marcioazam/nycode-cli`
   (documento). A diferença é um resíduo de nome; a política usa o remoto real.
@@ -123,7 +123,7 @@ sem ator com dispensa (D-07). O afrouxamento é só `required_linear_history` e 
 
 - **Rotina:** uma sincronização por semana, em dia fixo. Sugestão: segunda-feira; o CONTRIBUTING do upstream diz que
   issues de sexta a domingo podem não ser revisadas, então a segunda concentra a resposta a pedidos nossos.
-- **Antes de abrir fase:** sincronizar antes de F4 a F11 e registrar o SHA no `evidencias/F<n>.md`. Uma fase não
+- **Antes de abrir fase:** sincronizar antes de F4 a F11 e registrar o SHA no registro do mantenedor. Uma fase não
   começa sobre base mais velha que 7 dias.
 - **Alvo:** por padrão, a ponta de `main` do upstream. Se a ponta estiver instável, a última tag `v*` (cadência de
   5,1 dias, seção 1.3). A escolha fica registrada na fusão.
@@ -544,7 +544,7 @@ K1 (cache-warm) e K2 (mcp-close-grace) são correções genéricas, sem relaçã
 
 1. Reproduzir cada defeito no código do upstream mais recente (K1: comparação por identidade em `sdk.ts` impede o
    reaproveitamento do cache; K2: 500 ms de espera no fechamento de `stdin` do MCP). A medição de origem está na
-   especificação 0003 e em `pi-memory-cache-sota-2026-11-13.md` do harness Nycode (documento: anexo A, seção 2.2).
+   especificação 0003 e em `pi-memory-cache-sota-2026-11-13.md` do harness Nycode (documento: registro do mantenedor, seção 2.2).
 2. **O CONTRIBUTING do upstream fecha PR de novos contribuidores automaticamente.** Lido em 2026-11-20
    (`gh api repos/earendil-works/pi/contents/CONTRIBUTING.md`): issues e PRs de novos contribuidores são fechados por
    padrão; `lgtmi` libera issues futuras, e só `lgtm` libera PR; o comando vem na resposta de um mantenedor. Logo: abrir
@@ -558,7 +558,7 @@ Não verificado: se o upstream já corrigiu K1 ou K2 nos 8 commits à frente da 
 
 ## 9. Métricas
 
-Registradas em cada `evidencias/sync-AAAA-MM-DD.md` (e, depois de F12, em `docs/fork/syncs/`).
+Registradas em cada registro do mantenedor (e, depois de F12, em `docs/fork/syncs/`).
 
 | # | Métrica | Como medir |
 |---|---|---|
@@ -580,7 +580,7 @@ sincronização e tempo de uma hora ou menos; é proposta, a ser recalibrada com
 
 ### 10.1 Aceite (critério 7 do mega plano)
 
-1. Duas sincronizações completas **depois de F6**, cada uma com `evidencias/sync-<data>.md` contendo as 6 métricas da
+1. Duas sincronizações completas **depois de F6**, cada uma com registro do mantenedor contendo as 6 métricas da
    seção 9, o SHA do upstream, o SHA de `R` e o resultado do job `merge-policy`.
 2. `merge-policy` passou nas duas, recalculando `P(U)`; uma terceira rodada de teste negativo (merge commit sem imagem
    válida) foi reprovada pelo job.

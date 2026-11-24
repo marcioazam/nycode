@@ -17,7 +17,7 @@ afterEach(() => {
 
 const m = __d_index;
 const { lerCaixa } = __d_registro;
-const SINK = Symbol.for("nycode-harness:diag");
+const SINK = Symbol.for("nycode:diag");
 const T0 = Date.parse("2026-11-14T12:00:00Z");
 const SEGREDO = "SEGREDO-NAO-VAZA-123";
 const TP = `00-${"a".repeat(32)}-${"b".repeat(16)}-01`;

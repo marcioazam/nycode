@@ -47,7 +47,7 @@ def make_round(
 def two_arms(tmp: Path) -> list[Path]:
     a = make_round(
         tmp,
-        "nycode-harness",
+        "nycode",
         [
             run("t1", 0, True),
             run("t1", 1, False),
@@ -82,7 +82,7 @@ def two_arms(tmp: Path) -> list[Path]:
 
 def test_arm_aggregates(tmp_path: Path) -> None:
     out = summary.compute([*two_arms(tmp_path)])
-    ny = out["arms"]["nycode-harness@m"]
+    ny = out["arms"]["nycode@m"]
     assert ny["runs"] == 4 and ny["solved"] == 1
     assert ny["pass_k"] == 0.0 and ny["flip_rate"] == 0.5  # t1 flips, t2 never passes
     assert ny["false_success"] == 1 and ny["give_up"] == 1 and ny["asks_user"] == 1
@@ -93,7 +93,7 @@ def test_arm_aggregates(tmp_path: Path) -> None:
 
 
 def test_paired_vs_reference(tmp_path: Path) -> None:
-    out = summary.compute(two_arms(tmp_path), focus="nycode-harness")
+    out = summary.compute(two_arms(tmp_path), focus="nycode")
     rows = {(p["metric"], p["ref"]): p for p in out["paired"]}
     pas = rows[("pass_rate", "pi-vanilla@m")]
     assert pas["n"] == 2 and abs(pas["median"] - (-0.5)) < 1e-9
@@ -107,8 +107,8 @@ def test_excluded_and_timeout(tmp_path: Path) -> None:
         run("t1", 1, False, 0.3, error="timeout"),
         run("t2", 0, False, 0.3, error="budget exceeded"),
     ]
-    d = make_round(tmp_path, "nycode-harness", runs, {})
-    arm = summary.compute([d])["arms"]["nycode-harness@m"]
+    d = make_round(tmp_path, "nycode", runs, {})
+    arm = summary.compute([d])["arms"]["nycode@m"]
     assert (
         arm["excluded"] == 1
         and arm["timeouts"] == 1
@@ -125,12 +125,12 @@ def test_render_and_cli(tmp_path: Path, capsys: Any) -> None:
     js = tmp_path / "m.json"
     assert cli.main(["metrics", "--rounds", *rounds, "--json", str(js)]) == 0
     md = capsys.readouterr().out
-    assert "| nycode-harness@m |" in md and "Pareado" in md
+    assert "| nycode@m |" in md and "Pareado" in md
     assert "arms" in json.loads(js.read_text())
 
 
 def test_paired_p_ahead_direction_and_neutral_metrics(tmp_path: Path) -> None:
-    out = summary.compute(two_arms(tmp_path), focus="nycode-harness")
+    out = summary.compute(two_arms(tmp_path), focus="nycode")
     rows = {p["metric"]: p for p in out["paired"] if p["ref"] == "pi-vanilla@m"}
     assert rows["pass_rate"]["p_ahead"] < 0.2  # ny loses where it differs
     assert (
@@ -145,7 +145,7 @@ def test_paired_p_ahead_direction_and_neutral_metrics(tmp_path: Path) -> None:
 def test_paired_p_ahead_lower_is_better_for_cost(tmp_path: Path) -> None:
     mine = [run(f"t{i}", 0, True, 0.1) for i in range(6)]
     ref = [run(f"t{i}", 0, True, 0.2) for i in range(6)]
-    rounds = [make_round(tmp_path, "nycode-harness", mine, {}), make_round(tmp_path, "pi-vanilla", ref, {})]  # fmt: skip
+    rounds = [make_round(tmp_path, "nycode", mine, {}), make_round(tmp_path, "pi-vanilla", ref, {})]  # fmt: skip
     rows = {p["metric"]: p for p in summary.compute(rounds)["paired"]}
     assert (
         rows["cost"]["p_ahead"] == 1.0 and rows["pass_rate"]["p_ahead"] == 0.0
@@ -164,7 +164,7 @@ def test_paired_drops_a_task_with_an_infra_run_from_both_arms(tmp_path: Path) ->
     )  # zero cost: kept for pass_rate, dropped from the cost ratio
     ref.append(run("t9", 0, True, 0.2))
     rounds = [
-        make_round(tmp_path, "nycode-harness", mine, {}),
+        make_round(tmp_path, "nycode", mine, {}),
         make_round(tmp_path, "pi-vanilla", ref, {}),
     ]
     rows = {p["metric"]: p for p in summary.compute(rounds)["paired"]}
@@ -183,14 +183,14 @@ def test_claimed_failed_adds_caveated_claims_and_marks_exploratory(
     fin = {(f"t{i}", 0): "Implementei tudo, pronto." for i in range(6)}
     fin_c = {(f"t{i}", 0): "Implementei, pronto. Decidi ler o campo como texto; não rodei os testes." for i in range(6)}  # fmt: skip
     rounds = [
-        make_round(tmp_path, "nycode-harness", mine, fin_c),
+        make_round(tmp_path, "nycode", mine, fin_c),
         make_round(tmp_path, "pi-vanilla", ref, fin),
     ]
     out = summary.compute(rounds)
     arms = out["arms"]
     assert (
-        arms["nycode-harness@m"]["claimed_failed"] == 6
-        and arms["nycode-harness@m"]["false_success"] == 0
+        arms["nycode@m"]["claimed_failed"] == 6
+        and arms["nycode@m"]["false_success"] == 0
     )
     assert (
         arms["pi-vanilla@m"]["claimed_failed"] == 6
