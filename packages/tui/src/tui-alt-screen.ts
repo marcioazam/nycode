@@ -205,6 +205,7 @@ export class TuiAltScreen extends TuiBase implements ViewportTUI {
 	readonly mode = "fullscreen" as const;
 	readonly [VIEWPORT_TUI] = true as const;
 	private previousScreen: string[] = [];
+	private previousCursor = "";
 	private lastDocument: string[] = [];
 	private previousScreenWidth = 0;
 	private previousScreenHeight = 0;
@@ -1819,14 +1820,15 @@ export class TuiAltScreen extends TuiBase implements ViewportTUI {
 			}
 		}
 
-		if (cursorPos) {
-			buffer += `\x1b[${cursorPos.row + 1};${Math.min(width, cursorPos.col) + 1}H`;
-			buffer += this.getShowHardwareCursor() ? "\x1b[?25h" : "\x1b[?25l";
-		} else {
-			buffer += "\x1b[?25l";
+		const cursor = cursorPos
+			? `\x1b[${cursorPos.row + 1};${Math.min(width, cursorPos.col) + 1}H${this.getShowHardwareCursor() ? "\x1b[?25h" : "\x1b[?25l"}`
+			: "\x1b[?25l";
+		// Nothing drawn and the cursor where the last frame left it: no write. A poll that asks for a frame every
+		// second would otherwise wake the terminal and restart its cursor blink forever.
+		if (buffer !== BEGIN_SYNCHRONIZED_OUTPUT || cursor !== this.previousCursor) {
+			this.terminal.write(`${buffer}${cursor}${END_SYNCHRONIZED_OUTPUT}`);
 		}
-		buffer += END_SYNCHRONIZED_OUTPUT;
-		this.terminal.write(buffer);
+		this.previousCursor = cursor;
 
 		this.previousScreen = screen;
 		this.previousScreenWidth = width;

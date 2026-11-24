@@ -33,6 +33,19 @@ describe("CustomEditor prompt history keybindings", () => {
 	});
 });
 
+describe("CustomEditor hidden at startup", () => {
+	it("draws nothing while hidden but keeps what is typed, so an editor set at startup replaces it unseen", () => {
+		const keybindings = new KeybindingsManager();
+		const editor = new CustomEditor(new TuiMainScreen(new VirtualTerminal()), defaultEditorTheme, keybindings);
+		editor.hidden = true;
+		editor.handleInput("a");
+		expect(editor.render(40)).toEqual([]);
+		editor.hidden = false;
+		expect(editor.getText()).toBe("a");
+		expect(editor.render(40).length).toBeGreaterThan(0);
+	});
+});
+
 describe("CustomEditor selection page keybindings", () => {
 	it("pages an open autocomplete menu before pasting an image with the same key (#7629)", async () => {
 		// Bind both explicitly: the paste default is Alt+V on Windows and WSL.

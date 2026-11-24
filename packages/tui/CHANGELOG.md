@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed subscript and superscript normalization so a long run of spaces cannot make the scan take polynomial time
+- The fullscreen renderer writes nothing for a frame that changes neither a row nor the cursor; before, every requested frame wrote a synchronized-output block, which also restarted the terminal's cursor blink
 - `replaceScrollToEndIndicator`'s restore function is a no-op once the TUI reference no longer points at a fullscreen renderer, instead of throwing
 
 ## [2.0.2] - 2026-11-23

@@ -15,6 +15,12 @@ export class CustomEditor extends Editor {
 	private workingStatusIndicator: StatusIndicator | undefined;
 	public readonly embedWorkingStatus: boolean;
 	public actionHandlers: Map<AppKeybinding, () => void> = new Map();
+	/** True until the startup extensions are bound: an editor an extension sets then replaces this one unseen. Input still lands here. */
+	public hidden = false;
+
+	override render(width: number): string[] {
+		return this.hidden ? [] : super.render(width);
+	}
 
 	// Special handlers that can be dynamically replaced
 	public onEscape?: () => void;
