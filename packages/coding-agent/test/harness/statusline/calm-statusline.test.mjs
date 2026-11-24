@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { after, test } from 'node:test';
-import { cacheRatio, cellWidth, ctxHistory, ctxLabel, gitState, milhar, render, span, sparkline, themePalette, turnStats, windowState } from '../../../resources/statusline/calm-statusline.mjs';
+import { cacheRatio, cellWidth, ctxLabel, gitState, milhar, render, span, themePalette, turnStats, windowState } from '../../../resources/statusline/calm-statusline.mjs';
 
 const H = 3_600_000;
 const now = 1_800_000_000_000;
@@ -147,36 +147,20 @@ test('launcher com renderer calm imprime o desenho novo e respeita NO_COLOR', ()
   assert.equal(l2, 'ctx ━━━━━━━━ 9%');
 });
 
-// Onda 10, P17: histórico do contexto em blocos e o limiar escrito, para não depender só da cor.
-test('P17 ctxHistory: por sessão, só quando muda, 8 valores, arquivo limitado e tolerante a lixo', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hud-p17-'));
-  const file = path.join(dir, 'h.json');
-  const p = (id, pct) => ({ session_id: id, context_window: { used_percentage: pct } });
-  assert.deepEqual(ctxHistory(p('a', 10.4), file), [10]);
-  assert.deepEqual(ctxHistory(p('a', 10.2), file), [10], 'igual ao último: não repete');
-  for (const v of [20, 30, 40, 50, 60, 70, 80, 90]) ctxHistory(p('a', v), file);
-  assert.deepEqual(ctxHistory(p('a', 90), file), [20, 30, 40, 50, 60, 70, 80, 90]);
-  assert.deepEqual(ctxHistory(p('b', 5), file), [5], 'outra sessão começa do zero');
-  for (let i = 0; i < 25; i++) ctxHistory(p(`s${i}`, 1), file);
-  assert.equal(Object.keys(JSON.parse(fs.readFileSync(file, 'utf8'))).length, 20);
-  fs.writeFileSync(file, '[1,2');
-  assert.deepEqual(ctxHistory(p('a', 33), file), [33], 'arquivo corrompido: recomeça');
-  assert.deepEqual(ctxHistory({ context_window: { used_percentage: 3 } }, file), [], 'sem sessão: nada');
-  fs.rmSync(dir, { recursive: true });
-});
-
-test('P17 sparkline, rótulo e linha do contexto; ASCII fica só com o número', () => {
-  assert.equal(sparkline([0, 12.5, 50, 99, 100], {}), '▁▁▄██'); // 8 faixas de 12,5%
-  assert.equal(sparkline([40], {}), '', 'um valor só não é histórico');
-  assert.equal(sparkline([5, 9, 15, 25], {}), '', 'até 25% seria só ▁▂ e parece uma barra quebrada');
-  assert.equal(sparkline([5, 9, 15, 26], {}), '▁▁▂▃');
-  assert.equal(sparkline([10, 90], { NYCODE_ASCII_ICONS: '1' }), '');
+// Onda 10, P17: limiar escrito ao lado da cor, para não depender só dela.
+test('P17 rótulo e linha do contexto', () => {
   assert.deepEqual([69, 70, 84, 85].map(ctxLabel), ['', 'acima de 70%', 'acima de 70%', 'acima de 85%']);
   const cw = { context_window_size: 1e6, used_percentage: 72, total_input_tokens: 72e4, current_usage: null };
-  const l = plain(render(base({ context_window: cw }), { ...opts, reserve: 0, history: [20, 45, 72] }))[1];
-  assert.equal(l, 'ctx ━━━━━━━━ 72% ▂▄▆ acima de 70%');
-  const estreito = plain(render(base({ context_window: cw }), { ...opts, columns: 20, reserve: 0, history: [20, 45, 72] }))[1];
-  assert.equal(estreito, 'ctx ━━━━━━━━ 72%', 'sem espaço, o histórico sai junto com a nota');
+  assert.match(plain(render(base({ context_window: cw }), { ...opts, reserve: 0 }))[1], /^ctx ━━━━━━━━ 72% acima de 70%    5h /);
+  assert.equal(plain(render(base({ context_window: cw }), { ...opts, columns: 20, reserve: 0 }))[1], 'ctx ━━━━━━━━ 72%', 'sem espaço, a nota sai');
+});
+
+// Dono (2026-11-24, 2ª queixa): o histórico em blocos ▁…█ ao lado da barra ━ parece uma barra quebrada; saiu da linha.
+test('linha do contexto: só barra, número e nota, sem histórico em blocos', () => {
+  const cw = { context_window_size: 1e6, used_percentage: 9, total_input_tokens: 9e4, current_usage: null };
+  const l = plain(render(base({ context_window: cw }), { ...opts, reserve: 0, history: [5, 9, 30, 9] }))[1];
+  assert.match(l, /^ctx ━━━━━━━━ 9%    5h /);
+  assert.doesNotMatch(plain(render(base({ context_window: { ...cw, used_percentage: 72 } }), { ...opts, reserve: 0, history: [20, 45, 72] })).join('\n'), /[▁▂▃▄▅▆▇█]/);
 });
 
 // ---- U17: largura real e truncamento; U18: cache de git status; U21: tmp por pid ----
@@ -227,22 +211,6 @@ test('U18 gitState: cache de 5-10 s por diretório; no timeout reusa o último v
   const before = calls;
   assert.equal(gitState('/w/nao-repo', { file, now: 41_000, run }), undefined);
   assert.equal(calls, before);
-});
-
-test('U21 ctxHistory: tmp por pid (sessões simultâneas não pisam no mesmo arquivo), sem sobra', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'calmhist-'));
-  after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  const file = path.join(dir, 'h.json');
-  const seen = [];
-  const rename = fs.renameSync;
-  fs.renameSync = (from, to) => { seen.push(from); return rename(from, to); };
-  try {
-    ctxHistory({ session_id: 'a', context_window: { used_percentage: 5 } }, file);
-  } finally {
-    fs.renameSync = rename;
-  }
-  assert.deepEqual(seen, [`${file}.${process.pid}.tmp`]);
-  assert.deepEqual(fs.readdirSync(dir), ['h.json']);
 });
 
 // Dono (2026-11-19, /status): ramo com ↑/↓ e +/− do diff na 1ª linha; uma 3ª linha com tokens, cache, turno e velocidade.
