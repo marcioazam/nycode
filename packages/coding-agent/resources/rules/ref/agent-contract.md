@@ -2,7 +2,7 @@
 
 Nycode port of `~/.claude/docs/agent-contract.md` (itself a port of
 `~/.codex/docs/agent-contract.md`). The single shared execution contract for the subagents in
-`packages/coding-agent/resources/agents/`, run by the pi-code `subagent` tool as child `nycode` processes. The parent's
+`packages/coding-agent/resources/agents/`, run by the `subagent` tool as child `nycode` processes. The parent's
 assignment comes first; this document adds no authority. Domain instructions live in the agent file and the
 procedures it cites. The global contract `packages/coding-agent/resources/instructions/contract.md` and `packages/coding-agent/resources/rules/*.md`
 (Nycode ports of Claude's global CLAUDE.md and rules) are already in your context, except in agents with `omitClaudeMd: true`

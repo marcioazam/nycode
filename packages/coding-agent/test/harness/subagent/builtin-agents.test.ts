@@ -40,9 +40,9 @@ describe("discoverAgents", () => {
 		}
 	});
 
-	// Paridade com o ny-pi (dono, 2026-11-24): o contrato que todo agente lê primeiro precisa existir fora deste
-	// repositório (o caminho relativo docs/harness/... dava ENOENT em outro cwd), e os writers mantêm as ferramentas do ny-pi.
-	it("every built-in agent reads files that exist from any cwd, and writers keep the ny-pi tools", () => {
+	// Paridade com o harness anterior (dono, 2026-11-24): o contrato que todo agente lê primeiro precisa existir fora deste
+	// repositório (o caminho relativo docs/harness/... dava ENOENT em outro cwd), e os writers mantêm as ferramentas do harness anterior.
+	it("every built-in agent reads files that exist from any cwd, and writers keep the previous harness tools", () => {
 		const previous = process.env[ENV_AGENT_DIR];
 		const previousHome = process.env.HOME;
 		process.env[ENV_AGENT_DIR] = join(tmp, "agent");
