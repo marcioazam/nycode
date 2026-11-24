@@ -29,13 +29,13 @@ e não usado, porque o caminho escolhido foi o core).
 
 | # | Item | Decisão | Δacerto (pp, IC90) | US$/acerto | PR | Registro |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | P-16: referência `nycode`, piloto S2, `baseline-main`, `bench-pr` no ruleset | pi 1.6.0 rejeitado (1,31×); `baseline-main` trocado para o braço `nycode` (428 linhas, 97,2%, US$ 12,59 na retomada final); poster e ruleset pendentes | n/a | 0,0303 (base `nycode`) | (esta PR) | [p16](p16-pi160-2026-11-24.md) |
+| 1 | P-16: referência `nycode`, piloto S2, `baseline-main`, `bench-pr` no ruleset | pi 1.6.0 rejeitado (1,31×); `baseline-main` trocado para o braço `nycode`; poster instalado (clone bare do nycode, overlay `nycode-2026-11-24-noperso`); prova em PR de docs (#422: não funcional, sem rodada); 1ª rodada real na #419: PASS (n = 42, IC90 [−8,5; +2,0] pp, custo 1,03×, US$ 3,60); `bench-pr` obrigatório no ruleset `main` | n/a | 0,0303 (base `nycode`) | #418, #419, esta PR | [p16](p16-pi160-2026-11-24.md) |
 | 2 | #90: escopo do núcleo | rejeitado (US$/acerto 1,05×; D-51 fica) | 0,0 (IC99 [−5,8; +2,2]) | 0,0399 (base 0,0378) | n/a | [90](90-escopo-nucleo-2026-11-24.md) |
 | 3 | V1 (#75): leituras agrupadas num turno | rejeitado (US$/acerto 1,01×; turnos não caíram) | −1,2 (IC90 [−5,0; +0,4]) | 0,0382 (base 0,0378) | n/a | [V1](v1-75-leituras-agrupadas-2026-11-24.md) |
 | 4 | #35: tarefas de comportamento | adotado como piso de regressão (tier `behavior`); caso "contrato curto" aprovado (D-66), em construção | n/a (satura: 15/15) | 0,045 | #414 | [35](35-behavior-2026-11-24.md) |
-| 5 | #151: velocidade | registrado sem mudança: Nycode 0,39–0,50× do tempo do Claude Code; K1 34/36 (US$/acerto 0,155 contra 0,219 do CC); guard nativo < 0,1 ms | n/a | 0,155 (K1) | #418 + esta PR | [151](151-velocidade-2026-11-24.md) |
-| 6 | #183: subagente barato de execução | rejeitado: sem efeito (0 delegações em 36); variante forçada é decisão do dono | 0,0 (IC90 [0; 0]) | 0,153 (base 0,155; 0,99×) | PR do #183 | [183](183-executor-barato-2026-11-24.md) |
-| 7 | #168: bootstrap e lições de falha | passa a regra por margem nula (0,998×), sem efeito mensurável; adoção no contrato é decisão do dono | 0,0 (12/12; IC90 [0; 0]) | 0,176 (base 0,176) | esta PR | [168](168-bootstrap-licoes-2026-11-24.md) |
+| 5 | #151: velocidade | registrado sem mudança: Nycode 0,39–0,50× do tempo do Claude Code; K1 34/36 (US$/acerto 0,155 contra 0,219 do CC); guard nativo < 0,1 ms | n/a | 0,155 (K1) | #418, #422 | [151](151-velocidade-2026-11-24.md) |
+| 6 | #183: subagente barato de execução | rejeitado: sem efeito (0 delegações em 36); variante forçada é decisão do dono | 0,0 (IC90 [0; 0]) | 0,153 (base 0,155; 0,99×) | #423 | [183](183-executor-barato-2026-11-24.md) |
+| 7 | #168: bootstrap e lições de falha | passa a regra por margem nula (0,998×), sem efeito mensurável; adoção no contrato é decisão do dono | 0,0 (12/12; IC90 [0; 0]) | 0,176 (base 0,176) | #422 | [168](168-bootstrap-licoes-2026-11-24.md) |
 | 8 | #169: poder contra o Claude Code | pendente | | | | |
 | 9 | B1: pesquisa e blueprint | pesquisa refeita e plano em 6 etapas aprovado (D-66: release-please, SSH, `AGENTS.md` sem `CLAUDE.md`) | n/a | n/a | (esta PR) | [B1](b1-blueprint-2026-11-24.md) |
 | 10 | #167: checkout `~/code/pi-harness` | obsoleto como fonte, mantido como instalação do `pi`; arquivado em `~/archive/` sem apagar | n/a | n/a | (esta PR) | [167](167-pi-harness-checkout-2026-11-24.md) |
@@ -44,7 +44,7 @@ e não usado, porque o caminho escolhido foi o core).
 
 - [x] 1. Passo 0: conferir o estado
 - [x] 2. Registrar a D-63 (benchmark liberado)
-- [ ] 3. Item 1: P-16
+- [x] 3. Item 1: P-16
 - [x] 4. Item 2: #90, escopo do núcleo
 - [x] 5. Item 3: V1 (#75), leituras agrupadas
 - [x] 6. Item 4: #35, tarefas de comportamento
