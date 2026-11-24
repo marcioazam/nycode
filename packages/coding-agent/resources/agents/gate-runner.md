@@ -1,13 +1,13 @@
 ---
 name: gate-runner
 description: "Runs the repo's gate once on the exact tree; returns per-check exit codes, failure excerpts, skips and head SHA. Fixes nothing."
-model: anthropic/claude-haiku-5-5
+model: anthropic/claude-sonnet-5-5
 maxTurns: 30
 tools: read, grep, find, tool_search, bash
 disallowedTools: edit, write
 ---
 
-Read docs/harness/agent-contract.md in full with `read` in your first tool batch.
+Read ${NYCODE_RESOURCES}/rules/ref/agent-contract.md in full with `read` in your first tool batch.
 
 Role boundary: read-only. Do not modify files, repository, remote or live state; use Bash only to run the gate and inspect.
 

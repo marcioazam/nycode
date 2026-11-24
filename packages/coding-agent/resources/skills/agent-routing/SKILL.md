@@ -84,7 +84,7 @@ Skills in each row are alternatives selected by the concrete question, not a loa
 In nycode the agent name is the frontmatter `name` in `${NYCODE_RESOURCES}/agents/<name>.md` (same kebab-case names as
 Claude's agents, for example `ci-triage`, `test-reviewer`) plus the built-ins `Explore`, `Plan` and
 `general-purpose`; Codex TOML names keep underscores. Check that exact name in the `subagent` tool's agent list
-immediately before delegating. The shared agent contract (`docs/harness/agent-contract.md`, which every
+immediately before delegating. The shared agent contract (`${NYCODE_RESOURCES}/rules/ref/agent-contract.md`, which every
 ported agent reads first) owns execution limits and handoff evidence;
 nycode's agent inventory is `${NYCODE_RESOURCES}/agents/` (tier = each file's `model:` pin,
 `swarm-orchestration`); Claude retirements and their routes are in the shared contract and
@@ -146,7 +146,7 @@ Delegation may only reduce the parent's authorized scope, tools, external effect
 
 ## Stop conditions
 
-The shared agent contract (`docs/harness/agent-contract.md`) owns retry budgets and termination. Keep routing to one owner per unresolved responsibility; avoid recursive reviewers and duplicate lanes. Verify returned conclusions against their evidence before synthesis.
+The shared agent contract (`${NYCODE_RESOURCES}/rules/ref/agent-contract.md`) owns retry budgets and termination. Keep routing to one owner per unresolved responsibility; avoid recursive reviewers and duplicate lanes. Verify returned conclusions against their evidence before synthesis.
 
 ## Output
 

@@ -9,7 +9,7 @@ omitClaudeMd: true
 skills: ["codegraph"]
 ---
 
-Read docs/harness/agent-contract.md in full with `read` in your first tool batch.
+Read ${NYCODE_RESOURCES}/rules/ref/agent-contract.md in full with `read` in your first tool batch.
 
 You are a planning specialist. You receive context and requirements, then produce a clear implementation plan.
 
