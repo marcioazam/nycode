@@ -593,6 +593,36 @@ def test_parse_events_per_run_records_pi_and_omp() -> None:
     assert ev["first_request_tokens"] == 3004 and ev["cost"] == pytest.approx(0.02)
 
 
+def test_parse_events_pi_adds_the_subagent_children_cost() -> None:
+    # #183: a delegated child bills apart; its cost reaches the transcript only in the subagent tool result.
+    paid = {
+        "input": 1,
+        "output": 1,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 2,
+        "cost": {"total": 0.05},
+    }
+    child = {
+        "input": 6,
+        "output": 452,
+        "cacheRead": 18999,
+        "cacheWrite": 23863,
+        "cost": 0.0034,
+        "turns": 2,
+    }
+    text = "\n".join([
+        _pi_msg("assistant", content=[], usage=paid),
+        _pi_msg("toolResult", toolName="subagent", details={"mode": "parallel", "results": [{"usage": child}, {"usage": child}]}),
+        _pi_msg("toolResult", toolName="bash", details={"results": [{"usage": child}]}),  # not a subagent: ignored
+        _pi_msg("toolResult", toolName="subagent", details={"results": [{"usage": None}, "x"]}),  # malformed: ignored
+        _pi_msg("assistant", content=[{"type": "text", "text": "done"}], usage=paid),
+    ])  # fmt: skip
+    ev = rn.parse_events(text, "pi")
+    assert ev["cost"] == pytest.approx(0.1 + 2 * 0.0034)
+    assert ev["subagents"] is True
+
+
 def test_parse_events_per_run_records_claude_code() -> None:
     def assistant(mid: str, i: int, o: int, r: int, w: int) -> str:
         u = {"input_tokens": i, "output_tokens": o, "cache_read_input_tokens": r, "cache_creation_input_tokens": w}  # fmt: skip
