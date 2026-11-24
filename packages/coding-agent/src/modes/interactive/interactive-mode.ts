@@ -1112,6 +1112,8 @@ export class InteractiveMode {
 
 		// An external SIGTSTP (kill -TSTP) restores the terminal like Ctrl+Z (#12272).
 		this.ui.setSuspendSignalHandler(() => this.handleCtrlZ());
+		// The footer extension sets the nycode footer on session_start; drawing the built-in one first flashed it.
+		this.footer.hidden = true;
 		// Start the UI before initializing extensions so session_start handlers can use interactive dialogs
 		this.ui.start();
 		this.isInitialized = true;
@@ -1226,8 +1228,9 @@ export class InteractiveMode {
 		try {
 			await this.rebindCurrentSession();
 		} finally {
-			// Without an extension header (NO_COLOR, ui-visual disabled) the built-in one shows from here on.
+			// Without an extension header or footer (NO_COLOR, extension disabled) the built-in ones show from here on.
 			if (this.builtInHeader instanceof BuiltInHeader) this.builtInHeader.hidden = false;
+			this.footer.hidden = false;
 		}
 
 		// Render initial messages AFTER showing loaded resources

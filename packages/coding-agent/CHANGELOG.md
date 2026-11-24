@@ -19,7 +19,7 @@
 - The agent directory's CLAUDE.md is not injected twice when nycode already loads it as the global context file
 - An expired or revoked OAuth login (`invalid_grant` on token refresh) is reported as an account problem with `/login` as the action, instead of "Algo falhou no nycode" with `/bug`
 - Fixed a crash on exit in fullscreen mode (`tui.setScrollToEndIndicator is not a function`) when the sticky-prompt extension restored the jump-to-end label after the renderer had left fullscreen mode
-- The upstream startup header (key hints and "Nycode can explain its own features") no longer flashes before the nycode header replaces it
+- The upstream startup header (key hints and "Nycode can explain its own features") and footer no longer flash before the nycode header and footer replace them
 
 ## [2.0.2] - 2026-11-23
 
