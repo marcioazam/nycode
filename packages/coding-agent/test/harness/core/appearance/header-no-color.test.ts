@@ -34,6 +34,15 @@ describe("BuiltInHeader under NO_COLOR", () => {
 		expect(h.render(40).join("\n")).toContain("full");
 	});
 
+	it("draws nothing while hidden, so a header set at startup replaces it unseen", () => {
+		delete process.env.NO_COLOR;
+		const h = header();
+		h.hidden = true;
+		expect(h.render(40)).toEqual([]);
+		h.hidden = false;
+		expect(h.render(40).join("\n")).toContain("short");
+	});
+
 	it("an empty NO_COLOR counts as unset", () => {
 		process.env.NO_COLOR = "";
 		expect(header().render(40).join("\n")).toContain("\x1b[38;2;228;138;122m");

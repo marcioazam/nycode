@@ -280,9 +280,12 @@ function noColorRequested(): boolean {
  */
 export class BuiltInHeader extends ExpandableText {
 	onLogoClick: ((column: number, row: number) => void) | undefined;
+	/** True until the startup extensions are bound: a header an extension sets then replaces this one unseen. */
+	hidden = false;
 
 	// nycode: K10 NO_COLOR: the logo's brand colors are fixed, outside the theme, so strip them here
 	override render(width: number): readonly string[] {
+		if (this.hidden) return [];
 		const lines = super.render(width);
 		return noColorRequested() ? lines.map(stripTerminalSequences) : lines;
 	}
@@ -1109,6 +1112,8 @@ export class InteractiveMode {
 
 		// An external SIGTSTP (kill -TSTP) restores the terminal like Ctrl+Z (#12272).
 		this.ui.setSuspendSignalHandler(() => this.handleCtrlZ());
+		// The footer extension sets the nycode footer on session_start; drawing the built-in one first flashed it.
+		this.footer.hidden = true;
 		// Start the UI before initializing extensions so session_start handlers can use interactive dialogs
 		this.ui.start();
 		this.isInitialized = true;
@@ -1189,6 +1194,8 @@ export class InteractiveMode {
 			// nycode: K10 NO_COLOR: the 3D logo easter egg is colored, so it is not wired
 			if (showLogo && !noColorRequested())
 				header.onLogoClick = (column, row) => playNycodeLogo3d(this.renderer, column, row);
+			// The ui-visual extension sets the nycode header on session_start; drawing this one first flashed it.
+			header.hidden = true;
 			this.builtInHeader = header;
 
 			// Setup UI layout
@@ -1218,7 +1225,13 @@ export class InteractiveMode {
 		this.ui.requestRender();
 
 		// Initialize extensions first so resources are shown before messages
-		await this.rebindCurrentSession();
+		try {
+			await this.rebindCurrentSession();
+		} finally {
+			// Without an extension header or footer (NO_COLOR, extension disabled) the built-in ones show from here on.
+			if (this.builtInHeader instanceof BuiltInHeader) this.builtInHeader.hidden = false;
+			this.footer.hidden = false;
+		}
 
 		// Render initial messages AFTER showing loaded resources
 		this.renderInitialMessages();

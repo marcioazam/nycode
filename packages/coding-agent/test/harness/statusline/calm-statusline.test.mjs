@@ -168,6 +168,8 @@ test('P17 ctxHistory: por sessão, só quando muda, 8 valores, arquivo limitado 
 test('P17 sparkline, rótulo e linha do contexto; ASCII fica só com o número', () => {
   assert.equal(sparkline([0, 12.5, 50, 99, 100], {}), '▁▁▄██'); // 8 faixas de 12,5%
   assert.equal(sparkline([40], {}), '', 'um valor só não é histórico');
+  assert.equal(sparkline([5, 9, 15, 25], {}), '', 'até 25% seria só ▁▂ e parece uma barra quebrada');
+  assert.equal(sparkline([5, 9, 15, 26], {}), '▁▁▂▃');
   assert.equal(sparkline([10, 90], { NYCODE_ASCII_ICONS: '1' }), '');
   assert.deepEqual([69, 70, 84, 85].map(ctxLabel), ['', 'acima de 70%', 'acima de 70%', 'acima de 85%']);
   const cw = { context_window_size: 1e6, used_percentage: 72, total_input_tokens: 72e4, current_usage: null };

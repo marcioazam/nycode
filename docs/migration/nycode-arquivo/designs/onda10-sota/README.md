@@ -69,7 +69,7 @@ Rec.: ✔ recomendo · ◐ opcional · ✕ não agora.
 |---|---|---|---|---|---|---|
 | P15 | Aviso com entrada, contagem e saída | aparece e some seco | entra em 160 ms, linha de contagem regressiva, sai em 100 ms | ideia (duração dentro de NN/g 100–500 ms) | M | ◐ |
 | P16 | Véu atrás de overlays | transcript igual atrás do overlay | transcript misturado 40% com o fundo enquanto o overlay está aberto | ideia (composição em camadas existe no Lip Gloss v2) | G | ◐ |
-| P17 | Sparkline de contexto no HUD | número de contexto | histórico por turno em oitavos de bloco e limiar 70/85% (os do HUD atual, `calm-statusline.mjs:3-4`) com rótulo, não só cor | fonte (WCAG 1.4.1; blocos Unicode) | M | ◐ |
+| P17 | Sparkline de contexto no HUD | número de contexto | histórico por turno em oitavos de bloco (oculto enquanto todo o histórico está em até 25%, dono 2026-11-23) e limiar 70/85% (os do HUD atual, `calm-statusline.mjs:3-4`) com rótulo, não só cor | fonte (WCAG 1.4.1; blocos Unicode) | M | ◐ |
 | P18 | Placeholder do prompt | editor vazio sem texto (grep em `ui/editor.ts` e no editor do pi-tui) | dim `Pergunte, ou / comandos · @ arquivos · ! shell`, some na primeira tecla | código | P | ◐ |
 | P19 | Abertura do cabeçalho | logo 2×2 aparece seco | revela em 320 ms, uma vez por sessão | fonte (Codex anima a tela de boas-vindas) | P | ◐ |
 | P20 | Assinatura no fim do plano | `concluído` igual a qualquer tool | uma varredura de gradiente de 600 ms no título, só em plano ou goal concluído | ideia | P | ◐ |

@@ -60,6 +60,8 @@ interface SessionStats {
  * Computes token/context stats from session, gets git branch and extension statuses from provider.
  */
 export class FooterComponent implements Component {
+	/** True until the startup extensions are bound: a footer an extension sets then replaces this one unseen. */
+	hidden = false;
 	private autoCompactEnabled = true;
 	private session: AgentSession;
 	private footerData: ReadonlyFooterDataProvider;
@@ -155,6 +157,7 @@ export class FooterComponent implements Component {
 	}
 
 	render(width: number): string[] {
+		if (this.hidden) return [];
 		const state = this.session.state;
 		const { usageTotals, latestCacheHitRate, contextUsage } = this.getSessionStats();
 		const contextWindow = contextUsage?.contextWindow ?? state.model?.contextWindow ?? 0;

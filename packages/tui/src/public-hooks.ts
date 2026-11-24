@@ -38,7 +38,10 @@ export function replaceScrollToEndIndicator(
 	if (!(tui instanceof TuiAltScreen)) return () => {};
 	const original = tui.getScrollToEndIndicator();
 	tui.setScrollToEndIndicator(make(original));
-	return () => tui.setScrollToEndIndicator(original);
+	// `tui` may be a reference whose renderer left fullscreen mode since (shutdown, mode switch): nothing to restore then.
+	return () => {
+		if (tui instanceof TuiAltScreen) tui.setScrollToEndIndicator(original);
+	};
 }
 
 /** True while a mouse press may still become a text selection (fullscreen mode only). */

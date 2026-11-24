@@ -110,6 +110,26 @@ describe("public hooks (seam K10)", () => {
 		}
 	});
 
+	it("restoring the jump-to-end label after the renderer left fullscreen mode does not throw", () => {
+		// InteractiveMode hands extensions a stable reference whose target changes when the renderer is replaced.
+		const alt = new TuiAltScreen(new VirtualTerminal(20, 5), false, undefined, {
+			scrollToEndIndicator: () => "ORIGINAL",
+		});
+		const main = new TuiMainScreen(new VirtualTerminal(20, 5));
+		let current: TuiAltScreen | TuiMainScreen = alt;
+		const reference = new Proxy({} as TuiAltScreen, {
+			get: (_target, property) => {
+				const value = Reflect.get(current, property, current);
+				return typeof value === "function" ? value.bind(current) : value;
+			},
+			getPrototypeOf: () => Reflect.getPrototypeOf(current),
+		});
+		const restore = replaceScrollToEndIndicator(reference, () => () => "NOVO");
+		assert.strictEqual(alt.getScrollToEndIndicator()?.(), "NOVO");
+		current = main;
+		assert.doesNotThrow(restore);
+	});
+
 	it("replacing the jump-to-end label is a no-op outside fullscreen mode", () => {
 		const tui = new TuiMainScreen(new VirtualTerminal(20, 5));
 		let called = false;

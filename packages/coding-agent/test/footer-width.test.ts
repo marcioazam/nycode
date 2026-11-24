@@ -122,6 +122,14 @@ describe("FooterComponent width handling", () => {
 		initTheme(undefined, false);
 	});
 
+	it("draws nothing while hidden, so a footer set at startup replaces it unseen", () => {
+		const footer = new FooterComponent(createSession({ sessionName: "s" }), createFooterData(1));
+		footer.hidden = true;
+		expect(footer.render(80)).toEqual([]);
+		footer.hidden = false;
+		expect(footer.render(80).length).toBeGreaterThan(0);
+	});
+
 	it("keeps all lines within width for wide session names", () => {
 		const width = 93;
 		const session = createSession({ sessionName: "한글".repeat(30) });
