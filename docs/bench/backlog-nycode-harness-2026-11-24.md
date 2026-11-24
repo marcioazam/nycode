@@ -33,9 +33,9 @@ e não usado, porque o caminho escolhido foi o core).
 | 2 | #90: escopo do núcleo | rejeitado (US$/acerto 1,05×; D-51 fica) | 0,0 (IC99 [−5,8; +2,2]) | 0,0399 (base 0,0378) | n/a | [90](90-escopo-nucleo-2026-11-24.md) |
 | 3 | V1 (#75): leituras agrupadas num turno | rejeitado (US$/acerto 1,01×; turnos não caíram) | −1,2 (IC90 [−5,0; +0,4]) | 0,0382 (base 0,0378) | n/a | [V1](v1-75-leituras-agrupadas-2026-11-24.md) |
 | 4 | #35: tarefas de comportamento | adotado como piso de regressão (tier `behavior`); caso "contrato curto" aprovado (D-66), em construção | n/a (satura: 15/15) | 0,045 | #414 | [35](35-behavior-2026-11-24.md) |
-| 5 | #151: velocidade | registrado sem mudança (quente/frio); K1 e K2 pendentes | n/a | n/a (US$ 0) | | [151](151-velocidade-2026-11-24.md) |
-| 6 | #183: subagente barato de execução | pendente | | | | |
-| 7 | #168: bootstrap e lições de falha | pendente | | | | |
+| 5 | #151: velocidade | registrado sem mudança: Nycode 0,39–0,50× do tempo do Claude Code; K1 34/36 (US$/acerto 0,155 contra 0,219 do CC); guard nativo < 0,1 ms | n/a | 0,155 (K1) | #418 + esta PR | [151](151-velocidade-2026-11-24.md) |
+| 6 | #183: subagente barato de execução | rejeitado: sem efeito (0 delegações em 36); variante forçada é decisão do dono | 0,0 (IC90 [0; 0]) | 0,153 (base 0,155; 0,99×) | PR do #183 | [183](183-executor-barato-2026-11-24.md) |
+| 7 | #168: bootstrap e lições de falha | passa a regra por margem nula (0,998×), sem efeito mensurável; adoção no contrato é decisão do dono | 0,0 (12/12; IC90 [0; 0]) | 0,176 (base 0,176) | esta PR | [168](168-bootstrap-licoes-2026-11-24.md) |
 | 8 | #169: poder contra o Claude Code | pendente | | | | |
 | 9 | B1: pesquisa e blueprint | pesquisa refeita e plano em 6 etapas aprovado (D-66: release-please, SSH, `AGENTS.md` sem `CLAUDE.md`) | n/a | n/a | (esta PR) | [B1](b1-blueprint-2026-11-24.md) |
 | 10 | #167: checkout `~/code/pi-harness` | obsoleto como fonte, mantido como instalação do `pi`; arquivado em `~/archive/` sem apagar | n/a | n/a | (esta PR) | [167](167-pi-harness-checkout-2026-11-24.md) |
@@ -48,9 +48,9 @@ e não usado, porque o caminho escolhido foi o core).
 - [x] 4. Item 2: #90, escopo do núcleo
 - [x] 5. Item 3: V1 (#75), leituras agrupadas
 - [x] 6. Item 4: #35, tarefas de comportamento
-- [ ] 7. Item 5: #151, velocidade
-- [ ] 8. Item 6: #183, subagente barato
-- [ ] 9. Item 7: #168, bootstrap e lições
+- [x] 7. Item 5: #151, velocidade
+- [x] 8. Item 6: #183, subagente barato
+- [x] 9. Item 7: #168, bootstrap e lições
 - [ ] 10. Item 8: #169, poder contra o CC
 - [x] 11. Item 9: B1, pesquisa e blueprint
 - [x] 12. Item 10: #167, pi-harness
