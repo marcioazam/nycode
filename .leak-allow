@@ -7,7 +7,7 @@ README.md:securityscorecards\.dev/projects/github\.com/
 .github/CODEOWNERS:^\* @
 .github/ISSUE_TEMPLATE/config.yml:github\.com/
 # Public GitHub handle (repository slugs, forks, CODEOWNERS) and fake home fixtures in files touched by the
-# 2026-11-24 rename (Nycode without nycode-harness/ny-pi); verified benign, not personal data.
+# 2026-11-24 rename; verified benign, not personal data.
 NOTICE:marcioazam
 README.md:marcioazam
 bench/suites/README.md:marcioazam
