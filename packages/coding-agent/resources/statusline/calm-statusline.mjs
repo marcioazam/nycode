@@ -178,7 +178,10 @@ export function ctxHistory(p, file) {
 export function sparkline(hist, env = process.env) {
   const ascii = ['1', 'true', 'yes', 'on'].includes(String(env.NYCODE_ASCII_ICONS ?? '').toLowerCase()) || env.TERM === 'dumb' || env.TERM === 'linux';
   if (ascii || hist.length < 2) return '';
-  return hist.map((v) => SPARK[Math.min(7, Math.max(0, Math.floor((v * 8) / 100.0001)))]).join('');
+  const faixas = hist.map((v) => Math.min(7, Math.max(0, Math.floor((v * 8) / 100.0001))));
+  // Só blocos rasos (▁▂, histórico até 25%) parecem uma barra quebrada (dono, 2026-11-23): fica só o número.
+  if (Math.max(...faixas) < 2) return '';
+  return faixas.map((i) => SPARK[i]).join('');
 }
 /** Limiar escrito ao lado da cor, para não depender só dela (WCAG 1.4.1). */
 export const ctxLabel = (pct) => (pct >= LIMITS.ctx[1] ? `acima de ${LIMITS.ctx[1]}%` : pct >= LIMITS.ctx[0] ? `acima de ${LIMITS.ctx[0]}%` : '');
