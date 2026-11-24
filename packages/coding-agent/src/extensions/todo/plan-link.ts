@@ -2,7 +2,7 @@
  * Espelha as etapas do plano em execução na lista do `todo` (contrato em `_shared/events/plan-steps.ts`).
  * Função pura: recebe a lista e devolve a nova, sem tocar na entrada.
  */
-import type { PlanStepsEvent } from "../_shared/events/plan-steps.ts";
+import type { PlanStepsEvent } from "../_shared/events/plan-mode-state.ts";
 
 export type LinkStatus = "pending" | "in_progress" | "completed";
 

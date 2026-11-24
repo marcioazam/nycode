@@ -1,7 +1,7 @@
 /** Publica as etapas do plano para a extensão todo (contrato em `_shared/events/plan-steps.ts`), sem repetir estado igual. */
-import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
-import { PLAN_STEPS_CHANNEL, type PlanStepsEvent } from "../_shared/events/plan-steps.ts";
-import type { TodoItem } from "./utils.ts";
+import type { ExtensionAPI, ExtensionContext } from "../../../core/extensions/types.ts";
+import { PLAN_STEPS_CHANNEL, type PlanStepsEvent } from "../../_shared/events/plan-mode-state.ts";
+import type { TodoItem } from "../utils.ts";
 
 const sessionOf = (ctx: ExtensionContext | undefined): string | undefined => {
 	try {

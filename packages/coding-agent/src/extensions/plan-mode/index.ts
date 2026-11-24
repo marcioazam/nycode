@@ -22,8 +22,7 @@ import { Type } from "typebox";
 import { getAgentDir } from "../../config.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import type { SessionEntry } from "../../core/session-manager.ts";
-import { PLAN_MODE_CHANNEL } from "../_shared/events/plan-mode-state.ts";
-import { TODO_STEP_DONE_CHANNEL } from "../_shared/events/plan-steps.ts";
+import { PLAN_MODE_CHANNEL, TODO_STEP_DONE_CHANNEL } from "../_shared/events/plan-mode-state.ts";
 import type { UiTheme } from "../subagent/fleet-ui/panel.ts";
 import { hudTheme } from "../subagent/fleet-ui/style/palette.ts";
 import { openPlanFile, planMarkdown } from "./manage.ts";
@@ -44,7 +43,7 @@ import { PlanModal, planTitle } from "./modal.ts";
 import { donePaint, fmtSent } from "./render/done-paint.ts";
 import { renderDoneTags } from "./render/done-view.ts";
 import { PlanSection, setPlanPath } from "./section.ts";
-import { createStepPublisher } from "./todo-sync.ts";
+import { createStepPublisher } from "./sync/todo-sync.ts";
 import {
 	isPlanModeToolAllowed,
 	isSafeCommand,

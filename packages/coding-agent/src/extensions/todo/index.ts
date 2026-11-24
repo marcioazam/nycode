@@ -28,7 +28,7 @@ import {
 	PLAN_STEPS_CHANNEL,
 	type PlanStepsEvent,
 	TODO_STEP_DONE_CHANNEL,
-} from "../_shared/events/plan-steps.ts";
+} from "../_shared/events/plan-mode-state.ts";
 import { stringEnum } from "../_shared/model/string-enum.ts";
 import { reconcilePlan } from "./plan-link.ts";
 import { registerStaleReminder } from "./stale-reminder.ts";
