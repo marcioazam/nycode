@@ -206,7 +206,10 @@ export async function boot(command: string | undefined, records: any[]) {
 		on: (n: string, f: any) => handlers.set(n, [...(handlers.get(n) ?? []), f]),
 		events: { on: () => () => {} },
 		registerCommand() {},
-		getSettings: () => ({}),
+		// "built-in" is the segment with no script: nycode's own empty statusLine command turns the default launcher off.
+		// With none, the default launcher ran the real calm script, and the case only held while the first run sat behind
+		// the 300 ms debounce; the first run is immediate since 2026-11-24 (no startup layout jump), so it is off explicitly.
+		getSettings: () => (command ? {} : { statusLine: { type: "command", command: "" } }),
 		registerShortcut() {},
 	};
 	const source = { list: () => records, onChange: () => () => {}, hasForeground: () => false };

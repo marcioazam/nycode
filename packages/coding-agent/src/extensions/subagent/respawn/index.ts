@@ -12,9 +12,9 @@ import * as path from "node:path";
 export const MAX_RESPAWNS = 2;
 /** Espera antes do 1º e do 2º respawn; NYCODE_SUBAGENT_RESPAWN_DELAY_MS substitui ambas (testes). */
 const DELAYS_MS = [20_000, 60_000];
-/** Erros do provedor que reiniciar não resolve (cota, cobrança, credencial, requisição inválida). */
+/** Erros que reiniciar não resolve (cota, cobrança, credencial, requisição inválida, modelo inexistente). */
 const NON_RETRYABLE =
-	/insufficient_quota|billing|quota exceeded|out of budget|usage limit|authentication_error|invalid_api_key|permission_error|invalid_request_error/i;
+	/insufficient_quota|billing|quota exceeded|out of budget|usage limit|authentication_error|invalid_api_key|permission_error|invalid_request_error|no api key found|model "[^"]*" not found/i;
 
 type Env = Record<string, string | undefined>;
 interface Msg {
@@ -56,7 +56,8 @@ export function shouldRespawn(i: RespawnInput): string | undefined {
 		// Erro do último turno só vale quando ele é erro: um turno ok seguido de exit != 0 usa o stderr.
 		const detail =
 			last?.stopReason === "error" && last.errorMessage ? last.errorMessage : (i.stderr ?? "").trim().slice(-300);
-		if (NON_RETRYABLE.test(`${last?.errorMessage ?? ""}\n${detail}`)) return undefined;
+		// The whole stderr: the cause opens it, and a long /login help after it pushed it out of the 300-character tail.
+		if (NON_RETRYABLE.test(`${last?.errorMessage ?? ""}\n${detail}\n${i.stderr ?? ""}`)) return undefined;
 		if (i.claimBudget?.()) return undefined;
 		return oneLine(detail ? `${reason}: ${detail}` : reason, 200);
 	} catch {

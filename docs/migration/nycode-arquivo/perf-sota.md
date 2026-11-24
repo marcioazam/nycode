@@ -275,3 +275,24 @@ Ativação: os dois patches foram ligados em `~/.pi/agent/claude-home/patches/pi
 
 1ª passada: `PLAN_REVIEW: gaps`, sem defeito de código. AC1–AC8, AC10–AC14 e AC16 atendidos; AC9 não atingido (declarado); AC15 parcial (falta o rótulo `parcial` no painel `fleet-ui/panel.ts`, declarado em D10). Nenhuma asserção afrouxada; gate vermelho só cita arquivo do plano nas 2 linhas de `check-refs` já declaradas. Lacunas e tratamento: (1) registro dizia `diagnosticsSettleMs` pendente → marcado superado; (2) este registro citava o caminho do sandbox em forma de referência e reabria `check-refs` → reescrito; (3) etapa 8 aberta → fechada aqui, com a captura no IA-Brain; (4) edição limpa→limpa do TypeScript → pendência do dono, mantida; (5) e (6) alcance de "edit e diff intocados" e do AC11 → limite registrado na decisão T6. Notas do revisor mantidas como pendência: `biome` não analisou o código (config depreciada em `biome.json:6`, anterior ao plano); o aborto do LSP vira um aviso `aborted` por sessão; o teto do LSP conta a partir de `wait()`.
 
+## Repouso e abertura (2026-11-24)
+
+Medido em pty 140×40, diretório vazio, build de `main` (`863b3c763`) contra o build com esta mudança; sondas em `/tmp` (não versionadas): escrita no terminal e CPU do processo em 12 s de repouso depois de 12 s de abertura.
+
+| Medida | Antes | Depois |
+| --- | --- | --- |
+| Escritas no terminal em repouso | 1 por segundo (29 bytes, só cursor) | 0 |
+| CPU em repouso (5 leituras de 6–12 s) | 0,3–1,0% | 0,1–2,0%, mediana 0,7%: sem mudança mensurável |
+| Quadros na abertura | 119–128, 29 sem nenhuma linha mudada | 89–92, 0 vazios |
+| Editor do upstream na abertura | quadros 1–9 | nenhum |
+
+Causas e correções:
+
+- `fleet/source.ts` avisa os assinantes a cada 1 s mesmo sem mudança (poll de reserva do `fs.watch`), e o painel da frota pedia um quadro a cada aviso. Agora `fleet-ui/index.ts` só pede quadro se há linha na frota ou se havia na última vez (um quadro para limpar). Contrato antigo do teste `registerFleetUi: o tick de 1 s…`: "a mudança do source repinta" mesmo com a frota vazia; novo: frota vazia e nada desenhado não repinta. O AC9 acima (CPU em repouso ≤ 1%) segue aberto: a escrita sumiu, a CPU não mudou de forma mensurável.
+- `TuiAltScreen.doRender` escrevia o bloco de saída sincronizada e a posição do cursor mesmo sem linha mudada. Agora um quadro sem linha mudada e com o cursor igual ao do quadro anterior não escreve nada (a escrita também reiniciava o piscar do cursor no terminal).
+- O editor embutido era desenhado antes de `extensions/ui/editor.ts` instalar o do nycode: `CustomEditor.hidden` até as extensões da abertura ligarem, como o cabeçalho e o rodapé. A entrada digitada nesse intervalo continua indo para ele.
+
+Sem mudança, por já estarem dentro do alvo: eco de tecla p50 1,3 ms / p95 2,3 ms; redimensionar ≤ 10 ms até o primeiro quadro; `!sleep 5` redesenha 1 linha por quadro a ~12 quadros/s (13 KB/s, 5% de CPU).
+
+Não medido: transmissão de resposta do modelo e animações de trabalho com subagentes (exigem chamada paga ao provedor); terminais reais (kitty, ghostty, tmux), só pty.
+

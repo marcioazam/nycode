@@ -29,10 +29,16 @@ export function getBuiltinResourcesRoot(): string {
 /**
  * Exports the resources root as NYCODE_RESOURCES so the shell commands the embedded texts show
  * (`python3 ${NYCODE_RESOURCES}/skills/x/y.py`) expand. A user value wins and nothing is set without `resources/`.
+ * NYCODE_RESOURCES_AUTO marks a value nycode exported: a nycode started inside another one (a `!` shell, a different
+ * version) replaces it with its own root instead of running the parent's scripts.
  */
 export function exportResourcesRoot(): void {
 	const root = getBuiltinResourcesRoot();
-	if (process.env.NYCODE_RESOURCES === undefined && existsSync(root)) process.env.NYCODE_RESOURCES = root;
+	const inherited = process.env.NYCODE_RESOURCES === undefined || process.env.NYCODE_RESOURCES_AUTO === "1";
+	if (inherited && existsSync(root)) {
+		process.env.NYCODE_RESOURCES = root;
+		process.env.NYCODE_RESOURCES_AUTO = "1";
+	}
 }
 
 /** The built-in directory of `kind`, or undefined when it does not exist. */

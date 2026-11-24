@@ -110,6 +110,7 @@ export function registerFleetUi(
 		let tui: { requestRender(): void } | undefined;
 		let lastView: PanelView | undefined;
 		let ticks = 0;
+		let shown = false;
 		const render = (): void => tui?.requestRender();
 		ctx.ui.setWidget(
 			WIDGET_KEY,
@@ -191,7 +192,13 @@ export function registerFleetUi(
 			if (!source || source === subscribedTo) return;
 			offChange?.();
 			subscribedTo = source;
-			offChange = source.onChange(render);
+			// The source also fires once a second with nothing changed (its fallback poll): an empty fleet with
+			// nothing drawn asks for no frame, or every idle session would render once a second forever.
+			offChange = source.onChange(() => {
+				const has = controller.rows().length > 0;
+				if (has || shown) render();
+				shown = has;
+			});
 		};
 		subscribe();
 		const timer = setInterval(() => {

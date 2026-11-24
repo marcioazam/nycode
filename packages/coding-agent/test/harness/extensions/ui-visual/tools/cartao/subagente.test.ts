@@ -238,6 +238,14 @@ test("tempo: rodando corre do início da chamada; assentado usa o intervalo das 
 		];
 		assert.match(plain(card({}, [feito({ messages: msgs })], 0)[0]!), /00:14/);
 		assert.doesNotMatch(plain(card({}, [feito()], 0)[0]!), /\d\d:\d\d/, "sem dado de tempo, sem mm:ss");
+		// Um agente: vale a duração da chamada. O filho emite system/user/assistant com o timestamp do início de cada
+		// mensagem, então um filho de um turno que levou 2,8 s media 21 ms e o card mostrava 00:00 (medido 2026-11-24).
+		const umTurno = [
+			{ role: "system", timestamp: 1000 },
+			{ role: "user", timestamp: 1000 },
+			{ role: "assistant", timestamp: 1021, content: [{ type: "text", text: "x" }] },
+		];
+		assert.match(plain(card({}, [feito({ messages: umTurno })], 0, { durationMs: 2800 })[0]!), /00:02/);
 	}));
 
 test("rodando: sem spinner braille; a palavra `executando` respira entre dim e syntaxType (ciclo de 1,6 s) e fica fixa sem movimento", () => {

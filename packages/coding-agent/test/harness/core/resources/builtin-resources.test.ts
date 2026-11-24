@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
 	builtinResourceDir,
+	exportResourcesRoot,
 	getBuiltinResourcesRoot,
 	RESOURCES_MARKER,
 	resolveResourcesMarker,
@@ -118,5 +119,40 @@ describe("shipped skills restored to the model context (D-51)", () => {
 		const hidden = skills.find((s) => s.name === "plan-workflow");
 		expect(hidden?.disableModelInvocation).toBe(true);
 		expect(formatSkillsForPrompt(skills)).not.toContain("<name>plan-workflow</name>");
+	});
+});
+
+// Measured 2026-11-24: a nycode started inside another nycode (a `!` shell, bash, a probe) inherited the parent's
+// NYCODE_RESOURCES and ran the parent version's status-line and hook scripts. Only a value the user set wins.
+describe("exportResourcesRoot", () => {
+	const keys = ["NYCODE_RESOURCES", "NYCODE_RESOURCES_AUTO"] as const;
+	let saved: Record<string, string | undefined>;
+	beforeEach(() => {
+		saved = Object.fromEntries(keys.map((k) => [k, process.env[k]]));
+	});
+	afterEach(() => {
+		for (const k of keys) {
+			if (saved[k] === undefined) delete process.env[k];
+			else process.env[k] = saved[k];
+		}
+	});
+
+	it("replaces a value another nycode exported, keeps a value the user set", () => {
+		fx.write("instructions/contract.md", "x");
+		const own = getBuiltinResourcesRoot();
+		delete process.env.NYCODE_RESOURCES;
+		delete process.env.NYCODE_RESOURCES_AUTO;
+		exportResourcesRoot();
+		expect(process.env.NYCODE_RESOURCES).toBe(own);
+		expect(process.env.NYCODE_RESOURCES_AUTO).toBe("1");
+
+		process.env.NYCODE_RESOURCES = "/other/nycode/resources";
+		exportResourcesRoot();
+		expect(process.env.NYCODE_RESOURCES).toBe(own);
+
+		process.env.NYCODE_RESOURCES = "/user/choice";
+		delete process.env.NYCODE_RESOURCES_AUTO;
+		exportResourcesRoot();
+		expect(process.env.NYCODE_RESOURCES).toBe("/user/choice");
 	});
 });

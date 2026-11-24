@@ -65,6 +65,42 @@ class RecordingTerminal extends VirtualTerminal {
 }
 
 describe("TuiAltScreen", () => {
+	it("writes nothing for a frame that changes neither a row nor the cursor", async () => {
+		const terminal = new RecordingTerminal(20, 4);
+		const tui = new TuiAltScreen(terminal, undefined, undefined, { copyOnSelect: false });
+		let text = "idle";
+		let caret = "";
+		tui.addChild({ render: () => [`${text}${caret}`], invalidate() {} });
+		tui.start();
+		await terminal.waitForRender();
+		const writesSince = (from: number) => terminal.events.slice(from).filter((event) => event.type === "write");
+
+		// A poll that asks for a frame every second must not wake the terminal (it also restarts the cursor blink).
+		let mark = terminal.events.length;
+		tui.requestRender();
+		await terminal.waitForRender();
+		assert.deepStrictEqual(writesSince(mark), []);
+
+		mark = terminal.events.length;
+		text = "busy";
+		tui.requestRender();
+		await terminal.waitForRender();
+		assert.strictEqual(writesSince(mark).length, 1, "a changed row is still drawn");
+
+		// Same rows, the hardware cursor appears: that alone is a frame.
+		mark = terminal.events.length;
+		caret = CURSOR_MARKER;
+		tui.requestRender();
+		await terminal.waitForRender();
+		assert.strictEqual(writesSince(mark).length, 1, "a cursor change is still written");
+
+		mark = terminal.events.length;
+		tui.requestRender(true);
+		await terminal.waitForRender();
+		assert.strictEqual(writesSince(mark).length, 1, "a forced render always redraws");
+		tui.stop();
+	});
+
 	it("does not leak cursor markers while selecting after the caret", async () => {
 		const terminal = new RecordingTerminal(20, 4);
 		const tui = new TuiAltScreen(terminal, undefined, undefined, { copyOnSelect: false });

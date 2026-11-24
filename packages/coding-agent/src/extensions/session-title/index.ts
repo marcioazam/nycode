@@ -68,11 +68,25 @@ function trimTrailing(value: string, chars: string): string {
 	return value.slice(0, end);
 }
 
-/** Trim the model's reply to a bare title: collapse whitespace, then peel wrapping quotes
- * and trailing punctuation until stable, so `"Fix The Parser."` and `Fix The Parser.` both
- * land on the plain phrase. */
+/** Longest title kept: a provider may ignore TITLE_MAX_TOKENS, and the name fills the editor border and terminal title. */
+export const TITLE_MAX_CHARS = 80;
+
+/** Trim the model's reply to a bare title: its first non-blank line without markdown heading
+ * marks, whitespace collapsed, wrapping quotes and trailing punctuation peeled until stable (so
+ * `"Fix The Parser."` and `Fix The Parser.` both land on the plain phrase), then capped at
+ * TITLE_MAX_CHARS on a word boundary. */
 export function cleanTitle(raw: string): string {
-	let title = raw.trim().replace(/\s+/g, " ");
+	const line =
+		raw
+			.split("\n")
+			.map((l) => l.trim().replace(/^#+\s*/, ""))
+			.find(Boolean) ?? "";
+	let title = line.replace(/\s+/g, " ");
+	if (title.length > TITLE_MAX_CHARS) {
+		const cut = title.slice(0, TITLE_MAX_CHARS - 1);
+		const space = cut.lastIndexOf(" ");
+		title = `${(space > 0 ? cut.slice(0, space) : cut).trimEnd()}…`;
+	}
 	let prev: string;
 	do {
 		prev = title;

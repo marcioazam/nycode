@@ -12,6 +12,7 @@ let fx: ResourcesFixture;
 beforeEach(() => {
 	fx = createResourcesFixture();
 	delete process.env.NYCODE_RESOURCES;
+	delete process.env.NYCODE_RESOURCES_AUTO;
 });
 afterEach(() => {
 	setBuiltinInstructions(false);

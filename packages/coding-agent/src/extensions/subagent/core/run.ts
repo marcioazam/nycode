@@ -379,7 +379,9 @@ async function runSingleAgentInner(options: RunAgentOptions): Promise<SingleResu
 		if (onUpdate) {
 			onUpdate({
 				content: [{ type: "text", text: getFinalOutput(currentResult.messages) || "(running...)" }],
-				details: makeDetails([currentResult]),
+				// -1 = still running (the parallel placeholder's sentinel): mid-run currentResult.exitCode is 0,
+				// which every mode's card and renderer read as "done".
+				details: makeDetails([{ ...currentResult, exitCode: -1 }]),
 			});
 		}
 	};
@@ -549,7 +551,7 @@ async function runSingleAgentInner(options: RunAgentOptions): Promise<SingleResu
 							text: `(respawning after failure, attempt ${respawns.length + 1}/2 in ${Math.round(waitMs / 1000)}s: ${reason})`,
 						},
 					],
-					details: makeDetails([currentResult]),
+					details: makeDetails([{ ...currentResult, exitCode: -1 }]),
 				});
 			if (await sleepAbortable(waitMs, signal)) {
 				wasAborted = true;

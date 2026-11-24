@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { visibleWidth } from "@nycode/tui";
 import { afterEach, beforeEach, test, vi } from "vitest";
 import { VERSION } from "../../../../../src/config.ts";
+import { marcarStatusPendente } from "../../../../../src/extensions/status-line/rows.ts";
 import * as __m1 from "../../../../../src/extensions/ui-visual/header.ts";
 import * as __m3 from "../../../../../src/extensions/ui-visual/header.ts";
 import * as __m4 from "../../../../../src/extensions/ui-visual/header.ts";
@@ -220,6 +221,47 @@ test("abertura no cabeçalho: espera o laço acalmar, depois um travamento atras
 		}
 		assert.deepEqual(comp.render(120), em(Infinity), "assenta no fim");
 	} finally {
+		performance.now = real;
+	}
+});
+
+// Abertura sem salto (2026-11-24): claude-rules carrega antes e publica o aviso de regras no session_start dela, antes do
+// cabeçalho existir. Sem a marca da abertura o aviso abria na hora, no topo, e descia 9 linhas quando a marca entrava.
+// A marca nasce no carregamento da extensão e o session_start reaproveita a mesma, então o aviso já espera a abertura.
+test("abertura: a marca existe desde o carregamento e o session_start reaproveita a mesma", () => {
+	const g = globalThis as Record<symbol, unknown>;
+	g[__m1.ABERTURA] = undefined;
+	let antes: unknown;
+	const ctx = { hasUI: true, ui: { setHeader() {} } };
+	header({
+		on: (_n: string, h: (e: unknown, c: unknown) => void) => {
+			antes = g[__m1.ABERTURA];
+			assert.ok(antes, "marca criada no carregamento, antes de qualquer session_start");
+			h({}, ctx);
+		},
+	} as any);
+	assert.equal(g[__m1.ABERTURA], antes, "o aviso que guardou a marca é o que a abertura vai soltar");
+});
+
+// Abertura sem salto (2026-11-24): com a 1ª execução da Status Line pendente, o laço calmo não basta; a abertura (e a subida do
+// editor) espera o widget entrar, para ele não empurrar o editor no meio da animação. ESPERA_MAX_MS continua de teto.
+test("abertura no cabeçalho: espera a 1ª Status Line da sessão", () => {
+	const real = performance.now;
+	let agora = 60_000;
+	performance.now = () => agora;
+	try {
+		marcarStatusPendente(true);
+		const comp = setup(true, {}).calls[0]({ requestRender() {} }, theme);
+		comp.render(120);
+		for (let i = 0; i < CALMA_QUADROS + 3; i++) {
+			agora += 16;
+			assert.deepEqual(comp.render(120), buildHeaderLines(VERSION, theme, 120, -1), "status pendente: não começa");
+		}
+		marcarStatusPendente(false);
+		agora += 16;
+		assert.deepEqual(comp.render(120), buildHeaderLines(VERSION, theme, 120, 0), "status entrou: começa do zero");
+	} finally {
+		marcarStatusPendente(false);
 		performance.now = real;
 	}
 });

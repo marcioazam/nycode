@@ -642,11 +642,19 @@ test("registerFleetUi: o tick de 1 s assina um source que só aparece depois do 
 		vi.advanceTimersByTime(1000);
 		assert.equal(src.listeners.length, 1, "o tick assinou o source tardio");
 		assert.equal(r.renders ?? 0, 0, "sem linhas o tick não repinta");
+		// O source avisa a cada 1 s mesmo sem mudança (poll de reserva): frota vazia e nada na tela não pede quadro.
+		src.listeners[0]();
+		assert.equal(r.renders ?? 0, 0, "frota vazia: o aviso do source não repinta");
+		src.records.push(rec("a", null, 1));
 		src.listeners[0]();
 		assert.equal(r.renders, 1, "a mudança do source repinta pela assinatura do tick");
-		src.records.push(rec("a", null, 1));
 		vi.advanceTimersByTime(1000);
 		assert.equal(r.renders, 2, "com linhas o tick repinta");
+		src.records.length = 0;
+		src.listeners[0]();
+		assert.equal(r.renders, 3, "a frota esvaziou: um quadro para limpar o painel");
+		src.listeners[0]();
+		assert.equal(r.renders, 3, "e depois nenhum");
 		assert.equal(src.listeners.length, 1, "o mesmo source não é assinado de novo");
 	} finally {
 		await handlers.session_shutdown();

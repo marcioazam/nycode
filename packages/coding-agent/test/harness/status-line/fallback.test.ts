@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExtensionAPI } from "../../../src/core/extensions/types.ts";
 import { setManagedSettingsPath } from "../../../src/extensions/_shared/settings/managed-settings.ts";
 import statusLine from "../../../src/extensions/status-line/index.ts";
+import { statusPendente } from "../../../src/extensions/status-line/rows.ts";
 
 type Handler = (event: unknown, ctx: unknown) => void;
 
@@ -70,9 +71,11 @@ function boot(ownStatusLine: unknown) {
 		},
 		getContextUsage: () => ({ tokens: 0, contextWindow: 200_000, percent: 0 }),
 		isProjectTrusted: () => false,
+		hasUI: true,
 	};
-	for (const fn of handlers.get("session_start") ?? []) fn({}, ctx);
+	const started = Promise.all((handlers.get("session_start") ?? []).map((fn) => fn({}, ctx)));
 	return {
+		started,
 		isWidgetShown: () => widgetShown,
 		shutdown: () => {
 			for (const fn of handlers.get("session_shutdown") ?? []) fn({}, ctx);
@@ -103,6 +106,32 @@ describe("statusLine fallback on broken Claude settings command", () => {
 		try {
 			await new Promise((resolve) => setTimeout(resolve, 600));
 			expect(session.isWidgetShown()).toBe(false);
+		} finally {
+			session.shutdown();
+		}
+	});
+
+	// Abertura sem salto (2026-11-24): o widget de status entrava ~300 ms depois do editor e o empurrava para cima no meio
+	// da animação. A 1ª execução roda já no session_start e fica pendente até terminar; o cabeçalho espera por ela.
+	it("a 1ª execução do script roda no session_start, que espera por ela, e o status fica pendente até terminar", async () => {
+		const script = join(tmp, "two-rows.sh");
+		writeFileSync(script, "#!/bin/sh\nprintf 'a\\nb\\n'\n", { mode: 0o755 });
+		const session = boot({ type: "command", command: script });
+		try {
+			expect(statusPendente()).toBe(true);
+			// session_start waits for it (bounded), so the widget is in before ui installs the editor above it.
+			await session.started;
+			expect(session.isWidgetShown()).toBe(true);
+			expect(statusPendente()).toBe(false);
+		} finally {
+			session.shutdown();
+		}
+	});
+
+	it("sem script nada fica pendente", () => {
+		const session = boot({ type: "command", command: "" });
+		try {
+			expect(statusPendente()).toBe(false);
 		} finally {
 			session.shutdown();
 		}
