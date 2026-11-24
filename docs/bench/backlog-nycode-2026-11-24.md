@@ -36,7 +36,7 @@ e não usado, porque o caminho escolhido foi o core).
 | 5 | #151: velocidade | registrado sem mudança: Nycode 0,39–0,50× do tempo do Claude Code; K1 34/36 (US$/acerto 0,155 contra 0,219 do CC); guard nativo < 0,1 ms | n/a | 0,155 (K1) | #418, #422 | [151](151-velocidade-2026-11-24.md) |
 | 6 | #183: subagente barato de execução | rejeitado: sem efeito (0 delegações em 36); variante forçada é decisão do dono | 0,0 (IC90 [0; 0]) | 0,153 (base 0,155; 0,99×) | #423 | [183](183-executor-barato-2026-11-24.md) |
 | 7 | #168: bootstrap e lições de falha | passa a regra por margem nula (0,998×), sem efeito mensurável; adoção no contrato é decisão do dono | 0,0 (12/12; IC90 [0; 0]) | 0,176 (base 0,176) | #422 | [168](168-bootstrap-licoes-2026-11-24.md) |
-| 8 | #169: poder contra o Claude Code | pendente | | | | |
+| 8 | #169: poder contra o Claude Code | bloqueado por futilidade: suítes saturadas (≥ 94% nos dois braços); nenhum desenho dentro de US$ 80 chega a poder 0,80; US$ 0 gasto | n/a (Δ base observado ≈ +1, não pareado) | 0,030 contra 0,076 do CC (base, não pareado) | esta PR | [169](169-poder-cc-2026-11-24.md) |
 | 9 | B1: pesquisa e blueprint | pesquisa refeita e plano em 6 etapas aprovado (D-66: release-please, SSH, `AGENTS.md` sem `CLAUDE.md`) | n/a | n/a | (esta PR) | [B1](b1-blueprint-2026-11-24.md) |
 | 10 | #167: checkout `~/code/pi-harness` | obsoleto como fonte, mantido como instalação do `pi`; arquivado em `~/archive/` sem apagar | n/a | n/a | (esta PR) | [167](167-pi-harness-checkout-2026-11-24.md) |
 
@@ -51,7 +51,21 @@ e não usado, porque o caminho escolhido foi o core).
 - [x] 7. Item 5: #151, velocidade
 - [x] 8. Item 6: #183, subagente barato
 - [x] 9. Item 7: #168, bootstrap e lições
-- [ ] 10. Item 8: #169, poder contra o CC
+- [x] 10. Item 8: #169, poder contra o CC
 - [x] 11. Item 9: B1, pesquisa e blueprint
 - [x] 12. Item 10: #167, pi-harness
-- [ ] 13. Fechamento e placar
+- [x] 13. Fechamento e placar
+
+## Fechamento (2026-11-24)
+
+Os 10 itens estão fechados: 1 adotado com o `bench-pr` obrigatório (P-16), 1 adotado como piso de regressão (#35),
+3 rejeitados pela regra (#90, V1, #183), 2 registrados sem mudança (#151, #168), 1 bloqueado com evidência (#169) e
+2 sem medição (B1, #167). Nenhuma mudança medida baixou o US$/acerto abaixo de 1,00× com acerto não inferior.
+
+Decisões pendentes do dono:
+
+| Item | Decisão | Opções |
+| --- | --- | --- |
+| #168 | Levar bootstrap e lições ao contrato embarcado | (a) PR no contrato e o `bench-pr` decide; (b) só registro |
+| #183 | Variante com delegação forçada | (a) rodar (≈ US$ 5, sessão principal sem edit/write); (b) encerrar |
+| #169 | Como destravar | (a) suíte não saturada; (b) não inferioridade + custo pareado (≈ US$ 4,3); (c) encerrar |
