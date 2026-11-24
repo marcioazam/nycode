@@ -361,6 +361,7 @@ def test_suites_toml_tiers_are_consistent() -> None:
         "vanilla",
         "tb41",
         "hard",
+        "behavior",
     }
 
     def ks(tier: str) -> dict[str, int]:
@@ -370,6 +371,9 @@ def test_suites_toml_tiers_are_consistent() -> None:
         return [{k: v for k, v in st.items() if k not in ("k", "k_security")} for st in cfg["tier"][tier]["steps"]]  # fmt: skip
 
     # the sequential gate: look 1 at k1 (security k3) against a k12 base over the same units (bench/stats.py, MARGIN)
+    # behavior suite (#35): on demand, its own suite so the hard held-out draw is not reshuffled
+    assert cfg["suite"]["s9"]["dir"] == "suites/behavior"
+    assert ks("behavior") == {"s9": 3}
     assert ks("pr") == {"s1": 1, "s4": 1, "s5": 1, "s2": 1}
     assert ks("baseline") == {"s1": 12, "s4": 12, "s5": 12, "s2": 4}
     assert units("baseline") == units("pr")
