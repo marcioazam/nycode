@@ -55,6 +55,10 @@ function host() {
 test("causa: status HTTP, palavras-chave e texto livre; retryLinha e blocoErro usam a causa", () => {
 	assert.equal(causa('429 {"error":{"type":"rate_limit_error","message":"m"}}').id, "limite");
 	assert.equal(causa("401: x").id, "conta");
+	assert.equal(
+		causa('OAuth refresh failed for anthropic: status=400; body={"error": "invalid_grant"}; stack=Error').id,
+		"conta",
+	);
 	assert.equal(causa("503 down").id, "fora");
 	assert.equal(causa("fetch failed").id, "rede");
 	assert.equal(causa("422 bad").codigo, "422");

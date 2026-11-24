@@ -21,7 +21,8 @@ process.env.NYCODE_CODING_AGENT_DIR = agentDir;
 delete process.env.NYCODE_SUBAGENT;
 delete process.env.NYCODE_SUBAGENT_DEPTH;
 
-// O filho falso só responde depois que `release-<tarefa>` existe em FAKE_PI_DIR; tarefas `hang-*` nunca respondem (servem a parada).
+// O filho falso só responde depois que `release-<tarefa>` existe em FAKE_PI_DIR; tarefas `hang-*` nunca respondem (servem a parada)
+// e saem sozinhas quando a suíte remove o diretório (um filho que o teste não matou ficava órfão para sempre).
 const fakeNycode = join(tmp, "fake-nycode-entry.mjs");
 writeFileSync(
 	fakeNycode,
@@ -31,6 +32,7 @@ const task = (process.argv.at(-1).match(/Task: ([\\s\\S]*)$/) ?? [])[1] ?? ''
 const gate = join(process.env.FAKE_PI_DIR, 'release-' + task)
 const never = task.startsWith('hang-')
 const timer = setInterval(() => {
+  if (!existsSync(process.env.FAKE_PI_DIR)) process.exit(0) // the suite is over and removed its directory: never outlive it
   if (never || !existsSync(gate)) return
   clearInterval(timer)
   process.stdout.write(JSON.stringify({ type: 'message_end', message: { role: 'assistant', content: [{ type: 'text', text: 'feito:' + task }], stopReason: 'stop' } }) + '\\n')

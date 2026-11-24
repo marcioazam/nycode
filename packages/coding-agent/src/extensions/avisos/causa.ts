@@ -53,7 +53,7 @@ const OUTRO: Base = {
 
 const POR_PALAVRA: Array<[RegExp, Base]> = [
 	[/rate_limit|rate limit/i, LIMITE],
-	[/authentication|unauthorized|permission_error/i, CONTA],
+	[/authentication|unauthorized|permission_error|invalid_grant/i, CONTA],
 	[/invalid_request/i, PEDIDO],
 	[/overloaded/i, FORA],
 	[/ECONNREFUSED|ECONNRESET|ENOTFOUND|ETIMEDOUT|fetch failed|network|socket/i, REDE],
