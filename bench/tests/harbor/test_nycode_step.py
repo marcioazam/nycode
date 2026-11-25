@@ -76,3 +76,22 @@ def test_nycode_step_refuses_without_stage(tmp_path: Path, monkeypatch: MP) -> N
     steps = rb.build_plan("pr", rb.load_toml(BENCH / "suites.toml"), ["s2"], k=1)
     with pytest.raises(RuntimeError, match="nycode stage"):
         rb._harbor_step(steps[0], "nycode", "m", tmp_path / "o", 5.0)
+
+
+def test_nycode_step_failed_bundle_reports_its_stderr(
+    tmp_path: Path, monkeypatch: MP
+) -> None:
+    """bench-pr logs only the traceback: a failed bundle.sh must carry its own stderr (2026-11-25, PR #429)."""
+    stage, hd = _stage(tmp_path), tmp_path / "hd"
+    hd.mkdir()
+    script(
+        hd / "bundle.sh", 'echo "gzip: stdin: invalid compressed data" >&2; exit 2\n'
+    )
+    monkeypatch.setenv("BENCH_STAGE", str(stage))
+    monkeypatch.setattr(rb, "HARBOR_DIR", hd)
+    monkeypatch.setattr(rb, "oauth_token", lambda: "tok")
+    steps = rb.build_plan("pr", rb.load_toml(BENCH / "suites.toml"), ["s2"], k=1)
+    with pytest.raises(
+        RuntimeError, match="bundle.sh exit 2: gzip: stdin: invalid compressed data"
+    ):
+        rb._harbor_step(steps[0], "nycode", "m", tmp_path / "o", 5.0)
