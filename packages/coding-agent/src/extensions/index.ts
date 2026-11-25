@@ -31,6 +31,7 @@ import llamaExtension from "./llama/index.ts";
 import lspExtension from "./lsp/index.ts";
 import mcpExtension from "./mcp/index.ts";
 import memoryExtension from "./memory/index.ts";
+import monitorExtension from "./monitor/index.ts";
 import notifyExtension from "./notify/index.ts";
 import outputStylesExtension from "./output-styles/index.ts";
 import planGateExtension from "./plan-gate/index.ts";
@@ -76,6 +77,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "hooks", factory: hooksExtension, builtin: true },
 	{ name: "init", factory: initExtension, builtin: true },
 	{ name: "memory", factory: memoryExtension, builtin: true },
+	{ name: "monitor", factory: monitorExtension, builtin: true },
 	{ name: "notify", factory: notifyExtension, builtin: true },
 	{ name: "output-styles", factory: outputStylesExtension, builtin: true },
 	{ name: "plan-mode", factory: planModeExtension, builtin: true },

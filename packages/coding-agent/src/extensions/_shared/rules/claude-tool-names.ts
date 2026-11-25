@@ -47,6 +47,9 @@ const TOOL_NAMES: ToolNamePair[] = [
 	// spelling resolves so an allowed-tools entry naming the current tools still grants
 	// something, and TodoWrite stays the name a payload reports.
 	{ claude: "TodoWrite", nycode: "todo", aliases: ["TodoRead", "TaskCreate", "TaskGet", "TaskList", "TaskUpdate"] },
+	// KillShell was renamed TaskStop; both resolve, the payload reports TaskStop.
+	{ claude: "TaskStop", nycode: "task_stop", aliases: ["KillShell"] },
+	{ claude: "Monitor", nycode: "monitor" },
 	// nycode tools the tools reference has no entry for.
 	{ claude: null, nycode: "ls", aliases: ["LS"] },
 ];

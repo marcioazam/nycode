@@ -3,6 +3,7 @@ import { access as fsAccess } from "node:fs/promises";
 import { constants as osConstants } from "node:os";
 import { spawn } from "child_process";
 import { type Static, Type } from "typebox";
+import { backgroundAllowed, backgroundShell } from "../../extensions/_shared/seams/background-shell.ts";
 import { waitForChildProcess } from "../../utils/child-process.ts";
 import {
 	getShellConfig,
@@ -40,6 +41,12 @@ function resolveTimeoutMs(timeout: number | undefined): number | undefined {
 const bashSchema = Type.Object({
 	command: Type.String({ description: "Shell command to execute" }),
 	timeout: Type.Optional(Type.Number({ description: "Timeout in seconds (optional, no default timeout)" })),
+	run_in_background: Type.Optional(
+		Type.Boolean({
+			description:
+				"Run the command in the background and keep working; you are notified when it finishes. Stop it with task_stop.",
+		}),
+	),
 });
 
 export const bashToolSystemPromptContribution = {
@@ -292,11 +299,30 @@ export function createShellToolDefinition(
 		constrainedSampling: { type: "json_schema", strict: "prefer" },
 		async execute(
 			toolCallId,
-			{ command: requestedCommand, timeout: requestedTimeout }: { command: string; timeout?: number },
+			{
+				command: requestedCommand,
+				timeout: requestedTimeout,
+				run_in_background,
+			}: { command: string; timeout?: number; run_in_background?: boolean },
 			signal?: AbortSignal,
 			onUpdate?,
 			ctx?: ExtensionContext,
 		) {
+			if (run_in_background === true) {
+				const start = backgroundShell.get();
+				// Running it in the foreground instead would block the turn on a command that may never exit.
+				if (!start || !backgroundAllowed(ctx?.hasUI))
+					throw new Error(
+						"Background commands are not available in this session. Run the command in the foreground, with a timeout if it may not exit.",
+					);
+				const run = start(
+					commandPrefix ? `${commandPrefix}\n${requestedCommand}` : requestedCommand,
+					ctx?.cwd || cwd,
+				);
+				const output = `Command running in background with ID: ${run.id}. Output is being written to: ${run.logPath}. You will be notified when it completes; use task_stop to stop it.`;
+				const structuredContent: BashToolOutput = { output, truncated: false, exit_code: 0, wall_time_seconds: 0 };
+				return { content: [{ type: "text", text: output }], details: undefined, structuredContent };
+			}
 			// nycode: K8 default 600 s / cap 1800 s timeout policy, optional background mode, timeout hint (bash only)
 			const { command, timeout } =
 				config.name === "bash"

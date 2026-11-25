@@ -19,6 +19,15 @@
 - Setting `todo.sync` (`NYCODE_TODO_SYNC_V2`, default off pending the bench A/B): turn-end check of a stale list, items for background runs and subagents, new reminder cadence
 - The plan-mode `DONE_RULE` tells the model it may complete the step's linked todo item instead of writing the `[DONE:n]` tag
 - Bench todo metrics in `bench/metrics/trace.py` (todo-only turns, reminders followed, turn-check and external reminders, list coherence at the end of a run) and the arms `nycode-todo-v1` (control with the `todo` tool kept headless), `nycode-todo-v2` and `nycode-mcp-hybrid`
+- `bash` `run_in_background`: the command starts as a run of the Run section, its log path comes back at once and its end starts a turn; refused without a UI or under `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`
+- Tool `task_stop` (Claude Code's TaskStop, `KillShell` alias) stops a background command or monitor by id
+- Tool `monitor` (Claude Code's Monitor): each stdout line of a background command comes back as an event, batched over 200 ms, 10 events at once then one every 2 s, stopped after 30 s of suppression, ended at its deadline (5 min default, 30 max); the guard and Bash-matched hooks judge its command as Bash, and it is dropped when `bash` is off
+- `BASH_DEFAULT_TIMEOUT_MS` and `BASH_MAX_TIMEOUT_MS` replace the bash default timeout and cap (the cap is at least the default)
+- Plugin skills register as `/<plugin>:<skill>` and, for the model, through the `plugin_skill` tool, with `${CLAUDE_PLUGIN_ROOT}` and the plugin's variables; a renamed skill also resolves by its directory
+- `/claude-plugins` lists the installed Claude Code plugins with the setting that decides each one and toggles them in the user `settings.json`
+- `/todos-widget off|compact|full` chooses how the task list shows in the Plan section
+- Setting `autoMemoryStorage: "claude"` (user or managed settings only) keeps the auto memory in Claude Code's `~/.claude/projects/<slug>/memory/` with its frontmatter
+- Question form: a "Conversar sobre isto" row ends the call with Claude Code's clarify text and the answers so far; a revisited question shows its confirmed answer in green with ✔
 
 ### Changed
 
@@ -28,6 +37,10 @@
 - A local marketplace's `./` plugin entry loads from the marketplace itself rather than the install-time cache; a plugin the marketplace no longer lists, or whose entry leaves the marketplace directory, does not load
 - Prompt hooks, the `/goal` evaluator and the shared model call use the model's declared output limit instead of fixed 512/1024-token caps; a model that declares none gets no cap
 - The status line keeps `rate_limits` across a model switch within the same provider
+- Question form: Esc cancels from anywhere, the answer editor included (the exit menu once a batch has answers), and Enter on a blank answer does the same; the draft is never sent
+- Plugin skills are no longer handed to the skill loader as `/skill:<dir>`
+- The web tool icon matches generic names (`fetch`, `web`, `search`, `scrape`, `crawl`) instead of provider names; `tool_search` shows the tool icon
+- A hook's `updatedInput` for `run` and `monitor` replaces the command and keeps the tool's other fields (it dropped `action`, failing the call)
 - `updatedToolOutput` is read only under `hookSpecificOutput`, and for an MCP tool it wins over `updatedMCPToolOutput`
 - The embedded contract is about 1 KB of generic protection; the system prompt adds a scope rule and an ambiguity rule; `/init` no longer asks for an architecture or layout overview
 - Embedded agents use tier aliases (`haiku`, `sonnet`, `inherit`)

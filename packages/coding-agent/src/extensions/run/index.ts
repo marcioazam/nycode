@@ -3,13 +3,13 @@
  * One registry for shells and background subagents (registry.ts); the finish of a run the agent awaits starts a turn.
  */
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
+import { backgroundShell } from "../_shared/seams/background-shell.ts";
 import { announceExternalFinish, announceExternalStart } from "../todo/external.ts";
-
 import { extractPid, type Instrumented, instrument } from "./detect.ts";
 import { type RunRecord, sharedRegistry } from "./registry.ts";
 import { RunSection } from "./section.ts";
-import { registerDetected } from "./shell.ts";
-import { registerRunTool, summary } from "./tool.ts";
+import { registerDetected, startShell } from "./shell.ts";
+import { registerRunTool, registerTaskSurface, summary } from "./tool.ts";
 
 export function finishMessage(r: RunRecord, now: number): { customType: string; content: string; display: boolean } {
 	return { customType: "run-finished", content: `Run terminou:\n${summary(r, now, 20)}`, display: true };
@@ -18,7 +18,13 @@ export function finishMessage(r: RunRecord, now: number): { customType: string; 
 export default function run(nycode: ExtensionAPI): void {
 	const reg = sharedRegistry();
 	const section = new RunSection(reg);
+	registerTaskSurface(nycode, reg);
 	registerRunTool(nycode, reg);
+	// bash run_in_background starts here: the registry owns the process, the Run section shows it, the finish starts a turn.
+	backgroundShell.set((command, cwd) => {
+		const rec = startShell(reg, { command, cwd, awaited: true });
+		return { id: rec.id, logPath: rec.logPath ?? "" };
+	});
 	/** toolCallId → what tool_call changed, read back by tool_result. */
 	const pending = new Map<string, Instrumented & { cwd: string }>();
 	let offFinish: (() => void) | undefined;

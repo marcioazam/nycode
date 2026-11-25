@@ -132,3 +132,30 @@ export function registerRunTool(nycode: ExtensionAPI, reg: RunRegistry): void {
 		},
 	});
 }
+
+const StopParams = Type.Object({
+	task_id: Type.Optional(Type.String({ description: "The ID of the background command or monitor to stop" })),
+	shell_id: Type.Optional(Type.String({ description: "Deprecated: use task_id" })),
+});
+
+/** Claude Code's TaskStop (`task_stop`) over the run registry: bash `run_in_background` and monitor ids are run ids;
+ * the Run section lists them (Nycode's /tasks is the subagent browser). */
+export function registerTaskSurface(nycode: ExtensionAPI, reg: RunRegistry): void {
+	nycode.registerTool({
+		name: "task_stop",
+		label: "task_stop",
+		description: "Stop a running background bash command or monitor by its ID.",
+		promptSnippet: "Stop a background bash command or monitor",
+		parameters: StopParams,
+		async execute(_id, params) {
+			const id = params.task_id ?? params.shell_id;
+			if (id === undefined) throw new Error("task_id is required");
+			const rec = reg.get(id);
+			if (!rec) throw new Error(`No background command with ID ${id}`);
+			const outcome = stopRun(reg, rec);
+			return text(
+				outcome === "stopping" ? `Stopped background command ${id}.` : `Background command ${id} is not running.`,
+			);
+		},
+	});
+}

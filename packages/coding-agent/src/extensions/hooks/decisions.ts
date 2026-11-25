@@ -234,7 +234,10 @@ function applyUpdatedInput(toolName: string, toolInput: unknown, translated: boo
 	const updated = tryParseJson(stdout)?.hookSpecificOutput?.updatedInput;
 	if (!isRecord(updated) || !isRecord(toolInput)) return;
 	const replacement = translated ? nycodeToolInput(toolName, updated) : updated;
-	if (replacement) replaceRecord(toolInput, replacement);
+	if (!replacement) return;
+	// run and monitor hand hooks only their command (as Bash): the rewrite replaces that, and their own fields stay.
+	const kept = translated && (toolName === "run" || toolName === "monitor") ? { ...toolInput } : {};
+	replaceRecord(toolInput, { ...kept, ...replacement });
 }
 
 /** Claude's `onFailure: "block"`: an exit other than 0 and 2 (2 is the hook's own block) fails the
