@@ -592,8 +592,20 @@ export interface PlanToolPolicy {
 const EMPTY_POLICY: PlanToolPolicy = { tools: [], userReadOnly: [] };
 
 function globMatches(pattern: string, name: string): boolean {
-	const source = pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replaceAll("*", ".*");
-	return new RegExp(`^${source}$`).test(name);
+	// `*` is the only wildcard: match the fixed parts in order (no regex built from settings text, no backtracking)
+	const parts = pattern.split("*");
+	const head = parts[0];
+	if (parts.length === 1) return name === head;
+	const tail = parts[parts.length - 1];
+	if (name.length < head.length + tail.length || !name.startsWith(head) || !name.endsWith(tail)) return false;
+	let pos = head.length;
+	const end = name.length - tail.length;
+	for (const part of parts.slice(1, -1)) {
+		const at = name.indexOf(part, pos);
+		if (at < 0 || at + part.length > end) return false;
+		pos = at + part.length;
+	}
+	return true;
 }
 
 /** An MCP tool runs in plan mode only when its server marked it `readOnlyHint: true` or the user listed it. */

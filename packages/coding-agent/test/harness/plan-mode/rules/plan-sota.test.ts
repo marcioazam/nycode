@@ -78,6 +78,19 @@ test("AC2: MCP só com readOnlyHint true ou na lista do usuário", () => {
 		assert.match(verdict.reason ?? "", /plan\.readOnlyTools/);
 	}
 	assert.equal(allowed("mcp__docs__x").ok, false, "empty registry: unknown tool is denied");
+	// plan.readOnlyTools globs: `*` is the only wildcard, every other character is literal
+	const listed = (pattern: string, name: string) => allowed(name, {}, policy({ userReadOnly: [pattern] })).ok;
+	for (const [pattern, name, ok] of [
+		["mcp__web__*", "mcp__web__fetch", true],
+		["mcp__*__search", "mcp__docs__search", true],
+		["mcp__a*b", "mcp__ab", true],
+		["mcp__web__fetch", "mcp__web__fetch", true],
+		["mcp__x.y", "mcp__xzy", false],
+		["mcp__a*a", "mcp__a", false],
+		["mcp__*__search", "mcp__docs__searchx", false],
+		["mcp__web__*", "mcp__webx__fetch", false],
+	] as const)
+		assert.equal(listed(pattern, name), ok, `${pattern} vs ${name}`);
 	// the user list: an exact name and a glob, each with no annotation
 	const user = policy({ tools, userReadOnly: ["mcp__web__fetch", "mcp__docs__*"] });
 	assert.equal(allowed("mcp__web__fetch", {}, user).ok, true);
