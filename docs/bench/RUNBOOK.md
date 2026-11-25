@@ -534,6 +534,7 @@ placar das três regras do objetivo, em Markdown. É informativo: sai sempre com
   regras que falharam.
 - Sem rodada do `pi-vanilla`, a R1 não é avaliada e conta como não cumprida; o mesmo vale para a R2 sem outra
   referência.
+- Último placar registrado: [Nycode contra Claude Code e pi, 2026-11-25](sota-2026-11-25.md).
 
 ## Tornar `bench-pr` obrigatório
 
