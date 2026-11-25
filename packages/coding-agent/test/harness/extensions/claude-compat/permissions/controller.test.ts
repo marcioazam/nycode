@@ -319,7 +319,7 @@ test("select(auto) = acceptEdits; modos inválidos: erro honesto, sem mudança",
 	assert.equal(c.status().label, "Auto");
 });
 
-// Modo sempre visível junto ao bypass (dono, 2026-11-19). Antes: `⏵⏵ auto on` e/ou o bypass, e Ask limpava a linha.
+// Modo sempre visível junto ao bypass. Antes: `⏵⏵ auto on` e/ou o bypass, e Ask limpava a linha.
 // Agora cada parte leva o tipo (a UI pinta ask verde, auto azul, plan roxo, bypass vermelho) e Ask aparece como `⏵ ask`.
 test("status da UI: o modo sempre aparece (ask, auto) e o bypass junto; sem segredos", () => {
 	const e = env({ NYCODE_BYPASS_ELIGIBLE: "1", ANTHROPIC_API_KEY: "segredo-nao-vazar" });
@@ -345,7 +345,7 @@ test("status da UI: o modo sempre aparece (ask, auto) e o bypass junto; sem segr
 	c.select("acceptEdits"); // sem sink: não lança
 });
 
-// Cores dos modos (dono, 2026-11-19): ask verde (success), auto azul (accent), plan roxo (bashMode), bypass vermelho (error).
+// Cores dos modos: ask verde (success), auto azul (accent), plan roxo (bashMode), bypass vermelho (error).
 test("sinkFor: pinta cada parte com a cor do modo e junta com · em dim", async () => {
 	let visto: string | undefined = "x";
 	const ctx = {

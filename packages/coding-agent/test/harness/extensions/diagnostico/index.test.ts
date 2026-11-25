@@ -320,7 +320,7 @@ test("status com NYCODE_ASCII_ICONS=1 usa x e !", () => {
 	assert.equal(t.ultimo(), "x 1 erro · ! 1 aviso · ctrl+e abre");
 });
 
-// Atalho ctrl+e (dono, 2026-11-19): antes alt+e.
+// Atalho ctrl+e: antes alt+e.
 test("atalho ctrl+e registrado: abre o modal em problemas, marca visto; s silencia e reativa pelo registro", async () => {
 	const t = cria();
 	t.start();

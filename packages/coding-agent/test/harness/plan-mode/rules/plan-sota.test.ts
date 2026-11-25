@@ -21,21 +21,35 @@ afterAll(() => {
 	else process.env.NYCODE_PLANS_DIR = savedPlansDir;
 	rmSync(tmp, { recursive: true });
 });
-const allowed = (tool: string, input: Loose = {}) => utils.isPlanModeToolAllowed(tool, input, plans);
+const agent = (name: string, tools?: string[]) => ({
+	name,
+	description: name,
+	tools,
+	systemPrompt: "",
+	source: "user" as const,
+	filePath: "",
+});
+const policy = (over: Partial<utils.PlanToolPolicy> = {}): utils.PlanToolPolicy => ({
+	tools: [],
+	userReadOnly: [],
+	agents: [],
+	...over,
+});
+const allowed = (tool: string, input: Loose = {}, p: utils.PlanToolPolicy = policy()) =>
+	utils.isPlanModeToolAllowed(tool, input, plans, p);
 
 function setup() {
 	const fake = fakeNycode({ active: ["read", "bash", "edit", "write", "plan_mode_complete"] });
 	const ctx = fakeCtx({
 		sessionManager: { getEntries: () => [], getBranch: () => [], getSessionId: () => "abcdef12-3456" },
 	});
-	return { on: fake.on, cmds: fake.cmds, tools: fake.tools, sent: fake.sent, ctx };
+	return { on: fake.on, cmds: fake.cmds, tools: fake.tools, sent: fake.sent, shortcuts: fake.shortcuts, ctx };
 }
 
-test("AC1: ferramentas e MCP read-only passam", () => {
+test("AC1: ferramentas fixas de leitura passam", () => {
 	for (const t of [
 		"tool_search",
 		"web_fetch",
-		"mcp__keenable__search_web_pages",
 		"lsp_diagnostics",
 		"lsp_hover",
 		"lsp_definition",
@@ -47,88 +61,202 @@ test("AC1: ferramentas e MCP read-only passam", () => {
 		"plan_mode_complete",
 	])
 		assert.equal(allowed(t).ok, true, t);
-	for (const s of [
-		"keenable",
-		"perplexity",
-		"exa",
-		"brave_search",
-		"octen",
-		"parallel",
-		"youcom",
-		"context7",
-		"codegraph",
-		"paper_search",
-		"package_version_check",
-		"fetch",
-		"firecrawl",
-		"nimble",
-	])
-		assert.equal(allowed(`mcp__${s}__x`).ok, true, s);
 });
 
-test("AC2: MCP fora da lista é bloqueado", () => {
-	for (const s of ["playwright", "computer_use_linux", "linear", "desconhecido"])
-		assert.equal(allowed(`mcp__${s}__x`).ok, false, s);
-});
-
-test("AC3: subagent só com agentes read-only", () => {
-	const ro = [
-		"Explore",
-		"code-mapper",
-		"Plan",
-		"perplexity-scout",
-		"web-scout",
-		"research-scout",
-		"scholar-scout",
-		"claim-verifier",
-		"code-reviewer",
-		"security-reviewer",
-		"test-reviewer",
-		"reliability-reviewer",
-		"contract-migration-reviewer",
-		"agent-systems-auditor",
+test("AC2: MCP só com readOnlyHint true ou na lista do usuário", () => {
+	const tools = [
+		{ name: "mcp__docs__search", annotations: { readOnlyHint: true } },
+		{ name: "mcp__docs__write", annotations: { readOnlyHint: false } },
+		{ name: "mcp__docs__plain" },
+		{ name: "mcp__web__fetch" },
+		{ name: "mcp__web__post" },
 	];
-	for (const a of ro) {
-		assert.equal(allowed("subagent", { agent: a, task: "x" }).ok, true, a);
-		assert.equal(allowed("subagent", { tasks: [{ agent: a, task: "x" }] }).ok, true, a);
-		assert.equal(allowed("subagent", { chain: [{ agent: a, task: "x" }] }).ok, true, a);
+	assert.equal(allowed("mcp__docs__search", {}, policy({ tools })).ok, true);
+	for (const name of ["mcp__docs__write", "mcp__docs__plain", "mcp__docs__unknown"]) {
+		const verdict = allowed(name, {}, policy({ tools }));
+		assert.equal(verdict.ok, false, name);
+		assert.match(verdict.reason ?? "", /plan\.readOnlyTools/);
 	}
-	assert.equal(allowed("subagent", { agent: "swarm-worker", task: "x" }).ok, false);
-	assert.equal(allowed("subagent", { tasks: [{ agent: "swarm-worker", task: "x" }] }).ok, false);
-	assert.equal(
-		allowed("subagent", {
-			chain: [
-				{ agent: "Explore", task: "x" },
-				{ agent: "swarm-worker", task: "y" },
-			],
-		}).ok,
-		false,
-	);
-	assert.equal(
-		allowed("subagent", {
-			tasks: [
-				{ agent: "Explore", task: "x" },
-				{ agent: "git-delivery", task: "y" },
-			],
-		}).ok,
-		false,
-	);
-	assert.equal(allowed("subagent", { status: true }).ok, true);
-	assert.equal(allowed("subagent", { cancel: "bg_1" }).ok, true);
-	assert.equal(allowed("subagent", { resume: "bg_1", task: "x" }).ok, false);
-	// revisão: resume reabre qualquer run (até um writer); escopo de projeto deixa um agente local sombrear o nome
-	assert.equal(allowed("subagent", { resume: "bg_1", agent: "Explore", task: "x" }).ok, false);
-	assert.equal(allowed("subagent", { agent: "Explore", task: "x", agentScope: "project" }).ok, false);
-	assert.equal(allowed("subagent", { agent: "Explore", task: "x", agentScope: "both" }).ok, false);
-	assert.equal(allowed("subagent", { agent: "Explore", task: "x", agentScope: "user" }).ok, true);
+	assert.equal(allowed("mcp__docs__x").ok, false, "empty registry: unknown tool is denied");
+	// plan.readOnlyTools globs: `*` is the only wildcard, every other character is literal
+	const listed = (pattern: string, name: string) => allowed(name, {}, policy({ userReadOnly: [pattern] })).ok;
+	for (const [pattern, name, ok] of [
+		["mcp__web__*", "mcp__web__fetch", true],
+		["mcp__*__search", "mcp__docs__search", true],
+		["mcp__a*b", "mcp__ab", true],
+		["mcp__web__fetch", "mcp__web__fetch", true],
+		["mcp__x.y", "mcp__xzy", false],
+		["mcp__a*a", "mcp__a", false],
+		["mcp__*__search", "mcp__docs__searchx", false],
+		["mcp__web__*", "mcp__webx__fetch", false],
+	] as const)
+		assert.equal(listed(pattern, name), ok, `${pattern} vs ${name}`);
+	// the user list: an exact name and a glob, each with no annotation
+	const user = policy({ tools, userReadOnly: ["mcp__web__fetch", "mcp__docs__*"] });
+	assert.equal(allowed("mcp__web__fetch", {}, user).ok, true);
+	assert.equal(allowed("mcp__docs__plain", {}, user).ok, true);
+	assert.equal(allowed("mcp__docs__write", {}, user).ok, true, "the user's glob wins over readOnlyHint false");
+	assert.equal(allowed("mcp__web__post", {}, user).ok, false);
+	assert.equal(allowed("mcp__webx__fetch", {}, user).ok, false, "a name is not a prefix match");
 });
 
-test("AC3 pelo handler: subagent permitido roda com agentScope user", async () => {
-	const { on, cmds, ctx } = setup();
-	await cmds.plan.handler("", ctx);
-	const input: Loose = { agent: "Explore", task: "x" };
-	assert.equal(await on.tool_call({ toolName: "subagent", input }, ctx), undefined);
-	assert.equal(input.agentScope, "user");
+test("AC3: subagent só com agente cujo tools: é read-only", () => {
+	const tools = [
+		{ name: "mcp__docs__search", annotations: { readOnlyHint: true } },
+		{ name: "mcp__docs__list", annotations: { readOnlyHint: true } },
+		{ name: "mcp__docs__write", annotations: { readOnlyHint: false } },
+	];
+	const agents = [
+		agent("reader", ["read", "grep"]),
+		agent("finder", ["read", "grep", "find", "ls", "tool_search", "lsp_symbols", "web_fetch"]),
+		agent("editor", ["read", "edit"]),
+		agent("writer", ["read", "write"]),
+		agent("shell", ["read", "grep", "bash"]),
+		agent("shell-edit", ["read", "bash", "edit"]),
+		agent("spawner", ["read", "subagent"]),
+		agent("unrestricted"),
+		agent("docs-exact", ["read", "mcp__docs__search"]),
+		agent("docs-glob-ro", ["mcp__docs__search", "mcp__docs__list"]),
+		agent("docs-glob", ["read", "mcp__docs__*"]),
+		agent("empty-glob", ["mcp__nothing__*"]),
+	];
+	const p = policy({ tools, agents });
+	for (const a of ["reader", "finder", "docs-exact", "shell"]) {
+		assert.equal(allowed("subagent", { agent: a, task: "x" }, p).ok, true, a);
+		assert.equal(allowed("subagent", { tasks: [{ agent: a, task: "x" }] }, p).ok, true, a);
+		assert.equal(allowed("subagent", { chain: [{ agent: a, task: "x" }] }, p).ok, true, a);
+	}
+	for (const a of [
+		"editor",
+		"writer",
+		"shell-edit",
+		"spawner",
+		"unrestricted",
+		"docs-glob",
+		"empty-glob",
+		"missing",
+	]) {
+		const verdict = allowed("subagent", { agent: a, task: "x" }, p);
+		assert.equal(verdict.ok, false, a);
+		assert.ok(verdict.reason?.includes(a), a);
+	}
+	assert.match(allowed("subagent", { agent: "unrestricted", task: "x" }, p).reason ?? "", /no tools/);
+	assert.match(allowed("subagent", { agent: "editor", task: "x" }, p).reason ?? "", /edit/);
+	// a server glob counts when the user lists it, or when every registered tool it covers is read-only
+	assert.equal(
+		allowed("subagent", { agent: "docs-glob", task: "x" }, policy({ tools, agents, userReadOnly: ["mcp__docs__*"] }))
+			.ok,
+		true,
+	);
+	const readOnlyDocs = policy({ tools: tools.slice(0, 2), agents: [agent("g", ["mcp__docs__*"])] });
+	assert.equal(allowed("subagent", { agent: "g", task: "x" }, readOnlyDocs).ok, true);
+	assert.equal(
+		allowed(
+			"subagent",
+			{
+				chain: [
+					{ agent: "reader", task: "x" },
+					{ agent: "writer", task: "y" },
+				],
+			},
+			p,
+		).ok,
+		false,
+	);
+	assert.equal(allowed("subagent", { status: true }, p).ok, true);
+	assert.equal(allowed("subagent", { cancel: "bg_1" }, p).ok, true);
+	assert.equal(allowed("subagent", { resume: "bg_1", task: "x" }, p).ok, false);
+	// resume reopens any earlier run (a writer too); a project scope lets a local agent shadow a name
+	assert.equal(allowed("subagent", { resume: "bg_1", agent: "reader", task: "x" }, p).ok, false);
+	assert.equal(allowed("subagent", { agent: "reader", task: "x", agentScope: "project" }, p).ok, false);
+	assert.equal(allowed("subagent", { agent: "reader", task: "x", agentScope: "both" }, p).ok, false);
+	assert.equal(allowed("subagent", { agent: "reader", task: "x", agentScope: "user" }, p).ok, true);
+});
+
+test("AC3 pelo handler: subagent read-only roda com agentScope user; o com edit é bloqueado", async () => {
+	const agentDir = join(tmp, "agent");
+	mkdirSync(join(agentDir, "agents"), { recursive: true });
+	writeFileSync(
+		join(agentDir, "agents", "ro-reader.md"),
+		"---\nname: ro-reader\ndescription: reads\ntools: read, grep\n---\nRead.\n",
+	);
+	writeFileSync(
+		join(agentDir, "agents", "rw-editor.md"),
+		"---\nname: rw-editor\ndescription: edits\ntools: read, edit\n---\nEdit.\n",
+	);
+	const savedAgentDir = process.env.NYCODE_CODING_AGENT_DIR;
+	process.env.NYCODE_CODING_AGENT_DIR = agentDir;
+	try {
+		const { on, cmds, ctx } = setup();
+		await cmds.plan.handler("", ctx);
+		const input: Loose = { agent: "ro-reader", task: "x" };
+		assert.equal(await on.tool_call({ toolName: "subagent", input }, ctx), undefined);
+		assert.equal(input.agentScope, "user");
+		const blocked = await on.tool_call({ toolName: "subagent", input: { agent: "rw-editor", task: "x" } }, ctx);
+		assert.equal(blocked?.block, true);
+		assert.match(blocked.reason, /rw-editor/);
+	} finally {
+		if (savedAgentDir === undefined) delete process.env.NYCODE_CODING_AGENT_DIR;
+		else process.env.NYCODE_CODING_AGENT_DIR = savedAgentDir;
+	}
+});
+
+test("subagente de plan mode herda a marca: bash só da allowlist, edit/write bloqueados; fora de plan mode a marca sai", async () => {
+	const saved = process.env.NYCODE_PLAN_READONLY;
+	try {
+		delete process.env.NYCODE_PLAN_READONLY;
+		const parent = setup();
+		await parent.on.tool_call({ toolName: "read", input: {} }, parent.ctx);
+		assert.equal(process.env.NYCODE_PLAN_READONLY, undefined);
+		await parent.cmds.plan.handler("", parent.ctx);
+		await parent.on.tool_call({ toolName: "subagent", input: { task: "x" } }, parent.ctx);
+		assert.equal(process.env.NYCODE_PLAN_READONLY, "1", "the child spawned by this call inherits the marker");
+		// the child: a fresh extension that loads with the inherited marker and is not in plan mode itself
+		const child = setup();
+		assert.equal(
+			(await child.on.tool_call({ toolName: "bash", input: { command: "rm -r src" } }, child.ctx))?.block,
+			true,
+		);
+		assert.equal(
+			(await child.on.tool_call({ toolName: "bash", input: { command: "printf x > a.ts" } }, child.ctx))?.block,
+			true,
+		);
+		assert.equal(await child.on.tool_call({ toolName: "bash", input: { command: "ls -la" } }, child.ctx), undefined);
+		assert.equal((await child.on.tool_call({ toolName: "edit", input: { path: "a.ts" } }, child.ctx))?.block, true);
+		assert.equal(await child.on.tool_call({ toolName: "read", input: { path: "a.ts" } }, child.ctx), undefined);
+		// leave plan mode (Ctrl+Shift+P; /plan only enters)
+		await parent.shortcuts.find((s: Loose) => s.description === "Toggle plan mode").handler(parent.ctx);
+		await parent.on.tool_call({ toolName: "subagent", input: { task: "x" } }, parent.ctx);
+		assert.equal(process.env.NYCODE_PLAN_READONLY, undefined, "children spawned after plan mode run unrestricted");
+	} finally {
+		if (saved === undefined) delete process.env.NYCODE_PLAN_READONLY;
+		else process.env.NYCODE_PLAN_READONLY = saved;
+	}
+});
+
+test("MCP pelo handler: readOnlyHint e plan.readOnlyTools liberam; o resto é bloqueado e fica fora do conjunto ativo", async () => {
+	const fake = fakeNycode({
+		active: ["read", "mcp__docs__search", "mcp__docs__write", "mcp__web__fetch"],
+		allTools: [
+			"read",
+			{ name: "mcp__docs__search", annotations: { readOnlyHint: true } },
+			{ name: "mcp__docs__write", annotations: { readOnlyHint: false } },
+			{ name: "mcp__web__fetch" },
+		],
+		readOnlyTools: ["mcp__web__*"],
+	});
+	const ctx = fakeCtx({
+		sessionManager: { getEntries: () => [], getBranch: () => [], getSessionId: () => "abcdef12-3456" },
+	});
+	await fake.cmds.plan.handler("", ctx);
+	assert.deepEqual(fake.active().sort(), ["mcp__docs__search", "mcp__web__fetch", "read"]);
+	for (const [name, block] of [
+		["mcp__docs__search", false],
+		["mcp__web__fetch", false],
+		["mcp__docs__write", true],
+		["mcp__playwright__click", true],
+	] as const)
+		assert.equal((await fake.on.tool_call({ toolName: name, input: {} }, ctx))?.block === true, block, name);
 });
 
 test("AC4: symlink pendurado no diretório de planos é recusado", () => {
@@ -197,12 +325,11 @@ test("AC7: o modelo do plano gera exatamente 3 tarefas", () => {
 	assert.equal(utils.planToTodos(tpl).length, 3);
 });
 
-test("bash: fdfind e kb.py", () => {
+test("bash: fdfind", () => {
 	assert.equal(utils.isSafeCommand("fdfind foo"), true);
 	assert.equal(utils.isSafeCommand("fdfind -x rm"), false);
 	assert.equal(utils.isSafeCommand("fdfind --exec-batch rm"), false);
-	assert.equal(utils.isSafeCommand("python3 ~/.nycode/agent/skills/obsidian-cli/scripts/kb.py search x"), true);
-	assert.equal(utils.isSafeCommand("python3 ~/.nycode/agent/skills/obsidian-cli/scripts/kb.py capture x"), false);
+	assert.equal(utils.isSafeCommand("python3 ~/.nycode/agent/skills/obsidian-cli/scripts/kb.py search x"), false);
 	assert.equal(utils.isSafeCommand("python3 evil.py"), false);
 });
 

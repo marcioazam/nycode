@@ -128,7 +128,7 @@ test("sinkFor: sem UI não há sink; com contexto antigo as chamadas não lança
 	};
 	const s = sinkFor(ctx as never)!;
 	s.notify("x", "info");
-	// Partes tipadas (dono, 2026-11-19): antes status(texto, perigo); agora cada parte leva o tipo que escolhe a cor.
+	// Partes tipadas: antes status(texto, perigo); agora cada parte leva o tipo que escolhe a cor.
 	s.status([{ tipo: "bypass", texto: "⚠ bypass ligado" }]);
 	s.status(undefined);
 	assert.deepEqual(calls[0], ["permission-mode", process.env.NO_COLOR ? "⚠ bypass ligado" : "<⚠ bypass ligado>"]);

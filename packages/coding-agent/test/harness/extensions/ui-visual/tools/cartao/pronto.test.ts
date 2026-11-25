@@ -1,4 +1,4 @@
-// plan_mode_complete em "Expandido" + "Cascata" (dono, 2026-11-20, lab /planopronto desenho 10): ver plano/pronto.ts.
+// plan_mode_complete em "Expandido" + "Cascata": ver plano/pronto.ts.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import * as __m2 from "../../../../../../src/extensions/ui-visual/motion/vivo.ts";

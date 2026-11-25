@@ -427,7 +427,7 @@ export default function commandsExtension(nycode: ExtensionAPI) {
 			nycode.sendUserMessage(expanded);
 			return;
 		}
-		// Patch local (claude-home/patches/nycode/commands-print.patch): no `nycode -p` e no `--mode json` o
+		// No `nycode -p` e no `--mode json` o
 		// session.prompt() volta quando este handler volta, e o print mode descartava o runtime antes de a execução
 		// iniciada pelo sendUserMessage começar ("turn_end could not resolve...", ctx stale). Sem UI, o handler
 		// espera essa execução assentar; se ela não começar em 60 s (o prompt falhou antes), segue.

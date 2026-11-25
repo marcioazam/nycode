@@ -83,8 +83,8 @@ export function matchesSkillRules(invocation: string, rules: string[]): boolean 
 		const rule = raw.trim();
 		if (rule === "") return false;
 		if (!rule.endsWith(" *")) return rule === call;
-		// The space before the trailing `*` is part of the rule, so `review-pr *` covers
-		// `review-pr` and `review-pr 123` but never the longer name `review-pretend`.
+		// The space before the trailing `*` is part of the rule, so `commit *` covers
+		// `commit` and `commit all` but never the longer name `committed`.
 		const prefix = rule.slice(0, -2).trimEnd();
 		return prefix !== "" && (call === prefix || call.startsWith(`${prefix} `));
 	});

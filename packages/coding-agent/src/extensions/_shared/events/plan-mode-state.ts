@@ -15,7 +15,7 @@ export function isPlanModeState(data: unknown): data is PlanModeState {
 }
 
 /**
- * Plano em execução ↔ lista da ferramenta `todo` (dono, 2026-11-24: "todo list 100% sem gaps, sempre sincronizando").
+ * Plano em execução ↔ lista da ferramenta `todo` (a lista fica sincronizada com as etapas do plano, sem lacunas).
  * O plano é a fonte: plan-mode publica as etapas em PLAN_STEPS_CHANNEL a cada mudança e ao restaurar a sessão; a
  * extensão todo espelha cada etapa num item ligado (`planStep`). Concluir um item ligado pela ferramenta publica
  * TODO_STEP_DONE_CHANNEL, que plan-mode trata como um [DONE:n]. As duas extensões não compartilham módulo em memória,

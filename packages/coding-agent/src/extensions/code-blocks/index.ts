@@ -1,6 +1,6 @@
 /**
  * Blocos de código sem ``` e sem borda: fundo tingido pela cor da linguagem e botão "⧉ copiar" clicável (fullscreen).
- * O clique copia exatamente o código do bloco, sem rótulo, recuo nem quebras do terminal. Pedido do dono 2026-11-15.
+ * O clique copia exatamente o código do bloco, sem rótulo, recuo nem quebras do terminal.
  * O core não tem gancho público para blocos de código: envolve Markdown.prototype.renderToken só para tokens
  * `code` e o openUrl do TUI só para links `nycode-copy:`; qualquer erro cai no renderizador nativo.
  * Reverter: apagar este diretório.

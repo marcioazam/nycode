@@ -1,17 +1,12 @@
 // The Edit, Write and MultiEdit rules: protected and sensitive files, and writes outside the project.
-// Port of `check_file` of guard.py.
+// Port of the former Python guard's `check_file`.
 
 import type { Finding } from "../lex/tokens.ts";
 import { abspath, basename, expanduser, isabs, join, realpath, tempDir } from "../py-path.ts";
 import { inside } from "./read.ts";
 
 const ENV_SAFE_SUFFIXES = [".example", ".sample", ".template", ".dist"];
-const ASK_WRITE_SUFFIXES = [
-	"/.nycode/agent/local.env",
-	"/.nycode/agent/mcp-auth.json",
-	"/.nycode/agent/claude-home/settings.json",
-];
-const PROTECTED_WRITE_SUFFIXES = ["/claude-home/hooks/guard.py"];
+const ASK_WRITE_SUFFIXES = ["/.nycode/agent/local.env", "/.nycode/agent/mcp-auth.json"];
 const SENSITIVE_DIR_NAMES = [".ssh", ".aws", ".gnupg", ".config/gh", ".kube", ".docker"];
 const SENSITIVE_FILE_NAMES = [
 	...[".nycode/agent/settings.json", ".nycode/agent/auth.json", ".local/bin/nycode"],
@@ -33,7 +28,6 @@ const KEY_NAME_RE = /^id_(rsa|ed25519|ecdsa|dsa)/;
 function sensitiveFile(path: string): Finding | undefined {
 	const home = expanduser("~");
 	const base = basename(path);
-	if (PROTECTED_WRITE_SUFFIXES.some((s) => path.endsWith(s))) return ["deny", `escrita em arquivo protegido ${path}`];
 	if (ASK_WRITE_SUFFIXES.some((s) => path.endsWith(s))) return ["ask", `arquivo sensível ${path}`];
 	if ((base === ".env" || base.startsWith(".env.")) && !ENV_SAFE_SUFFIXES.some((s) => base.endsWith(s))) {
 		return ["ask", `arquivo de segredos ${base}`];

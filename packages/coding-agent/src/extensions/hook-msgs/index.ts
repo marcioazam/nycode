@@ -13,9 +13,9 @@ import { terminou } from "../ui-visual/motion/vivo.ts";
 
 type Theme = Parameters<typeof estadoBg>[1] & { bold?: (s: string) => string };
 type Resumo = { alvo: string; quando: string; detalhe: string[]; previa?: string };
-// completion-gate (extensions/completion-gate.ts) no mesmo visual, com rótulo `gate` (dono, 2026-11-14: variante A).
-// subagent-background (aviso de subagente em segundo plano do nycode) no mesmo visual, com rótulo `subagente` e ícone ⇄ (dono: variante B).
-// run-finished (aviso do `run start … await` do nycode) no padrão do run em ui-visual/tools.ts (dono, 2026-11-14: variante B).
+// completion-gate (extensions/completion-gate.ts) no mesmo visual, com rótulo `gate` (variante A).
+// subagent-background (aviso de subagente em segundo plano do nycode) no mesmo visual, com rótulo `subagente` e ícone ⇄.
+// run-finished (aviso do `run start … await` do nycode) no padrão do run em ui-visual/tools.ts (variante B).
 const TIPOS = [
 	"claude-stop-hook",
 	"claude-async-hook",
@@ -146,40 +146,6 @@ export const classify = (customType: string, content: string): Exclude<Estado, "
 	return customType === "claude-stop-hook" || REWAKE.test(content) ? "warn" : "ok";
 };
 
-// regra do impeccable → [nome curto, nome, o que fazer]
-const REGRAS: Record<string, [string, string, string]> = {
-	"low-contrast": ["contraste", "contraste baixo", "texto abaixo de 4,5:1 (WCAG AA)"],
-	"cramped-padding": ["espaçamento", "espaçamento interno apertado", "texto colado na borda; use 8–16px"],
-};
-const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`;
-
-/** Achados do impeccable: contagem por regra e arquivo; `undefined` se o texto não for dele. */
-const impeccable = (content: string): Pick<Resumo, "alvo" | "detalhe"> | undefined => {
-	const arquivos = [...content.matchAll(/findings requiring review in (\S+) \(\d+ issue/g)].map((m) => m[1]!);
-	if (!arquivos.length) return undefined;
-	const regras = new Map<string, { n: number; texto: string; anterior: boolean }>();
-	for (const m of content.matchAll(/^- \[([\w-]+)\]( \[attribution unknown\])? ?(.*)$/gm)) {
-		const r = regras.get(m[1]!) ?? { n: 0, texto: m[3]!.split(". ")[0]!.replace(/\.$/, ""), anterior: true };
-		regras.set(m[1]!, { ...r, n: r.n + 1, anterior: r.anterior && m[2] !== undefined });
-	}
-	const total = [...regras.values()].reduce((a, r) => a + r.n, 0);
-	const onde = arquivos.length === 1 ? arquivos[0]!.split("/").pop()! : `${arquivos.length} arquivos`;
-	const curto = [...regras].map(([id, r]) => `${r.n} ${REGRAS[id]?.[0] ?? id}`).join(", ");
-	return {
-		alvo: `impeccable · ${plural(total, "achado", "achados")} em ${onde}${curto ? ` · ${curto}` : ""}`,
-		detalhe: [
-			...[...regras].map(
-				([id, r]) =>
-					`${REGRAS[id]?.[1] ?? id} ×${r.n} · ${REGRAS[id]?.[2] ?? r.texto}${r.anterior ? " · pode ser anterior" : ""}`,
-			),
-			...arquivos.map((a) => `arquivo: ${a}`),
-			...(content.includes("ignore-value")
-				? ["pedido ao agente: corrigir o real; falso positivo medido vai para impeccable hooks ignore-value"]
-				: []),
-		],
-	};
-};
-
 export const summarize = (customType: string, content: string): Resumo => {
 	if (customType === SUB) return subagente(content);
 	const quando = customType === "claude-async-hook" ? "assíncrono" : "ao parar";
@@ -187,7 +153,7 @@ export const summarize = (customType: string, content: string): Resumo => {
 		const arquivos = (/edited this turn \(([^)]*)\)/.exec(content)?.[1] ?? "").split(", ").filter(Boolean);
 		const n = arquivos.length;
 		return {
-			// Faixa âmbar (dono, 2026-11-19): antes `conclusão · N arquivos…` e `· ao parar`; agora só o resumo.
+			// Faixa âmbar: antes `conclusão · N arquivos…` e `· ao parar`; agora só o resumo.
 			alvo: `${n === 1 ? "1 arquivo editado" : `${n} arquivos editados`}, nenhum check depois`,
 			quando: "",
 			detalhe: [
@@ -196,8 +162,6 @@ export const summarize = (customType: string, content: string): Resumo => {
 			],
 		};
 	}
-	const imp = impeccable(content);
-	if (imp) return { ...imp, quando };
 	const [primeira = "sem texto", ...detalhe] = linhas(content);
 	const tag = /^\[([^\]@]+)(?:@[^\]]*)?\]\s*(.*)$/.exec(primeira);
 	return { alvo: tag ? `${tag[1]} · ${tag[2]}` : primeira, quando, detalhe };
@@ -219,7 +183,7 @@ const chegados = new Set<string>();
 const horaDe = (ts: number) =>
 	ts > 0 ? new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "";
 
-/** Fim do run = o cartão do Bash (dono, 2026-11-19; antes caixa própria `▶ run · terminou`): mesmo título régua, prévia,
+/** Fim do run = o cartão do Bash (antes caixa própria `▶ run · terminou`): mesmo título régua, prévia,
  * rodapé (`OK`, `OK · N avisos`, `Erro`, `Erro N`, `interrompido`) e dissolver; o nome do run ocupa o lugar do comando. */
 function cartaoFim(message: Mensagem, options: Opcoes, theme: Theme) {
 	const f = fimDe(textOf(message.content));
@@ -263,7 +227,7 @@ function cartaoFim(message: Mensagem, options: Opcoes, theme: Theme) {
 
 type Mensagem = { customType?: string; content?: unknown; timestamp?: unknown };
 
-/** Bloco do aviso; um clique esquerdo abre e fecha só este bloco (pedido do dono, 2026-11-14), por cima do atalho global. */
+/** Bloco do aviso; um clique esquerdo abre e fecha só este bloco, por cima do atalho global. */
 export function render(message: Mensagem, options: Opcoes, theme: Theme) {
 	let virado = false;
 	const montar = (m: typeof message, o: Opcoes, t: Theme) =>
@@ -288,7 +252,7 @@ function montarCaixa(message: Mensagem, options: Opcoes, theme: Theme) {
 	const r = summarize(tipo, texto);
 	const cor = { warn: "warning", err: "error", ok: "success" }[estado];
 	const bold = theme.bold ?? ((s: string) => s);
-	// Sem ícone de estado (dono, 2026-11-15): o estado vai por nome, na cor dele, após o título.
+	// Sem ícone de estado: o estado vai por nome, na cor dele, após o título.
 	const sep = ` ${theme.fg("dim", "·")} `;
 	const nomeEstado = tipo === FIM ? "" : `${sep}${estadoNome(estado, theme, estado === "err" ? "falhou" : undefined)}`;
 	const cabeca = `${theme.fg(cor, icon(tipo === SUB ? "swap" : tipo === FIM ? "run" : "hook"))}${iconGap()}${theme.fg("toolTitle", bold(tipo === GATE ? "gate" : tipo === SUB ? "subagente" : tipo === FIM ? "run" : "hook"))}${nomeEstado}${r.alvo ? `${sep}${theme.fg("muted", r.alvo)}` : ""}`;
@@ -310,7 +274,7 @@ function montarCaixa(message: Mensagem, options: Opcoes, theme: Theme) {
 		},
 		abre: r.detalhe.length > 0,
 	};
-	// Faixa âmbar (escolha do dono no lab /gate, 2026-11-19; antes caixa com linha em branco acima e abaixo, padding lateral
+	// Faixa âmbar (lab /gate; antes caixa com linha em branco acima e abaixo, padding lateral
 	// e atalho e hora em pílulas): UMA linha no fundo do estado na largura inteira, `atalho · hora` à direita; prévia e
 	// detalhe logo abaixo, sem fundo, recuados com │. Chegando agora, nasce do fundo em NASCE_MS (o histórico vem assentado).
 	function desenhar(w: number): string[] {

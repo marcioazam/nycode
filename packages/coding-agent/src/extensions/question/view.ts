@@ -80,7 +80,7 @@ export function buildQuestionLines(view: QuestionView): string[] {
 	const lines: string[] = [];
 	const add = (s: string) => lines.push(truncateToWidth(s, width));
 
-	// Variant B: a short numbered list (title only, owner 2026-11-15), the recommended option marked with a star at the
+	// Variant B: a short numbered list (title only), the recommended option marked with a star at the
 	// right, and a detail panel with the full description of the focused option only. The panel keeps the height of
 	// the tallest description so the dialog does not jump while moving. Nothing is cut with "...".
 	const wrapped = (text: string, indent: string): string[] =>
@@ -125,7 +125,7 @@ export function buildQuestionLines(view: QuestionView): string[] {
 			tag ? `${left}${" ".repeat(Math.max(2, width - visibleWidth(left) - visibleWidth(tag) - 1))}${tag}` : left,
 			width,
 		);
-		// Recommended option: system-palette cyan (theme token syntaxType = vars.cyan, owner 2026-11-15) on the bluish toolPendingBg across the whole row, focused or not. A reset inside the
+		// Recommended option: system-palette cyan (theme token syntaxType = vars.cyan) on the bluish toolPendingBg across the whole row, focused or not. A reset inside the
 		// row (truncation closes colors) would drop it, so it is reopened.
 		const paint =
 			parts[i].tag.startsWith("recomendada") && typeof theme.bg === "function"
@@ -243,7 +243,7 @@ function questionBlock(v: QuestionView1, theme: Theme, expanded: boolean, hint: 
 					: failed
 						? `${theme.fg("warning", "tempo esgotado")} ${theme.fg("dim", "· seguiu sem resposta")}`
 						: theme.fg("success", shown) + (v.note ? theme.fg("dim", ` · nota: ${v.note}`) : "");
-	// Sem ícone de estado no chat (dono, 2026-11-15): a resposta já diz o estado na cor dele; os 2 espaços mantêm o ícone na coluna das tools.
+	// Sem ícone de estado no chat: a resposta já diz o estado na cor dele; os 2 espaços mantêm o ícone na coluna das tools.
 	const state = v.answer === undefined ? "" : "  ";
 	const rail = theme.fg("dim", "│");
 	const asked = v.question.split("\n").map((row) => `${rail} ${theme.fg("muted", row)}`);

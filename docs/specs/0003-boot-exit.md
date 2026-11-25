@@ -24,7 +24,8 @@ A long task finds every server up and pays about 0.
 
 ## turn_gap 0.057 vs 0.012 s
 
-Diagnosis only. Per tool call harness Nycode runs two hooks in sequence around the tool: `packages/coding-agent/resources/hooks/guard.py` (python3, about 31-33 ms)
+Diagnosis only, superseded on 2026-11-24: `guard.py` gave way to the native TypeScript guard and the dispatch hook left
+the package (`docs/harness/decisoes-nucleo-harness-pessoal-2026-11-24.md`, C9). Per tool call harness Nycode runs two hooks in sequence around the tool: `packages/coding-agent/resources/hooks/guard.py` (python3, about 31-33 ms)
 and `hooks/dispatch/hook-dispatch.sh` (about 10 ms), plus the Stop-phase hooks (ralph-loop, impeccable gate, about 5 ms).
 That is about 43-45 ms per tool call, the whole 45 ms difference. Not changed: guard.py is the safety control.
 A long-lived guard process (one python start per session) would cut about 25 ms per call; out of scope here.

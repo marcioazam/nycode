@@ -314,7 +314,7 @@ const resolverEm = (ctx: ExtensionCommandContext, k: string): boolean => {
 	return !!ctx.modelRegistry.find(p, id);
 };
 
-/** Marca invisível lida pelo patch de avisos do core (caixaNeutra): caixa com fundo de aviso (dono, 2026-11-14). */
+/** Marca invisível lida pelo patch de avisos do core (caixaNeutra): caixa com fundo de aviso. */
 const CAIXA_AVISO = "\u2063\u2063";
 
 export default montar;

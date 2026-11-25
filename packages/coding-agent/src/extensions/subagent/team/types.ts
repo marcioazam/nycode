@@ -1,5 +1,5 @@
 /**
- * Agent team contract (local patch, claude-home/patches/nycode/team.patch). Opt-in
+ * Agent team contract. Opt-in
  * (NYCODE_TEAMS=1 or /team on): every run of the fleet tree can message any other run,
  * share a board and claim tasks, all through files under the fleet dir (fleet/types.ts):
  *   <id>.inbox.jsonl         team messages, delivered by the fleet inbox watcher (steer)

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { ExtensionAPI } from "../../../../src/core/extensions/types.ts";
 import { waitsInForeground } from "../../../../src/extensions/bash-main-guard/espera.ts";
-import ext, { decide, MAIN, MAIN_WAIT_S } from "../../../../src/extensions/bash-main-guard/index.ts";
+import ext, { decide, MAIN_WAIT_S } from "../../../../src/extensions/bash-main-guard/index.ts";
 
 type Handler = (event: unknown, ctx: unknown) => { block?: boolean; reason?: string } | undefined;
 
@@ -12,10 +12,12 @@ function run(
 	input: Record<string, unknown>,
 	ctx: unknown = undefined,
 	env: Record<string, string | undefined> = {},
+	settings: unknown = {},
 ) {
 	let handler: Handler | undefined;
 	ext(
 		{
+			getSettings: () => settings,
 			on: (name: string, h: Handler) => {
 				if (name === "tool_call") handler = h;
 			},
@@ -27,10 +29,11 @@ function run(
 }
 
 test("decide: sem timeout vale o padrão; acima do teto recusa e aponta para run start", () => {
-	assert.deepEqual(decide(undefined), { timeout: 120 });
-	assert.deepEqual(decide(-1), { timeout: 120 });
-	assert.deepEqual(decide(300), { timeout: 300 });
-	const d = decide(601);
+	const lim = { def: 120, max: 600 };
+	assert.deepEqual(decide(undefined, lim), { timeout: 120 });
+	assert.deepEqual(decide(-1, lim), { timeout: 120 });
+	assert.deepEqual(decide(300, lim), { timeout: 300 });
+	const d = decide(601, lim);
 	assert.ok("deny" in d && /run start/.test(d.deny));
 });
 
@@ -40,12 +43,11 @@ test("só mexe em bash e run", () => {
 	assert.deepEqual(input, { path: "x" });
 });
 
-// Sessão principal interativa (pedido do dono, 2026-11-14): nada pode prender o turno enquanto o usuário espera.
+// Sessão principal interativa: nada pode prender o turno enquanto o usuário espera.
 // Números: Claude Code usa 120 s de padrão e 600 s de teto no Bash em primeiro plano; Codex devolve o controle em até 30 s.
 const UI = { hasUI: true };
 
 test("sessão principal: padrão 120 s e teto 600 s; acima do teto aponta para run start", () => {
-	assert.deepEqual(MAIN, { def: 120, max: 600 });
 	assert.equal(run("bash", { command: "make" }, UI).input.timeout, 120);
 	assert.equal(run("bash", { command: "make", timeout: 600 }, UI).input.timeout, 600);
 	const { out } = run("bash", { command: "make", timeout: 601 }, UI);
@@ -138,4 +140,34 @@ test("F22: sleep em segundo plano (&, ( … ) &, lista com &&, laço com &) não
 
 test("F22: sessão principal deixa passar (sleep 90 && cmd) &", () => {
 	assert.equal(run("bash", { command: "(sleep 90 && cmd) &" }, UI).out, undefined);
+});
+
+// bash.mainGuard (decision B7): the numbers and the switch come from the settings; the defaults are 120 s and 600 s.
+test("bash.mainGuard.timeoutSec e capSec mudam o padrão e o teto da sessão principal", () => {
+	const settings = { bash: { mainGuard: { timeoutSec: 45, capSec: 200 } } };
+	assert.equal(run("bash", { command: "make" }, UI, {}, settings).input.timeout, 45);
+	assert.equal(run("bash", { command: "make", timeout: 200 }, UI, {}, settings).input.timeout, 200);
+	const { out } = run("bash", { command: "make", timeout: 201 }, UI, {}, settings);
+	assert.equal(out?.block, true);
+	assert.match(out?.reason ?? "", /teto de 200s/);
+});
+
+test("bash.mainGuard: um padrão acima do teto vale o teto", () => {
+	const settings = { bash: { mainGuard: { timeoutSec: 900, capSec: 300 } } };
+	assert.equal(run("bash", { command: "make" }, UI, {}, settings).input.timeout, 300);
+});
+
+test("bash.mainGuard.enabled false desliga tudo: timeout, recusa de sleep e run wait", () => {
+	const settings = { bash: { mainGuard: { enabled: false } } };
+	const bash = run("bash", { command: "sleep 240; ls", timeout: 900 }, UI, {}, settings);
+	assert.equal(bash.out, undefined);
+	assert.equal(bash.input.timeout, 900);
+	assert.equal(run("bash", { command: "make" }, UI, {}, settings).input.timeout, undefined);
+	assert.equal(run("run", { action: "wait", id: "r1", timeout_s: 900 }, UI, {}, settings).input.timeout_s, 900);
+});
+
+test("bash.mainGuard: valores inválidos voltam ao padrão", () => {
+	const settings = { bash: { mainGuard: { timeoutSec: 0, capSec: "x", enabled: "no" } } };
+	assert.equal(run("bash", { command: "make" }, UI, {}, settings).input.timeout, 120);
+	assert.equal(run("bash", { command: "make", timeout: 601 }, UI, {}, settings).out?.block, true);
 });

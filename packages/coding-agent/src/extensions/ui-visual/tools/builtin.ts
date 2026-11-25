@@ -41,7 +41,7 @@ import {
 } from "./base.ts";
 
 // ── hora da execução ─────────────────────────────────────────────────────────
-// Pedido do dono (2026-11-14): toda tool mostra à direita a hora em que TERMINOU; enquanto roda não há hora. Ao vivo vem do
+// Toda tool mostra à direita a hora em que TERMINOU; enquanto roda não há hora. Ao vivo vem do
 // evento tool_execution_end; no histórico (retomada, /reload) vem do timestamp do resultado na sessão, lido uma vez por chamada.
 export const fim = new Map<string, number>();
 let historico: (() => unknown[]) | undefined;
@@ -154,13 +154,13 @@ const callComponent = (name: ToolName, theme: Theme, ctx: Ctx): Component => {
 			: "";
 	const desenha = (w: number): string[] => {
 		const card = name !== "edit" && name !== "write";
-		// Ficha na largura inteira dentro da margem do chat, a partir da coluna 0 como o cartão Run (dono, 2026-11-18; antes
+		// Ficha na largura inteira dentro da margem do chat, a partir da coluna 0 como o cartão Run (antes
 		// margem 2 e no máximo 58 colunas).
 		const uw = card ? Math.max(1, w - 2) : util(w);
 		const hora = w >= 30 ? horaDe(ctx) : "";
 		const bgToken = ctx.isError ? "toolErrorBg" : ctx.isPartial === false ? "toolSuccessBg" : "toolPendingBg";
-		// Edit no estilo do Read (dono, 2026-11-19): lápis + `Edit`, `·` entre as partes, régua até a hora. Ícone sempre muted e
-		// fundo igual ao da caixa do diff (dono, 2026-11-20; antes ícone na cor do estado e cabeçalho sem fundo): read/cabecalho-edit.ts.
+		// Edit no estilo do Read: lápis + `Edit`, `·` entre as partes, régua até a hora. Ícone sempre muted e
+		// fundo igual ao da caixa do diff (antes ícone na cor do estado e cabeçalho sem fundo): read/cabecalho-edit.ts.
 		if (name === "edit") {
 			const raw = argsProntos(ctx) ? argPath(ctx.args ?? {}) : undefined;
 			const rel = raw ? relPath(raw, ctx.cwd) : undefined;
@@ -198,8 +198,8 @@ const callComponent = (name: ToolName, theme: Theme, ctx: Ctx): Component => {
 		}
 		const dica = ctx.state?.uiDica;
 		const reserve = (hora ? HORA_W : 0) + (dica ? teclaDe(ctx).length + dica.length + 5 : 0);
-		// Read em chips sem o fundo do cartão, a pílula na margem do chat (dono, 2026-11-18; antes cartão cinza com 1 espaço de recuo).
-		// Write igual ao Read com a bolinha cheia (dono, 2026-11-19; antes cartão verde do shell padrão com `write` minúsculo).
+		// Read em chips sem o fundo do cartão, a pílula na margem do chat (antes cartão cinza com 1 espaço de recuo).
+		// Write igual ao Read com a bolinha cheia (antes cartão verde do shell padrão com `write` minúsculo).
 		const box = (name === "read" && card) || name === "write" ? fundoLeitura(theme as never, ctx) : undefined;
 		const lw = box ? w : uw;
 		const width = Math.max(1, lw - reserve);
@@ -213,7 +213,7 @@ const callComponent = (name: ToolName, theme: Theme, ctx: Ctx): Component => {
 		// Read em chips com varredura e transição de estado (read/chips.ts); sem cores no tema, a linha de texto de antes.
 		let first: string;
 		if (box) {
-			// `Read` com maiúscula e sem pílula (dono, 2026-11-19; antes `read` numa pílula tingida).
+			// `Read` com maiúscula e sem pílula (antes `read` numa pílula tingida).
 			const pil = pilulaVerbo(
 				theme as never,
 				ctx,
@@ -223,22 +223,22 @@ const callComponent = (name: ToolName, theme: Theme, ctx: Ctx): Component => {
 				live,
 				now,
 			);
-			// `·` entre o verbo e o alvo (dono, 2026-11-19; antes só um espaço).
+			// `·` entre o verbo e o alvo (antes só um espaço).
 			const esq = `${pil}${estado ? SEP(theme) + estado : ""}${target ? SEP(theme) + target : ""}${pilulaFaixa(theme as never, box, meta)}`;
 			const dir =
 				name === "write"
 					? [ctx.state?.uiRight, dur].filter(Boolean).join(theme.fg("dim", " · "))
 					: pilulasDireita(theme as never, ctx, box, dur);
-			// Régua como no Run (dono, 2026-11-18): antes espaços entre o alvo e a contagem, e a hora em pílula à parte; agora
+			// Régua como no Run: antes espaços entre o alvo e a contagem, e a hora em pílula à parte; agora
 			// `read  alvo ──────── 3 linhas · 11:14`, com `·` entre a contagem e a hora.
-			// A pílula da contagem já termina num espaço: `·` com um espaço só de cada lado (dono, 2026-11-19; antes dois à esquerda).
+			// A pílula da contagem já termina num espaço: `·` com um espaço só de cada lado (antes dois à esquerda).
 			const lado = [dir, hora ? theme.fg("dim", hora) : ""]
 				.filter(Boolean)
 				.join(theme.fg("dim", dir.endsWith("\x1b[49m") ? "· " : " · "));
 			const rw = visibleWidth(lado),
 				wl = width + (hora ? HORA_W : 0);
 			const e = rw === 0 || rw > wl / 2 ? "" : fitLine(esq, wl - rw - 4);
-			// Moldura (dono, 2026-11-20, lab /pertence): com corpo embaixo a régua dobra em ╮ (moldura/quadro.ts).
+			// Moldura: com corpo embaixo a régua dobra em ╮ (moldura/quadro.ts).
 			const curva = ctx.state?.uiMoldura === true && molduraOk(theme as never, wl);
 			first = curva
 				? cabecalhoCurvo(esq, lado, wl, theme as never, ctx.isError === true)
@@ -286,7 +286,7 @@ const callComponent = (name: ToolName, theme: Theme, ctx: Ctx): Component => {
 	};
 	return {
 		render: (w) => {
-			// Read/Write com pulso (dono, 2026-11-19): o erro também fica vivo até o fim do pulso; antes guardava o 1º quadro do erro.
+			// Read/Write com pulso: o erro também fica vivo até o fim do pulso; antes guardava o 1º quadro do erro.
 			const vivoFim =
 				name === "read" || name === "write"
 					? idadeFim(ctx, Math.max(SETTLE_DURATION_MS, janelaLeitura(ctx as never))) !== undefined
@@ -339,7 +339,7 @@ const rightOf = (name: ToolName, result: Result, ctx: Ctx, theme: Theme): string
 	let summary: string;
 	if (name === "read") {
 		const l = leituraDe(result);
-		if (l.img) return ""; // sem o tipo (dono, 2026-11-19; antes `imagem`)
+		if (l.img) return ""; // sem o tipo (antes `imagem`)
 		summary = count(l.n, "linha", "linhas");
 	} else if (name === "write") {
 		const content = typeof ctx.args?.content === "string" ? ctx.args.content : "";
@@ -476,7 +476,7 @@ const comSintaxe = (c: Component, s: Sintaxe | undefined, theme: Theme): Compone
 
 export const wrap = (name: ToolName, base: Renderers): Renderers => ({
 	...base,
-	renderShell: "self" as const, // Write no estilo do Read (dono, 2026-11-19; antes o write ficava no shell padrão, fundo verde)
+	renderShell: "self" as const, // Write no estilo do Read (antes o write ficava no shell padrão, fundo verde)
 	renderCall(args, theme, context) {
 		try {
 			if (name === "bash") {
@@ -496,7 +496,7 @@ export const wrap = (name: ToolName, base: Renderers): Renderers => ({
 					dur,
 				});
 			}
-			return callComponent(name, theme, context); // edit: cabeçalho com o fundo da caixa do diff (dono, 2026-11-20)
+			return callComponent(name, theme, context); // edit: cabeçalho com o fundo da caixa do diff
 		} catch {
 			return base.renderCall ? base.renderCall(args, theme, context) : empty();
 		}
@@ -549,7 +549,7 @@ export const wrap = (name: ToolName, base: Renderers): Renderers => ({
 				return detail([linhaSintaxe(sintaxe, theme as never)], theme);
 			if (options.expanded) return finish(native(), partial);
 			if (partial) return empty();
-			// Imagem lida: uma linha a mais entre o cabeçalho e a imagem (dono, 2026-11-19; antes só o espaçador do nycode).
+			// Imagem lida: uma linha a mais entre o cabeçalho e a imagem (antes só o espaçador do nycode).
 			if (name === "read" && !context.isError && context.state?.uiLeitura?.img)
 				return { render: () => [""], invalidate() {} };
 			if (context.isError) return finish(errorComponent(name, result, theme, context), partial);

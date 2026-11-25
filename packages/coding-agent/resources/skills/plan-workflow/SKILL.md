@@ -25,7 +25,7 @@ A **vague objective** ("melhorar", "otimizar", "mais robusto", with no observabl
 | T0 | a mechanical edit with no behavior change (typo, rename), or an obvious one-file fix | none; list the assumptions | 1–3 tasks | — |
 | T1 | new or changed behavior inside one module, clear acceptance | ≤1 round, ≤4 questions | /docs record, AC | checklists |
 | T2 | several modules, a feature, external uncertainty, or a vague objective | ≤3 rounds, ≤5 per round | phases, EARS AC, unit graph | checklists + pre-mortem |
-| T3 | auth, secrets, money, **persistent data or its format**, migrations, concurrency, a public contract or wire format, deletion or another irreversible step, security, or a contradiction or material ambiguity in the request | rounds until the frontier is empty (cap 6, then a spike or `/skill:to-questionnaire`) | full `sdd-workflow` lifecycle, pre-mortem, rollback | one fresh-context reviewer |
+| T3 | auth, secrets, money, **persistent data or its format**, migrations, concurrency, a public contract or wire format, deletion or another irreversible step, security, or a contradiction or material ambiguity in the request | rounds until the frontier is empty (cap 6, then a spike or a written questionnaire for a third party) | full spec-driven lifecycle, pre-mortem, rollback | one fresh-context reviewer |
 
 ## P1 Ambiguity gate (mandatory)
 
@@ -43,11 +43,11 @@ Score each entry by impact × uncertainty. Facts go to P2; decisions go to P3.
 
 Facts are your job; never ask the user for one. Use, in parallel:
 
-- codegraph (`tool_search` codegraph), `rg`/`fdfind`/`read`;
-- the repository's `/docs` and instructions, and knowledge vault (`kb.py search|section`);
-- `Explore` or `code-mapper` for broad sweeps.
+- `rg`/`fdfind`/`read` and `lsp_*` (a code-index MCP when one is configured);
+- the repository's `/docs` and instructions;
+- `Explore` for broad sweeps.
 
-Use the web only when external uncertainty affects correctness: follow `perplexity-urls`, or call `perplexity-scout`, `web-scout` or `research-scout`. Cite every fact a decision rests on. Ask the questions that do not depend on a pending fact now.
+Use the web only when external uncertainty affects correctness: search with the configured web providers (two independent ones when available) and read the primary source. Cite every fact a decision rests on. Ask the questions that do not depend on a pending fact now.
 
 ## P3 Grill
 
@@ -83,7 +83,7 @@ Each round asks the **frontier**: the decisions whose prerequisites are settled.
 ## P6 Checklists and P7 Review
 
 - Run [checklists](references/checklists.md) yourself: T1 and above for requirement quality and readiness, T2 and above for the pre-mortem. Fix each gap or state it. The lint in `plan_mode_complete` checks the mechanical part (tier line, EARS, AC coverage, check command, assumption %, risks and rollback) at no token cost.
-- **T3 only:** run one fresh-context review with `subagent`. Pick ONE agent by the risk: `contract-migration-reviewer` (contract, schema, migration), `security-reviewer` (auth, secrets, input), `reliability-reviewer` (retries, concurrency, recovery), else `Plan`. Put the draft plan in the task text and ask one question: "could a newcomer execute this without deciding anything, and what breaks?", with findings by severity.
+- **T3 only:** run one fresh-context review with `subagent`. Pick ONE agent by the risk: `security-reviewer` (auth, secrets, input), else `Plan`. Put the draft plan in the task text and ask one question: "could a newcomer execute this without deciding anything, and what breaks?", with findings by severity.
 - Reconcile the findings against the evidence. Re-review only after CRITICAL changes, at most once more.
 
 ## P8 Submit

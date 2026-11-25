@@ -38,7 +38,7 @@ test("skill-prompts: expande a skill instalada com argumentos, só pelo usuário
 	assert.match(c.last(), /security-audit.*não está instalada/);
 });
 
-test("doctor: JSON corrompido reportado, valores nunca impressos, guarda ausente detectada", () => {
+test("doctor: JSON corrompido reportado, valores nunca impressos", () => {
 	const dir = tmp();
 	writeFileSync(join(dir, "settings.json"), "{ruim");
 	writeFileSync(
@@ -49,7 +49,6 @@ test("doctor: JSON corrompido reportado, valores nunca impressos, guarda ausente
 	const text = doctorText(checks);
 	assert.match(text, /✕ settings\.json: JSON inválido/);
 	assert.match(text, /mcp\.json: JSON válido \(2 em mcpServers\)/);
-	assert.match(text, /✕ guarda de segurança.*AUSENTE/);
 	assert.doesNotMatch(text, /SEGREDO/);
 	assert.match(doctorText(doctorChecks(dir, 0, 0, "18.0.0")), /Node 18\.0\.0 \(< 20/);
 });

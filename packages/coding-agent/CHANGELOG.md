@@ -6,16 +6,38 @@
 
 - The user scope is `~/.nycode/agent` only (D-62): the user's CLAUDE.md, rules, skills, agents, commands, output styles, plugins and Claude-format settings keys (`hooks`, `env`, `disableAllHooks`, `outputStyle`, ...) are read from there, and the home directories of other tools (`~/.claude`, `~/.agents`) are no longer read. The home directory is never treated as a project. Managed policy moves to `/etc/nycode/managed-settings.json` (`/Library/Application Support/Nycode/`, `C:\Program Files\Nycode\`)
 
+### Added
+
+- Settings `plan.readOnlyTools`, `bash.mainGuard`, `footer.stats`, `editorMode` and `notify.desktop`
+- In-process core hook `core-notes` (untrusted-data note, missing MCP launcher, test-edit note)
+- The guard denies `git commit|push|merge --no-verify` and `gh pr merge --admin`
+- User override of the built-in instructions at `<agentDir>/instructions/<name>.md`
+- `resources/.npmignore`
+- A test that fails when an embedded text cites a missing skill, agent, command or resource
+
+### Changed
+
+- The embedded contract is about 1 KB of generic protection; the system prompt adds a scope rule and an ambiguity rule; `/init` no longer asks for an architecture or layout overview
+- Embedded agents use tier aliases (`haiku`, `sonnet`, `inherit`)
+- Ponytail is updated to v5.3.3 (`shortcut:` marker); subagents get its rules only when their `tools:` include `edit` or `write` or are unrestricted (`PONYTAIL_SUBAGENT_MATCHER` overrides)
+- Plan mode allows MCP tools by `readOnlyHint` or `plan.readOnlyTools`, and read-only agents by their `tools:`
+- Auto-resume uses the `@nycode/ai` classifiers
+- The ralph Stop hook is registered only while a loop runs, and `--max-iterations` defaults to 20 (`0` is unlimited)
+- `avisos`, `sound-notify` and `notify` are one `notify` extension (`/notifications`, alias `/avisos`); it no longer reads Claude's `preferredNotifChannel` nor sends the PowerShell toast
+- Vim editing is the `editorMode` setting
+
 ### Fixed
 
+- Fixed read-only subagents started in plan mode running unrestricted bash: they inherit `NYCODE_PLAN_READONLY`, which keeps plan mode's bash allowlist and blocks edit/write
+- Fixed the git guard reading the value of `--namespace`, `--config-env`, `--attr-source` and `--exec-path` as the subcommand, which skipped the `--no-verify` and force-push denies
+- Fixed `/list-agents`, which read a `claude-home/agents` directory that no longer exists: it now lists the agents the subagent tool resolves
+- Fixed the bash full-output file being read before it was flushed: `executeBash` now resolves only after the temp file is written
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
 - Git fetch of a pinned ref passes `--` before the remote and the ref, including when the checkout already exists, so the ref cannot be read as a git option
 - The built-in Mistral default is `codestral-latest`. The live catalog no longer includes `devstral-medium-latest`
 - Fixed argument substitution, skill-block parsing and diff-line parsing so a long crafted string cannot make those scans take polynomial time
 - Hooks, plugins, rules, CLAUDE.md, skills and agents of another tool's home directory no longer run or reach the prompt in nycode sessions; the HUD config and usage cache are read from `~/.nycode/agent/plugins/claude-hud`
 - A skill path declared in `settings.json` no longer reports a startup collision with a lower-precedence copy of the same skill
-- `nycode migrate from-pi` now carries the harness overlay `claude-home/rules/personal.md` into `~/.nycode/agent/AGENTS.md`, with the pi names converted
-- `nycode migrate from-pi` points the personal `/conta` extension's `pi-conta` helper at `~/.nycode/agent`; before, switching accounts in nycode rewrote `~/.pi/agent/auth.json`
 - The agent directory's CLAUDE.md is not injected twice when nycode already loads it as the global context file
 - An expired or revoked OAuth login (`invalid_grant` on token refresh) is reported as an account problem with `/login` as the action, instead of "Algo falhou no nycode" with `/bug`
 - An idle session no longer renders once a second: the subagent panel asked for a frame on every 1 s fleet poll, even with no subagent
@@ -31,6 +53,11 @@
 - The editor no longer moves up one row when the first response arrives: the status line's token row (`↓ … ↑ … · turno`) exists from startup as `↓ 0 ↑ 0` instead of appearing with the first turn
 - A nycode started inside another nycode (a `!` shell, a different version) uses its own `resources/` instead of the parent's: an inherited `NYCODE_RESOURCES` that nycode exported (marked by `NYCODE_RESOURCES_AUTO=1`) is replaced, while a value the user set still wins
 - An automatic session title is bounded to the first line of the model's reply without heading marks, at most 80 characters; a provider that ignores the token cap made the whole reply the session name
+
+### Removed
+
+- `nycode migrate from-pi`, `/puxar`, the codegraph and knowledge-vault integrations, the `guard.py`/`script` permission engine (`permissions.engine` is native-only), `/review-pr`, `/ralph-help`, `/vim`, `/mobile`, `/stickers`, `/upgrade`, `hook-dispatch.sh`, the `claims` hook and `impeccable_gate.sh`
+- 24 skills, 10 agents, 9 commands and the git-deliver, structure, checks, telemetry, mcp-header and nycode-image scripts from the embedded resources (they were the owner's personal setup)
 
 ## [2.0.2] - 2026-11-23
 

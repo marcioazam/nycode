@@ -39,7 +39,7 @@ export const formatDuration = (ms: number): string => {
 	return `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, "0")}s`;
 };
 
-/** Solução 2 (escolha do dono, 2026-11-18): atalho (`alt+o abre`) e hora (`01:29`) ficam juntos no cabeçalho em pílulas
+/** Solução 2 (escolha): atalho (`alt+o abre`) e hora (`01:29`) ficam juntos no cabeçalho em pílulas
  * discretas, liberando 100% da largura de todas as linhas do corpo. Sem espaço, cai primeiro o atalho, depois a hora. */
 export const comTopoDireita = (
 	row: string,

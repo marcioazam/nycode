@@ -9,7 +9,7 @@ lê AGENTS.md e CLAUDE.md (e o CLAUDE.local.md pessoal), então os dois entram; 
 o original procurava `.claude.local.md`, nome que o Claude Code não lê (o certo é `CLAUDE.local.md`, conferido em
 code.claude.com/docs/en/memory); no nycode, CLAUDE.local.md e .claude/CLAUDE.md só carregam em projeto aprovado
 (extensão context-imports), e o nycode roda com --no-approve. Instruções
-globais (${NYCODE_RESOURCES}/instructions/contract.md e rules/) ficam de fora: são mantidas por outro fluxo. -->
+globais do harness (instruções e regras embutidas) ficam de fora: são mantidas por outro fluxo. -->
 
 Foco pedido: `$ARGUMENTS`
 

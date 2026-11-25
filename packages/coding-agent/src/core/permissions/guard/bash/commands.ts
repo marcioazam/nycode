@@ -1,5 +1,5 @@
 // What a single command is allowed to do: the static table of the guard (rm, dd, mkfs, chmod, kill, git, docker...).
-// Port of the body of `check_segment` of guard.py, without the indirections (those live in rules.ts).
+// Port of the body of `check_segment` of the former Python guard, without the indirections (those live in rules.ts).
 
 import { type Finding, longOpt, shortFlags } from "../lex/tokens.ts";
 import { expanduser, normpath } from "../py-path.ts";
@@ -154,6 +154,13 @@ export function commandFindings(name: string, args: string[], top: string, cwd: 
 		found.push(["ask", `${name} publish`]);
 	} else if (name === "git") {
 		found.push(...checkGit(args, cwd));
+	} else if (
+		name === "gh" &&
+		positional.includes("pr") &&
+		positional.includes("merge") &&
+		args.some((a) => a === "--admin" || a.startsWith("--admin="))
+	) {
+		found.push(["deny", "gh pr merge --admin contorna a proteção de branch"]);
 	}
 	return found;
 }

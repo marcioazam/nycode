@@ -1,7 +1,7 @@
 // K6: the standalone binary resolves the built-in resources next to the executable, so scripts/build-binaries.sh must
 // copy `resources/` into every platform directory. A full binary build is too slow for a unit test: this checks the
 // static contract (the "Copy shared files" loop and the bun-binary package dir); the real build is the F11 rehearsal.
-import { execFileSync, spawnSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -29,18 +29,9 @@ describe("binary ships the built-in resources", () => {
 		execFileSync("cp", ["-r", join(pkgRoot, "resources"), out]);
 
 		it("keeps the execute bit of the entry points", () => {
-			for (const rel of ["bin/git-deliver", "bin/doctor/nycode-doctor", "bin/checks/check-agents.py"]) {
+			for (const rel of ["bin/doctor/nycode-doctor", "bin/doctor/prune-sessions", "bin/nycode-session"]) {
 				expect(statSync(join(out, "resources", rel)).mode & 0o111, rel).not.toBe(0);
 			}
-		});
-
-		it("runs git-deliver from the copy, resolving its engine next to it", () => {
-			const env = { ...process.env };
-			delete env.NYCODE_RESOURCES;
-			const run = spawnSync(join(out, "resources/bin/git-deliver"), [], { encoding: "utf-8", env });
-			// no subcommand: the engine answers its usage JSON with exit 2 (a missing engine would exit 127 or 1)
-			expect(run.status).toBe(2);
-			expect(JSON.parse(run.stdout)).toMatchObject({ ok: false, cmd: "usage" });
 		});
 	});
 });

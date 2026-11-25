@@ -103,6 +103,7 @@ describe("footer", () => {
 		let built: { render(width: number): string[] } | undefined;
 		let bridge: { folded: boolean } | undefined;
 		const api = {
+			getSettings: () => ({}),
 			on: (_name: string, fn: typeof handler) => {
 				handler = fn;
 			},

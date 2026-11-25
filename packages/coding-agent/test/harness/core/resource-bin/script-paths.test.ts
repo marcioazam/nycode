@@ -22,35 +22,22 @@ const files = walk(resources).map((path) => ({ rel: relative(resources, path), t
 
 describe("script paths cited by the embedded resources", () => {
 	it("has a resources/bin tree with the harness scripts", () => {
-		for (const rel of [
-			"bin/git-deliver",
-			"bin/structure/structure.py",
-			"bin/checks/check-instructions.py",
-			"bin/checks/check-agents.py",
-			"bin/puxar/puxar.py",
-			"bin/telemetry/nycode_telemetry.py",
-			"bin/doctor/nycode-doctor",
-			"bin/mcp-header.sh",
-			"bin/nycode-image.mjs",
-		]) {
+		for (const rel of ["bin/doctor/nycode-doctor", "bin/usage.mjs", "bin/nycode-session"]) {
 			expect(existsSync(join(resources, rel)), rel).toBe(true);
 		}
 	});
 
 	it("resolves every cited NYCODE_RESOURCES script path inside the package", () => {
 		const missing: string[] = [];
-		let cited = 0;
 		for (const { rel, text } of files) {
 			for (const line of text.split("\n")) {
 				if (/optional/i.test(line)) continue; // an optional piece may be absent
 				for (const match of line.matchAll(CITED)) {
-					cited++;
 					const target = match[1].replace(/[.:]+$/, "");
 					if (!existsSync(join(resources, target))) missing.push(`${rel}: ${target}`);
 				}
 			}
 		}
-		expect(cited).toBeGreaterThan(10);
 		expect(missing).toEqual([]);
 	});
 
@@ -60,17 +47,7 @@ describe("script paths cited by the embedded resources", () => {
 	});
 
 	it("keeps the execute bit on the entry points", () => {
-		for (const rel of [
-			"bin/git-deliver",
-			"bin/mcp-header.sh",
-			"bin/nycode-image.mjs",
-			"bin/doctor/nycode-doctor",
-			"bin/doctor/nycode-typecheck",
-			"bin/doctor/prune-sessions",
-			"bin/checks/check-agents.py",
-			"bin/checks/check-instructions.py",
-			"bin/checks/skill-usage.py",
-		]) {
+		for (const rel of ["bin/doctor/nycode-doctor", "bin/doctor/nycode-typecheck", "bin/doctor/prune-sessions"]) {
 			expect(statSync(join(resources, rel)).mode & 0o111, rel).not.toBe(0);
 		}
 	});

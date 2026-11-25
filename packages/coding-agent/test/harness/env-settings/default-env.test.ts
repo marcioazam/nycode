@@ -56,22 +56,16 @@ describe("default env", () => {
 		session.stop();
 	});
 
-	// D-54: ponytail is on by default: quiet startup and the writer-only subagent matcher.
-	it("exports the ponytail defaults: quiet startup and the subagent matcher of the writers", () => {
+	// D-54: ponytail is on by default with quiet startup; the subagent matcher is derived by the extension, not a default.
+	it("exports the ponytail quiet-startup default and no subagent matcher", () => {
 		delete process.env.PONYTAIL_SUBAGENT_MATCHER;
 		delete process.env.PONYTAIL_QUIET_STARTUP;
 		load({});
 		expect(process.env.PONYTAIL_QUIET_STARTUP).toBe("1");
-		const matcher = new RegExp(process.env.PONYTAIL_SUBAGENT_MATCHER ?? "(unset)", "i");
-		for (const writer of ["swarm-worker", "test-author", "lane-integrator", "general-purpose"]) {
-			expect(matcher.test(writer), writer).toBe(true);
-		}
-		for (const reader of ["Explore", "Plan", "gate-runner", "code-reviewer"]) {
-			expect(matcher.test(reader), reader).toBe(false);
-		}
+		expect(process.env.PONYTAIL_SUBAGENT_MATCHER).toBeUndefined();
 	});
 
-	it("a settings.json env entry replaces the ponytail matcher", () => {
+	it("a settings.json env entry sets the ponytail matcher override", () => {
 		const session = load({ env: { PONYTAIL_SUBAGENT_MATCHER: "general|plan" } });
 		session.start();
 		expect(process.env.PONYTAIL_SUBAGENT_MATCHER).toBe("general|plan");

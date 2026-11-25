@@ -1,4 +1,4 @@
-// Ported from marcioazam/ponytail a75382e (MIT; its helpers and subagent tests): the pure helpers of the
+// Ported from DietrichGebert/ponytail v5.3.3 (MIT; its helpers and subagent tests): the pure helpers of the
 // embedded ponytail extension, with the config file under XDG_CONFIG_HOME in a temp directory.
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -14,6 +14,7 @@ import {
 } from "../../../../src/extensions/ponytail/config.ts";
 import {
 	childMode,
+	childTools,
 	parsePonytailCommand,
 	resolveSessionMode,
 	subagentName,
@@ -138,7 +139,10 @@ describe("instructions", () => {
 	it("builds the rules from the embedded skill, and review points at its own skill", () => {
 		const full = getPonytailInstructions("full");
 		expect(full).toMatch(/^PONYTAIL MODE ACTIVE — level: full\n\n/);
-		expect(full).toContain("The ladder");
+		expect(full).toContain("## The smallest complete change");
+		expect(full).toContain("`shortcut: <the limit>, <when to upgrade>`");
+		expect(full).not.toContain("`ponytail:`");
+		expect(full).not.toContain("| **ultra**");
 		expect(getPonytailInstructions("review")).toBe(
 			"PONYTAIL MODE ACTIVE — level: review. Behavior defined by /ponytail-review skill.",
 		);
@@ -147,7 +151,8 @@ describe("instructions", () => {
 	it("falls back to the short rules when the skill file is missing", () => {
 		const text = getPonytailInstructions("ultra", join(xdg, "missing", "SKILL.md"));
 		expect(text).toContain("level: ultra");
-		expect(text).toContain("## The ladder");
+		expect(text).toContain("## The smallest complete change");
+		expect(text).toContain("`shortcut: <the limit>, <when to upgrade>`");
 	});
 });
 
@@ -166,6 +171,31 @@ describe("subagent matcher", () => {
 		expect(childMode({ ...base, argv: argv("Explore") })).toBe("off");
 		expect(childMode({ ...base, parentMode: "off", argv: argv("swarm-worker") })).toBe("off");
 		expect(childMode({ ...base, parentMode: undefined, argv: argv("swarm-worker") })).toBe("full");
+	});
+
+	it("without a matcher, keeps the rules for agents whose tools include edit or write, or that have no tools list", () => {
+		const base = { parentMode: "ultra", fallback: "full" as const };
+		const withTools = (tools: string) => [...argv("x"), "--tools", tools];
+		expect(childMode({ ...base, argv: withTools("read,grep,find,bash") })).toBe("off");
+		expect(childMode({ ...base, argv: withTools("read,edit,bash") })).toBe("ultra");
+		expect(childMode({ ...base, argv: withTools("read, write") })).toBe("ultra");
+		expect(childMode({ ...base, argv: argv("x") })).toBe("ultra");
+		expect(childMode({ ...base, parentMode: "off", argv: withTools("edit") })).toBe("off");
+		expect(childMode({ ...base, matcher: "", argv: withTools("read") })).toBe("off");
+	});
+
+	it("a set matcher overrides the tools rule in both directions", () => {
+		const base = { parentMode: "lite", fallback: "full" as const };
+		const reader = [...argv("Explore"), "--tools", "read,grep"];
+		const writer = [...argv("swarm-worker"), "--tools", "read,edit,write"];
+		expect(childMode({ ...base, matcher: "explore", argv: reader })).toBe("lite");
+		expect(childMode({ ...base, matcher: "explore", argv: writer })).toBe("off");
+	});
+
+	it("reads the tools allowlist from the child's --tools argument", () => {
+		expect(childTools(["node", "--tools", "read, edit,bash"])).toEqual(["read", "edit", "bash"]);
+		expect(childTools(["node", "nycode"])).toBeNull();
+		expect(childTools(["node", "--tools"])).toBeNull();
 	});
 
 	it("fails open on a bad regex or an unparseable agent name", () => {

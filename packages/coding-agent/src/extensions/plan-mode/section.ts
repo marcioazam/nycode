@@ -490,8 +490,7 @@ export class PlanSection {
 		const tail = colored.join(theme.fg("dim", " · "));
 		const base = heading(title, theme, width, this.source, focus ? "accent" : undefined);
 		const head = tail ? truncateToWidth(base + theme.fg("dim", " · ") + tail, width) : base;
-		// Time, spend, window and keys sit on a footer line under the table (owner request 2026-11-14; they used to follow the
-		// tab name on the bar). The line is always there, so focusing never moves the transcript. The bar keeps the marks.
+		// Time, spend, window and keys sit on a footer line under the table. The line is always there, so focusing never moves the transcript. The bar keeps the marks.
 		// The button is there focused or not (a click on the line opens the plan modal); the info text gives way to it.
 		const button = focus ? hint : ` · ${OPEN_PLAN}`;
 		const infoText = truncateToWidth(info.replace(/^ · /, ""), Math.max(0, width - visibleWidth(button)));

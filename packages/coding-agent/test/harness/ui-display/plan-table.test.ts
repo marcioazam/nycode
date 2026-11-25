@@ -62,7 +62,7 @@ test("state per row: done / doing / todo plus blocked, failed, skipped when set;
 	times.observe(items, 134_000);
 	const raw = (i: number) => t.tableRow(items[i], tagged, 100, times, 134_000, true, t.activeStep(items));
 	const row = (i: number) => strip(raw(i));
-	// Owner request (2026-11-14): the cell shows the clock time the step finished, then how long it took (was `finalizado 02:14`).
+	// The cell shows the clock time the step finished, then how long it took (was `finalizado 02:14`).
 	assert.match(
 		row(0),
 		new RegExp(
@@ -72,11 +72,11 @@ test("state per row: done / doing / todo plus blocked, failed, skipped when set;
 	assert.ok(raw(0).includes("\x1b[32mfeito"), "done is success-colored");
 	assert.match(row(1), /^02\s+fazendo/);
 	assert.ok(raw(1).includes("\x1b[1m\x1b[34mfazendo"), "doing is bold task color");
-	assert.match(row(1), /00:00\s*$/, "running counter, no blinking mark (owner, 2026-11-15: no status icons)");
+	assert.match(row(1), /00:00\s*$/, "running counter, no blinking mark (no status icons)");
 	assert.match(row(2), /a fazer.*—/);
 	assert.match(row(3), /bloqueado/);
 	assert.ok(raw(3).includes("\x1b[33mbloqueado"), "blocked is warning-colored");
-	assert.match(row(4), /falhou.*falhou\s*$/); // no agent cell (owner, 2026-11-14; was `code-reviewer` at the end)
+	assert.match(row(4), /falhou.*falhou\s*$/); // no agent cell (was `code-reviewer` at the end)
 	assert.ok(raw(4).includes("\x1b[31mfalhou"), "failed is error-colored");
 	assert.match(row(5), /pulado/);
 	const odd = strip(t.tableRow(items[1], tagged, 100, times, 135_000, true, 2));
@@ -85,14 +85,14 @@ test("state per row: done / doing / todo plus blocked, failed, skipped when set;
 		!strip(t.tableRow(items[1], tagged, 100, times, 134_000, false, 2)).includes("▮"),
 		"reduced motion: no blinking mark",
 	);
-	// Narrow rung (no state column): no symbol, the task text alone carries the state color (owner, 2026-11-15).
+	// Narrow rung (no state column): no symbol, the task text alone carries the state color.
 	const narrow = t.tableRow(items[4], tagged, 45, times, 134_000, true, t.activeStep(items));
 	assert.equal(t.columns(45).label, false);
 	assert.ok(narrow.includes("\x1b[31mstep 5"), narrow);
 	assert.ok(!/[✓▸○‖✕⊘∥]/.test(strip(narrow)));
 });
 
-// Owner request (2026-11-14): no agent column at any width; header `fim` instead of `tempo`.
+// No agent column at any width; header `fim` instead of `tempo`.
 test("responsive ladder: duration → state label → time and number; every line fits, the task is cut with an ellipsis", () => {
 	const times = new t.PlanTimes();
 	const long = { ...item(1), text: "x".repeat(200), agent: "swarm-worker" };
@@ -295,7 +295,7 @@ test("spend in the Plan title: tokens and dollars of the assistant messages sinc
 	(section as any).times.observe([item(1)], since);
 	freshNav();
 	section.update((section as any).ctx, [item(1)]);
-	assert.match(strip(section.render(100).at(-1)!), /^00:00 · 42k tok · \$0\.63/); // footer line (owner, 2026-11-14; was the bar)
+	assert.match(strip(section.render(100).at(-1)!), /^00:00 · 42k tok · \$0\.63/); // footer line (was the bar)
 });
 
 // ---- management: select, details, skip, pause, open ----
@@ -340,7 +340,7 @@ test("manage: ↓ selects (❯ on the row), Enter opens the drawer with the fact
 		lines().some((l) => /^02❯\s+fazendo/.test(l.trimStart())),
 		lines().join("\n"),
 	);
-	assert.match(lines().at(-1)!, /↵ detalhes · o abrir plano · s pular · p pausar · esc back$/); // keys on the footer line (owner, 2026-11-14; was the title)
+	assert.match(lines().at(-1)!, /↵ detalhes · o abrir plano · s pular · p pausar · esc back$/); // keys on the footer line (was the title)
 	s.handleInput("\r");
 	const open = lines();
 	assert.ok(
@@ -381,7 +381,7 @@ test("manage: s asks why, marks the step skipped, tells the agent; r reopens; fi
 test("manage: p aborts the run and freezes the clock and the step; p again resumes without the gap and starts a turn", () => {
 	const { s, log, tick, lines } = managed([item(1), item(2)]);
 	tick(10_000);
-	assert.match(lines().at(-1)!, /^00:10/); // footer line (owner, 2026-11-14; was the bar)
+	assert.match(lines().at(-1)!, /^00:10/); // footer line (was the bar)
 	s.handleInput("p");
 	assert.deepEqual(
 		log.slice(0, 2).map((x) => x.split(":")[0]),

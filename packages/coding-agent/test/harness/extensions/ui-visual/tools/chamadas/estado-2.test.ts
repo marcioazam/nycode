@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 const { iconGap, nerdFont } = __m1;
-// Régua Run (dono, 2026-11-18): antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
+// Régua Run: antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
 // Prefixos de icon('bash') e iconGap() da cópia tmp (base.ts fixa o terminal): independem de TERM.
 const G = iconGap();
 const _P = `▎ ${" ".repeat(1 + G.length)}`; // corpo e rodapé: trilho + recuo até o `Run`
@@ -49,32 +49,32 @@ const comHora = (branch: unknown[] = []) => {
 	return { on, resolver };
 };
 
-// 2026-11-14 (dono): a hora à direita é a do TÉRMINO da execução; enquanto roda não há hora.
-// (dono, 2026-11-20): o nome da ferramenta é `Subagent`/`Subagents` e o `│` do corpo fica na coluna do nome; antes `Subagente` e o `│` 2 colunas antes.
+// 2026-11-14: a hora à direita é a do TÉRMINO da execução; enquanto roda não há hora.
+// o nome da ferramenta é `Subagent`/`Subagents` e o `│` do corpo fica na coluna do nome; antes `Subagente` e o `│` 2 colunas antes.
 
-// Antigo (2026-11-14): bolinha pulsando, com um timer pedindo redesenho. Novo (dono, 2026-11-15): sem ícone de estado no chat;
+// Antigo (2026-11-14): bolinha pulsando, com um timer pedindo redesenho. Novo: sem ícone de estado no chat;
 // "executando" é o nome em ciano (syntaxType), sem animação, e nenhum timer pede redesenho.
 
-// Pedido do dono (2026-11-14, print b4b98ee1): a pergunta tem o mesmo alinhamento dos demais blocos, com o atalho e a hora juntos no
-// cabeçalho. Resposta em destaque (dono, 2026-11-20, lab /pergunta desenho 7): antes `? pergunta  resposta` + texto atrás de um `│`
+// A pergunta tem o mesmo alinhamento dos demais blocos, com o atalho e a hora juntos no
+// cabeçalho. Resposta em destaque: antes `? pergunta  resposta` + texto atrás de um `│`
 // em cartão verde; agora ` cabeçalho · pergunta` (atalho e hora só na 1ª linha) e ` ❯ resposta`, sem fundo.
 
-// Pedido do dono (2026-11-14): `run` saía sem estado, sem ícone e sem hora (não tem renderCall próprio).
+// `run` saía sem estado, sem ícone e sem hora (não tem renderCall próprio).
 
-// Pedido do dono (2026-11-14): o todo repetia a mesma coisa em duas linhas (chamada + "Started #1: …"). Uma linha só, em
+// O todo repetia a mesma coisa em duas linhas (chamada + "Started #1: …"). Uma linha só, em
 // português, com o andamento da lista à direita; lista e erro continuam com o desenho nativo embaixo.
 
-// Pedido do dono (2026-11-14): memory é consulta, não execução com resultado: sem ícone de estado. Erro continua visível.
-// Contrato trocado (dono, 2026-11-20, lab /memoria desenho 9): antes cartão com fundo neutro (customMessageBg), `│ corpo` cru abaixo
+// Memory é consulta, não execução com resultado: sem ícone de estado. Erro continua visível.
+// Contrato trocado: antes cartão com fundo neutro (customMessageBg), `│ corpo` cru abaixo
 // e o título nativo; agora uma frase `Memory · estado · nome` sem fundo e sem corpo (detalhes em memoria.test.ts).
 
-// Pedido do dono (2026-11-14, variante B): run com cabeçalho curto (verbo + nome do run) e linha de fatos (estado em cor,
+// Run com cabeçalho curto (verbo + nome do run) e linha de fatos (estado em cor,
 // duração, id, log); saída recuada só quando existe; estado e fundo pelo estado REAL do run, não pelo da chamada.
 
-// "Uma linha" com a Barra (dono, 2026-11-19): enquanto o run segue vivo no registro do nycode (nycode.run.registry), o tempo
+// "Uma linha" com a Barra: enquanto o run segue vivo no registro do nycode (nycode.run.registry), o tempo
 // corre a partir do início e a barra ━ do Bash anda ao lado do estado; terminado no registro, a faixa para e fica como veio.
 
-// Pedido do dono (2026-11-14, variante B): subagente no padrão do run: cabeçalho `subagente · <agente|paralelo · N agentes>`,
+// Subagente no padrão do run: cabeçalho `subagente · <agente|paralelo · N agentes>`,
 // linha de fatos (estado em cor, onde roda, id) e a tarefa ou o resultado de cada agente embaixo. Sem a frase em inglês.
 test("subagente B: árvore sem fundo, estado de cada agente e expansão nativa", () => {
 	const { resolver } = comHora();
@@ -116,7 +116,7 @@ test("subagente B: árvore sem fundo, estado de cada agente e expansão nativa",
 		usage: { turns },
 		messages: [{ role: "assistant", content: [{ type: "text", text: out }] }],
 	});
-	// segundo plano (dono, 2026-11-14, variante A): a chamada só entrega o agente; a caixa diz "enviado", sem bolinha nem fundo
+	// segundo plano: a chamada só entrega o agente; a caixa diz "enviado", sem bolinha nem fundo
 	// de estado (antes ficava "rodando" para sempre no histórico). O resultado chega no aviso subagent-background.
 	const bg = draw(
 		{ agent: "plan-reviewer", task: "Faça uma re-revisão\nsegunda linha" },
@@ -124,8 +124,8 @@ test("subagente B: árvore sem fundo, estado de cada agente e expansão nativa",
 			"Started background run bg-1c12d077 (plan-reviewer). A notification will arrive on completion; check progress with {status: true}.",
 		),
 	);
-	assert.deepEqual(bg.linhas, [`${A} Subagent · plan-reviewer ${ENG} · enviado`, "  └ Faça uma re-revisão"]); // (dono, 2026-11-20, /subag2 desenho 3): antes `Subagent · enviado para segundo plano` e `└ plan-reviewer · tarefa` // (dono, 2026-11-20): antes ícone na coluna 2 e `└` na 4; agora ícone na coluna 0 (a do Read) e `└` na coluna de Subagent
-	// (dono, 2026-11-20): antes sem nenhum fundo (`customMessageBg` proibido); agora a 1ª linha é uma faixa neutra de ponta a ponta, a 2ª segue sem fundo.
+	assert.deepEqual(bg.linhas, [`${A} Subagent · plan-reviewer ${ENG} · enviado`, "  └ Faça uma re-revisão"]); // antes `Subagent · enviado para segundo plano` e `└ plan-reviewer · tarefa` // antes ícone na coluna 2 e `└` na 4; agora ícone na coluna 0 (a do Read) e `└` na coluna de Subagent
+	// antes sem nenhum fundo (`customMessageBg` proibido); agora a 1ª linha é uma faixa neutra de ponta a ponta, a 2ª segue sem fundo.
 	assert.doesNotMatch(bg.cru, /\[tool|Started background/);
 	assert.match(bg.cru, /^\[customMessageBg\]/);
 	assert.doesNotMatch(bg.cru.split("\n")[1]!, /\[customMessageBg\]/);
@@ -144,19 +144,19 @@ test("subagente B: árvore sem fundo, estado de cada agente e expansão nativa",
 		`${A} Subagents · 2 enviados`,
 		`  ├ gate-runner ${ENG} · Rode o gate`,
 		`  └ test-author ${ENG} · Escreva os testes`,
-	]); // (dono, 2026-11-20, /subag2 desenho 3): antes `Subagent · enviado para segundo plano` e sem o ícone
+	]); // antes `Subagent · enviado para segundo plano` e sem o ícone
 	// primeiro plano, concluído (Solução 2): atalho no cabeçalho, resultado na prévia sem disputa à direita
 	const ok = draw(
 		{ agent: "plan-reviewer", task: "t" },
 		{ content: [], details: { results: [fim("plan-reviewer", 0, "PLAN_REVIEW: complete.\nresto", 12)] } },
 	);
-	// Chips (dono, 2026-11-20): antes `◎ 1 agente · 12 turnos` e `└ plan-reviewer · concluído · …`; agora ícone do estado, chips e resultado recuado.
-	// (dono, 2026-11-20): antes chips com fundo (`✓  plan-reviewer   concluído   12 turnos`); agora lab /subag3: cabeçalho + linha `└ agente · estado · texto`, `·` dim, sem fundo.
-	// (dono, 2026-11-20): nome da tool sempre capitalizado (antes `subagente`/`subagentes`).
-	assert.deepEqual(ok.linhas, ["◎ Subagent · plan-reviewer · concluído · 12 turnos  ⌨", "  └ PLAN_REVIEW: complete."]); // (dono, 2026-11-20, /subag2 desenho 3): antes nome e estado na linha └
-	assert.doesNotMatch(ok.cru.split("\n").slice(1).join("\n"), /\[(toolSuccessBg|customMessageBg)\]/); // (dono, 2026-11-20): antes nenhuma linha com fundo; agora o cabeçalho tem a faixa neutra
+	// Chips: antes `◎ 1 agente · 12 turnos` e `└ plan-reviewer · concluído · …`; agora ícone do estado, chips e resultado recuado.
+	// antes chips com fundo (`✓  plan-reviewer   concluído   12 turnos`); agora lab /subag3: cabeçalho + linha `└ agente · estado · texto`, `·` dim, sem fundo.
+	// nome da tool sempre capitalizado (antes `subagente`/`subagentes`).
+	assert.deepEqual(ok.linhas, ["◎ Subagent · plan-reviewer · concluído · 12 turnos  ⌨", "  └ PLAN_REVIEW: complete."]); // antes nome e estado na linha └
+	assert.doesNotMatch(ok.cru.split("\n").slice(1).join("\n"), /\[(toolSuccessBg|customMessageBg)\]/); // antes nenhuma linha com fundo; agora o cabeçalho tem a faixa neutra
 	assert.ok(ok.cru.includes("<success>concluído</c>"));
-	// lote misto: um par de linhas por agente, na ordem da chamada (dono, 2026-11-20; antes quem falhou primeiro, em árvore)
+	// lote misto: um par de linhas por agente, na ordem da chamada (antes quem falhou primeiro, em árvore)
 	const misto = draw(
 		{ tasks },
 		{
@@ -166,7 +166,7 @@ test("subagente B: árvore sem fundo, estado de cada agente e expansão nativa",
 			},
 		},
 	);
-	// (dono, 2026-11-20): antes `✓  test-author   concluído   3 turnos` + resultado em 2 linhas por agente; agora cabeçalho com contagem + `├ └ agente · estado · texto`.
+	// antes `✓  test-author   concluído   3 turnos` + resultado em 2 linhas por agente; agora cabeçalho com contagem + `├ └ agente · estado · texto`.
 	assert.deepEqual(misto.linhas, [
 		"◎ Subagents · 1 ok · 1 erro  ⌨",
 		"  ├ test-author · concluído · 6 testes novos",
@@ -194,21 +194,21 @@ test("subagente B: árvore sem fundo, estado de cada agente e expansão nativa",
 			"  ├ gate-runner · concluído · gate verde",
 			"  └ test-author · executando · Escreva os testes",
 		],
-	); // (dono, 2026-11-20): antes 2 linhas por agente com turnos
+	); // antes 2 linhas por agente com turnos
 	// aberto: fatos + o desenho nativo inteiro; status/cancel/erro: nativo
 	const aberto = draw(
 		{ agent: "x", task: "t" },
 		{ content: [], details: { results: [fim("x", 0, "ok")] } },
 		{ expanded: true },
 	);
-	assert.deepEqual(aberto.linhas.slice(2), ["  nativo-result"]); // (dono, 2026-11-20): antes slice(1); o card de chips tem 2 linhas (chips + resultado)
+	assert.deepEqual(aberto.linhas.slice(2), ["  nativo-result"]); // antes slice(1); o card de chips tem 2 linhas (chips + resultado)
 	assert.deepEqual(draw({ status: true }, txt("No background runs in this session.")).linhas, [
 		`${A} Subagent · status · nenhum run`,
-	]); // (dono, 2026-11-20): antes `Subagent · status` e o texto cru sob `│`; agora a contagem no cabeçalho
+	]); // antes `Subagent · status` e o texto cru sob `│`; agora a contagem no cabeçalho
 });
 
-// Pedido do dono (2026-11-14): pergunta cancelada com fundo de aviso (antes ficava verde, como se tivesse dado certo).
-// Resposta em destaque (dono, 2026-11-20): sem fundo algum; cancelada = `sem resposta · Esc` em warning, respondida em success.
+// Pergunta cancelada com fundo de aviso (antes ficava verde, como se tivesse dado certo).
+// Resposta em destaque: sem fundo algum; cancelada = `sem resposta · Esc` em warning, respondida em success.
 test("question: sem fundo; cancelada e tempo esgotado em warning, respondida em success; várias perguntas separadas por linha em branco", () => {
 	const BG: Record<string, number> = { toolSuccessBg: 42, toolErrorBg: 41, toolPendingBg: 46, customMessageBg: 47 };
 	const t = {
@@ -233,7 +233,7 @@ test("question: sem fundo; cancelada e tempo esgotado em warning, respondida em 
 	assert.ok(
 		ok.every((l) => !/\x1b\[4[1267]m/.test(l)),
 		ok.join("|"),
-	); // (dono, 2026-11-20): antes a pílula da hora/atalho tinha fundo; agora nada tem
+	); // antes a pílula da hora/atalho tinha fundo; agora nada tem
 	assert.ok(ok[1]!.includes("<success>a</c>") && ok[1]!.includes("<accent>❯</c>"));
 	const cancelada = draw({ question: "Qual?", answer: null });
 	assert.ok(cancelada[1]!.includes("<warning>sem resposta · Esc</c>") && !cancelada.join("").includes("<success>"));
@@ -253,11 +253,11 @@ test("question: sem fundo; cancelada e tempo esgotado em warning, respondida em 
 	assert.deepEqual(
 		lote.map((l: string) => l.replace(/(?<=\S) {2,}.*$/, "")),
 		["Um · Q1", "❯ a", "", "Dois · Q2", "❯ sem resposta · Esc"],
-	); // (dono, 2026-11-20): antes recuo 3
+	); // antes recuo 3
 	// resposta digitada: `(outra)` dim; opção com a descrição entre parênteses mostra só o rótulo
 	assert.ok(draw({ question: "Q", answer: "texto livre", wasCustom: true })[1]!.includes("<dim> (outra)</c>"));
 	assert.ok(draw({ question: "Q", answer: "Sim (recomendado)" })[1]!.includes("<success>Sim</c>"));
-	// variante A (dono, 2026-11-14): a hora do término vai à direita do cabeçalho
+	// variante A: a hora do término vai à direita do cabeçalho
 	const { on, resolver } = comHora();
 	const wh = resolver("question", () => ({
 		renderCall: () => ({ render: () => [], invalidate() {} }),
@@ -274,7 +274,7 @@ test("question: sem fundo; cancelada e tempo esgotado em warning, respondida em 
 		)
 		.render(80)
 		.map(plain);
-	assert.match(linhas[0]!, /^Forma · Qual\? +ctrl\+o abre {2}\d\d:\d\d$/); // (dono, 2026-11-20): antes recuo 3 (margem do chat agora)
+	assert.match(linhas[0]!, /^Forma · Qual\? +ctrl\+o abre {2}\d\d:\d\d$/); // antes recuo 3 (margem do chat agora)
 });
 
 // U14: o ramo da sessão é varrido uma vez para montar toolCallId -> hora, não uma vez por chamada.
@@ -328,7 +328,7 @@ test("U14 hora do histórico: 300 chamadas leem o ramo uma vez e a hora sai igua
 	assert.deepEqual(horas, ["09:41", "09:42", "14:40"]);
 });
 
-// Azul do Bash (dono, 2026-11-20; antes ícone muted nas ações, nome em text, e `enviado para segundo plano` sem nome): ícone e
+// Azul do Bash (antes ícone muted nas ações, nome em text, e `enviado para segundo plano` sem nome): ícone e
 // `Subagent`/`Subagents` em accent, negrito, em todos os cartões.
 test("subagente: ícone e nome em accent em todos os cartões (único, paralelo, segundo plano, ações)", () => {
 	const { on, resolver } = comHora();
@@ -385,7 +385,7 @@ test("subagente: ícone e nome em accent em todos os cartões (único, paralelo,
 	}
 });
 
-// status legível (dono, 2026-11-20; antes o texto cru em inglês sob `│`): contagem colorida no cabeçalho, um run por linha.
+// status legível (antes o texto cru em inglês sob `│`): contagem colorida no cabeçalho, um run por linha.
 test("subagente: status lista os runs (registro e lanes) com estado colorido; texto desconhecido sob │", () => {
 	const { resolver } = comHora();
 	const t = { fg: (c: string, x: string) => `<${c}>${x}</c>`, bold: (x: string) => x };
@@ -440,7 +440,7 @@ test("subagente: status lista os runs (registro e lanes) com estado colorido; te
 	assert.ok(cru.length >= 1 && cru.every((l: string) => !/├|└/.test(l)), cru.join("|"));
 });
 
-// Hora dos subagentes (dono, 2026-11-20): sem fundo (antes pílula) e na mesma coluna da hora do Read (margem direita do chat).
+// Hora dos subagentes: sem fundo (antes pílula) e na mesma coluna da hora do Read (margem direita do chat).
 test("subagente: a hora fica em dim sem fundo e termina na mesma coluna da hora do Read (enviado ao segundo plano, único e paralelo)", () => {
 	const { on, resolver } = comHora();
 	const tema = {
@@ -489,7 +489,7 @@ test("subagente: a hora fica em dim sem fundo e termina na mesma coluna da hora 
 		],
 		details: { results: [] },
 	});
-	assert.match(plain(bg), /swarm-worker \S+ · enviado/); // (dono, 2026-11-20, /subag2 desenho 3): antes `enviado para segundo plano`
+	assert.match(plain(bg), /swarm-worker \S+ · enviado/); // antes `enviado para segundo plano`
 	const um = linhaDe(sub, { agent: "a", task: "x" }, "sub-1", {
 		content: [],
 		details: { results: [{ agent: "a", task: "x", exitCode: 0, usage: {}, messages: [] }] },
@@ -510,7 +510,7 @@ test("subagente: a hora fica em dim sem fundo e termina na mesma coluna da hora 
 		{ isPartial: true },
 	);
 	for (const l of [bg, um, par]) assert.equal(coluna(l), ref, plain(l));
-	// Pergunta na margem do chat (dono, 2026-11-20; antes 3 colunas para dentro e a hora 2 antes): cabeçalho na coluna 0, hora com a do Read.
+	// Pergunta na margem do chat (antes 3 colunas para dentro e a hora 2 antes): cabeçalho na coluna 0, hora com a do Read.
 	const q = resolver("question", () => ({
 		renderCall: () => nativeComponent("n"),
 		renderResult: () => nativeComponent("n"),
@@ -546,12 +546,12 @@ test("subagente: a hora fica em dim sem fundo e termina na mesma coluna da hora 
 			.slice(-60),
 		/\x1b\[48;/,
 	);
-	// (dono, 2026-11-20): antes único e paralelo sem fundo; agora a faixa neutra também (a hora fica dentro dela)
+	// antes único e paralelo sem fundo; agora a faixa neutra também (a hora fica dentro dela)
 	for (const l of [um, par])
 		assert.deepEqual([...new Set(l.match(/\x1b\[48;[0-9;]*m/g))], ["\x1b[48;2;9;9;9m"], "só a faixa neutra");
 });
 
-// Corpo de texto puro (dono, 2026-11-20): send/status/cancel/resume/list e erro sem detalhes saíam na margem esquerda; agora `│` e o texto
+// Corpo de texto puro: send/status/cancel/resume/list e erro sem detalhes saíam na margem esquerda; agora `│` e o texto
 // começam na coluna da palavra `Subagent` do cabeçalho, cortados com … na largura.
 test("subagente: resultado em texto puro (send, status, cancel, resume) com `│` e o texto alinhado à palavra Subagent", () => {
 	const { resolver } = comHora();
@@ -580,7 +580,7 @@ test("subagente: resultado em texto puro (send, status, cancel, resume) com `│
 			const corpo = plain(res.render(larg)[0]);
 			const col = cab.indexOf("Subagent");
 			assert.ok(col > 0, cab);
-			// (dono, 2026-11-20): `│` na coluna do nome Subagent e o texto 2 colunas depois; antes o texto na coluna do nome e o `│` 2 antes.
+			// `│` na coluna do nome Subagent e o texto 2 colunas depois; antes o texto na coluna do nome e o `│` 2 antes.
 			assert.equal(corpo[col], "│", corpo);
 			assert.equal(corpo.indexOf(longo.slice(0, 7)), col + 2, `texto 2 colunas após o │: ${corpo}`);
 			assert.ok(visibleWidth(corpo) <= larg);
@@ -589,7 +589,7 @@ test("subagente: resultado em texto puro (send, status, cancel, resume) com `│
 	}
 });
 
-// Cabeçalho das ações sem run (dono, 2026-11-20; antes `Subagent · mensagem para bg-…` sem agente nem desfecho): `Subagent · <ação> · <agente> <id dim>`
+// Cabeçalho das ações sem run (antes `Subagent · mensagem para bg-…` sem agente nem desfecho): `Subagent · <ação> · <agente> <id dim>`
 // e à direita, antes da hora, o desfecho real do resultado (na fila/entregue/cancelado/retomado/falhou); texto não reconhecido = nada.
 test("subagente: cabeçalho das ações (send, cancel, resume, status) com agente conhecido, id dim e desfecho colorido", () => {
 	const { on, resolver } = comHora();
@@ -657,7 +657,7 @@ test("subagente: cabeçalho das ações (send, cancel, resume, status) com agent
 			"Background run bg-2 is still running; wait for it or cancel it first.",
 		).includes("<error>falhou</c>"),
 	);
-	assert.equal(p(cab({ status: true }, "No background subagent runs.")), "◎ Subagent · status · nenhum run"); // (dono, 2026-11-20): antes sem a contagem
+	assert.equal(p(cab({ status: true }, "No background subagent runs.")), "◎ Subagent · status · nenhum run"); // antes sem a contagem
 	on.tool_execution_end({ toolCallId: "h-1", toolName: "subagent" });
 	assert.match(
 		cab({ send: "bg-h", task: "x" }, "Message queued for run bg-h: it is delivered", { toolCallId: "h-1" }),
@@ -666,7 +666,7 @@ test("subagente: cabeçalho das ações (send, cancel, resume, status) com agent
 	);
 });
 
-// Antes do resultado (dono, 2026-11-20): a chamada pendente já usa o cabeçalho novo da ação, sem desfecho; antes `Subagent · mensagem para bg-…`.
+// Antes do resultado: a chamada pendente já usa o cabeçalho novo da ação, sem desfecho; antes `Subagent · mensagem para bg-…`.
 test("subagente: ação pendente (sem resultado) já mostra `Subagent · ação · id`, sem desfecho", () => {
 	const { resolver } = comHora();
 	const cor = { fg: (c: string, t: string) => `<${c}>${t}</c>`, bold: (t: string) => t };
@@ -693,7 +693,7 @@ test("subagente: ação pendente (sem resultado) já mostra `Subagent · ação 
 	assert.equal(p(pend({ send: "bg-p4", task: "oi" })), "◎ Subagent · mensagem · swarm-worker bg-p4");
 });
 
-// Margens do cabeçalho do subagente (dono, 2026-11-20): ícone na coluna do ícone do Read, `├/└` na coluna da palavra Subagent, faixa neutra de ponta a ponta (rodando incluso).
+// Margens do cabeçalho do subagente: ícone na coluna do ícone do Read, `├/└` na coluna da palavra Subagent, faixa neutra de ponta a ponta (rodando incluso).
 test("subagente rodando: ícone na coluna do Read, e faixa neutra de ponta a ponta no cabeçalho (`└` na coluna de Subagent: subagente.test.ts)", () => {
 	const { on, resolver } = comHora();
 	const BG = "\x1b[48;2;9;9;9m";

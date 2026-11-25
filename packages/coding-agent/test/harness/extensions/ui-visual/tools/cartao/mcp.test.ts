@@ -1,4 +1,4 @@
-// Ferramentas MCP em uma linha (dono, 2026-11-20, lab /ferramcp desenho 21 "Uma linha · barra fina · chave" + animação "Flash na troca"): ver mcp/linha.ts.
+// Ferramentas MCP em uma linha: ver mcp/linha.ts.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import * as __m1 from "../../../../../../src/extensions/ui-visual/mcp/linha.ts";

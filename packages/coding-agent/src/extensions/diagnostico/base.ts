@@ -9,7 +9,7 @@ export const DOCTOR = Symbol.for("nycode:doctor");
 export const MARCA = Symbol.for("nycode:diag-notify");
 export const MARCA_FIO = Symbol.for("nycode:diag-fio");
 /** Abre o modal; livre nos padrões do nycode 1.5.2, em claude-compat/shortcuts.ts e em EXT_ACTIONS (comandos/catalog.ts). */
-export const ATALHO = "ctrl+e" as const; // dono, 2026-11-19: antes alt+e; ctrl+e sai do fim de linha (fica End) em keybindings.json
+export const ATALHO = "ctrl+e" as const; // antes alt+e; ctrl+e sai do fim de linha (fica End) em keybindings.json
 export const RESERVA = 40; // colunas do rodapé que ficam para o resto da linha (modelo, esforço, pasta, custo)
 export const MAX_LINHA = 2048;
 export const DIA = 24 * 3600_000;

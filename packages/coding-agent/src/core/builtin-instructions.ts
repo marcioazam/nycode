@@ -2,10 +2,15 @@
  * Built-in instructions (K7): `resources/instructions/{contract,headless,lite}.md`. The contract is a context file of
  * the lowest precedence: it comes before the global and project AGENTS.md. `headless.md` is not chosen here: in print
  * mode the headless-lean extension swaps the contract for it in the provider payload. `lite.md` is only read on demand.
+ *
+ * User override: `<agentDir>/instructions/<name>.md` replaces the embedded file of the same name (user scope over
+ * built-in, the rule skills and agents follow in builtin-resources.ts). An empty user file means "no instruction": it
+ * still wins, so the user can switch the contract off without deleting anything.
  */
 
 import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { getAgentDir } from "../config.ts";
 import { stripBlockComments } from "../extensions/_shared/shell/strip-comments.ts";
 import { builtinResourceDir, resolveResourcesMarker } from "./builtin-resources.ts";
 
@@ -19,11 +24,22 @@ interface ContextFile {
 // The resources never change while the process runs; the mtime keeps a rewritten fixture from being served stale.
 const cache = new Map<string, { mtimeMs: number; text: string }>();
 
-/** The text of a built-in instruction (block comments stripped, `${NYCODE_RESOURCES}` resolved), or undefined if absent. */
-export function readBuiltinInstruction(name: BuiltinInstruction): string | undefined {
+/** The file that supplies an instruction: the user's override when it exists, else the embedded one (if any). */
+function instructionFile(name: BuiltinInstruction): string | undefined {
+	const user = join(getAgentDir(), "instructions", `${name}.md`);
+	try {
+		if (statSync(user).isFile()) return user;
+	} catch {
+		// no override: fall through to the embedded file
+	}
 	const dir = builtinResourceDir("instructions");
-	if (!dir) return undefined;
-	const file = join(dir, `${name}.md`);
+	return dir ? join(dir, `${name}.md`) : undefined;
+}
+
+/** The text of an instruction (block comments stripped, `${NYCODE_RESOURCES}` resolved), or undefined if absent or empty. */
+export function readBuiltinInstruction(name: BuiltinInstruction): string | undefined {
+	const file = instructionFile(name);
+	if (!file) return undefined;
 	try {
 		const { mtimeMs } = statSync(file);
 		const cached = cache.get(file);
@@ -53,7 +69,7 @@ export function setBuiltinInstructions(on: boolean): void {
 export function withBuiltinInstructions(contextFiles: ContextFile[]): ContextFile[] {
 	if (!enabled || process.env.CLAUDE_CODE_DISABLE_CLAUDE_MDS === "1") return contextFiles;
 	const content = readBuiltinInstruction("contract");
-	const dir = builtinResourceDir("instructions");
-	if (!content || !dir) return contextFiles;
-	return [{ path: join(dir, "contract.md"), content }, ...contextFiles];
+	const path = instructionFile("contract");
+	if (!content || !path) return contextFiles;
+	return [{ path, content }, ...contextFiles];
 }

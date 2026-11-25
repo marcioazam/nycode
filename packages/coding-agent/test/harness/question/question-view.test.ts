@@ -1,4 +1,4 @@
-// Ported from zzzzzzzzzzzzzzzzz-question-view.test.ts (owner request 2026-11-14): the question tool shows as a list
+// Ported from zzzzzzzzzzzzzzzzz-question-view.test.ts: the question tool shows as a list
 // (● chosen, ○ the rest), drawn only once.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { asTheme, captureTool, type Rendered } from "./support.ts";
@@ -31,14 +31,14 @@ const details = {
 const ASK = "<dim:│> <muted:Como resolvo?>";
 
 describe("question result view", () => {
-	// Owner request (2026-11-14): while the dialog is open the question does not also show in the chat (it was duplicated);
+	// While the dialog is open the question does not also show in the chat (it was duplicated);
 	// the block enters the chat only after the answer, drawn by the result.
 	it("renderCall draws nothing, pending or not: the question enters the chat only with the answer", () => {
 		expect(call(args).join("").trim()).toBe("");
 		expect(call(args, false).join("").trim()).toBe("");
 	});
 
-	// Variant A (owner, 2026-11-14): state + icon + title + ANSWER on the header, the question below with │; options only when open.
+	// Variant A: state + icon + title + ANSWER on the header, the question below with │; options only when open.
 	// The title is always "pergunta"; the model's label (header) follows, dimmed.
 	it('without header the label is just "pergunta"', () => {
 		expect(result({ question: "Qual?", options: ["a", "b"], answer: "a" })).toEqual([

@@ -1,5 +1,5 @@
 // Port of the plan-modal patch tests (nycode 1.7.0) to vitest against the embedded source.
-// Pedido do dono (2026-11-14): botão `o abrir plano` no rodapé do Plan abre o plano numa modal com título e descrição por passo;
+// Botão `o abrir plano` no rodapé do Plan abre o plano numa modal com título e descrição por passo;
 // a descrição vem dos bullets do próprio plano (custo zero) e o lint exige ao menos um por tarefa. Registro: docs/pi-plan-modal-2026-11-14.md.
 import assert from "node:assert/strict";
 import { visibleWidth } from "@nycode/tui";

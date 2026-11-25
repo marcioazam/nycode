@@ -28,7 +28,7 @@ afterEach(() => {
 });
 
 const { iconGap } = __m1;
-// Régua Run (dono, 2026-11-18): antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
+// Régua Run: antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
 // Prefixos de icon('bash') e iconGap() da cópia tmp (base.ts fixa o terminal): independem de TERM.
 const G = iconGap();
 const _P = `▎ ${" ".repeat(1 + G.length)}`; // corpo e rodapé: trilho + recuo até o `Run`
@@ -52,28 +52,28 @@ const comHora = (branch: unknown[] = []) => {
 	return { on, resolver };
 };
 
-// 2026-11-14 (dono): a hora à direita é a do TÉRMINO da execução; enquanto roda não há hora.
-// (dono, 2026-11-20): o nome da ferramenta é `Subagent`/`Subagents` e o `│` do corpo fica na coluna do nome; antes `Subagente` e o `│` 2 colunas antes.
+// 2026-11-14: a hora à direita é a do TÉRMINO da execução; enquanto roda não há hora.
+// o nome da ferramenta é `Subagent`/`Subagents` e o `│` do corpo fica na coluna do nome; antes `Subagente` e o `│` 2 colunas antes.
 test("hora: tool ao vivo mostra a hora do término à direita, alinhada à largura; rodando ou sem hora conhecida a linha não muda", () => {
 	const { on, resolver } = comHora();
 	const antes = Date.now();
 	const w = resolver("bash", base);
-	// Variante 04 (dono, 2026-11-18): antes a hora ficava na borda direita do cartão de 58 colunas e sumia em largura estreita;
+	// Variante 04: antes a hora ficava na borda direita do cartão de 58 colunas e sumia em largura estreita;
 	// agora é o título do cartão do shell (72 colunas, sem margem desde 2026-11-18: o trilho fica na coluna do texto), com a hora à direita só depois do fim.
 	const titulo = (c: Record<string, unknown>, largura = 80) =>
 		w.renderCall({ command: "ls" }, ansiTheme, ctx({ args: { command: "ls" }, ...c })).render(largura);
-	// Respiro (dono, 2026-11-18): antes o título era a 1ª linha; agora vem depois da linha de respiro.
+	// Respiro: antes o título era a 1ª linha; agora vem depois da linha de respiro.
 	const rodando = plain(titulo({ toolCallId: "vivo-1", isPartial: true })[1]).trimEnd();
 	assert.doesNotMatch(rodando, /\d\d:\d\d$/);
 	on.tool_execution_end({ toolCallId: "vivo-1", toolName: "bash" });
 	const linha = semRespiro(titulo({ toolCallId: "vivo-1" }))[0];
 	const row = plain(linha).trimEnd();
-	// (dono, 2026-11-18): antes 72 (teto do cartão); agora a largura inteira, 80.
+	// antes 72 (teto do cartão); agora a largura inteira, 80.
 	assert.equal(visibleWidth(plain(linha)), 80);
 	assert.ok(
 		[hhmm(antes), hhmm(Date.now())].some((h) => row === regua("ls", h)),
 		row,
-	); // Régua Run (dono, 2026-11-18): antes `$ ls` + espaços + hora; agora a régua `─` até a hora
+	); // Régua Run: antes `$ ls` + espaços + hora; agora a régua `─` até a hora
 	const sem = plain(semRespiro(titulo({ toolCallId: "desconhecida" }))[0]).trimEnd();
 	assert.doesNotMatch(sem, /\d\d:\d\d$/);
 	// estreito: o cartão encolhe e a linha continua cabendo
@@ -128,7 +128,7 @@ test("hora: demais ferramentas (ícone) também ganham a hora na 1ª linha quand
 	assert.doesNotMatch(curta[0], /\d\d:\d\d$/);
 });
 
-// Antigo (2026-11-14): bolinha pulsando, com um timer pedindo redesenho. Novo (dono, 2026-11-15): sem ícone de estado no chat;
+// Antigo (2026-11-14): bolinha pulsando, com um timer pedindo redesenho. Novo: sem ícone de estado no chat;
 // "executando" é o nome em ciano (syntaxType), sem animação, e nenhum timer pede redesenho.
 test("executando: nome do estado em ciano, sem animação nem redesenho por timer", async () => {
 	// Relógio controlado (plano de testes, item 14): qualquer setTimeout/setInterval pedido pelo cartão vira pendente aqui.
@@ -145,8 +145,8 @@ test("executando: nome do estado em ciano, sem animação nem redesenho por time
 	const w = resolver("bash", base);
 	// Onda 10, P06: o início da chamada agora é ouvido (tempo vivo); sem início visto e sem truecolor, nada pede redesenho.
 	assert.equal(typeof on.tool_execution_start, "function");
-	// Variante 04 (dono, 2026-11-18): antes `· executando` em ciano (syntaxType) no título; agora o rodapé do cartão diz `executando` em accent.
-	// Respiro (dono, 2026-11-18): antes o rodapé era a última linha; agora vem antes da linha de respiro.
+	// Variante 04: antes `· executando` em ciano (syntaxType) no título; agora o rodapé do cartão diz `executando` em accent.
+	// Respiro: antes o rodapé era a última linha; agora vem antes da linha de respiro.
 	const run = semRespiro(w.renderCall({}, tags, c).render(80));
 	assert.ok(run.at(-1)!.includes(tg("accent", "executando")));
 	vi.advanceTimersByTime(5_000);
@@ -157,8 +157,8 @@ test("executando: nome do estado em ciano, sem animação nem redesenho por time
 	);
 });
 
-// Pedido do dono (2026-11-14, print b4b98ee1): a pergunta tem o mesmo alinhamento dos demais blocos, com o atalho e a hora juntos no
-// cabeçalho. Resposta em destaque (dono, 2026-11-20, lab /pergunta desenho 7): antes `? pergunta  resposta` + texto atrás de um `│`
+// A pergunta tem o mesmo alinhamento dos demais blocos, com o atalho e a hora juntos no
+// cabeçalho. Resposta em destaque: antes `? pergunta  resposta` + texto atrás de um `│`
 // em cartão verde; agora ` cabeçalho · pergunta` (atalho e hora só na 1ª linha) e ` ❯ resposta`, sem fundo.
 test("question (Resposta em destaque): atalho + hora no cabeçalho da 1ª pergunta; texto dim cortado com …; resposta em ❯", () => {
 	const { on, resolver } = comHora();
@@ -178,13 +178,13 @@ test("question (Resposta em destaque): atalho + hora no cabeçalho da 1ª pergun
 		.render(80)
 		.map(plain);
 	assert.equal(l.length, 2);
-	// (dono, 2026-11-20): na margem do chat e a hora na margem direita; antes recuo 3 e 78 colunas (recuo direito 2).
+	// na margem do chat e a hora na margem direita; antes recuo 3 e 78 colunas (recuo direito 2).
 	assert.match(l[0]!, /^Forma · palavra .*… +ctrl\+o abre {2}\d\d:\d\d$/);
 	assert.equal(l[1], "❯ a");
 	assert.ok(l.every((x: string) => [...x].length <= 80));
 });
 
-// Pedido do dono (2026-11-14): `run` saía sem estado, sem ícone e sem hora (não tem renderCall próprio).
+// `run` saía sem estado, sem ícone e sem hora (não tem renderCall próprio).
 test("tool sem renderCall (run): linha com ícone, nome, argumentos resumidos e hora do término; erro por nome no título", () => {
 	const { on, resolver } = comHora();
 	const w = resolver("run", () => ({}));
@@ -206,7 +206,7 @@ test("tool sem renderCall (run): linha com ícone, nome, argumentos resumidos e 
 	);
 });
 
-// Pedido do dono (2026-11-14): o todo repetia a mesma coisa em duas linhas (chamada + "Started #1: …"). Uma linha só, em
+// O todo repetia a mesma coisa em duas linhas (chamada + "Started #1: …"). Uma linha só, em
 // português, com o andamento da lista à direita; lista e erro continuam com o desenho nativo embaixo.
 test("Task: verbo como título, id apagado, barra e contagem sem percentual; resultado não repete", async () => {
 	const { on, resolver } = comHora();
@@ -276,8 +276,8 @@ test("Task: verbo como título, id apagado, barra e contagem sem percentual; res
 	);
 });
 
-// Pedido do dono (2026-11-14): memory é consulta, não execução com resultado: sem ícone de estado. Erro continua visível.
-// Contrato trocado (dono, 2026-11-20, lab /memoria desenho 9): antes cartão com fundo neutro (customMessageBg), `│ corpo` cru abaixo
+// Memory é consulta, não execução com resultado: sem ícone de estado. Erro continua visível.
+// Contrato trocado: antes cartão com fundo neutro (customMessageBg), `│ corpo` cru abaixo
 // e o título nativo; agora uma frase `Memory · estado · nome` sem fundo e sem corpo (detalhes em memoria.test.ts).
 test("memory: sem fundo e sem corpo cru; a frase traz a hora e o erro aparece como falha", () => {
 	const { on, resolver } = comHora();
@@ -304,7 +304,7 @@ test("memory: sem fundo e sem corpo cru; a frase traz a hora e o erro aparece co
 	assert.match(plain(call[0]), /Memory · failed · x · não encontrada +\d\d:\d\d$/);
 });
 
-// Pedido do dono (2026-11-14, variante B): run com cabeçalho curto (verbo + nome do run) e linha de fatos (estado em cor,
+// Run com cabeçalho curto (verbo + nome do run) e linha de fatos (estado em cor,
 // duração, id, log); saída recuada só quando existe; estado e fundo pelo estado REAL do run, não pelo da chamada.
 test("run A: nome, estado e resumo em uma linha; id, log e saída expandidos, sem barra", () => {
 	const { resolver } = comHora();
@@ -339,10 +339,10 @@ test("run A: nome, estado e resumo em uma linha; id, log e saída expandidos, se
 			cru: [...call, ...res].join("\n"),
 		};
 	};
-	// Desenho "Uma linha" (escolha do dono no lab /rodando, 2026-11-19): antes caixa com o fundo do estado de ponta a ponta,
+	// Desenho "Uma linha" (lab /rodando): antes caixa com o fundo do estado de ponta a ponta,
 	// linha em branco acima e abaixo e `▸ nome · rotulo · tempo · resumo`; agora uma faixa só, neutra (vermelha no erro):
 	// `▸ nome  estado · tempo[ · N linhas]` à esquerda e `id[ · tecla abre] · hora` à direita. Rodando = "em segundo plano".
-	// (dono, 2026-11-20, lab /runbanda desenho 19 "Refinada"): antes `estado · tempo · linhas` com o rótulo cru (exit 0) e
+	// antes `estado · tempo · linhas` com o rótulo cru (exit 0) e
 	// `id · tecla abre · hora`; agora `estado em palavra · tempo · tipo · exit N · N linhas · comando` e `id · hora`.
 	const espera = draw(
 		{ action: "wait", id: "rhwep1", timeout_s: 30 },
@@ -401,7 +401,7 @@ test("run A: nome, estado e resumo em uma linha; id, log e saída expandidos, se
 	assert.match(fechado[0]!, /^ ▸ gw-lean {2}concluído · 03:12 · shell · 9 linhas {2,}rhwep1$/);
 	const abertoRun = draw({ action: "wait", id: "rhwep1" }, longo, {}, true, ansiCor);
 	assert.equal(abertoRun.linhas.length, 11);
-	assert.match(abertoRun.linhas[0]!, /rhwep1$/); // (dono, 2026-11-20): antes `rhwep1 · ctrl+o fecha`; o atalho saiu da faixa
+	assert.match(abertoRun.linhas[0]!, /rhwep1$/); // antes `rhwep1 · ctrl+o fecha`; o atalho saiu da faixa
 	assert.equal(abertoRun.linhas[1]!.trim(), "03:12 · rhwep1");
 	assert.deepEqual(
 		abertoRun.linhas.slice(2).map((r: string) => r.trim()),
@@ -421,7 +421,7 @@ test("run A: nome, estado e resumo em uma linha; id, log e saída expandidos, se
 	);
 });
 
-// "Uma linha" com a Barra (dono, 2026-11-19): enquanto o run segue vivo no registro do nycode (nycode.run.registry), o tempo
+// "Uma linha" com a Barra: enquanto o run segue vivo no registro do nycode (nycode.run.registry), o tempo
 // corre a partir do início e a barra ━ do Bash anda ao lado do estado; terminado no registro, a faixa para e fica como veio.
 test("run vivo: tempo corrente e barra enquanto o registro diz running; terminado, sem barra", () => {
 	const { resolver } = comHora();
@@ -467,27 +467,27 @@ test("run vivo: tempo corrente e barra enquanto o registro diz running; terminad
 	}
 });
 
-// Pedido do dono (2026-11-14, variante B): subagente no padrão do run: cabeçalho `subagente · <agente|paralelo · N agentes>`,
+// Subagente no padrão do run: cabeçalho `subagente · <agente|paralelo · N agentes>`,
 // linha de fatos (estado em cor, onde roda, id) e a tarefa ou o resultado de cada agente embaixo. Sem a frase em inglês.
 
-// Pedido do dono (2026-11-14): pergunta cancelada com fundo de aviso (antes ficava verde, como se tivesse dado certo).
-// Resposta em destaque (dono, 2026-11-20): sem fundo algum; cancelada = `sem resposta · Esc` em warning, respondida em success.
+// Pergunta cancelada com fundo de aviso (antes ficava verde, como se tivesse dado certo).
+// Resposta em destaque: sem fundo algum; cancelada = `sem resposta · Esc` em warning, respondida em success.
 
 // U14: o ramo da sessão é varrido uma vez para montar toolCallId -> hora, não uma vez por chamada.
 
-// Azul do Bash (dono, 2026-11-20; antes ícone muted nas ações, nome em text, e `enviado para segundo plano` sem nome): ícone e
+// Azul do Bash (antes ícone muted nas ações, nome em text, e `enviado para segundo plano` sem nome): ícone e
 // `Subagent`/`Subagents` em accent, negrito, em todos os cartões.
 
-// status legível (dono, 2026-11-20; antes o texto cru em inglês sob `│`): contagem colorida no cabeçalho, um run por linha.
+// status legível (antes o texto cru em inglês sob `│`): contagem colorida no cabeçalho, um run por linha.
 
-// Hora dos subagentes (dono, 2026-11-20): sem fundo (antes pílula) e na mesma coluna da hora do Read (margem direita do chat).
+// Hora dos subagentes: sem fundo (antes pílula) e na mesma coluna da hora do Read (margem direita do chat).
 
-// Corpo de texto puro (dono, 2026-11-20): send/status/cancel/resume/list e erro sem detalhes saíam na margem esquerda; agora `│` e o texto
+// Corpo de texto puro: send/status/cancel/resume/list e erro sem detalhes saíam na margem esquerda; agora `│` e o texto
 // começam na coluna da palavra `Subagent` do cabeçalho, cortados com … na largura.
 
-// Cabeçalho das ações sem run (dono, 2026-11-20; antes `Subagent · mensagem para bg-…` sem agente nem desfecho): `Subagent · <ação> · <agente> <id dim>`
+// Cabeçalho das ações sem run (antes `Subagent · mensagem para bg-…` sem agente nem desfecho): `Subagent · <ação> · <agente> <id dim>`
 // e à direita, antes da hora, o desfecho real do resultado (na fila/entregue/cancelado/retomado/falhou); texto não reconhecido = nada.
 
-// Antes do resultado (dono, 2026-11-20): a chamada pendente já usa o cabeçalho novo da ação, sem desfecho; antes `Subagent · mensagem para bg-…`.
+// Antes do resultado: a chamada pendente já usa o cabeçalho novo da ação, sem desfecho; antes `Subagent · mensagem para bg-…`.
 
-// Margens do cabeçalho do subagente (dono, 2026-11-20): ícone na coluna do ícone do Read, `├/└` na coluna da palavra Subagent, faixa neutra de ponta a ponta (rodando incluso).
+// Margens do cabeçalho do subagente: ícone na coluna do ícone do Read, `├/└` na coluna da palavra Subagent, faixa neutra de ponta a ponta (rodando incluso).

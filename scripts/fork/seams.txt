@@ -16,7 +16,7 @@ K8 | packages/coding-agent/src/core/tools/bash.ts packages/coding-agent/src/core
 K9 | packages/coding-agent/src/core/compaction/ packages/coding-agent/src/core/agent-session.ts | nycode: K9[[:space:]] | packages/coding-agent/test/harness/core/compact-threshold.test.ts | ativa
 K10 | packages/tui/src/ packages/coding-agent/src/modes/interactive/interactive-mode.ts | nycode: K10[[:space:]] | packages/tui/test/public-hooks.test.ts | ativa
 K11 | packages/coding-agent/src/core/agent-session.ts packages/coding-agent/src/main.ts packages/coding-agent/src/extensions/hooks/index.ts packages/coding-agent/src/extensions/index.ts | nycode: K11[[:space:]] | packages/coding-agent/test/harness/permissions/gate.test.ts | ativa
-K12 | packages/coding-agent/src/main.ts | nycode: K12[[:space:]] | packages/coding-agent/test/harness/migrations/from-pi-apply.test.ts | ativa
+K12 | packages/coding-agent/src/main.ts | nycode: K12[[:space:]] | packages/coding-agent/test/harness/core/local-env.test.ts | ativa
 K13 | packages/coding-agent/package.json | "resources" | packages/coding-agent/test/harness/core/resources/package-files.test.ts | ativa
 K14 | packages/coding-agent/src/config.ts | nycode: K14[[:space:]] | packages/coding-agent/test/cli-brand.test.ts | ativa
 K15 | packages/tui/src/index.ts | nycode: K15[[:space:]] | packages/tui/test/image-line-export.test.ts | ativa

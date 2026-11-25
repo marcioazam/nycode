@@ -39,3 +39,12 @@ packages/coding-agent/test/harness/extensions/hook-msgs/index.test.ts:/home/(u|f
 scripts/ci/lint/residuo/residuo-allow.txt:/home/(u|fulano|me2?|badlogic)/?
 scripts/fork/rename.py:marcioazam
 scripts/fork/tests/test_rename.py:marcioazam
+# 2026-11-24 core/harness/personal split: public GitHub handle (fork slugs, schema $id, upstream benchmark links) and
+# fake home fixtures of the native guard and local-env tests; verified benign, not personal data.
+docs/harness/auditoria-core-vs-harness-2026-11-23.md:marcioazam
+docs/harness/decisoes-nucleo-harness-pessoal-2026-11-24.md:marcioazam
+packages/coding-agent/docs/optional-packages.md:marcioazam
+packages/coding-agent/resources/commands/ralph-loop.md:marcioazam
+packages/coding-agent/schemas/settings.schema.json:marcioazam
+packages/coding-agent/test/harness/permissions/guard/decide-table.test.ts:/home/guard-test-user
+packages/coding-agent/test/harness/core/local-env.test.ts:/home/(u|fulano|me2?|badlogic)/?

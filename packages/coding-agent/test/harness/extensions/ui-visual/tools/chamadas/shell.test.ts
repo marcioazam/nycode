@@ -1,5 +1,5 @@
 // node --experimental-strip-types --test extensions/ui-visual/test/tools/shell.test.ts
-// Variante 04 "Trilho de status" (dono, 2026-11-18): o bash inteiro é um cartão desenhado por renderCall (motion/shell.ts);
+// Variante 04 "Trilho de status": o bash inteiro é um cartão desenhado por renderCall (motion/shell.ts);
 // renderResult só entrega a saída ao estado. Execução 5 (barra indeterminada) e transição C (dissolver) só são testadas
 // no estado assentado: o laboratório de movimento mede a cadência; aqui nada depende de relógio ou de timer.
 import assert from "node:assert/strict";
@@ -33,7 +33,7 @@ delete process.env.NO_COLOR; // anima() é falso com NO_COLOR; o teste da barra 
 const vivo = __m1;
 const _shell = __m3;
 const { iconGap } = __m4;
-// Régua Run (dono, 2026-11-18): antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
+// Régua Run: antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
 // O prefixo vem de icon('bash') e iconGap() da cópia tmp (base.ts fixa o terminal), sem depender de TERM.
 const G = iconGap();
 const P = `▎ ${" ".repeat(1 + G.length)}`; // corpo e rodapé: trilho + recuo até o `Run`
@@ -77,7 +77,7 @@ test("título: `Bash · OK · comando` (1ª linha; … se multilinha); `…` sem
 	};
 	const fgm = (c: string, t: string) => `\x1b[${CODS[c] ?? 39}m${t}\x1b[39m`;
 	const _marcas = { fg: fgm, bold: (t: string) => t };
-	// Título sem régua (dono, 2026-11-20): antes `Bash ─ ls -la ─────` e rodapé `OK`; agora o estado vem após o nome e o rodapé vazio some.
+	// Título sem régua: antes `Bash ─ ls -la ─────` e rodapé `OK`; agora o estado vem após o nome e o rodapé vazio some.
 	assert.deepEqual(lines({ command: "ls -la" }), [regua("ls -la")]);
 	assert.deepEqual(lines({ command: "echo a\necho b" }), [regua("echo a…")]);
 	assert.deepEqual(lines({}), [regua("…")]);
@@ -110,9 +110,9 @@ test("hora: à direita do título só depois do fim", () => {
 			),
 		);
 	const fim = t({});
-	// (dono, 2026-11-20): antes a régua `─` preenchia até a hora; agora espaços, mesma coluna.
+	// antes a régua `─` preenchia até a hora; agora espaços, mesma coluna.
 	assert.equal(fim[0], regua("ls", "09:41"));
-	// (dono, 2026-11-18): antes 72 - 1 (cartão de no máximo 72); agora 80 - 1 (largura inteira, menos 1 de respiro)
+	// antes 72 - 1 (cartão de no máximo 72); agora 80 - 1 (largura inteira, menos 1 de respiro)
 	assert.equal(
 		[...fim[0]].length,
 		80 - 1,
@@ -123,7 +123,7 @@ test("hora: à direita do título só depois do fim", () => {
 	assert.doesNotMatch(t({ isPartial: true, executionStarted: false })[0], /\d\d:\d\d$/, "preparando: sem hora");
 });
 
-// Título sem régua (dono, 2026-11-20): `<ícone> Bash · ESTADO · comando` + espaços + hora; estado colorido logo após o nome.
+// Título sem régua: `<ícone> Bash · ESTADO · comando` + espaços + hora; estado colorido logo após o nome.
 // Marcas SGR de largura zero por token (as tags `<cor>` do `theme` contam como colunas no corte do título).
 const CODS: Record<string, number> = {
 	success: 32,
@@ -227,7 +227,7 @@ test("prévia: 5 últimas linhas + `K acima` + `<tecla> abre`; expandido mostra 
 });
 
 test("estado no título e rodapé final: OK, OK · N avisos, Erro, Erro N, tempo esgotado, interrompido; duração antes das linhas", () => {
-	// (dono, 2026-11-20): antes o estado abria o rodapé (`OK · 2 linhas`); agora fica no título e o rodapé traz só dur · linhas · acima · atalho · log.
+	// antes o estado abria o rodapé (`OK · 2 linhas`); agora fica no título e o rodapé traz só dur · linhas · acima · atalho · log.
 	const rows = (texto: string, c: Record<string, unknown> = {}) => lines({ command: "x" }, texto, c);
 	const foot = (texto: string, c: Record<string, unknown> = {}) => {
 		const r = rows(texto, c);
@@ -265,9 +265,9 @@ test("estado no título e rodapé final: OK, OK · N avisos, Erro, Erro N, tempo
 });
 
 test("execução: recebendo o comando, executando, args.description, barra e tempo vivo", () => {
-	// Régua Run (dono, 2026-11-18): antes `$ x` + `preparando o comando…`; agora o título mostra o comando parcial (muted + cursor) e o rodapé `recebendo o comando…`.
+	// Régua Run: antes `$ x` + `preparando o comando…`; agora o título mostra o comando parcial (muted + cursor) e o rodapé `recebendo o comando…`.
 	// Preparando anima: o cursor `▏` pisca e a barra `━/─` abre o rodapé; saem do texto antes de comparar.
-	// Barra que respira (dono, 2026-11-18, /cursor variante 3): antes o cursor do comando chegando era `▌`; agora `▏`.
+	// Barra que respira: antes o cursor do comando chegando era `▌`; agora `▏`.
 	const prepara = (args: Args, c: Record<string, unknown> = {}) =>
 		lines(args, undefined, { isPartial: true, executionStarted: false, ...c }).map((l) =>
 			l
@@ -317,7 +317,7 @@ test("execução: recebendo o comando, executando, args.description, barra e tem
 	]);
 	// Chamada que o nycode iniciou (tool_execution_start): barra `━/─` e tempo vivo a partir de 2 s. Sem `invalidate` nenhum timer é armado.
 	const vivoId = id();
-	// Relógio falso (dono, 2026-11-19): antes usava o performance.now() real, e em 1 de cada 13 leituras a barra cai na posição 0,
+	// Relógio falso: antes usava o performance.now() real, e em 1 de cada 13 leituras a barra cai na posição 0,
 	// sem trecho aceso, o que deixava o teste instável. Em 109 550 ms a posição é 5, seja no passo de 70 ms ou no de 1 s.
 	const realNow = performance.now;
 	performance.now = () => 109_550;
@@ -363,7 +363,7 @@ test("bash-clamp: total e log do rodapé da extensão; o aviso não entra no cor
 	// caminho longo: o rodapé corta com … dentro do cartão
 	const longo = foot.replaceAll("/tmp/c.log", `/tmp/nycode-bash-clamp/${"d".repeat(80)}.log`);
 	const cortado = lines({ command: "seq" }, `${out}\n\n${longo}`).at(-1)!;
-	// (dono, 2026-11-18): antes o cartão tinha no máximo 72 colunas; agora a largura inteira (w = 80)
+	// antes o cartão tinha no máximo 72 colunas; agora a largura inteira (w = 80)
 	assert.ok(cortado.endsWith("…") && [...cortado].length <= 80, cortado);
 });
 
@@ -375,12 +375,12 @@ test("trilho ▎ na cor do estado em toda linha do cartão", () => {
 	assert.ok(todas(cor({ isError: true }, "a\n\nCommand exited with code 1"), "error"));
 	assert.ok(todas(cor({ isPartial: true }), "accent"));
 	assert.ok(todas(cor({ isPartial: true, executionStarted: false }), "dim"));
-	// (dono, 2026-11-18): antes 8 linhas; agora 10 (título, 5 de prévia, vazia, rodapé + 2 linhas de respiro com trilho)
+	// antes 8 linhas; agora 10 (título, 5 de prévia, vazia, rodapé + 2 linhas de respiro com trilho)
 	assert.ok(cor({}, nums(8)).length === 10 && todas(cor({}, nums(8)), "success"));
 });
 
-// (dono, 2026-11-18): antes o cartão tinha no máximo 72 colunas (min(72, w)); agora tem exatamente w, sem teto
-test("largura: nenhuma linha passa de w; o cartão tem exatamente w e começa na coluna 0 (sem margem, dono 2026-11-18; antes margem 2 e teto de 72)", () => {
+// antes o cartão tinha no máximo 72 colunas (min(72, w)); agora tem exatamente w, sem teto
+test("largura: nenhuma linha passa de w; o cartão tem exatamente w e começa na coluna 0 (sem margem; antes margem 2 e teto de 72)", () => {
 	const longa = `echo ${"x".repeat(300)}`;
 	const estados: Array<[string, Record<string, unknown>, string | undefined]> = [
 		["ok", { durationMs: 65_000 }, `${nums(8)}\n${longa}`],
@@ -411,7 +411,7 @@ test("largura: nenhuma linha passa de w; o cartão tem exatamente w e começa na
 });
 
 test("largura: sem teto de 72; o cartão tem exatamente w em w = 120 e w = 200", () => {
-	// (dono, 2026-11-18): antes min(72, w); agora a largura inteira.
+	// antes min(72, w); agora a largura inteira.
 	for (const w of [120, 200]) {
 		for (const [c, texto] of [
 			[{}, nums(8)],
@@ -422,7 +422,7 @@ test("largura: sem teto de 72; o cartão tem exatamente w em w = 120 e w = 200",
 			assert.ok(rows.length >= 3);
 			for (const l of rows) assert.equal(visibleWidth(l), w, `w=${w}`);
 		}
-		// (dono, 2026-11-20): antes o título ia até w - 1 pela régua `─`; agora termina no texto (sem hora aqui) e o cartão segue com w colunas.
+		// antes o título ia até w - 1 pela régua `─`; agora termina no texto (sem hora aqui) e o cartão segue com w colunas.
 		assert.equal(
 			txt(semRespiro(draw({ command: "x" }, "", {}, ansiPlain, w).rows, w))[0],
 			regua("x", "", w),

@@ -42,7 +42,7 @@ export function phaseText(state: PhaseState): string {
 	return `${phase} · ${formatElapsed(state.elapsedMs)} · esc interrompe`;
 }
 
-/** Spinner nas cores do nycode (dono, 2026-11-15; supera o arco-íris): `accent`, como o Loader nativo. Sem movimento: 1 quadro. */
+/** Spinner nas cores do nycode (supera o arco-íris): `accent`, como o Loader nativo. Sem movimento: 1 quadro. */
 export function frames(theme: Fg, motion: boolean): string[] {
 	return (motion ? FRAMES : ["●"]).map((f) => theme.fg("accent", f));
 }

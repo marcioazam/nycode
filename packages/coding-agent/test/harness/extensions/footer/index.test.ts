@@ -15,12 +15,13 @@ type Handler = (event: unknown, ctx: ExtensionContext) => void;
 type Built = { render(width: number): string[] };
 
 /** Mounts the footer with the given statuses; `onBridge` runs when the footer publishes on the bridge channel. */
-function mount(statuses: Map<string, string>, onBridge?: (bridge: Bridge) => void) {
+function mount(statuses: Map<string, string>, onBridge?: (bridge: Bridge) => void, settings: object = {}) {
 	let handler: Handler | undefined;
 	let built: Built | undefined;
 	let channel: string | undefined;
 	let published: Bridge | undefined;
 	const api = {
+		getSettings: () => settings,
 		on: (_name: string, fn: Handler) => {
 			handler = fn;
 		},
@@ -40,7 +41,14 @@ function mount(statuses: Map<string, string>, onBridge?: (bridge: Bridge) => voi
 			built = factory(undefined, theme, footerData);
 		},
 	};
-	handler?.({}, { ui } as unknown as ExtensionContext);
+	const usage = { input: 1200, output: 340, cacheRead: 5000, cacheWrite: 0, cost: { total: 0.0421 } };
+	const ctx = {
+		ui,
+		model: { id: "model-x" },
+		getContextUsage: () => ({ tokens: 20_000, contextWindow: 200_000, percent: 10 }),
+		sessionManager: { getEntries: () => [{ type: "message", message: { role: "assistant", usage } }] },
+	};
+	handler?.({}, ctx as unknown as ExtensionContext);
 	return { footer: built as Built, channel, bridge: published as Bridge };
 }
 
@@ -95,5 +103,16 @@ describe("footer extension", () => {
 		const lines = footer.render(10);
 		expect(lines).toHaveLength(1);
 		expect(visibleWidth(lines[0] ?? "")).toBeLessThanOrEqual(10);
+	});
+
+	it("footer.stats is off by default: no stats line", () => {
+		const { footer } = mount(new Map([["a", "x"]]));
+		expect(footer.render(80)).toEqual(["x"]);
+	});
+
+	it("footer.stats=true adds a tokens, cost, context and model line above the statuses", () => {
+		const { footer } = mount(new Map([["a", "x"]]), undefined, { footer: { stats: true } });
+		expect(footer.render(80)).toEqual(["↑1.2k ↓340 R5.0k $0.042 10.0%/200k model-x", "x"]);
+		expect(mount(new Map(), undefined, { footer: { stats: true } }).footer.render(80)).toHaveLength(1);
 	});
 });

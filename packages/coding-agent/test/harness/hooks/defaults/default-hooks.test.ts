@@ -1,14 +1,14 @@
 // The hooks nycode registers by default (settings-defaults.ts `hooks`): the hooks extension, started on default
-// settings, resolves every command to a file under the embedded resources, and the guard blocks a catastrophic command.
-import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+// settings. The permission guard is native (gate.ts), not a hook, so no PreToolUse hook is registered by default, and
+// the ralph-loop Stop hook is not a default either (ralph-stop.test.ts).
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getBuiltinResourcesRoot, resolveResourcesMarker } from "../../../../src/core/builtin-resources.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../../../src/core/extensions/types.ts";
 import { SETTINGS_DEFAULTS } from "../../../../src/core/settings-defaults.ts";
 import hooksExtension from "../../../../src/extensions/hooks/index.ts";
+import { internalHookNames } from "../../../../src/extensions/hooks/internal/registry.ts";
 
 type Handler = (event: unknown, ctx: ExtensionContext) => unknown;
 interface Command {
@@ -35,8 +35,6 @@ interface SessionOptions {
 	global?: Record<string, unknown>;
 	/** A project directory with this `.claude/settings.json`, trusted by the user. */
 	projectClaude?: Record<string, unknown>;
-	/** Keep the default permission engine (native) instead of choosing the guard.py script. */
-	nativeEngine?: boolean;
 }
 
 const writeJson = (file: string, value: unknown) => {
@@ -44,7 +42,7 @@ const writeJson = (file: string, value: unknown) => {
 	writeFileSync(file, JSON.stringify(value));
 };
 
-/** Starts a session on `settings` and returns the `/hooks` summary and the tool_call handler. */
+/** Starts a session on `settings` and returns the `/hooks` summary. */
 async function startSession(settings: { hooks?: Record<string, unknown> } = {}, options: SessionOptions = {}) {
 	const handlers = new Map<string, Handler>();
 	const commands = new Map<string, Command>();
@@ -57,8 +55,7 @@ async function startSession(settings: { hooks?: Record<string, unknown> } = {}, 
 	};
 	hooksExtension(api as unknown as ExtensionAPI);
 	const notify = vi.fn();
-	const global = options.nativeEngine ? options.global : { permissions: { engine: "script" }, ...options.global };
-	if (global) writeJson(join(home, ".nycode", "agent", "settings.json"), global);
+	if (options.global) writeJson(join(home, ".nycode", "agent", "settings.json"), options.global);
 	const project = join(home, "project");
 	if (options.projectClaude) writeJson(join(project, ".claude", "settings.json"), options.projectClaude);
 	const trusted = options.projectClaude !== undefined;
@@ -76,183 +73,57 @@ async function startSession(settings: { hooks?: Record<string, unknown> } = {}, 
 		await commands.get("hooks")?.handler("", ctx);
 		return String(notify.mock.calls[0]?.[0]);
 	};
-	const toolCall = (command: string) =>
-		handlers.get("tool_call")?.({ toolName: "bash", toolCallId: "t1", input: { command } }, ctx);
-	const runCall = (input: Record<string, unknown>) =>
-		handlers.get("tool_call")?.({ toolName: "run", toolCallId: "t2", input }, ctx);
-	return { summary, toolCall, runCall, notify };
+	return { summary, notify };
 }
 
 describe("default hooks", () => {
-	it("registers the guard, graph context and dispatch on their events", async () => {
+	it("registers the core-notes internal hook on SessionStart and PostToolUse, and no Stop hook", async () => {
 		const text = await (await startSession()).summary();
-		expect(text).toContain("PreToolUse:\n  [Bash|run|Edit|Write|Read|Grep] command: python3 ");
-		expect(text).toContain("SessionStart:\n  [startup|resume|clear|compact] internal: graph-context");
-		expect(text).toContain("SubagentStart:\n  [*] internal: graph-context");
-		expect(text).toMatch(/PostToolUse:\n {2}\[\*\] command: bash .*hook-dispatch\.sh/);
+		expect(text).toMatch(/SessionStart:\n {2}\[startup\|resume\|clear\|compact\] internal: core-notes/);
+		expect(text).toMatch(/PostToolUse:\n {2}\[\*\] internal: core-notes/);
+		expect(text).not.toContain("Stop:");
+		expect(text).not.toContain("hook-dispatch");
 		expect(text).not.toContain("impeccable_gate");
-		// D-54: the ralph-loop Stop hook (embedded) is the only default Stop hook.
-		expect(text).toMatch(/Stop:\n {2}\[\*\] command: if \[ -f .*ralph-loop\/hooks\/stop-hook\.sh" \]/);
+		expect(text).not.toContain("ralph-loop");
 	});
 
-	it("registers no guard.py hook under the default native engine, and the script engine brings it back", async () => {
-		const native = await (await startSession({}, { nativeEngine: true })).summary();
-		expect(native).not.toContain("guard.py");
-		expect(native).toContain("SessionStart:");
-		const script = await (await startSession()).summary();
-		expect(script).toContain("guard.py");
+	it("registers no PreToolUse or graph-context hook by default (the native gate guards, codegraph is not embedded)", async () => {
+		const text = await (await startSession()).summary();
+		expect(text).not.toContain("PreToolUse:");
+		expect(text).not.toContain("guard.py");
+		expect(text).not.toContain("graph-context");
+		expect(text).not.toContain("SubagentStart:");
 	});
 
 	it("an internal hook with an unknown name is reported and never runs", async () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const bad = { type: "internal", name: "nope" };
 		const text = await (await startSession({ hooks: { SessionStart: [{ hooks: [bad] }] } })).summary();
-		expect(warn.mock.calls.flat().join("\n")).toContain('"nope" is not a core hook (known: graph-context)');
+		expect(warn.mock.calls.flat().join("\n")).toContain('"nope" is not a core hook');
 		expect(text).toContain("internal: nope");
 		warn.mockRestore();
 	});
 
-	it("every default command names a script that exists under the embedded resources", () => {
-		const root = getBuiltinResourcesRoot();
-		const commands = Object.values(SETTINGS_DEFAULTS.hooks)
-			.flatMap((matchers) => matchers.flatMap((matcher) => matcher.hooks))
-			.flatMap((hook) => ("command" in hook ? [hook.command] : []));
-		expect(commands.length).toBe(4);
-		for (const command of commands) {
-			const script = /"([^"]+)"/.exec(resolveResourcesMarker(command, root))?.[1] ?? "";
-			expect(script.startsWith(root), command).toBe(true);
-			expect(existsSync(script), script).toBe(true);
+	it("every default hook names a core hook that is registered", () => {
+		const hooks = Object.values(SETTINGS_DEFAULTS.hooks).flatMap((matchers) => matchers.flatMap((m) => m.hooks));
+		expect(hooks.length).toBe(2);
+		for (const hook of hooks) {
+			expect(hook.type).toBe("internal");
+			expect(internalHookNames(), hook.name).toContain(hook.name);
 		}
-	});
-
-	it("keeps the guard timeout at 30 s so CPU saturation does not block tool calls", () => {
-		const [entry] = SETTINGS_DEFAULTS.hooks.PreToolUse;
-		expect(entry.hooks.map((hook) => hook.timeout)).toEqual([30]);
-	});
-
-	it("runs the guard: a catastrophic command is blocked, a harmless one is not", async () => {
-		const { toolCall } = await startSession();
-		expect(await toolCall("rm -rf /")).toMatchObject({ block: true });
-		expect(await toolCall("echo ok")).toBeUndefined();
-	});
-
-	// F1 (C-F8-13): `run start` executes `bash -lc <command>`; the guard judges it as Bash.
-	it("runs the guard on a run start command: rm -rf / is denied, sudo asks, harmless and no-command actions pass", async () => {
-		const { runCall } = await startSession();
-		expect(await runCall({ action: "start", command: "rm -rf /" })).toMatchObject({ block: true });
-		expect(await runCall({ action: "start", command: "sudo ls" })).toMatchObject({ block: true });
-		expect(await runCall({ action: "start", command: "echo ok" })).toBeUndefined();
-		expect(await runCall({ action: "list" })).toBeUndefined();
-		expect(await runCall({ action: "stop", id: "r1" })).toBeUndefined();
-	});
-
-	// F4 (C-F8-13): D-08, a guard that fails to run denies the call instead of failing open.
-	it.each([127, 1])("blocks the call when the guard interpreter exits %i", async (code) => {
-		const bin = join(home, "bin");
-		mkdirSync(bin);
-		writeFileSync(join(bin, "python3"), `#!/bin/sh\nexit ${code}\n`);
-		chmodSync(join(bin, "python3"), 0o755);
-		const savedPath = process.env.PATH;
-		process.env.PATH = `${bin}:${savedPath}`;
-		try {
-			const { toolCall } = await startSession();
-			expect(await toolCall("echo ok")).toMatchObject({ block: true, reason: expect.stringContaining("onFailure") });
-		} finally {
-			process.env.PATH = savedPath;
-		}
-	});
-
-	// F3 (C-F8-13): with the script engine the guard is always in the effective PreToolUse.
-	it("a PreToolUse of the settings adds to the guard instead of replacing it", async () => {
-		const mine = { matcher: "Bash", hooks: [{ type: "command", command: "true" }] };
-		const session = await startSession({ hooks: { PreToolUse: [mine] } });
-		const text = await session.summary();
-		expect(text).toContain("python3 ");
-		expect(text).toContain("[Bash] command: true");
-		expect(await session.toolCall("rm -rf /")).toMatchObject({ block: true });
 	});
 
 	it("other events of the settings still replace their default", async () => {
 		const session = await startSession({ hooks: { Stop: [{ hooks: [{ type: "command", command: "true" }] }] } });
 		const text = await session.summary();
 		expect(text).toContain("Stop:\n  [*] command: true");
-		expect(text.split("Stop:")[1]).not.toContain("impeccable_gate");
 		expect(text).toContain("SessionStart:");
 	});
 
-	// D-54 (supersedes D-11 for ralph-loop): the Stop hook is a default; it is inert without a loop state file, and a
-	// missing script (resources root without ralph-loop/) is skipped instead of failing every stop.
-	describe("ralph-loop Stop hook", () => {
-		const [group] = SETTINGS_DEFAULTS.hooks.Stop;
-		const command = group?.hooks[0]?.command ?? "";
-		let work: string;
-		beforeEach(() => {
-			work = mkdtempSync(join(tmpdir(), "ralph-"));
-		});
-		afterEach(() => rmSync(work, { recursive: true }));
-		const run = (resources: string, input: object) =>
-			spawnSync("bash", ["-c", command], {
-				cwd: work,
-				input: JSON.stringify(input),
-				encoding: "utf8",
-				env: { ...process.env, NYCODE_RESOURCES: resources },
-			});
-
-		it("is the only default Stop hook", () => {
-			expect(group?.hooks.map((h) => h.command.includes("ralph-loop"))).toEqual([true]);
-			expect(command).toContain("ralph-loop/hooks/stop-hook.sh");
-		});
-
-		it("exits 0 and prints nothing when the script is absent from the resources root", () => {
-			const result = run(work, {});
-			expect([result.status, result.stdout, result.stderr]).toEqual([0, "", ""]);
-		});
-
-		it("exits 0 and prints nothing without a loop state file", () => {
-			const result = run(getBuiltinResourcesRoot(), { session_id: "s1" });
-			expect([result.status, result.stdout, result.stderr]).toEqual([0, "", ""]);
-		});
-
-		it("returns the prompt of an active loop as a block decision, and cancels at the iteration limit", () => {
-			mkdirSync(join(work, ".claude"));
-			const state = (iteration: number) =>
-				`---\nactive: true\niteration: ${iteration}\nsession_id: s1\nmax_iterations: 2\ncompletion_promise: null\nstarted_at: "x"\n---\nKeep going\n`;
-			writeFileSync(join(work, ".claude", "ralph-loop.local.md"), state(1));
-			const transcript = join(work, "t.jsonl");
-			writeFileSync(
-				transcript,
-				`${JSON.stringify({ role: "assistant", message: { content: [{ type: "text", text: "x" }] } })}\n`,
-			);
-			const first = run(getBuiltinResourcesRoot(), { session_id: "s1", transcript_path: transcript });
-			expect(first.status).toBe(0);
-			expect(JSON.parse(first.stdout)).toMatchObject({ decision: "block", reason: "Keep going" });
-			writeFileSync(join(work, ".claude", "ralph-loop.local.md"), state(2));
-			const last = run(getBuiltinResourcesRoot(), { session_id: "s1", transcript_path: transcript });
-			expect(last.status).toBe(0);
-			expect(last.stdout).toContain("Max iterations (2) reached");
-			expect(last.stdout).not.toContain("decision");
-			expect(existsSync(join(work, ".claude", "ralph-loop.local.md"))).toBe(false);
-		});
-	});
-
-	it("an empty PreToolUse in the GLOBAL settings turns the guard off and warns once", async () => {
-		const hooks = { PreToolUse: [] };
-		const session = await startSession({ hooks }, { global: { hooks } });
-		expect(session.notify.mock.calls.filter(([text]) => String(text).includes("guard.py"))).toHaveLength(1);
-		expect(await session.summary()).not.toContain("PreToolUse:");
-		expect(await session.toolCall("rm -rf /")).toBeUndefined();
-	});
-
-	it("an empty PreToolUse that only the project's settings carries does not turn the guard off", async () => {
-		const session = await startSession({ hooks: { PreToolUse: [] } });
-		expect(await session.toolCall("rm -rf /")).toMatchObject({ block: true });
-	});
-
-	it("disableAllHooks in a project file keeps the guard; in the user's own file it turns everything off", async () => {
+	it("disableAllHooks, in a project file or in the user's own, turns every default hook off", async () => {
 		const project = await startSession({}, { projectClaude: { disableAllHooks: true } });
-		expect(await project.toolCall("rm -rf /")).toMatchObject({ block: true });
 		expect(await project.summary()).not.toContain("SessionStart:");
 		const user = await startSession({}, { global: { disableAllHooks: true } });
-		expect(await user.toolCall("rm -rf /")).toBeUndefined();
+		expect(await user.summary()).not.toContain("SessionStart:");
 	});
 });

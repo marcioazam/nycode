@@ -1,6 +1,6 @@
 /**
- * Cartão do shell (Variante 04 "Trilho de status", escolha do dono, 2026-11-18): bloco com fundo e trilho `▎` na cor do
- * estado; título `ícone Bash · ESTADO · comando    hora` (sem régua; dono, 2026-11-20), corpo com as últimas linhas e rodapé que diz o que está rodando ou como terminou.
+ * Cartão do shell (Variante 04 "Trilho de status", escolha): bloco com fundo e trilho `▎` na cor do
+ * estado; título `ícone Bash · ESTADO · comando    hora` (sem régua), corpo com as últimas linhas e rodapé que diz o que está rodando ou como terminou.
  * Execução 5 (barra indeterminada ━━━ no rodapé) e transição C em toda troca de estado (preparando → executando e
  * executando → final; dissolver em 600 ms: o fundo brilha na cor do desfecho e assenta,
  * o trilho e o estado vão à cor final, o resto do rodapé e a hora nascem do fundo).
@@ -124,13 +124,13 @@ export function cartaoShell(theme: Theme, ctx: CtxShell, o: OpcoesShell): Compon
 					? "prep"
 					: "run";
 		// Preparando também anima (barra e cursor do comando chegando); executando, só enquanto roda de fato.
-		// A barra nunca some enquanto prepara ou executa (dono, 2026-11-18: parecia travado): sem foco ou em movimento
+		// A barra nunca some enquanto prepara ou executa (parecia travado): sem foco ou em movimento
 		// reduzido anda 1 passo por segundo, no tique lento do relógio; só `desligado` fica sem ela.
 		const fluido = anima();
 		const nivel = movimento();
 		const vivo = ((tipo === "run" && rodando(ctx.toolCallId)) || tipo === "prep") && nivel === "normal";
 		const now = vivo ? tocar(ctx) : performance.now();
-		// Toda troca de estado dissolve (dono, 2026-11-18): preparando → executando pelo início, executando → final pelo fim.
+		// Toda troca de estado dissolve: preparando → executando pelo início, executando → final pelo fim.
 		const idade =
 			tipo === "run" ? idadeInicio(ctx, DISSOLVER_MS) : tipo === "prep" ? undefined : idadeFim(ctx, DISSOLVER_MS);
 		const p = idade === undefined || !anima() ? 1 : ease(idade / DISSOLVER_MS);
@@ -155,8 +155,8 @@ export function cartaoShell(theme: Theme, ctx: CtxShell, o: OpcoesShell): Compon
 		const token = tipo === "erro" ? "toolErrorBg" : "customMessageBg";
 		const open = fundo ? `\x1b[48;2;${fundo.join(";")}m` : bgOpen(theme, token);
 
-		// Sem margem: o trilho fica na coluna do texto da conversa (pedido do dono, 2026-11-18; antes margem 2).
-		// Largura inteira dentro da margem do chat (dono, 2026-11-18; antes no máximo 72 colunas).
+		// Sem margem: o trilho fica na coluna do texto da conversa (antes margem 2).
+		// Largura inteira dentro da margem do chat (antes no máximo 72 colunas).
 		const bw = Math.max(4, w);
 		const iw = bw - 3; // trilho + espaço à esquerda, 1 de respiro à direita
 		const linha = (conteudo: string): string => {
@@ -172,22 +172,22 @@ export function cartaoShell(theme: Theme, ctx: CtxShell, o: OpcoesShell): Compon
 			return pintada;
 		};
 
-		// Título "régua" (dono, 2026-11-18): ícone pendurado + `Bash ─ comando ───── hora`; corpo e rodapé recuam até o `Bash`.
-		// Nome e ícone de bash (dono, 2026-11-19): antes `Run` com o ícone de play (inseto com play); o resto igual.
+		// Título "régua": ícone pendurado + `Bash ─ comando ───── hora`; corpo e rodapé recuam até o `Bash`.
+		// Nome e ícone de bash: antes `Run` com o ícone de play (inseto com play); o resto igual.
 		// Preparando ("comando chegando"): o comando aparece conforme o modelo escreve, com cursor.
 		const surge = (t: string) =>
 			rgb && fundo && p < 1 ? sgrFg(lerpRgb(fundo, dim, p) as Rgb, t) : theme.fg("dim", t); // nasce do fundo
 		const gap = iconGap();
 		const recuo = " ".repeat(1 + gap.length);
 		const hora = o.hora && tipo !== "run" && tipo !== "prep" && iw >= 30 ? surge(o.hora) : "";
-		// Tinta longa (/refino escrita 1, dono, 2026-11-18): cada letra do comando nasce do fundo e ganha a cor; o cursor respira
+		// Tinta longa (/refino escrita 1): cada letra do comando nasce do fundo e ganha a cor; o cursor respira
 		// em vez de piscar. Antes o comando vinha pronto em muted e o cursor piscava a cada 400 ms. Sem movimento fluido, como antes.
 		const parcial = [...sanitizarExibicao(o.comando ?? o.parcial ?? "")];
 		if (parcial.length < chegada.length) chegada.length = parcial.length;
 		while (chegada.length < parcial.length) chegada.push(now);
 		const muted = cor("muted");
 		const tinta = tipo === "prep" && fluido && fundo && muted;
-		// Barra que respira (/cursor variante 3, dono, 2026-11-18; antes bloco ▌ respirando): acesa enquanto as letras chegam,
+		// Barra que respira (/cursor variante 3; antes bloco ▌ respirando): acesa enquanto as letras chegam,
 		// respira nas pausas do modelo; ao começar a executar escorrega 3 colunas e some (SAI_MS).
 		const ultima = chegada.at(-1) ?? -Infinity;
 		const saindo = tipo === "run" && fluido && fundo && accent ? idadeInicio(ctx, SAI_MS) : undefined;
@@ -222,7 +222,7 @@ export function cartaoShell(theme: Theme, ctx: CtxShell, o: OpcoesShell): Compon
 			tipo === "prep"
 				? escrito + cursor
 				: (cmdLimpo ? theme.fg("toolTitle", theme.bold(cmdLimpo)) : theme.fg("muted", "…")) + sai;
-		// Título sem régua (dono, 2026-11-20; antes `Bash ─ comando ───── hora`): `<ícone> Bash · ESTADO · comando` e a hora à direita.
+		// Título sem régua (antes `Bash ─ comando ───── hora`): `<ícone> Bash · ESTADO · comando` e a hora à direita.
 		// O estado fica logo depois do nome e nunca é cortado: no aperto o comando encolhe primeiro.
 		const sep = theme.fg("dim", " · ");
 		const nomeEstado =
@@ -299,7 +299,7 @@ export function cartaoShell(theme: Theme, ctx: CtxShell, o: OpcoesShell): Compon
 				n;
 		} else {
 			const dica = ocultas > 0 ? "abre" : o.expandido && total > PREVIA ? "fecha" : "";
-			// O estado já está no título (dono, 2026-11-20): o rodapé final só traz duração, linhas, ocultas, atalho e log, sem separador inicial.
+			// O estado já está no título: o rodapé final só traz duração, linhas, ocultas, atalho e log, sem separador inicial.
 			const resto = [
 				o.dur,
 				n ? plural(total, "linha", "linhas") : "",
@@ -311,8 +311,8 @@ export function cartaoShell(theme: Theme, ctx: CtxShell, o: OpcoesShell): Compon
 				.join(" · ");
 			rodape = resto ? surge(resto) : "";
 		}
-		// Respiro entre a saída e o rodapé (pedido do dono, 2026-11-18); sem saída o cartão segue com 2 linhas de conteúdo.
-		// Uma linha de respiro em cima e embaixo, dentro do fundo e com o trilho (dono, 2026-11-18).
+		// Respiro entre a saída e o rodapé; sem saída o cartão segue com 2 linhas de conteúdo.
+		// Uma linha de respiro em cima e embaixo, dentro do fundo e com o trilho.
 		return [
 			"",
 			titulo,

@@ -37,6 +37,15 @@ describe("buildSystemPrompt", () => {
 		});
 	});
 
+	describe("scope guideline", () => {
+		test("states the scope and ambiguity rules even with no tools", () => {
+			const prompt = buildSystemPrompt({ selectedTools: [], contextFiles: [], skills: [], cwd: process.cwd() });
+
+			expect(prompt).toContain("smallest sufficient change and stop once its acceptance criteria are met");
+			expect(prompt).toContain("read the repository's requirements and instructions");
+		});
+	});
+
 	describe("prompt structure", () => {
 		test("keeps the default and custom prompt prefixes exact", () => {
 			const defaultPrompt = buildSystemPrompt({ cwd: "/tmp", selectedTools: [], contextFiles: [], skills: [] });

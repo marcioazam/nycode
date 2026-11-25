@@ -32,7 +32,7 @@ function register() {
 
 test("ui/index.ts monta todas as partes: comandos, editor, a11y e terminal", () => {
 	const { commands, events } = register();
-	assert.deepEqual([...commands].sort(), ["btw", "diff", "movimento", "rename", "vim"]); // movimento: Onda 10, P01
+	assert.deepEqual([...commands].sort(), ["btw", "diff", "movimento", "rename"]); // movimento: Onda 10, P01
 	assert.ok(events.session_start!.length >= 3); // editor, a11y, terminal
 	for (const ev of ["session_info_changed", "agent_start", "agent_settled", "session_shutdown"])
 		assert.ok(events[ev]?.length, ev);

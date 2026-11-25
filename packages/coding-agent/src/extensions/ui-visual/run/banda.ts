@@ -1,5 +1,5 @@
 /**
- * Faixa do run, desenho "Uma linha" com a animação "Barra" (escolha do dono no lab /rodando, 2026-11-19; antes caixa com o
+ * Faixa do run, desenho "Uma linha" com a animação "Barra" (lab /rodando; antes caixa com o
  * fundo do estado, linhas em branco acima e abaixo e `▸ nome · rotulo · tempo · resumo`). Uma linha neutra (vermelha no
  * erro): `▸ nome  [barra] estado · tempo[ · N linhas]` à esquerda, `id[ · tecla abre] · hora` à direita.
  * Enquanto o registro do nycode (Symbol.for('nycode.run.registry')) diz que o run segue rodando, o tempo corre e a barra
@@ -34,10 +34,10 @@ type Tema = {
 type Registro = { get?: (id: string) => { state?: string; startedAt?: number } | undefined };
 
 const COR: Record<RunVisto["estado"], string> = { run: "syntaxType", ok: "success", err: "error", warn: "warning" };
-/** Entrada (dono, 2026-11-20, lab /segplano "Nasce do fundo"): a faixa sobe do fundo em NASCE_MS, uma vez por run. */
+/** Entrada: a faixa sobe do fundo em NASCE_MS, uma vez por run. */
 export const NASCE_MS = 450;
 const nascidas = new Map<string, number>(); // run (ou chamada) -> instante em que a faixa nasceu; o histórico nunca entra
-/** Marcador da faixa (dono, 2026-11-20, lab /runbanda desenho 19): md-layers para todo run (antes md-cog_play no subagente e `▸`
+/** Marcador da faixa: md-layers para todo run (antes md-cog_play no subagente e `▸`
  * no shell); sem Nerd Font, `▸`. */
 const marca = (): string => (nerdFont() ? "\u{f0328}" : "▸");
 /** Estado em palavra (desenho 19 "Refinada"; antes `em segundo plano` rodando e o rótulo cru, ex. `exit 0`, no fim). */
@@ -68,7 +68,7 @@ export function bandaRun(
 					i >= pos - 3 && i < pos ? theme.fg("accent", "━") : theme.fg("dim", "─"),
 				).join("")} `
 			: "";
-	// Lab /runbanda desenho 19 "Refinada · md-layers" + "Barra varrendo" (dono, 2026-11-20; antes `estado · tempo · linhas` e
+	// Lab /runbanda desenho 19 "Refinada · md-layers" + "Barra varrendo" (antes `estado · tempo · linhas` e
 	// `id · tecla abre · hora`): `ícone nome  [barra] estado · tempo · tipo · exit N · N linhas · comando`; à direita `id · hora`.
 	const saida = v.estado !== "run" && /^(exit [1-9-]|sinal )/.test(v.rotulo) ? theme.fg(COR[v.estado], v.rotulo) : "";
 	const cmd = v.cmd ? (v.cmd.length > CMD_MAX ? `${v.cmd.slice(0, CMD_MAX - 2)} …` : v.cmd) : "";

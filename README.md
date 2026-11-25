@@ -23,7 +23,7 @@ It is a fork of the pi coding agent. Everything that used to sit outside the age
 ## Contents
 
 - [Why Nycode](#why-nycode) · [What is built in](#what-is-built-in)
-- [Install](#install) · [First run](#first-run) · [Migrating from pi](#migrating-from-pi)
+- [Install](#install) · [First run](#first-run)
 - [Where your configuration lives](#where-your-configuration-lives) · [Permissions](#permissions)
 - [Benchmarks](#benchmarks) · [Packages](#packages)
 - [Development](#development) · [Building standalone binaries](#building-standalone-binaries) · [Security and quality gates](#security-and-quality-gates) · [Supply-chain hardening](#supply-chain-hardening)
@@ -46,8 +46,8 @@ These figures come from the harness before it moved into the core. The post-migr
 
 - **Terminal UI:** animated header wordmark, capsule composer, tool cards for read, shell, diff and subagents, compact and diff views, sticky prompt with jump-to-end, chat margin, code blocks with copy, image preview, the `calm` status line (HUD) and the built-in themes `nycode-claro`, `nycode-escuro`, `nycode-noite`, `tokyo-night` and `mono`. Motion respects `NYCODE_REDUCED_MOTION` and `NO_COLOR`.
 - **Agent workflow:** `subagent` with fleet panel and model routing, `plan-mode` and `plan-gate`, `goal`, `todo`, `question`, `memory`, `git-checkpoint` with `/rewind`, `contexto` (per-session compaction limit), `travar-modelos`, `auto-resume`, `ponytail` and `ralph-loop`.
-- **Tools and integrations:** `lsp`, `mcp`, `web_fetch`, `codemode`, `tool-search`, `llama.cpp`, and `/puxar` to import a session from another tool on request.
-- **Safety:** the native permission engine (on by default), hooks, notices (`avisos`) and diagnostics (`/diagnostico`, `/doctor`).
+- **Tools and integrations:** `lsp`, `mcp`, `web_fetch`, `codemode`, `tool-search`, and `llama.cpp`.
+- **Safety:** the native permission engine (on by default), hooks, notifications (`/notifications`) and diagnostics (`/diagnostico`, `/doctor`).
 - **Lifecycle:** native `/restart` and `/update`, no wrapper script.
 - **Resources:** rules, agents, skills, commands and helper scripts under `resources/`, at the lowest precedence, so your own files with the same name win.
 
@@ -98,17 +98,6 @@ nycode
 
 Inside Nycode, `/login` (or `nycode auth login <provider>` outside it) connects a subscription or an API key. `?` lists the shortcuts, `/` the commands and `!` runs a shell command. The [documentation](packages/coding-agent/docs/) covers setup and usage in full.
 
-## Migrating from pi
-
-```bash
-nycode migrate from-pi          # dry run: prints the plan, writes nothing
-nycode migrate from-pi --apply  # applies it, with a backup of every file it replaces
-```
-
-It converts `~/.pi/agent` into `~/.nycode/agent`: settings (`PI_*` names become `NYCODE_*`), `local.env`, MCP and LSP configuration, sessions, memory, plans, themes (`pi-claro`, `pi-escuro` and `pi-noite` become the built-in `nycode-*` themes), and the personal layer: skills, agents and commands that Nycode does not embed, and `claude-home/rules/personal.md`, appended to `~/.nycode/agent/AGENTS.md`. Credentials (`auth.json`, `mcp-auth.json`) are copied only after you confirm in a terminal. A file already in the destination is kept, never overwritten, and `~/.pi` is left untouched.
-
-After migrating, sign in again in Nycode (`/login`) when a provider uses OAuth: the copied refresh token stops working as soon as either program refreshes it.
-
 ## Where your configuration lives
 
 Your configuration has one home: **`~/.nycode/agent`** (or `NYCODE_CODING_AGENT_DIR`). Nycode does not read the home directory of another tool or agent, and the home directory is never treated as a project.
@@ -126,10 +115,10 @@ Projects add `.nycode/` and the instruction files of the repository (`AGENTS.md`
 
 ## Permissions
 
-The **native TypeScript permission engine** (`permissions.engine: "native"`, the default; the `guard.py` script engine stays selectable) checks every tool call before it runs and blocks when it fails ([security](packages/coding-agent/docs/security.md), [SECURITY.md](SECURITY.md)):
+The **native TypeScript permission engine** (`permissions.engine: "native"`, the only engine) checks every tool call before it runs and blocks when it fails ([security](packages/coding-agent/docs/security.md), [SECURITY.md](SECURITY.md)):
 
 - **Modes:** `ask` (default), `auto` and `plan`. Bypass (`--bypass`, `--safe`, `NYCODE_BYPASS_PERMISSIONS`, `local.env` or `permissions.bypass`; precedence flag > env > `local.env` > `settings.json` > off) approves the `ask` prompts and nothing else.
-- **Always denied, bypass or not:** destructive filesystem commands (shell forms such as `bash -c`, `eval` and `$()` are re-parsed), download-and-execute pipelines, writes to disk devices, force-push to `main`, and reads of `.env*` and credential files.
+- **Always denied, bypass or not:** destructive filesystem commands (shell forms such as `bash -c`, `eval` and `$()` are re-parsed), download-and-execute pipelines, writes to disk devices, force-push to `main`, `git commit|push|merge --no-verify`, `gh pr merge --admin`, and reads of `.env*` and credential files.
 - **Not a sandbox:** it guards against mistakes, not against an adversary. For hard isolation see the four patterns in [containerization](packages/coding-agent/docs/containerization.md) (Gondolin micro-VM, plain Docker, Docker Sandboxes, OpenShell).
 
 ## Benchmarks

@@ -1,4 +1,4 @@
-// Ported from zzzzzzzzzzzzzzzzzzzz-question-dialog.test.ts (owner request 2026-11-14): the question was drawn twice (chat and
+// Ported from zzzzzzzzzzzzzzzzzzzz-question-dialog.test.ts: the question was drawn twice (chat and
 // dialog) and the dialog cut texts with "...". Variant B: numbered list, ★ on the recommended option, panel of the focused one.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { askViaOverlay } from "../../../src/extensions/question/overlay.ts";
@@ -51,7 +51,7 @@ describe("question dialog", () => {
 		expect(lines({}).some((l) => l.includes("<accent><b>❯ 2</b></accent>  <accent><b>beta"))).toBe(true);
 	});
 
-	// Owner, 2026-11-15: the list shows only the title (the one-line summary is gone); the description stays in the focused panel.
+	// The list shows only the title (the one-line summary is gone); the description stays in the focused panel.
 	it("variant B: one row per option with number and title only; ★ recommended; panel of the focused option only, stable height", () => {
 		const longa =
 			"Mesma conta do baseline já gravado. Então a comparação continua limpa e eu tento de novo a cada 30 minutos, sem trocar de conta nem de modelo no meio.";
@@ -138,11 +138,11 @@ describe("question dialog", () => {
 				tagTheme,
 			)
 			.render(80);
-		// variant A of the block (owner, 2026-11-14): answer on the header, question below
+		// variant A of the block: answer on the header, question below
 		expect(stripTags(res).replace(/\s+/g, " ")).toMatch(/\? .*pergunta.* a │ Como\? · ctrl\+o abre/);
 	});
 
-	// Owner request (2026-11-14): question icon = two balloons (cod-comment_discussion, U+EAC7), one color, in the chat block and
+	// Question icon = two balloons (cod-comment_discussion, U+EAC7), one color, in the chat block and
 	// the dialog header. Only where there is a Nerd Font; otherwise `?`.
 	it("icon: balloons with Nerd Font, ? without", () => {
 		expect(questionGlyph({ TERM: "xterm-kitty" })).toBe("\ueac7");
@@ -162,8 +162,8 @@ describe("question dialog", () => {
 		}
 	});
 
-	// Owner request (2026-11-14): the recommended option row takes a soft background across the whole row, with or without focus.
-	// Owner, 2026-11-15: it uses the system palette cyan (token syntaxType) over toolPendingBg, no longer green.
+	// The recommended option row takes a soft background across the whole row, with or without focus.
+	// It uses the system palette cyan (token syntaxType) over toolPendingBg, no longer green.
 	it("recommended: ★ in cyan (syntaxType) and toolPendingBg across the row, with and without focus; the others have no background", () => {
 		const cor = asTheme({
 			fg: (_c: string, x: string) => `\x1b[2m${x}\x1b[22m`,

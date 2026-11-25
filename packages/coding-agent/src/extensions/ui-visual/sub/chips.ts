@@ -1,5 +1,5 @@
 /**
- * Card dos subagentes (lab /subag3 desenho 7 "Chips" sem fundo + animação 4 "Brilho no nome", dono, 2026-11-20; antes chips com
+ * Card dos subagentes (lab /subag3 desenho 7 "Chips" sem fundo + animação 4 "Brilho no nome"; antes chips com
  * fundo por agente, lab /subag). Cabeçalho ` <robô>  subagentes · contagem por estado` (um agente: `subagente · <estado> · turnos · tok · custo`)
  * e uma linha por agente `├ agente · estado · mm:ss · texto`, `·` neutro dim, sem fundo. Turnos, tokens e custo só quando o resultado
  * do nycode os traz (usage); nada é inventado; sem estado `aviso` (o nycode não o distingue).
@@ -110,7 +110,7 @@ function nomeBrilho(t: Tema, nome: string, now: number | undefined): string {
 	return t.bold(`${out}\x1b[39m`);
 }
 
-/** Coluna da palavra `Subagent` com o ícone na coluna 0, como o Read (dono, 2026-11-20; antes recuo LEAD, ícone 2-3 colunas à direita do Read). */
+/** Coluna da palavra `Subagent` com o ícone na coluna 0, como o Read (antes recuo LEAD, ícone 2-3 colunas à direita do Read). */
 export const colSub = (): number => 1 + iconGap().length;
 const SEP = (t: Tema) => t.fg("dim", " · ");
 const ORDEM: SubE[] = ["run", "ok", "stop", "err"];
@@ -152,7 +152,7 @@ export function cabecalho(
 	return fitLine(left, w);
 }
 
-/** Cabeçalho do `enviado para segundo plano` (dono, 2026-11-20): faixa neutra (customMessageBg) de ponta a ponta, hora dim dentro dela
+/** Cabeçalho do `enviado para segundo plano`: faixa neutra (customMessageBg) de ponta a ponta, hora dim dentro dela
  * na margem direita; sem cor no tema, a linha sem fundo. */
 export function cabecalhoFaixa(
 	left: string,
@@ -166,7 +166,7 @@ export function cabecalhoFaixa(
 }
 
 /**
- * Linhas do card (sem o recuo), lab /subag3 desenho 7 "Chips" sem fundo + "Brilho no nome" (dono, 2026-11-20; antes chips com fundo):
+ * Linhas do card (sem o recuo), lab /subag3 desenho 7 "Chips" sem fundo + "Brilho no nome" (antes chips com fundo):
  *   ` <robô>  subagentes · 1 executando · 1 ok · 1 erro` + `alt+o abre · hora` à direita (um agente: `subagente · <estado> · turnos · tok · custo`);
  *   `   ├ agente · estado · mm:ss · texto` por agente (└ no último). `·` neutro dim, sem fundo, sem spinner.
  * `now` é o relógio (performance.now); `anim` liga a respiração e o brilho do nome.
@@ -188,9 +188,9 @@ export function cartaoSub(
 				.filter(Boolean)
 				.map((x) => t.fg("muted", x))
 		: [];
-	// Nome em accent, como o `Bash` (dono, 2026-11-20; antes text).
+	// Nome em accent, como o `Bash` (antes text).
 	const titulo = estreito ? "" : t.bold(t.fg("accent", um ? "Subagent" : "Subagents")) + SEP(t);
-	// Um agente = lab /subag2 desenho 3 "Cabeçalho + └" (dono, 2026-11-20; antes `Subagent · estado · fatos` e `└ agente · estado · mm:ss · texto`):
+	// Um agente = lab /subag2 desenho 3 "Cabeçalho + └" (antes `Subagent · estado · fatos` e `└ agente · estado · mm:ss · texto`):
 	// nome (brilho rodando), estado e fatos no cabeçalho; o `└` leva só o texto.
 	const resumo = um
 		? [
@@ -204,7 +204,7 @@ export function cartaoSub(
 		: ORDEM.filter((e) => ags.some((a) => a.e === e))
 				.map((e) => t.fg(TOK[e], `${ags.filter((a) => a.e === e).length} ${CONTA[e]}`))
 				.join(SEP(t));
-	// Largura `w` inteira (com o recuo): faixa neutra de ponta a ponta e ícone na coluna dos outros cabeçalhos (dono, 2026-11-20; antes `w` útil + LEAD por fora, ícone 3 colunas à direita do Read).
+	// Largura `w` inteira (com o recuo): faixa neutra de ponta a ponta e ícone na coluna dos outros cabeçalhos (antes `w` útil + LEAD por fora, ícone 3 colunas à direita do Read).
 	const head = cabecalhoFaixa(`${t.fg("accent", icon("agent"))}${iconGap()}${titulo}${resumo}`, w, t, o);
 	const rows = ags.map((a, i) => {
 		const texto = a.linha ? t.fg(a.e === "err" || a.e === "stop" ? "muted" : "dim", a.linha) : "";
@@ -216,7 +216,7 @@ export function cartaoSub(
 					a.durMs === undefined ? "" : t.fg("dim", mmss(a.durMs)),
 					texto,
 				].filter(Boolean);
-		// `├/└` na coluna da palavra `Subagent` e o texto 2 colunas depois (dono, 2026-11-20; antes 3 colunas fixas).
+		// `├/└` na coluna da palavra `Subagent` e o texto 2 colunas depois (antes 3 colunas fixas).
 		return fitLine(
 			`${" ".repeat(colSub())}${t.fg("borderMuted", i === ags.length - 1 ? "└" : "├")} ${partes.join(SEP(t))}`,
 			w,
@@ -233,7 +233,7 @@ const nomeAg = (t: Tema, a: AgenteVisto, o: { now: number; anim: boolean }) => {
 /** Ícone de segundo plano (md-cog_play, lab /subag2); sem Nerd Font, `↗`. */
 const ENG = () => (nerdFont() ? "\u{f1935}" : "↗");
 /**
- * `enviado para segundo plano`, lab /subag2 desenho 3 (dono, 2026-11-20; antes `Subagent · enviado para segundo plano` + `└ agente · tarefa`):
+ * `enviado para segundo plano`, lab /subag2 desenho 3 (antes `Subagent · enviado para segundo plano` + `└ agente · tarefa`):
  * um agente `Subagent · agente ⚙ · enviado` + `└ tarefa`; vários `Subagents · N enviados` + `├ agente ⚙ · tarefa`.
  */
 export function cartaoEnviado(
@@ -405,7 +405,7 @@ function desfecho(acao: string, texto: string, erro: boolean): { s: string; tok:
 }
 type EstAcao = { uiSub?: string; uiDir?: string };
 /**
- * Corpo de texto puro (send, status, cancel, resume, list, erro sem detalhes; dono, 2026-11-20): `│` em dim e o texto na coluna da
+ * Corpo de texto puro (send, status, cancel, resume, list, erro sem detalhes): `│` em dim e o texto na coluna da
  * nome `Subagent` do cabeçalho (colSub()), cortado com … na largura; antes o texto nativo na margem esquerda. Também grava no
  * estado o cabeçalho da ação (`Subagent · mensagem · agente id`, agente só se conhecido) e o desfecho colorido à direita da hora.
  */
@@ -445,7 +445,7 @@ export function cabecalhoAcao(t: Tema, args: Record<string, unknown>): { acao: s
 	};
 }
 /**
- * Corpo de texto puro (send, status, cancel, resume, list, erro sem detalhes; dono, 2026-11-20): `│` em dim e o texto na coluna da
+ * Corpo de texto puro (send, status, cancel, resume, list, erro sem detalhes): `│` em dim e o texto na coluna da
  * nome `Subagent` do cabeçalho (colSub()), cortado com … na largura; antes o texto nativo na margem esquerda.
  */
 const corpoComTrilho = (
@@ -453,7 +453,7 @@ const corpoComTrilho = (
 	t: Tema,
 ): { render: (w: number) => string[]; invalidate: () => void } => ({
 	render: (w) => {
-		// `│` na coluna do nome `Subagent` e o texto 2 colunas depois (dono, 2026-11-20; antes o `│` 2 colunas antes do nome).
+		// `│` na coluna do nome `Subagent` e o texto 2 colunas depois (antes o `│` 2 colunas antes do nome).
 		const col = colSub();
 		const pre = `${" ".repeat(col) + t.fg("dim", "│")} `;
 		return native.render(Math.max(1, w - col - 2)).map((r) => (r ? fitLine(pre + r, w) : r));

@@ -29,7 +29,7 @@ afterEach(() => {
 
 // O relógio único lê a hora por `relogio.agora`; com os timers falsos do node:test a hora que anda é a do Date.
 relogio.agora = () => Date.now();
-process.env.NYCODE_UI_STATE = join(mkdtempSync(join(tmpdir(), "working-test-")), "ui-state.json"); // sem o estado real do dono
+process.env.NYCODE_UI_STATE = join(mkdtempSync(join(tmpdir(), "working-test-")), "ui-state.json"); // sem o estado real do usuário
 
 // The event-loop utilization the limiter reads is real: vitest keeps the loop busy, node:test did not.
 relogio.ocupacao = () => 0;
@@ -81,7 +81,7 @@ test("phaseText: 0, 1 e 2 ferramentas", () => {
 	assert.equal(phaseText({ phase: "pensando", tools: two, elapsedMs: 2000 }), "2 ferramentas · 2s · esc interrompe");
 });
 
-// Dono, 2026-11-15: spinner nas cores do nycode (`accent`, como o Loader nativo), não mais arco-íris; sem movimento 1 quadro.
+// Spinner nas cores do nycode (`accent`, como o Loader nativo), não mais arco-íris; sem movimento 1 quadro.
 test("frames: 10 quadros em accent; sem movimento 1 quadro accent", () => {
 	const theme = { fg: (k: string, s: string) => `<${k}>${s}` };
 	assert.deepEqual(
@@ -142,7 +142,7 @@ test("session_start: indicador animado e rótulo de raciocínio", () => {
 		const ind = calls[0][1] as { frames: string[]; intervalMs: number };
 		assert.equal(ind.frames.length, 10);
 		assert.equal(ind.intervalMs, 80);
-		// dono, 2026-11-14: o rótulo fica no histórico de um raciocínio já terminado; "raciocinando…" parecia em andamento
+		// O rótulo fica no histórico de um raciocínio já terminado; "raciocinando…" parecia em andamento
 		assert.match(String(calls[1][1]), /raciocínio · clique abre$/);
 	});
 });

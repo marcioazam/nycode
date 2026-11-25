@@ -1,5 +1,6 @@
 // Git rules of the guard: push (force and protected branches), reset --hard, clean -f, rebase, branch -D, checkout
-// that discards changes, and an alias defined on the command line. Port of `check_git` of permissions/rules.py.
+// that discards changes, an alias defined on the command line, and `--no-verify` on commit, push and merge (always
+// denied: hooks are a gate the agent may not skip). Port of `check_git` of permissions/rules.py.
 import * as fs from "node:fs";
 import { type Finding, shortFlags } from "../lex/tokens.ts";
 import { abspath, dirname, join, pyStrip } from "../py-path.ts";
@@ -61,14 +62,59 @@ export function currentBranch(cwd: string): string | undefined {
 			d = parent;
 		}
 	} catch {
-		// Unreadable or not UTF-8: the branch is unknown, as in guard.py.
+		// Unreadable or not UTF-8: the branch is unknown, as in the former Python guard.
 	}
 	return undefined;
 }
 
 const lstripPlus = (text: string): string => text.replace(/^\++/, "");
 const PUSH_VALUE_OPTS = new Set(["-o", "--push-option", "--repo", "--receive-pack", "--exec"]);
-const GIT_VALUE_OPTS = new Set(["-C", "-c", "--git-dir", "--work-tree"]);
+const PUSH_VALUE_OPTS_SHORT = new Set(["o"]);
+// git global options whose value may be the next word (git 2.53); a missing one makes its value read as the subcommand
+const GIT_VALUE_OPTS = new Set([
+	"-C",
+	"-c",
+	"--git-dir",
+	"--work-tree",
+	"--namespace",
+	"--config-env",
+	"--attr-source",
+	"--exec-path",
+]);
+
+// Options of `git commit` and `git merge` that take a value (the next word, or the rest of a short cluster): a value
+// such as `-m "--no-verify"` is a message, not the flag.
+const COMMIT_VALUE_SHORT = new Set(["m", "F", "C", "c", "t"]);
+const COMMIT_VALUE_LONG = new Set(["--message", "--file", "--reuse-message", "--reedit-message", "--template"]);
+const MERGE_VALUE_SHORT = new Set(["m", "F", "s", "X"]);
+const MERGE_VALUE_LONG = new Set(["--message", "--file", "--strategy", "--strategy-option", "--into-name"]);
+
+/**
+ * True when `args` (after the git subcommand) skip the hooks: `--no-verify` (git accepts any unique prefix, so `--no-v`
+ * and longer), or `-n` in a short cluster when `shortN` (`git commit` only: `git push -n` is a dry run).
+ * Values of message-like options are skipped; every other word is judged, so a quoted flag-like word elsewhere is
+ * a false positive that stays denied (fail closed).
+ */
+function skipsHooks(args: string[], valueShort: Set<string>, valueLong: Set<string>, shortN: boolean): boolean {
+	for (let i = 0; i < args.length; i++) {
+		const a = args[i];
+		if (a === "--") return false;
+		if (a.startsWith("--")) {
+			const key = a.split("=")[0];
+			if (key.length >= 6 && "--no-verify".startsWith(key)) return true;
+			if (valueLong.has(key) && !a.includes("=")) i++;
+		} else if (a.startsWith("-") && a.length > 1) {
+			for (let k = 1; k < a.length; k++) {
+				if (shortN && a[k] === "n") return true;
+				if (valueShort.has(a[k])) {
+					if (k === a.length - 1) i++;
+					break;
+				}
+			}
+		}
+	}
+	return false;
+}
 
 function deletesProtected(rest: string[]): boolean {
 	const pos = rest.filter((a) => !a.startsWith("-"));
@@ -127,7 +173,13 @@ export function checkGit(args: string[], cwdInput: string): Finding[] {
 	const sub = args[i];
 	const rest = args.slice(i + 1);
 	const flags = shortFlags(rest);
-	if (sub === "push") return [...found, ...checkPush(rest, cwd)];
+	const skip: Finding = ["deny", `git ${sub} --no-verify pula os hooks`];
+	if (sub === "push") {
+		if (skipsHooks(rest, PUSH_VALUE_OPTS_SHORT, PUSH_VALUE_OPTS, false)) found.push(skip);
+		return [...found, ...checkPush(rest, cwd)];
+	}
+	if (sub === "commit" && skipsHooks(rest, COMMIT_VALUE_SHORT, COMMIT_VALUE_LONG, true)) found.push(skip);
+	if (sub === "merge" && skipsHooks(rest, MERGE_VALUE_SHORT, MERGE_VALUE_LONG, false)) found.push(skip);
 	if (sub === "reset" && rest.includes("--hard")) return [...found, ["ask", "git reset --hard"]];
 	if (sub === "clean" && (flags.has("-f") || flags.has("--force"))) return [...found, ["ask", "git clean -f"]];
 	if (sub === "rebase") return [...found, ["ask", "git rebase"]];

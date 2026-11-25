@@ -33,15 +33,13 @@ r=$(vcov git-checkpoint $H/git-checkpoint/git-checkpoint.test.ts)
 chk "2 git-checkpoint (rewind-tree) + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov todo $H/todo/todo-collapse.test.ts $H/extensions/todo/stale-reminder.test.ts)
 chk "2 todo (todo-collapse) + cobertura>=80" "${r%%|*}" "${r#*|}"
-r=$(vcov notify $H/notify/notify-focus.test.ts $H/extensions/notify/index.test.ts)
-chk "2 notify (notify-focus) + cobertura>=80" "${r%%|*}" "${r#*|}"
+r=$(vcov notify $H/extensions/notify)
+chk "2 notify + cobertura>=80" "${r%%|*}" "${r#*|}"
 
 # 3: every harness test of the package (was: every nycode test).
 (cd "$CA" && env -u OPENROUTER_API_KEY timeout 900 npx vitest --run $H >"$W/all.log" 2>&1)
 chk "3 vitest test/harness (todos)" $? "$(rg '^ +(Test Files|Tests) ' "$W/all.log" | tr -s ' ' | tr '\n' ' ')"
 
-r=$(vcov sound-notify $H/extensions/sound-notify/index.test.ts)
-chk "5 som + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov syntax-check $H/extensions/syntax-check/index.test.ts)
 chk "5 syntax-check + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov docs-pointer $H/extensions/docs-pointer/index.test.ts)
