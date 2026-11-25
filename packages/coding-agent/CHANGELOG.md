@@ -22,6 +22,13 @@
 
 ### Changed
 
+- `CLAUDE_PROJECT_DIR` is the directory the session started in, not the git checkout root, for hook commands, `${CLAUDE_PROJECT_DIR}` in command and skill bodies and their shell spans, and the status line's `workspace.project_dir`, as Claude Code passes it. A hook from a project or local settings file gets the folder holding its `.claude` (the checkout root for the repository root's `settings.local.json`)
+- A handler declared in several settings files runs once, as the copy from the highest-precedence source (user < project < local < `--settings` < managed), with all of that copy's fields
+- Plugin manifests may list `hooks` as an array of paths and inline objects; they add to `hooks/hooks.json`, which always loads first, and a path listed twice registers once
+- A local marketplace's `./` plugin entry loads from the marketplace itself rather than the install-time cache; a plugin the marketplace no longer lists, or whose entry leaves the marketplace directory, does not load
+- Prompt hooks, the `/goal` evaluator and the shared model call use the model's declared output limit instead of fixed 512/1024-token caps; a model that declares none gets no cap
+- The status line keeps `rate_limits` across a model switch within the same provider
+- `updatedToolOutput` is read only under `hookSpecificOutput`, and for an MCP tool it wins over `updatedMCPToolOutput`
 - The embedded contract is about 1 KB of generic protection; the system prompt adds a scope rule and an ambiguity rule; `/init` no longer asks for an architecture or layout overview
 - Embedded agents use tier aliases (`haiku`, `sonnet`, `inherit`)
 - Ponytail is updated to v5.3.3 (`shortcut:` marker); subagents get its rules only when their `tools:` include `edit` or `write` or are unrestricted (`PONYTAIL_SUBAGENT_MATCHER` overrides)

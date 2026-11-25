@@ -41,14 +41,14 @@ export function tryParseJson(text: string):
 				additionalContext?: string;
 				updatedInput?: unknown;
 				suppressOriginalPrompt?: boolean;
+				updatedToolOutput?: unknown;
+				updatedMCPToolOutput?: unknown;
 			};
 			decision?: string;
 			reason?: string;
 			continue?: boolean;
 			stopReason?: string;
 			systemMessage?: string;
-			updatedToolOutput?: unknown;
-			updatedMCPToolOutput?: unknown;
 			ok?: boolean;
 	  }
 	| undefined {
@@ -74,8 +74,6 @@ const OUTPUT_FIELDS = new Set([
 	"systemMessage",
 	"suppressOutput",
 	"hookSpecificOutput",
-	"updatedToolOutput",
-	"updatedMCPToolOutput",
 	"ok",
 ]);
 

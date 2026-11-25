@@ -7,7 +7,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import * as fs from "node:fs";
 import type { Api, Model } from "@nycode/ai";
-import { type CompletionRegistry, completeText } from "../_shared/model/model-complete.ts";
+import { type CompletionRegistry, completeText, modelOutputLimit } from "../_shared/model/model-complete.ts";
 import { runAgent } from "../_shared/seams/agent-run.ts";
 import { callMcpTool } from "../_shared/seams/mcp-call.ts";
 import { killProcessTree } from "../_shared/shell/process-tree.ts";
@@ -416,7 +416,9 @@ export async function runPromptHook(
 	try {
 		const { text: answer } = await completeText(model, prompt, {
 			system: PROMPT_HOOK_SYSTEM,
-			maxTokens: 512,
+			// Claude Code sets no output cap here: the model's own limit applies, so a long reason is never
+			// cut off mid-JSON.
+			maxTokens: modelOutputLimit(model),
 			signal,
 			registry,
 		});

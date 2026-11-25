@@ -85,6 +85,13 @@ export interface CompleteOptions {
 	reasoning?: ThinkingLevel;
 }
 
+/** The model's own output limit as a `maxTokens` option, for a call Claude Code leaves uncapped. A model
+ * without a declared limit (a virtual model, for one) has `maxTokens: 0`, meaning unknown; sent as a cap
+ * it would reject every request, so it falls back to the completion default instead. */
+export function modelOutputLimit(model: Pick<Model<Api>, "maxTokens">): number | undefined {
+	return model.maxTokens > 0 ? model.maxTokens : undefined;
+}
+
 /** Levels from cheapest to dearest, as a one-off completion wants them. */
 const ASCENDING_LEVELS: readonly ThinkingLevel[] = ["minimal", "low", "medium", "high"];
 

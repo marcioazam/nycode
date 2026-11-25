@@ -10,7 +10,7 @@ import {
 	substituteVars,
 } from "../_shared/commands/command-file.ts";
 import { claudeEffortLevel } from "../_shared/model/effort.ts";
-import { ancestorDirs, checkoutRoot } from "../_shared/project/project-root.ts";
+import { ancestorDirs } from "../_shared/project/project-root.ts";
 import { managedSettingsFile, readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { type InstalledPlugin, pluginComponentPath } from "../_shared/settings/plugins.ts";
 import { claudeSettingsChain } from "../_shared/settings/settings-chain.ts";
@@ -143,7 +143,8 @@ export function commandVars(
 		// low|medium|high|xhigh|max, and an unset one stays literal in the body.
 		CLAUDE_EFFORT: claudeEffortLevel(varCtx.thinkingLevel),
 		CLAUDE_SKILL_DIR: path.dirname(filePath),
-		CLAUDE_PROJECT_DIR: checkoutRoot(ctx.cwd),
+		// Claude passes the launch directory, even inside a repository.
+		CLAUDE_PROJECT_DIR: ctx.cwd,
 		CLAUDE_PLUGIN_ROOT: plugin?.root,
 		CLAUDE_PLUGIN_DATA: plugin?.dataDir,
 	};
@@ -177,7 +178,6 @@ export async function expandCommand(
 	plugin?: CommandPlugin,
 	options?: { allowShell?: boolean },
 ): Promise<string> {
-	const projectRoot = checkoutRoot(ctx.cwd);
 	const vars = commandVars(ctx, filePath, plugin);
 	const { text: withArgs, consumed } = substituteArgsDetailed(parsed.body, args, parsed.argumentNames ?? []);
 	// `${user_config.KEY}` is a plugin-command variable only; leave it literal in an
@@ -194,7 +194,7 @@ export async function expandCommand(
 					// project-scoped script. nycode.exec takes no env, so it is set in the script.
 					// stderr merges into stdout, as the Bash tool runs these for Claude. The
 					// resolver is passed by its imported binding so tests can stub the lookup.
-					const run = spanExec(parsed.shell, projectRoot, script, resolvePowershellBinary);
+					const run = spanExec(parsed.shell, ctx.cwd, script, resolvePowershellBinary);
 					const result = await runner.exec(run.command, run.args, { cwd: ctx.cwd, timeout: BASH_TIMEOUT_MS });
 					// pwsh cannot merge a native command's stderr in-script (spanExec sets
 					// mergeStreams), so it is appended here; the sh script merges via 2>&1.

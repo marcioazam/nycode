@@ -18,6 +18,7 @@ type Handler = (event: unknown, ctx: unknown) => void;
 interface Payload {
 	model: Record<string, unknown>;
 	rate_limits?: { five_hour: { used_percentage: number } };
+	workspace?: { current_dir: string; project_dir: string };
 }
 
 const ANTHROPIC: ModelInfo = { id: "claude-sonnet-5-5", name: "Sonnet 5.5", provider: "anthropic" };
@@ -61,6 +62,7 @@ const fire = (name: string, event: unknown = {}): void => {
 
 beforeAll(() => {
 	mkdirSync(cwd, { recursive: true });
+	mkdirSync(join(tmp, ".git"), { recursive: true }); // cwd is a repository subdirectory
 	mkdirSync(agentDir, { recursive: true });
 	writeFileSync(
 		join(agentDir, "settings.json"),
@@ -126,15 +128,33 @@ describe("status-line provider payload", () => {
 		const withLimits = await payloadAfter(respond);
 		expect(withLimits.rate_limits?.five_hour.used_percentage).toBe(42);
 		model = GPT;
-		const gpt = await payloadAfter(() => fire("model_select"));
+		const gpt = await payloadAfter(() => fire("model_select", { model: GPT }));
 		expect(gpt.model.provider).toBe("openai-codex");
 		expect("rate_limits" in gpt).toBe(false);
 		model = ANTHROPIC;
-		const back = await payloadAfter(() => fire("model_select"));
+		const back = await payloadAfter(() => fire("model_select", { model: ANTHROPIC }));
 		expect(back.model.provider).toBe("anthropic");
 		expect("rate_limits" in back).toBe(false); // the first pass's snapshot does not come back
 		const fresh = await payloadAfter(respond);
 		expect(fresh.rate_limits?.five_hour.used_percentage).toBe(42); // the next response restores it
+	});
+
+	it("troca de modelo no mesmo provider mantém rate_limits; troca de provider limpa", async () => {
+		model = ANTHROPIC;
+		await payloadAfter(respond);
+		const opus: ModelInfo = { id: "claude-opus-5-5", name: "Opus 5.5", provider: "anthropic" };
+		model = opus;
+		const same = await payloadAfter(() => fire("model_select", { model: opus }));
+		expect(same.rate_limits?.five_hour.used_percentage).toBe(42);
+		model = GPT;
+		const other = await payloadAfter(() => fire("model_select", { model: GPT }));
+		expect("rate_limits" in other).toBe(false);
+	});
+
+	it("workspace.project_dir é o diretório de lançamento, mesmo dentro de um repositório", async () => {
+		model = ANTHROPIC;
+		const payload = await payloadAfter(() => fire("session_start"));
+		expect(payload.workspace?.project_dir).toBe(cwd);
 	});
 
 	it("preserva o footer bridge e o evento thinking_level_select", () => {
