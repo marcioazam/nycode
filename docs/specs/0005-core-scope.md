@@ -138,6 +138,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | init | core | `/init` |
 | extension | lsp | core | Diagnósticos e navegação por servidor de linguagem, para qualquer linguagem |
 | extension | memory | core | Memória do projeto |
+| extension | monitor | core | Ferramenta `monitor` do Claude Code: cada linha de um comando em segundo plano volta ao modelo como evento |
 | extension | notify | core | Dono único dos sinais de fim de turno: notificação desktop, som, progresso na aba do terminal e o painel `/notifications` (apelido `/avisos`); som e notificação desligam por `notify.sound` e `notify.desktop` (B9) |
 | extension | output-styles | core | Estilos de saída |
 | extension | plan-gate | core | Plano aprovado vai ao fim |
