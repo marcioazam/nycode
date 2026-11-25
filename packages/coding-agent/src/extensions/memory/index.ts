@@ -3,7 +3,8 @@
  *
  * Claude Code style persistent memory, per project. Memories live as markdown
  * files under <agent dir>/memory/<project-slug>/ with a MEMORY.md index whose
- * content is injected into the system prompt each session. The agent manages
+ * content is injected into the system prompt each session; `autoMemoryStorage: "claude"`
+ * uses Claude Code's own store for the project instead (claude-store.ts). The agent manages
  * memories through the memory tool (save / read / delete / list).
  */
 
@@ -28,6 +29,7 @@ import { atomicWriteFile } from "../_shared/util/atomic-write.ts";
 import { statToken } from "../_shared/util/stat-token.ts";
 import { errorMessage } from "../_shared/util/values.ts";
 import { capForContext } from "../_shared/web/output-guard.ts";
+import { claudeFrontmatter, claudeMemoryDir, type MemoryStorage, memoryStorageSetting } from "./claude-store.ts";
 import { memoryNotice } from "./notice.ts";
 
 export const INDEX_FILE = "MEMORY.md";
@@ -83,11 +85,11 @@ export function memoryDir(cwd: string): string {
 /** The store location, honoring an `autoMemoryDirectory` override. Claude requires
  * it to be absolute or start with `~/`; a relative value is ignored, falling back
  * to the default per-project directory. */
-export function resolveMemoryDir(cwd: string, override?: string): string {
+export function resolveMemoryDir(cwd: string, override?: string, storage: MemoryStorage = "nycode"): string {
 	const trimmed = override?.trim();
 	if (trimmed?.startsWith("~/")) return path.join(os.homedir(), trimmed.slice(2));
 	if (trimmed && path.isAbsolute(trimmed)) return trimmed;
-	return memoryDir(cwd);
+	return storage === "claude" ? claudeMemoryDir(memoryProject(cwd)) : memoryDir(cwd);
 }
 
 /** Whether auto memory runs: on by default, off when `CLAUDE_CODE_DISABLE_AUTO_MEMORY`
@@ -214,6 +216,7 @@ type MemoryToolResult = { content: Array<{ type: "text"; text: string }>; detail
 async function saveMemory(
 	dir: string,
 	indexPath: string,
+	storage: MemoryStorage,
 	name: string | undefined,
 	description: string | undefined,
 	content: string | undefined,
@@ -227,8 +230,10 @@ async function saveMemory(
 		async (): Promise<MemoryToolResult> => /* NOSONAR typescript:S7503 - withFileMutationQueue takes a Promise-returning function */ {
 			const index = readIndex(dir);
 			fs.mkdirSync(dir, { recursive: true });
-			// A memory with frontmatter records its write time; one without is left as-is.
-			fs.writeFileSync(path.join(dir, `${name}.md`), stampModified(content, now));
+			// A memory with frontmatter records its write time; one without is left as-is in Nycode's own store and
+			// given Claude Code's frontmatter in Claude's.
+			const file = storage === "claude" ? claudeFrontmatter(content, name, description) : content;
+			fs.writeFileSync(path.join(dir, `${name}.md`), stampModified(file, now));
 			const nextIndex = upsertIndexLine(index, name, description);
 			writeIndex(indexPath, nextIndex);
 			// Claude measures the index after the write: over a read limit the write still
@@ -419,14 +424,16 @@ export function memorySettingsFiles(cwd: string, home: string, approved: boolean
 export function readMemorySettings(
 	files: string[],
 	managed: Record<string, unknown> = readManagedSettings(),
-): { autoMemoryEnabled?: unknown; autoMemoryDirectory?: unknown } {
-	const merged: { autoMemoryEnabled?: unknown; autoMemoryDirectory?: unknown } = {};
+): { autoMemoryEnabled?: unknown; autoMemoryDirectory?: unknown; autoMemoryStorage?: unknown } {
+	const merged: { autoMemoryEnabled?: unknown; autoMemoryDirectory?: unknown; autoMemoryStorage?: unknown } = {};
 	for (const settings of readSettingsChain(files)) {
 		if ("autoMemoryEnabled" in settings) merged.autoMemoryEnabled = settings.autoMemoryEnabled;
 		if ("autoMemoryDirectory" in settings) merged.autoMemoryDirectory = settings.autoMemoryDirectory;
+		if ("autoMemoryStorage" in settings) merged.autoMemoryStorage = settings.autoMemoryStorage;
 	}
 	if ("autoMemoryEnabled" in managed) merged.autoMemoryEnabled = managed.autoMemoryEnabled;
 	if ("autoMemoryDirectory" in managed) merged.autoMemoryDirectory = managed.autoMemoryDirectory;
+	if ("autoMemoryStorage" in managed) merged.autoMemoryStorage = managed.autoMemoryStorage;
 	return merged;
 }
 
@@ -469,6 +476,7 @@ export function setAutoMemoryEnabledSetting(value: boolean): { ok: true } | { ok
 export default function memoryExtension(nycode: ExtensionAPI): void {
 	let dir = memoryDir(process.cwd());
 	let enabled = true;
+	let storage: MemoryStorage = "nycode";
 
 	// The index is injected every turn but changes only through the tool or an external
 	// edit, so a turn costs one stat instead of a full read. The stat token (mtime plus
@@ -504,7 +512,8 @@ export default function memoryExtension(nycode: ExtensionAPI): void {
 		const settings = readMemorySettings(memorySettingsFiles(ctx.cwd, os.homedir(), approved));
 		enabled = autoMemoryEnabled(settings.autoMemoryEnabled, process.env);
 		const override = typeof settings.autoMemoryDirectory === "string" ? settings.autoMemoryDirectory : undefined;
-		dir = enabled ? resolveMemoryDir(ctx.cwd, override) : memoryDir(ctx.cwd);
+		storage = memoryStorageSetting(settings.autoMemoryStorage);
+		dir = enabled ? resolveMemoryDir(ctx.cwd, override, storage) : memoryDir(ctx.cwd);
 		indexCache = null;
 		if (!enabled) return;
 		const notice = memoryNotice(dir, readIndexQuietly(dir), ctx.ui.theme);
@@ -555,7 +564,7 @@ export default function memoryExtension(nycode: ExtensionAPI): void {
 	) {
 		try {
 			// Awaited here, not returned: the catch must see a queued write's rejection.
-			return await saveMemory(dir, indexPath, name, description, content);
+			return await saveMemory(dir, indexPath, storage, name, description, content);
 		} catch (error) {
 			return {
 				content: [
@@ -662,7 +671,7 @@ function showMemoryLocations(ctx: ExtensionCommandContext, home: string): void {
 	const settings = readMemorySettings(memorySettingsFiles(ctx.cwd, home, approved));
 	const isEnabled = autoMemoryEnabled(settings.autoMemoryEnabled, process.env);
 	const override = typeof settings.autoMemoryDirectory === "string" ? settings.autoMemoryDirectory : undefined;
-	const store = resolveMemoryDir(ctx.cwd, override);
+	const store = resolveMemoryDir(ctx.cwd, override, memoryStorageSetting(settings.autoMemoryStorage));
 	const lines = [
 		"Memory",
 		`  Auto memory: ${isEnabled ? "on" : "off"}`,
