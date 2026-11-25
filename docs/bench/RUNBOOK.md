@@ -564,6 +564,9 @@ Sob demanda, com teto explícito (sem `--budget-usd` o script recusa):
 vanilla-retest.sh --budget-usd 20 [--arms cc-vanilla,pi-vanilla]
 ```
 
+Só com pedido explícito do dono: a regra de economia de 2026-11-25 (seção "Referências guardadas") proíbe rerodar
+referência em tarefa já medida.
+
 Roda só os braços vanilla (tier vanilla), divide o teto entre eles, grava em `$BENCH_STATE/vanilla/<data>` e imprime o
 comando `bench report` que gera `docs/bench/BASELINE-VANILLA-<data>.md`. Rode-o numa branch nova e abra PR; um baseline
 existente nunca é sobrescrito (outra data ou sufixo de hora). Quando um PR toca capacidade sem cobertura vanilla
@@ -657,10 +660,13 @@ O `evidence` também classifica cada falha por assinatura (primeira regra que ca
 
 Regra do dono (2026-11-15): `cc-vanilla` e `pi-vanilla` rodam uma vez em cada conjunto de tarefas que nunca rodaram,
 com tudo guardado (`runs.jsonl`, `meta.json`, jobs do Harbor ou artefatos, custo, tokens, turnos, tempo, versão do
-braço, modelo). Gates e benchmarks seguintes rodam só o `nycode` contra a referência guardada; refazer uma referência
-só a pedido explícito do dono ou com um gatilho (2026-11-18): troca do modelo do benchmark, nova versão do
-Claude Code ou do pi nos braços, nova afirmação pública de comparação (braços intercalados nas mesmas tarefas, mesmo
-modo de conta) ou ~1 mês desde a última medição. Nunca misture OAuth e chave de API numa comparação. Os diretórios ficam fora do repositório, no estado local do benchmark
+braço, modelo). Gates e benchmarks seguintes rodam só o `nycode` contra a referência guardada.
+
+Regra de economia do dono (2026-11-25, substitui os gatilhos de 2026-11-18): **tarefa que o `cc-vanilla` ou o
+`pi-vanilla` já rodou nunca roda de novo nesse braço**, nem por versão nova, nem por tempo, nem para parear uma
+afirmação. Antes de qualquer rodada de referência, confira a tabela abaixo e rode só as tarefas que faltam
+(`--tasks`). Refazer só com pedido explícito do dono para aquela rodada. A comparação com a referência guardada
+não é pareada no tempo: diga isso no relatório. Nunca misture OAuth e chave de API numa comparação. Os diretórios ficam fora do repositório, no estado local do benchmark
 (`$XDG_STATE_HOME/bench`, padrão `~/.local/state/bench`):
 
 | Conjunto | Referências | Diretório | Medido em |
