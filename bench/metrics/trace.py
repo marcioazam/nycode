@@ -256,3 +256,102 @@ def cc_session_speed(path: Path, t0: float) -> dict[str, float]:
         "model_s": union(list(zip(req, ass.values(), strict=False))),
         "tool_s": union(tools),
     }
+
+
+# --- Todo-list behaviour -------------------------------------------------------------------------
+# Todo-list behaviour of one pi run, read from its transcript (events as `trace.parse` reads them).
+#
+# Counters (per run):
+# - todo_only_turn_share: assistant turns that have tool calls, all of them `todo`, over all assistant turns.
+# - reminders: tool results containing `<system-reminder>The todo list has` (the stale-list reminder).
+# - reminders_followed: for each reminder, 1 if a changing `todo` call (action not `list`) is among the next 3
+#   assistant tool calls after it (any tool), else 0.
+# - final_open_items / final_in_progress: items `pending`/`in_progress` and items `in_progress` in the last todo
+#   snapshot (`details.todos` of the last `todo` tool result). `blocked`, `failed`, `cancelled` and `completed` are
+#   not open: `blocked` is deferred by the owner's choice, the others are settled.
+# - coherent_end: 1.0 when a snapshot exists and no item is `in_progress` at the end, 0.0 when one is left open,
+#   None when the run never produced a snapshot (no todo use: nothing to judge).
+#
+# - turn_checks: end-of-turn blocks of todo.sync, one per `entry_appended` event whose entry is a `custom_message`
+#   of type `todo-turn-check` (turn-check.ts appends it with the block; the `custom` marker entry is not counted).
+# - external_reminders: todo.sync reminders for a finished background run/subagent (`externalFinishReminder` in
+#   status.ts), counted in toolResult/custom/user messages and `custom_message` entries that carry its text.
+# Both are 0 with todo.sync off. They are interventions, kept apart from `reminders` (stale-list cadence).
+# tests/test_trace.py pins every matcher below to the strings in packages/coding-agent/src/extensions/todo/.
+#
+# Only the pi/nycode format has the `todo` tool; a Claude Code transcript gives zeros and None.
+# Reference: the offline analysis of stored sessions that sized this cost (2026-11-25).
+
+REMINDER = "<system-reminder>The todo list has"
+TURN_CHECK_TYPE = "todo-turn-check"
+EXTERNAL_REMINDER = "waited on a background event that"
+FOLLOW_WINDOW = 3
+OPEN = ("pending", "in_progress")  # blocked is deferred, not open
+
+
+def _result_text(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    return "".join(
+        str(b.get("text") or "")
+        for b in (content if isinstance(content, list) else [])
+        if isinstance(b, dict)
+    )
+
+
+def todo_metrics(text: str) -> dict[str, float | int | None]:
+    turns = todo_only = reminders = followed = turn_checks = external = 0
+    pending: list[int] = []  # tool calls left in the window, one per reminder
+    snapshot: list[dict[str, Any]] | None = None
+    for line in text.splitlines():
+        try:
+            e = json.loads(line)
+        except ValueError:
+            continue
+        if not isinstance(e, dict):
+            continue
+        if e.get("type") == "entry_appended":
+            entry = e.get("entry")
+            if isinstance(entry, dict) and entry.get("type") == "custom_message":
+                turn_checks += entry.get("customType") == TURN_CHECK_TYPE
+                external += EXTERNAL_REMINDER in _result_text(entry.get("content"))
+            continue
+        m = e.get("message")
+        if not isinstance(m, dict) or e.get("type") != "message_end":
+            continue
+        if m.get("role") == "assistant":
+            calls = [
+                b
+                for b in m.get("content") or []
+                if isinstance(b, dict) and b.get("type") == "toolCall"
+            ]
+            turns += 1
+            todo_only += bool(calls) and all(c.get("name") == "todo" for c in calls)
+            for c in calls:
+                args = c.get("arguments") or {}
+                if c.get("name") == "todo" and args.get("action") != "list" and pending:
+                    followed += len(pending)
+                    pending = []
+                pending = [n - 1 for n in pending if n > 1]
+        elif m.get("role") in ("custom", "user"):
+            external += EXTERNAL_REMINDER in _result_text(m.get("content"))
+        elif m.get("role") == "toolResult":
+            external += EXTERNAL_REMINDER in _result_text(m.get("content"))
+            if REMINDER in _result_text(m.get("content")):
+                reminders += 1
+                pending.append(FOLLOW_WINDOW)
+            todos = (m.get("details") or {}).get("todos")
+            if m.get("toolName") == "todo" and isinstance(todos, list):
+                snapshot = todos
+    items = snapshot or []
+    in_progress = sum(t.get("status") == "in_progress" for t in items)
+    return {
+        "todo_only_turn_share": todo_only / turns if turns else None,
+        "reminders": reminders,
+        "reminders_followed": followed,
+        "turn_checks": turn_checks,
+        "external_reminders": external,
+        "final_open_items": sum(t.get("status") in OPEN for t in items),
+        "final_in_progress": in_progress,
+        "coherent_end": None if snapshot is None else float(in_progress == 0),
+    }

@@ -83,6 +83,10 @@ const ToolsSettingsSchema = Type.Object({
 
 const TodoSettingsSchema = Type.Object({
 	staleReminder: flag("Remind the model of a stale todo list. NYCODE_TODO_SYNC takes precedence.", true),
+	sync: flag(
+		"Todo sync: end-of-turn check, items for background work, 30-call reminder. NYCODE_TODO_SYNC_V2 takes precedence.",
+		false,
+	),
 });
 
 const PlanSettingsSchema = Type.Object({

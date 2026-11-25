@@ -92,7 +92,7 @@ export const SETTINGS_DEFAULTS = {
 	},
 	subagent: { respawn: true },
 	tools: { bash: { backgroundOnTimeout: false } },
-	todo: { staleReminder: true },
+	todo: { staleReminder: true, sync: false },
 	plan: { gate: true, readOnlyTools: [] as string[] },
 	bash: { mainGuard: { enabled: true, timeoutSec: 120, capSec: 600 } },
 	footer: { stats: false },

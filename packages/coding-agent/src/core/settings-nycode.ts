@@ -22,7 +22,7 @@ export interface NycodeSettings {
 	};
 	subagent: { respawn: boolean };
 	tools: { bash: { backgroundOnTimeout: boolean } };
-	todo: { staleReminder: boolean };
+	todo: { staleReminder: boolean; sync: boolean };
 	plan: { gate: boolean; readOnlyTools: string[] };
 	bash: { mainGuard: { enabled: boolean; timeoutSec: number; capSec: number } };
 	footer: { stats: boolean };
@@ -162,7 +162,10 @@ export function resolveNycodeSettings(settings: Settings, env: Env): NycodeSetti
 				),
 			},
 		},
-		todo: { staleReminder: pick(BOOLEAN, env.NYCODE_TODO_SYNC, settings.todo?.staleReminder, d.todo.staleReminder) },
+		todo: {
+			staleReminder: pick(BOOLEAN, env.NYCODE_TODO_SYNC, settings.todo?.staleReminder, d.todo.staleReminder),
+			sync: pick(BOOLEAN, env.NYCODE_TODO_SYNC_V2, settings.todo?.sync, d.todo.sync),
+		},
 		plan: {
 			gate: pick(BOOLEAN, env.NYCODE_PLAN_GATE, settings.plan?.gate, d.plan.gate),
 			readOnlyTools: pick(NAME_LIST, undefined, settings.plan?.readOnlyTools, [...d.plan.readOnlyTools]),

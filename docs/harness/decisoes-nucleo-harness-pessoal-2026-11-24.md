@@ -193,3 +193,58 @@ sessão e subagente.
   +27%, acerto igual, <https://github.com/caioagiani/skillarena>); AGENTS.md genérico sem ganho de acerto, custo +20%
   (<https://arxiv.org/html/2602.11988>). Princípio sustentado por <https://arxiv.org/abs/2608.01347>.
 - Lacuna: nenhuma réplica independente discriminante do Ponytail 5.
+
+## Recheck 2026-11-25
+
+Pesquisa de 2026-11-25: 9 scouts (Perplexity mais um provedor independente) em 7 frentes e um verificador que reabriu as
+12 citações de maior peso (todas confirmadas, nenhuma fonte contrária). Agentes comparados: Claude Code (CC), Codex,
+Gemini CLI, OpenCode, pi; parcial: Cursor CLI, Cline, Kiro, Aider, Crush, Goose, Roo, Amp. Os fatos abaixo foram
+copiados dos relatórios (que ficam em `/tmp`, volátil). Onde não há link, a pesquisa não guardou a URL: reabrir a fonte
+antes de citar em outro lugar. Os links abaixo responderam HTTP 200 em 2026-11-25.
+
+### Rótulos (dono, 2026-11-25: "só ajustar rótulos nos docs")
+
+| Item | Rótulo | Motivo |
+|---|---|---|
+| `git-checkpoint` | **Núcleo**, ligado | Já é builtin, sem código novo. Salvaguardas: só arquivos editados, repositório bare fora do projeto, `.gitignore` respeitado, retenção de 30 dias. CC, Cline e OpenCode têm por padrão; Gemini tem desligado; Codex, experimental e desligado. CC `/rewind` não desfaz `bash`; Cline usa shadow git; Aider faz auto-commit |
+| `diagnostico` (`/diagnostico`, `/doctor`) | **Harness**, ligado | O conceito é geral (CC `doctor`, Codex `doctor`, Gemini `/bug`), mas a extensão tem 2947 linhas com trilha, OTLP e modal |
+| `docs-pointer` | continua **Núcleo** (B4) | A proposta do recheck de rebaixar a Harness não foi adotada: só troca a seção de docs do próprio nycode (cerca de 1,3 KB); o CC usa um subagente guia sob demanda |
+| `web_fetch` | sem mudança (Núcleo) | Tem guarda SSRF; `web_search` segue opt-in. O CC pergunta no WebFetch fora de domínios de docs, o Codex usa cache, o Gemini confirma; propor "ask" no modo seguro fica fora deste corte |
+| `codemode` | **pendente do A/B** | Híbrido proposto: `autoEnableToolSearch` (padrão desligado) ativa `tool_search` junto com `codemode`; vira padrão só se o A/B empatar ou ganhar em acerto e custo (`bench/metrics/README.md`) |
+
+### Evidência: codemode × tool_search
+
+- Código atual: QuickJS wasm em worker; hooks e permissões por chamada; `outputSchema` vira dica de retorno
+  (`describeOutput`); MCP sem `exposure` usa `codemode`.
+- Ganha em cadeias, fan-out, resultados grandes e catálogo grande: chamada programática de ferramentas da Anthropic
+  (PTC) usa 37% menos tokens e ganha 3-5 pontos (<https://www.anthropic.com/engineering/advanced-tool-use>); Pydantic
+  em tarefas longas, custo -58% e +16 pontos; arXiv 2611.19123, 70-90% menos tokens
+  (<https://arxiv.org/abs/2611.19123>); CodeAct, +20,7 pontos com gpt-4-1106 em multi-turn
+  (<https://arxiv.org/abs/2402.01030>).
+- Perde em chamada única ou simples: Anthropic no τ²-bench, +8% de custo sem ganho; Pydantic em tarefas de 5 itens,
+  +21-38%; CodeAct no API-Bank, o JSON vence no GPT-4; latência 2x (dev.to); arXiv 2602.15945, MCP direto melhor em
+  tarefas adaptativas (<https://arxiv.org/abs/2602.15945>).
+- Mercado: OpenCode 2.0 usa codemode por padrão; o CC tem como experimental e desligado; o Codex usa tool search por
+  padrão. Segurança: Check Point achou um escape no Code Mode da Cloudflare (workerd); ataques sem escape em 2602.15945.
+- Decisão: manter `codemode` e deixar o modelo escolher (chamada única via `tool_search`, cadeia via script), com A/B
+  no bench antes de mudar o padrão. A divergência 1 do recheck (codemode opt-in) não foi adotada.
+
+### Evidência: sincronia do todo (W7)
+
+- Cline descontinuou o Focus Chain: "no longer providing enough additional benefit"
+  (<https://docs.cline.bot/resources/deprecations>).
+- Goose, A/B com k=3 e 26 tarefas (2026-08-12): prompts de todo custam +17-49%, uso de 85-100% sem correlação com
+  sucesso, +39% de "laços de fechamento"; "the instructions, not the tool, are the active ingredient"
+  (<https://github.com/aaif-goose/goose/issues/11172>).
+- O lembrete por tempo do CC dispara 5-30 vezes por sessão, sem checar relevância
+  (<https://github.com/anthropics/claude-code/issues/62323>, fechada como "not planned").
+- Codex: o plano não vale como estado de execução; lembrete a cada requisição "too noisy"
+  (<https://github.com/openai/codex/issues/19749>, "not planned").
+- Manus recita o `todo.md` no fim do contexto (só anexa, por causa do cache); Anthropic (harness de longa duração):
+  "Claude marks features as done prematurely", JSON "default-fail" em que só `passes` muda; Pydantic: lembretes no fim
+  preservam o cache, com predicado e `max_fires`; Kiro "Sync Files" marca tarefas pelo código, a pedido; hooks do CC
+  `Stop` e `TaskCompleted` (teto de 8 bloqueios).
+- Não há estudo quantitativo da eficácia de lembretes. Nosso: 10 de 41 lembretes atendidos (2026-11-15). Caso de tela:
+  aba do plano "Plan 1/11" com 4 todos do modelo concluídos, duas fontes de verdade divergentes.
+- Resultado: sincronia do todo atrás de `todo.sync` (`NYCODE_TODO_SYNC_V2`), desligada até o A/B passar (plano
+  `plano-todo-sync-codemode-2026-11-25.md`, regra pré-registrada em `bench/metrics/README.md`).

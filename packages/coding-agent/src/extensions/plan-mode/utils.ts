@@ -268,6 +268,20 @@ export interface TodoItem {
 	description?: string;
 }
 
+/** The todo tool's `nycode:todos` payload as Plan rows: cancelled shows as skipped, failed/blocked as is, reason as the note. */
+export function todosToItems(
+	todos: ReadonlyArray<{ id: number; text: string; status: string; reason?: string }>,
+): TodoItem[] {
+	const marks: Record<string, TodoItem["status"]> = { failed: "failed", blocked: "blocked", cancelled: "skipped" };
+	return todos.map((t) => ({
+		step: t.id,
+		text: t.text,
+		completed: t.status === "completed",
+		doing: t.status === "in_progress",
+		...(marks[t.status] ? { status: marks[t.status], note: t.reason } : {}),
+	}));
+}
+
 /** The plan state persisted in a session entry, once each field has been checked.
  * A field the restore cannot recognize is simply absent, so the caller keeps its
  * current value. */

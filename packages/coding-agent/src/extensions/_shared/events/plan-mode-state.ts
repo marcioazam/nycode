@@ -43,3 +43,65 @@ export function isPlanStepsEvent(data: unknown): data is PlanStepsEvent {
 	const d = data as PlanStepsEvent | undefined;
 	return typeof d?.executing === "boolean" && Array.isArray(d.steps);
 }
+
+// Todo sync contract (todo.sync): the todo extension owns the list; run/subagent/turn-check talk to it over the bus.
+
+export type TodoStatus = "pending" | "in_progress" | "completed" | "failed" | "blocked" | "cancelled";
+
+/** An outside event (background run, background subagent) asks the todo extension for an item or reports its end. */
+export const TODO_EXTERNAL_CHANNEL = "nycode:todo-external";
+
+export type TodoExternalEvent =
+	| { op: "add"; linkId: string; text: string }
+	| { op: "finish"; linkId: string; ok: boolean; detail?: string; stopped?: boolean };
+
+export function isTodoExternalEvent(data: unknown): data is TodoExternalEvent {
+	const d = data as { op?: unknown; linkId?: unknown; text?: unknown; ok?: unknown } | undefined;
+	if (typeof d?.linkId !== "string") return false;
+	if (d.op === "add") return typeof d.text === "string";
+	return d.op === "finish" && typeof d.ok === "boolean";
+}
+
+/** Request/reply over the bus: the todo extension answers synchronously through `reply`. */
+export const TODO_TURN_STATE_CHANNEL = "nycode:todo-turn-state";
+
+export interface TodoSyncItem {
+	id: number;
+	text: string;
+	status: TodoStatus;
+	reason?: string;
+	/** Plan step the item mirrors; unset = the model's own item. */
+	planStep?: number;
+	/** Background event the item waits for. */
+	linkId?: string;
+}
+
+export interface ExternalFinish {
+	linkId: string;
+	ok: boolean;
+	detail?: string;
+	/** Ended because someone stopped it: the item is cancelled, not failed. */
+	stopped?: boolean;
+}
+
+export interface TodoTurnState {
+	items: readonly TodoSyncItem[];
+	/** Finished background events not yet announced; reading them clears them. */
+	takeFinished(): ExternalFinish[];
+}
+
+export interface TodoTurnStateRequest {
+	reply(state: TodoTurnState): void;
+}
+
+/** Reads the todo extension's state; undefined when it is not loaded. */
+export function readTodoTurnState(events: { emit(channel: string, data: unknown): void }): TodoTurnState | undefined {
+	let state: TodoTurnState | undefined;
+	const request: TodoTurnStateRequest = {
+		reply: (s) => {
+			state = s;
+		},
+	};
+	events.emit(TODO_TURN_STATE_CHANNEL, request);
+	return state;
+}

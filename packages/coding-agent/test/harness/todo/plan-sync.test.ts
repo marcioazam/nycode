@@ -71,6 +71,19 @@ test("concluir o item pelo todo conclui a etapa no plano (o plan-gate lê a mesm
 	assert.equal(statusOf(await b.list(), 2), "in_progress");
 });
 
+test("falhar, bloquear ou cancelar o item ligado não conclui a etapa; a tag [DONE:n] ainda vale", async () => {
+	const b = boot();
+	await execute13(b);
+	const step1 = linked(await b.list()).find((t) => t.planStep === 1);
+	await b.todo({ action: "fail", id: step1.id, reason: "gate red" });
+	assert.equal(b.planTodos().find((t: Loose) => t.step === 1)?.completed, false);
+	assert.equal(statusOf(await b.list(), 1), "failed");
+	b.turn("[DONE:1]");
+	assert.equal(b.planTodos().find((t: Loose) => t.step === 1)?.completed, true);
+	assert.equal(statusOf(await b.list(), 1), "completed");
+	assert.equal((await b.list()).find((t) => t.planStep === 1)?.reason, undefined);
+});
+
 test("delete de item ligado é recusado; clear tira só os itens do modelo", async () => {
 	const b = boot();
 	await b.todo({ action: "add", text: "lateral" });

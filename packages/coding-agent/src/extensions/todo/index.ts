@@ -6,7 +6,8 @@
  * - Registers a `/todos` command for users to view the list
  * - Publishes the list on the `nycode:todos` event; the Plan section draws it, the chat does not
  *
- * Todos move through a status machine: pending -> in_progress -> completed.
+ * Todos move through a status machine: pending -> in_progress -> completed, or failed / blocked / cancelled
+ * (each with an optional reason). `confirm` changes nothing; the todo.sync turn check sees the call and lets the turn end.
  * Exactly one todo is in_progress at a time; `start` moves any other
  * in_progress todo back to pending. An optional activeForm label (present
  * continuous, e.g. "Writing tests") is shown while a todo is in_progress.
@@ -22,27 +23,39 @@ import { type Static, Type } from "typebox";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import type { SessionEntry } from "../../core/session-manager.ts";
 import type { Theme } from "../../modes/interactive/theme/theme.ts";
-
 import {
+	type ExternalFinish,
 	isPlanStepsEvent,
+	isTodoExternalEvent,
 	PLAN_STEPS_CHANNEL,
 	type PlanStepsEvent,
+	TODO_EXTERNAL_CHANNEL,
 	TODO_STEP_DONE_CHANNEL,
+	TODO_TURN_STATE_CHANNEL,
+	type TodoStatus,
+	type TodoTurnStateRequest,
 } from "../_shared/events/plan-mode-state.ts";
 import { stringEnum } from "../_shared/model/string-enum.ts";
+import { registerExternal } from "./external.ts";
 import { reconcilePlan } from "./plan-link.ts";
-import { registerStaleReminder } from "./stale-reminder.ts";
+import { readTodoSyncEnabled, registerStaleReminder } from "./stale-reminder.ts";
+import { isTerminal, toStatus } from "./status.ts";
 
-type TodoStatus = "pending" | "in_progress" | "completed";
-type TodoAction = "add" | "start" | "complete" | "delete" | "clear" | "list";
+type TodoAction = "add" | "start" | "complete" | "fail" | "block" | "cancel" | "confirm" | "delete" | "clear" | "list";
+/** Actions that close or park an item, and the status each one sets. */
+const CLOSING: Partial<Record<TodoAction, TodoStatus>> = { fail: "failed", block: "blocked", cancel: "cancelled" };
 
 export interface Todo {
 	id: number;
 	text: string;
 	status: TodoStatus;
 	activeForm?: string;
+	/** Why it failed, is blocked or was cancelled. */
+	reason?: string;
 	/** Etapa do plano em execução que o item espelha (todo/plan-link.ts). */
 	planStep?: number;
+	/** Background event the item waits for (todo.sync). */
+	linkId?: string;
 }
 
 interface PersistedTodoState {
@@ -61,21 +74,35 @@ interface TodoDetails {
 export interface LegacyTodo {
 	id: number;
 	text: string;
-	status?: TodoStatus;
+	status?: string;
 	activeForm?: string;
 	done?: boolean;
+	reason?: string;
 	planStep?: number;
+	linkId?: string;
 }
 
 const TodoParams = Type.Object({
-	action: stringEnum(["add", "start", "complete", "delete", "clear", "list"] as const),
+	action: stringEnum([
+		"add",
+		"start",
+		"complete",
+		"fail",
+		"block",
+		"cancel",
+		"confirm",
+		"delete",
+		"clear",
+		"list",
+	] as const),
 	text: Type.Optional(Type.String({ description: "Todo text (for add)" })),
 	activeForm: Type.Optional(
 		Type.String({
 			description: "Present-continuous label shown while in_progress, e.g. 'Writing tests' (for add/start)",
 		}),
 	),
-	id: Type.Optional(Type.Number({ description: "Todo ID (for start, complete, delete)" })),
+	id: Type.Optional(Type.Number({ description: "Todo ID (for start, complete, fail, block, cancel, delete)" })),
+	reason: Type.Optional(Type.String({ description: "Why (for fail, block, cancel)" })),
 });
 
 type TodoParamsType = Static<typeof TodoParams>;
@@ -83,17 +110,26 @@ type TodoParamsType = Static<typeof TodoParams>;
 const TOOL_NAME = "todo";
 const STATE_ENTRY_TYPE = "nycode:todo";
 
+/** Replays any persisted shape: legacy `done`, missing reason or an unknown status. */
 export const normalizeTodo = (raw: LegacyTodo): Todo => {
-	const link = typeof raw.planStep === "number" ? { planStep: raw.planStep } : {};
-	if (raw.status) return { id: raw.id, text: raw.text, status: raw.status, activeForm: raw.activeForm, ...link };
-	return { id: raw.id, text: raw.text, status: raw.done ? "completed" : "pending", ...link };
+	const extra = {
+		...(typeof raw.planStep === "number" ? { planStep: raw.planStep } : {}),
+		...(typeof raw.reason === "string" ? { reason: raw.reason } : {}),
+		...(typeof raw.linkId === "string" ? { linkId: raw.linkId } : {}),
+	};
+	if (raw.status)
+		return { id: raw.id, text: raw.text, status: toStatus(raw.status), activeForm: raw.activeForm, ...extra };
+	return { id: raw.id, text: raw.text, status: raw.done ? "completed" : "pending", ...extra };
 };
 
 // Sem ícone de estado: o nome do estado, na cor dele, numa coluna de largura fixa.
-const STATUS_NAME: Record<TodoStatus, [string, "success" | "accent" | "dim"]> = {
+const STATUS_NAME: Record<TodoStatus, [string, "success" | "accent" | "dim" | "error" | "warning"]> = {
 	completed: ["concluída", "success"],
 	in_progress: ["em andamento", "accent"],
 	pending: ["pendente", "dim"],
+	failed: ["falhou", "error"],
+	blocked: ["bloqueada", "warning"],
+	cancelled: ["cancelada", "dim"],
 };
 const STATUS_W = 12;
 const statusName = (status: TodoStatus, theme: Theme, pad = true): string => {
@@ -104,12 +140,17 @@ const statusName = (status: TodoStatus, theme: Theme, pad = true): string => {
 const listMark = (status: TodoStatus): string => {
 	if (status === "completed") return "[x]";
 	if (status === "in_progress") return "[>]";
+	if (status === "failed") return "[!]";
+	if (status === "blocked") return "[~]";
+	if (status === "cancelled") return "[-]";
 	return "[ ]";
 };
 
 /** Plain-text list, shared by the list action and the non-terminal /todos path. */
 const plainTodoList = (todos: Todo[]): string =>
-	todos.length ? todos.map((t) => `${listMark(t.status)} #${t.id}: ${t.text}`).join("\n") : "No todos";
+	todos.length
+		? todos.map((t) => `${listMark(t.status)} #${t.id}: ${t.text}${t.reason ? ` (${t.reason})` : ""}`).join("\n")
+		: "No todos";
 
 /**
  * UI component for the /todos command
@@ -151,14 +192,17 @@ class TodoListComponent {
 			lines.push(truncateToWidth(`  ${th.fg("dim", "No todos yet. Ask the agent to add some!")}`, width));
 		} else {
 			const completed = this.todos.filter((t) => t.status === "completed").length;
-			const completedLabel = `${completed}/${this.todos.length} completed`;
+			const failed = this.todos.filter((t) => t.status === "failed").length;
+			const blocked = this.todos.filter((t) => t.status === "blocked").length;
+			const completedLabel = `${completed}/${this.todos.length} completed${failed ? ` · ${failed} failed` : ""}${blocked ? ` · ${blocked} blocked` : ""}`;
 			lines.push(truncateToWidth(`  ${th.fg("muted", completedLabel)}`, width), "");
 
 			for (const todo of this.todos) {
 				const glyph = statusName(todo.status, th);
 				const id = th.fg("accent", `#${todo.id}`);
-				const text = todo.status === "completed" ? th.fg("dim", todo.text) : th.fg("text", todo.text);
+				const text = isTerminal(todo.status) ? th.fg("dim", todo.text) : th.fg("text", todo.text);
 				let line = `  ${glyph} ${id} ${text}`;
+				if (todo.reason) line += ` ${th.fg("dim", `(${todo.reason})`)}`;
 				if (todo.status === "in_progress" && todo.activeForm) {
 					const activeFormLabel = `(${todo.activeForm})`;
 					line += ` ${th.fg("dim", activeFormLabel)}`;
@@ -195,7 +239,7 @@ const renderTodoListResult = (todoList: Todo[], expanded: boolean, theme: Theme)
 	const display = expanded ? todoList : todoList.slice(0, LIST_RESULT_PREVIEW);
 	for (const t of display) {
 		const idLabel = `#${t.id}`;
-		const itemText = t.status === "completed" ? theme.fg("dim", t.text) : theme.fg("muted", t.text);
+		const itemText = isTerminal(t.status) ? theme.fg("dim", t.text) : theme.fg("muted", t.text);
 		listText += `\n${statusName(t.status, theme)} ${theme.fg("accent", idLabel)} ${itemText}`;
 	}
 	if (!expanded && todoList.length > LIST_RESULT_PREVIEW) {
@@ -218,15 +262,18 @@ const persistedTodoDetails = (entry: SessionEntry, includeLegacy: boolean): Pers
 /** Register the branch-local Todo provider and viewer. */
 export default function todoExtension(nycode: ExtensionAPI) {
 	const setStaleItems = registerStaleReminder(nycode);
+	registerExternal(nycode);
 	// In-memory state (reconstructed from session on load)
 	let todos: Todo[] = [];
 	let nextId = 1;
+	let finished: ExternalFinish[] = [];
 	/** Todos go to the Plan section (plan-mode/index.ts listens); the chat draws no todo widget. */
 	const refresh = () => {
 		const shown = todos.map((t) => ({
 			id: t.id,
 			text: t.status === "in_progress" ? (t.activeForm ?? t.text) : t.text,
 			status: t.status,
+			...(t.reason ? { reason: t.reason } : {}),
 		}));
 		// Itens ligados ao plano andam sozinhos com as etapas: o lembrete de lista parada não cobra por eles.
 		setStaleItems(shown.filter((_t, i) => todos[i]?.planStep === undefined));
@@ -300,6 +347,7 @@ export default function todoExtension(nycode: ExtensionAPI) {
 	};
 
 	nycode.on("session_start", (_event, ctx) => {
+		finished = [];
 		const next = sessionOf(ctx);
 		if (next !== session) plan = plan?.session === next ? plan : undefined;
 		session = next;
@@ -314,6 +362,26 @@ export default function todoExtension(nycode: ExtensionAPI) {
 	// branch is stale until message_end runs after tool_execution_end).
 	nycode.on("tool_execution_end", (event) => {
 		if (event.toolName !== TOOL_NAME || event.isError) return;
+		refresh();
+	});
+
+	// todo.sync: background events add "aguardando X" items and report their end; the turn check reads the state.
+	nycode.events.on(TODO_TURN_STATE_CHANNEL, (data) => {
+		(data as TodoTurnStateRequest).reply({
+			items: snapshot(),
+			takeFinished: () => finished.splice(0),
+		});
+	});
+	nycode.events.on(TODO_EXTERNAL_CHANNEL, (data) => {
+		if (!isTodoExternalEvent(data) || !readTodoSyncEnabled(nycode)) return;
+		if (data.op === "finish") {
+			if (todos.some((t) => t.linkId === data.linkId))
+				finished.push({ linkId: data.linkId, ok: data.ok, detail: data.detail, stopped: data.stopped });
+			return;
+		}
+		if (todos.some((t) => t.linkId === data.linkId)) return; // idempotent per linkId
+		todos.push({ id: nextId++, text: `aguardando ${data.text}`, status: "pending", linkId: data.linkId });
+		nycode.appendEntry(STATE_ENTRY_TYPE, { todos: snapshot(), nextId });
 		refresh();
 	});
 
@@ -347,6 +415,7 @@ export default function todoExtension(nycode: ExtensionAPI) {
 		const demoted = todos.filter((t) => t.status === "in_progress" && t.id !== todo.id);
 		for (const other of demoted) other.status = "pending";
 		todo.status = "in_progress";
+		delete todo.reason;
 		if (params.activeForm) todo.activeForm = params.activeForm;
 		let text = `Started #${todo.id}: ${todo.text}`;
 		if (demoted.length > 0) {
@@ -361,10 +430,28 @@ export default function todoExtension(nycode: ExtensionAPI) {
 		const todo = todos.find((t) => t.id === params.id);
 		if (!todo) return fail("complete", `#${params.id} not found`);
 		todo.status = "completed";
+		delete todo.reason;
 		const result = ok("complete", `Completed #${todo.id}: ${todo.text}`);
 		// Item ligado: conclui a etapa no plano também (mesmo efeito de [DONE:n]); o plano devolve a próxima etapa.
 		if (todo.planStep !== undefined) nycode.events.emit(TODO_STEP_DONE_CHANNEL, { step: todo.planStep });
 		return result;
+	};
+
+	/** fail / block / cancel: park or close an item with a reason. A linked plan item only changes here; the plan step stays open. */
+	const handleClosing = (action: TodoAction, params: TodoParamsType) => {
+		if (params.id === undefined) return fail(action, `id required for ${action}`);
+		const todo = todos.find((t) => t.id === params.id);
+		if (!todo) return fail(action, `#${params.id} not found`);
+		const status = CLOSING[action] as TodoStatus;
+		if (isTerminal(todo.status) || todo.status === status)
+			return fail(action, `#${todo.id} is already ${todo.status}`);
+		todo.status = status;
+		todo.reason = params.reason?.trim() || undefined;
+		return ok(action, `Marked #${todo.id} ${status}: ${todo.text}${todo.reason ? ` (${todo.reason})` : ""}`);
+	};
+
+	const handleConfirm = () => {
+		return toolMessage("Confirmed: the list is accurate as it is.", { action: "confirm", todos: snapshot(), nextId });
 	};
 
 	const handleDelete = (params: TodoParamsType) => {
@@ -397,7 +484,7 @@ export default function todoExtension(nycode: ExtensionAPI) {
 		name: TOOL_NAME,
 		label: "Todo",
 		description:
-			"Manage a todo list for tracking multi-step progress. Actions: add (text, optional activeForm), start (id, mark in_progress), complete (id), delete (id), clear, list. Status machine: pending -> in_progress -> completed. Exactly one todo is in_progress at a time; start moves any other in_progress todo back to pending.",
+			"Manage a todo list for tracking multi-step progress. Actions: add (text, optional activeForm), start (id, mark in_progress), complete (id), fail (id, reason), block (id, reason), cancel (id, reason), confirm (the list is accurate; changes nothing), delete (id), clear, list. Status machine: pending -> in_progress -> completed, or failed / blocked / cancelled. Exactly one todo is in_progress at a time; start moves any other in_progress todo back to pending.",
 		promptSnippet: "Manage a todo list to plan and track multi-step work",
 		promptGuidelines: [
 			"Use the todo tool to create todos for any multi-step work (3+ steps) or when the user gives you a list of tasks. Skip it for single trivial tasks and purely conversational requests.",
@@ -420,6 +507,12 @@ export default function todoExtension(nycode: ExtensionAPI) {
 					return handleStart(params);
 				case "complete":
 					return handleComplete(params);
+				case "fail":
+				case "block":
+				case "cancel":
+					return handleClosing(params.action, params);
+				case "confirm":
+					return handleConfirm();
 				case "delete":
 					return handleDelete(params);
 				case "clear":
@@ -466,7 +559,11 @@ export default function todoExtension(nycode: ExtensionAPI) {
 			const text = result.content[0];
 			const msg = text?.type === "text" ? text.text : "";
 			const nome =
-				details.action === "start" ? "in_progress" : details.action === "complete" ? "completed" : undefined;
+				details.action === "start"
+					? "in_progress"
+					: details.action === "complete"
+						? "completed"
+						: CLOSING[details.action];
 			const tag = nome ? `${statusName(nome, theme, false)}${theme.fg("dim", " · ")}` : "";
 			return new Text(tag + theme.fg("muted", msg), 0, 0);
 		},

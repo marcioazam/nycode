@@ -235,6 +235,10 @@ Text results over 20 KB reach the model with their middle removed around a `…N
 
 Codemode scripts receive the complete MCP `CallToolResult`, including `content`, `structuredContent`, and `isError`. A result with `isError` resolves inside scripts but is reported as an error for direct calls. `image(result.content[0])` forwards an image block. Server instructions are not part of any tool description; scripts read them with `describeNamespace("mcp__<server>")`, which also returns the server's tool names.
 
+### Hybrid: `autoEnableToolSearch`
+
+Set `"autoEnableToolSearch": true` beside `mcpServers` (default `false`; a project value overrides the user-level value) to activate `tool_search` together with `codemode` for servers with `codemode` exposure. A single call then goes directly through `tool_search`, and a chain of calls goes through a `codemode` script. Servers with `deferred` exposure behave as before. It is off by default because the cost and accuracy of the combination are pending a bench A/B (see `bench/metrics/README.md`); `NYCODE_MCP_TOOL_SEARCH=1` only turns it on for one run, over the files; any other value leaves the setting as it is.
+
 ## Use resources
 
 When a connected server offers [resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), Nycode adds the resource tools used by Codex and OpenCode:

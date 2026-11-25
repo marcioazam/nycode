@@ -94,6 +94,18 @@ def na() -> Iterator[Any]:
     sys.modules.pop("nycode_agent", None)
 
 
+@pytest.fixture(autouse=True)
+def _no_arm_env(monkeypatch: MP) -> None:
+    """The host's arm switches must not leak into the exact-env assertions."""
+    for k in (
+        "NYCODE_TODO_SYNC_V2",
+        "NYCODE_MCP_TOOL_SEARCH",
+        "NYCODE_HEADLESS_TRIM",
+        "NYCODE_SECRET_TOKEN",
+    ):
+        monkeypatch.delenv(k, raising=False)
+
+
 def _install(na: Any, tmp_path: Path, monkeypatch: MP, **env: str) -> tuple[Any, _Env]:
     bundle = tmp_path / "b.tgz"
     bundle.write_bytes(b"x")
@@ -189,6 +201,42 @@ def test_run_invokes_the_bundled_cli_with_the_agent_env(na: Any) -> None:
         "NYCODE_CODING_AGENT_DIR": f"{HOME}/.nycode/agent",
         "NYCODE_SKIP_VERSION_CHECK": "1",
     }
+
+
+ARM_ENV = {
+    "NYCODE_TODO_SYNC_V2": "1",
+    "NYCODE_MCP_TOOL_SEARCH": "1",
+    "NYCODE_HEADLESS_TRIM": "0",
+}
+
+
+def test_arm_env_is_forwarded_to_install_and_run(
+    na: Any, tmp_path: Path, monkeypatch: MP
+) -> None:
+    for k in ARM_ENV:
+        monkeypatch.delenv(k, raising=False)
+    plain, _ = _install(na, tmp_path, monkeypatch)
+    assert not set(ARM_ENV) & set(plain.calls[2][2])
+    plain_run = na.NycodeAgent()
+    asyncio.run(plain_run.run("x", _Env(), None))
+    assert not set(ARM_ENV) & set(plain_run.calls[0][2])
+    for k, v in ARM_ENV.items():
+        monkeypatch.setenv(k, v)
+    agent, _ = _install(na, tmp_path, monkeypatch)
+    assert ARM_ENV.items() <= agent.calls[2][2].items()
+    run_agent = na.NycodeAgent()
+    asyncio.run(run_agent.run("x", _Env(), None))
+    assert ARM_ENV.items() <= run_agent.calls[0][2].items()
+
+
+def test_only_the_allowlisted_arm_env_is_forwarded(
+    na: Any, tmp_path: Path, monkeypatch: MP
+) -> None:
+    monkeypatch.setenv("NYCODE_SECRET_TOKEN", "s3")
+    monkeypatch.setenv("NYCODE_TODO_SYNC_V2", "1")
+    agent, _ = _install(na, tmp_path, monkeypatch)
+    assert "NYCODE_SECRET_TOKEN" not in agent.calls[2][2]
+    assert agent.calls[2][2]["NYCODE_TODO_SYNC_V2"] == "1"
 
 
 def test_run_ends_options_before_an_instruction_starting_with_a_dash(na: Any) -> None:

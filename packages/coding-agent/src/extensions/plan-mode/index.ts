@@ -55,6 +55,7 @@ import {
 	planToTodos,
 	restoredPlanState,
 	type TodoItem,
+	todosToItems,
 } from "./utils.ts";
 
 /** Env marker a subagent spawned from plan mode inherits: its bash keeps plan mode's allowlist and edit/write stay off. */
@@ -248,12 +249,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 	let externalTodos: TodoItem[] = [];
 	let lastCtx: ExtensionContext | undefined;
 	nycode.events.on("nycode:todos", (data) => {
-		externalTodos = (data as Array<{ id: number; text: string; status: string }>).map((t) => ({
-			step: t.id,
-			text: t.text,
-			completed: t.status === "completed",
-			doing: t.status === "in_progress",
-		}));
+		externalTodos = todosToItems(data as Array<{ id: number; text: string; status: string; reason?: string }>);
 		if (!lastCtx) return;
 		try {
 			if (executionMode) updateStatus(lastCtx);
