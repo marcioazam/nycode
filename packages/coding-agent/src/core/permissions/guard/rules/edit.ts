@@ -6,11 +6,7 @@ import { abspath, basename, expanduser, isabs, join, realpath, tempDir } from ".
 import { inside } from "./read.ts";
 
 const ENV_SAFE_SUFFIXES = [".example", ".sample", ".template", ".dist"];
-const ASK_WRITE_SUFFIXES = [
-	"/.nycode/agent/local.env",
-	"/.nycode/agent/mcp-auth.json",
-	"/.nycode/agent/claude-home/settings.json",
-];
+const ASK_WRITE_SUFFIXES = ["/.nycode/agent/local.env", "/.nycode/agent/mcp-auth.json"];
 const SENSITIVE_DIR_NAMES = [".ssh", ".aws", ".gnupg", ".config/gh", ".kube", ".docker"];
 const SENSITIVE_FILE_NAMES = [
 	...[".nycode/agent/settings.json", ".nycode/agent/auth.json", ".local/bin/nycode"],

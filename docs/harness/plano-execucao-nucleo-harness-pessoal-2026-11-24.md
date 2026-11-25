@@ -11,13 +11,26 @@ Status: aprovado pelo dono em 2026-11-24 ("Aprovo, executar F0–F7"). Em execu�
 - Ondas: 1) cópia pessoal (F1), remoções (F2), prompt e regras (C1, C2, E1, E2), ponytail 5 (F5, A6);
   2) permissões e plan mode, extensões e settings, agentes e comandos; 3) notify, footer, vim, retirada do pessoal
   (F3) e C7; 4) A7, A8 e docs; depois F7.
-- Onda 1 concluída (W-A, W-B, W-C, W-D). O contrato pessoal do dono foi para `~/.nycode/agent/instructions/contract.md`
-  (15 KB, título `# Working contract (nycode)` para o `headless-lean` continuar trocando-o por `headless.md` nos filhos);
-  o `AGENTS.md` dele voltou a ter só o overlay. Falta no binário (onda 3): `readBuiltinInstruction` procurar primeiro
-  `<agentDir>/instructions/<nome>.md` (override de usuário, mesma precedência de skills e agentes). Até lá o binário
-  instalado segue com o contrato antigo embutido, sem perda para o dono.
-- Onda 2 em andamento: L2 (A4, A5, C2), L3a (settings novas, sobras do guard, hook interno C9, B6, B7, C11), L4 (C3,
-  C8, D1, agentes e comandos pessoais fora do pacote).
+- Ondas 1 a 4 concluídas. `readBuiltinInstruction` lê primeiro `<agentDir>/instructions/<nome>.md` (arquivo vazio =
+  sem instrução); o contrato pessoal do dono está em `~/.nycode/agent/instructions/contract.md`.
+- F7 (2026-11-25): gate local completo verde no head 8401a74, árvore limpa, ambiente sem credenciais de provedor como
+  o CI: build, check, testes de coding-agent, durable, chord, env e demais workspaces, `test:scripts`,
+  `run-static.sh` (ruff, mypy, markdownlint, structure, check-refs, core-scope, residuo, pytest 652 com diff-cover
+  100%), orçamento de instruções (1955 tokens, rebaseline; main tem 8621), changelogs, `npm pack --dry-run` (3016
+  arquivos, sem `__pycache__` nem testes Python) e conformidade MCP. Logs em `/tmp/np-gate3/`. Smoke ao vivo
+  (`NYCODE_HEADLESS_LEAN=0 nycode -p` do `dist`): Explore respondeu; as 36 skills e os 17 agentes da foto F0 resolvem
+  (embutidos mais `~/.nycode/agent`). Não executados ao vivo: `/code-review` e plan mode com MCP `readOnlyHint`
+  (cobertos por testes unitários).
+- Achados do gate corrigidos na branch: `executeBash` voltava antes de gravar o arquivo de saída completa (teste
+  instável sob carga; teste novo sem polling); `/list-agents` lia `claude-home/agents`, que não existe, e agora lista
+  o que o subagent resolve; referências a `claude-home` em `src` apontam para os caminhos reais.
+- Desvios registrados: A5 deixa `bash` nos agentes somente leitura do plan mode (o próprio plan mode já permite bash
+  com o guard); a tool `outline` de A1 (tree-sitter) fica adiada para depois do merge; o `notify` único deixou de ler
+  `preferredNotifChannel` do Claude e o toast do PowerShell.
+- Sobras conhecidas, sem bloqueio: o teto `DEFAULT_STOP_HOOK_BLOCK_CAP = 8` (`hooks/lifecycle.ts`) para o ralph antes
+  das 20 iterações padrão; o som segue a lista `som` (pede entrada, erro) e não todo fim de turno; mudar `editorMode`
+  pede reload; o guard nega `gh pr merge --body "--admin"` (falso positivo); `scripts/harness/port-agents.py`
+  sobrescreveria os agentes curados se rodado de novo.
 - Depois do merge e da instalação: registrar no `~/.nycode/agent/settings.json` do dono os hooks pessoais
   (dispatch pessoal, claims, `~/.claude/hooks/graph_context.py` para codegraph e vault).
 

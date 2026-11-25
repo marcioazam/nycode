@@ -23,11 +23,12 @@
 - Plan mode allows MCP tools by `readOnlyHint` or `plan.readOnlyTools`, and read-only agents by their `tools:`
 - Auto-resume uses the `@nycode/ai` classifiers
 - The ralph Stop hook is registered only while a loop runs, and `--max-iterations` defaults to 20 (`0` is unlimited)
-- `avisos`, `sound-notify` and `notify` are one `notify` extension (`/notifications`, alias `/avisos`)
+- `avisos`, `sound-notify` and `notify` are one `notify` extension (`/notifications`, alias `/avisos`); it no longer reads Claude's `preferredNotifChannel` nor sends the PowerShell toast
 - Vim editing is the `editorMode` setting
 
 ### Fixed
 
+- Fixed `/list-agents`, which read a `claude-home/agents` directory that no longer exists: it now lists the agents the subagent tool resolves
 - Fixed the bash full-output file being read before it was flushed: `executeBash` now resolves only after the temp file is written
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
 - Git fetch of a pinned ref passes `--` before the remote and the ref, including when the checkout already exists, so the ref cannot be read as a git option

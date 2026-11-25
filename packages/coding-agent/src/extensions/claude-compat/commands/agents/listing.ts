@@ -1,13 +1,9 @@
 /** /list-agents (/peers): agentes definidos + subagentes em execução (fleet do nycode); /stop: interrompe a execução atual, e com `agents` os subagentes desta sessão. */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import type { ExtensionAPI, ExtensionCommandContext } from "../../../../core/extensions/types.ts";
+import { discoverAgents } from "../../../subagent/registry/agents.ts";
 import { stopAgents } from "../../fleet.ts";
-
-export function claudeHome(agentRoot = join(homedir(), ".nycode", "agent")): string {
-	return join(agentRoot, "claude-home"); // nycode ignores the Claude config-dir override (D-09)
-}
 
 export interface AgentDef {
 	name: string;
@@ -38,7 +34,7 @@ export function readAgentDefs(dir: string): AgentDef[] {
 	return out;
 }
 
-type Ctx = Pick<ExtensionCommandContext, "ui">;
+type Ctx = Pick<ExtensionCommandContext, "ui" | "cwd">;
 export interface Fleet {
 	list(): unknown[];
 }
@@ -71,11 +67,23 @@ function currentFleet(): Fleet | undefined {
 	return s && typeof s.list === "function" ? s : undefined;
 }
 
-export function registerListing(nycode: ExtensionAPI, defsDir = join(claudeHome(), "agents")): void {
+/** The agents the subagent tool resolves from `cwd` (embedded, plugin, user and project), same precedence. */
+function resolvedAgentDefs(cwd: string): AgentDef[] {
+	return discoverAgents(cwd, "both")
+		.agents.map((a) => ({ name: a.name, description: a.description.slice(0, 90), model: a.model }))
+		.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** `defsDir` pins one directory (tests); by default the list follows the subagent registry. */
+export function registerListing(nycode: ExtensionAPI, defsDir?: string): void {
 	for (const n of ["list-agents", "peers"])
 		nycode.registerCommand(n, {
 			description: "Lista agentes definidos e subagentes em execução",
-			handler: async (_a, ctx: Ctx) => ctx.ui.notify(listAgentsText(readAgentDefs(defsDir), currentFleet()), "info"),
+			handler: async (_a, ctx: Ctx) =>
+				ctx.ui.notify(
+					listAgentsText(defsDir ? readAgentDefs(defsDir) : resolvedAgentDefs(ctx.cwd), currentFleet()),
+					"info",
+				),
 		});
 	nycode.registerCommand("stop", {
 		description: "Interrompe a execução atual do agente; `/stop agents` também cancela os subagentes desta sessão",

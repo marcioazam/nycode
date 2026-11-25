@@ -26,7 +26,7 @@ só o nativo (`permissions.engine: "native"`), sem `guard.py` nem o motor `scrip
 | /autocompact | – | B | partial | compact-at-400k.ts automático; /compact manual |
 | /autofix-pr | – | B | unsupported | nuvem do Claude |
 | /background | /bg | B | partial | /background e /bg (background/): condicional, só em sessão iniciada por um supervisor tmux privado (opt-in; fora do core, D-56): desanexa o único cliente sem abortar; [prompt] é enfileirado uma vez como followUp literal. Fora do transporte, subagente ou sem UI recusa com instrução. Não cria sessão em background separada nem fork |
-| /batch | – | S | partial | workflow de prompt do usuário (claude-home/commands/batch.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
+| /batch | – | S | partial | workflow de prompt do usuário (resources/commands/batch.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /branch | – | B | partial | /branch → /clone (sem nome; com argumento recusa). NÃO é o /fork do Claude |
 | /btw | – | B | exact | /btw (extensions/ui/btw.ts) |
 | /bug | /share | B | unsupported | O /bug e /share do Claude enviam feedback/bug report; NÃO são o /bug (relatório aos devs do nycode) nem o /share (upload da sessão) do nycode, que mantêm a semântica do nycode |
@@ -98,11 +98,11 @@ só o nativo (`permissions.engine: "native"`), sem `guard.py` nem o motor `scrip
 | /remote-control | /rc | B | unsupported | sem controle remoto |
 | /remote-env | – | B | unsupported | nuvem do Claude |
 | /rename | – | B | exact | /rename (alias de /name) |
-| /restart | /update | B | partial | /restart sob supervisor (claude-home/bin/lifecycle/supervisor.sh), mesma sessão; /update sem auto-update; verificação integrada pendente (gate) |
+| /restart | /update | B | partial | /restart sob o supervisor nativo (core/lifecycle/supervisor.ts), mesma sessão; /update sem auto-update; verificação integrada pendente (gate) |
 | /resume | /continue | B | exact | /resume nativo; /continue → /resume (sem argumentos) |
 | /rewind | /checkpoint /undo | B | exact | /rewind do nycode (checkpoints de código e conversa); /checkpoint e /undo → /rewind |
-| /run | – | S | partial | workflow de prompt do usuário (claude-home/commands/run.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
-| /run-skill-generator | – | S | partial | workflow de prompt do usuário (claude-home/commands/run-skill-generator.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
+| /run | – | S | partial | workflow de prompt do usuário (resources/commands/run.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
+| /run-skill-generator | – | S | partial | workflow de prompt do usuário (resources/commands/run-skill-generator.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /sandbox | – | B | unsupported | sem sandbox do Claude |
 | /schedule | /routines | B | unsupported | nuvem do Claude |
 | /scroll-speed | – | B | partial | /scroll-speed registrado (commands/settings/config.ts). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
@@ -115,22 +115,22 @@ só o nativo (`permissions.engine: "native"`), sem `guard.py` nem o motor `scrip
 | /slides | – | S | unsupported | sem skill empacotada |
 | /stats | – | B | alias | /stats → /session (só a sessão atual) |
 | /status | – | B | alias | /status → /session (sem conta/conectividade) |
-| /statusline | – | S | partial | workflow de prompt do usuário (claude-home/commands/statusline.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
+| /statusline | – | S | partial | workflow de prompt do usuário (resources/commands/statusline.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /stickers | – | B | unsupported | produto/conta Anthropic; fora do Nycode |
 | /stop | – | B | partial | /stop registrado (commands/agents/listing.ts). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /subtask | – | B | unsupported | sem subtask |
 | /tasks | /bashes | B | exact | /tasks do nycode; /bashes → /tasks |
-| /team-onboarding | – | S | partial | workflow de prompt do usuário (claude-home/commands/team-onboarding.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
+| /team-onboarding | – | S | partial | workflow de prompt do usuário (resources/commands/team-onboarding.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /teleport | /tp | B | unsupported | nuvem do Claude |
 | /terminal-setup | – | B | partial | lifecycle/terminal-setup.ts grava configuração do terminal com backup .bak; verificação integrada pendente (gate) |
 | /theme | – | B | alias | /theme → /settings (sem argumentos; sem seletor próprio) |
 | /tui | – | B | alias | /tui → /settings (modo de tela; também --tui-mode) |
 | /ultraplan | – | R | removed | removido no Claude |
 | /ultrareview | – | B | unsupported | nuvem do Claude |
-| /update-config | – | S | partial | workflow de prompt do usuário (claude-home/commands/update-config.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
+| /update-config | – | S | partial | workflow de prompt do usuário (resources/commands/update-config.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /upgrade | – | B | unsupported | produto/conta Anthropic; fora do Nycode |
 | /usage-credits | – | B | unsupported | plano do Claude |
-| /verify | – | S | partial | workflow de prompt do usuário (claude-home/commands/verify.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
+| /verify | – | S | partial | workflow de prompt do usuário (resources/commands/verify.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /vim | – | R | removed | removido no Claude Code v2.1.92 (virou Editor mode em /config); no Nycode: setting `editorMode: "vim"` liga a edição modal (motor em extensions/claude-compat/vim, usado por ui/editor.ts); não há /vim |
 | /voice | – | B | unsupported | sem voz |
 | /web-setup | – | B | unsupported | nuvem do Claude |

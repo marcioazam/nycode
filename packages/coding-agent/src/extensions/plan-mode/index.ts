@@ -740,7 +740,7 @@ ${CANCEL_RULE}`,
 	});
 
 	// nycode permission-control BEGIN
-	// Controle semântico para Shift+Tab e /permissions plan (claude-compat). Fonte: claude-home/patches/nycode/permission-control.
+	// Controle semântico para Shift+Tab e /permissions plan (claude-compat).
 	const PLAN_CONTROLLER_SLOT = Symbol.for("nycode.plan-controller");
 	let permissionCtx: ExtensionContext | undefined;
 	const planController = {

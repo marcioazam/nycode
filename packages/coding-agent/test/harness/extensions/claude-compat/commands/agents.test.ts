@@ -273,6 +273,18 @@ test("loop: intervalo mínimo, limites, só dispara ocioso, para em plan mode/st
 	assert.equal(clock.timers.at(-1)!.live, false);
 });
 
+test("list-agents sem diretório fixo lista os agentes que o subagent resolve (embutidos e do projeto)", async () => {
+	const cwd = tmp();
+	mkdirSync(join(cwd, ".nycode", "agents"), { recursive: true });
+	writeFileSync(join(cwd, ".nycode", "agents", "local.md"), "---\nname: local-x\ndescription: do projeto\n---\ncorpo");
+	const r = reg();
+	registerListing(r.nycode);
+	const c = mkCtx({ cwd });
+	await r.commands["list-agents"].handler("", c.ctx);
+	assert.match(c.last(), /^\s+Explore\b/m);
+	assert.match(c.last(), /local-x — do projeto/);
+});
+
 test("list-agents lê definições sem executar nada; /stop só aborta se ocupado; fleet ausente informado", async () => {
 	const dir = join(tmp(), "agents");
 	mkdirSync(dir);
