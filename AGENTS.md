@@ -63,6 +63,7 @@ Binding for Chord v2 (`packages/chord/src/`) and its tests, when writing and whe
   - `packages/tui` (`node:test`): `node --test test/specific.test.ts`
 - If you create or modify a test file, run it and iterate on test or implementation until it passes.
 - For `packages/*/test` (including `packages/coding-agent/test/suite/`, which uses `test/suite/harness.ts` + the faux provider), use no real provider APIs, keys, or paid tokens. Only `bench/` spends tokens, under an explicit `--budget-usd`.
+- Never rerun a vanilla reference bench arm (Claude Code or the upstream agent) on a task it already ran (owner rule 2026-11-25, cost): compare `nycode` against the stored references listed in `docs/bench/RUNBOOK.md` ("Referências guardadas") and run a reference arm only on tasks missing there, or when the owner explicitly asks for that round.
 - When regressions tests for fixing a github issue, add a comment with the github issue number next to the test.
 - For ad-hoc scripts, `write` them to a temp file (e.g. `/tmp`), run, edit if needed, remove when done. Don't embed multi-line scripts in `bash` commands.
 - Commit only when the user asks, or when the task carries an explicit delivery authorization.
@@ -152,8 +153,8 @@ Rules:
 
 Attribution:
 
-- Internal (from issues): `Fixed foo bar ([#123](https://github.com/marcioazam/nycode/issues/123))`
-- External contributions: `Added feature X ([#456](https://github.com/marcioazam/nycode/pull/456) by [@username](https://github.com/username))`
+- Internal (from issues): `Fixed foo bar ([#123](https://github.com/OWNER/REPO/issues/123))`
+- External contributions: `Added feature X ([#456](https://github.com/OWNER/REPO/pull/456) by [@username](https://github.com/username))`
 
 ## Languages
 
