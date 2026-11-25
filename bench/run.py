@@ -45,7 +45,7 @@ MAX_ERROR_SHARE = (
     0.10  # a stage with more errored runs than this ends the round (infra, not a score)
 )
 # Arms that build a stage from this checkout (arms.toml `stage_prefix` names it; `bench-nycode` is the default).
-STAGED_ARMS = ("nycode",)
+STAGED_ARMS = ("nycode", "nycode-todo-v1", "nycode-todo-v2", "nycode-mcp-hybrid")
 STAGE_PREFIX = "bench-nycode"
 Key = tuple[str, str, int]  # (suite, task_id, rep)
 Step = dict[str, Any]

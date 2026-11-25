@@ -181,6 +181,7 @@ These keys only exist, validate, and are read here; the built-in extensions that
 | `harness.headless.floor` | boolean | `true` | `NYCODE_HEADLESS_FLOOR` | Add the headless instruction floor. |
 | `tools.bash.backgroundOnTimeout` | boolean | `false` | `NYCODE_BASH_TIMEOUT_BG` | Keep a command that hits its timeout running in the background. |
 | `todo.staleReminder` | boolean | `true` | `NYCODE_TODO_SYNC` | Remind the model of a stale todo list. |
+| `todo.sync` | boolean | `false` | `NYCODE_TODO_SYNC_V2` | End-of-turn todo check, items for background runs and subagents, rarer stale reminder (disable only the check with `-builtin:todo-turn-check`). |
 | `harness.prefixCache1h` | boolean \| `"auto"` | `"auto"` | `NYCODE_PREFIX_CACHE_1H` | One-hour prompt-prefix cache TTL; `"auto"` enables it in interactive sessions only. |
 | `harness.autoResume` | boolean | `true` | `NYCODE_AUTO_RESUME` | Resume a turn cut short by a transient failure. |
 | `plan.gate` | boolean | `true` | `NYCODE_PLAN_GATE` | Keep plan mode open until the plan is submitted. |

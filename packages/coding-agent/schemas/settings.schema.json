@@ -924,6 +924,11 @@
           "type": "boolean",
           "description": "Remind the model of a stale todo list. NYCODE_TODO_SYNC takes precedence.",
           "default": true
+        },
+        "sync": {
+          "type": "boolean",
+          "description": "Todo sync: end-of-turn check, items for background work, 30-call reminder. NYCODE_TODO_SYNC_V2 takes precedence.",
+          "default": false
         }
       }
     },

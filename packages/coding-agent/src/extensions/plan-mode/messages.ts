@@ -32,7 +32,7 @@ export const PLAN_MODE_TOOLS = [
 
 /** The tracker reads only this literal tag from the reply text; prose or ☑ checkboxes do not count. */
 export const DONE_RULE =
-	"When you finish step n, write the literal tag [DONE:n] in the final reply of the turn (the message without a tool call); the tracker reads only this tag, not prose or checkboxes. If the step ended mid-work, repeat the tag in the final reply. In that reply tick box n under `## Progresso` of the task's /docs record.";
+	"When you finish step n, complete its todo item or write the literal tag [DONE:n] in the final reply of the turn (the message without a tool call); only the tag counts, not prose or checkboxes. If it ended mid-work, repeat the tag in the final reply. In it tick box n under `## Progresso` of the /docs record.";
 
 /** Only the end of the plan or an explicit user request ends plan mode: nothing else, no event, no command. */
 export const CANCEL_RULE =

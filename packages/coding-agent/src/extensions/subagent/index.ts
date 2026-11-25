@@ -31,6 +31,7 @@ import { setAgentRunner } from "../_shared/seams/agent-run.ts";
 import { setBackgroundAgentCounter } from "../_shared/seams/background-agents.ts";
 import { errorMessage } from "../_shared/util/values.ts";
 import { skillDirs } from "../skills-compat/index.ts";
+import { announceExternalFinish } from "../todo/external.ts";
 import { buildHookAgent, forkAgent, setKnownMcpAliases } from "./core/child.ts";
 import {
 	checkProjectAgentGate,
@@ -313,8 +314,16 @@ export default function subagentExtension(nycode: ExtensionAPI) {
 				agentId: run.id,
 				lastAssistantMessage: run.output,
 			});
+			// todo.sync: one reminder line when a todo item waits on this run (nothing when off or no item).
+			const reminder = announceExternalFinish(
+				current,
+				`subagent:${run.id}`,
+				run.state === "done",
+				`${run.agent}, ${run.state}`,
+			);
+			const text = backgroundCompletionText(run, userResume);
 			current.sendMessage(
-				{ customType: "subagent-background", content: backgroundCompletionText(run, userResume), display: true },
+				{ customType: "subagent-background", content: reminder ? `${text}\n${reminder}` : text, display: true },
 				{ triggerTurn: startsTurn },
 			);
 		});

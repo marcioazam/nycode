@@ -48,6 +48,7 @@ import subagentExtension from "./subagent/index.ts";
 import syntaxCheckExtension from "./syntax-check/index.ts";
 import thinkingExtension from "./thinking/index.ts";
 import todoExtension from "./todo/index.ts";
+import { registerTurnCheck } from "./todo/turn-check.ts";
 import toolSearchExtension from "./tool-search/index.ts";
 import travarModelosExtension from "./travar-modelos/index.ts";
 import uiExtension from "./ui/index.ts";
@@ -112,6 +113,8 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "docs-pointer", factory: docsPointerExtension, builtin: true },
 	{ name: "image-open", factory: imageOpenExtension, builtin: true },
 	{ name: "plan-gate", factory: planGateExtension, builtin: true },
+	// After completion-gate and plan-gate: the todo turn check yields to a gate block already drafted in the same settle.
+	{ name: "todo-turn-check", factory: registerTurnCheck, builtin: true },
 	{ name: "prefix-cache-1h", factory: prefixCache1hExtension, builtin: true },
 	{ name: "sticky-prompt", factory: stickyPromptExtension, builtin: true },
 	{ name: "syntax-check", factory: syntaxCheckExtension, builtin: true },

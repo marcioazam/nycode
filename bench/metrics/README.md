@@ -15,7 +15,7 @@ geometric mean).
 
 | file | owns |
 |---|---|
-| `trace.py` | pi and Claude Code transcript to calls and turns; process metrics; boot, model and tool time |
+| `trace.py` | pi and Claude Code transcript to calls and turns; process metrics; boot, model and tool time; todo counters of a run (todo-only turns, reminders and followed, open items and coherence at the end) |
 | `classify.py` | rules over the final message |
 | `summary.py` | per-run record, per-arm and paired aggregation, Markdown |
 
@@ -133,3 +133,56 @@ bound. The first audit's rows (K3) are superseded by this table.
   `evidence.collect`; a run with none stays out of the cache and token columns.
 - Claude Code headless runs outside Harbor keep no timestamps: boot, model and tool time are `n/a` for them.
 - Idle turns are rare by design in headless runs (one prompt, no user turn), so they read near zero.
+
+## Todo and MCP hybrid A/B (2026-11-25)
+
+Todo columns (`trace.todo_metrics`, pi/nycode transcripts only; the exact definitions are in its section comment): share of assistant
+turns that only call `todo`, stale-list reminders and how many were followed by a changing `todo` call within 3 tool
+calls, open items and `in_progress` items in the last snapshot, and `coherent_end` (a snapshot exists and no item is
+left `in_progress`; `n/a` when the run never used the todo). Paired table rows: `turnos só de todo`, `lista coerente
+no fim`. `coherent_end` stays as pre-registered; the Todo table also reports `final_open_items` (sum over runs) next to
+it, because a run can end with no `in_progress` item and still leave `pending` ones.
+
+Flag-on interventions (todo.sync), two counters apart from the stale-list `reminders`, both 0 with the flag off:
+
+- `turn_checks`: end-of-turn blocks, one per `entry_appended` event in `pi-events.jsonl` whose entry is a
+  `custom_message` of type `todo-turn-check`.
+- `external_reminders`: reminders for a finished background run or subagent (`externalFinishReminder`, text
+  `... waited on a background event that ...`), counted in tool result, custom and user messages and in
+  `custom_message` entries.
+
+The Todo table shows them as `bloqueios de fim de turno` and `lembretes de evento externo`. Their matchers
+(`trace.REMINDER`, `TURN_CHECK_TYPE`, `EXTERNAL_REMINDER`) are tested against the strings read from
+`packages/coding-agent/src/extensions/todo/` (`test_trace.py`), so a wording change there fails a test instead of
+zeroing a column.
+
+The arms reach Harbor containers through `bench/harbor/nycode_agent.py`, which forwards `NYCODE_TODO_SYNC_V2`,
+`NYCODE_MCP_TOOL_SEARCH` and `NYCODE_HEADLESS_TRIM` from the host env (allowlist; nothing else).
+
+Three arm variants in `bench/arms.toml` share the stage of `nycode` and differ only in env:
+
+| arm | env | tests |
+|---|---|---|
+| `nycode-todo-v1` | `NYCODE_HEADLESS_TRIM=0` | control: headless runs drop `todo` (headless-lean item 8); this keeps it |
+| `nycode-todo-v2` | `NYCODE_HEADLESS_TRIM=0`, `NYCODE_TODO_SYNC_V2=1` | `todo.sync` (turn-end check, external items, new reminder cadence) |
+| `nycode-mcp-hybrid` | `NYCODE_MCP_TOOL_SEARCH=1` | MCP `autoEnableToolSearch` (`tool_search` next to `codemode`) |
+
+```bash
+# same tasks, tier and k for every arm; add --model etc. as for any round
+python3 bench/run.py run --arm nycode --tier <tier> --out <dir>/base
+python3 bench/run.py run --arm nycode-todo-v1 --tier <tier> --out <dir>/todo-base
+python3 bench/run.py run --arm nycode-todo-v2 --tier <tier> --out <dir>/todo
+python3 bench/run.py run --arm nycode-mcp-hybrid --tier <tier> --out <dir>/mcp
+python3 bench/run.py metrics --rounds <dir>/todo-base <dir>/todo --focus nycode-todo-v2
+python3 bench/run.py metrics --rounds <dir>/base <dir>/mcp --focus nycode-mcp-hybrid
+```
+
+Pass rule, pre-registered (before any run) for turning the option on by default:
+
+- **todo.sync**: cost per task ratio (`nycode-todo-v2` / `nycode-todo-v1`) <= 1.05, no loss in pass rate, `coherent_end` higher.
+- **MCP hybrid**: pass rate not lower and cost not higher; it needs tasks with MCP tools (codemode servers), so use
+  a suite that has them.
+
+Cost and pass rate are the paired `custo US$` and `acerto` rows (the existing pre-registered metrics); the
+todo columns are exploratory. If a rule fails the option stays off. Goose measured +17-49% cost with todo prompts,
+which is why the default stays off until this passes.
