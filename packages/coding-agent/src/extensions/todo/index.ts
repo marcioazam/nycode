@@ -36,6 +36,7 @@ import {
 	type TodoTurnStateRequest,
 } from "../_shared/events/plan-mode-state.ts";
 import { stringEnum } from "../_shared/model/string-enum.ts";
+import { setTodoWidgetMode, TODO_WIDGET_MODES, todoWidgetMode } from "../_shared/ui/todo-widget.ts";
 import { registerExternal } from "./external.ts";
 import { reconcilePlan } from "./plan-link.ts";
 import { readTodoSyncEnabled, registerStaleReminder } from "./stale-reminder.ts";
@@ -347,6 +348,8 @@ export default function todoExtension(nycode: ExtensionAPI) {
 	};
 
 	nycode.on("session_start", (_event, ctx) => {
+		// The /todos-widget choice lasts until reload, new session, resume or fork, as upstream.
+		setTodoWidgetMode("full");
 		finished = [];
 		const next = sessionOf(ctx);
 		if (next !== session) plan = plan?.session === next ? plan : undefined;
@@ -566,6 +569,27 @@ export default function todoExtension(nycode: ExtensionAPI) {
 						: CLOSING[details.action];
 			const tag = nome ? `${statusName(nome, theme, false)}${theme.fg("dim", " · ")}` : "";
 			return new Text(tag + theme.fg("muted", msg), 0, 0);
+		},
+	});
+
+	nycode.registerCommand("todos-widget", {
+		description: "Set the todo list display: off, compact, or full (default)",
+		getArgumentCompletions: (prefix) => {
+			const modes = TODO_WIDGET_MODES.filter((mode) => mode.startsWith(prefix));
+			return modes.length ? modes.map((mode) => ({ value: mode, label: mode })) : null;
+		},
+		handler: async (args, ctx) => {
+			if (ctx.mode !== "tui") {
+				ctx.ui.notify("/todos-widget needs the terminal UI; /todos lists the todos", "warning");
+				return;
+			}
+			const arg = args.trim();
+			const usage = "Usage: /todos-widget off|compact|full";
+			if (!arg) return ctx.ui.notify(`Todo widget: ${todoWidgetMode()}. ${usage}`, "info");
+			const mode = TODO_WIDGET_MODES.find((value) => value === arg);
+			if (!mode) return ctx.ui.notify(usage, "warning");
+			setTodoWidgetMode(mode);
+			ctx.ui.notify(`Todo widget: ${mode}`, "info");
 		},
 	});
 

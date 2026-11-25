@@ -63,6 +63,7 @@ Sessão|heapdump|||Grava um heap snapshot local, após confirmação
 Sessão|quit||app.exit|Sai do nycode
 Plano e tarefas|plan||ext.plan|Entra no modo plano
 Plano e tarefas|todos|||Mostra as tarefas do ramo
+Plano e tarefas|todos-widget|off, compact, full||Escolhe como a lista de tarefas aparece
 Plano e tarefas|plan-todos|||Mostra as tarefas do plano
 Plano e tarefas|goal|||Define uma meta que a sessão persegue até ser confirmada
 Plano e tarefas|loop|||Repete um prompt em intervalos, até parar ou atingir o limite
@@ -91,6 +92,7 @@ Configuração|hooks|||Mostra os hooks configurados
 Configuração|mcp|||Mostra servidores MCP e suas ferramentas
 Configuração|skills|||Lista as skills carregadas
 Configuração|skill-doctor|||Valida o frontmatter e as duplicatas das skills
+Configuração|claude-plugins|||Liga ou desliga os plugins do Claude Code instalados
 Configuração|reload|||Recarrega atalhos, extensões, skills e temas
 Configuração|painel|||Visão geral do que está ligado
 Configuração|notifications|avisos||Avisos, notificação, som e progresso na aba

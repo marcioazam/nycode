@@ -6,6 +6,7 @@
 
 - Fixed provider host detection that treated a base URL as a match when the host name appeared anywhere in the URL, and the Cerebras bodyless-overflow check that could backtrack on a long run of spaces
 - Fixed OAuth callback pages so provider error text is escaped before it is written as HTML
+- Qwen Token Plan Individual lists `qwen4-max` instead of `qwen4-max-preview`, which Qwen retired on 2026-11-25 (the model catalog no longer carries the preview id)
 
 ## [2.0.2] - 2026-11-23
 

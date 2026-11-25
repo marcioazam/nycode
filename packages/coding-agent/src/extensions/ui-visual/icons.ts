@@ -143,7 +143,8 @@ export const iconGap = (env: Env = process.env): string =>
 	!ascii(env) && (env.TERM === "xterm-kitty" || set(env.KITTY_WINDOW_ID)) ? "  " : " ";
 
 const BUILTIN = new Set(["read", "bash", "edit", "write", "grep", "find", "ls"]);
-const WEB = /fetch|web|search_web|perplexity|exa_|brave|keenable|firecrawl|youcom|octen|parallel|nimble/;
+/** Generic words only, no provider names; `tool_search` finds tools, not pages. */
+const WEB = /fetch|web|search|scrape|crawl/;
 
 /** Ferramenta → ícone; a primeira regra que casa vence: nativas, todo, agent, question, web, memory, lsp_, plan, run, tool. */
 export const toolIcon = (toolName: string): IconName => {
@@ -151,7 +152,7 @@ export const toolIcon = (toolName: string): IconName => {
 	if (toolName.includes("todo")) return "todo";
 	if (toolName.includes("agent")) return "agent";
 	if (toolName === "question") return "question";
-	if (WEB.test(toolName)) return "web";
+	if (toolName !== "tool_search" && WEB.test(toolName)) return "web";
 	if (toolName === "memory") return "memory";
 	if (toolName.startsWith("lsp_")) return "lsp";
 	if (toolName.includes("plan")) return "plan";

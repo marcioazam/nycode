@@ -18,8 +18,10 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { atomicWriteFile } from "../util/atomic-write.ts";
 import { statToken } from "../util/stat-token.ts";
 import { errorMessage, isDirectory, isRecord, realpathOr } from "../util/values.ts";
+import { cliSettings } from "./cli-settings.ts";
 import { userConfigDir } from "./config-dir.ts";
 import { readManagedSettings } from "./managed-settings.ts";
 import { userSettingsFiles } from "./settings-chain.ts";
@@ -370,6 +372,65 @@ function pluginEnabled(
 	const userState = enabled[qualified] ?? enabled[pluginDir];
 	if (typeof userState === "boolean") return userState;
 	return manifest.defaultEnabled !== false;
+}
+
+/** What decided a plugin's enablement, highest precedence first. */
+export type EnablementSource = "managed" | "flag" | "user" | "default";
+
+export interface PluginState {
+	/** `name@marketplace`, the key `/claude-plugins` writes. */
+	qualified: string;
+	enabled: boolean;
+	decidedBy: EnablementSource;
+}
+
+/** Every cached plugin with a loadable version, enabled or not, and the source that decided it (pluginEnabled's
+ * precedence). For `/claude-plugins`: a toggle saved to the user file has no effect under managed or flag. */
+export function pluginStates(): PluginState[] {
+	const cacheDir = path.join(userConfigDir(), "plugins", "cache");
+	const index = readInstallIndex();
+	const locals = localMarketplaceRoots();
+	const cli = cliSettings();
+	const user = cli.sources.has("user") ? enabledMap([path.join(userConfigDir(), "settings.json")]) : {};
+	const flag = cli.settingsFile === undefined ? {} : enabledMap([cli.settingsFile]);
+	const managed = readManagedSettings().enabledPlugins;
+	const states: PluginState[] = [];
+	for (const marketplace of listDirs(cacheDir)) {
+		for (const pluginDir of listPluginDirs(path.join(cacheDir, marketplace))) {
+			const root = pluginRoot(cacheDir, marketplace, pluginDir, index, locals);
+			if (!root) continue;
+			const qualified = `${pluginDir}@${marketplace}`;
+			const decide = (decidedBy: EnablementSource, value: unknown) =>
+				typeof value === "boolean" ? { qualified, enabled: value, decidedBy } : undefined;
+			const manifest = readJson(path.join(root, ".claude-plugin", "plugin.json"));
+			states.push(
+				decide("managed", enablementEntry(managed, qualified, pluginDir)) ??
+					decide("flag", enablementEntry(flag, qualified, pluginDir)) ??
+					decide("user", enablementEntry(user, qualified, pluginDir)) ?? {
+						qualified,
+						enabled: manifest.defaultEnabled !== false,
+						decidedBy: "default",
+					},
+			);
+		}
+	}
+	return states;
+}
+
+/** Saves one plugin's enablement in the user settings.json, atomically and keeping every other key. Throws when the
+ * file does not parse: rewriting it would drop what it holds. */
+export function setPluginEnabled(qualified: string, enabled: boolean): void {
+	const file = path.join(userConfigDir(), "settings.json");
+	let settings: Record<string, unknown> = {};
+	if (fs.existsSync(file)) {
+		const parsed: unknown = JSON.parse(fs.readFileSync(file, "utf-8"));
+		if (!isRecord(parsed)) throw new Error(`${file} is not a JSON object`);
+		settings = parsed;
+	}
+	const current = isRecord(settings.enabledPlugins) ? settings.enabledPlugins : {};
+	settings.enabledPlugins = { ...current, [qualified]: enabled };
+	fs.mkdirSync(path.dirname(file), { recursive: true });
+	atomicWriteFile(file, `${JSON.stringify(settings, null, 2)}\n`);
 }
 
 /** Resolve one cached plugin directory into an enabled InstalledPlugin, or null to skip

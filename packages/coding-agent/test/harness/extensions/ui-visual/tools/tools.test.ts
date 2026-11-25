@@ -581,13 +581,15 @@ test("toolIcon: regras em ordem", () => {
 		"web_fetch",
 		"fetch",
 		"brave_news_search",
-		"perplexity_ask",
+		"perplexity_search",
 		"exa_search",
 		"firecrawl_scrape",
 		"search_web_pages",
-		"mcp__keenable",
+		"mcp__x__crawl",
 	])
 		assert.equal(t(n), "web");
+	// Generic words only: a provider name alone says nothing about the tool.
+	for (const n of ["perplexity_ask", "mcp__keenable", "tool_search"]) assert.equal(t(n), "tool");
 	assert.equal(t("lsp_hover"), "lsp");
 	for (const n of ["plan_mode_complete", "planner"]) assert.equal(t(n), "plan");
 	assert.equal(t("mcp__linear"), "tool");

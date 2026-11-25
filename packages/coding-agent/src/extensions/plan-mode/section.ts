@@ -10,6 +10,7 @@
 
 import { matchesKey, truncateToWidth, visibleWidth } from "@nycode/tui";
 import type { ExtensionContext } from "../../core/extensions/types.ts";
+import { onTodoWidgetMode, todoWidgetMode } from "../_shared/ui/todo-widget.ts";
 import { fleetSourceForUi } from "../subagent/fleet/source.ts";
 import type { UiTheme } from "../subagent/fleet-ui/panel.ts";
 import { bridge, clampOffset, viewportSize } from "../subagent/fleet-ui/section.ts";
@@ -104,6 +105,7 @@ export class PlanSection {
 	/** D13: `agent state` of the running fleet lanes by `planStep`, refreshed on fleet changes (never read per render). */
 	private lanes = new Map<number, string[]>();
 	private offFleet?: () => void;
+	private offWidgetMode?: () => void;
 	/** Clock the table reads; tests replace it. */
 	now: () => number = Date.now;
 
@@ -138,6 +140,9 @@ export class PlanSection {
 
 	update(ctx: ExtensionContext, items: TodoItem[], source: "plan" | "todo" = "plan", extra?: PlanExtra): void {
 		this.ctx = ctx;
+		this.offWidgetMode ??= onTodoWidgetMode(() => {
+			if (this.ctx) this.update(this.ctx, this.raw, this.source);
+		});
 		if (extra) {
 			this.hold = extra.hold;
 			this.todo = extra.todo;
@@ -167,7 +172,8 @@ export class PlanSection {
 		}
 		this.syncTimer();
 		// A finished todo list hides itself (a plan keeps its done state); a new open item brings it back.
-		const hide = items.length === 0 || (source === "todo" && items.every((i) => i.completed));
+		const hide =
+			items.length === 0 || (source === "todo" && (todoWidgetMode() === "off" || items.every((i) => i.completed)));
 		this.hidden = hide;
 		if (hide) {
 			this.remove();
@@ -183,11 +189,21 @@ export class PlanSection {
 			active: () => this.items.length > 0 && !this.hidden,
 			hasBody: true,
 			label: () =>
-				`${this.source === "todo" ? "Todo" : "Plan"} ${this.items.filter((i) => i.completed).length}/${this.items.length}`,
+				`${this.source === "todo" ? "Todo" : "Plan"} ${this.items.filter((i) => i.completed).length}/${this.items.length}${this.compactDoing()}`,
 			changed: () => this.tabChanged(),
 			enter: () => this.focusByKeyboard(),
 		});
 		if (hadItems !== !hide) bridge.onPlanChange?.();
+	}
+
+	/** `/todos-widget compact`: the one line also names the active task, as Claude Code's spinner label. */
+	private compactDoing(): string {
+		if (this.source !== "todo" || todoWidgetMode() !== "compact") return "";
+		const doing = this.items
+			.find((i) => i.doing && !i.completed)
+			?.text.replace(/\s+/g, " ")
+			.trim();
+		return doing ? ` · ${doing}` : "";
 	}
 
 	private resetManagement(): void {
@@ -312,6 +328,8 @@ export class PlanSection {
 
 	/** Session boundary: widget, listener and bridge links go away. */
 	shutdown(ctx: ExtensionContext | undefined = this.ctx): void {
+		this.offWidgetMode?.();
+		this.offWidgetMode = undefined;
 		this.items = [];
 		this.raw = [];
 		this.marks.clear();
@@ -441,7 +459,8 @@ export class PlanSection {
 	render(width: number): string[] {
 		nav.stamp("plan");
 		const theme = this.theme;
-		if (!theme || this.items.length === 0) return [];
+		if (!theme || this.items.length === 0 || this.hidden) return [];
+		const compact = this.source === "todo" && todoWidgetMode() === "compact";
 		const total = this.items.length;
 		const done = this.items.filter((i) => i.completed).length;
 		const visible = this.visible();
@@ -498,7 +517,8 @@ export class PlanSection {
 		const detail = tail;
 		const redraw = (): void => this.tui?.requestRender();
 		this.footerRow = -1;
-		if (this.collapsed) return tabbed("plan", ["", head, rule(theme, width)], detail, theme, width, redraw);
+		if (this.collapsed || compact)
+			return tabbed("plan", ["", head, rule(theme, width)], detail, theme, width, redraw);
 		const motion = motionEnabled();
 		const active = activeStep(this.items);
 		const body = this.items.slice(this.offset, this.offset + visible).flatMap((i) => {

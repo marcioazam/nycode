@@ -101,7 +101,9 @@ export function claudePreCall(
 	cwd: string,
 ): { name: string | undefined; input: Record<string, unknown> | undefined } {
 	const raw = record(input);
-	if (nycodeName === "run" && typeof raw?.command === "string")
+	// Claude Code: Monitor "uses the same permission rules as Bash", so the guard and Bash-matched hooks judge its
+	// command as a Bash call.
+	if ((nycodeName === "run" || nycodeName === "monitor") && typeof raw?.command === "string")
 		return { name: "Bash", input: { command: raw.command } };
 	return { name: claudeToolName(nycodeName), input: claudeToolInput(nycodeName, input, cwd) };
 }
@@ -110,6 +112,7 @@ type RewriteMapper = (updated: Record<string, unknown>) => Record<string, unknow
 
 const FROM_CLAUDE_INPUT: Record<string, RewriteMapper> = {
 	run: (updated) => (typeof updated.command === "string" ? { command: updated.command } : undefined),
+	monitor: (updated) => (typeof updated.command === "string" ? { command: updated.command } : undefined),
 	bash: (updated) =>
 		typeof updated.command === "string"
 			? pick({
