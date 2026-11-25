@@ -2,12 +2,14 @@
  * Espelha as etapas do plano em execução na lista do `todo` (contrato em `_shared/events/plan-steps.ts`).
  * Função pura: recebe a lista e devolve a nova, sem tocar na entrada.
  */
-import type { PlanStepsEvent } from "../_shared/events/plan-mode-state.ts";
+import type { PlanStepsEvent, TodoStatus } from "../_shared/events/plan-mode-state.ts";
+import { isOpen } from "./status.ts";
 
-export type LinkStatus = "pending" | "in_progress" | "completed";
+export type LinkStatus = TodoStatus;
 
 export interface LinkTodo {
 	id: number;
+	reason?: string;
 	text: string;
 	status: LinkStatus;
 	activeForm?: string;
@@ -44,12 +46,15 @@ export function reconcilePlan<T extends LinkTodo>(todos: T[], nextId: number, ev
 			t = { id: id++, text: stepText(s.step, s.text), status: "pending", planStep: s.step } as T;
 			out.push(t);
 		}
-		if (s.completed) t.status = "completed";
-		else if (t.status === "completed") t.status = "pending"; // etapa reaberta (rewind): o item volta
+		if (s.completed) {
+			t.status = "completed";
+			delete t.reason;
+		} else if (t.status === "completed") t.status = "pending"; // etapa reaberta (rewind): o item volta
 	}
 	const current = ev.steps.find((s) => !s.completed);
 	const cur = current && out.find((x) => x.planStep === current.step);
-	if (cur && cur.status !== "in_progress") {
+	// failed/blocked/cancelled keep their status: they do not complete the step, and the model decides what follows.
+	if (cur && cur.status !== "in_progress" && isOpen(cur.status)) {
 		// Um item em andamento por vez: a etapa atual assume e os demais voltam a pendente.
 		for (const t of out) if (t.status === "in_progress") t.status = "pending";
 		cur.status = "in_progress";

@@ -184,6 +184,32 @@ describe("MCP config", () => {
 		expect(trusted.errors).toContainEqual(expect.stringContaining("autoEnableCodemode must be a boolean"));
 	});
 
+	it("reads autoEnableToolSearch with project precedence and rejects non-booleans", () => {
+		const paths = setup(
+			{ autoEnableToolSearch: true, mcpServers: {} },
+			{ autoEnableToolSearch: false, mcpServers: {} },
+		);
+		expect(loadMcpConfig({ ...paths, projectTrusted: false }).autoEnableToolSearch).toBe(true);
+		expect(loadMcpConfig({ ...paths, projectTrusted: true }).autoEnableToolSearch).toBe(false);
+
+		const bad = setup({ autoEnableToolSearch: "yes", mcpServers: {} }, {});
+		const loaded = loadMcpConfig({ ...bad, projectTrusted: false });
+		expect(loaded.autoEnableToolSearch).toBeUndefined();
+		expect(loaded.errors).toContainEqual(expect.stringContaining("autoEnableToolSearch must be a boolean"));
+	});
+
+	it("lets NYCODE_MCP_TOOL_SEARCH=1 turn autoEnableToolSearch on over the files", () => {
+		const paths = setup({ autoEnableToolSearch: false, mcpServers: {} }, {});
+		const previous = process.env.NYCODE_MCP_TOOL_SEARCH;
+		process.env.NYCODE_MCP_TOOL_SEARCH = "1";
+		try {
+			expect(loadMcpConfig({ ...paths, projectTrusted: false }).autoEnableToolSearch).toBe(true);
+		} finally {
+			if (previous === undefined) delete process.env.NYCODE_MCP_TOOL_SEARCH;
+			else process.env.NYCODE_MCP_TOOL_SEARCH = previous;
+		}
+	});
+
 	it("validates the OAuth callback URL, scope, and client name", () => {
 		const paths = setup(
 			{

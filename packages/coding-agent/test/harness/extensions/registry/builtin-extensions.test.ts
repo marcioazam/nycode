@@ -36,6 +36,11 @@ describe("embedded extension registry (K5)", () => {
 		}
 	});
 
+	it("runs the todo turn check after the completion-gate and plan-gate, so it sees their drafts", () => {
+		expect(names.indexOf("todo-turn-check")).toBeGreaterThan(names.indexOf("completion-gate"));
+		expect(names.indexOf("todo-turn-check")).toBeGreaterThan(names.indexOf("plan-gate"));
+	});
+
 	it("keeps claude-rules ahead of the other embedded nycode extensions", () => {
 		expect(names.indexOf("claude-rules")).toBeLessThan(names.indexOf("status-line"));
 		expect(names.indexOf("mcp")).toBeLessThan(names.indexOf("claude-rules"));

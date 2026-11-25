@@ -146,6 +146,15 @@ const rows: Row[] = [
 		envExpected: true,
 	},
 	{
+		key: "todo.sync",
+		env: "NYCODE_TODO_SYNC_V2",
+		def: false,
+		set: true,
+		invalid: "no",
+		envRaw: "1",
+		envExpected: true,
+	},
+	{
 		key: "harness.prefixCache1h",
 		env: "NYCODE_PREFIX_CACHE_1H",
 		def: "auto",

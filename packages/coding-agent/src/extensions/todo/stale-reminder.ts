@@ -22,6 +22,8 @@
 import { getAgentDir } from "../../config.ts";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 import { SettingsManager } from "../../core/settings-manager.ts";
+import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
+import { isOpen } from "./status.ts";
 
 export type Item = { id: number; text: string; status: string };
 
@@ -31,11 +33,15 @@ export const EVERY = 10;
 /** Chamadas entre lembretes enquanto a lista não mudar (modo estrito). */
 export const FOLLOW = 3;
 
+/** Cadência com todo.sync: 30 chamadas, sem repetição estrita, no máximo 2 lembretes por sessão. */
+export const SYNC_EVERY = 30;
+export const SYNC_MAX = 2;
+
 const MAX_ITEMS = 12;
 
 /** Lembrete estrito: itens abertos compactos e pedido de reconciliação, sem saída. */
 export function strictReminder(items: Item[]): string | undefined {
-	const open = items.filter((t) => t.status !== "completed");
+	const open = items.filter((t) => isOpen(t.status));
 	if (open.length === 0) return undefined;
 	const lines = open.slice(0, MAX_ITEMS).map((t) => `#${t.id} [${t.status}] ${t.text.slice(0, 60)}`);
 	if (open.length > MAX_ITEMS) lines.push(`+${open.length - MAX_ITEMS} more`);
@@ -44,7 +50,7 @@ export function strictReminder(items: Item[]): string | undefined {
 
 /** Texto do lembrete, ou undefined quando não há item aberto. */
 export function reminder(items: Item[], calls: number): string | undefined {
-	const open = items.filter((t) => t.status !== "completed");
+	const open = items.filter((t) => isOpen(t.status));
 	if (open.length === 0) return undefined;
 	const active = open.find((t) => t.status === "in_progress");
 	const where = active ? `in progress: #${active.id} "${active.text}"` : "none in progress";
@@ -55,17 +61,38 @@ export function reminder(items: Item[], calls: number): string | undefined {
 export const readStaleReminderEnabled = (cwd: string): boolean =>
 	SettingsManager.create(cwd, getAgentDir()).getNycodeSettings().todo.staleReminder;
 
+/** Lê a chave `todo.sync` (env NYCODE_TODO_SYNC_V2 > settings.json > desligado). */
+export const readTodoSyncEnabled = (nycode: Pick<ExtensionAPI, "getSettings">): boolean => {
+	try {
+		return resolveNycodeSettings(nycode.getSettings(), process.env).todo.sync;
+	} catch {
+		return false; // stale session or no settings: sync stays off, like the default
+	}
+};
+
 /** Registra o lembrete e devolve o setter da lista; a chave é lida uma vez, na primeira chamada de ferramenta (a fábrica não tem cwd). */
 export function registerStaleReminder(
 	nycode: ExtensionAPI,
 	readEnabled: (cwd: string) => boolean = readStaleReminderEnabled,
+	readSync: (cwd: string) => boolean = () => readTodoSyncEnabled(nycode),
 ) {
 	let items: Item[] = [];
 	let calls = 0;
+	let sent = 0;
 	let enabled: boolean | undefined;
+	let sync: boolean | undefined;
+	nycode.on("session_start", (_event, ctx) => {
+		// Counters reset only with todo.sync: off keeps today's behavior (no reset on session_start).
+		sync ??= readSync(ctx?.cwd ?? process.cwd());
+		if (!sync) return;
+		calls = 0;
+		sent = 0;
+	});
 	nycode.on("tool_result", (event, ctx) => {
-		enabled ??= readEnabled(ctx?.cwd ?? process.cwd());
+		const cwd = ctx?.cwd ?? process.cwd();
+		enabled ??= readEnabled(cwd);
 		if (!enabled) return undefined;
+		sync ??= readSync(cwd);
 		const strict = ctx?.hasUI === true;
 		const action = (event.input as { action?: string } | undefined)?.action;
 		if (event.toolName === "todo" && (!strict || action !== "list")) {
@@ -73,9 +100,11 @@ export function registerStaleReminder(
 			return undefined;
 		}
 		calls += 1;
-		if (calls < EVERY) return undefined;
+		if (calls < (sync ? SYNC_EVERY : EVERY)) return undefined;
+		if (sync && sent >= SYNC_MAX) return undefined;
 		const text = strict ? strictReminder(items) : reminder(items, calls);
-		calls = strict && text ? EVERY - FOLLOW : 0;
+		calls = strict && text && !sync ? EVERY - FOLLOW : 0;
+		if (text && sync) sent += 1;
 		if (!text || !Array.isArray(event.content)) return undefined;
 		return { content: [...event.content, { type: "text" as const, text }] };
 	});

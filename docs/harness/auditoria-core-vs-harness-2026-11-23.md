@@ -178,14 +178,14 @@ usuário são instruções mortas. Concentração por arquivo:
 | `lsp` | N | |
 | `web` (`web_fetch`; `web_search` via DuckDuckGo é opt-in) | N | |
 | `subagent` (9,8 mil linhas) | N | O mecanismo é núcleo; os agentes que ele carrega são H/P. |
-| `todo`, `question`, `memory`, `goal`, `run`, `git-checkpoint`, `thinking`, `init` | N | Paridade com o Claude Code. |
+| `todo`, `question`, `memory`, `goal`, `run`, `git-checkpoint`, `thinking`, `init` | N | Paridade com o Claude Code. `git-checkpoint` confirmado Núcleo no recheck de 2026-11-25 (salvaguardas: só arquivos editados, repositório bare fora do projeto, `.gitignore`, 30 dias). |
 | `plan-mode` | N\* | `utils.ts:563` tem a lista fixa dos seus MCPs (`keenable`, `perplexity`, `exa`, `brave_search`, `octen`, `parallel`, `youcom`, `context7`, `codegraph`…); `:120` (`kb.py` do obsidian-cli); `:569` (`perplexity-scout`); `messages.ts:22`; `table.ts:253` (`toLocaleTimeString("pt-BR")`). |
 | `hooks` (executor) | N\* | `internal/codegraph.ts`, `internal/graph-context.ts` e `internal/knowledge.ts` são P (seção 3.4). |
 | `status-line` (executor do contrato `statusLine`) | N | |
 | `notify` | N | |
 | `session-title` | N | |
 | `syntax-check` (tree-sitter) | N | |
-| `diagnostico` (`/diagnostico`, `/doctor`) | N\* | Função geral; nome e textos em pt-BR. |
+| `diagnostico` (`/diagnostico`, `/doctor`) | H | Reclassificado no recheck de 2026-11-25: função geral, mas 2947 linhas com trilha, OTLP e modal; fica Harness, ligado. |
 | `contexto` (`/contexto`) | N\* | Útil a todos; nome em português. |
 
 ### 3.2 Compatibilidade com o Claude Code (decisão de produto)

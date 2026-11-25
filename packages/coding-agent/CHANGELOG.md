@@ -14,6 +14,11 @@
 - User override of the built-in instructions at `<agentDir>/instructions/<name>.md`
 - `resources/.npmignore`
 - A test that fails when an embedded text cites a missing skill, agent, command or resource
+- MCP setting `autoEnableToolSearch` (default `false`; `NYCODE_MCP_TOOL_SEARCH=1` for one run): activates `tool_search` together with `codemode` for `codemode` servers, so single calls go direct and chains go through a script. Pending a bench A/B before it can become the default
+- Todo statuses `failed`, `blocked` and `cancelled` with an optional reason, and `todo confirm`
+- Setting `todo.sync` (`NYCODE_TODO_SYNC_V2`, default off pending the bench A/B): turn-end check of a stale list, items for background runs and subagents, new reminder cadence
+- The plan-mode `DONE_RULE` tells the model it may complete the step's linked todo item instead of writing the `[DONE:n]` tag
+- Bench todo metrics in `bench/metrics/trace.py` (todo-only turns, reminders followed, turn-check and external reminders, list coherence at the end of a run) and the arms `nycode-todo-v1` (control with the `todo` tool kept headless), `nycode-todo-v2` and `nycode-mcp-hybrid`
 
 ### Changed
 

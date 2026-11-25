@@ -26,6 +26,15 @@ _AGENT_ENV = {
     "NYCODE_CODING_AGENT_DIR": _AGENT_DIR,
     "NYCODE_SKIP_VERSION_CHECK": "1",  # same as bench/arms/nycode: no update check in a measured run
 }
+# Arm switches (bench/arms.toml `env`): run.py sets them in its own env, the container only sees what is forwarded here.
+# Allowlist, never a blanket copy of os.environ: the host env holds secrets.
+_ARM_ENV = ("NYCODE_TODO_SYNC_V2", "NYCODE_MCP_TOOL_SEARCH", "NYCODE_HEADLESS_TRIM")
+
+
+def _agent_env() -> dict[str, str]:
+    """Container env of an agent command: the fixed one plus the arm switches set on the host."""
+    return {**_AGENT_ENV, **{k: os.environ[k] for k in _ARM_ENV if k in os.environ}}
+
 
 # curl and tar for nvm and the bundle (the bundle needs no python3 or patch,); fails loudly.
 _ROOT_DEPS = r"""
@@ -115,7 +124,7 @@ class NycodeAgent(Pi):  # type: ignore[misc]
                 # --help warms Node's compile cache (best effort, never fails the install).
                 f"(node {_CLI} --help >/dev/null 2>&1 || true)"
             ),
-            env=dict(_AGENT_ENV),
+            env=_agent_env(),
         )
 
     @override
@@ -145,5 +154,5 @@ class NycodeAgent(Pi):  # type: ignore[misc]
             quoted = getattr(self, "_quoted_instruction", None)
             if quoted and f" {quoted} " in command:
                 command = command.replace(f" {quoted} ", f" -- {quoted} ", 1)
-            env = {**(env or {}), **_AGENT_ENV}
+            env = {**(env or {}), **_agent_env()}
         return await super().exec_as_agent(environment, command, env, cwd, timeout_sec)
