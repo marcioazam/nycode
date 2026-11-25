@@ -19,6 +19,8 @@ packages/coding-agent/resources/commands/claude-hud-setup.md | CLAUDE_CONFIG_DIR
 packages/coding-agent/src/extensions/env-settings/index.ts | CLAUDE_CONFIG_DIR | produto-externo | Claude Code documented drop list of keys a repository must not set
 packages/coding-agent/test/harness/env-settings/env-settings.test.ts | CLAUDE_CONFIG_DIR | produto-externo | asserts the drop list refuses the Claude Code variable
 packages/coding-agent/test/harness/_shared/config-dir.test.ts | CLAUDE_CONFIG_DIR | produto-externo | asserts nycode ignores the Claude Code variable (D-09)
+packages/coding-agent/src/extensions/memory/claude-store.ts | CLAUDE_CONFIG_DIR | produto-externo | opt-in autoMemoryStorage "claude" writes to Claude Code's memory dir, found as Claude Code finds it
+packages/coding-agent/test/harness/memory/claude-storage.test.ts | CLAUDE_CONFIG_DIR | produto-externo | asserts the claude memory store follows the Claude Code variable
 packages/coding-agent/test/harness/hooks/fixtures/*.json | .pi/agent | produto-externo | hook payloads captured from a real session, Claude Code format
 # produto-externo: bench measures the nycode, pi-vanilla and Claude Code arms, which really use ~/.pi/agent and CLAUDE_CONFIG_DIR
 bench/arms/* | .pi/agent,CLAUDE_CONFIG_DIR | produto-externo | arm scripts that stage the nycode and pi-vanilla homes and the Claude Code config dir
