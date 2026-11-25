@@ -296,10 +296,15 @@ def _harbor_step(
         # Per-round path: arms running side by side must not overwrite one shared bundle.
         out.mkdir(parents=True, exist_ok=True)
         bundle = out / "nycode-bundle.tgz"
-        subprocess.run(
+        made = subprocess.run(
             ["bash", str(HARBOR_DIR / "bundle.sh"), str(bundle)],
-            check=True, capture_output=True, env={**os.environ, "HOME": str(stage)},
+            check=False, capture_output=True, text=True, env={**os.environ, "HOME": str(stage)},
         )  # fmt: skip
+        # Its stderr is the only diagnosis: bench-pr logs only this traceback.
+        if made.returncode != 0:
+            raise RuntimeError(
+                f"bundle.sh exit {made.returncode}: {made.stderr.strip()[-2000:]}"
+            )
         env["NYCODE_BUNDLE"] = str(bundle)
     excl = (
         runners.load_excluded(BENCH / cfg["excluded_file"])
