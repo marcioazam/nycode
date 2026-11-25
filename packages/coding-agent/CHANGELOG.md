@@ -28,6 +28,7 @@
 
 ### Fixed
 
+- Fixed the bash full-output file being read before it was flushed: `executeBash` now resolves only after the temp file is written
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
 - Git fetch of a pinned ref passes `--` before the remote and the ref, including when the checkout already exists, so the ref cannot be read as a git option
 - The built-in Mistral default is `codestral-latest`. The live catalog no longer includes `devstral-medium-latest`
