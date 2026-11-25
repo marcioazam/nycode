@@ -78,6 +78,7 @@ export interface Detail {
 	delegated?: boolean;
 	note?: string;
 	pending?: boolean;
+	chat?: boolean;
 	questions: Detail[];
 }
 export interface Rendered {

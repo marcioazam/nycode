@@ -58,6 +58,8 @@ export interface QuestionView {
 	expanded?: boolean;
 	/** What the editor is for; free text when unset. */
 	editKind?: EditKind;
+	/** The row of the answer already confirmed (a revisited batch question): green with ✔. */
+	confirmed?: number;
 }
 
 export function buildQuestionLines(view: QuestionView): string[] {
@@ -76,6 +78,7 @@ export function buildQuestionLines(view: QuestionView): string[] {
 		batch,
 		expanded,
 		editKind = "free",
+		confirmed,
 	} = view;
 	const lines: string[] = [];
 	const add = (s: string) => lines.push(truncateToWidth(s, width));
@@ -111,15 +114,17 @@ export function buildQuestionLines(view: QuestionView): string[] {
 	for (let i = 0; i < options.length; i++) {
 		const opt = options[i];
 		const focus = i === optionIndex;
-		const box = multiSelect && opt.isOther !== true ? checkbox(checked[i]) : "";
+		const box = multiSelect && opt.isOther !== true && opt.isChat !== true ? checkbox(checked[i]) : "";
 		const edit = opt.isOther === true && editMode && editKind === "free" ? " ✎" : "";
 		const tag = parts[i].tag
 			? parts[i].tag.startsWith("recomendada")
 				? theme.fg("syntaxType", `★ ${parts[i].tag}`)
 				: theme.fg("dim", parts[i].tag)
 			: "";
-		const label = `${box}${parts[i].label}${edit}`;
-		const head = ` ${focus ? theme.fg("accent", theme.bold(`❯ ${i + 1}`)) : `  ${theme.fg("dim", String(i + 1))}`}  ${focus ? theme.fg("accent", theme.bold(label)) : theme.fg("text", label)}`;
+		const done = i === confirmed;
+		const label = `${box}${parts[i].label}${edit}${done ? " ✔" : ""}`;
+		const tone = done ? "success" : "accent";
+		const head = ` ${focus ? theme.fg(tone, theme.bold(`❯ ${i + 1}`)) : `  ${theme.fg("dim", String(i + 1))}`}  ${focus ? theme.fg(tone, theme.bold(label)) : theme.fg(done ? "success" : "text", label)}`;
 		const left = head;
 		const row = truncateToWidth(
 			tag ? `${left}${" ".repeat(Math.max(2, width - visibleWidth(left) - visibleWidth(tag) - 1))}${tag}` : left,
@@ -179,7 +184,7 @@ export function buildQuestionLines(view: QuestionView): string[] {
 		theme.fg(
 			"dim",
 			editMode
-				? " ⏎ envia · esc volta"
+				? " ⏎ envia · esc sai"
 				: navFooter({
 						multi: multiSelect,
 						count: options.length,
@@ -220,6 +225,7 @@ export interface QuestionView1 {
 	delegated?: boolean;
 	note?: string;
 	pending?: boolean;
+	chat?: boolean;
 }
 
 /** Result block of one question (variant A): state + icon + title + ANSWER on the header, the question below behind a
@@ -232,17 +238,19 @@ function questionBlock(v: QuestionView1, theme: Theme, expanded: boolean, hint: 
 	const cancelled = v.answer === null;
 	const failed = cancelled || (v.timedOut === true && answer === "");
 	const shown = v.wasCustom || v.multiSelect ? answer : (LABEL_TAG.exec(answer)?.[1] ?? answer);
-	const outcome = v.skipped
-		? `${theme.fg("dim", "↷ pulada")} ${theme.fg("dim", "· o agente decide")}`
-		: v.delegated
-			? `${theme.fg("accent", "decide você")}${v.note ? theme.fg("dim", ` · ${v.note}`) : ""}`
-			: v.pending
-				? `${theme.fg("dim", "não respondida")}`
-				: cancelled
-					? `${theme.fg("warning", "cancelada")} ${theme.fg("dim", "· sem resposta")}`
-					: failed
-						? `${theme.fg("warning", "tempo esgotado")} ${theme.fg("dim", "· seguiu sem resposta")}`
-						: theme.fg("success", shown) + (v.note ? theme.fg("dim", ` · nota: ${v.note}`) : "");
+	const outcome = v.chat
+		? theme.fg("warning", "quer conversar sobre a pergunta")
+		: v.skipped
+			? `${theme.fg("dim", "↷ pulada")} ${theme.fg("dim", "· o agente decide")}`
+			: v.delegated
+				? `${theme.fg("accent", "decide você")}${v.note ? theme.fg("dim", ` · ${v.note}`) : ""}`
+				: v.pending
+					? `${theme.fg("dim", "não respondida")}`
+					: cancelled
+						? `${theme.fg("warning", "cancelada")} ${theme.fg("dim", "· sem resposta")}`
+						: failed
+							? `${theme.fg("warning", "tempo esgotado")} ${theme.fg("dim", "· seguiu sem resposta")}`
+							: theme.fg("success", shown) + (v.note ? theme.fg("dim", ` · nota: ${v.note}`) : "");
 	// Sem ícone de estado no chat: a resposta já diz o estado na cor dele; os 2 espaços mantêm o ícone na coluna das tools.
 	const state = v.answer === undefined ? "" : "  ";
 	const rail = theme.fg("dim", "│");

@@ -3,7 +3,7 @@
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { readUserSetting } from "../_shared/settings/settings-chain.ts";
-import { type Batch, DISMISSED_TEXT, delegatedText, SKIPPED_TEXT } from "../_shared/ui/question-nav.ts";
+import { type Batch, chatText, DISMISSED_TEXT, delegatedText, SKIPPED_TEXT } from "../_shared/ui/question-nav.ts";
 import { askViaDialogs, askViaOverlay } from "./overlay.ts";
 import { offerRemoteQuestion } from "./remote.ts";
 import {
@@ -116,6 +116,11 @@ export async function askOne(
 	if (!result) return out(DISMISSED_TEXT, { answer: null });
 	// Batch navigation and the exit menu are consumed by runBatch, never shown to the model.
 	if (result.nav || result.exit) return out("", { answer: null });
+	if (result.chat)
+		return out(chatText([{ question: params.question, answer: result.answer || undefined }]), {
+			answer: null,
+			chat: true,
+		});
 	if (result.skipped) return out(SKIPPED_TEXT, { answer: "", skipped: true });
 	if (result.delegated)
 		return out(delegatedText(result.note), {

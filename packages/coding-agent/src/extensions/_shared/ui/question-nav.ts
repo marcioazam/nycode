@@ -20,6 +20,8 @@ export type Answer = {
 	nav?: "prev" | "next";
 	/** Batch only: the exit menu choice (send the answered ones, or discard everything). */
 	exit?: "send" | "discard";
+	/** The user chose "Chat about this": the call ends with Claude Code's clarify text. */
+	chat?: boolean;
 } | null;
 
 export type EditKind = "free" | "note" | "delegate";
@@ -38,6 +40,22 @@ interface Opt {
 	label: string;
 	description?: string;
 	isOther?: boolean;
+	isChat?: boolean;
+}
+
+/** The "Chat about this" row the overlay adds below the options (not on the dialog fallback). */
+export const CHAT_ROW: Opt = { label: "Conversar sobre isto", isChat: true };
+
+/** Claude Code's clarify text for "Chat about this", then each question with the answer Submit would send. */
+export function chatText(asked: { question: string; answer?: string }[]): string {
+	const list = asked.map((q) => `- "${q.question}"\n  ${q.answer ? `Answer: ${q.answer}` : "(No answer provided)"}`);
+	return `The user wants to clarify these questions.
+This means they may have additional information, context or questions for you.
+Take their response into account and then reformulate the questions if appropriate.
+Start by asking them what they would like to clarify.
+
+Questions asked:
+${list.join("\n")}`;
 }
 
 export interface SelectState {
@@ -106,6 +124,8 @@ export function selectKey(data: string, st: SelectState, opts: Opt[], multi: boo
 		return "redraw";
 	};
 	const confirm = (): Effect => {
+		if (opts[st.index].isChat)
+			return { done: { answer: multi ? selectedLabels(opts, st.checked) : "", wasCustom: false, chat: true } };
 		if (multi) return { done: { answer: selectedLabels(opts, st.checked), wasCustom: false } };
 		if (opts[st.index].isOther) return { edit: "free" };
 		return { done: { answer: opts[st.index].label, wasCustom: false, index: st.index + 1 } };
@@ -121,16 +141,16 @@ export function selectKey(data: string, st: SelectState, opts: Opt[], multi: boo
 	// A digit picks its option directly: single choice confirms at once (free text opens the editor), multiple toggles.
 	if (/^[1-9]$/.test(data) && Number(data) <= opts.length) {
 		st.index = Number(data) - 1;
-		return multi && !opts[st.index].isOther ? toggle(st.index) : confirm();
+		return multi && !opts[st.index].isOther && !opts[st.index].isChat ? toggle(st.index) : confirm();
 	}
-	if (multi && data === " ") return toggle(st.index);
+	if (multi && data === " ") return opts[st.index].isChat ? undefined : toggle(st.index);
 	if (multi && data === "a") {
-		const all = st.checked.every(Boolean);
-		st.checked = opts.map(() => !all);
+		const all = opts.every((o, i) => o.isChat || st.checked[i]);
+		st.checked = opts.map((o) => !o.isChat && !all);
 		return "redraw";
 	}
 	if (multi && data === "i") {
-		st.checked = opts.map((_, i) => !st.checked[i]);
+		st.checked = opts.map((o, i) => !o.isChat && !st.checked[i]);
 		return "redraw";
 	}
 	if (data === "o" || data === "0") {
@@ -152,6 +172,7 @@ export function selectKey(data: string, st: SelectState, opts: Opt[], multi: boo
 	}
 	if (data === "d") return { edit: "delegate" };
 	if (data === "n") {
+		if (opts[st.index].isChat) return undefined;
 		if (multi) st.checked[st.index] = true;
 		else if (opts[st.index].isOther) return undefined;
 		return { edit: "note" };
@@ -395,7 +416,8 @@ export async function runBatch(
 	const slots: (Out | undefined)[] = [];
 	const label = (i: number) => (specs[i].header ?? "").trim().slice(0, 12) || `Q${i + 1}`;
 	const tabs = (): Tab[] => specs.map((_, i) => ({ label: label(i), status: statusOf(slots[i]?.raw) }));
-	let outcome: "send" | "discard" | "dismiss" = "send";
+	let outcome: "send" | "discard" | "dismiss" | "chat" = "send";
+	let chatAnswer: string | undefined;
 	let i = 0;
 	let back = false; // came from the review to edit one question: return there after answering
 	for (;;) {
@@ -434,6 +456,11 @@ export async function runBatch(
 			outcome = raw.exit;
 			break;
 		}
+		if (raw.chat) {
+			outcome = "chat";
+			chatAnswer = raw.answer || undefined;
+			break;
+		}
 		if (raw.nav) {
 			back = false;
 			i = Math.max(0, i + (raw.nav === "next" ? 1 : -1));
@@ -443,6 +470,22 @@ export async function runBatch(
 		i = back ? n : i + 1;
 	}
 	const lost = (k: number) => ({ ...d.blank(k), pending: false, dismissed: true });
+	if (outcome === "chat") {
+		// The question on screen carries what Submit would send for it; the others, their confirmed answers.
+		const answerOf = (k: number): string | undefined => {
+			const raw = slots[k]?.raw;
+			if (statusOf(raw) !== "done" || !raw || raw.skipped || raw.delegated) return undefined;
+			return raw.answer;
+		};
+		const asked = specs.map((s, k) => ({
+			question: s.question,
+			answer: k === i ? (chatAnswer ?? answerOf(k)) : answerOf(k),
+		}));
+		return {
+			text: chatText(asked),
+			details: specs.map((_, k) => ({ ...(slots[k]?.details ?? d.blank(k)), chat: true })),
+		};
+	}
 	if (outcome === "discard") return { text: DISCARDED_TEXT, details: specs.map((_, k) => lost(k)) };
 	const parts = specs.map((s, k) => `${s.question}\n${slots[k]?.text ?? "not answered"}`);
 	if (outcome === "dismiss")

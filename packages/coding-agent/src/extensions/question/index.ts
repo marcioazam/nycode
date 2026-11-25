@@ -2,7 +2,8 @@
  * Question Tool - a question with options, single- or multi-select.
  * Full custom UI: options list + inline editor for "Type something..." (single-select
  * only), or space-toggled checkboxes when `multiSelect` is set. An optional `header`
- * labels the question. Escape in the editor returns to options (the draft is kept); Escape in options dismisses.
+ * labels the question. Escape cancels from anywhere (the exit menu once a batch has answers), as does Enter on a blank
+ * answer field; a "Chat about this" row ends the call with Claude Code's clarify text.
  * Several questions per call are a batch: tabs, back/forward, a final review (_shared/ui/question-nav.ts).
  * On the TUI each question is also offered to a remote responder over nycode.events
  * (REMOTE_QUESTION_CHANNEL); the first answer, local or remote, wins.
@@ -87,6 +88,7 @@ export default function questionExtension(nycode: ExtensionAPI) {
 					delegated: d.delegated,
 					note: d.note,
 					pending: d.pending,
+					chat: d.chat,
 				})),
 				theme,
 				options?.expanded === true,

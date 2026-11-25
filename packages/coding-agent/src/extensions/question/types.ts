@@ -8,7 +8,7 @@ export interface OptionWithDesc {
 	description?: string;
 }
 
-export type DisplayOption = OptionWithDesc & { isOther?: boolean };
+export type DisplayOption = OptionWithDesc & { isOther?: boolean; isChat?: boolean };
 
 export interface QuestionDetails {
 	question: string;
@@ -25,6 +25,8 @@ export interface QuestionDetails {
 	note?: string;
 	pending?: boolean;
 	dismissed?: boolean;
+	/** The user chose "Chat about this". */
+	chat?: boolean;
 }
 
 // Options with labels and optional descriptions

@@ -6,6 +6,7 @@ import type { Theme } from "../../modes/interactive/theme/theme.ts";
 import {
 	type Answer,
 	type Batch,
+	CHAT_ROW,
 	type EditKind,
 	exitLines,
 	helpLines,
@@ -40,7 +41,7 @@ const IDLE_TICK_MS = 250;
 export function askViaOverlay(
 	params: QuestionSpec,
 	ctx: ExtensionContext,
-	allOptions: DisplayOption[],
+	answerOptions: DisplayOption[],
 	multiSelect: boolean,
 	timeoutMs?: number,
 	remote?: RemoteQuestion,
@@ -53,6 +54,8 @@ export function askViaOverlay(
 			_kb: unknown,
 			done: (value: Answer) => void,
 		) => {
+			// The "Chat about this" row is the overlay's own: the remote responder and the dialogs never offer it.
+			const allOptions: DisplayOption[] = [...answerOptions, CHAT_ROW];
 			const st: SelectState = {
 				index: 0,
 				checked: allOptions.map(() => false),
@@ -130,20 +133,31 @@ export function askViaOverlay(
 			};
 			const editor = new Editor(tui, editorTheme);
 
-			// Revisiting an answered question restores the focus, the checks or the typed text.
+			// Revisiting an answered question restores the focus, the checks or the typed text; the confirmed row shows ✔.
 			const init = batch?.initial;
-			if (init && !init.skipped && !init.delegated) {
+			let confirmed: number | undefined;
+			if (init && !init.skipped && !init.delegated && !init.timedOut) {
 				if (init.wasCustom) {
 					st.index = Math.max(
 						0,
 						allOptions.findIndex((o) => o.isOther),
 					);
+					confirmed = st.index;
 					editor.setText(init.answer);
 					draftKind = "free";
 				} else if (multiSelect) {
 					const picked = init.answer ? init.answer.split(", ") : [];
-					st.checked = allOptions.map((o) => picked.includes(o.label));
-				} else if (init.index) st.index = init.index - 1;
+					st.checked = allOptions.map((o) => !o.isChat && picked.includes(o.label));
+				} else if (init.index) {
+					st.index = init.index - 1;
+					confirmed = st.index;
+				}
+			}
+
+			/** Esc from anywhere: the list's Esc (the exit menu once something in the batch is answered, else a cancel). */
+			function cancel(): void {
+				st.edit = undefined;
+				apply(selectKey("\u001b", st, allOptions, multiSelect, batch));
 			}
 
 			editor.onSubmit = (value) => {
@@ -157,11 +171,8 @@ export function askViaOverlay(
 							: { answer: allOptions[st.index].label, wasCustom: false, index: st.index + 1, ...note },
 					);
 				else if (text) finish({ answer: text, wasCustom: true });
-				else {
-					st.edit = undefined;
-					editor.setText("");
-					refresh();
-				}
+				// Enter on a blank answer field cancels, as Esc does.
+				else cancel();
 			};
 
 			function refresh() {
@@ -169,11 +180,25 @@ export function askViaOverlay(
 				tui.requestRender();
 			}
 
-			/** Esc leaves the editor for the list and keeps the draft; it is cleared only when the editor opens for another purpose. */
+			/** Esc cancels from the editor too; the draft is never sent. */
 			function handleEditInput(data: string): void {
-				if (matchesKey(data, Key.escape)) st.edit = undefined;
-				else editor.handleInput(data);
-				refresh();
+				if (matchesKey(data, Key.escape)) cancel();
+				else {
+					editor.handleInput(data);
+					refresh();
+				}
+			}
+
+			function apply(effect: ReturnType<typeof selectKey>): void {
+				if (effect === undefined) return;
+				if (effect === "redraw") refresh();
+				else if ("done" in effect) finish(effect.done);
+				else {
+					if (draftKind !== effect.edit) editor.setText("");
+					draftKind = effect.edit;
+					st.edit = effect.edit;
+					refresh();
+				}
 			}
 
 			function handleInput(data: string) {
@@ -182,15 +207,8 @@ export function askViaOverlay(
 				// them, including the ones (arrow keys, space) that never reach `finish`.
 				resetIdleTimer();
 
-				if (st.edit) return handleEditInput(data);
-				const effect = selectKey(data, st, allOptions, multiSelect, batch);
-				if (effect === undefined) return;
-				if (effect === "redraw") return refresh();
-				if ("done" in effect) return finish(effect.done);
-				if (draftKind !== effect.edit) editor.setText("");
-				draftKind = effect.edit;
-				st.edit = effect.edit;
-				refresh();
+				if (st.edit) handleEditInput(data);
+				else apply(selectKey(data, st, allOptions, multiSelect, batch));
 			}
 
 			function render(width: number): string[] {
@@ -216,6 +234,7 @@ export function askViaOverlay(
 									batch,
 									expanded: st.expanded,
 									editKind: st.edit,
+									confirmed,
 								});
 				return cachedLines;
 			}
