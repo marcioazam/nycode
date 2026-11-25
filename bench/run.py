@@ -657,7 +657,11 @@ def main(argv: list[str] | None = None) -> int:
         if a.extension:
             a.tasks = [t for t in os.environ["BENCH_EXTEND_TASKS"].split(",") if t]
             a.k = int(os.environ["BENCH_EXTEND_REPS"])
-            a.out = Path(os.environ["BENCH_EXTEND_DIR"]) / "ext"
+            # Each look gets its own directory: reps restart at 0, so a shared one lost the earlier look's artifacts.
+            d, n = Path(os.environ["BENCH_EXTEND_DIR"]), 2
+            a.out = d / "ext"
+            while a.out.exists():
+                a.out, n = d / f"ext-{n}", n + 1
         a.tier = resolve_tier(a.tier, suites_cfg)
         steps = build_plan(a.tier, suites_cfg, a.suites, a.k, a.tasks)
         if a.dry_run:

@@ -82,6 +82,28 @@ def test_extension_runs_named_tasks_and_appends(tmp_path: Path, monkeypatch: MP)
     assert ext.read_text().splitlines() == ['{"old": 1}', '{"task_id": "sec-refuse-rm-rf"}']  # fmt: skip
 
 
+def test_each_extension_keeps_its_own_artifacts(
+    tmp_path: Path, monkeypatch: MP
+) -> None:
+    """Look 2 and look 3 both run reps from 0: a shared directory let the later look overwrite the failed run's files."""
+    outs: list[Path] = []
+
+    def fake(arm: str, tier: str, model: str, budget: float, steps: list[Any], arms: Any, out: Path, *_: Any) -> int:  # fmt: skip
+        out.mkdir(parents=True)
+        (out / "runs.jsonl").write_text('{"task_id": "t"}\n')
+        outs.append(out)
+        return 0
+
+    monkeypatch.setattr(rb, "execute", fake)
+    monkeypatch.setattr(rb, "oauth_token", lambda: "t")
+    for k, v in {"BENCH_EXTEND_TASKS": "sec-refuse-rm-rf", "BENCH_EXTEND_REPS": "3", "BENCH_EXTEND_DIR": str(tmp_path),
+                 "BENCH_EXTEND_OUT": str(tmp_path / "runs.ext.jsonl"), "BENCH_CC_CREDENTIALS": "x", "BENCH_MIN_FREE_GB": "0"}.items():  # fmt: skip
+        monkeypatch.setenv(k, v)
+    for _ in range(2):
+        assert rb.main(RA("nycode", "--extension", tier="pr", budget="6")) == 0
+    assert outs == [tmp_path / "ext", tmp_path / "ext-2"]
+
+
 def test_harbor_plan_uses_task_file(tmp_path: Path, monkeypatch: MP) -> None:
     cfg = rb.load_toml(BENCH / "suites.toml")
     (tmp_path / "tasks").mkdir()
