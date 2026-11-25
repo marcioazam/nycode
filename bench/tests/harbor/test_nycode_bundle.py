@@ -136,3 +136,14 @@ def test_bundle_replaces_the_tarball_atomically(tmp_path: Path) -> None:
     assert r.returncode == 0, r.stderr
     assert out.stat().st_ino != before
     assert not list(tmp_path.glob("b.tgz.*"))  # no temporary left behind
+
+
+def test_bundle_finds_the_launcher_in_a_large_tarball(tmp_path: Path) -> None:
+    """grep -q in a pipe under pipefail: grep stops at the match, printf takes SIGPIPE and the assert read the
+    launcher as missing once the list outgrew the pipe buffer (bench-pr on PR #436, 2026-11-25)."""
+    repo, stage = _fixture(tmp_path)
+    docs = repo / "packages/coding-agent/docs"
+    for i in range(6000):
+        (docs / f"page-{i:05d}-{'x' * 40}.md").write_text("x")
+    r = _bundle(repo, stage, tmp_path / "b.tgz")
+    assert r.returncode == 0, r.stderr

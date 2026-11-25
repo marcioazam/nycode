@@ -57,7 +57,8 @@ if [ -n "$bad" ]; then
   printf '%s\n' "$bad" | head -20 >&2
   exit 1
 fi
-printf '%s\n' "$list" | grep -qx '\.local/lib/nycode/dist/bundle/cli\.js' || {
+# A here-string, not a pipe: grep -q stops at the match and, under pipefail, the writer's SIGPIPE failed the check.
+grep -qx '\.local/lib/nycode/dist/bundle/cli\.js' <<<"$list" || {
   echo "BUNDLE ASSERT FAILED: dist/bundle/cli.js not in $OUT" >&2
   exit 1
 }
