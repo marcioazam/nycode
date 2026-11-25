@@ -32,7 +32,10 @@ for m in jiti @silvia-odwyer/photon-node; do
 done
 
 STAGE=$(mktemp -d)
-trap 'rm -r "$STAGE"' EXIT
+# Written beside OUT and renamed at the end: suites of one round bundle into the same OUT at once, and an in-place
+# rewrite let one run read the other's half-written tarball (2026-11-25).
+TMP_OUT=$OUT.$$
+trap 'rm -r "$STAGE"; rm -f "$TMP_OUT"' EXIT
 lib=$STAGE/.local/lib/nycode
 mkdir -p "$STAGE/.nycode/agent" "$lib/dist/modes/interactive" "$lib/dist/core" "$lib/node_modules/@silvia-odwyer"
 overlay_copy "$HOME/.nycode/agent" "$STAGE/.nycode/agent" "$here/../arms/overlay-nycode.list"
@@ -44,10 +47,10 @@ cp -a "$pkg/dist/modes/interactive/theme" "$pkg/dist/modes/interactive/assets" "
 cp -a "$pkg/dist/core/export-html" "$lib/dist/core/export-html"
 cp -a "$repo/node_modules/jiti" "$lib/node_modules/jiti"
 cp -a "$repo/node_modules/@silvia-odwyer/photon-node" "$lib/node_modules/@silvia-odwyer/photon-node"
-tar --sort=name -czf "$OUT" -C "$STAGE" .nycode/agent .local/lib/nycode
+tar --sort=name -czf "$TMP_OUT" -C "$STAGE" .nycode/agent .local/lib/nycode
 
 # Assert: no credential-looking path inside, and the launcher is there.
-list=$(tar -tzf "$OUT")
+list=$(tar -tzf "$TMP_OUT")
 bad=$(printf '%s\n' "$list" | grep -E '(^|/)(auth\.json|models\.json|mcp-auth\.json|trust\.json|credentials\.json|\.credentials\.json|secrets\.env|id_rsa|id_ed25519)[^/]*$|(^|/)\.ssh(/|$)|(^|/)\.env|\.bak|(^|/)(sessions|__pycache__)(/|$)' || true)
 if [ -n "$bad" ]; then
   echo "BUNDLE ASSERT FAILED: forbidden paths inside $OUT:" >&2
@@ -58,4 +61,5 @@ printf '%s\n' "$list" | grep -qx '\.local/lib/nycode/dist/bundle/cli\.js' || {
   echo "BUNDLE ASSERT FAILED: dist/bundle/cli.js not in $OUT" >&2
   exit 1
 }
+mv -f "$TMP_OUT" "$OUT"
 echo "bundle ok: $OUT $(du -h "$OUT" | cut -f1), $(printf '%s\n' "$list" | wc -l) entries; no forbidden paths"
