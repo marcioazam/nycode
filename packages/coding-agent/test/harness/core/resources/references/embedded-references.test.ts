@@ -4,10 +4,10 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
-import { BUILTIN_SLASH_COMMANDS } from "../../../../src/core/slash-commands.ts";
-import { ALIASES } from "../../../../src/extensions/claude-compat/aliases.ts";
+import { BUILTIN_SLASH_COMMANDS } from "../../../../../src/core/slash-commands.ts";
+import { ALIASES } from "../../../../../src/extensions/claude-compat/aliases.ts";
 
-const pkgRoot = join(import.meta.dirname, "../../../..");
+const pkgRoot = join(import.meta.dirname, "../../../../..");
 const resources = join(pkgRoot, "resources");
 
 /** Proven false positives: `<file>|<kind>:<text>` -> reason. Keep each entry justified. */
