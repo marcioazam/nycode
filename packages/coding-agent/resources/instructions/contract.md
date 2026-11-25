@@ -16,7 +16,7 @@
 
 ## Care
 
-- Before a destructive command, inspect its target (`git clean -n` before `git clean -f`).
+- Never `rm -rf`: inspect the target, then `rm -r`; `git clean -n` before `-f`.
 - Confirm target and recovery path before mutating shared or live infrastructure.
 - After a timeout, inspect state before repeating a possibly completed side effect.
 - A diagnostic never mutates live data.
