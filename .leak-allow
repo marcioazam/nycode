@@ -48,3 +48,4 @@ packages/coding-agent/resources/commands/ralph-loop.md:marcioazam
 packages/coding-agent/schemas/settings.schema.json:marcioazam
 packages/coding-agent/test/harness/permissions/guard/decide-table.test.ts:/home/guard-test-user
 packages/coding-agent/test/harness/core/local-env.test.ts:/home/(u|fulano|me2?|badlogic)/?
+packages/coding-agent/src/migrations.ts:github\.com/marcioazam/nycode/blob/main/
