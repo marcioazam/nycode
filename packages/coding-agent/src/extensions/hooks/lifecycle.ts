@@ -123,14 +123,14 @@ export function continueFalseReason(results: HookRunResult[]): string | undefine
 	return postToolStop ? (postToolStop.stopReason ?? "Stopped by hook") : undefined;
 }
 
-/** The first completed result's updatedToolOutput, as the nycode output text. An MCP tool
- * also reads updatedMCPToolOutput. */
+/** The first completed result's hookSpecificOutput.updatedToolOutput, as the nycode output text. As in
+ * Claude Code the field is read there only; an MCP tool falls back to updatedMCPToolOutput. */
 export function updatedToolOutput(results: HookRunResult[], toolName: string, isMcp: boolean): string | undefined {
 	return results
 		.filter((result) => !result.timedOut)
 		.map((result) => {
-			const parsed = tryParseJson(result.stdout);
-			const value = isMcp ? (parsed?.updatedMCPToolOutput ?? parsed?.updatedToolOutput) : parsed?.updatedToolOutput;
+			const output = tryParseJson(result.stdout)?.hookSpecificOutput;
+			const value = isMcp ? (output?.updatedToolOutput ?? output?.updatedMCPToolOutput) : output?.updatedToolOutput;
 			return value === undefined ? undefined : nycodeToolOutput(toolName, value, isMcp);
 		})
 		.find((text) => text !== undefined);

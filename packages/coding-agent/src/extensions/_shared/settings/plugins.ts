@@ -10,6 +10,7 @@
  * installed_plugins.json records; without a usable record, the newest directory
  * not marked `.orphaned_at`, since an update leaves the old version in the cache
  * for a grace period and some directories are named by commit sha.
+ * A local marketplace's `./` entry loads from the marketplace itself, as in Claude Code.
  * The persistent data directory (${CLAUDE_PLUGIN_DATA}) survives updates at
  * ~/.nycode/agent/plugins/data/<id>, id being the qualified name folded to dashes.
  */
@@ -18,7 +19,7 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { statToken } from "../util/stat-token.ts";
-import { errorMessage, isRecord } from "../util/values.ts";
+import { errorMessage, isDirectory, isRecord, realpathOr } from "../util/values.ts";
 import { userConfigDir } from "./config-dir.ts";
 import { readManagedSettings } from "./managed-settings.ts";
 import { userSettingsFiles } from "./settings-chain.ts";
@@ -213,6 +214,59 @@ function contentToken(target: string): string {
 	}
 }
 
+/** The root of each local marketplace in `plugins/known_marketplaces.json`: Claude records it as
+ * `installLocation` for a `directory` source and for a `file` one alike. */
+function localMarketplaceRoots(): Map<string, string> {
+	const roots = new Map<string, string>();
+	for (const [name, entry] of Object.entries(
+		readJson(path.join(userConfigDir(), "plugins", "known_marketplaces.json")),
+	)) {
+		if (!isRecord(entry) || !isRecord(entry.source)) continue;
+		const kind = entry.source.source;
+		if ((kind === "directory" || kind === "file") && typeof entry.installLocation === "string")
+			roots.set(name, entry.installLocation);
+	}
+	return roots;
+}
+
+const contains = (root: string, target: string): boolean => {
+	const relative = path.relative(root, target);
+	return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative);
+};
+
+/** Claude Code loads a local marketplace's `./` entry from the marketplace itself, not from the copy cached at
+ * install time. Undefined leaves the cache to decide (a remote source, which Claude does copy); null is a plugin
+ * that does not load: the marketplace is gone or no longer lists it, or the entry leaves the marketplace directory,
+ * by its path or through a link, which Claude refuses. */
+function localPluginRoot(marketplaceRoot: string, directory: string): string | null | undefined {
+	const plugins = readJson(path.join(marketplaceRoot, ".claude-plugin", "marketplace.json")).plugins;
+	if (!Array.isArray(plugins)) return null;
+	const entry: unknown = plugins.find((plugin) => isRecord(plugin) && plugin.name === directory);
+	if (!isRecord(entry)) return null;
+	if (typeof entry.source !== "string" || !entry.source.startsWith("./")) return undefined;
+	const root = path.resolve(marketplaceRoot, entry.source);
+	// Resolving links catches both a climbing path and one that leaves through a link.
+	if (!contains(realpathOr(marketplaceRoot), realpathOr(root)) || !isDirectory(root)) return null;
+	return root;
+}
+
+/** The directory one installed plugin loads from: its local source, else its cached version. A live cached version
+ * is what says the plugin is installed at all: uninstalling leaves the source in place and only marks the cached
+ * copy orphaned. */
+function pluginRoot(
+	cacheDir: string,
+	marketplace: string,
+	directory: string,
+	installs: Map<string, string[]> | undefined,
+	locals: Map<string, string>,
+): string | undefined {
+	const cached = versionDir(path.join(cacheDir, marketplace, directory), installs?.get(`${directory}@${marketplace}`));
+	const local = locals.get(marketplace);
+	if (cached === undefined || local === undefined) return cached;
+	const fromSource = localPluginRoot(local, directory);
+	return fromSource === undefined ? cached : (fromSource ?? undefined);
+}
+
 /**
  * A cheap change signature for one home's plugin config: the settings files'
  * content hashes plus the cache tree's directory names and mtimes down through each plugin's
@@ -224,8 +278,9 @@ function pluginFingerprint(
 	cacheDir: string,
 	settingsFiles: string[],
 	index: Map<string, string[]> | undefined,
+	locals: Map<string, string>,
 ): string {
-	const parts = settingsFiles.map(contentToken);
+	const parts = [...settingsFiles.map(contentToken), JSON.stringify([...locals])];
 	for (const marketplace of listDirs(cacheDir)) {
 		const marketplaceDir = path.join(cacheDir, marketplace);
 		parts.push(`${marketplace}:${statTokenOrMissing(marketplaceDir)}`);
@@ -238,10 +293,10 @@ function pluginFingerprint(
 			}
 			// resolvePlugin reads only the resolved version's manifest, so its stat token is
 			// what an in-place edit (no directory entry changing) must move.
-			const resolved = versionDir(pluginPath, index?.get(`${pluginDir}@${marketplace}`));
+			const resolved = pluginRoot(cacheDir, marketplace, pluginDir, index, locals);
 			if (resolved)
 				parts.push(
-					`${marketplace}/${pluginDir}/${path.basename(resolved)}/manifest:${statTokenOrMissing(path.join(resolved, ".claude-plugin", "plugin.json"))}`,
+					`${marketplace}/${pluginDir}/${resolved}/manifest:${statTokenOrMissing(path.join(resolved, ".claude-plugin", "plugin.json"))}`,
 				);
 		}
 	}
@@ -264,7 +319,8 @@ export function installedPlugins(home: string, extraSettingsFiles: string[] = []
 	const settingsFiles = [...userSettingsFiles(), ...extraSettingsFiles];
 	const key = [home, ...extraSettingsFiles].join("\n");
 	const index = readInstallIndex();
-	const fingerprint = pluginFingerprint(cacheDir, settingsFiles, index);
+	const locals = localMarketplaceRoots();
+	const fingerprint = pluginFingerprint(cacheDir, settingsFiles, index, locals);
 	const cached = pluginCache.get(key);
 	if (cached?.fingerprint === fingerprint) return cached.plugins;
 	const enabled = enabledMap(settingsFiles);
@@ -272,7 +328,7 @@ export function installedPlugins(home: string, extraSettingsFiles: string[] = []
 	const plugins: InstalledPlugin[] = [];
 	for (const marketplace of listDirs(cacheDir)) {
 		for (const pluginDir of listPluginDirs(path.join(cacheDir, marketplace))) {
-			const plugin = resolvePlugin(cacheDir, marketplace, pluginDir, enabled, configs, index);
+			const plugin = resolvePlugin(cacheDir, marketplace, pluginDir, enabled, configs, index, locals);
 			if (plugin) plugins.push(plugin);
 		}
 	}
@@ -325,9 +381,10 @@ function resolvePlugin(
 	enabled: Record<string, boolean>,
 	configs: Record<string, Record<string, string>>,
 	installs: Map<string, string[]> | undefined,
+	locals: Map<string, string>,
 ): InstalledPlugin | null {
 	const qualified = `${pluginDir}@${marketplace}`;
-	const root = versionDir(path.join(cacheDir, marketplace, pluginDir), installs?.get(qualified));
+	const root = pluginRoot(cacheDir, marketplace, pluginDir, installs, locals);
 	if (!root) return null;
 	const manifest = readJson(path.join(root, ".claude-plugin", "plugin.json"));
 	if (!pluginEnabled(qualified, pluginDir, enabled, manifest)) return null;

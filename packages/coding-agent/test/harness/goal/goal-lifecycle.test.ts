@@ -144,6 +144,24 @@ test("avaliador: Haiku mais novo por padrão, retry com orçamento maior após c
 	mc.setCompleteBackend(null);
 });
 
+test("avaliador: modelo com limite declarado recebe o próprio limite de saída, sem retry de orçamento", async () => {
+	const calls: Loose[] = [];
+	const saved = haiku.maxTokens;
+	haiku.maxTokens = 64_000;
+	mc.setCompleteBackend(async (model: Loose, _c: Loose, options: Loose) => {
+		calls.push([model.id, options.maxTokens]);
+		return reply(`{"ok": true, "reason": "${"r".repeat(5_000)}"}`);
+	});
+	const h = harness();
+	await h.fire("session_start");
+	await h.command().handler("X pronto", h.ctx);
+	await h.fire("agent_end", { messages: [assistant()] });
+	haiku.maxTokens = saved;
+	assert.deepEqual(calls, [["claude-haiku-5-5", 64_000]]);
+	assert.match(h.sent.at(-1)!.content, /Goal achieved/);
+	mc.setCompleteBackend(null);
+});
+
 test("avaliador: falha irrecuperável no Haiku cai para o modelo da sessão (com reasoning mínimo)", async () => {
 	const calls: Loose[] = [];
 	mc.setCompleteBackend(async (model: Loose, _c: Loose, options: Loose) => {

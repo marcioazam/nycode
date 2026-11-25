@@ -82,7 +82,7 @@ import {
 	goalPanelLines,
 	indicatorText,
 } from "../_shared/goal/goal-ui.ts";
-import { canForceTool, completeText, completeToolCall } from "../_shared/model/model-complete.ts";
+import { canForceTool, completeText, completeToolCall, modelOutputLimit } from "../_shared/model/model-complete.ts";
 import { errorMessage } from "../_shared/util/values.ts";
 import { stopHookBlockCap } from "../hooks/index.ts";
 import { evaluatorModel, modelLabel, transcriptBudget } from "./evaluator-model.ts";
@@ -106,10 +106,8 @@ const GOAL_MESSAGE = "goal";
 /** Claude's prompt hooks allow 30 s, but the evaluator reads up to half a 1M-token window;
  * a slow evaluator is still an error, not a stall. */
 const EVALUATOR_TIMEOUT_MS = 90_000;
-/** A verdict is one JSON object; the cap stops a runaway reply. Thinking the model cannot
- * turn off shares this budget (model-complete keeps it at the lowest level). */
-const EVALUATOR_MAX_TOKENS = 1024;
-/** One retry with this cap when a reply was cut off before its verdict. */
+/** One retry with this cap when a reply was cut off before its verdict. Only a model without a declared
+ * output limit needs it: the others get their own limit, as in Claude Code, which sets no evaluator cap. */
 const EVALUATOR_RETRY_MAX_TOKENS = 4096;
 /** Evaluator calls per turn before the goal pauses on an evaluator error. */
 const EVALUATOR_ATTEMPTS = 3;
@@ -310,7 +308,7 @@ export default function goalExtension(nycode: ExtensionAPI) {
 		ctx: ExtensionContext,
 		active: ActiveGoal,
 		model: NonNullable<ExtensionContext["model"]>,
-		maxTokens: number,
+		maxTokens: number | undefined,
 		structured: boolean,
 	): Promise<GoalVerdict> {
 		const transcript = renderTranscript(branchMessages(ctx), transcriptBudget(model));
@@ -358,7 +356,7 @@ export default function goalExtension(nycode: ExtensionAPI) {
 		startedGeneration: number,
 	): Promise<GoalVerdict> {
 		let model = first;
-		let maxTokens = EVALUATOR_MAX_TOKENS;
+		let maxTokens = modelOutputLimit(first);
 		/** Off once a forced-tool call fails, so a provider that rejects it still gets a verdict as text. */
 		let toolAllowed = true;
 		let lastError: unknown;
@@ -370,7 +368,7 @@ export default function goalExtension(nycode: ExtensionAPI) {
 			} catch (error) {
 				lastError = error;
 				if (ctx.signal?.aborted || generation !== startedGeneration) throw error;
-				if (error instanceof TruncatedVerdict) {
+				if (error instanceof TruncatedVerdict && maxTokens === undefined) {
 					maxTokens = EVALUATOR_RETRY_MAX_TOKENS;
 					continue;
 				}
@@ -382,6 +380,7 @@ export default function goalExtension(nycode: ExtensionAPI) {
 						"warning",
 					);
 					model = ctx.model;
+					maxTokens = modelOutputLimit(model);
 					continue;
 				}
 				if (unrecoverable) throw error;

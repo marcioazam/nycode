@@ -95,6 +95,7 @@
  */
 
 import * as os from "node:os";
+import * as path from "node:path";
 import { exportResourcesRoot } from "../../core/builtin-resources.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import { INSTRUCTIONS_CHANNEL, isInstructionLoadEvent } from "../_shared/events/instruction-events.ts";
@@ -106,7 +107,7 @@ import { setSubagentStartHookRunner } from "../_shared/events/subagent-hooks.ts"
 import { claudeEffortLevel } from "../_shared/model/effort.ts";
 import { resolveModelOverride } from "../_shared/model/model-lookup.ts";
 import { approvalRecheck, isProjectApproved } from "../_shared/project/project-approval.ts";
-import { checkoutRoot } from "../_shared/project/project-root.ts";
+import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { installedPlugins, managedForceEnabled } from "../_shared/settings/plugins.ts";
 import { watchSettingsFiles } from "../_shared/settings/settings-watch.ts";
@@ -130,6 +131,8 @@ import {
 	readAllowedHttpHookUrls,
 	readDisableAllHooks,
 	readSettingsDisableAllHooks,
+	type SourceStamp,
+	settingsSourceStamps,
 } from "./config.ts";
 import { promptContext, runUserPromptSubmit, surfaceSystemMessages, tryParseJson } from "./decisions.ts";
 import {
@@ -258,7 +261,7 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		if (hook.type === "mcp_tool") return runMcpToolHook(hook, merged, ms);
 		if (hook.type === "internal") return runInternalHook(hook, merged, ms);
 		return runHookCommand(hook.command, merged, ms, {
-			projectDir,
+			projectDir: hook.projectDir ?? projectDir,
 			args: hook.args,
 			onChild,
 			shell: hook.shell,
@@ -475,17 +478,19 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 			loadPluginHooks(config, managedForceEnabled(installedPlugins(os.homedir())), hookSources);
 			return;
 		}
-		mergeNonManagedHooks(files);
+		mergeNonManagedHooks(files, settingsSourceStamps(cwd, os.homedir(), trusted));
 	}
 
 	/** Merge the non-managed hook sources into the managed config resolveConfig loaded:
 	 * settings files, plugins, a subagent child's agent hooks, and this session's skill hooks. */
-	function mergeNonManagedHooks(files: string[]): void {
+	function mergeNonManagedHooks(files: string[], stamps: Map<string, SourceStamp>): void {
 		// The embedded commands name ${NYCODE_RESOURCES}; claude-rules exports it too, but nothing here may depend on its order.
 		exportResourcesRoot();
 		for (const [eventName, matchers] of [
-			...Object.entries(loadSettingsHooks(settingsHooks, hookSources)),
-			...Object.entries(loadHooks(hookSourceFiles(files), hookSources)),
+			...Object.entries(
+				loadSettingsHooks(settingsHooks, hookSources, stamps.get(path.join(userConfigDir(), "settings.json"))),
+			),
+			...Object.entries(loadHooks(hookSourceFiles(files), hookSources, stamps)),
 		])
 			config[eventName] = [...(config[eventName] ?? []), ...matchers];
 		// Plugins are user-installed and enabled by user settings (see installedPlugins),
@@ -516,10 +521,10 @@ export default function hooksExtension(nycode: ExtensionAPI) {
 		registeredSkillHooks.length = 0;
 		spentOnce.clear();
 		const trusted = await isProjectApproved(ctx);
-		// Claude's CLAUDE_PROJECT_DIR is the project root, not the session cwd; a hook
-		// referencing $CLAUDE_PROJECT_DIR/.claude/hooks/helper.sh must resolve from a
-		// subdirectory session too.
-		projectDir = checkoutRoot(ctx.cwd);
+		// Claude passes the launch directory as CLAUDE_PROJECT_DIR, and anchors `/`-rooted `if` paths there,
+		// even from a repository subdirectory; a project or local settings hook gets its own folder (see
+		// settingsSourceStamps).
+		projectDir = ctx.cwd;
 		settingsHooks = nycode.getSettings().hooks;
 		resolveConfig(ctx.cwd, trusted);
 		// Claude picks up direct settings edits mid-session via a file watcher. The reload
