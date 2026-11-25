@@ -92,6 +92,7 @@ Configuração|hooks|||Mostra os hooks configurados
 Configuração|mcp|||Mostra servidores MCP e suas ferramentas
 Configuração|skills|||Lista as skills carregadas
 Configuração|skill-doctor|||Valida o frontmatter e as duplicatas das skills
+Configuração|claude-plugins|||Liga ou desliga os plugins do Claude Code instalados
 Configuração|reload|||Recarrega atalhos, extensões, skills e temas
 Configuração|painel|||Visão geral do que está ligado
 Configuração|notifications|avisos||Avisos, notificação, som e progresso na aba
