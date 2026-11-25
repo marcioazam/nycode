@@ -7,7 +7,7 @@
  * shares the lane's budget: NYCODE_SUBAGENT_BUDGET runs (default 64, nycode-subagents' per-tree
  * default) and NYCODE_SUBAGENT_COST_BUDGET USD of finished descendants (default 20: p99 of
  * one subagent run here was 7.2 USD, 2026-11-11). The main session is never capped: the
- * user sees every call it makes. Decision record: docs/harness/pi-multi-agent-2026-11-11.md.
+ * user sees every call it makes. Decision record: the multi-agent note of 2026-11-11 in docs/harness/.
  */
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
