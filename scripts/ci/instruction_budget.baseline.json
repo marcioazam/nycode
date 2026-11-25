@@ -8,7 +8,7 @@
     "packages/coding-agent/resources/agents/general-purpose.md": 35,
     "packages/coding-agent/resources/agents/plan-reviewer.md": 46,
     "packages/coding-agent/resources/agents/security-reviewer.md": 43,
-    "packages/coding-agent/resources/instructions/contract.md": 336,
+    "packages/coding-agent/resources/instructions/contract.md": 337,
     "packages/coding-agent/resources/instructions/headless.md": 230,
     "packages/coding-agent/resources/instructions/lite.md": 206,
     "packages/coding-agent/resources/skills/code-simplification/SKILL.md": 64,
@@ -23,6 +23,6 @@
     "packages/coding-agent/resources/skills/pr-review/SKILL.md": 70,
     "packages/coding-agent/resources/skills/security-audit/SKILL.md": 74
   },
-  "total": 1954,
+  "total": 1955,
   "version": 1
 }
