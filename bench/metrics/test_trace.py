@@ -2,6 +2,7 @@
 
 import json
 import re
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -193,7 +194,10 @@ def test_cc_session_timing(tmp_path: Any) -> None:
 
 # --- todo counters ------------------------------------------------------------
 def res(
-    i: str, name: str, body: str = "ok", todos: list[dict[str, str]] | None = None
+    i: str,
+    name: str,
+    body: str = "ok",
+    todos: Sequence[Mapping[str, object]] | None = None,
 ) -> dict[str, Any]:
     m: dict[str, Any] = {
         "role": "toolResult",

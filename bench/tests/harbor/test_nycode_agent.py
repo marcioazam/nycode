@@ -97,7 +97,12 @@ def na() -> Iterator[Any]:
 @pytest.fixture(autouse=True)
 def _no_arm_env(monkeypatch: MP) -> None:
     """The host's arm switches must not leak into the exact-env assertions."""
-    for k in ("NYCODE_TODO_SYNC_V2", "NYCODE_MCP_TOOL_SEARCH", "NYCODE_HEADLESS_TRIM", "NYCODE_SECRET_TOKEN"):
+    for k in (
+        "NYCODE_TODO_SYNC_V2",
+        "NYCODE_MCP_TOOL_SEARCH",
+        "NYCODE_HEADLESS_TRIM",
+        "NYCODE_SECRET_TOKEN",
+    ):
         monkeypatch.delenv(k, raising=False)
 
 
@@ -198,7 +203,11 @@ def test_run_invokes_the_bundled_cli_with_the_agent_env(na: Any) -> None:
     }
 
 
-ARM_ENV = {"NYCODE_TODO_SYNC_V2": "1", "NYCODE_MCP_TOOL_SEARCH": "1", "NYCODE_HEADLESS_TRIM": "0"}
+ARM_ENV = {
+    "NYCODE_TODO_SYNC_V2": "1",
+    "NYCODE_MCP_TOOL_SEARCH": "1",
+    "NYCODE_HEADLESS_TRIM": "0",
+}
 
 
 def test_arm_env_is_forwarded_to_install_and_run(
