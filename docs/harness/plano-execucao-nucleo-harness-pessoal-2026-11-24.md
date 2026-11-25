@@ -24,9 +24,15 @@ Status: aprovado pelo dono em 2026-11-24 ("Aprovo, executar F0–F7"). Em execu�
 - Achados do gate corrigidos na branch: `executeBash` voltava antes de gravar o arquivo de saída completa (teste
   instável sob carga; teste novo sem polling); `/list-agents` lia `claude-home/agents`, que não existe, e agora lista
   o que o subagent resolve; referências a `claude-home` em `src` apontam para os caminhos reais.
-- Desvios registrados: A5 deixa `bash` nos agentes somente leitura do plan mode (o próprio plan mode já permite bash
-  com o guard); a tool `outline` de A1 (tree-sitter) fica adiada para depois do merge; o `notify` único deixou de ler
+- Desvios registrados: A5 deixa `bash` nos agentes somente leitura do plan mode, e o filho herda
+  `NYCODE_PLAN_READONLY`, que prende o bash dele à allowlist do plan mode e bloqueia edit/write (achado do
+  security-reviewer: sem isso o filho escrevia fora do plan mode); a tool `outline` de A1 (tree-sitter) fica adiada para depois do merge; o `notify` único deixou de ler
   `preferredNotifChannel` do Claude e o toast do PowerShell.
+- Revisão de segurança (2026-11-25): o guard passou a pular `--namespace`, `--config-env`, `--attr-source` e
+  `--exec-path` como opções globais com valor (antes o valor virava o subcomando e o deny de `--no-verify` e de push
+  forçado não rodava). Riscos aceitos e anotados: um servidor MCP que mente em `readOnlyHint` roda em plan mode (o
+  servidor já é configurado pelo usuário); um filho com `tool_search` pode ativar tools MCP não diretas; `*` em
+  `plan.readOnlyTools` atravessa o separador `__`.
 - Sobras conhecidas, sem bloqueio: o teto `DEFAULT_STOP_HOOK_BLOCK_CAP = 8` (`hooks/lifecycle.ts`) para o ralph antes
   das 20 iterações padrão; o som segue a lista `som` (pede entrada, erro) e não todo fim de turno; mudar `editorMode`
   pede reload; o guard nega `gh pr merge --body "--admin"` (falso positivo); `scripts/harness/port-agents.py`

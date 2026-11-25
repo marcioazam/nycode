@@ -122,6 +122,6 @@ Every variable below overrides the `settings.json` key in the second column; the
 | `NYCODE_UI_STATE`, `NYCODE_REDUCED_MOTION`, `NYCODE_NERD_FONT`, `NYCODE_ASCII_ICONS` | `terminal.uiState`, `.reducedMotion`, `.nerdFont`, `.asciiIcons` |
 | `NYCODE_MCP_CONFIG` | `mcp.configPath` |
 
-`NYCODE_DISABLE_TERMINAL_TITLE`, `NYCODE_SUBAGENT`, and `NYCODE_SUBAGENT_DEPTH` have no settings key: the first is a switch for automation and the other two mark child processes.
+`NYCODE_DISABLE_TERMINAL_TITLE`, `NYCODE_SUBAGENT`, `NYCODE_SUBAGENT_DEPTH` and `NYCODE_PLAN_READONLY` have no settings key: the first is a switch for automation and the others mark child processes (`NYCODE_PLAN_READONLY=1`: spawned from plan mode, so bash keeps the plan allowlist and edit/write are blocked).
 
 Provider credentials such as `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, and provider-specific configuration are listed in [Providers](providers.md#use-an-api-key-from-the-environment).

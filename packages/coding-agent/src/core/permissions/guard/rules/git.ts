@@ -70,7 +70,17 @@ export function currentBranch(cwd: string): string | undefined {
 const lstripPlus = (text: string): string => text.replace(/^\++/, "");
 const PUSH_VALUE_OPTS = new Set(["-o", "--push-option", "--repo", "--receive-pack", "--exec"]);
 const PUSH_VALUE_OPTS_SHORT = new Set(["o"]);
-const GIT_VALUE_OPTS = new Set(["-C", "-c", "--git-dir", "--work-tree"]);
+// git global options whose value may be the next word (git 2.53); a missing one makes its value read as the subcommand
+const GIT_VALUE_OPTS = new Set([
+	"-C",
+	"-c",
+	"--git-dir",
+	"--work-tree",
+	"--namespace",
+	"--config-env",
+	"--attr-source",
+	"--exec-path",
+]);
 
 // Options of `git commit` and `git merge` that take a value (the next word, or the rest of a short cluster): a value
 // such as `-m "--no-verify"` is a message, not the flag.

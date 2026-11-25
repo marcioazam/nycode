@@ -111,6 +111,11 @@ const CATASTROPHIC_DENY = [
 	"git push origin feature --no-verify",
 	"git merge --no-verify feature",
 	"git -C repo push --no-verify",
+	// global options whose value is the next word must not be read as the subcommand
+	"git --config-env core.x=HOME commit -n -m x",
+	"git --namespace x commit -n -m x",
+	"git --attr-source HEAD commit -n -m x",
+	"git --config-env core.x=HOME push -f origin main",
 	"bash -c 'git push --no-verify'",
 	"echo $(git commit --no-verify -m x)",
 	"gh pr merge 12 --admin --squash",

@@ -28,6 +28,8 @@
 
 ### Fixed
 
+- Fixed read-only subagents started in plan mode running unrestricted bash: they inherit `NYCODE_PLAN_READONLY`, which keeps plan mode's bash allowlist and blocks edit/write
+- Fixed the git guard reading the value of `--namespace`, `--config-env`, `--attr-source` and `--exec-path` as the subcommand, which skipped the `--no-verify` and force-push denies
 - Fixed `/list-agents`, which read a `claude-home/agents` directory that no longer exists: it now lists the agents the subagent tool resolves
 - Fixed the bash full-output file being read before it was flushed: `executeBash` now resolves only after the temp file is written
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs

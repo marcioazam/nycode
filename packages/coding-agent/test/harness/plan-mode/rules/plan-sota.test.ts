@@ -43,7 +43,7 @@ function setup() {
 	const ctx = fakeCtx({
 		sessionManager: { getEntries: () => [], getBranch: () => [], getSessionId: () => "abcdef12-3456" },
 	});
-	return { on: fake.on, cmds: fake.cmds, tools: fake.tools, sent: fake.sent, ctx };
+	return { on: fake.on, cmds: fake.cmds, tools: fake.tools, sent: fake.sent, shortcuts: fake.shortcuts, ctx };
 }
 
 test("AC1: ferramentas fixas de leitura passam", () => {
@@ -185,6 +185,39 @@ test("AC3 pelo handler: subagent read-only roda com agentScope user; o com edit 
 	} finally {
 		if (savedAgentDir === undefined) delete process.env.NYCODE_CODING_AGENT_DIR;
 		else process.env.NYCODE_CODING_AGENT_DIR = savedAgentDir;
+	}
+});
+
+test("subagente de plan mode herda a marca: bash só da allowlist, edit/write bloqueados; fora de plan mode a marca sai", async () => {
+	const saved = process.env.NYCODE_PLAN_READONLY;
+	try {
+		delete process.env.NYCODE_PLAN_READONLY;
+		const parent = setup();
+		await parent.on.tool_call({ toolName: "read", input: {} }, parent.ctx);
+		assert.equal(process.env.NYCODE_PLAN_READONLY, undefined);
+		await parent.cmds.plan.handler("", parent.ctx);
+		await parent.on.tool_call({ toolName: "subagent", input: { task: "x" } }, parent.ctx);
+		assert.equal(process.env.NYCODE_PLAN_READONLY, "1", "the child spawned by this call inherits the marker");
+		// the child: a fresh extension that loads with the inherited marker and is not in plan mode itself
+		const child = setup();
+		assert.equal(
+			(await child.on.tool_call({ toolName: "bash", input: { command: "rm -r src" } }, child.ctx))?.block,
+			true,
+		);
+		assert.equal(
+			(await child.on.tool_call({ toolName: "bash", input: { command: "printf x > a.ts" } }, child.ctx))?.block,
+			true,
+		);
+		assert.equal(await child.on.tool_call({ toolName: "bash", input: { command: "ls -la" } }, child.ctx), undefined);
+		assert.equal((await child.on.tool_call({ toolName: "edit", input: { path: "a.ts" } }, child.ctx))?.block, true);
+		assert.equal(await child.on.tool_call({ toolName: "read", input: { path: "a.ts" } }, child.ctx), undefined);
+		// leave plan mode (Ctrl+Shift+P; /plan only enters)
+		await parent.shortcuts.find((s: Loose) => s.description === "Toggle plan mode").handler(parent.ctx);
+		await parent.on.tool_call({ toolName: "subagent", input: { task: "x" } }, parent.ctx);
+		assert.equal(process.env.NYCODE_PLAN_READONLY, undefined, "children spawned after plan mode run unrestricted");
+	} finally {
+		if (saved === undefined) delete process.env.NYCODE_PLAN_READONLY;
+		else process.env.NYCODE_PLAN_READONLY = saved;
 	}
 });
 

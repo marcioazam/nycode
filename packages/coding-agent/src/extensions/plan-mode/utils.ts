@@ -561,7 +561,8 @@ export function lintPlan(plan: string): string[] {
 
 /**
  * Built-in tools a subagent may carry in `tools:` for plan mode: no edit, write or subagent. `bash` is allowed for
- * parity with Claude Code's Explore/Plan agents; the child's own bash still goes through the permission guard.
+ * parity with Claude Code's Explore/Plan agents; the child inherits NYCODE_PLAN_READONLY (index.ts), which holds its bash
+ * to plan mode's allowlist.
  */
 const PLAN_AGENT_TOOLS = new Set([
 	"read",

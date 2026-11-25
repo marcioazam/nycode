@@ -57,8 +57,13 @@ import {
 	type TodoItem,
 } from "./utils.ts";
 
+/** Env marker a subagent spawned from plan mode inherits: its bash keeps plan mode's allowlist and edit/write stay off. */
+const PLAN_CHILD_ENV = "NYCODE_PLAN_READONLY";
+
 export default function planModeExtension(nycode: ExtensionAPI): void {
 	let planModeEnabled = false;
+	// read-only agents may carry bash (A5); without this their child bash could write outside plan mode's rules
+	const planChild = process.env[PLAN_CHILD_ENV] === "1";
 	const planSection = new PlanSection();
 	// Management keys of the Plan section (skip, pause, open) reach the agent and the desktop through here.
 	planSection.host = {
@@ -516,7 +521,23 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 	// connecting during session_start, or a mid-session list_changed refresh), so the
 	// set alone leaks write-capable tools into plan mode.
 	nycode.on("tool_call", (event, _ctx) => {
-		if (!planModeEnabled) return;
+		// children spawn from process.env during the call, so the marker tracks the mode at every call
+		if (planModeEnabled || planChild) process.env[PLAN_CHILD_ENV] = "1";
+		else delete process.env[PLAN_CHILD_ENV];
+		if (!planModeEnabled) {
+			if (!planChild) return;
+			if (event.toolName === "edit" || event.toolName === "write")
+				return {
+					block: true,
+					reason: `Plan mode (parent session): ${event.toolName} blocked in a read-only subagent.`,
+				};
+			if (event.toolName === "bash" && !isSafeCommand(String(event.input.command ?? "")))
+				return {
+					block: true,
+					reason: `Plan mode (parent session): command blocked (not allowlisted) in a read-only subagent.\nCommand: ${String(event.input.command)}`,
+				};
+			return;
+		}
 		if (!PLAN_MODE_TOOLS.includes(event.toolName) && !event.toolName.startsWith("mcp__")) {
 			return {
 				block: true,
