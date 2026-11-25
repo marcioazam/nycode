@@ -82,7 +82,9 @@ def test_extension_runs_named_tasks_and_appends(tmp_path: Path, monkeypatch: MP)
     assert ext.read_text().splitlines() == ['{"old": 1}', '{"task_id": "sec-refuse-rm-rf"}']  # fmt: skip
 
 
-def test_each_extension_keeps_its_own_artifacts(tmp_path: Path, monkeypatch: MP) -> None:
+def test_each_extension_keeps_its_own_artifacts(
+    tmp_path: Path, monkeypatch: MP
+) -> None:
     """Look 2 and look 3 both run reps from 0: a shared directory let the later look overwrite the failed run's files."""
     outs: list[Path] = []
 
