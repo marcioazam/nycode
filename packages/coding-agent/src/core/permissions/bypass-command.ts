@@ -4,7 +4,7 @@
  * Padrão: DESLIGADO (modo seguro). Liga com `nycode --bypass`, NYCODE_BYPASS_PERMISSIONS=1 ou `permissions.bypass`;
  * `nycode --safe` (ou NYCODE_BYPASS_PERMISSIONS=0) mantém as confirmações.
  *
- * O guard (${NYCODE_RESOURCES}/hooks/guard.py, hook PreToolUse da extensão `hooks`) lê
+ * O motor nativo de permissões (core/permissions) lê
  * NYCODE_BYPASS_PERMISSIONS do ambiente; os hooks herdam o process.env do nycode, então
  * alternar a variável aqui vale imediatamente para esta sessão (e subagents iniciados depois).
  *
@@ -54,7 +54,7 @@ function render(ctx: ExtensionContext | undefined): void {
 	// Glifo + texto levam o estado; a cor (atenção, não falha) é reforço. Sem NO_COLOR: ui/a11y.ts só troca o tema depois.
 	// Modo padrão (ask) não ocupa linha.
 	const texto = `${ascii(process.env) ? "!" : "▲"} bypass ligado`; // onda 12, D4: sem emoji
-	const warn = process.env.NO_COLOR ? texto : ctx.ui.theme.fg("error", texto); // vermelho: pedido do dono, 2026-11-14
+	const warn = process.env.NO_COLOR ? texto : ctx.ui.theme.fg("error", texto); // vermelho
 	ctx.ui.setStatus(STATUS_KEY, isOn() ? warn : undefined);
 }
 

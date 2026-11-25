@@ -1,5 +1,5 @@
 /**
- * Mensagem `[plan-mode-execute]` (dono, 2026-11-20, lab /execplano: "Lista de etapas" + "Desliza"): o que dá para saber do plano
+ * Mensagem `[plan-mode-execute]`: o que dá para saber do plano
  * a partir do ramo da sessão. O nycode grava uma entrada `custom` `plan-mode` ({todos: [{step, text, completed}], executing})
  * ANTES de enviar a mensagem e a regrava a cada mudança; `plan-complete` e `plan-cancelled` são mensagens que fecham a execução.
  * Sem essas entradas só resta o texto `Execute the plan. Start with: <1ª etapa>`: mostra só a 1ª etapa, sem total (nunca inventa).

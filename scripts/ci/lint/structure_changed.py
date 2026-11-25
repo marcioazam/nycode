@@ -7,7 +7,7 @@ The limits bind only what nycode creates (OWN_PREFIXES, AGENTS.md and the migrat
 listed in structure-upstream.txt and stay exempt.
 
 Usage: changed-files.sh | structure_changed.py [--root DIR]
-Code suffixes come from packages/coding-agent/resources/bin/structure/structure.py (owner of the list) when the
+Code suffixes come from scripts/ci/lint/structure/structure.py (owner of the list) when the
 scanned root has it; otherwise DEFAULT_SUFFIXES, a copy kept equal by test_default_suffixes_match_owner.
 """
 
@@ -20,7 +20,7 @@ from pathlib import Path
 
 MAX_LINES = 800
 MAX_FILES = 7
-HARNESS_STRUCTURE = "packages/coding-agent/resources/bin/structure/structure.py"
+HARNESS_STRUCTURE = "scripts/ci/lint/structure/structure.py"
 UPSTREAM_LIST = Path(__file__).with_name("structure-upstream.txt")
 OWN_PREFIXES = (
     "packages/coding-agent/src/extensions/",

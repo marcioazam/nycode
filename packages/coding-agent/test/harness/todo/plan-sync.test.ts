@@ -1,4 +1,4 @@
-// Plano em execução ↔ lista do todo (dono, 2026-11-24: "estava no 1 marcando mas já estávamos no 13"): as etapas do
+// Plano em execução ↔ lista do todo ("estava no 1 marcando mas já estávamos no 13"): as etapas do
 // plano aparecem na lista, andam com [DONE:n], concluir pelo todo conclui a etapa, sobrevivem ao resume e somem no fim.
 import assert from "node:assert/strict";
 import { test } from "vitest";

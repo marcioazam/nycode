@@ -1,5 +1,5 @@
 // Port of patches/nycode/zzzzzzzzzzzzzzzzzz-memory-notice (node:test).
-// Owner request (2026-11-14, variant C): "Memory: 11 memories loaded" becomes `◆ memória  11 notas · 7 projeto · … · /memory`.
+// "Memory: 11 memories loaded" becomes `◆ memória  11 notas · 7 projeto · … · /memory`.
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -51,7 +51,7 @@ describe("memoryNotice", () => {
 		expect(memoryNotice(dir, "- [x](../fora.md): y", undefined, {})).toBe("◆ memória  1 nota · 1 sem tipo · /memory");
 	});
 
-	// Owner request (2026-11-14): minimal brain icon for memory, only where a Nerd Font renders (kitty or NYCODE_NERD_FONT=1);
+	// Minimal brain icon for memory, only where a Nerd Font renders (kitty or NYCODE_NERD_FONT=1);
 	// an ASCII request or an unknown terminal keeps the diamond.
 	it("icon: brain with a Nerd Font, diamond without", () => {
 		const iconDir = mkdtempSync(join(tmpdir(), "mem-icone-"));
@@ -66,7 +66,7 @@ describe("memoryNotice", () => {
 		rmSync(iconDir, { recursive: true });
 	});
 
-	// Owner request (2026-11-14): the memory notice in a neutral-background box. The notify goes out marked with U+2063 (invisible)
+	// The memory notice in a neutral-background box. The notify goes out marked with U+2063 (invisible)
 	// and the core draws the box; without the mark the box is not drawn.
 	it("the start notice goes out marked for the neutral box", () => {
 		const src = readFileSync(join(import.meta.dirname, "../../../src/extensions/memory/index.ts"), "utf8");

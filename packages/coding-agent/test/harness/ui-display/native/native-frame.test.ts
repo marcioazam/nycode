@@ -90,7 +90,7 @@ test("native nycode: one tab bar with a rule below, only the open tab has a body
 		const o = await openByClick(s, /Plan/, "Plan");
 		const bar = barRow(o);
 		assert.ok(!/Context test/.test(o), `Status body hidden once Plan is open\n${o}`);
-		// Plan detail (time, window) sits on the footer line under the table (owner, 2026-11-14; was the bar); the count stays in the label only.
+		// Plan detail (time, window) sits on the footer line under the table (was the bar); the count stays in the label only.
 		assert.match(lines(o)[bar], /^Status {3}Plan 3\/20\s*$/, o);
 		assert.match(lines(o)[bar + 9], /^\d\d:\d\d · \d\/6 na tela/, o);
 		assert.equal(lines(o)[bar].split("3/20").length - 1, 1, `count not repeated\n${o}`);

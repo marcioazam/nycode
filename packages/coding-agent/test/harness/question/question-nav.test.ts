@@ -1,4 +1,4 @@
-// Ported from zzzzzzzzzzzzzzzzzzzzzzzzz-question-nav.test.ts (owner request 2026-11-15): navigation between the questions of a batch,
+// Ported from zzzzzzzzzzzzzzzzzzzzzzzzz-question-nav.test.ts: navigation between the questions of a batch,
 // tabs, review, esc with answers, list commands. Contract: discarding, esc or skipping goes to the model with its own text
 // (it decides whether to ask again). Assertions are the original ones (node:assert/strict inside vitest).
 import assert from "node:assert/strict";

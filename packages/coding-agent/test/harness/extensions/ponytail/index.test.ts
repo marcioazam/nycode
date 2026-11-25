@@ -151,6 +151,28 @@ describe("embedded ponytail extension", () => {
 		}
 	});
 
+	it("without a matcher, a child with a read-only tools list gets no rules and a writer or an unrestricted one does", async () => {
+		process.env.NYCODE_SUBAGENT = "1";
+		process.env.PONYTAIL_PARENT_MODE = "full";
+		const argv = [...process.argv];
+		const start = async (...extra: string[]) => {
+			// session_start writes the child's level back to PONYTAIL_PARENT_MODE; each case starts from a "full" parent
+			process.env.PONYTAIL_PARENT_MODE = "full";
+			process.argv.splice(0, process.argv.length, ...argv, "--system-prompt", "/tmp/p/prompt-a.md", ...extra);
+			const child = await fake();
+			await child.run("session_start");
+			return child.prompt();
+		};
+		try {
+			expect(await start("--tools", "read,grep,find")).toBeUndefined();
+			expect(await start("--tools", "read,edit")).toContain("level: full");
+			expect(await start("--tools", "write")).toContain("level: full");
+			expect(await start()).toContain("level: full");
+		} finally {
+			process.argv.splice(0, process.argv.length, ...argv);
+		}
+	});
+
 	it("session_start restores the latest persisted level of the branch", async () => {
 		const { run, prompt } = await fake([{ type: "custom", customType: "ponytail-mode", data: { mode: "lite" } }]);
 		await run("session_start");

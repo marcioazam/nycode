@@ -66,7 +66,7 @@ def _private_dir(path: Any, create: Any) -> Any:
         or stat.S_IMODE(st.st_mode) != 0o700
     ):
         raise TransportError(
-            "diretório de transporte inseguro (dono, modo 0700 ou link)"
+            "diretório de transporte inseguro"
         )
     return path
 

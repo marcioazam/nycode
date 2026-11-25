@@ -342,7 +342,7 @@ export function pillChip(inner: string, boxBgRgb: Rgb | undefined): string {
 	return `${open} ${body} \x1b[49m`;
 }
 
-/** Respiração (dono, 2026-11-20: spinner braille só na caixa de digitação): o texto de quem aguarda oscila entre dim e `token`
+/** Respiração (spinner braille só na caixa de digitação): o texto de quem aguarda oscila entre dim e `token`
  * (ciclo de 1600 ms). Sem movimento, sem cor ou sem foco, fica em `token`. */
 export function respira(
 	t: { fg: (c: string, s: string) => string; getFgAnsi?: (c: string) => string },

@@ -1,36 +1,39 @@
-// The `internal` hook type: the runner (registered name, timeout, unknown name) and the configuration check.
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+// The `internal` hook type: the runner (registered name, timeout, unknown name) and the configuration check. The real
+// registry is replaced by a test double that holds two.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { formatHooksSummary } from "../../../../src/extensions/hooks/config.ts";
-import { internalHook, internalHookNames } from "../../../../src/extensions/hooks/internal/registry.ts";
+import type { InternalHook } from "../../../../src/extensions/hooks/internal/registry.ts";
 import { runInternalHook } from "../../../../src/extensions/hooks/runners.ts";
 
-const dirs: string[] = [];
-afterEach(() => {
-	for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true });
-	vi.restoreAllMocks();
+const { hooks } = vi.hoisted(() => ({ hooks: new Map<string, unknown>() }));
+
+vi.mock("../../../../src/extensions/hooks/internal/registry.ts", () => ({
+	internalHook: (name: unknown) => (typeof name === "string" ? hooks.get(name) : undefined),
+	internalHookNames: () => [...hooks.keys()],
+}));
+
+const echo: InternalHook = async (payload) => ({
+	code: 0,
+	stdout: JSON.stringify({ seen: payload.event }),
+	stderr: "",
 });
+const never: InternalHook = () => new Promise(() => {});
+const boom: InternalHook = async () => {
+	throw new Error("boom");
+};
+
+afterEach(() => hooks.clear());
 
 describe("internal hooks", () => {
-	it("registers graph-context and nothing unknown", () => {
-		expect(internalHookNames()).toEqual(["graph-context"]);
-		expect(internalHook("graph-context")).toBeTypeOf("function");
-		expect(internalHook("nope")).toBeUndefined();
-		expect(internalHook(undefined)).toBeUndefined();
-	});
-
 	it("runs a registered hook like a command hook: exit code, stdout, no timeout", async () => {
-		const cwd = mkdtempSync(join(tmpdir(), "internal-hook-"));
-		dirs.push(cwd);
+		hooks.set("echo", echo);
 		const result = await runInternalHook(
-			{ type: "internal", name: "graph-context", command: "internal:graph-context" },
-			{ hook_event_name: "SessionStart", cwd },
-			20_000,
+			{ type: "internal", name: "echo", command: "internal:echo" },
+			{ event: "x" },
+			1000,
 		);
 		expect(result).toMatchObject({ code: 0, timedOut: false });
-		expect(JSON.parse(result.stdout).hookSpecificOutput.hookEventName).toBe("SessionStart");
+		expect(JSON.parse(result.stdout)).toEqual({ seen: "x" });
 	});
 
 	it("an unknown name is a failed hook, never a silent pass", async () => {
@@ -39,12 +42,16 @@ describe("internal hooks", () => {
 		expect(result.stderr).toContain("not registered");
 	});
 
+	it("a hook that throws is a failed hook (exit 1) with the message", async () => {
+		hooks.set("boom", boom);
+		const result = await runInternalHook({ type: "internal", name: "boom", command: "internal:boom" }, {}, 1000);
+		expect(result).toMatchObject({ code: 1, timedOut: false });
+		expect(result.stderr).toContain("boom");
+	});
+
 	it("reports the deadline as a timeout so a gated event fails closed", async () => {
-		const result = await runInternalHook(
-			{ type: "internal", name: "graph-context", command: "internal:graph-context" },
-			{ hook_event_name: "SessionStart", cwd: tmpdir() },
-			1,
-		);
+		hooks.set("never", never);
+		const result = await runInternalHook({ type: "internal", name: "never", command: "internal:never" }, {}, 1);
 		expect(result).toMatchObject({ code: 1, timedOut: true });
 	});
 
@@ -53,13 +60,13 @@ describe("internal hooks", () => {
 			SessionStart: [
 				{
 					hooks: [
-						{ type: "internal", name: "graph-context", command: "" },
+						{ type: "internal", name: "echo", command: "" },
 						{ type: "internal", command: "" },
 					],
 				},
 			],
 		});
-		expect(text).toContain("internal: graph-context");
+		expect(text).toContain("internal: echo");
 		expect(text).toContain("internal: (missing name)");
 	});
 });

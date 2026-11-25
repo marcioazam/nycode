@@ -35,9 +35,9 @@ afterEach(() => {
 
 posix("loadLocalEnv", () => {
 	it("loads the allowlisted keys, skipping comments and blank lines", () => {
-		write("# comment\n\nNYCODE_COMPACT_AT=123456\nPONYTAIL_QUIET_STARTUP=1\nCODEGRAPH_AUTO_ROOT=/src\n");
+		write("# comment\n\nNYCODE_COMPACT_AT=123456\nPONYTAIL_QUIET_STARTUP=1\nNYCODE_EFFORT_SANDWICH=1\n");
 		load();
-		expect(env).toEqual({ NYCODE_COMPACT_AT: "123456", PONYTAIL_QUIET_STARTUP: "1", CODEGRAPH_AUTO_ROOT: "/src" });
+		expect(env).toEqual({ NYCODE_COMPACT_AT: "123456", PONYTAIL_QUIET_STARTUP: "1", NYCODE_EFFORT_SANDWICH: "1" });
 		expect(warnings).toEqual([]);
 	});
 
@@ -48,22 +48,26 @@ posix("loadLocalEnv", () => {
 	});
 
 	it("never overrides a variable that is already set, even an empty one", () => {
-		env = { NYCODE_COMPACT_AT: "999", NYCODE_KNOWLEDGE_VAULT: "" };
-		write("NYCODE_COMPACT_AT=1\nNYCODE_KNOWLEDGE_VAULT=/vault\n");
+		env = { NYCODE_COMPACT_AT: "999", NYCODE_EFFORT_SANDWICH: "" };
+		write("NYCODE_COMPACT_AT=1\nNYCODE_EFFORT_SANDWICH=/vault\n");
 		load();
-		expect(env).toEqual({ NYCODE_COMPACT_AT: "999", NYCODE_KNOWLEDGE_VAULT: "" });
+		expect(env).toEqual({ NYCODE_COMPACT_AT: "999", NYCODE_EFFORT_SANDWICH: "" });
 	});
 
 	it("keeps values literal: no expansion, no command substitution, split at the first =", () => {
-		write("NYCODE_GRAPHS_VAULT=$(touch /nonexistent/x)$HOME=a\n");
+		write("NYCODE_EFFORT_SANDWICH_TURNS=$(touch /nonexistent/x)$HOME=a\n");
 		load();
-		expect(env.NYCODE_GRAPHS_VAULT).toBe("$(touch /nonexistent/x)$HOME=a");
+		expect(env.NYCODE_EFFORT_SANDWICH_TURNS).toBe("$(touch /nonexistent/x)$HOME=a");
 	});
 
 	it("drops one pair of matching quotes and the CR of a CRLF line", () => {
-		write('NYCODE_KNOWLEDGE_VAULT="/my vault"\r\nNYCODE_GRAPHS_VAULT=\'/g\'\r\nNYCODE_COMPACT_AT=""\r\n');
+		write('NYCODE_EFFORT_SANDWICH="/my vault"\r\nNYCODE_EFFORT_SANDWICH_TURNS=\'/g\'\r\nNYCODE_COMPACT_AT=""\r\n');
 		load();
-		expect(env).toEqual({ NYCODE_KNOWLEDGE_VAULT: "/my vault", NYCODE_GRAPHS_VAULT: "/g", NYCODE_COMPACT_AT: '""' });
+		expect(env).toEqual({
+			NYCODE_EFFORT_SANDWICH: "/my vault",
+			NYCODE_EFFORT_SANDWICH_TURNS: "/g",
+			NYCODE_COMPACT_AT: '""',
+		});
 	});
 
 	it("ignores unknown keys (the old PI_* names included) and lines without =, naming the line", () => {

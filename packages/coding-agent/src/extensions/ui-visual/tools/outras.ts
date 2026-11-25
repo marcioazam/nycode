@@ -74,7 +74,7 @@ const chamadaGenerica =
 		invalidate() {},
 	});
 
-// Pedido do dono (2026-11-14, variante B): run com cabeçalho curto (`run  aguardou 30s gw-lean`) e linha de fatos (estado em cor,
+// Run com cabeçalho curto (`run  aguardou 30s gw-lean`) e linha de fatos (estado em cor,
 // duração, id, log); a saída vem recuada e só quando existe. O estado é o do RUN (rodando, exit 0, exit ≠ 0, parado), lido do
 // texto que a tool devolve (nycode run/tool.ts: `line` e `summary`); texto não reconhecido (list, stop, erro) sai como veio.
 const RUN_LINHA =
@@ -148,7 +148,7 @@ const runCorpo = (
 	);
 };
 
-// Pedido do dono (2026-11-14, variante B): subagente no padrão do run. Cabeçalho `subagente  <agente | paralelo · N agentes>`,
+// Subagente no padrão do run. Cabeçalho `subagente  <agente | paralelo · N agentes>`,
 // linha de fatos (estado em cor, onde roda, id, turnos) e embaixo a tarefa (rodando) ou a 1ª linha do resultado de cada agente,
 // quem falhou primeiro. Quem foi para segundo plano sai como "enviado", sem estado e com fundo neutro (o resultado chega no aviso). Aberto (ctrl+o) mostra os
 // fatos e o desenho nativo inteiro; status, cancel, resume, send e erros saem com o desenho nativo.
@@ -167,7 +167,7 @@ const subAlvo = (a: Record<string, unknown>): string => {
 					? `mensagem para ${a.send}`
 					: "";
 };
-// Card em chips (dono, 2026-11-20, lab /subag desenho 5 + "Brilho no nome"): quem desenha é sub/chips.ts, na linha da chamada;
+// Card em chips: quem desenha é sub/chips.ts, na linha da chamada;
 // o resultado só decide os dados (st.uiCartao) e a expansão. Antes: árvore `├ agente · concluído · resultado`.
 const subCorpo = (
 	result: unknown,
@@ -198,7 +198,7 @@ const subCorpo = (
 		},
 		invalidate: () => native.invalidate(),
 	};
-	// Interrompido (dono, 2026-11-20): o nycode lança `Subagent was aborted` e a chamada volta como erro sem detalhes; antes caía em erro.
+	// Interrompido: o nycode lança `Subagent was aborted` e a chamada volta como erro sem detalhes; antes caía em erro.
 	const abortou = ctx.isError === true && !rs.length && /was aborted/.test(texto);
 	if ((ctx.isError && !abortou) || (!solto && !rs.length && !abortou))
 		return corpoDeAcao(native, theme, st, args, texto, ctx.isError === true);
@@ -243,14 +243,14 @@ const comEstado = (row: string, name: string, estado: string, theme: Theme): str
 	return row.slice(0, j) + SEP(theme) + estado + row.slice(j);
 };
 
-// Consultas, não execuções com resultado (dono, 2026-11-14): sem ícone de estado e sem fundo; só o erro aparece como estado.
+// Consultas, não execuções com resultado: sem ícone de estado e sem fundo; só o erro aparece como estado.
 const SEM_ESTADO = new Set(["memory"]);
 
 /** Caixa própria (renderShell 'self') com o fundo do estado, inclusive o amarelo de "parte falhou", que o nycode não tem. */
 export const caixa = (inner: Component, theme: Theme, ctx: Ctx, edge: "call" | "result", name = ""): Component => ({
 	render: (w) => {
 		const st = ctx.state as OutroState | undefined;
-		// Run reconhecido (faixa "Uma linha", dono, 2026-11-19): sem caixa; a saída aberta vem logo abaixo, sem fundo.
+		// Run reconhecido (faixa "Uma linha"): sem caixa; a saída aberta vem logo abaixo, sem fundo.
 		if (name === "run" && st?.uiRun) {
 			const r = inner.render(w);
 			if (edge === "result") st.uiCorpo = r.length > 0;
@@ -296,8 +296,8 @@ export const withIcon = (name: string, base: Renderers): Renderers => {
 		renderCall(args, theme, context) {
 			const state = context.state;
 			if (!state) return inner(args, theme, context);
-			// memory (dono, 2026-11-20): frase compacta sem caixa (memoria/linha.ts); o resultado só entrega os dados.
-			// plan_mode_complete (dono, 2026-11-20, lab /planopronto desenho 10): plano/pronto.ts.
+			// memory: frase compacta sem caixa (memoria/linha.ts); o resultado só entrega os dados.
+			// plan_mode_complete: plano/pronto.ts.
 			if (name === "plan_mode_complete")
 				return {
 					render: (w) =>
@@ -332,7 +332,7 @@ export const withIcon = (name: string, base: Renderers): Renderers => {
 				const linha: Component = {
 					render: (w) => {
 						const uw = util(w);
-						// MCP (dono, 2026-11-20): uma linha, chave colorida pelo estado e barra fina só executando (mcp/linha.ts).
+						// MCP: uma linha, chave colorida pelo estado e barra fina só executando (mcp/linha.ts).
 						if (mcp)
 							return linhaMcp(
 								name,
@@ -471,7 +471,7 @@ export const withIcon = (name: string, base: Renderers): Renderers => {
 							return { render: () => [], invalidate() {} };
 						}
 						if (name === "question" && st) {
-							// Cancelada (answer null, em qualquer pergunta do lote) = aviso, não sucesso (dono, 2026-11-14).
+							// Cancelada (answer null, em qualquer pergunta do lote) = aviso, não sucesso.
 							const q = (
 								result as
 									| {
@@ -534,7 +534,7 @@ export const withIcon = (name: string, base: Renderers): Renderers => {
 							},
 							invalidate: () => native.invalidate(),
 						};
-						// question (dono, 2026-11-20): "Resposta em destaque" (pergunta/bloco.ts) a partir de details; sem details, o desenho do nycode.
+						// question: "Resposta em destaque" (pergunta/bloco.ts) a partir de details; sem details, o desenho do nycode.
 						const ps = name === "question" ? perguntasDe(result) : undefined;
 						const corpo: Component = ps
 							? perguntaCorpo(ps, theme, context, {

@@ -36,8 +36,8 @@ test('normal: duas linhas se couber, três no fallback; sem cor de alerta, com b
   assert.equal(roleOf(largo[1], 9), 'ok');
   assert.equal(roleOf(largo[1], 22), 'usage');
   assert.deepEqual(rest, ['↓ 0 ↑ 0'], 'a 3ª linha zerada vem depois das faixas');
-  // Git com ícone, à frente/atrás e +/− (dono, 2026-11-19, /status "Git"): antes 'nycode ⎇ main*'; sujo sem linhas mudadas segue com *.
-  // Effort entre parênteses colado ao modelo (dono, 2026-11-19): antes 'Fable 5.2 · medium · nycode'.
+  // Git com ícone, à frente/atrás e +/− antes 'nycode ⎇ main*'; sujo sem linhas mudadas segue com *.
+  // Effort entre parênteses colado ao modelo: antes 'Fable 5.2 · medium · nycode'.
   assert.equal(l1, 'Fable 5.2 (medium) · nycode · \ue725 main* │ 12m · $1.08');
   assert.equal(l2, 'ctx ━━━━━━━━ 9%');
   assert.equal(l3, '5h ━━━━━━━━ 8% renova em 4h · semana ━━━━━━━━ 22% renova em 4d');
@@ -104,7 +104,7 @@ test('paleta vem do tema do nycode: par claro/escuro por COLORFGBG, tokens via v
 
 test('cache ruim vira aviso, salvo no começo da sessão; cache bom e entrada pequena não avisam', () => {
   const usage = (read, write) => ({ context_window: { context_window_size: 1e6, used_percentage: 9, total_input_tokens: 9e4, current_usage: { input_tokens: 0, output_tokens: 10, cache_read_input_tokens: read, cache_creation_input_tokens: write } } });
-  // Dono (2026-11-19): o aviso entrou na 3ª linha (tokens · cache · turno); antes era uma linha própria '▲ cache 31%'
+  // O aviso entrou na 3ª linha (tokens · cache · turno); antes era uma linha própria '▲ cache 31%'
   // e cache bom ou começo de sessão não geravam linha nenhuma (length 2).
   const raw = render(base(usage(31_000, 69_000)), { ...opts, turn: undefined })
   assert.equal(plain(raw)[2], '↓ 100 mil ↑ 10 · ▲ cache 31%');
@@ -155,7 +155,7 @@ test('P17 rótulo e linha do contexto', () => {
   assert.equal(plain(render(base({ context_window: cw }), { ...opts, columns: 20, reserve: 0 }))[1], 'ctx ━━━━━━━━ 72%', 'sem espaço, a nota sai');
 });
 
-// Dono (2026-11-24, 2ª queixa): o histórico em blocos ▁…█ ao lado da barra ━ parece uma barra quebrada; saiu da linha.
+// O histórico em blocos ▁…█ ao lado da barra ━ parece uma barra quebrada; saiu da linha.
 test('linha do contexto: só barra, número e nota, sem histórico em blocos', () => {
   const cw = { context_window_size: 1e6, used_percentage: 9, total_input_tokens: 9e4, current_usage: null };
   const l = plain(render(base({ context_window: cw }), { ...opts, reserve: 0, history: [5, 9, 30, 9] }))[1];
@@ -193,7 +193,7 @@ test('U18 gitState: cache de 5-10 s por diretório; no timeout reusa o último v
   let calls = 0;
   let out = '## main...origin/main\n M a\n';
   const run = () => { calls++; if (out === null) throw Object.assign(new Error('timeout'), { code: 'ETIMEDOUT' }); return out; };
-  // Dono (2026-11-19): o valor ganhou ahead/behind/added/removed; antes era só { branch, dirty }.
+  // O valor ganhou ahead/behind/added/removed; antes era só { branch, dirty }.
   const at = (now) => gitState('/w/repo', { file, now, run, diff: () => ' 1 file changed, 2 insertions(+)' });
   const v = (branch, dirty) => ({ branch, dirty, ahead: 0, behind: 0, added: dirty ? 2 : 0, removed: 0 });
   assert.deepEqual(at(1_000), v('main', true));
@@ -213,7 +213,7 @@ test('U18 gitState: cache de 5-10 s por diretório; no timeout reusa o último v
   assert.equal(calls, before);
 });
 
-// Dono (2026-11-19, /status): ramo com ↑/↓ e +/− do diff na 1ª linha; uma 3ª linha com tokens, cache, turno e velocidade.
+// Ramo com ↑/↓ e +/− do diff na 1ª linha; uma 3ª linha com tokens, cache, turno e velocidade.
 test('git: ramo com ícone, à frente/atrás e +/− nas cores; ASCII sem Nerd Font', () => {
   const git = { branch: 'main', dirty: true, ahead: 2, behind: 1, added: 34, removed: 8 };
   const raw = render(base(), { ...opts, git });
@@ -268,7 +268,7 @@ test('3ª linha: tokens, cache, turno e velocidade abaixo dos medidores; some se
   assert.equal(plain(render(base(), { ...opts, turn: { ms: 3_725_000, tps: 0 } }))[2], 'turno 1:02:05');
 });
 
-// Dono (2026-11-19): o effort vai entre parênteses logo após o modelo, sem o ponto, e a cor sobe com o nível:
+// O effort vai entre parênteses logo após o modelo, sem o ponto, e a cor sobe com o nível:
 // cinza (off, minimal), verde (low), azul (medium), roxo (high), vermelho (xhigh, max). Antes `· medium` em cinza.
 test('effort: (nível) colado ao modelo, cor pela intensidade', () => {
   const cor = { off: 'sec', minimal: 'sec', low: 'ok', medium: 'usage', high: 'high', xhigh: 'crit', max: 'crit' };

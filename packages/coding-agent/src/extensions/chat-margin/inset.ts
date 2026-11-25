@@ -22,7 +22,7 @@ export function inset(lines: readonly string[], p: number, skip: (line: string) 
 	});
 }
 
-/** Recuo interno padrão dos blocos do chat (dono, 2026-11-16; simétrico em 2026-11-18): padding + RECUO colunas dos dois lados. */
+/** Recuo interno padrão dos blocos do chat (simétrico em 2026-11-18): padding + RECUO colunas dos dois lados. */
 export const RECUO = 2;
 const LEAD_SGR = /^(?:\x1b\[[0-9;:]*m)*/;
 const TAIL_END = /(?:\x1b\[(?:0|49)?m|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\))*$/;

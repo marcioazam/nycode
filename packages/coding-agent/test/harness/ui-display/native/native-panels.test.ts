@@ -23,7 +23,7 @@ const test = (name: string, fn: () => Promise<void>) => vitestTest(name, { timeo
 
 const both: Cfg = { plan: true, agents: true };
 const word = (n: string | undefined) => n?.split(" ")[0];
-// Owner request (2026-11-14): the Plan detail (time, window, keys) is the footer line under the table, not the bar.
+// The Plan detail (time, window, keys) is the footer line under the table, not the bar.
 const footer = (t: string) => lines(t).find((l) => /\d+\/\d+ na tela/.test(l));
 const range = (t: string) =>
 	footer(t)?.match(/(?:\d+:\d\d)?(?: · (\d+\/\d+ na tela))/)?.[0] ?? `<no Plan footer>\n${t}`;
@@ -279,7 +279,7 @@ test("a tab with a non-empty draft: ↓ stays in the editor; the focused tab is 
 			ruleSgr && border?.startsWith(`\x1b[${ruleSgr}m`),
 			`open tab rule in the editor border colour\n${all[at + 1]}\n${border}`,
 		);
-		// Focused tab in the system cyan (syntaxType, owner 2026-11-15: cyan marks the focus), not the open tab's border colour.
+		// Focused tab in the system cyan (syntaxType: cyan marks the focus), not the open tab's border colour.
 		const focusSgr = /\x1b\[1m\x1b\[(38;[0-9;]+)mAgentes 2/.exec(row)?.[1];
 		assert.ok(
 			focusSgr && focusSgr !== ruleSgr,

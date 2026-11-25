@@ -120,8 +120,6 @@ Every variable below overrides the `settings.json` key in the second column; the
 | `NYCODE_COMPLETION_GATE` | `harness.completionGate` |
 | `NYCODE_SOUND_NOTIFY` | `notify.sound` |
 | `NYCODE_UI_STATE`, `NYCODE_REDUCED_MOTION`, `NYCODE_NERD_FONT`, `NYCODE_ASCII_ICONS` | `terminal.uiState`, `.reducedMotion`, `.nerdFont`, `.asciiIcons` |
-| `NYCODE_KNOWLEDGE_VAULT`, `NYCODE_GRAPHS_VAULT` | `knowledge.vault`, `knowledge.graphsVault` |
-| `CODEGRAPH_AUTO_ROOT`, `CODEGRAPH_BIN`, `CODEGRAPH_STATUS_TTL`, `CODEGRAPH_AUTO_STATE` | `codegraph.autoRoot`, `.bin`, `.statusTtl`, `.autoState` (the codegraph tool's own names) |
 | `NYCODE_MCP_CONFIG` | `mcp.configPath` |
 
 `NYCODE_DISABLE_TERMINAL_TITLE`, `NYCODE_SUBAGENT`, and `NYCODE_SUBAGENT_DEPTH` have no settings key: the first is a switch for automation and the other two mark child processes.

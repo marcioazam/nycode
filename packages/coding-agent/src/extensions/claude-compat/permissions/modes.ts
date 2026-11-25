@@ -1,5 +1,5 @@
 /** Modos locais de permissão (contrato: docs/specs/claude-code-parity/bypass-orthogonal.md, que supera permission-modes.md §4).
- * Ask=default, Auto=acceptEdits, Plan=plan; o bypass é um interruptor independente. A autorização real é só do guard.py. */
+ * Ask=default, Auto=acceptEdits, Plan=plan; o bypass é um interruptor independente. A autorização real é só do motor nativo (core/permissions). */
 export const PERMISSION_MODES = ["default", "acceptEdits", "plan"] as const;
 export type PermissionMode = (typeof PERMISSION_MODES)[number];
 

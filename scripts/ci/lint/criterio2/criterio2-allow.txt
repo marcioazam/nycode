@@ -2,7 +2,7 @@
 # Format, one per line: glob | pattern[,pattern] | class | reason
 # The glob is fnmatch (`*` also crosses `/`): one line per file or directory, never `**`, never a leading wildcard.
 # Classes: produto-externo (text naming a product really measured or integrated), upstream (file we must not edit),
-# ferramenta-fork (the fork's own rename machinery, 08), migracao (`nycode migrate from-pi`).
+# ferramenta-fork (the fork's own rename machinery, 08), migracao (records about the origin harness).
 # A line that covers no hit fails criterio2 (stale): delete it. F12 (import/ removal) and R1 (internal identifiers)
 # drop no line here: import/ is already outside the search. The bench/ lines go when the owner retires the pi arms.
 
@@ -12,11 +12,6 @@ packages/tui/CHANGELOG.md | .pi/agent | upstream | release history of the upstre
 packages/coding-agent/test/fixtures/*.jsonl | .pi/agent,sed -i | upstream | session fixtures recorded by the upstream pi
 # ferramenta-fork
 scripts/fork/* | sed -i | ferramenta-fork | the fork rename machinery that rewrites the upstream tree (08)
-# migracao
-packages/coding-agent/src/migrations/from-pi.ts | .pi/agent | migracao | help text of nycode migrate from-pi (origin directory)
-packages/coding-agent/src/migrations/from-pi-personal.ts | .pi/agent | migracao | the personal pi-conta helper defaults to the origin directory; the migration repoints it
-packages/coding-agent/test/harness/migrations/personal/from-pi-personal.test.ts | .pi/agent | migracao | origin paths the personal-layer migration converts
-README.md | .pi/agent | migracao | the migration section names the origin directory of nycode migrate from-pi
 # produto-externo: claude-hud honours CLAUDE_CONFIG_DIR (C-F8-07)
 packages/coding-agent/resources/statusline/*.mjs | CLAUDE_CONFIG_DIR | produto-externo | the launcher points the claude-hud plugin at the nycode config dir
 packages/coding-agent/resources/commands/claude-hud-setup.md | CLAUDE_CONFIG_DIR | produto-externo | the claude-hud installer reads its config dir from the variable
@@ -35,4 +30,3 @@ bench/metrics/README.md | sed -i | produto-externo | names `sed -i` as a write c
 bench/runners.py | .pi/agent | produto-externo | runner of the pi-based arms (run_pi.py)
 bench/tests/* | .pi/agent | produto-externo | tests of the pi arms and Harbor agents
 bench/tools/test_tools.sh | .pi/agent | produto-externo | test of the api-key mode of the arms
-packages/coding-agent/test/harness/hooks/permissions/* | sed -i | produto-externo | guard test fixtures: `sed -i` is the command the guard classifies as an edit

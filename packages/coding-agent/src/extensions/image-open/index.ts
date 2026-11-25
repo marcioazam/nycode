@@ -1,6 +1,6 @@
 /**
  * Clicar numa imagem do transcript (Image do @nycode/tui: resultado de tool, screenshot, MCP) abre o arquivo no
- * visualizador do sistema, pedido do usuário 2026-11-13. Define Image.prototype.handleMouse; só o clique esquerdo
+ * visualizador do sistema. Define Image.prototype.handleMouse; só o clique esquerdo
  * simples (release sem arrasto, sem modificadores) age, o resto devolve undefined (seleção e rolagem intactas).
  * Override do abridor: NYCODE_IMAGE_OPENER (testes). Temporários em os.tmpdir()/nycode-images-<uid>-<pid> (0700), apagados no exit.
  * Também pinta o fundo da tool atrás da imagem (fundo.ts).
@@ -26,7 +26,7 @@ const EXT: Record<string, string> = {
 };
 type ImagemClicavel = { base64Data: string; mimeType: string };
 export const MAX_BYTES = 50 * 1024 * 1024;
-// Um diretório por processo (dono, 2026-11-19; antes nycode-images-<uid> compartilhado, que a saída de uma sessão apagava inteiro).
+// Um diretório por processo (antes nycode-images-<uid> compartilhado, que a saída de uma sessão apagava inteiro).
 const dir = () => join(tmpdir(), `nycode-images-${process.getuid?.() ?? 0}-${process.pid}`);
 let cleanup = false;
 
@@ -160,7 +160,7 @@ type Rotavel = { handleMouse?: (this: Corpo, event: TuiMouseEvent) => TuiMouseEv
 const rotas = new WeakSet<object>();
 /** No core o ToolExecutionComponent com renderShell 'self' (todos os blocos do nycode) só repassa o clique ao próprio
  * conteúdo; as imagens vêm depois (linha vazia, conteúdo, e por imagem um espaço e a imagem). Aqui o clique abaixo do
- * conteúdo é levado à imagem, com y local, espelhando o render de tool-execution.js (dono, 2026-11-19). */
+ * conteúdo é levado à imagem, com y local, espelhando o render de tool-execution.js. */
 export function rotearImagens(proto: Rotavel): void {
 	// Marca na função, não no protótipo: o chat-margin restaura o handleMouse original no /reload e aí reembrulhamos.
 	if (proto.handleMouse && rotas.has(proto.handleMouse)) return;

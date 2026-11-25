@@ -10,14 +10,11 @@ import { readFileSync, type Stats, statSync } from "node:fs";
 import { join } from "node:path";
 import { expandTildePath } from "../config.ts";
 
-/** The 9 keys of the old local.env, under their nycode names (D-09); the other two keep their names. */
+/** The keys local.env may set, under their nycode names (D-09). */
 export const LOCAL_ENV_KEYS: ReadonlySet<string> = new Set([
 	"NYCODE_BYPASS_PERMISSIONS",
 	"NYCODE_COMPACT_AT",
 	"PONYTAIL_QUIET_STARTUP",
-	"NYCODE_KNOWLEDGE_VAULT",
-	"NYCODE_GRAPHS_VAULT",
-	"CODEGRAPH_AUTO_ROOT",
 	"NYCODE_SUBAGENT_RESPAWN",
 	"NYCODE_EFFORT_SANDWICH",
 	"NYCODE_EFFORT_SANDWICH_TURNS",

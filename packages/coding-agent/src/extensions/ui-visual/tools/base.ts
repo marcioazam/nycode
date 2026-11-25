@@ -56,7 +56,7 @@ export type Renderers = {
 
 export const TOOLS = ["read", "bash", "edit", "write", "grep", "find", "ls"] as const;
 export type ToolName = (typeof TOOLS)[number];
-/** Título e tarefa separados por bolinha (`bash · cd /tmp`), pedido do dono, 2026-11-14; antes dois espaços com o verbo em coluna fixa. */
+/** Título e tarefa separados por bolinha (`bash · cd /tmp`); antes dois espaços com o verbo em coluna fixa. */
 export const SEP = (theme: Theme): string => ` ${theme.fg("dim", "·")} `;
 export const MIN_DURATION_MS = 1000; // abaixo disso a duração é ruído ("0.0s")
 

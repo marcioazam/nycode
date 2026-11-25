@@ -8,10 +8,12 @@ export type Loose = any;
 export interface FakeOptions {
 	/** Tools active when the extension loads (the set plan mode saves and restores). */
 	active?: string[];
-	/** Names `getAllTools` reports; defaults to the active set. */
-	allTools?: string[];
+	/** Tools `getAllTools` reports (a name, or a name with MCP annotations); defaults to the active set. */
+	allTools?: Array<string | { name: string; annotations?: { readOnlyHint?: boolean } }>;
 	/** Captures `registerMarkdownTransformer` when true. */
 	transformer?: boolean;
+	/** `plan.readOnlyTools` of the settings `getSettings` reports. */
+	readOnlyTools?: string[];
 	/** `getFlag` result. */
 	flag?: boolean | undefined;
 }
@@ -59,7 +61,8 @@ export function fakeNycode(opts: FakeOptions = {}) {
 		setActiveTools: (names: string[]) => {
 			active = names;
 		},
-		getAllTools: () => (opts.allTools ?? active).map((name) => ({ name })),
+		getAllTools: () => (opts.allTools ?? active).map((tool) => (typeof tool === "string" ? { name: tool } : tool)),
+		getSettings: () => ({ plan: { readOnlyTools: opts.readOnlyTools } }),
 		events: {
 			emit: (channel: string, data: unknown) => {
 				emitted.push([channel, data]);

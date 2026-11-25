@@ -249,7 +249,7 @@ test("Plan tab keys: ← → Space in the body never fold the tab; the label kee
 	assert.equal(nav.title, "plan");
 	h.key("\r"); // Enter: the body
 	assert.equal(plan.focusedVisible(), true);
-	// Owner request (2026-11-14): time, window and keys live on the footer line under the table, not after the tab names.
+	// Time, window and keys live on the footer line under the table, not after the tab names.
 	const head = (w = 100) => {
 		h.lines(w);
 		return h.lines(w).at(-1) ?? "";

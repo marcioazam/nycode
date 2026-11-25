@@ -1,5 +1,5 @@
 /**
- * Read em chips (laboratórios /read desenho 4 + animação 4 e /refino variante 2, dono, 2026-11-18):
+ * Read em chips (laboratórios /read desenho 4 + animação 4 e /refino variante 2):
  * - verbo numa pílula tingida pelo estado: ciano lendo, verde lido, âmbar truncado (aviso), vermelho erro;
  * - lendo: um brilho atravessa a pílula (VARRE_MS por passada);
  * - transição de estado em TRANSICAO_MS: a pílula (e o fundo do cartão, no erro) funde do ciano à cor do desfecho,
@@ -34,7 +34,7 @@ export const CONTADOR_MS = 400;
 export const SURGE_MS = 260;
 export const ESCALONA_MS = 120;
 export const VARRE_MS = 700;
-/** Pulso (lab /rwerro desenho 1 + "Pulso", dono, 2026-11-19; antes o erro e o aviso só fundiam e assentavam): depois da
+/** Pulso (lab /rwerro desenho 1 + "Pulso"; antes o erro e o aviso só fundiam e assentavam): depois da
  * transição, a cor do erro (Read/Write) ou do aviso (Read truncado) pulsa duas vezes em PULSO_MS e assenta. */
 export const PULSO_MS = 1200;
 /** Janela em que o read terminado ainda muda a cada quadro (tools.ts não guarda o desenho antes dela). */
@@ -67,7 +67,7 @@ export function fundoLeitura(t: Tema, ctx: Ctx): Rgb | undefined {
 	return base && err ? (lerpRgb(base, err, a === undefined ? 1 : ease(a / TRANSICAO_MS)) as Rgb) : err;
 }
 
-/** Verbo sem pílula (dono, 2026-11-19; antes pílula de fundo tingido): a cor do estado vai no ícone e na palavra, que
+/** Verbo sem pílula (antes pílula de fundo tingido): a cor do estado vai no ícone e na palavra, que
  * fundem do ciano ao desfecho com o clarão; lendo, a varredura clareia letra a letra. `box` não pinta mais o verbo. */
 export function pilulaVerbo(
 	t: Tema,
@@ -79,7 +79,7 @@ export function pilulaVerbo(
 	now: number,
 	marcaNeutra = false,
 ): string {
-	// `marcaNeutra` (Edit, dono, 2026-11-20): o ícone `marca` já vem colorido pelo chamador e não muda com o estado; só a palavra muda.
+	// `marcaNeutra` (Edit): o ícone `marca` já vem colorido pelo chamador e não muda com o estado; só a palavra muda.
 	const ciano = fg(t, "syntaxType"),
 		alvo = fg(t, desfecho(ctx));
 	if (!ciano || !alvo)
@@ -108,7 +108,7 @@ export function pilulaVerbo(
 /** Pílulas da direita (contagem · duração, truncado); '' até haver resultado. */
 export function pilulasDireita(t: Tema, ctx: Ctx, box: Rgb, dur: string): string {
 	const l = ctx.state?.uiLeitura;
-	// Imagem sem o tipo antes da hora (dono, 2026-11-19; antes pílula `imagem`): fica só a duração, se houver.
+	// Imagem sem o tipo antes da hora (antes pílula `imagem`): fica só a duração, se houver.
 	if (!l || ctx.isError || ctx.isPartial !== false || (l.img && !l.trunc)) return dur;
 	const a = idade(ctx);
 	const neutro = tomAbaixo(box) as Rgb;

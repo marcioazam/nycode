@@ -1,6 +1,6 @@
 // Status line "Calmo" do nycode (docs/designs/statusline): desenho próprio, sem o claude-hud.
 // Ligado por "renderer": "calm" em plugins/claude-hud/config.json; "level": "detalhe" abre o painel.
-// Cores e limiares do claude-hud 0.10.0 (pedido do dono, 2026-11-14, substitui as quatro cores 40/60/80 e 50/75/90):
+// Cores e limiares do claude-hud 0.10.0 (substitui as quatro cores 40/60/80 e 50/75/90):
 // contexto verde <70, amarelo 70-85, vermelho ≥85; uso azul <75, roxo 75-90 ou ritmo de alerta, vermelho ≥90 ou ritmo
 // crítico. Ritmo (usage-pace.ts): projeção linear até a renovação ≥90% é alerta, >100% é crítico; ▲ na cor do ritmo.
 // Paleta: a do tema do nycode em uso (settings.json), não a do claude-hud.
@@ -186,7 +186,7 @@ function meters(p, { now, reserve }) {
     const limit = p.rate_limits?.[key];
     if (!Number.isFinite(limit?.used_percentage)) continue;
     const w = windowState(limit, WINDOW_MS[key], now);
-    // A nota diz quando a janela renova (pedido do dono, 2026-11-14); a projeção de ritmo vira só o ▲ e fica no painel.
+    // A nota diz quando a janela renova; a projeção de ritmo vira só o ▲ e fica no painel.
     const pace = w.eta === undefined || w.level === 'crit' ? '' : `nesse ritmo acaba em ${span(w.eta)}`;
     const renews = w.left === undefined ? '' : `renova em ${span(w.left)}`;
     out.push({ short, long, pct: w.pct, level: w.level, stale, mark: w.pace ? paint(w.pace, ' ▲') : '', note: stale ? '' : renews, detail: [renews, pace].filter(Boolean).join(' · ') });
@@ -212,7 +212,7 @@ export function cacheRatio(p) {
 // Ramo em Nerd Font (nf-dev-git_branch); sem ela (NYCODE_ASCII_ICONS=1, console linux/dumb) o ⎇ de antes.
 const ramo = (env = process.env) => (env.NYCODE_ASCII_ICONS === '1' || /^(?:dumb|linux)$/.test(env.TERM ?? '') ? '⎇' : '\ue725');
 
-/** Ramo, ↑/↓ e +/− (dono, 2026-11-19, /status "Git"); sujo sem linhas mudadas (só arquivos novos) mostra `*`. */
+/** Ramo, ↑/↓ e +/−; sujo sem linhas mudadas (só arquivos novos) mostra `*`. */
 function gitText(git) {
   const extra = [git.ahead ? `↑${git.ahead}` : '', git.behind ? `↓${git.behind}` : ''].filter(Boolean).join(' ');
   const linhas = [git.added ? paint('ok', `+${git.added}`) : '', git.removed ? paint('crit', `−${git.removed}`) : ''].filter(Boolean).join(' ');
@@ -230,13 +230,13 @@ const EFFORT_COR = { off: 'sec', minimal: 'sec', low: 'ok', medium: 'usage', hig
 function head(p, git) {
   const cwd = p.workspace?.project_dir || p.workspace?.current_dir || p.cwd || '';
   const dir = cwd === os.homedir() ? '~' : path.basename(cwd);
-  // Effort entre parênteses colado ao modelo, na cor da intensidade (dono, 2026-11-19; antes `· medium` em cinza).
+  // Effort entre parênteses colado ao modelo, na cor da intensidade (antes `· medium` em cinza).
   const lv = p.effort?.level;
   const effort = lv ? ' ' + paint(EFFORT_COR[lv] ?? 'sec', `(${lv})`) : '';
   const left = bold(paint('text', p.model?.display_name || p.model?.id || '?')) + effort + paint('sec', dir ? ` · ${dir}` : '') + (git ? dot() + gitText(git) : '');
   const cost = p.cost ?? {};
   const spent = [Number.isFinite(cost.total_duration_ms) ? span(cost.total_duration_ms) : '', Number.isFinite(cost.total_cost_usd) ? `$${cost.total_cost_usd.toFixed(2)}` : ''].filter(Boolean).join(' · ');
-  // Tempo e custo logo depois da identidade, à esquerda, atrás de um traço vertical (pedido do dono, 2026-11-14).
+  // Tempo e custo logo depois da identidade, à esquerda, atrás de um traço vertical.
   return spent ? left + paint('track', ' │ ') + paint('sec', spent) : left;
 }
 
@@ -279,7 +279,7 @@ export function turnStats(file) {
   return Number.isFinite(ms) && ms >= 0 ? { ms, tps: dur > 0 ? Math.round((out * 1000) / dur) : 0 } : undefined;
 }
 
-/** 3ª linha (dono, 2026-11-19, /status "Linha extra" sem o git): tokens do último pedido, cache, turno e velocidade. */
+/** 3ª linha: tokens do último pedido, cache, turno e velocidade. */
 function extraLine(p, turn) {
   const u = p.context_window?.current_usage;
   const partes = [];

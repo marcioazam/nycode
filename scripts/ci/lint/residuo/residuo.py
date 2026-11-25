@@ -36,14 +36,13 @@ CLASSES = (
     "protocolo",  # names on the wire shared with processes we do not rebuild
     "falso-positivo",  # `Math.PI` and the like
     "compat",  # names still accepted from the origin harness
-    "migracao",  # `nycode migrate from-pi` and the trees it reads
+    "migracao",  # records and pointers about the migration from the origin harness
     "ferramenta-fork",  # the fork's own rename and gate machinery
     "produto-externo",  # bench: the arms and records that measure the pi
 )
 EXEMPT_BASENAMES = ("LICENSE", "NOTICE", "CHANGELOG.md")
 EXEMPT_PATHS = ("README.md",)
 EXEMPT_GLOBS = (
-    "packages/coding-agent/src/migrations/from-pi*",
     "docs/fork/*",
     "docs/migration/*",
     "docs/harness/*",

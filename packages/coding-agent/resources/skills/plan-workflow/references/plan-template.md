@@ -35,7 +35,7 @@ Tier: T2 (sinais: 3 módulos, contrato interno)
 
 ### Fase 1: <marco> (gate: <check observável>)
 1. <Verbo + objeto, ≤50 caracteres>
-   - agente: swarm-worker (sonnet) · arquivos: src/a.ts, test/a.test.ts
+   - agente: general-purpose · arquivos: src/a.ts, test/a.test.ts
    - ler antes: src/b.ts:40-90
    - ação: <o que muda>
    - after: (nenhum) · AC: AC1

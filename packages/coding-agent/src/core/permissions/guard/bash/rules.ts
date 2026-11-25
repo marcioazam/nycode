@@ -1,6 +1,6 @@
 // The Bash rules of the guard: the text is cut into segments, each segment is judged by the command table (commands.ts),
 // and what runs another command (`bash -c`, `eval`, `xargs`, `find -exec`, `$( )`) is judged again, to a depth.
-// Port of `check_bash`, `check_segment` and `check_indirection` of guard.py.
+// Port of `check_bash`, `check_segment` and `check_indirection` of the former Python guard.
 
 import { forkBomb, maskHeredocs } from "../lex/heredoc.ts";
 import { SEPARATORS, segments } from "../lex/segments.ts";

@@ -40,7 +40,7 @@ describe("discoverAgents", () => {
 		}
 	});
 
-	// Paridade com o harness anterior (dono, 2026-11-24): o contrato que todo agente lê primeiro precisa existir fora deste
+	// Paridade com o harness anterior: o contrato que todo agente lê primeiro precisa existir fora deste
 	// repositório (o caminho relativo docs/harness/... dava ENOENT em outro cwd), e os writers mantêm as ferramentas do harness anterior.
 	it("every built-in agent reads files that exist from any cwd, and writers keep the previous harness tools", () => {
 		const previous = process.env[ENV_AGENT_DIR];
@@ -56,7 +56,7 @@ describe("discoverAgents", () => {
 				}
 			}
 			const writerTools = ["find", "todo", "lsp_diagnostics", "lsp_definition", "lsp_references", "subagent"];
-			for (const name of ["swarm-worker", "test-author", "lane-integrator", "general-purpose"]) {
+			for (const name of ["general-purpose"]) {
 				const tools = builtin.find((agent) => agent.name === name)?.tools ?? [];
 				expect(tools, name).toEqual(expect.arrayContaining(writerTools));
 			}

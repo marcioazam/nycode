@@ -1,12 +1,11 @@
 /**
- * `plan_mode_complete` (o agente enviou o plano para revisão) em "Expandido" + "Cascata" (dono, 2026-11-20, lab /planopronto desenho 10;
- * antes cartão verde com a prancheta, `plan_mode_complete`, o tier cortado e o texto em inglês rente à coluna 0).
+ * `plan_mode_complete` (o agente enviou o plano para revisão) em "Expandido" + "Cascata".
  * Aberto (alt+o): ` <ícone>  Plano · <estado> ──── hora  alt+o recolher`, o tier completo (muted), as etapas numeradas e o arquivo (dim).
  * Recolhido (escolha desta implementação: o lab só define o aberto): a linha do cabeçalho (`alt+o expandir`) e o arquivo. Ícone e `Plano`
  * neutros (muted/text, dois espaços); o estado segue colorido; `·` e hora dim, sem pílula; sem spinner (o ícone respira só enviando).
  * Fonte (nycode plan-mode/index.ts, só leitura): args `{plan}` (texto numerado, 1ª linha `Tier: …`, ou `@file`) e resultado em inglês:
  * `Plan submitted and saved to <arquivo>.`, `Plan not accepted… saved to <arquivo>…:\n- problema…`, `No plan file…`, `Not in plan mode…`.
- * Aprovado/ajustes pedidos (estados do lab) vêm de ação do dono depois da chamada e não do resultado: não são desenhados.
+ * Aprovado/ajustes pedidos (estados do lab) vêm de ação do usuário depois da chamada e não do resultado: não são desenhados.
  * Entrada Cascata: ao chegar o resultado cada linha se revela da esquerda, 80 ms depois da anterior, 300 ms cada, uma vez.
  */
 import { truncateToWidth, visibleWidth } from "@nycode/tui";

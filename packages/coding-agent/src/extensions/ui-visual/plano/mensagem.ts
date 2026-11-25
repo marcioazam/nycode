@@ -1,6 +1,5 @@
 /**
- * Mensagem `[plan-mode-execute]` em "Lista de etapas" + "Desliza" (dono, 2026-11-20, lab /execplano; antes a caixa customMessageBg
- * com ~10 linhas em inglês para o agente, que segue recebendo o texto inteiro). Recolhida:
+ * Mensagem `[plan-mode-execute]` em "Lista de etapas" + "Desliza". Recolhida:
  *   ` <\uf0ae>  Plano · estado                          feitas/TOTAL`
  *   `   ├ \uf42e 1. anterior` / `   ├ ● 2. atual (o ● respira, sem spinner)` / `   └ ○ 3. próxima`
  * Expandida (alt+o) devolve `undefined`: o nycode desenha o padrão, com o texto original. O progresso vem do ramo da sessão

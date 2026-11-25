@@ -1,7 +1,7 @@
 /**
  * /permissions e /allowed-tools: troca o modo local (ask|auto|plan; aliases default|manual|acceptEdits) e liga/desliga o bypass
  * (`bypass on|off`, independente do modo) pelo controlador e exibe o estado; `tools on|off` só RESTRINGE ferramentas ativas (reversível apenas para o que este comando desligou).
- * A autorização é do guard.py (hook); aqui não há decisão de permissão. Auto = acceptEdits.
+ * A autorização é do motor nativo de permissões (core/permissions); aqui não há decisão de permissão. Auto = acceptEdits.
  */
 import type { ExtensionAPI, ExtensionCommandContext } from "../../../../core/extensions/types.ts";
 import type { PermissionModes } from "../../permissions/controller.ts";

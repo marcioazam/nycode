@@ -19,7 +19,7 @@
  *
  * 7. Na sessão headless de topo (mesmo critério do item 6), `subagent`, `memory` e `lsp_*` ficam inativas: 0 de 2.091
  *    chamadas em 263 sessões guardadas (2026-11-16) e 0 de 168 sessões `nycode -p` de topo do Terminal-Bench (2026-11-18);
- *    o esquema de `subagent` sozinho pesa ~800 tokens do prefixo. Custo x benefício acima de tudo (dono, 2026-11-19)
+ *    o esquema de `subagent` sozinho pesa ~800 tokens do prefixo. Custo x benefício acima de tudo
  *    substitui a decisão de 2026-11-18 de manter `subagent`. harness.headless.tools=all (NYCODE_HEADLESS_TOOLS) mantém as três; subagentes (depth 1 ou mais) também rodam sem UI e ficam fora do corte.
  *
  * 8. Na sessão headless de topo, `todo` fica inativa e a seção `<docs>` (caminhos da documentação do nycode, "leia só se o

@@ -1,4 +1,4 @@
-/** Controlador de modos (Ask/Auto/Plan + bypass ortogonal): dono de NYCODE_PERMISSION_MODE e NYCODE_BYPASS_PERMISSIONS. Decide nada; o guard.py autoriza. */
+/** Controlador de modos (Ask/Auto/Plan + bypass ortogonal): dono de NYCODE_PERMISSION_MODE e NYCODE_BYPASS_PERMISSIONS. Decide nada; o motor nativo (core/permissions) autoriza. */
 
 import { ascii } from "../../ui-visual/icons.ts";
 import {
@@ -46,7 +46,7 @@ export interface Controller extends PermissionModes {
 	dispose(): void;
 }
 
-/** Linha de status (dono, 2026-11-19; antes só `⏵⏵ auto on` e/ou o bypass, Ask vazio e Plan só no HUD do nycode): o modo
+/** Linha de status (antes só `⏵⏵ auto on` e/ou o bypass, Ask vazio e Plan só no HUD do nycode): o modo
  * sempre aparece, junto ao bypass: `⏵ ask` · `⏵⏵ auto` · `⏸ plan`, depois `▲ bypass ligado` quando ligado. */
 const ICONE: Record<PermissionMode, [string, string]> = {
 	default: ["⏵", ">"],

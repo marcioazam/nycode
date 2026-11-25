@@ -245,7 +245,7 @@ export function tableRow(
 	let time = "—";
 	if (key === "paused") time = formatDuration(times.running(item.step, now) ?? 0);
 	else if (key === "done") {
-		// Clock time the step finished (owner request 2026-11-14: "really show when each one finished"), then how long it
+		// Clock time the step finished, then how long it
 		// took; the short rung keeps the clock only. Unknown when the step was already done the first time it was seen.
 		const at = times.finishedAt(item.step);
 		const took = times.took(item.step);
@@ -257,7 +257,7 @@ export function tableRow(
 		time = run === undefined ? "" : formatDuration(run);
 	} else if (key === "failed") time = c.short ? "" : "falhou";
 	else if (key === "blocked") time = c.short ? "" : "bloqueado";
-	// Sem ícone de estado (dono, 2026-11-15): com coluna de estado vai o nome na cor; sem ela, só a cor da tarefa diz o estado.
+	// Sem ícone de estado: com coluna de estado vai o nome na cor; sem ela, só a cor da tarefa diz o estado.
 	const taskRole: Role = !c.label
 		? st.role
 		: key === "done" || key === "todo" || key === "skipped"

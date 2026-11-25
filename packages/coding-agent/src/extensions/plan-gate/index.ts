@@ -228,7 +228,7 @@ export function gateComponent(
 ): Component & { handleMouse(e: { type: string; button: string }): { handled: boolean } | undefined } {
 	const n = Number(message?.details?.blocks) || 1;
 	const head = "▲ Plano  falta a revisão final (plan-reviewer) · o agente foi avisado";
-	let virado = false; // clique esquerdo abre e fecha só este bloco (pedido do dono, 2026-11-14)
+	let virado = false; // clique esquerdo abre e fecha só este bloco
 	return {
 		invalidate() {},
 		handleMouse(e: { type: string; button: string }) {

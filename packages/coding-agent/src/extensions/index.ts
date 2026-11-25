@@ -1,7 +1,6 @@
 import type { InlineExtension } from "../core/extensions/types.ts";
 import bypassPermissionsExtension from "../core/permissions/bypass-command.ts";
 import autoResumeExtension from "./auto-resume/index.ts";
-import avisosExtension from "./avisos/index.ts";
 import bashMainGuardExtension from "./bash-main-guard/index.ts";
 import chatMarginExtension from "./chat-margin/index.ts";
 import claudeCompatExtension from "./claude-compat/index.ts";
@@ -27,7 +26,6 @@ import headlessLeanExtension from "./headless-lean/index.ts";
 import hookMsgsExtension from "./hook-msgs/index.ts";
 import hooksExtension from "./hooks/index.ts";
 import imageOpenExtension from "./image-open/index.ts";
-import importClaudeSessionExtension from "./import-claude-session/index.ts";
 import initExtension from "./init/index.ts";
 import llamaExtension from "./llama/index.ts";
 import lspExtension from "./lsp/index.ts";
@@ -44,7 +42,6 @@ import runExtension from "./run/index.ts";
 import sessionTitleExtension from "./session-title/index.ts";
 import settingsFlagsExtension from "./settings-flags/index.ts";
 import skillsCompatExtension from "./skills-compat/index.ts";
-import soundNotifyExtension from "./sound-notify/index.ts";
 import statusLineExtension from "./status-line/index.ts";
 import stickyPromptExtension from "./sticky-prompt/index.ts";
 import subagentExtension from "./subagent/index.ts";
@@ -102,7 +99,6 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "bypass-permissions", factory: bypassPermissionsExtension, builtin: true },
 	{ name: "chat-margin", factory: chatMarginExtension, builtin: true },
 	{ name: "claude-compat", factory: claudeCompatExtension, builtin: true },
-	{ name: "avisos", factory: avisosExtension, builtin: true },
 	{ name: "comandos", factory: comandosExtension, builtin: true },
 	{ name: "code-blocks", factory: codeBlocksExtension, builtin: true },
 	{ name: "completion-gate", factory: completionGateExtension, builtin: true },
@@ -117,8 +113,6 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "image-open", factory: imageOpenExtension, builtin: true },
 	{ name: "plan-gate", factory: planGateExtension, builtin: true },
 	{ name: "prefix-cache-1h", factory: prefixCache1hExtension, builtin: true },
-	{ name: "import-claude-session", factory: importClaudeSessionExtension, builtin: true },
-	{ name: "sound-notify", factory: soundNotifyExtension, builtin: true },
 	{ name: "sticky-prompt", factory: stickyPromptExtension, builtin: true },
 	{ name: "syntax-check", factory: syntaxCheckExtension, builtin: true },
 	{ name: "travar-modelos", factory: travarModelosExtension, builtin: true },

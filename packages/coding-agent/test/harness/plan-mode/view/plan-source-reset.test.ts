@@ -24,7 +24,7 @@ function section(clock: { t: number }) {
 	return s;
 }
 // Sem ANSI e com espaços colapsados: aba + detalhe viram `Plan 1/3 10:00`. O detalhe (relógio) é a linha de rodapé da
-// seção desde o patch plan-footer (dono, 2026-11-14; antes vinha na própria linha das abas).
+// seção desde o patch plan-footer (antes vinha na própria linha das abas).
 const title = (s: Loose): string => {
 	const l = s.render(200);
 	return `${l.find((x: string) => /^(Plan|Todo) \d+\/\d+/.test(x)) ?? ""} ${l.at(-1) ?? ""}`

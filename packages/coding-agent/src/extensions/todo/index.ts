@@ -89,7 +89,7 @@ export const normalizeTodo = (raw: LegacyTodo): Todo => {
 	return { id: raw.id, text: raw.text, status: raw.done ? "completed" : "pending", ...link };
 };
 
-// Sem ícone de estado (dono, 2026-11-15): o nome do estado, na cor dele, numa coluna de largura fixa.
+// Sem ícone de estado: o nome do estado, na cor dele, numa coluna de largura fixa.
 const STATUS_NAME: Record<TodoStatus, [string, "success" | "accent" | "dim"]> = {
 	completed: ["concluída", "success"],
 	in_progress: ["em andamento", "accent"],

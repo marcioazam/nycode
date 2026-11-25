@@ -4,23 +4,15 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type * as BuiltinResources from "../../../src/core/builtin-resources.ts";
 import type { ExtensionContext } from "../../../src/core/extensions/types.ts";
 import { setBypassState } from "../../../src/core/permissions/bypass-state.ts";
-import { type GateHost, gateToolCall, guardHookEnabled } from "../../../src/core/permissions/gate.ts";
-import { readGlobalSettings } from "../../../src/core/permissions/global-settings.ts";
+import { type GateHost, gateToolCall } from "../../../src/core/permissions/gate.ts";
 import { InMemorySettingsStorage, SettingsManager } from "../../../src/core/settings-manager.ts";
 
-const { initialAgentDir, initialBypass, resourcesRoot } = vi.hoisted(() => ({
+const { initialAgentDir, initialBypass } = vi.hoisted(() => ({
 	initialAgentDir: process.env.NYCODE_CODING_AGENT_DIR,
 	initialBypass: process.env.NYCODE_BYPASS_PERMISSIONS,
-	resourcesRoot: { override: undefined as string | undefined },
 }));
-
-vi.mock("../../../src/core/builtin-resources.ts", async (importOriginal) => {
-	const original = await importOriginal<typeof BuiltinResources>();
-	return { ...original, getBuiltinResourcesRoot: () => resourcesRoot.override ?? original.getBuiltinResourcesRoot() };
-});
 
 let agentDir: string;
 
@@ -59,21 +51,20 @@ afterEach(() => {
 });
 
 describe("gateToolCall", () => {
-	it('leaves every call to the guard.py hook when the engine is "script"', async () => {
-		expect(await gateToolCall("bash", { command: "rm -rf /" }, host("script", { hasUI: false }))).toBeUndefined();
+	it('refuses the removed "script" engine by name instead of crashing or running unguarded', async () => {
+		const result = await gateToolCall("bash", { command: "ls" }, host("script", { hasUI: false }));
+		expect(result).toEqual({ block: true, reason: expect.stringContaining('"script" was removed') });
+		const dangerous = await gateToolCall("bash", { command: "rm -rf /" }, host("script", { hasUI: false }));
+		expect(dangerous).toMatchObject({ block: true });
 	});
 
 	// (b) C-F8-13: permissions.engine is global-only, like permissions.bypass.
-	it("ignores a project's permissions.engine: a bogus one denies nothing, a native one does not take over", async () => {
-		const script = host("script", { hasUI: false }, "bogus");
-		expect(await gateToolCall("bash", { command: "ls" }, script)).toBeUndefined();
-		const native = host("script", { hasUI: false }, "native");
-		expect(await gateToolCall("bash", { command: "rm -rf /" }, native)).toBeUndefined();
-		expect(
-			await gateToolCall("bash", { command: "rm -rf /" }, host("native", { hasUI: false }, "script")),
-		).toMatchObject({
-			block: true,
-		});
+	it("ignores a project's permissions.engine: a bogus one changes nothing, a native one does not rescue a bad global", async () => {
+		const bogus = host("native", { hasUI: false }, "bogus");
+		expect(await gateToolCall("bash", { command: "ls" }, bogus)).toBeUndefined();
+		expect(await gateToolCall("bash", { command: "rm -rf /" }, bogus)).toMatchObject({ block: true });
+		const rescued = host("script", { hasUI: false }, "native");
+		expect(await gateToolCall("bash", { command: "ls" }, rescued)).toMatchObject({ block: true });
 	});
 
 	it("denies every call for an unknown engine, even a harmless one", async () => {
@@ -81,17 +72,7 @@ describe("gateToolCall", () => {
 		expect(result).toEqual({ block: true, reason: expect.stringContaining('"wasm" is not known') });
 	});
 
-	it('denies when the engine is "script" and the guard script is gone', async () => {
-		resourcesRoot.override = "/nonexistent-resources";
-		try {
-			const result = await gateToolCall("bash", { command: "ls" }, host("script", { hasUI: true }));
-			expect(result).toEqual({ block: true, reason: expect.stringContaining("guard.py") });
-		} finally {
-			resourcesRoot.override = undefined;
-		}
-	});
-
-	it("blocks what guard.py denies", async () => {
+	it("blocks what the guard denies", async () => {
 		const result = await gateToolCall("bash", { command: "rm -rf /" }, host("native", { hasUI: true }));
 		expect(result).toEqual({ block: true, reason: expect.stringContaining("Bloqueado pelo guard") });
 	});
@@ -132,7 +113,7 @@ describe("gateToolCall", () => {
 	});
 
 	it("denies the call when the engine itself fails (C-F8-12)", async () => {
-		// A NUL byte makes realpath throw, as it does in guard.py.
+		// A NUL byte makes realpath throw, as it does in the guard.
 		const result = await gateToolCall("read", { path: "/tmp/a\0b" }, host("native", { hasUI: true }));
 		expect(result).toEqual({ block: true, reason: expect.stringContaining("permission engine failed") });
 		const bash = await gateToolCall("bash", { command: 42 }, host("native", { hasUI: true }));
@@ -162,24 +143,9 @@ describe("gateToolCall", () => {
 	});
 });
 
-describe("guardHookEnabled", () => {
-	it("is off for the default (native) engine, on for the script one, and off for the global opt-out", () => {
-		expect(guardHookEnabled({})).toBe(false);
-		expect(guardHookEnabled({ permissions: { engine: "script" } })).toBe(true);
-		expect(guardHookEnabled({ permissions: { engine: "native" } })).toBe(false);
-		expect(guardHookEnabled({ hooks: { PreToolUse: [] } })).toBe(false);
-	});
-
-	it("keeps the guard for a global PreToolUse that names hooks of its own", () => {
-		expect(guardHookEnabled({ permissions: { engine: "script" }, hooks: { PreToolUse: [{ hooks: [] }] } })).toBe(
-			true,
-		);
-	});
-
-	it("reads the engine as the gate does", async () => {
-		const global = { permissions: { engine: "native" } };
-		writeFileSync(join(agentDir, "settings.json"), JSON.stringify(global));
-		expect(guardHookEnabled(readGlobalSettings())).toBe(false);
+describe("global settings engine", () => {
+	it("reads the engine from the global settings.json", async () => {
+		writeFileSync(join(agentDir, "settings.json"), JSON.stringify({ permissions: { engine: "native" } }));
 		expect(await gateToolCall("bash", { command: "rm -rf /" }, host("native", { hasUI: false }))).toMatchObject({
 			block: true,
 		});

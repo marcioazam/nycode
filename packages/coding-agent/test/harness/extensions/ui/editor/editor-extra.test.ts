@@ -94,7 +94,7 @@ function _historyCtx(s: ReturnType<typeof setup>, branchText: string, sessionDir
 
 const _strip = (s: string) => s.replace(/\x1b\[[0-9;]*m/g, "").replace(/\x1b_[^\x07]*\x07/g, "");
 
-// Cápsula (dono, 2026-11-18, /barra variante 2): antes réguas retas `───`; agora as pontas viram cantos `╮` e `╯`.
+// Cápsula: antes réguas retas `───`; agora as pontas viram cantos `╮` e `╯`.
 
 // --- compatibilidade Claude Code ---
 function compatEditor(busy = false) {
@@ -388,8 +388,8 @@ test("histórico do alias só depois que o handler assíncrono termina; falha do
 	assert.equal(f.getText(), "");
 });
 
-// Pedido do dono (2026-11-14): `❯` no começo da caixa de entrada (antes só o cursor em bloco), alinhado ao `❯` das mensagens enviadas.
-// Cápsula (dono, 2026-11-18): antes ` ❯ texto` e continuação em 3 colunas; agora `│ ❯ texto`, continuação em 4, `│` no fim.
+// `❯` no começo da caixa de entrada (antes só o cursor em bloco), alinhado ao `❯` das mensagens enviadas.
+// Cápsula: antes ` ❯ texto` e continuação em 3 colunas; agora `│ ❯ texto`, continuação em 4, `│` no fim.
 test("prompt: ❯ antes do texto na 1ª linha; as demais linhas ficam alinhadas ao texto", () => {
 	const { e } = editor({ enabled: false });
 	assert.ok(
@@ -411,7 +411,7 @@ test("prompt: ❯ antes do texto na 1ª linha; as demais linhas ficam alinhadas 
 	assert.ok(duas.every((l: string) => [...l].length <= 40));
 });
 
-// Dono, 2026-11-15: a régua do composer (barra de envio) fica no ciano do sistema; o modo shell mantém a cor do nycode (magenta).
+// A régua do composer (barra de envio) fica no ciano do sistema; o modo shell mantém a cor do nycode (magenta).
 test("borda: ciano do ui.cyan; com ! usa a cor que o nycode atribuiu", () => {
 	const e = new m.UiEditor(tui, theme, kb, { enabled: false }, () => undefined, {
 		cyan: (s: string) => `<c>${s}</c>`,
@@ -426,7 +426,7 @@ test("borda: ciano do ui.cyan; com ! usa a cor que o nycode atribuiu", () => {
 	assert.equal(sem.borderColor("─"), "<nycode>─</nycode>"); // sem ui.cyan: comportamento do nycode
 });
 
-// Dono, 2026-11-15: o ciano marca onde está o foco; a régua só fica ciano com o composer focado e nenhuma tab focada.
+// O ciano marca onde está o foco; a régua só fica ciano com o composer focado e nenhuma tab focada.
 test("borda: ciano só com o editor focado e sem tab focada na barra de grupos", () => {
 	const e = new m.UiEditor(tui, theme, kb, { enabled: false }, () => undefined, {
 		cyan: (s: string) => `<c>${s}</c>`,
@@ -453,7 +453,7 @@ test("placeholder: só com o editor vazio, em dim, na mesma largura", () => {
 	const plain = (s: string) => s.replace(/\x1b\[[0-9;]*m|\x1b_[^\x07]*\x07/g, "");
 	const { e } = editor({ enabled: false });
 	const vazio = e.render(70)[1];
-	assert.match(plain(vazio), /^│ ❯ . Pergunte, ou \/ comandos · @ arquivos · ! shell +│$/); // cápsula (dono, 2026-11-18): antes sem `│`
+	assert.match(plain(vazio), /^│ ❯ . Pergunte, ou \/ comandos · @ arquivos · ! shell +│$/); // cápsula: antes sem `│`
 	assert.equal(plain(vazio).length, plain(e.render(70)[0]).length);
 	e.handleInput("a");
 	assert.ok(!plain(e.render(70)[1]).includes("Pergunte"));
@@ -467,7 +467,7 @@ test("placeholder: só com o editor vazio, em dim, na mesma largura", () => {
 	assert.ok(curto.endsWith("\x1b[0m"), "mantém o fecho de cor da linha");
 });
 
-// Cápsula (dono, 2026-11-18, /barra variante 2): a borda respira entre a régua e o ciano enquanto o agente trabalha e fica âmbar
+// Cápsula: a borda respira entre a régua e o ciano enquanto o agente trabalha e fica âmbar
 // parada quando o turno está sem resposta; fora do turno, a cor de sempre.
 test("cápsula: respira no trabalho, âmbar sem resposta, cor de sempre ocioso", () => {
 	const FOCO = Symbol.for("nycode:foco"),
