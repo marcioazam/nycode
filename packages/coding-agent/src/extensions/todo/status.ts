@@ -17,6 +17,15 @@ export const isDeferred = (status: string): boolean => status === "blocked";
 export const isTerminal = (status: string): boolean =>
 	status === "completed" || status === "failed" || status === "cancelled";
 
+/**
+ * User-facing progress: completed items over the items still in scope. Cancelled work leaves the count, so a list whose
+ * items all ended reads n/n instead of staying one short (bug 2026-11-26: "8/9" with one cancelled item).
+ */
+export function todoProgress(items: readonly { status?: string }[]): { done: number; total: number } {
+	const scope = items.filter((t) => t.status !== "cancelled");
+	return { done: scope.filter((t) => t.status === "completed").length, total: scope.length };
+}
+
 /** One-shot reminder for a finished background event: names the item and suggests `failed` on failure. */
 export function externalFinishReminder(
 	items: readonly TodoSyncItem[],

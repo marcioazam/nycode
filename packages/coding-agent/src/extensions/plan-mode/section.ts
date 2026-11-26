@@ -29,7 +29,7 @@ import {
 	tableHeader,
 	tableRow,
 } from "./table.ts";
-import type { TodoItem } from "./utils.ts";
+import { type TodoItem, todoRowsProgress } from "./utils.ts";
 
 const KEY = "plan-section";
 const OPEN_PLAN = "o abrir plano";
@@ -171,9 +171,12 @@ export class PlanSection {
 			this.offset = clampOffset(Math.max(0, open - 1), items.length, this.visible());
 		}
 		this.syncTimer();
-		// A finished todo list hides itself (a plan keeps its done state); a new open item brings it back.
+		// A finished todo list (every item completed or cancelled) hides itself (a plan keeps its done state); a new open
+		// item brings it back.
 		const hide =
-			items.length === 0 || (source === "todo" && (todoWidgetMode() === "off" || items.every((i) => i.completed)));
+			items.length === 0 ||
+			(source === "todo" &&
+				(todoWidgetMode() === "off" || items.every((i) => i.completed || i.status === "skipped")));
 		this.hidden = hide;
 		if (hide) {
 			this.remove();
@@ -188,12 +191,20 @@ export class PlanSection {
 			id: "plan",
 			active: () => this.items.length > 0 && !this.hidden,
 			hasBody: true,
-			label: () =>
-				`${this.source === "todo" ? "Todo" : "Plan"} ${this.items.filter((i) => i.completed).length}/${this.items.length}${this.compactDoing()}`,
+			label: () => `${this.source === "todo" ? "Todo" : "Plan"} ${this.progressLabel()}${this.compactDoing()}`,
 			changed: () => this.tabChanged(),
 			enter: () => this.focusByKeyboard(),
 		});
 		if (hadItems !== !hide) bridge.onPlanChange?.();
+	}
+
+	/** done/total of the title: a todo list leaves cancelled items out (todoRowsProgress); a plan counts every step. */
+	private progressLabel(): string {
+		const { done, total } =
+			this.source === "todo"
+				? todoRowsProgress(this.items)
+				: { done: this.items.filter((i) => i.completed).length, total: this.items.length };
+		return `${done}/${total}`;
 	}
 
 	/** `/todos-widget compact`: the one line also names the active task, as Claude Code's spinner label. */
@@ -484,7 +495,7 @@ export class PlanSection {
 				? ` · todo ${this.todo.done}/${this.todo.total}${this.todo.doing ? ` · ${this.todo.doing}` : ""}`
 				: "";
 		const info = `${elapsed === undefined ? "" : ` · ${formatDuration(elapsed)}${this.resumed ? " desde a retomada" : ""}`}${spend ? ` · ${spend}` : ""}${todo}${paused ? " · pausado" : ""}${range}${flash}`;
-		const lead = `${this.source === "todo" ? "TODO" : "PLAN"} ${done}/${total}${info}`;
+		const lead = `${this.source === "todo" ? "TODO" : "PLAN"} ${this.progressLabel()}${info}`;
 		if (focus) {
 			// Keys that fit, most useful first; `esc back` always stays (the way out must never be cut). The tab names take the start of the bar.
 			const keys = validKeys(this.selected(), paused)

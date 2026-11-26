@@ -11,6 +11,7 @@ import { getAgentDir } from "../../config.ts";
 import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "../../core/extensions/types.ts";
 import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
 import { ligarAvisos } from "../../modes/interactive/avisos/index.ts";
+import { todoProgress } from "../todo/status.ts";
 import { type Config, caminhoAvisos, canalEfetivo, carregar, type Evento, gravar } from "./config.ts";
 import { corpo, criarNotificador, type Info } from "./notificar.ts";
 import { type Aviso, adicionar, PainelAvisos } from "./painel.ts";
@@ -106,10 +107,10 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 		(e: { toolName?: string; result?: { details?: { todos?: Array<{ status?: string }> } } }) => {
 			if (e.toolName === "question") progresso.esperar(false);
 			const todos = e.toolName === "todo" ? e.result?.details?.todos : undefined;
-			if (Array.isArray(todos))
-				progresso.percentual(
-					todos.length ? (100 * todos.filter((t) => t.status === "completed").length) / todos.length : undefined,
-				);
+			if (Array.isArray(todos)) {
+				const { done, total } = todoProgress(todos);
+				progresso.percentual(todos.length ? (total ? (100 * done) / total : 100) : undefined);
+			}
 		},
 	);
 	nycode.on("agent_end", (e) => {
