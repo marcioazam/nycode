@@ -53,6 +53,12 @@ describe("ProjectTrustStore", () => {
 			writeFileSync(join(cwd, ".nycode", "settings.json"), "{}");
 			expect(hasTrustRequiringProjectResources(cwd)).toBe(true);
 
+			// A project routing policy picks the models subagents run on, so it needs trust like settings.json.
+			rmSync(join(cwd, ".nycode", "settings.json"), { force: true });
+			expect(hasTrustRequiringProjectResources(cwd)).toBe(false);
+			writeFileSync(join(cwd, ".nycode", "subagent-routing.json"), "{}");
+			expect(hasTrustRequiringProjectResources(cwd)).toBe(true);
+
 			rmSync(join(cwd, ".nycode"), { recursive: true, force: true });
 			mkdirSync(join(cwd, ".agents", "skills"), { recursive: true });
 			expect(hasTrustRequiringProjectResources(cwd)).toBe(true);

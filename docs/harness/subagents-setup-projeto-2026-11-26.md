@@ -15,6 +15,8 @@ O dono pediu (2026-11-26) uma política de projeto que sobrepõe a global.
   global. O arquivo do projeto substitui o global inteiro; não há mescla.
 - Confiança: o arquivo do projeto é controlado pelo repositório, então só vale quando o projeto está aprovado
   (`isProjectApprovedSilently`, a mesma porta dos agentes de projeto). Sem confiança ele é ignorado.
+- O arquivo entra na lista de recursos que exigem confiança (`core/trust-manager.ts`): sem isso, um repositório
+  que só tivesse esse arquivo contava como aprovado sem pergunta (achado no smoke do binário em `/tmp`).
 - Filhos: o pai passa ao filho `NYCODE_SUBAGENT_ROUTING_FILE` com o arquivo que usou, então um subagente aninhado segue
   a mesma política mesmo rodando em outro `cwd`.
 - A descrição e o schema do tool `subagent` são recalculados no `session_start` e só registrados de novo quando a

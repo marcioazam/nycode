@@ -36,6 +36,8 @@ const TRUST_REQUIRING_PROJECT_CONFIG_RESOURCES = [
 	"themes",
 	"SYSTEM.md",
 	"APPEND_SYSTEM.md",
+	// Picks the models subagents run on (extensions/subagent/routing/policy.ts).
+	"subagent-routing.json",
 ] as const;
 
 function normalizeCwd(cwd: string): string {
