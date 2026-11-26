@@ -43,14 +43,14 @@
 		"node": ">=26.3.1"
 	},
 	"dependencies": {
-		"@nycode/chord": "2.0.2",
-		"@nycode/schema": "2.0.2",
-		"@nycode/telemetry": "2.0.2",
+		"@nycode/chord": "2.0.3",
+		"@nycode/schema": "2.0.3",
+		"@nycode/telemetry": "2.0.3",
 		"esbuild": "0.28.2",
 		"ws": "8.23.0"
 	},
 	"devDependencies": {
-		"@nycode/ai": "2.0.2",
-		"@nycode/durable": "2.0.2"
+		"@nycode/ai": "2.0.3",
+		"@nycode/durable": "2.0.3"
 	}
 }

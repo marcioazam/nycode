@@ -1,6 +1,6 @@
 {
 	"name": "@nycode/chord",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "Object runtime for apps across processes: contracts, documents, a store, links, plugins with hot reload, HTTP, workers, web and terminal clients",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -170,8 +170,8 @@
 		"node": ">=22.19.0"
 	},
 	"dependencies": {
-		"@nycode/schema": "2.0.2",
-		"@nycode/telemetry": "2.0.2"
+		"@nycode/schema": "2.0.3",
+		"@nycode/telemetry": "2.0.3"
 	},
 	"peerDependencies": {
 		"esbuild": "^0.28.2",
