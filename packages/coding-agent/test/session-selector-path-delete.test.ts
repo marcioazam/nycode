@@ -389,7 +389,13 @@ describe("session selector path/delete interactions", () => {
 
 		list.handleInput(CTRL_D);
 		list.handleInput("\r");
-		for (let i = 0; i < 10 && existsSync(sessions[0]!.path); i++) {
+		// The delete and the reload after it are async: wait for both (bounded) instead of a fixed number of ticks,
+		// which lost the race under a loaded full-suite run.
+		const deadline = Date.now() + 2000;
+		while (
+			Date.now() < deadline &&
+			(existsSync(sessions[0]!.path) || list.getSelectedSessionPath() === sessions[0]!.path)
+		) {
 			await new Promise((resolve) => setTimeout(resolve, 10));
 		}
 		await flushPromises();
