@@ -1,4 +1,4 @@
-// Faixa do run: entrada "Nasce do fundo" (dono, 2026-11-20, lab /segplano design 1 "Atual" + animação "Nasce do fundo"): 450 ms, uma vez por run.
+// Faixa do run: entrada "Nasce do fundo": 450 ms, uma vez por run.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import * as __m2 from "../../../../../../src/extensions/ui-visual/motion/vivo.ts";
@@ -66,7 +66,7 @@ test("nasce do fundo: movimento reduzido e NO_COLOR a mostram pronta", () => {
 	}
 });
 
-// Marcador (dono, 2026-11-20, lab /runbanda desenho 19): md-layers em todo run; antes md-cog_play só no subagente e `▸` no shell.
+// Marcador: md-layers em todo run; antes md-cog_play só no subagente e `▸` no shell.
 // Sem Nerd Font volta ao `▸`. O tipo vem escrito: `subagent` ou `shell`.
 test("marcador: todo run usa md-layers com Nerd Font, na cor do estado; sem Nerd Font fica ▸", async () => {
 	const { resolverOf, ctx } = __r3;
@@ -96,7 +96,7 @@ test("marcador: todo run usa md-layers com Nerd Font, na cor do estado; sem Nerd
 	}
 });
 
-// Lab /runbanda desenho 19 (dono, 2026-11-20): prévia do comando dim, cortada em 22 com ` …`; à direita só `id · hora`.
+// Lab /runbanda desenho 19: prévia do comando dim, cortada em 22 com ` …`; à direita só `id · hora`.
 test("refinada: comando longo cortado em 22 colunas; sem atalho à direita", () => {
 	const fg = { fg: (c: string, t: string) => `<${c}>${t}</c>`, bold: (t: string) => t };
 	const l = bandaRun(

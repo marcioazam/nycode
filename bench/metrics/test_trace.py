@@ -1,6 +1,9 @@
 """Transcript parsing and per-run process/speed metrics, from minimal synthetic pi and Claude Code events."""
 
 import json
+import re
+from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 from bench.metrics import trace
@@ -187,3 +190,161 @@ def test_cc_session_timing(tmp_path: Any) -> None:
         "tool_s": 1.0,
     }
     assert trace.cc_session_speed(tmp_path / "none.jsonl", t0=1.0) == {}
+
+
+# --- todo counters ------------------------------------------------------------
+def res(
+    i: str,
+    name: str,
+    body: str = "ok",
+    todos: Sequence[Mapping[str, object]] | None = None,
+) -> dict[str, Any]:
+    m: dict[str, Any] = {
+        "role": "toolResult",
+        "toolCallId": i,
+        "toolName": name,
+        "content": [{"type": "text", "text": body}],
+    }
+    if todos is not None:
+        m["details"] = {"todos": todos}
+    return {"type": "message_end", "message": m}
+
+
+REMINDER = "x\n" + trace.REMINDER + " 1 open item(s)</system-reminder>"
+
+
+def run(last_status: str) -> str:
+    return pi_text(
+        p_asst([p_call("1", "todo", action="add", text="a")]),  # todo-only turn
+        res("1", "todo", todos=[{"id": 1, "status": "pending"}]),
+        p_asst([p_call("2", "bash", command="ls")]),
+        res("2", "bash", REMINDER),  # reminder 1
+        p_asst([p_call("3", "todo", action="list")]),  # list does not follow
+        res("3", "todo"),
+        p_asst(
+            [p_call("4", "todo", action="start", id=1)]
+        ),  # changing call: follows reminder 1
+        res("4", "todo", todos=[{"id": 1, "status": "in_progress"}]),
+        p_asst([p_call("5", "bash", command="ls")]),
+        res("5", "bash", REMINDER),  # reminder 2, never followed
+        p_asst([p_call("6", "bash", command="a")]),
+        p_asst([p_call("7", "bash", command="b")]),
+        p_asst([p_call("8", "bash", command="c")]),
+        p_asst([p_call("9", "todo", action="complete", id=1)]),  # fourth call: too late
+        res(
+            "9",
+            "todo",
+            todos=[{"id": 1, "status": last_status}, {"id": 2, "status": "pending"}],
+        ),
+        p_asst([text("Done.")]),
+    )
+
+
+def test_counters_and_coherent_end() -> None:
+    m = trace.todo_metrics(run("completed"))
+    assert m["todo_only_turn_share"] == 4 / 10
+    assert m["reminders"] == 2 and m["reminders_followed"] == 1
+    assert m["final_open_items"] == 1 and m["final_in_progress"] == 0
+    assert m["coherent_end"] == 1.0
+
+
+def test_in_progress_left_open_is_incoherent() -> None:
+    m = trace.todo_metrics(run("in_progress"))
+    assert m["final_in_progress"] == 1 and m["coherent_end"] == 0.0
+
+
+def test_no_todo_use_has_no_coherence() -> None:
+    m = trace.todo_metrics(
+        pi_text(p_asst([p_call("1", "bash", command="ls")]), p_asst([text("x")]))
+    )
+    assert (
+        m["coherent_end"] is None
+        and m["todo_only_turn_share"] == 0.0
+        and m["reminders"] == 0
+    )
+    assert trace.todo_metrics("")["todo_only_turn_share"] is None
+
+
+def test_blocked_failed_cancelled_are_not_open() -> None:
+    todos = [
+        {"id": i, "status": s}
+        for i, s in enumerate(
+            ("blocked", "failed", "cancelled", "completed", "pending")
+        )
+    ]
+    m = trace.todo_metrics(pi_text(res("1", "todo", todos=todos)))
+    assert m["final_open_items"] == 1 and m["coherent_end"] == 1.0
+
+
+# --- matchers pinned to the real extension strings ---------------------------------
+TODO_SRC = Path(__file__).parents[2] / "packages/coding-agent/src/extensions/todo"
+
+
+def _src(name: str) -> str:
+    return (TODO_SRC / name).read_text()
+
+
+def test_reminder_matcher_matches_both_stale_reminder_texts() -> None:
+    src = _src("stale-reminder.ts")
+    # strictReminder and reminder: a wording change there must fail here, not zero `reminders` silently
+    assert src.count(f"`{trace.REMINDER} ") == 2
+    samples = re.findall(r"`(<system-reminder>The todo list has[^`]*)`", src)
+    assert len(samples) == 2
+    for sample in samples:
+        body = re.sub(r"\$\{[^}]*\}", "1", sample)
+        tr = pi_text(res("1", "bash", body))
+        assert trace.todo_metrics(tr)["reminders"] == 1
+
+
+def test_turn_check_matcher_matches_the_source_type() -> None:
+    src = _src("turn-check.ts")
+    m = re.search(r'TURN_CHECK_TYPE = "([^"]+)"', src)
+    assert m and m.group(1) == trace.TURN_CHECK_TYPE
+    assert 'type: "custom_message", customType: TURN_CHECK_TYPE' in src
+
+
+def test_external_matcher_matches_the_source_text() -> None:
+    src = _src("status.ts")
+    assert trace.EXTERNAL_REMINDER in src
+    line = next(
+        ln
+        for ln in src.splitlines()
+        if ln.lstrip().startswith("return `<system-reminder>Todo #")
+    )
+    body = re.sub(r"\$\{[^}]*\}", "x", line)
+    assert trace.todo_metrics(pi_text(res("1", "run", body)))["external_reminders"] == 1
+
+
+def entry(custom_type: str, content: str = "x") -> dict[str, Any]:
+    return {
+        "type": "entry_appended",
+        "entry": {
+            "type": "custom_message",
+            "customType": custom_type,
+            "content": content,
+        },
+    }
+
+
+def test_flag_on_interventions_are_counted_separately() -> None:
+    ext = f'<system-reminder>Todo #1 "a" {trace.EXTERNAL_REMINDER} finished. x</system-reminder>'
+    m = trace.todo_metrics(
+        pi_text(
+            entry(trace.TURN_CHECK_TYPE),
+            {
+                "type": "entry_appended",
+                "entry": {"type": "custom", "customType": trace.TURN_CHECK_TYPE},
+            },
+            entry("other"),
+            res("1", "run", ext),
+            {"type": "message_end", "message": {"role": "custom", "content": ext}},
+            entry(trace.TURN_CHECK_TYPE),
+        )
+    )
+    assert m["turn_checks"] == 2 and m["external_reminders"] == 2
+    assert m["reminders"] == 0
+
+
+def test_interventions_are_zero_without_todo_sync() -> None:
+    m = trace.todo_metrics(run("completed"))
+    assert m["turn_checks"] == 0 and m["external_reminders"] == 0

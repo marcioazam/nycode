@@ -1,5 +1,5 @@
 // node --experimental-strip-types --test extensions/ui-visual/test/tools/leitura.test.ts
-// Read em chips + contador (/read desenho 4, animação 4; dono, 2026-11-18): antes `ícone read · alvo :faixa · N linhas`
+// Read em chips + contador (/read desenho 4, animação 4): antes `ícone read · alvo :faixa · N linhas`
 // em texto corrido; agora, com cores no tema, verbo/faixa/contagem/truncado em pílulas e a contagem sobe de 0 ao total.
 import assert from "node:assert/strict";
 import { test } from "vitest";
@@ -42,11 +42,11 @@ test("chips: verbo tingido pelo estado, faixa e contagem em pílulas, linha na l
 	const { linha } = desenha({ path: "/work/proj/src/a.ts", offset: 120, limit: 60 }, result("a\nb\nc"));
 	const p = plain(linha);
 	assert.equal(visibleWidth(p), 120);
-	// Sem o fundo do cartão, pílula na margem do chat (dono, 2026-11-18): antes cartão customMessageBg com 1 espaço de recuo e 1 no fim.
-	// Régua como no Run (dono, 2026-11-18): antes espaços entre o alvo e a contagem e a hora em pílula à parte; agora régua ─ e `·` antes da hora.
-	// Verbo sem pílula (dono, 2026-11-19): antes ` ícone read ` num fundo misturado ao verde; agora `ícone Read` na coluna 0, sem
+	// Sem o fundo do cartão, pílula na margem do chat: antes cartão customMessageBg com 1 espaço de recuo e 1 no fim.
+	// Régua como no Run: antes espaços entre o alvo e a contagem e a hora em pílula à parte; agora régua ─ e `·` antes da hora.
+	// Verbo sem pílula: antes ` ícone read ` num fundo misturado ao verde; agora `ícone Read` na coluna 0, sem
 	// fundo, com a cor do estado no ícone e na palavra.
-	// `·` entre o verbo e o alvo (dono, 2026-11-19): antes `Read src/a.ts`.
+	// `·` entre o verbo e o alvo: antes `Read src/a.ts`.
 	assert.match(p, /^\S+ Read · src\/a\.ts {2}120-180 {2}─{10,} {2}3 linhas $/, p);
 	assert.ok(linha.startsWith(`\x1b[38;2;${RGB.success}m`), "ícone na cor do estado, na coluna 0");
 	assert.deepEqual(fundos(antesDoAlvo(linha)), [], "verbo sem fundo");
@@ -62,11 +62,11 @@ test("chips: verbo tingido pelo estado, faixa e contagem em pílulas, linha na l
 
 test("chips: truncado em pílula de aviso; erro tinge o verbo de vermelho e não mostra contagem", () => {
 	const t = desenha({ path: "log.jsonl" }, result("a\nb", { truncation: { truncated: true } }));
-	// Sem o fundo do cartão, pílula na margem do chat (dono, 2026-11-18): antes cartão customMessageBg com 1 espaço de recuo e 1 no fim.
+	// Sem o fundo do cartão, pílula na margem do chat: antes cartão customMessageBg com 1 espaço de recuo e 1 no fim.
 	assert.match(plain(t.linha), /2 linhas {3}truncado $/);
 	const e = desenha({ path: "x.md" }, result("ENOENT"), { isError: true });
 	assert.doesNotMatch(plain(e.linha), /linha/);
-	// Erro: antes pílula de fundo vermelho misturado (118;48;51); agora ícone e palavra no vermelho, sem fundo (dono, 2026-11-19).
+	// Erro: antes pílula de fundo vermelho misturado (118;48;51); agora ícone e palavra no vermelho, sem fundo.
 	assert.deepEqual(fundos(antesDoAlvo(e.linha)), []);
 	assert.ok(cores(antesDoAlvo(e.linha)).includes(RGB.error), cores(e.linha).join(" "));
 });
@@ -92,10 +92,10 @@ test("sem cores no tema: a linha de texto corrido de antes", () => {
 	assert.match(plain(w0.renderCall({ path: "a.ts" }, sem, c).render(80)[0]).trimEnd(), / read · a\.ts · 1 linha$/);
 });
 
-// Varredura + transição de estado (/refino read 2, dono, 2026-11-18): antes a pílula trocava de cor de uma vez e não havia
+// Varredura + transição de estado (/refino read 2): antes a pílula trocava de cor de uma vez e não havia
 // estado de aviso; agora lendo há um brilho que atravessa a pílula e o desfecho funde em 300 ms (verde, âmbar truncado, vermelho).
 const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
-// Sem pílula (dono, 2026-11-19): antes o brilho e a transição pintavam o fundo da pílula; agora a cor do ícone e da palavra.
+// Sem pílula: antes o brilho e a transição pintavam o fundo da pílula; agora a cor do ícone e da palavra.
 const verboCores = (linha: string) => cores(antesDoAlvo(linha));
 test("varredura: lendo, o brilho atravessa o ícone e a palavra (as cores deles mudam letra a letra)", async () => {
 	const id = "rd-varre";
@@ -130,27 +130,27 @@ test("transição: o desfecho funde do ciano à cor dele e assenta (verde; âmba
 		const { w0, shared } = desenha({ path: "a.ts" }, r, { toolCallId: id });
 		const q = () => verboCores(w0.renderCall({ path: "a.ts" }, cor, shared).render(120)[0]);
 		assert.ok(!q().includes(alvo), `${id}: logo após o fim ainda em transição: ${q()}`);
-		// Pulso no aviso (dono, 2026-11-19): antes assentava em 450 ms; o truncado pulsa até TRANSICAO_MS + PULSO_MS.
+		// Pulso no aviso: antes assentava em 450 ms; o truncado pulsa até TRANSICAO_MS + PULSO_MS.
 		await espera(id === "rd-av" ? 1650 : 450);
 		assert.ok(q().includes(alvo), `${id}: assentado na cor do desfecho: ${q()}`);
 	}
 });
 
 test("transição: no erro o verbo funde ao vermelho; não há fundo de cartão nem de pílula", async () => {
-	// Sem o fundo do cartão (dono, 2026-11-18): antes o fundo do cartão fundia de customMessageBg a toolErrorBg; agora só a pílula.
+	// Sem o fundo do cartão: antes o fundo do cartão fundia de customMessageBg a toolErrorBg; agora só a pílula.
 	vivo.terminou("rd-err");
 	const { w0, shared } = desenha({ path: "x.md" }, result("ENOENT"), { toolCallId: "rd-err", isError: true });
 	const linha = () => w0.renderCall({ path: "x.md" }, cor, shared).render(120)[0] as string;
 	const verbo = () => verboCores(linha())[0];
 	const cedo = verbo();
-	// Pulso no erro (dono, 2026-11-19): antes assentava em 450 ms; agora pulsa até TRANSICAO_MS + PULSO_MS.
+	// Pulso no erro: antes assentava em 450 ms; agora pulsa até TRANSICAO_MS + PULSO_MS.
 	await espera(1650);
 	assert.notEqual(verbo(), cedo, "o verbo mudou durante a transição");
 	assert.equal(verbo(), RGB.error, "assentado no vermelho");
 	assert.deepEqual(fundos(linha()), [], "sem fundo de cartão nem de pílula");
 });
 
-// Lab /rwerro desenho 1 + "Pulso" (dono, 2026-11-19), também para aviso: depois da transição a cor do erro (Read, Write) e
+// Lab /rwerro desenho 1 + "Pulso", também para aviso: depois da transição a cor do erro (Read, Write) e
 // do aviso (truncado) pulsa duas vezes e assenta; sucesso não pulsa. Args estáveis, como no nycode real (o desenho do erro era
 // guardado no 1º quadro).
 test("pulso: erro e aviso clareiam e voltam à cor depois da transição; sucesso não pulsa", async () => {
@@ -192,9 +192,9 @@ test("surgir: a contagem e o truncado nascem do fundo, o truncado depois da cont
 	assert.ok(fgAntes("linhas")[0]! > 0, "contagem já surgindo");
 });
 
-// Edit no estilo do Read (dono, 2026-11-19): antes `● arquivo  pasta  ·  +N −M  …  concluído [hora em pílula]` com o fundo do
+// Edit no estilo do Read: antes `● arquivo  pasta  ·  +N −M  …  concluído [hora em pílula]` com o fundo do
 // cartão; agora lápis + `Edit` na cor do estado, `·` entre verbo, arquivo, pasta e placar, régua até a hora, nada de
-// `concluído`. (dono, 2026-11-20): antes o ícone seguia a cor do estado e o cabeçalho ficava sem fundo; agora o ícone é
+// `concluído`. antes o ícone seguia a cor do estado e o cabeçalho ficava sem fundo; agora o ícone é
 // sempre muted e a linha leva o fundo da caixa do diff.
 test("edit: lápis muted + Edit na cor do estado, · entre as partes, régua, sem concluído e com o fundo da caixa", () => {
 	const args = { path: "/work/proj/docs/x/plano.md" };
@@ -217,7 +217,7 @@ test("edit: lápis muted + Edit na cor do estado, · entre as partes, régua, se
 	assert.deepEqual([...new Set(fundos(le))], [RGB.toolErrorBg], "fundo de erro, igual ao da caixa");
 });
 
-// Imagem no Read (dono, 2026-11-19): uma linha em branco a mais antes da imagem; texto segue sem corpo.
+// Imagem no Read: uma linha em branco a mais antes da imagem; texto segue sem corpo.
 test("imagem: o resultado do Read deixa uma linha de margem acima da imagem; texto não", () => {
 	const w0 = wrapped("read");
 	const img = {
@@ -232,7 +232,7 @@ test("imagem: o resultado do Read deixa uma linha de margem acima da imagem; tex
 	assert.deepEqual(w0.renderResult(result("a"), { expanded: false, isPartial: false }, cor, t).render(80), []);
 });
 
-// Write igual ao Read, com a bolinha cheia (dono, 2026-11-19): antes cartão verde do shell padrão com `write` minúsculo e a
+// Write igual ao Read, com a bolinha cheia: antes cartão verde do shell padrão com `write` minúsculo e a
 // contagem colada ao alvo; agora `● Write · alvo ──── N linhas`, sem fundo, na cor do estado.
 test("write: mesma linha do Read, bolinha cheia e Write", () => {
 	const args = { path: "/work/proj/src/novo.ts", content: "a\nb\n" };
@@ -247,7 +247,7 @@ test("write: mesma linha do Read, bolinha cheia e Write", () => {
 	assert.deepEqual(fundos(linha), [], "sem fundo");
 });
 
-// Sem o tipo antes da hora (dono, 2026-11-19): antes `… ──── imagem · 22:56`; agora a régua vai direto à hora.
+// Sem o tipo antes da hora: antes `… ──── imagem · 22:56`; agora a régua vai direto à hora.
 test("imagem: cabeçalho do Read sem `imagem`", () => {
 	const img = {
 		content: [

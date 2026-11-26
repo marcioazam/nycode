@@ -31,5 +31,5 @@ All three new skills permit implicit invocation. Existing skill discovery policy
 is preserved. No global AGENTS.md or runtime permission settings were changed.
 
 Source blob identities and hashes of changed skill/agent artifacts are recorded
-in `provenance.json` (ausente do ny-pi no commit e4f8729). The integration status and validation record
-are in `skill-curation.md` (ausente do ny-pi no commit e4f8729).
+in `provenance.json` (not kept in this repository). The integration status and validation record
+are in `skill-curation.md` (not kept in this repository).

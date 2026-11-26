@@ -37,7 +37,7 @@ import { SETTINGS_DEFAULTS } from "../../core/settings-defaults.ts";
 import { isPlanModeState, PLAN_MODE_CHANNEL } from "../_shared/events/plan-mode-state.ts";
 import { claudeEffortLevel } from "../_shared/model/effort.ts";
 import { approvalRecheck, isProjectApprovedSilently } from "../_shared/project/project-approval.ts";
-import { checkoutRoot, gitRoot } from "../_shared/project/project-root.ts";
+import { gitRoot } from "../_shared/project/project-root.ts";
 import { addDirFlagValue } from "../_shared/seams/add-dir-flag.ts";
 import { watchSettingsFiles } from "../_shared/settings/settings-watch.ts";
 import { PACKAGE_VERSION } from "../_shared/util/package-version.ts";
@@ -152,6 +152,8 @@ export default function statusLine(nycode: ExtensionAPI) {
 	// The most recent rate-limit snapshot parsed from provider response headers, and
 	// a once-per-session guard so a 429 warns the user only the first time it lands.
 	let rateLimits: RateLimitSnapshot | undefined;
+	/** The provider of the model whose response produced `rateLimits`. */
+	let rateLimitsProvider: string | undefined;
 	let rateLimitWarned = false;
 	let refreshTimer: ReturnType<typeof setInterval> | undefined;
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
@@ -275,13 +277,12 @@ export default function statusLine(nycode: ExtensionAPI) {
 			cwd: ctx.cwd,
 			// Claude sends its CLI version; nycode's own version is the honest analogue.
 			version: PACKAGE_VERSION,
-			// project_dir is the repository, not the directory the session started in: a
-			// script labelling the project showed whichever subdirectory it was launched
-			// from. git_worktree names a linked worktree and is absent in a main checkout, as
+			// Claude documents project_dir as the directory it was launched in, even inside a
+			// repository. git_worktree names a linked worktree and is absent in a main checkout, as
 			// Claude sends it. added_dirs comes from the --add-dir flag nycode registers.
 			workspace: {
 				current_dir: ctx.cwd,
-				project_dir: checkoutRoot(ctx.cwd),
+				project_dir: ctx.cwd,
 				...(worktreeName === undefined ? {} : { git_worktree: worktreeName }),
 				added_dirs: addedDirs(),
 			},
@@ -480,6 +481,7 @@ export default function statusLine(nycode: ExtensionAPI) {
 		const snapshot = parseRateLimits(headers);
 		if (snapshot) {
 			rateLimits = snapshot;
+			rateLimitsProvider = ctx.model?.provider;
 			scheduleExpiryRefresh(snapshot);
 		}
 		if (event.status === 429 && !rateLimitWarned) {
@@ -530,6 +532,7 @@ export default function statusLine(nycode: ExtensionAPI) {
 		requestStartMs = undefined;
 		lastUsage = undefined;
 		rateLimits = undefined;
+		rateLimitsProvider = undefined;
 		rateLimitWarned = false;
 		clearInterval(refreshTimer);
 		// Seed the running cost from the branch: a resumed or forked session starts
@@ -635,9 +638,14 @@ export default function statusLine(nycode: ExtensionAPI) {
 	// fires these events, so refresh at once instead of waiting for the next tick.
 	// The rate-limit snapshot belongs to the provider that sent it: drop it on a switch, so
 	// Anthropic -> GPT -> Anthropic does not revive the old headers (docs/hud-provider-usage.md).
-	nycode.on("model_select", () => {
-		rateLimits = undefined;
-		clearTimeout(expiryTimer);
+	nycode.on("model_select", (event) => {
+		// The windows belong to the account that sent them, and only Anthropic sends these headers, so after a
+		// switch to another provider nothing would ever replace them. A switch within the provider keeps them.
+		if (rateLimits && event?.model?.provider !== rateLimitsProvider) {
+			rateLimits = undefined;
+			rateLimitsProvider = undefined;
+			clearTimeout(expiryTimer);
+		}
 		scheduleRefresh();
 	});
 	nycode.on("thinking_level_select", () => {

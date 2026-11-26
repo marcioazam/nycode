@@ -10,26 +10,26 @@ instalação. O mapa cobre as cinco fontes:
 
 | # | Fonte | Quantidade | Onde está o mapa |
 |---|---|---|---|
-| 1 | Arquivos rastreados em `marcioazam/ny-pi@e4f8729` | 1485 arquivos | Seção 2 e [anexo E](anexos/E-resumo-por-regra.md) (regras) e [TSV](anexos/E-mapa-arquivo-a-arquivo.tsv) (um por linha) |
+| 1 | Arquivos rastreados em Nycode pré-migração | 1485 arquivos | Seção 2 e registro do mantenedor (regras) e TSV (um por linha) |
 | 2 | pi-code 1.7.0 instalado e remendado | 159 arquivos em `extensions/` (112 do tarball, o resto criado pelos patches) | Seção 3 |
 | 3 | Terceiros de `third-party.json` | 5 componentes | Seção 4 |
 | 4 | Configuração do GitHub (não é arquivo) | 60 regras (R01 a R60) | [04-regras-do-repositorio.md](04-regras-do-repositorio.md) |
 | 5 | Dados na máquina do usuário (`~/.pi/agent`) | configuração, sessões, credenciais | Seção 5 |
 
-## 2. Arquivos do repositório `marcioazam/ny-pi`
+## 2. Arquivos do repositório Nycode pré-migração
 
-Cada um dos 1485 arquivos casa com exatamente uma regra de [anexos/gerar-mapa.py](anexos/gerar-mapa.py). O script
+Cada um dos 1485 arquivos casa com exatamente uma regra de gerador do mapa. O script
 falha se um arquivo ficar sem regra; a execução de 2026-11-20 terminou com 0 sem regra e todas as 104 regras usadas.
 A onda 9 (D-57, D-58) acrescentou 44 arquivos que só existem na foto do pi-harness; eles entram pela lista
-[anexos/E-onda9-caminhos.txt](anexos/E-onda9-caminhos.txt) e passam pelas mesmas regras (R18 a R20 e exceções). O TSV
+registro do mantenedor e passam pelas mesmas regras (R18 a R20 e exceções). O TSV
 e o resumo são só saída do script: `scripts/ci/lint/test_gerar_mapa.py` confere que cada linha do TSV é o que o script
 dá para a origem e que todo destino existe no repositório. Para regerar (2026-11-22: 1529 linhas, 109 regras usadas,
 0 destino inexistente):
 
 ```bash
-git -C ~/source/ny-pi ls-tree -r --name-only origin/main \
-  | python3 docs/migration/nycode-core/anexos/gerar-mapa.py --onda9 docs/migration/nycode-core/anexos/E-onda9-caminhos.txt \
-  > docs/migration/nycode-core/anexos/E-mapa-arquivo-a-arquivo.tsv
+git -C $ORIG ls-tree -r --name-only origin/main \
+  | python3 docs/migration/nycode-core/gerador do mapa --onda9 registro do mantenedor \
+  > registro do mantenedor
 ```
 
 ### 2.1 Ações
@@ -71,13 +71,13 @@ Dos 1312 "converter", 869 são `bench/` (784 deles são tarefas de teste em `ben
 | `scripts/check-patch-stack.sh`, `claude-home/patches/pi-code/zzzzzzz-subagent-model-effort/replay.test.ts` | Não há mais pilha de patches; o teste só reverte e reaplica essa pilha (o comportamento de roteamento tem `render.test.ts` e `tracker.test.ts` no destino) | — |
 | `extensions/cache-prefix-probe/index.ts`, `claude-home/bin/telemetry/cache_probe_join.py`, seu teste, `cache-remeasure.sh` | Diagnóstico marcado como temporário | D-10 |
 | `extensions/no-web-search.ts`, `extensions/no-context-files-covers-claude-md.ts`, `scripts/compaction-400k.py` | Contornos de um acoplamento que acaba | D-10 |
-| `claude-home/bin/evals/plan_ab.py`, `plan_ab_cases.jsonl`, `test_plan_ab.py`, `claude-home/bin/evals/harbor/run.sh`, `harbor/README.md` | Nada em `bench/`, `scripts/` ou `packages/` os referencia. `run.sh` e o README descreviam a execução manual do braço Nycode (`nycode-harness`) com as credenciais do dono (`~/.claude-2`); `bench/run.py` a substituiu. Os agentes de Harbor (`pi_harness_agent.py`, `pi_vanilla_api_agent.py`, o `bundle.sh` do Nycode como `pi_bundle.sh`) e os dois testes foram convertidos para `bench/harbor/` e `bench/tests/harbor/`; `structure.py` e seu teste para `scripts/ci/lint/structure/` | — |
+| `claude-home/bin/evals/plan_ab.py`, `plan_ab_cases.jsonl`, `test_plan_ab.py`, `claude-home/bin/evals/harbor/run.sh`, `harbor/README.md` | Nada em `bench/`, `scripts/` ou `packages/` os referencia. `run.sh` e o README descreviam a execução manual do braço Nycode pré-migração com as credenciais do dono (`~/.claude-2`); `bench/run.py` a substituiu. Os agentes de Harbor (`pi_harness_agent.py`, `pi_vanilla_api_agent.py`, o `bundle.sh` do Nycode pré-migração como `pi_bundle.sh`) e os dois testes foram convertidos para `bench/harbor/` e `bench/tests/harbor/`; `structure.py` e seu teste para `scripts/ci/lint/structure/` | — |
 | `third-party.json` | Terceiros embutidos ou pacotes opcionais | D-11 |
-| `pi-code-installed.SHA256SUMS` (`import/ny-pi/`) | Lista de checksums da cópia congelada do pi-code; a referência é o tarball de sha1 conferido. Sai junto com `import/` em C-F12-05 | D-02, D-47 |
+| `pi-code-installed.SHA256SUMS` (`import/origem/`) | Lista de checksums da cópia congelada do pi-code; a referência é o tarball de sha1 conferido. Sai junto com `import/` em C-F12-05 | D-02, D-47 |
 | `install.sh`, `publish.list`, `scripts/install-lib.sh`, `scripts/test_install.sh`, `npm/package.json`, `npm/package-lock.json` | Instalação e publicação do fork | — |
 
 Testes do harness Nycode que o Nycode não repete caso a caso (C-F10-07, detalhe em
-[evidencias/F10-testes.md](evidencias/F10-testes.md)):
+registro do mantenedor):
 
 - `bench/tests/classify/test_affects.py`, `test_more_ui`. O harness Nycode tratava `sound-notify`, `dev-commands`, `up-dequeue` e
   `puxar` como UI pura e, por isso, não funcionais. O Nycode é deliberadamente mais estreito: a UI pura é só `ui`,
@@ -112,7 +112,7 @@ Todo arquivo removido cujo comportamento precisa continuar tem um teste no desti
 
 ### 2.5 Classe de cada peça (especificação 0005, P-1)
 
-Copiada sem edição de `marcioazam/ny-pi@e4f8729:docs/specs/0005-core-scope.md` (linhas 75 a 170, 94 peças) em F0.
+Copiada sem edição de docs/specs/0005-core-scope.md` (linhas 75 a 170, 94 peças) em F0.
 `core` entra no contexto do modelo por padrão; `ui` só afeta a interface; `optional` fica fora do contexto até ser
 ligada; `remove` não migra. A especificação migra para `docs/specs/` em F2 e continua sendo a fonte.
 
@@ -214,7 +214,7 @@ ligada; `remove` não migra. A especificação migra para `docs/specs/` em F2 e 
 ## 3. pi-code 1.7.0 remendado
 
 O que roda hoje é o tarball `pi-code@1.7.0` mais 19 patches e um `sed`. Essa árvore tem 159 arquivos em
-`extensions/` e é a fonte de F5 e F6. Nenhum desses arquivos está no repositório `marcioazam/ny-pi`; o repositório só tem os
+`extensions/` e é a fonte de F5 e F6. Nenhum desses arquivos está no repositório Nycode pré-migração; o repositório só tem os
 patches.
 
 ### 3.1 Como obter a árvore de referência
@@ -224,12 +224,12 @@ npm pack pi-code@1.7.0 --pack-destination /tmp/pi-code-ref
 echo "8ba1f814773da6897f6708c62c7c517cee2baf4e  /tmp/pi-code-ref/pi-code-1.7.0.tgz" | sha1sum -c
 tar -xzf /tmp/pi-code-ref/pi-code-1.7.0.tgz -C /tmp/pi-code-ref        # cria package/
 cd /tmp/pi-code-ref/package/extensions
-for p in "$NYCODE"/import/ny-pi/claude-home/patches/pi-code/*.patch; do patch -p1 -N < "$p"; done
+for p in "$NYCODE"/import/origem/claude-home/patches/pi-code/*.patch; do patch -p1 -N < "$p"; done
 sed -i 's|^\(\s*\)if (!trusted) return TRUST_GATE|\1// if (!trusted) return TRUST_GATE|' goal.ts
 diff -r /tmp/pi-code-ref/package/extensions ~/.pi/agent/npm/node_modules/pi-code/extensions && echo IGUAL
 ```
 
-O `sed` reproduz o passo 9 do boot do wrapper ([anexo A](anexos/A-inventario-nycode-harness.md), seção 1); a expressão exata
+O `sed` reproduz o passo 9 do boot do wrapper registro do mantenedor, seção 1); a expressão exata
 deve ser copiada de `bin/pi` na hora, não deste documento. O `diff -r` vazio prova que a referência é o que foi
 medido. Só então a cópia entra no repositório.
 
@@ -324,11 +324,11 @@ faria.
 | `claude-home/skills`, `agents`, `commands` sem equivalente embutido (mesmo nome em `packages/coding-agent/resources`, calculado na execução) | `skills/`, `agents/`, `commands/` | Versão de `claude-home`, sem sobrescrever; vence `~/.claude` (testado). Os `commands` também vão para `commands/`: o core passa a ler `<agentDir>/commands`, depois de `~/.claude/commands` e antes do diretório gerenciado (`expand.ts`); os hooks de `claude-home` não são copiados (D-55) |
 | `install/`, `npm/`, `vendor/`, `bin/` | não migram | São a instalação antiga |
 | `~/.local/bin/pi` (wrapper) | não é tocado | O usuário remove em F12, depois da convivência |
-| `~/.config/ny-pi/bench.env`, unidades systemd `bench-*` | `~/.config/nycode/bench.env`, mesmas unidades com `BENCH_REPO` novo | Manual, em F3 ([09](09-paridade-e-benchmark.md)) |
+| `~/.config/<origem>/bench.env`, unidades systemd `bench-*` | `~/.config/nycode/bench.env`, mesmas unidades com `BENCH_REPO` novo | Manual, em F3 ([09](09-paridade-e-benchmark.md)) |
 
 ## 6. Conferência cruzada com o inventário
 
-Cada contagem do [anexo A](anexos/A-inventario-nycode-harness.md) tem de fechar com o mapa:
+Cada contagem do registro do mantenedor tem de fechar com o mapa:
 
 | Item do inventário | Contagem | Regras do mapa | Fecha |
 |---|---:|---|---|
@@ -346,7 +346,7 @@ Cada contagem do [anexo A](anexos/A-inventario-nycode-harness.md) tem de fechar 
 A conferência é reexecutável:
 
 ```bash
-cut -f1,5 docs/migration/nycode-core/anexos/E-mapa-arquivo-a-arquivo.tsv \
+cut -f1,5 registro do mantenedor \
   | awk -F'\t' 'NR>1 { split($1, p, "/"); k = (p[1]=="claude-home" ? p[1]"/"p[2] : p[1]); c[k]++ } END { for (k in c) print c[k], k }' \
   | sort -k2
 ```

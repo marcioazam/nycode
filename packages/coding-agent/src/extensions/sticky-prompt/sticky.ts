@@ -1,6 +1,6 @@
 // Funções puras do sticky-prompt (sem import do @nycode/tui, para testar com node:test).
 // Mensagem de uma linha: o core põe fim e início na mesma linha (`133;B 133;C 133;A texto`), então o A pode vir depois de
-// B/C (dono, 2026-11-19: antes só `^133;A`, e o sticky nunca achava prompt de uma linha).
+// B/C (antes só `^133;A`, e o sticky nunca achava prompt de uma linha).
 const ZONE_START = /^(?:\x1b\]133;[BC](?:\x07|\x1b\\))*\x1b\]133;A(?:\x07|\x1b\\)/;
 const ZONE_END = /\x1b\]133;B(?:\x07|\x1b\\)/;
 
@@ -165,7 +165,7 @@ export function stickyLine(
 	return style(`${lead}${body}${" ".repeat(Math.max(0, width - lead.length - measure(body)))}`);
 }
 
-/** Lab /rolagem desenho 6 "Duas linhas" (dono, 2026-11-19; antes só a faixa com `❯ texto`): em cima, sem fundo, o rótulo
+/** Lab /rolagem desenho 6 "Duas linhas" (antes só a faixa com `❯ texto`): em cima, sem fundo, o rótulo
  * `▎ você · HH:MM` (a hora do envio que a mensagem traz) em accent e dim, uma coluna antes do ❯; embaixo a faixa de sempre. */
 export function stickyLinhas(
 	text: string,

@@ -88,7 +88,7 @@ def write_round(d: Path, arm: str, rates: list[int]) -> Path:
 
 
 def test_cli_power_table_and_json(tmp_path: Path, capsys: Any) -> None:
-    ny = write_round(tmp_path / "ny", "nycode-harness", [1, 1, 0, 1, 0, 1])
+    ny = write_round(tmp_path / "ny", "nycode", [1, 1, 0, 1, 0, 1])
     ref = write_round(tmp_path / "ref", "pi-vanilla", [1, 0, 0, 1, 1, 0])
     out = tmp_path / "p.json"
     args = ["power", "--ny", str(ny), "--ref", str(ref), "--deltas", "0.05", "--ks", "1,2", "--ns", "6,12", "--sims", "200", "--json", str(out)]  # fmt: skip

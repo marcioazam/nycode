@@ -1,4 +1,4 @@
-/** Entrada "Nasce do fundo" (dono, 2026-11-20): a linha sobe do fundo em NASCE_MS, uma vez; `idade` undefined = já assentada. */
+/** Entrada "Nasce do fundo": a linha sobe do fundo em NASCE_MS, uma vez; `idade` undefined = já assentada. */
 import { esmaecer, safeAnsi } from "../motion/motion.ts";
 
 export const NASCE_MS = 450;

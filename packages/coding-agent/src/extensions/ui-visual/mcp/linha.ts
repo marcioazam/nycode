@@ -1,8 +1,8 @@
 /**
  * Ferramentas MCP (`mcp__<servidor>__<ferramenta>`) em uma linha (lab /ferramcp, desenho 21 "Uma linha · barra fina · chave" +
- * animação "Flash na troca", dono, 2026-11-20; antes o cartão do estado com `ferramenta args` e o JSON cru):
+ * animação "Flash na troca"; antes o cartão do estado com `ferramenta args` e o JSON cru):
  *   ` <chave> <servidor> › <ferramenta>  args…        <resumo>  <duração>`
- * A chave `\uf0ad` carrega o estado pela cor: accent respirando enquanto executa (sem spinner, dono 2026-11-20), success ok,
+ * A chave `\uf0ad` carrega o estado pela cor: accent respirando enquanto executa (sem spinner), success ok,
  * error erro, warning aviso (ok com resultado truncado). Executando: à direita só o tempo vivo (dim) e, embaixo, uma barra
  * fina com um trecho accent deslizando; nos outros estados, uma linha só. Na troca de estado a linha sobe do fundo em
  * FLASH_MS, uma vez; o histórico (nunca visto rodando) e o movimento reduzido já a mostram assentada.

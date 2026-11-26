@@ -5,7 +5,7 @@ benchmark; o critério numérico de paridade; a migração do `bench/`; a sequê
 Decisões D-nn e pendências P-n: [11](11-decisoes-e-pendencias.md). Caminhos de destino: seção 2 de
 [02](02-arquitetura-alvo.md). Gates de CI e o check `bench-pr` como obrigatório: [07](07-ci-qualidade-seguranca.md).
 
-Convenções: fatos do harness Nycode vêm de `origin/main` de `marcioazam/ny-pi` (`e4f8729`, levantamento de 2026-11-20) e fatos
+Convenções: fatos do harness Nycode vêm de `origin/main` de Nycode pré-migração (`e4f8729`, levantamento de 2026-11-20) e fatos
 do Nycode do worktree de migração. **Proposta** é o que não existe em nenhum dos dois; **não verificado** é o que não
 foi conferido nos arquivos; **sem medida** é a dimensão ou o critério sem número hoje. Nada aqui foi executado: nenhum
 benchmark, teste ou build rodou, e nenhuma ação de escrita foi feita no GitHub.
@@ -110,7 +110,7 @@ Já existe no harness Nycode, sem modelo e sem rede: `bench/contract/check.py`, 
 Roda o `pi -p` do braço num estágio descartável contra uma API Anthropic falsa que responde por roteiro e captura cada
 corpo de requisição (nunca os cabeçalhos). Verificações atuais: inventário de ferramentas e tamanho do system, regras
 (`plan_mode_complete` e `question` fora de `-p`), ferramentas básicas (`read`, `write`, `edit`, `bash`, `todo`), plano,
-comandos (`/goal`, `/plan`, `/subagents`), skills e MCP. Uso: `python3 bench/contract/check.py --arm nycode-harness [--only
+comandos (`/goal`, `/plan`, `/subagents`), skills e MCP. Uso: `python3 bench/contract/check.py --arm <braço pré-migração> [--only
 regras] [--json]`; exit 0 íntegro, 1 falha, 2 ambiente indisponível; `BENCH_STAGE` reaproveita um estágio.
 
 Para a paridade, três saídas do replay são o contrato (comparadas entre o braço de referência e o `nycode`):
@@ -163,12 +163,12 @@ funcional (tier `pr`), nightly e F10 (tier `full`), e o re-teste vanilla (tier `
 |---|---|---|---|
 | `cc-vanilla` | `run.py` | claude-code 2.1.323 | binário `arms/claude-vanilla`, esforço médio |
 | `pi-vanilla` | `run_pi.py` | pi 1.5.2 | `arms/pi-vanilla`: `PI_CODING_AGENT_DIR` vazio, `--thinking medium` |
-| `nycode-harness` | `run_pi.py` | pi 1.5.2 + pi-code 1.7.0 + este checkout | `arms/nycode-harness`: estágio com `HOME` descartável |
+| Nycode pré-migração | `run_pi.py` | pi 1.5.2 + pi-code 1.7.0 + este checkout | script do braço em `bench/arms/`: estágio com `HOME` descartável |
 | `omp` | `run_pi.py` | omp 18.20.0 | **não migra** (D-26) |
 
-### 2.1 Como o braço Nycode (`nycode-harness`) instala hoje
+### 2.1 Como o braço Nycode pré-migração instala hoje
 
-`bench/arms/nycode-harness` monta um estágio em `${BENCH_STAGE_ROOT:-~/.cache/bench}/bench-nycode-harness-<sha12>[-dirty]`:
+O script do braço Nycode pré-migração, em `bench/arms/`, monta um estágio em `${BENCH_STAGE_ROOT:-~/.cache/bench}/bench-nycode-<sha12>[-dirty]`:
 
 1. `ln -s` de `~/.pi/agent/install` e `~/.pi/agent/bin` do dono para o estágio.
 2. `npm ci --ignore-scripts` de `npm/package.json` e `package-lock.json` do checkout (pi-code "limpo", nunca a cópia
@@ -206,7 +206,7 @@ O nycode não tem instalador, patch nem wrapper; o braço passa a construir o mo
 - Lista da camada do dono (`bench/arms/overlay-nycode.list`): `settings.json` e `AGENTS.md`, lidos de `~/.nycode/agent` ou de
   `BENCH_OVERLAY_DIR`. `local.env` some, `vendor/pi-lsp` volta como extensão `lsp` (F9) e `vendor/ponytail` vira pacote
   opcional; nenhum dos dois é copiado. `auth.json` e `models.json` nunca entram no hash.
-- Estágio `bench-nycode-<sha12>[-dirty]` (campo `stage_prefix` do `arms.toml`); `meta.json` leva `overlay_sha` como nos braços nycode-harness.
+- Estágio `bench-nycode-<sha12>[-dirty]` (campo `stage_prefix` do `arms.toml`); `meta.json` leva `overlay_sha` como nos braços Nycode pré-migração.
 - As flags só do pi-code (`--settings`, `--mcp-config`, `--setting-sources`, `--add-dir`, `--strict-mcp-config`) são descartadas
   pelo braço até a extensão `settings-flags` (F5), como no `pi-vanilla`. Continua **não verificado** se o conjunto é o mesmo.
 - Agente Harbor do Nycode (S2, S3, S6): **implementado** em `bench/harbor/nycode_agent.py` (`NycodeAgent`) e `bench/harbor/bundle.sh`
@@ -227,7 +227,7 @@ instala `~/.pi/agent` e o wrapper a partir de um `bundle.sh`. O do `nycode` é o
 (`-a nycode_agent:NycodeAgent`, `PYTHONPATH=bench/harbor`), subclasse do agente `Pi` do Harbor como o do harness Nycode (flags
 `--print --mode json --session-dir`, trajetória e custo herdados; o Nycode mantém esse contrato):
 
-- **Pacote** (`bench/harbor/bundle.sh`, `HOME=<estágio do braço>`, saída por rodada em `<rodada>/nycode-harness-bundle.tgz`, variável
+- **Pacote** (`bench/harbor/bundle.sh`, `HOME=<estágio do braço>`, saída por rodada em `<rodada>/nycode-bundle.tgz`, variável
   `NYCODE_HARNESS_BUNDLE`): a camada do dono do estágio (só os arquivos de `bench/arms/overlay-nycode.list`, nunca `auth.json` nem
   `models.json`) em `.nycode/agent`, e o runtime do checkout em `.local/lib/nycode`: `package.json`, `dist/bundle` (o `cli.js` e os
   chunks do `npm run build`), `dist/modes/interactive/{theme,assets}`, `dist/core/export-html`, `docs`, `examples`, `README.md`,
@@ -241,24 +241,24 @@ instala `~/.pi/agent` e o wrapper a partir de um `bundle.sh`. O do `nycode` é o
   A execução é `node /opt/nycode-home/.local/lib/nycode/dist/bundle/cli.js --print --mode json ...` com
   `HOME=/opt/nycode-home`, `NYCODE_CODING_AGENT_DIR=/opt/nycode-home/.nycode/agent` e `NYCODE_SKIP_VERSION_CHECK=1` (as variáveis do
   braço local). Token: `ANTHROPIC_OAUTH_TOKEN`; no modo de chave de API, `ANTHROPIC_WORKSPACE_ID` entra em `models.json`.
-- **Diferença para o braço local**: o local usa `--no-session` e lê o stdout; o Harbor precisa do `--session-dir` para a trajetória, como no nycode-harness.
+- **Diferença para o braço local**: o local usa `--no-session` e lê o stdout; o Harbor precisa do `--session-dir` para a trajetória, como no Nycode pré-migração.
 - **Não verificado**: uma tarefa real do Terminal-Bench no contêiner (nenhuma rodada foi feita, nenhum custo); o `harbor run --dry-run`
   só valida a carga do agente. Se o Nycode troca o formato de sessão do pi, o custo e os turnos do S2 saem vazios (o
   `parse_harbor_job` marca isso como erro de infraestrutura).
 
-### 2.3 Braço temporário `nycode-harness@1.6.0` (D-25)
+### 2.3 Braço temporário Nycode pré-migração 1.6.0 (D-25)
 
 D-25: antes de migrar código, medir o harness Nycode **por fora** sobre o pi 1.6.0 para separar o efeito da base do efeito da
-migração. É o mesmo `bench/arms/nycode-harness` com a versão do `pi` trocada; `arm_version` passa de `1.5.2` para `1.6.0`.
+migração. É o mesmo script do braço Nycode pré-migração com a versão do `pi` trocada; `arm_version` passa de `1.5.2` para `1.6.0`.
 Entradas, todas **propostas**:
 
-- A origem do pi 1.6.0 no estágio (o `arms/nycode-harness` aponta o `~/.pi/agent/install` do dono, que hoje é 1.5.2).
-- O `meta.json` da rodada leva `arm: nycode-harness`, `arm_version: 1.6.0`; o nome do diretório da rodada distingue (por
-  exemplo `nycode-harness-1.6.0`), para não ser confundido com a baseline guardada em `docs/bench/baseline-main/`.
+- A origem do pi 1.6.0 no estágio (o script do braço aponta o `~/.pi/agent/install` do dono, que hoje é 1.5.2).
+- O `meta.json` da rodada leva `arm: nycode-pi160`, `arm_version: 1.6.0`; o nome do diretório da rodada distingue (por
+  exemplo `nycode-1.6.0`), para não ser confundido com a baseline guardada em `docs/bench/baseline-main/`.
 - O braço some quando F10 fecha; `docs/bench/baseline-main/` passa a ser do braço `nycode`.
 
-**Implementado em F3** (`nycode-harness-pi160` em `bench/arms.toml`): o mesmo `bin` `arms/nycode-harness`, com `BENCH_PI_VERSION=1.6.0` (tabela
-`env`) e estágio próprio `bench-nycode-harness160-<sha12>`; o `meta.json` leva `arm: nycode-harness-pi160`. O script se recusa a montar o estágio
+**Implementado em F3** (`nycode-pi160` em `bench/arms.toml`): o mesmo `bin` do braço Nycode pré-migração, com `BENCH_PI_VERSION=1.6.0` (tabela
+`env`) e estágio próprio `bench-nycode160-<sha12>`; o `meta.json` leva `arm: nycode-pi160`. O script se recusa a montar o estágio
 se o `current-version` de `BENCH_PI_INSTALL_DIR` (padrão `~/.pi/agent/install`) não for 1.6.0. Falta, para a rodada real,
 uma instalação gerenciada do pi 1.6.0 (ver o relatório da unidade). A simulação sem custo roda; a rodada não foi feita.
 
@@ -269,7 +269,7 @@ Nycode, que é pi 1.6.x.
 ### 2.4 Comparabilidade entre braços (lacuna)
 
 `stats.META_KEYS = ("model", "arm_version", "overlay_sha")`: se qualquer um difere entre a base e o candidato, o gate
-devolve `NOT_COMPARABLE` (exit 4). Um round do `nycode` contra um round do `nycode-harness@1.6.0` difere em `arm_version` e
+devolve `NOT_COMPARABLE` (exit 4). Um round do `nycode` contra um round do Nycode pré-migração 1.6.0 difere em `arm_version` e
 `overlay_sha` (os arquivos de camada são outros), então `bench gate` devolveria `NOT_COMPARABLE` por construção. O
 `arm` não está em `META_KEYS`, então o nome do braço não bloqueia.
 
@@ -283,11 +283,11 @@ camadas diferem em arquivos).
 
 ### 3.1 O que renomear
 
-- **Arquivo de ambiente**. De: `~/.config/ny-pi/bench.env`. Para: `~/.config/nycode/bench.env` (modo 0600).
-- **`bench-pr.service`**. De: `EnvironmentFile=%h/.config/ny-pi/bench.env`. Para: `%h/.config/nycode/bench.env`.
+- **Arquivo de ambiente**. De: `~/.config/<origem>/bench.env`. Para: `~/.config/nycode/bench.env` (modo 0600).
+- **`bench-pr.service`**. De: `EnvironmentFile=%h/.config/Nycode pré-migração/bench.env`. Para: `%h/.config/nycode/bench.env`.
 - **`bench-nightly.service`**. De: **não verificado** se usa o mesmo arquivo. Para: idem, se usar.
-- **`BENCH_REPO`**. De: `marcioazam/ny-pi` (obrigatória). Para: `marcioazam/nycode`; a URL padrão deriva dela.
-- **Cache do CI local**. De: `~/.cache/ny-pi-ci`. Para: `~/.cache/nycode-ci` (07, seção 7).
+- **`BENCH_REPO`**. De: Nycode pré-migração (obrigatória). Para: `marcioazam/nycode`; a URL padrão deriva dela.
+- **Cache do CI local**. De: `~/.cache/<origem>-ci`. Para: `~/.cache/nycode-ci` (07, seção 7).
 - **Overlay**. De: `bench/arms/overlay.list`. Para: nova lista (seção 2.2); `overlay-sha.sh` não muda (recebe o
   diretório e a lista).
 - **Estado e cache**. De: `~/.local/state/bench`, `~/.cache/bench`. Para: iguais (não citam o harness Nycode).
@@ -312,7 +312,7 @@ Units (`bench/tools/systemd/`): `bench-pr.timer` (`OnBootSec=2min`, `OnUnitActiv
 `BUDGET` 12 e `EXT_BUDGET` 6; trava `flock` em `$STATE/lock`; repositório bare em `$STATE/repo`; árvore descartável do
 head do PR; status `pending`, depois `success`, `failure` ou `error` por `bench/run.py post-status`; falha fechada.
 Só entram PRs abertos do mesmo repositório e do dono, e heads sem `bench-pr` final (RUNBOOK, "Fluxo do PR"). Muda para
-o nycode: `BENCH_REPO`, `--arm nycode` no lugar de `--arm nycode-harness` e a ordem de gatilho de 07 (seção 2.4, proposta).
+o nycode: `BENCH_REPO`, `--arm nycode` no lugar do braço Nycode pré-migração e a ordem de gatilho de 07 (seção 2.4, proposta).
 
 **D-21** (`bench-pr` em mudança não funcional): o verificador publica `success` com a descrição "não funcional, sem
 rodada". A classificação é `bench/classify/affects.py`, que falha fechada (qualquer caminho não provado não funcional
@@ -401,7 +401,7 @@ e bloqueava -10 pp em 97%). O RUNBOOK diz que **não houve rodada real** do gate
 em dólares absolutos; nenhuma margem própria para o tier `full`; nenhuma medida do ruído de custo entre duas
 rodadas idênticas do novo braço (o RUNBOOK registra um A/A de 2026-11-14 para turnos, 1,285 contra 0,998 pareado).
 **Proposta:** (a) usar a mesma razão de 1,10, e para F10 aplicá-la também à razão das somas de custo, como informativa;
-(b) medir em F3 um A/A do `nycode-harness@1.6.0` contra ele mesmo e só então fixar uma margem de custo própria do F10, se o A/A
+(b) medir em F3 um A/A do Nycode pré-migração 1.6.0 contra ele mesmo e só então fixar uma margem de custo própria do F10, se o A/A
 mostrar ruído acima de 1,10. Sem esse A/A, "custo por tarefa não pior além da margem" tem como número só o 1,10 herdado.
 
 ### 5.2 Tiers: smoke por PR, full por fase
@@ -479,7 +479,7 @@ O que o código diz (sem rodar): `bench/power/sim.py` e `bench run power` simula
 não o da não inferioridade; prior Beta(0,5; 0,5), 2 000 simulações por célula (`N_SIMS`), `DEFAULT_KS "1,2,3"`,
 `DEFAULT_NS "24,49,73"`, `DEFAULT_DELTAS "0,0.03,0.05,0.08"`. Resultados do RUNBOOK ("Poder (#76)"), a partir das 42
 tarefas
-do nycode-harness e do `cc-vanilla` (k aproximado de 1,8):
+do Nycode pré-migração e do `cc-vanilla` (k aproximado de 1,8):
 
 - Modelo B (prior de cada braço por máxima verossimilhança): o ganho alcançável é +4,7 pp (o alvo de +8 pp é
   inalcançável: o harness Nycode já acerta quase tudo). Com n = 73 e k = 3, poder de 0,97 (P >= 0,80) e 0,85 (IC90 > 0); o menor
@@ -506,9 +506,9 @@ s6 3,00; s8 0,60), na calibração de 2026-11-14 (média do piloto do harness Ny
 pilotados). Só entra no `bench run --dry-run` e na checagem de orçamento. Não inclui as sobreposições `reps` por caso
 (`suites.toml`, não lidas); por isso é uma estimativa e não um orçamento.
 
-- **F3**. O que roda: `nycode-harness@1.6.0`, tier `baseline` (grava a base do gate). Cálculo: 16x12x0,09 + 12x12x0,12 +
+- **F3**. O que roda: Nycode pré-migração 1.6.0, tier `baseline` (grava a base do gate). Cálculo: 16x12x0,09 + 12x12x0,12 +
   10x12x0,12 + 4x4x0,30. Estimado (US$): 53,76.
-- **F3**. O que roda: `nycode-harness@1.6.0`, tier `full` (referência de paridade). Cálculo: 32x3x0,09 + 12x3x0,12 + 10x3x0,12 +
+- **F3**. O que roda: Nycode pré-migração 1.6.0, tier `full` (referência de paridade). Cálculo: 32x3x0,09 + 12x3x0,12 + 10x3x0,12 +
   77x0,30 + 19x1,50 + 6x3,00. Estimado (US$): 86,16.
 - **F3**. O que roda: `nycode`, tier `pr` (critério de saída de F3, com alias `smoke`). Cálculo: 32x0,09 + 12x0,12 +
   10x0,12 + 4x0,30. Estimado (US$): 6,72.
@@ -525,17 +525,17 @@ funcional, mais a extensão (teto `BENCH_PR_EXT_BUDGET` 6) quando o olhar 1 não
 execuções
 (8 casos de segurança em k3 e 8 em k1); sem as sobreposições `reps`.
 
-Referências reais, para comparar com a estimativa: a baseline `nycode-harness` k12 de `docs/bench/baseline-main/meta.json`
+Referências reais, para comparar com a estimativa: a baseline Nycode pré-migração k12 de `docs/bench/baseline-main/meta.json`
 (2026-11-18, `tier: baseline`, 42 tarefas, teto US$ 60) custou **US$ 17,43**, cerca de um terço dos 53,76 estimados; o
 baseline vanilla de 2026-11 (76 execuções de Sonnet por braço) custou US$ 5,57 (`cc-vanilla`), 2,10 (`pi-vanilla`),
-7,54 (`omp`) e 7,06 (`nycode-harness`). Os valores de `est_cost_usd` portanto **superestimam** o `tier baseline`; a causa (folga
+7,54 (`omp`) e 7,06 (Nycode pré-migração). Os valores de `est_cost_usd` portanto **superestimam** o `tier baseline`; a causa (folga
 de 25%, caso curto, `reps` por caso) **não foi investigada**. O tempo de parede não está estimado: o comentário do
 `suites.toml` diz que o k3 com 77 mais 50 tarefas levou mais de 12 h e que o `pr` cabe em cerca de 1 h; as tarefas
 Harbor chegam a 28 min.
 
 **Ordem e passos.**
 
-- **F3**. Medição: Referência `nycode-harness@1.6.0` (tiers `baseline` e `full`) e `nycode` em `pr`. Observação: Separa efeito da
+- **F3**. Medição: Referência Nycode pré-migração 1.6.0 (tiers `baseline` e `full`) e `nycode` em `pr`. Observação: Separa efeito da
   base de efeito da migração (D-25); A/A de custo (seção 5.1).
 - **F5**. Medição: `pr` por PR funcional. Observação: Hooks, todo, question e o resto da camada base.
 - **F6**. Medição: `pr` por PR funcional mais S4 e S5 em k3 (os dois que exercitam plano e frota). Observação:
@@ -556,9 +556,9 @@ imprime o comando do PR de atualização).
 
 ### 7.1 `docs/bench/baseline-main`
 
-Conteúdo atual (Nycode): `meta.json`, `runs.jsonl`, `verdict.json`. O `meta.json` guarda `arm`, `arm_version`, `model`,
+Conteúdo atual (Nycode pré-migração): `meta.json`, `runs.jsonl`, `verdict.json`. O `meta.json` guarda `arm`, `arm_version`, `model`,
 `git_sha`, `started`, `budget_usd`, `overlay_sha`, `tier`, `jobs`, `not_verified`, `errors`, `cost_usd` e
-`dropped_infra_rows`. A `baseline-main` de 2026-11-18: `arm nycode-harness`, `arm_version 1.5.2`, `model claude-sonnet-5-5`, tier
+`dropped_infra_rows`. A `baseline-main` de 2026-11-18: `arm nycode`, `arm_version 1.5.2`, `model claude-sonnet-5-5`, tier
 `baseline`, 6 jobs, teto US$ 60, custo US$ 17,43, `overlay_sha c06e62526c0540fe` (corrigido em 2026-11-15 para o locale
 C), 2 linhas de infraestrutura descartadas. O `verdict.json` do baseline contra ele mesmo é PASS com n = 42.
 
@@ -580,14 +580,14 @@ agente só abre o PR com a saída que o poster gerou; **não verificado** quem t
 post-status` além do dono (ver "Contrapartida aceita" em `docs/ci-local.md`: qualquer credencial com escrita publica
 status).
 
-### 7.2 Relatório de paridade (`evidencias/F10-paridade.md`)
+### 7.2 Relatório de paridade (registro do mantenedor)
 
-Modelo (o arquivo é criado em F10; a pasta `evidencias/` ainda não existe):
+Modelo (o arquivo é criado em F10; a pasta registro do mantenedor ainda não existe):
 
 ```markdown
 # F10: relatório de paridade
 
-- Data, `git_sha` do nycode e do `nycode-harness@1.6.0`, `arm_version`, `overlay_sha` de cada braço, modelo, esforço.
+- Data, `git_sha` do nycode e do Nycode pré-migração 1.6.0, `arm_version`, `overlay_sha` de cada braço, modelo, esforço.
 - Tiers rodados, orçamento e custo real (US$), tempo de parede, jobs.
 - Tabela por regra: acerto (diferença, IC90), custo (razão), turnos (razão), segurança (regressões), exclusões.
 - Tabela das 11 dimensões: medida, valor do nycode, valor da referência, veredito ou "sem medida".
@@ -643,14 +643,14 @@ F3:
 - `bench run --arm nycode --tier pr` (ou `--tier smoke`, se o alias existir) termina e o `bench-pr` publica o status
   em um PR de teste (07, seção 9.2).
 - `docs/bench/baseline-main` regravada para o braço de referência, com `meta.json` coerente (`not_verified: false`).
-- O braço `nycode-harness@1.6.0` tem rodadas `baseline` e `full` guardadas, com custo real registrado.
+- O braço Nycode pré-migração 1.6.0 tem rodadas `baseline` e `full` guardadas, com custo real registrado.
 
 F10:
 
 - Camadas 1 a 3 verdes: cada teste do harness Nycode com equivalente verde ou linha justificada em [03](03-mapa-de-migracao.md);
   contrato sem diferença de estrutura; diferencial do `guard` em 100% do corpus e do fuzz.
 - Camada 4: regra da seção 5.1 em PASS no `full`, as 11 dimensões fechadas, `vanilla` re-medidos uma vez.
-- `docs/bench/baseline-main/` regravado por PR e `evidencias/F10-paridade.md` assinado pelo dono.
+- `docs/bench/baseline-main/` regravado por PR e registro do mantenedor assinado pelo dono.
 
 ## 10. Não verificado nesta frente
 

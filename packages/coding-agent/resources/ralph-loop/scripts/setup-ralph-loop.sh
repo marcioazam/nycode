@@ -7,7 +7,8 @@ set -euo pipefail
 
 # Parse arguments
 PROMPT_PARTS=()
-MAX_ITERATIONS=0
+# Bounded by default (upstream: unlimited); 0 asks for unlimited explicitly.
+MAX_ITERATIONS=20
 COMPLETION_PROMISE="null"
 
 # Parse options and positional arguments
@@ -24,7 +25,7 @@ ARGUMENTS:
   PROMPT...    Initial prompt to start the loop (can be multiple words without quotes)
 
 OPTIONS:
-  --max-iterations <n>           Maximum iterations before auto-stop (default: unlimited)
+  --max-iterations <n>           Maximum iterations before auto-stop (default: 20; 0 = unlimited)
   --completion-promise '<text>'  Promise phrase (USE QUOTES for multi-word)
   -h, --help                     Show this help message
 
@@ -42,12 +43,12 @@ DESCRIPTION:
 EXAMPLES:
   /ralph-loop Build a todo API --completion-promise 'DONE' --max-iterations 20
   /ralph-loop --max-iterations 10 Fix the auth bug
-  /ralph-loop Refactor cache layer  (runs forever)
+  /ralph-loop Refactor cache layer  (stops after 20 iterations)
+  /ralph-loop Refactor cache layer --max-iterations 0  (unlimited)
   /ralph-loop --completion-promise 'TASK COMPLETE' Create a REST API
 
 STOPPING:
-  Only by reaching --max-iterations or detecting --completion-promise
-  No manual stop - Ralph runs infinitely by default!
+  By reaching --max-iterations, by detecting --completion-promise, or with /cancel-ralph
 
 MONITORING:
   # View current iteration:
@@ -156,7 +157,7 @@ cat <<EOF
 
 Iteration: 1
 Max iterations: $(if [[ $MAX_ITERATIONS -gt 0 ]]; then echo "$MAX_ITERATIONS"; else echo "unlimited"; fi)
-Completion promise: $(if [[ "$COMPLETION_PROMISE" != "null" ]]; then echo "${COMPLETION_PROMISE//\"/} (ONLY output when TRUE - do not lie!)"; else echo "none (runs forever)"; fi)
+Completion promise: $(if [[ "$COMPLETION_PROMISE" != "null" ]]; then echo "${COMPLETION_PROMISE//\"/} (ONLY output when TRUE - do not lie!)"; else echo "none (runs until the iteration limit)"; fi)
 
 The stop hook is now active. When you try to exit, the SAME PROMPT will be
 fed back to you. You'll see your previous work in files, creating a
@@ -164,8 +165,7 @@ self-referential loop where you iteratively improve on the same task.
 
 To monitor: head -10 .claude/ralph-loop.local.md
 
-⚠️  WARNING: This loop cannot be stopped manually! It will run infinitely
-    unless you set --max-iterations or --completion-promise.
+To stop early: /cancel-ralph
 
 🔄
 EOF

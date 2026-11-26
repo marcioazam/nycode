@@ -63,11 +63,11 @@ export const resolverOf = (env: Record<string, string> = {}) => {
 	return { calls, resolver };
 };
 export const wrapped = (name: string, b: any = base()) => resolverOf().resolver(name, () => b);
-// Cartão 08 (dono, 2026-11-18, `Aplica ele real já`): read/bash/grep/find/ls desenham a linha da chamada como cartão de até 58
+// Cartão 08: read/bash/grep/find/ls desenham a linha da chamada como cartão de até 58
 // colunas: margem 2 + 1 de respiro à esquerda + preenchimento até a borda. Antigo: `  ícone texto`, sem preenchimento, até a
 // largura inteira. `ficha` devolve o texto do cartão no formato antigo (recuo de 2, sem preenchimento) para as asserções de conteúdo.
 export const CARD = new Set(["read", "bash", "grep", "find", "ls"]);
-// (dono, 2026-11-18): antes margem 2 + 1 de respiro (`^ {3}`) e cartão de até 58; agora sem margem: 1 de respiro e largura w.
+// antes margem 2 + 1 de respiro (`^ {3}`) e cartão de até 58; agora sem margem: 1 de respiro e largura w.
 export const ficha = (s: string) =>
 	plain(s)
 		.replace(/^ (?=\S)/, "  ")
@@ -126,16 +126,16 @@ export const tg = (c: string, t: string) => `\x1b[${COD[c] ?? 39}m${t}\x1b[39m`;
 export const ansiTags = { fg: tg, bold: (t: string) => t };
 export const OPEN = (c: string) => `\x1b[48;5;${BGC[c]}m`;
 
-// Régua Run (dono, 2026-11-18): título esperado, sem a margem direita (trimEnd), régua `─` até a hora na largura interna iw = w - 3.
-// (dono, 2026-11-18): antes iw = min(72, w) - 3 (cartão de no máximo 72); agora o cartão ocupa a largura inteira w.
-// (dono, 2026-11-20): antes `Bash ─ cmd ─────── hora`; agora `Bash · ESTADO · cmd` + espaços + hora na mesma coluna (sem régua `─`).
+// Régua Run: título esperado, sem a margem direita (trimEnd), régua `─` até a hora na largura interna iw = w - 3.
+// antes iw = min(72, w) - 3 (cartão de no máximo 72); agora o cartão ocupa a largura inteira w.
+// antes `Bash ─ cmd ─────── hora`; agora `Bash · ESTADO · cmd` + espaços + hora na mesma coluna (sem régua `─`).
 export const reguaRun = (bashIcon: string, gap: string, cmd: string, hora = "", w = 80, estado = "OK") => {
 	const iw = w - 3;
 	const esq = `${bashIcon}${gap}Bash · ${estado} · ${cmd}`,
 		dir = hora ? ` ${hora}` : "";
 	return `▎ ${esq}${" ".repeat(iw - [...esq].length - [...dir].length)}${dir}`.trimEnd();
 };
-// Respiro (dono, 2026-11-18): antes o cartão começava no título e acabava no rodapé; agora a 1ª e a última linha são
+// Respiro: antes o cartão começava no título e acabava no rodapé; agora a 1ª e a última linha são
 // linhas vazias com trilho (`▎` + espaços, largura w). Tira as duas para as asserções de conteúdo, mas EXIGE que sejam assim.
 export const semRespiro = (rows: string[], w = 80) => {
 	assert.ok(rows.length >= 3, "título, rodapé e as duas linhas de respiro");

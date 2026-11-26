@@ -5,7 +5,7 @@ import { getPlanControl, PLAN_MODE_CHANNEL } from "./plan-bridge.ts";
 import { registerPermissionModes } from "./slot.ts";
 
 const STATUS_KEY = "permission-mode";
-/** Cores dos modos (dono, 2026-11-19): ask verde, auto azul, plan roxo (bashMode é o roxo dos temas nycode-*), bypass vermelho. */
+/** Cores dos modos: ask verde, auto azul, plan roxo (bashMode é o roxo dos temas nycode-*), bypass vermelho. */
 export const COR: Record<StatusParte["tipo"], string> = {
 	default: "success",
 	acceptEdits: "accent",

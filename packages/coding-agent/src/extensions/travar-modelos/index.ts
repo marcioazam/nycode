@@ -25,8 +25,8 @@ export interface Deps {
 	env?: Record<string, string | undefined>;
 }
 
-const MARCA = Symbol.for("nycode-harness:travar-modelos");
-const SINK = Symbol.for("nycode-harness:diag");
+const MARCA = Symbol.for("nycode:travar-modelos");
+const SINK = Symbol.for("nycode:diag");
 /** Ícone do rodapé (R2 da onda 12 escolhe um sem emoji); vazio por ora. Ponto único de troca. */
 const ICONE_TRAVA = "";
 const USO = "uso: /travar-modelos provedor/id:low,medium …";
@@ -314,7 +314,7 @@ const resolverEm = (ctx: ExtensionCommandContext, k: string): boolean => {
 	return !!ctx.modelRegistry.find(p, id);
 };
 
-/** Marca invisível lida pelo patch de avisos do core (caixaNeutra): caixa com fundo de aviso (dono, 2026-11-14). */
+/** Marca invisível lida pelo patch de avisos do core (caixaNeutra): caixa com fundo de aviso. */
 const CAIXA_AVISO = "\u2063\u2063";
 
 export default montar;

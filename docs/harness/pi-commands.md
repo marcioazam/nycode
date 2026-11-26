@@ -18,6 +18,7 @@ context-mode) também entram.
 
 | Original | No Nycode | Adaptação | Evidência |
 |---|---|---|---|
+| `claude-tier.md` | `/claude-tier` | sem `run_in_background` (o bash do Nycode não tinha quando foi portado; hoje tem): uma execução em primeiro plano com `timeout: 3600`; `allowed-tools` `Bash(claude-tier-probe:*), Read`; `US\$3,6` escapado (no original `$3` virava placeholder com 4+ pastas) | `claude-tier-probe --selftest` = ok; expansão com 0, 1 e 4 argumentos |
 | `pre-launch.md` | `/pre-launch` | instruções de agente do Nycode (`AGENTS.md`/`CLAUDE.md` por diretório, `.pi/`, `.agents/skills`); gate medido pelo histórico do CI (`gh run list --json`); verificação no `gate-runner`, entrega no `git-delivery` | fontes respondem 200; DORA confirma o teto de ~10 min |
 | `puxar.md` | `/puxar` (extensão `~/.nycode/agent/extensions/puxar.ts`) | o Nycode não lê o JSONL do Claude: `scripts/harness/puxar/puxar.py` converte o ramo ativo (mensagens, thinking, tool calls mapeadas, compactações, título) para a sessão v3 do Nycode, e a extensão abre a sessão sem gastar tokens | 15 testes (`bin/tests/test_puxar.py`), 4 mutantes mortos; 6 sessões reais de 4 perfis importadas, 2 continuadas na API; `/puxar 3` no TUI |
 | `swarm.md` | `/swarm` | lanes por `subagent` paralelo (até 4 writers), tier pelo `model:` do agente, restrições verbatim em cada brief, entrega só pelo `git-delivery` | `--mode json "/swarm ..."` devolveu o resultado completo |

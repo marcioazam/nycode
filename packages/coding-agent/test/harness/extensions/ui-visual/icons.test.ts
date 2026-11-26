@@ -93,18 +93,18 @@ test("todo IconName existe nos três conjuntos e o fallback tem largura 1", () =
 });
 
 test("glifos conhecidos", () => {
-	assert.equal(icon("think", { NYCODE_NERD_FONT: "1" }), "\u{f0336}"); // lâmpada; cérebro = memória (dono, 2026-11-14)
+	assert.equal(icon("think", { NYCODE_NERD_FONT: "1" }), "\u{f0336}"); // lâmpada; cérebro = memória
 	assert.equal(icon("ok", { NYCODE_NERD_FONT: "1" }), "\uf42e");
 	assert.equal(icon("ok", {}), "✓");
-	assert.equal(icon("err", { NYCODE_NERD_FONT: "1" }), "\uea76"); // Codicons close: um pouco maior que o oct-x (pedido do dono, 2026-11-14)
+	assert.equal(icon("err", { NYCODE_NERD_FONT: "1" }), "\uea76"); // Codicons close: um pouco maior que o oct-x
 	assert.equal(icon("pending", {}), "●");
 	assert.equal(icon("pending", { NYCODE_ASCII_ICONS: "1" }), "*");
 });
 
-// Régua Run (dono, 2026-11-18): antes bash '\ueb70'; depois '\ueb91' (inseto com play); agora '\uebca' (cod-terminal_bash,
-// dono, 2026-11-19, título `Bash`); agora '\u{f018d}' (md-console, opção 6 do dono, 2026-11-19); run segue '\ueb70'.
+// Régua Run: antes bash '\ueb70'; depois '\ueb91' (inseto com play); agora '\uebca' (cod-terminal_bash,
+// título `Bash`); agora '\u{f018d}' (md-console, opção 6); run segue '\ueb70'.
 test("ícones de ferramenta: um Codicon por família, com Unicode e ASCII", () => {
-	// Edit com lápis (dono, 2026-11-19): antes edit '\uea71' (cod-circle_filled), o mesmo do write.
+	// Edit com lápis: antes edit '\uea71' (cod-circle_filled), o mesmo do write.
 	const nerd: Record<string, string> = {
 		read: "\ueabc",
 		bash: "\u{f018d}",
@@ -171,7 +171,7 @@ test("sem env usa process.env", () => {
 	assert.equal(typeof nerdFont(), "boolean");
 });
 
-// Vocabulário global de estado (pedido do dono, 2026-11-14): ● ciano = executando, ▲ amarelo = atenção, ✓ verde = feito, ✕ vermelho = erro;
+// Vocabulário global de estado: ● ciano = executando, ▲ amarelo = atenção, ✓ verde = feito, ✕ vermelho = erro;
 // o fundo acompanha o estado.
 test("estado: glifo + cor + fundo por estado; ✕ (não ✗) no Unicode; ▲ no aviso", async () => {
 	const { estadoGlyph, estadoBg, warnBgRgb } = __r1;
@@ -217,7 +217,7 @@ test("estado: glifo + cor + fundo por estado; ✕ (não ✗) no Unicode; ▲ no 
 	assert.equal(estadoGlyph("ok", new Real(), {}), "#success:✓");
 });
 
-// Pedido do dono (2026-11-14): setinha ❯ nas mensagens que o usuário enviou (só exibição, via transformador de Markdown).
+// Setinha ❯ nas mensagens que o usuário enviou (só exibição, via transformador de Markdown).
 test("marcaUsuario: ❯ em destaque antes do texto; bloco Markdown no início leva a marca em linha própria; vazio fica vazio", async () => {
 	const { marcaUsuario } = __r2;
 	const fg = (c: string, t: string) => `<${c}>${t}</>`;
@@ -232,7 +232,7 @@ test("marcaUsuario: ❯ em destaque antes do texto; bloco Markdown no início le
 	assert.equal(marcaUsuario("oi", fg, { NYCODE_ASCII_ICONS: "1" }), "<accent>></> oi");
 });
 
-// Pedido do dono (2026-11-14): a hora do envio à direita, como nos demais sinais. Cabe na 1ª linha: fica nela; não cabe: linha
+// A hora do envio à direita, como nos demais sinais. Cabe na 1ª linha: fica nela; não cabe: linha
 // própria no fim. Sem hora ou sem largura conhecida nada muda.
 test("marcaUsuario: hora do envio sempre à direita da 1ª linha; texto longo quebra antes dela", async () => {
 	const { marcaUsuario } = __r3;
@@ -242,7 +242,7 @@ test("marcaUsuario: hora do envio sempre à direita da 1ª linha; texto longo qu
 		`❯ terminamos?${" ".repeat(12)}16:20\nsegunda`,
 	);
 	// Não cabe: a 1ª linha é quebrada (na palavra; sem espaço, no corte) para a hora ficar em cima, como nos demais blocos
-	// (dono, 2026-11-14; antes a hora ia para uma linha própria no fim).
+	// (antes a hora ia para uma linha própria no fim).
 	assert.equal(marcaUsuario("x".repeat(26), fg, {}, "16:20", 30), `❯ ${"x".repeat(21)}  16:20\n${"x".repeat(5)}`);
 	assert.equal(
 		marcaUsuario("um dois tres quatro cinco seis sete\nfim", fg, {}, "16:20", 30),
@@ -253,7 +253,7 @@ test("marcaUsuario: hora do envio sempre à direita da 1ª linha; texto longo qu
 	assert.equal(marcaUsuario("oi", fg, {}, "16:20"), "❯ oi");
 });
 
-// Dono (2026-11-19): o texto da mensagem não entra na coluna da hora. Todas as linhas quebram antes dela (largura − hora − 2),
+// O texto da mensagem não entra na coluna da hora. Todas as linhas quebram antes dela (largura − hora − 2),
 // não só a 1ª; blocos de código ficam como estão. Antes a 2ª linha em diante usava a largura toda.
 test("marcaUsuario: todas as linhas quebram antes da coluna da hora; cerca de código intacta", async () => {
 	const { marcaUsuario } = __r4;

@@ -123,3 +123,27 @@ def test_bundle_asserts_no_credential_path_even_inside_copied_trees(
     r = _bundle(repo, stage, out)
     assert r.returncode == 1 and "BUNDLE ASSERT FAILED" in r.stderr
     assert "auth.json" in r.stderr
+
+
+def test_bundle_replaces_the_tarball_atomically(tmp_path: Path) -> None:
+    """Two Harbor suites of one round bundle into the same path at once (2026-11-25, PR #429: under load one run
+    read the other's half-written tarball and failed). The tarball must land by rename, never be rewritten in place."""
+    repo, stage = _fixture(tmp_path)
+    out = tmp_path / "b.tgz"
+    out.write_text("previous round")
+    before = out.stat().st_ino
+    r = _bundle(repo, stage, out)
+    assert r.returncode == 0, r.stderr
+    assert out.stat().st_ino != before
+    assert not list(tmp_path.glob("b.tgz.*"))  # no temporary left behind
+
+
+def test_bundle_finds_the_launcher_in_a_large_tarball(tmp_path: Path) -> None:
+    """grep -q in a pipe under pipefail: grep stops at the match, printf takes SIGPIPE and the assert read the
+    launcher as missing once the list outgrew the pipe buffer (bench-pr on PR #436, 2026-11-25)."""
+    repo, stage = _fixture(tmp_path)
+    docs = repo / "packages/coding-agent/docs"
+    for i in range(6000):
+        (docs / f"page-{i:05d}-{'x' * 40}.md").write_text("x")
+    r = _bundle(repo, stage, tmp_path / "b.tgz")
+    assert r.returncode == 0, r.stderr

@@ -46,7 +46,7 @@ test("clique esquerdo simples abre o arquivo 0600 com os bytes certos, em dir 07
 	assert.deepEqual(handleMouse.call(img(), ev({})), { handled: true });
 	await wait(() => f.got().length > 0 && existsSync(f.copy));
 	const [file] = f.got();
-	assert.match(file, /nycode-images-\d+-\d+\/[0-9a-f]{24}\.png$/); // por processo (dono, 2026-11-19): antes nycode-images-<uid>
+	assert.match(file, /nycode-images-\d+-\d+\/[0-9a-f]{24}\.png$/); // por processo: antes nycode-images-<uid>
 	assert.equal(statSync(file).mode & 0o777, 0o600);
 	assert.equal(statSync(path.dirname(file)).mode & 0o777, 0o700);
 	assert.deepEqual(readFileSync(f.copy), Buffer.from(PNG, "base64"));
@@ -269,7 +269,7 @@ test("F11: cache miss não grava no clique: handleMouse volta antes do arquivo e
 });
 const tmpdirUid = () => path.join(tmpdir(), `nycode-images-${process.getuid?.() ?? 0}-${process.pid}`);
 
-// Dono (2026-11-19): clicar na imagem do chat abre. No core o ToolExecutionComponent com renderShell 'self' (todos os
+// Clicar na imagem do chat abre. No core o ToolExecutionComponent com renderShell 'self' (todos os
 // blocos do nycode) só repassa o clique ao próprio conteúdo; as imagens, desenhadas depois dele, nunca recebiam o clique.
 test("rotearImagens: clique abaixo do conteúdo self chega à imagem certa, com y local", async () => {
 	const recebidos: any[] = [];
@@ -310,7 +310,7 @@ test("rotearImagens: clique abaixo do conteúdo self chega à imagem certa, com 
 	assert.equal(proto.handleMouse, antes, "embrulho único");
 });
 
-// Dono (2026-11-19): cada nycode gravava em os.tmpdir()/nycode-images-<uid> e apagava o diretório inteiro ao sair, levando as imagens
+// Cada nycode gravava em os.tmpdir()/nycode-images-<uid> e apagava o diretório inteiro ao sair, levando as imagens
 // que outra sessão aberta acabara de gravar para o visualizador (o e2e nativo falhava sob carga por isso). Agora um por processo.
 test("outra sessão saindo não apaga a imagem desta (diretório por processo)", () => {
 	const nosso = writeTemp(PNG, "image/png")!;

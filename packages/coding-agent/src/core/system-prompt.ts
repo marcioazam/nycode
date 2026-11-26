@@ -120,6 +120,13 @@ function buildRules(
 		for (const rule of toolGuidelines[name] ?? []) addRule(rule);
 	}
 	for (const rule of promptGuidelines) addRule(rule);
+	// Scope rule lives here, not in the contract: this prompt applies even when the contract is off (waste study, arXiv 2608.01347).
+	addRule(
+		"Keep to the scope of the request: make the smallest sufficient change and stop once its acceptance criteria are met",
+	);
+	addRule(
+		"When the task is ambiguous, read the repository's requirements and instructions before deciding what to build",
+	);
 	addRule("Be concise in your responses");
 	addRule("Show file paths clearly when working with files");
 	return rules.map((rule) => `- ${rule}`).join("\n");

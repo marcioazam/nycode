@@ -1,5 +1,5 @@
 /**
- * Última mensagem do usuário fixa no topo do transcript (como no Claude Code), pedido do usuário 2026-11-12.
+ * Última mensagem do usuário fixa no topo do transcript (como no Claude Code).
  * Só no modo fullscreen: quando o início do prompt mais recente acima da janela some ao rolar, uma linha flutuante
  * mostra o texto; clicar nela rola até o prompt. Lê o layout pela API pública do @nycode/tui (K10); fora do
  * fullscreen não há área de rolagem e a extensão fica sem efeito.

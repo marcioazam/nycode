@@ -1,5 +1,5 @@
 /**
- * `subagent status` legível (dono, 2026-11-20; antes o texto cru em inglês do nycode sob `│`). Lê as linhas reais do nycode
+ * `subagent status` legível (antes o texto cru em inglês do nycode sob `│`). Lê as linhas reais do nycode
  * (background.ts formatStatus e fleet/source.ts fleetStatusLines): o cabeçalho ganha a contagem por estado e cada run vira
  * `├ agente · estado · fatos · id · tarefa`. Linha não reconhecida segue como texto (o chamador a põe sob `│`); nada inventado.
  */
@@ -10,7 +10,7 @@ type Tema = { fg: (c: string, t: string) => string };
 export type RunStatus = { id: string; agente: string; e: SubE; fatos: string[]; tarefa: string };
 export type Status = { runs: RunStatus[]; resto: string[] };
 
-// `bg-1 swarm-worker: done (exit 0, 14 turns) - tarefa` (registro) e `fg-1 swarm-worker running · 4t · $0.09 · 00:19 · atividade` (lanes).
+// `bg-1 general-purpose: done (exit 0, 14 turns) - tarefa` (registro) e `fg-1 general-purpose running · 4t · $0.09 · 00:19 · atividade` (lanes).
 const REG = /^(\S+) (\S+): (running|done|failed|cancelled)(?: \(exit (-?\w+|\?), (\d+) turns?\))? - (.*)$/;
 const LANE =
 	/^\s*(\S+) (\S+) (running|done|failed|cancelled|\w+)(?: \(partial\))?(?: depth \d+)? · (\d+)t · \$([\d.]+) · ([\d:]+)(?: · (.*))?$/;

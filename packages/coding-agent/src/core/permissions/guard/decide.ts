@@ -1,5 +1,5 @@
-// The guard's verdict for one tool call: a TypeScript port of guard.py's `decide`, same verdicts and same reasons for
-// every input. guard.py stays the oracle (test/harness/permissions runs both on one corpus).
+// The guard's verdict for one tool call: a TypeScript port of the former Python guard's `decide` (same verdicts and
+// reasons; the Python guard is gone).
 import { checkBash } from "./bash/rules.ts";
 import { currentMode, decideMode, type Mode } from "./modes/decide.ts";
 import { abspath } from "./py-path.ts";
@@ -9,7 +9,7 @@ import { checkGrep, checkRead, readDenied } from "./rules/read.ts";
 /** What the guard decides: let the call run, ask the user, or block it. */
 export type GuardVerdict = { kind: "allow" } | { kind: "ask"; reason: string } | { kind: "deny"; reason: string };
 
-/** A tool call in Claude's vocabulary (`Bash`, `Edit`, `Write`, `MultiEdit`, `Read`, `Grep`, `run`), as guard.py reads it. */
+/** A tool call in Claude's vocabulary (`Bash`, `Edit`, `Write`, `MultiEdit`, `Read`, `Grep`, `run`), as the Python guard read it. */
 export interface GuardCall {
 	tool: string;
 	input: Record<string, unknown>;

@@ -3,10 +3,21 @@
 Estado: regra e checagem de classificação adotadas (2026-11-16). A mudança das peças `optional` para fora do contexto
 do modelo é outro pull request, medido no gate (K3c), porque mexe em custo e acerto.
 
-**Supera, em parte (D-51, 2026-11-21):** as 6 skills que eram `optional` (`agent-systems`, `atualizador`, `codegraph`,
-`deep-search`, `perplexity-urls`, `soteiros`) voltam ao contexto do modelo como no harness Nycode: ficam `core` e perdem
-`disable-model-invocation: true`. É mudança de contrato registrada, não afrouxamento: a checagem de `core_scope.py`
-continua exigindo a chave em toda skill que ficar `optional`.
+**Atualizado em 2026-11-24 (contrato antigo → novo).** A decisão do dono em
+`docs/harness/decisoes-nucleo-harness-pessoal-2026-11-24.md` (D0: o harness continua embutido e ligado; só sai o que é
+pessoal) substitui a classificação de 2026-11-16 e supera a D-51 (as 6 skills `agent-systems`, `atualizador`,
+`codegraph`, `deep-search`, `perplexity-urls` e `soteiros` deixam de existir no pacote). A checagem de `core_scope.py`
+continua exigindo `disable-model-invocation: true` em toda skill `optional`.
+
+| Antes (2026-11-16) | Agora (2026-11-24) | Decisão |
+|---|---|---|
+| 36 skills, 17 agentes, 24 comandos | 11 skills (`pr-review`, `security-audit`, `diagnose`, `code-simplification`, `plan-workflow`, 6 `ponytail*`), 7 agentes (`Explore`, `Plan`, `general-purpose`, `code-reviewer`, `plan-reviewer`, `gate-runner`, `security-reviewer`), 13 comandos | C3, C4–C6, C8 |
+| Tipo `hook`: `guard.py`, `permissions`, `dispatch`, `claims`, `diag.py`, `impeccable_gate.sh` | Nenhum hook embutido; `permissions.engine` é só `native`; a parte genérica do `dispatch` virou o hook interno `core-notes` em TypeScript | C9 |
+| Extensões `avisos`, `sound-notify`, `notify` | Uma extensão `notify` (`/notifications`, apelido `/avisos`) | B9 |
+| `/puxar` (`import-claude-session`), `nycode migrate from-pi` | Removidos | B11, D2, D3 |
+| `/review-pr`, `/ralph-help`, `/vim`, `/mobile`, `/stickers`, `/upgrade` | Removidos (`/vim` vira o setting `editorMode`; os três últimos viram `unsupported` na tabela de compatibilidade) | C8, C11, B12 |
+| Contrato embutido de 11,6 KB (política do dono) | ~1 KB de proteção genérica; a política do dono vive em `~/.nycode/agent/AGENTS.md` | C1, C2 |
+| Codegraph e cofre de conhecimento no núcleo | Fora do núcleo; só via `mcp.json` e hooks do usuário | A1, A2 |
 
 ## Pergunta
 
@@ -62,8 +73,7 @@ entram no repositório. Uma skill de marketing não entra nem como opção.
 2. Peça só de interface (`ui`) não entra no contexto do modelo e só muda o terminal. Pode vir ligada, como o TUI do
    próprio pi.
 3. O resto é `optional`: fica no repositório, mas fora do contexto do modelo por padrão. Skill oculta com
-   `disable-model-invocation: true`; agente, extensão, hook, comando ou plugin só com opt-in. As 6 skills que a D-39
-   ocultava deixaram de ser `optional` pela D-51 (acima) e a exigência de MCP da regra 1 não vale para elas.
+   `disable-model-invocation: true`; agente, extensão, hook, comando ou plugin só com opt-in. As skills do `ponytail*` e a `plan-workflow` são `core` e ocultas (só `/skill:<nome>` ou comando).
 4. Código de diagnóstico ou temporário é `remove` e sai no próximo pull request que tocar a área.
 5. Peça de domínio estreito (marketing, design visual, uma nuvem ou SaaS específicos) não entra no repositório.
 6. O orçamento do que o modelo vê sempre continua no gate `instruction-budget`, que não deixa o catálogo crescer sem
@@ -74,7 +84,7 @@ entram no repositório. Uma skill de marketing não entra nem como opção.
 ## Classificação (2026-11-16)
 
 Tipos: `skill` (`packages/coding-agent/resources/skills/<nome>/`), `agent` (`packages/coding-agent/resources/agents/<nome>.md`), `extension`
-(`packages/coding-agent/src/extensions/<nome>/`), `hook` (`packages/coding-agent/resources/hooks/<nome>`, fora testes e `fixtures`),
+(`packages/coding-agent/src/extensions/<nome>/`), `hook` (`packages/coding-agent/resources/hooks/<nome>`, fora testes e `fixtures`; o pacote não embute nenhum desde 2026-11-24),
 `command` (`packages/coding-agent/resources/commands/<nome>.md`) e `plugin` (`claude-home/plugins/<nome>/` no harness Nycode; no Nycode a linha de status
 vai para `packages/coding-agent/resources/statusline/`). Os caminhos são os de destino do mapa de migração (`docs/migration/nycode-core/`); as peças
 chegam por fase e o `core_scope.py` é convertido em F3.
@@ -82,23 +92,8 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 <!-- core-scope:begin -->
 | Tipo | Nome | Classe | Motivo |
 |---|---|---|---|
-| skill | agent-routing | core | Escolha entre agentes e ferramentas, qualquer projeto |
-| skill | agent-systems | core | Domínio: projetar agentes e prompts de LLM; no contexto do modelo como no harness Nycode (D-51) |
-| skill | atualizador | core | Fluxo de entrega do dono; `git-workflow` cobre o geral; no contexto do modelo como no harness Nycode (D-51) |
 | skill | code-simplification | core | Refatoração geral |
-| skill | codegraph | core | Exige o MCP codegraph; no contexto do modelo como no harness Nycode (D-51) |
-| skill | context-economy | core | Custo de contexto, qualquer sessão |
-| skill | deep-search | core | Exige MCPs de busca; no contexto do modelo como no harness Nycode (D-51) |
 | skill | diagnose | core | Depuração geral |
-| skill | differential-review | core | Revisão de segurança de diff, geral |
-| skill | doces-ou-travessuras | core | Detecta teste maquiado, geral |
-| skill | engineering-standards | core | Padrões de código por linguagem |
-| skill | git-workflow | core | Git geral |
-| skill | graph-engineering | core | Decomposição de tarefa grande, geral |
-| skill | insecure-defaults | core | Auditoria de padrões inseguros, oculta |
-| skill | lane-integration | core | Integração de lanes paralelas |
-| skill | loop-engineering | core | Laços com parada verificável |
-| skill | perplexity-urls | core | Exige o MCP Perplexity; no contexto do modelo como no harness Nycode (D-51) |
 | skill | plan-workflow | core | Modo plano, oculta |
 | skill | ponytail | core | Regras do ponytail, ligadas por padrão (D-54); oculta |
 | skill | ponytail-audit | core | Auditoria do ponytail (D-54); oculta |
@@ -107,40 +102,19 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | skill | ponytail-help | core | Ajuda do ponytail (D-54); oculta |
 | skill | ponytail-review | core | Revisão do ponytail (D-54); oculta |
 | skill | pr-review | core | Revisão de PR geral |
-| skill | property-based-testing | core | Testes de propriedade, geral |
-| skill | quality-gates | core | Cobertura e mutação, geral |
-| skill | ripple-hunt | core | Referências velhas após edição |
-| skill | sdd-workflow | core | Especificação antes de mudança grande |
 | skill | security-audit | core | Auditoria de segurança geral |
-| skill | sharp-edges | core | APIs perigosas, geral |
-| skill | soteiros | core | Auditoria de atualidade sob pedido, nicho; no contexto do modelo como no harness Nycode (D-51) |
-| skill | swarm-orchestration | core | Delegação em lanes |
-| skill | tdd | core | Teste antes, geral |
-| skill | to-questionnaire | core | Perguntas para terceiros, oculta |
-| skill | variant-analysis | core | Variantes de um bug, oculta |
 | agent | Explore | core | Leitura de código, padrão do mercado |
 | agent | Plan | core | Planejamento, padrão do mercado |
 | agent | general-purpose | core | Agente geral, padrão do mercado |
-| agent | swarm-worker | core | Escritor padrão das lanes |
-| agent | code-reviewer | core | Revisão de diff |
-| agent | test-author | core | Escrita de testes |
-| agent | test-reviewer | core | Revisão de testes |
-| agent | security-reviewer | core | Revisão de segurança |
-| agent | reliability-reviewer | core | Revisão de falhas e recuperação |
-| agent | gate-runner | core | Roda o gate uma vez |
-| agent | git-delivery | core | Entrega git |
-| agent | lane-integrator | core | Junta lanes |
-| agent | plan-reviewer | core | Fecha plano aprovado |
-| agent | research-scout | core | Fatos e versões com `web_fetch` |
-| agent | perplexity-scout | optional | Exige o MCP Perplexity |
-| agent | web-scout | optional | Exige MCPs de busca |
-| agent | claim-verifier | optional | Papel do `deep-search` |
+| agent | code-reviewer | core | Revisão de diff, só leitura, contexto limpo (C3) |
+| agent | security-reviewer | core | Revisão de segurança (C3, harness embutido) |
+| agent | gate-runner | core | Roda o gate uma vez; chamado pelo `completion-gate` (B2) |
+| agent | plan-reviewer | core | Fecha plano aprovado; chamado pelo `plan-gate` (B3) |
 | extension | auto-resume | core | Retoma após erro transitório do provedor |
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
 | extension | chat-margin | core | Margem do texto nos blocos com fundo do chat (D-56) |
 | extension | claude-compat | core | Compatibilidade com o Claude Code: `/clear`, `/reset`, `/help`, `/skills`, `/compat`, comandos locais, serviços públicos e a matriz (D-56, parte 2) |
 | extension | bash-main-guard | core | Na sessão principal interativa o bash não prende o turno: padrão de 120 s, teto de 600 s, sleep longo e laço de consulta recusados, `run wait` limitado a 30 s (D-57) (D-56) |
-| extension | avisos | core | Dono dos sinais de fim de turno: notificação, som, progresso na aba do terminal e o painel `/avisos` (D-56) |
 | extension | comandos | core | Paleta do `/` em pt-BR, painel `?` e `/atalhos` (ver, buscar e mudar atalhos); a ponte `__nycodeHarnessComandos` serve o editor (D-56) |
 | extension | contexto | core | Limite de compactação por sessão (`/contexto 400k`, restaurado ao retomar) e resumo anterior condensado quando passa de `NYCODE_COMPACT_SUMMARY_MAX` caracteres (D-57, D-58) (D-56) |
 | extension | diagnostico | core | Registro de erros e avisos internos, trilha de spans (OTel) e `/doctor`; `/diagnostico` ou ctrl+e abre o modal e o rodapé mostra só a contagem (D-56) |
@@ -161,11 +135,11 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | goal | core | Objetivo de sessão (/goal) |
 | extension | headless-lean | core | Custo sem interface |
 | extension | hooks | core | Hooks no formato do Claude Code |
-| extension | import-claude-session | core | Importa sessão de outro perfil (`/puxar`), ligado por padrão como no harness Nycode (D-52; era `optional`) |
 | extension | init | core | `/init` |
 | extension | lsp | core | Diagnósticos e navegação por servidor de linguagem, para qualquer linguagem |
 | extension | memory | core | Memória do projeto |
-| extension | notify | ui | Aviso de fim de turno |
+| extension | monitor | core | Ferramenta `monitor` do Claude Code: cada linha de um comando em segundo plano volta ao modelo como evento |
+| extension | notify | core | Dono único dos sinais de fim de turno: notificação desktop, som, progresso na aba do terminal e o painel `/notifications` (apelido `/avisos`); som e notificação desligam por `notify.sound` e `notify.desktop` (B9) |
 | extension | output-styles | core | Estilos de saída |
 | extension | plan-gate | core | Plano aprovado vai ao fim |
 | extension | plan-mode | core | Modo de plano |
@@ -176,7 +150,6 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | session-title | ui | Título da sessão |
 | extension | settings-flags | core | Flags de settings do Claude |
 | extension | skills-compat | core | Skills no formato do Claude Code |
-| extension | sound-notify | optional | Som ao fim do turno, gosto pessoal |
 | extension | status-line | ui | Linha de status |
 | extension | sticky-prompt | ui | Última mensagem fixa |
 | extension | subagent | core | Subagentes, frota e times |
@@ -188,28 +161,12 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | ui-visual | ui | Cabeçalho e ícones |
 | extension | up-dequeue | ui | Fila de mensagens em português (Variante C: editar, excluir, enviar agora); a seta para cima fica só com o histórico |
 | extension | web | core | `web_fetch` ligado por padrão como no harness Nycode; `web_search` só com `NYCODE_KEEP_WEB_SEARCH=1` (D-52; era `optional`, desligada, e o `no-web-search` do harness Nycode, que a 03 listava como `core`, foi removido pela D-10 e substituído por essa regra) |
-| hook | claims | core | Afirmação sem evidência |
-| hook | dispatch | core | Despachante dos hooks |
-| hook | diag.py | core | Relato de falhas dos hooks para a caixa de diagnóstico |
-| hook | guard.py | core | Bloqueio de comando destrutivo |
-| hook | permissions | core | Pacote Python do guard (modos, análise de shell, caminhos) |
-| hook | impeccable_gate.sh | optional | Serve uma skill de design que o repositório não traz |
 | command | cancel-ralph | core | Laço de prompt (par do `/loop` do Claude Code) |
 | command | claude-hud-configure | optional | Plugin `claude-hud` |
 | command | claude-hud-setup | optional | Plugin `claude-hud` |
-| command | clean_gone | core | Limpa branches mergeadas |
-| command | code-review | core | Revisão de PR |
-| command | commit | core | Commit |
-| command | commit-push-pr | core | Commit, push e PR |
-| command | diff-review | core | Revisão diferencial |
-| command | insecure-defaults-audit | core | Auditoria de padrões inseguros |
-| command | pre-launch | core | Fase do projeto prevista no contrato |
-| command | ralph-help | core | Ajuda do laço de prompt |
+| command | code-review | core | Revisão de PR com a skill `pr-review` e o agente `code-reviewer` (C8) |
 | command | ralph-loop | core | Laço de prompt |
-| command | review-pr | core | Revisão por aspectos |
-| command | revise-agents-md | core | Aprendizado da sessão vira regra |
-| command | skill-gen | optional | Exige o MCP Firecrawl |
-| command | swarm | core | Delegação em lanes |
+| command | revise-claude-md | core | Aprendizado da sessão vira regra |
 | command | batch | core | Execução em lotes de lanes paralelas |
 | command | run | core | Sobe e dirige o app real para ver a mudança funcionando |
 | command | run-skill-generator | core | Gera a skill por projeto que ensina /run e /verify |
@@ -223,5 +180,5 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 ## Próximo passo (pull request medido, #89)
 
 Tirar do contexto do modelo as skills e agentes `optional` e pôr extensões, hooks, comandos e plugin `optional` atrás de
-opt-in. Remover `cache-prefix-probe`. A checagem passa a exigir `disable-model-invocation: true` nas skills `optional` (hoje nenhuma: D-51).
+opt-in. Remover `cache-prefix-probe`. A checagem passa a exigir `disable-model-invocation: true` nas skills `optional` (hoje nenhuma).
 A medição é a do K3c: custo por tarefa no gate, contra o `main`, sem perda de acerto.

@@ -22,7 +22,7 @@ export function inset(lines: readonly string[], p: number, skip: (line: string) 
 	});
 }
 
-/** Recuo interno padrão dos blocos do chat (dono, 2026-11-16; simétrico em 2026-11-18): padding + RECUO colunas dos dois lados. */
+/** Recuo interno padrão dos blocos do chat (simétrico em 2026-11-18): padding + RECUO colunas dos dois lados. */
 export const RECUO = 2;
 const LEAD_SGR = /^(?:\x1b\[[0-9;:]*m)*/;
 const TAIL_END = /(?:\x1b\[(?:0|49)?m|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\))*$/;
@@ -48,7 +48,7 @@ export function padOf(c: { outputPad?: unknown; paddingX?: unknown }): number {
 	return typeof v === "number" && v > 0 ? Math.floor(v) : 0;
 }
 
-const MARK = Symbol.for("nycode-harness.chat-margin.child");
+const MARK = Symbol.for("nycode.chat-margin.child");
 
 export interface MouseLike {
 	x: number;
@@ -111,7 +111,7 @@ export function wrapInstance(
 }
 
 /** Marca o render do hook: `pre` passa os filhos novos por onChild; `prev` é o render que ele encadeia (a compactação das tools usa os dois). */
-export const HOOK = Symbol.for("nycode-harness.chat-margin.hook");
+export const HOOK = Symbol.for("nycode.chat-margin.hook");
 export type HookInfo = { pre: (self: ContainerLike) => void; prev: unknown };
 /** Container da TUI: filhos e render encadeável. */
 export type ContainerLike = { children: unknown[]; render: (this: ContainerLike, width: number) => string[] };

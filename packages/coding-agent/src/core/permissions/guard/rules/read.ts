@@ -9,7 +9,7 @@ const GREP_LISTING_LIMIT = 20_000;
 const READ_DENY_DIR_NAMES = [".ssh", ".config/claude-secrets", ".gnupg"];
 const READ_DENY_FILE_NAMES = [
 	...[".codex/auth.json", ".config/mcp/secrets.env", ".nycode/agent/auth.json", ".nycode/agent/mcp-auth.json"],
-	...[".nycode/agent/.credentials.json", ".nycode/agent/claude-home/.credentials.json", ".nycode/agent/local.env"],
+	...[".nycode/agent/.credentials.json", ".nycode/agent/local.env"],
 	...[".aws/credentials", ".netrc", ".git-credentials", ".config/gh/hosts.yml", ".docker/config.json", ".kube/config"],
 	...[".npmrc", ".pypirc"],
 ];

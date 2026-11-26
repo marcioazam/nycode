@@ -1,4 +1,4 @@
-// memory em uma frase (dono, 2026-11-20, lab /memoria desenho 9 "Frase compacta" + "Nasce do fundo"): ver memoria/linha.ts.
+// memory em uma frase: ver memoria/linha.ts.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import * as __m1 from "../../../../../../src/extensions/ui-visual/memoria/linha.ts";

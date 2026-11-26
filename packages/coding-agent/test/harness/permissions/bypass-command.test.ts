@@ -5,7 +5,7 @@ import { afterEach, beforeEach, test } from "vitest";
 import bypass from "../../../src/core/permissions/bypass-command.ts";
 
 const VAR = "NYCODE_BYPASS_PERMISSIONS";
-const SLOT = Symbol.for("nycode-harness.permission-modes");
+const SLOT = Symbol.for("nycode.permission-modes");
 const g = globalThis as Record<symbol, unknown>;
 const orig = { env: process.env[VAR], noColor: process.env.NO_COLOR, hadSlot: SLOT in g, slot: g[SLOT] };
 const restore = (k: string, v: string | undefined) => {

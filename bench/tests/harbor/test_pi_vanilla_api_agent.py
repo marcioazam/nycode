@@ -32,7 +32,7 @@ pi_vanilla_api_agent: Any = (
 @pytest.fixture(scope="module", autouse=True)
 def _agent_module() -> Iterator[None]:
     global pi_vanilla_api_agent
-    with import_agent(_Pi, "pi_harness_agent", "pi_vanilla_api_agent") as (
+    with import_agent(_Pi, "nycode_agent", "pi_vanilla_api_agent") as (
         _,
         pi_vanilla_api_agent,
     ):

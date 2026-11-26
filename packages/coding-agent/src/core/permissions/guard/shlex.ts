@@ -1,5 +1,5 @@
 // Port of Python's `shlex.shlex(text, posix=True, punctuation_chars=...)` with `whitespace_split` on and no comment
-// characters, which is how guard.py tokenizes (`tokenize`) and how `shlex.split` reads a pgrep line. Same state machine.
+// characters, which is how the former Python guard tokenized (`tokenize`) and how `shlex.split` reads a pgrep line. Same state machine.
 
 const PUNCTUATION = "();<>|&";
 const WHITESPACE = " \t\r\n";

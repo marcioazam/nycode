@@ -1,6 +1,6 @@
-# Portões de ui (paridade visual com o Nycode)
+# Portões de ui (paridade visual com o Nycode pré-migração)
 
-Prova de C-F7-27: a interface não diverge do Nycode. Os scripts só leem o repositório; tudo que
+Prova de C-F7-27: o nycode não tem diferença visual em relação ao Nycode pré-migração. Os scripts só leem o repositório; tudo que
 escrevem fica num `mktemp -d`, apagado ao sair. Saem 0 só se todos os checks passam.
 
 Pré-requisitos: `npm ci --ignore-scripts`, `npm run build` (o binário é `packages/coding-agent/dist/bundle/cli.js`),
@@ -27,10 +27,10 @@ nycode tenta carregar e a sessão cai antes de abrir. Use um diretório só com 
 | Antigo | Novo / motivo |
 | --- | --- |
 | 1 ui + cobertura | `vitest --coverage` nos testes de `test/harness/extensions/ui`, cobertura de linhas ≥ 80 em cada arquivo de `src/extensions/ui/` (1b: o mesmo para `ui-visual`) |
-| 2 patches da tarefa | rewind-tree, todo-collapse e notify-focus são extensões do core: testes de `git-checkpoint`, `todo`, `notify` com cobertura ≥ 80 nos arquivos de cada extensão |
+| 2 patches da tarefa | rewind-tree, todo-collapse e notify-focus são extensões do core: testes de `git-checkpoint`, `todo`, `notify` (a extensão única de avisos, som e notificação) com cobertura ≥ 80 nos arquivos de cada extensão |
 | 3 nycode, todos os testes | `vitest --run test/harness` (pacote coding-agent inteiro de harness) |
 | 4 hud | removido: claude-hud é dependência externa do dono; os testes dele migram na F8 (R13/R14) |
-| 5 som, syntax-check, nycode-docs | os três testes vitest (`sound-notify`, `syntax-check`, `docs-pointer`) com cobertura ≥ 80 |
+| 5 syntax-check, nycode-docs | os dois testes vitest (`syntax-check`, `docs-pointer`) com cobertura ≥ 80; o som agora é testado com `notify` (2) |
 | 6 hooks, dispatch | removido: testes python migram na F8 (R10) e rodam no pytest do `run-static.sh` |
 | 7 `bash -n` do wrapper | removido: `bin/nycode` foi absorvido pelo core (K01); o 13 roda o binário |
 | 8 structure.py | `scripts/ci/lint/structure_changed.py` sobre `src/extensions`, `test/harness`, `resources`, `scripts/harness` |

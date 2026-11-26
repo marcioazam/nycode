@@ -38,24 +38,19 @@ test("skill-prompts: expande a skill instalada com argumentos, só pelo usuário
 	assert.match(c.last(), /security-audit.*não está instalada/);
 });
 
-test("doctor: JSON corrompido reportado, valores nunca impressos, guarda ausente detectada", () => {
+test("doctor: JSON corrompido reportado, valores nunca impressos", () => {
 	const dir = tmp();
 	writeFileSync(join(dir, "settings.json"), "{ruim");
 	writeFileSync(
 		join(dir, "mcp.json"),
 		JSON.stringify({ mcpServers: { a: { env: { TOKEN: "SEGREDO-123" } }, b: {} } }),
 	);
-	const checks = doctorChecks(dir, 3, 2, "24.1.0", join(dir, "hooks", "guard.py"));
+	const checks = doctorChecks(dir, 3, 2, "24.1.0");
 	const text = doctorText(checks);
 	assert.match(text, /✕ settings\.json: JSON inválido/);
 	assert.match(text, /mcp\.json: JSON válido \(2 em mcpServers\)/);
-	assert.match(text, /✕ guarda de segurança.*AUSENTE/);
 	assert.doesNotMatch(text, /SEGREDO/);
 	assert.match(doctorText(doctorChecks(dir, 0, 0, "18.0.0")), /Node 18\.0\.0 \(< 20/);
-});
-
-test("doctor: por padrão confere o guard.py embutido, não o claude-home antigo", () => {
-	assert.match(doctorText(doctorChecks(tmp(), 1, 1, "24.1.0")), /✓ guarda de segurança.*presente/);
 });
 
 test("skill-doctor: frontmatter, nome vs diretório, descrição e duplicatas", () => {

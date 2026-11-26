@@ -1,5 +1,5 @@
-// Card dos subagentes (dono, 2026-11-20, lab /subag3 desenho 7 "Chips" sem fundo + animação 4 "Brilho no nome"): ver sub/chips.ts.
-// (dono, 2026-11-20): antes chips com fundo por agente (lab /subag desenho 5); agora cabeçalho + uma linha por agente, `·` dim, sem fundo.
+// Card dos subagentes: ver sub/chips.ts.
+// antes chips com fundo por agente (lab /subag desenho 5); agora cabeçalho + uma linha por agente, `·` dim, sem fundo.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import * as __m3 from "../../../../../../src/extensions/ui-visual/icons.ts";
@@ -8,7 +8,7 @@ import * as __m1 from "../../../../../../src/extensions/ui-visual/sub/chips.ts";
 import * as __m4 from "../../../../../../src/extensions/ui-visual/sub/chips.ts";
 import { ctx, mod, plain as plain0, visibleWidth } from "../base.ts";
 
-// (dono, 2026-11-20): o cabeçalho agora leva a faixa neutra (`[customMessageBg]` até o fim); antes sem fundo. `plain` a tira e apara a direita.
+// o cabeçalho agora leva a faixa neutra (`[customMessageBg]` até o fim); antes sem fundo. `plain` a tira e apara a direita.
 const plain = (s: string) => plain0(s.replace("[customMessageBg]", "")).replace(/ {2,}/g, " ").trimEnd();
 
 const { cartaoDaChamada } = __m1;
@@ -82,8 +82,8 @@ const card = (
 	}) as string[];
 };
 
-// (dono, 2026-11-20): o nome da ferramenta é `Subagent`/`Subagents`; antes `Subagente`/`Subagentes`.
-// Lab /subag2 desenho 3 "Cabeçalho + └" (dono, 2026-11-20): antes `Subagent · concluído · fatos` e `└ gate-runner · concluído · texto`;
+// o nome da ferramenta é `Subagent`/`Subagents`; antes `Subagente`/`Subagentes`.
+// Lab /subag2 desenho 3 "Cabeçalho + └": antes `Subagent · concluído · fatos` e `└ gate-runner · concluído · texto`;
 // agora o nome e o estado no cabeçalho e o `└` só com o texto.
 test("um agente: cabeçalho `Subagent · agente · estado · turnos · tok · custo` só com dado real; linha `└ texto`", () =>
 	comMovimento(() => {
@@ -102,7 +102,7 @@ test("um agente: cabeçalho `Subagent · agente · estado · turnos · tok · cu
 			card({}, [feito()], 0).slice(1).join("\n"),
 			/\[customMessageBg\]/,
 			"só o cabeçalho tem a faixa",
-		); // (dono, 2026-11-20): antes nenhuma linha com fundo
+		); // antes nenhuma linha com fundo
 	}));
 
 test("paralelo: cabeçalho com contagem por estado, `alt+o abre · hora` dim sem pílula, uma linha por agente com ├ └ e `·` dim", () =>
@@ -129,7 +129,7 @@ test("paralelo: cabeçalho com contagem por estado, `alt+o abre · hora` dim sem
 		);
 		assert.ok(ls[0]!.includes("<dim> · </c>") && ls[2]!.includes("<dim> · </c>"), "separador neutro dim");
 		assert.ok(ls[0]!.includes("<dim> abre · 10:41</c>"), "hora no dim padrão");
-		assert.ok(!/\[[a-zA-Z]+\]/.test(ls.slice(1).join("")), "linhas dos agentes sem fundo"); // (dono, 2026-11-20): antes nenhuma linha com fundo; agora o cabeçalho tem a faixa
+		assert.ok(!/\[[a-zA-Z]+\]/.test(ls.slice(1).join("")), "linhas dos agentes sem fundo"); // antes nenhuma linha com fundo; agora o cabeçalho tem a faixa
 		assert.ok(
 			ls[2]!.includes("<text>code-mapper</c>") && ls[3]!.includes("<text>web-platform-engineer</c>"),
 			"brilho do nome só em quem executa",
@@ -142,7 +142,7 @@ test("paralelo: cabeçalho com contagem por estado, `alt+o abre · hora` dim sem
 test('interrompido: stopReason aborted e a chamada que lançou "Subagent was aborted" dizem interrompido, não erro', () =>
 	comMovimento(() => {
 		const a = card({}, [feito({ exitCode: 1, stopReason: "aborted" })], 0).map(plain);
-		assert.match(a[0]!, /Subagent · gate-runner · interrompido/); // (dono, 2026-11-20, /subag2 desenho 3): antes nome e estado na linha └
+		assert.match(a[0]!, /Subagent · gate-runner · interrompido/); // antes nome e estado na linha └
 		assert.doesNotMatch(a.join("\n"), /\berro\b/);
 		// pelo renderizador: erro sem detalhes + texto do nycode
 		const resolver = (() => {
@@ -168,12 +168,12 @@ test('interrompido: stopReason aborted e a chamada que lançou "Subagent was abo
 			c,
 		).render(80);
 		const linhas = r.renderCall(args, th, c).render(400).map(plain);
-		assert.match(linhas[0], /plan-reviewer · interrompido/); // (dono, 2026-11-20, /subag2 desenho 3): antes na linha └
+		assert.match(linhas[0], /plan-reviewer · interrompido/); // antes na linha └
 		assert.doesNotMatch(linhas.join("\n"), /\berro\b|Subagent was aborted/);
 		assert.match(linhas[1], /└ interrompido antes de terminar/);
 	}));
 
-// (dono, 2026-11-20, /subag2 desenho 3): um agente tem nome, estado e tempo no cabeçalho (linha [0]); antes na linha └ ([1]).
+// um agente tem nome, estado e tempo no cabeçalho (linha [0]); antes na linha └ ([1]).
 test("transição: ao assentar, concluído sai do dim para o verde em 600 ms e erro pulsa duas vezes; depois assenta", () =>
 	comMovimento(() => {
 		const ok: any = {};
@@ -201,7 +201,7 @@ test("transição: ao assentar, concluído sai do dim para o verde em 600 ms e e
 	}));
 
 test("brilho no nome: só enquanto roda (a cada 1,3 s); assentado é estático; movimento reduzido ou NO_COLOR não animam", () => {
-	const nome = (l: string) => l.split("<dim> · </c>")[1]!; // (dono, 2026-11-20, /subag2 desenho 3): o nome é o 2º trecho do cabeçalho; antes o 1º da linha └
+	const nome = (l: string) => l.split("<dim> · </c>")[1]!; // o nome é o 2º trecho do cabeçalho; antes o 1º da linha └
 	comMovimento(() => {
 		const a = card({}, [run()], 0)[0]!,
 			b = card({}, [run()], 400)[0]!,
@@ -262,7 +262,7 @@ test("rodando: sem spinner braille; a palavra `executando` respira entre dim e s
 	comMovimento(() => assert.equal(card({}, [run()], 0)[0], card({}, [run()], 800)[0]), { NYCODE_REDUCED_MOTION: "1" });
 });
 
-// Faixa e margens (dono, 2026-11-20): cabeçalho com a faixa neutra de ponta a ponta; ícone na coluna dos outros cabeçalhos; `├/└` na coluna de `Subagent`.
+// Faixa e margens: cabeçalho com a faixa neutra de ponta a ponta; ícone na coluna dos outros cabeçalhos; `├/└` na coluna de `Subagent`.
 test("cabeçalho: faixa neutra de ponta a ponta (rodando, concluído e paralelo), ícone e `├/└` nas colunas certas; sem cor, sem faixa", () =>
 	comMovimento(() => {
 		const cols = (ls: string[]) => ls.map((l) => visibleWidth(l.replace(/\x1b\[[0-9;]*m/g, "")));

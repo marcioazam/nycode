@@ -1,4 +1,4 @@
-// Moldura do resultado de Read/Write (dono, 2026-11-20, lab /pertence desenho 5 "Moldura" + "Nasce do fundo"): ver moldura/quadro.ts.
+// Moldura do resultado de Read/Write: ver moldura/quadro.ts.
 import assert from "node:assert/strict";
 import { setCapabilities } from "@nycode/tui";
 import { test } from "vitest";
@@ -106,7 +106,7 @@ test("Read de imagem no kitty: o cabeçalho dobra (a miniatura é emoldurada por
 		assert.deepEqual(
 			a.corpo.render(60).map(plain),
 			[`│${" ".repeat(58)}│`],
-			"respiro com │ dos dois lados (dono, 2026-11-20; antes uma linha em branco abria buraco)",
+			"respiro com │ dos dois lados (antes uma linha em branco abria buraco)",
 		);
 		const e = montar("read", { path: "a.png" }, imgR, { expanded: true, isPartial: false });
 		assert.deepEqual(
@@ -182,7 +182,7 @@ test("nasce do fundo: o corpo chegou agora sobe em 450 ms; histórico e moviment
 	}
 });
 
-// Alinhamento das bordas (dono, 2026-11-20): cabeçalho + corpo + caixa da miniatura (fundo.ts) em largura `w`, sem ANSI nem APC kitty.
+// Alinhamento das bordas: cabeçalho + corpo + caixa da miniatura (fundo.ts) em largura `w`, sem ANSI nem APC kitty.
 const { instalarFundo } = __m3;
 const semAnsi = (l: string) => plain(l.replace(/\x1b_G.*?\x1b\\/g, ""));
 const KSEQ = "\x1b_Ga=T,f=100,q=2,C=1,c=16,r=3;AAAA\x1b\\";

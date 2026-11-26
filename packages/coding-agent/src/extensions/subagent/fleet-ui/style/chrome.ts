@@ -72,7 +72,7 @@ const openRole = (): string => {
 /** Tab bar (docs/pi-group-tabs-2026-11-14.md): a blank line, the tab names then the open group's detail (two spaces after the
  * last tab, cut to the width), and a rule with `━` under the open tab (editor border color, bold) and under the focused one
  * (bold); other tabs dim, rule `─`. Without color the `━` alone marks the open tab. `bands` are the name columns (clicks).
- * System cyan (`syntaxType`, owner 2026-11-15) marks where the focus is: the focused tab, else the open one (focus in the editor). */
+ * System cyan (`syntaxType`) marks where the focus is: the focused tab, else the open one (focus in the editor). */
 export function tabBar(
 	tabs: TabSpec[],
 	detail: string,

@@ -1,4 +1,4 @@
-// One case set per row of docs/migration/nycode-core/02-arquitetura-alvo.md section 5 (C-F4-05) plus the Nycode
+// One case set per row of docs/migration/nycode-core/02-arquitetura-alvo.md section 5 (C-F4-05) plus the pre-migration Nycode
 // defaults of K4 (C-F4-04): default, schema validation and environment override (the variable wins over settings.json).
 import { join } from "node:path";
 import { Compile } from "typebox/compile";
@@ -146,6 +146,15 @@ const rows: Row[] = [
 		envExpected: true,
 	},
 	{
+		key: "todo.sync",
+		env: "NYCODE_TODO_SYNC_V2",
+		def: false,
+		set: true,
+		invalid: "no",
+		envRaw: "1",
+		envExpected: true,
+	},
+	{
 		key: "harness.prefixCache1h",
 		env: "NYCODE_PREFIX_CACHE_1H",
 		def: "auto",
@@ -176,12 +185,19 @@ const rows: Row[] = [
 	{
 		key: "notify.sound",
 		env: "NYCODE_SOUND_NOTIFY",
-		def: true, // Nycode parity: sound-notify was on unless NYCODE_SOUND_NOTIFY=0
+		def: true, // pre-migration Nycode parity: sound-notify was on unless NYCODE_SOUND_NOTIFY=0
 		set: false,
 		invalid: "loud",
 		envRaw: "0",
 		envExpected: false,
 	},
+	{ key: "plan.readOnlyTools", def: [], set: ["mcp__docs__*", "web_fetch"], invalid: ["ok", 1] },
+	{ key: "bash.mainGuard.enabled", def: true, set: false, invalid: "no" },
+	{ key: "bash.mainGuard.timeoutSec", def: 120, set: 30, invalid: 0 },
+	{ key: "bash.mainGuard.capSec", def: 600, set: 900, invalid: "long" },
+	{ key: "footer.stats", def: false, set: true, invalid: "yes" },
+	{ key: "editorMode", def: "normal", set: "vim", invalid: "emacs" },
+	{ key: "notify.desktop", def: true, set: false, invalid: "loud" },
 	{
 		key: "terminal.uiState",
 		env: "NYCODE_UI_STATE",
@@ -217,60 +233,6 @@ const rows: Row[] = [
 		invalid: "yes",
 		envRaw: "0",
 		envExpected: false,
-	},
-	{
-		key: "knowledge.vault",
-		env: "NYCODE_KNOWLEDGE_VAULT",
-		def: undefined,
-		set: "/v",
-		invalid: 1,
-		envRaw: "/env-v",
-		envExpected: "/env-v",
-	},
-	{
-		key: "knowledge.graphsVault",
-		env: "NYCODE_GRAPHS_VAULT",
-		def: undefined,
-		set: "/g",
-		invalid: 1,
-		envRaw: "/env-g",
-		envExpected: "/env-g",
-	},
-	{
-		key: "codegraph.autoRoot",
-		env: "CODEGRAPH_AUTO_ROOT",
-		def: undefined,
-		set: "/r",
-		invalid: 1,
-		envRaw: "/env-r",
-		envExpected: "/env-r",
-	},
-	{
-		key: "codegraph.bin",
-		env: "CODEGRAPH_BIN",
-		def: undefined,
-		set: "/b",
-		invalid: 1,
-		envRaw: "/env-b",
-		envExpected: "/env-b",
-	},
-	{
-		key: "codegraph.statusTtl",
-		env: "CODEGRAPH_STATUS_TTL",
-		def: undefined,
-		set: 30,
-		invalid: -1,
-		envRaw: "0",
-		envExpected: 0,
-	},
-	{
-		key: "codegraph.autoState",
-		env: "CODEGRAPH_AUTO_STATE",
-		def: undefined,
-		set: "/s",
-		invalid: 1,
-		envRaw: "/env-s",
-		envExpected: "/env-s",
 	},
 	{
 		key: "mcp.configPath",
@@ -321,7 +283,7 @@ describe("settings keys of 02 section 5", () => {
 		expect(manager.getNycodeSettings().compaction.maxContextTokens).toBe(5);
 	});
 
-	it("permissions.engine defaults to script, accepts native and keeps an unknown value for the gate to deny", () => {
+	it("permissions.engine defaults to native, accepts only native and keeps any other value (the removed script included) for the gate to deny", () => {
 		expect(SettingsManager.inMemory().getNycodeSettings().permissions.engine).toBe("native");
 		const native = { permissions: { engine: "native" as const } };
 		expect(validator.Check(native)).toBe(true);
@@ -329,12 +291,18 @@ describe("settings keys of 02 section 5", () => {
 		const unknown = { permissions: { engine: "wasm" } } as never;
 		expect(validator.Check(unknown)).toBe(false);
 		expect(SettingsManager.inMemory(unknown).getNycodeSettings().permissions.engine).toBe("wasm");
+		const script = { permissions: { engine: "script" } } as never;
+		expect(validator.Check(script)).toBe(false);
+		expect(SettingsManager.inMemory(script).getNycodeSettings().permissions.engine).toBe("script");
 	});
 
 	it("reads hooks, statusLine and env as typed keys", () => {
 		const hooks = {
 			PreToolUse: [{ matcher: "Bash", hooks: [{ type: "command" as const, command: "true", timeout: 5 }] }],
 		};
+		const internal = { SessionStart: [{ hooks: [{ type: "internal" as const, name: "core-notes", timeout: 10 }] }] };
+		expect(validator.Check({ hooks: internal })).toBe(true);
+		expect(validator.Check({ hooks: { SessionStart: [{ hooks: [{ type: "internal" }] }] } })).toBe(false);
 		const statusLine = { type: "command" as const, command: "echo hi" };
 		const env = { EIO_BACKEND: "posix" };
 		const settings = { hooks, statusLine, env };
@@ -350,7 +318,7 @@ describe("settings keys of 02 section 5", () => {
 	});
 });
 
-describe("nycode-harness defaults (K4, C-F4-04)", () => {
+describe("pre-migration Nycode defaults (K4, C-F4-04)", () => {
 	it("starts untrusted for project files", () => {
 		expect(SettingsManager.inMemory().getDefaultProjectTrust()).toBe("never");
 	});
@@ -359,7 +327,7 @@ describe("nycode-harness defaults (K4, C-F4-04)", () => {
 		expect(SettingsManager.inMemory().getQuietStartup()).toBe("header");
 	});
 
-	it("retries ten times with the nycode-harness backoff", () => {
+	it("retries ten times with the pre-migration Nycode backoff", () => {
 		expect(SettingsManager.inMemory().getRetrySettings()).toEqual({
 			enabled: true,
 			maxRetries: 10,

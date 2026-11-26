@@ -14,8 +14,8 @@ type Child = {
 };
 type Layout = { component: Pick<Child, "handleMouse">; height: number };
 
-const WRAPPED = Symbol.for("nycode-harness.ui-visual.compact");
-const HOOK = Symbol.for("nycode-harness.chat-margin.hook"); // render do chat-margin (inset.ts): { pre, prev }
+const WRAPPED = Symbol.for("nycode.ui-visual.compact");
+const HOOK = Symbol.for("nycode.chat-margin.hook"); // render do chat-margin (inset.ts): { pre, prev }
 type Hook = { pre: (self: unknown) => void; prev: unknown };
 let tuiVisto: unknown;
 /** TUI recebido pelo widget (o brilho do envio, em index.ts, invalida a mensagem nova por ele). */
@@ -95,7 +95,7 @@ export default function (nycode: ExtensionAPI): void {
 		if (!ctx.hasUI) return;
 		ctx.ui.setWidget("tool-compact", (tui: unknown) => {
 			tuiVisto = tui;
-			(globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:tui")] = tui; // a linha de compactação (patch de avisos do core) anima por ele
+			(globalThis as Record<symbol, unknown>)[Symbol.for("nycode:tui")] = tui; // a linha de compactação (patch de avisos do core) anima por ele
 			let done = false;
 			// Widget sem linhas: só serve para receber o TUI e procurar o chat até a primeira tool aparecer.
 			return {

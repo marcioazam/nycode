@@ -47,7 +47,7 @@ plans/
 collect.sh
 packages/agent/docs/extensions/nycode-server-artifact/index.md
 
-# Credentials and local state (from nycode-harness); keep out of the repository
+# Credentials and local state; keep out of the repository
 /auth*.json
 *.env
 .env*

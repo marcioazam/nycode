@@ -15,8 +15,8 @@ def rounds(tmp: Path, cost: float = 1.0, **cand_meta: object) -> tuple[Path, Pat
     base = write_round(
         tmp / "b",
         tasks(10),
-        arm="nycode-harness-pi160",
-        arm_version="1.6.0",
+        arm="pi-vanilla",
+        arm_version="1.5.2",
         overlay_sha="aaa",
     )
     cand = write_round(

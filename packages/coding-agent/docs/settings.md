@@ -162,7 +162,7 @@ Resource paths in user settings resolve from the agent directory. Paths in proje
 
 Resource arrays support glob exclusions with `!pattern`, exact inclusion with `+path`, and exact exclusion with `-path`. Nycode loads resources listed in both user-level and project settings.
 
-The built-in extensions are named `builtin:mcp`, `builtin:llama.cpp`, `builtin:codemode`, and `builtin:tool-search` in `extensions`. They load by default; `-builtin:mcp` disables one. A `+builtin:<name>` or `-builtin:<name>` entry in project settings overrides the user setting. The `web` extension (`web_fetch`) and `import-claude-session` (`/puxar`) load by default too (D-52); `-builtin:web` or `-builtin:import-claude-session` turns one off. `web_search` is not registered unless `NYCODE_KEEP_WEB_SEARCH=1` is set in the environment (it scrapes DuckDuckGo and often fails; the default search is an MCP server). A built-in extension that ships off by default would load only when `"extensions": ["builtin:<name>"]` (or `+builtin:<name>`) is set or `-e builtin:<name>` is passed; none does today. `nycode config` lists them under Built-in. `--no-extensions` disables them too, and `-e builtin:<name>` loads one explicitly.
+The built-in extensions are named `builtin:mcp`, `builtin:llama.cpp`, `builtin:codemode`, and `builtin:tool-search` in `extensions`. They load by default; `-builtin:mcp` disables one. A `+builtin:<name>` or `-builtin:<name>` entry in project settings overrides the user setting. The `web` extension (`web_fetch`) loads by default too (D-52); `-builtin:web` turns it off. `web_search` is not registered unless `NYCODE_KEEP_WEB_SEARCH=1` is set in the environment (it scrapes DuckDuckGo and often fails; the default search is an MCP server). A built-in extension that ships off by default would load only when `"extensions": ["builtin:<name>"]` (or `+builtin:<name>`) is set or `-e builtin:<name>` is passed; none does today. `nycode config` lists them under Built-in. `--no-extensions` disables them too, and `-e builtin:<name>` loads one explicitly.
 
 ## Permissions, harness, and integrations
 
@@ -171,7 +171,7 @@ These keys only exist, validate, and are read here; the built-in extensions that
 | Setting | Type | Default | Variable | Description |
 |---|---|---|---|---|
 | `permissions.bypass` | boolean | `false` | `NYCODE_BYPASS_PERMISSIONS` | Auto-approve permission prompts; deny rules still apply. `--bypass` and `--dangerously-skip-permissions` turn it on for one run, `--safe` and `--no-bypass` turn it off; a flag beats the variable, which beats the file. **Can only be set in agent-directory settings.** |
-| `permissions.engine` | `"script" \| "native"` | `"script"` | none | Who decides the permission of each tool call. `"script"` runs the embedded `guard.py` as the `PreToolUse` hook (needs `python3`). `"native"` decides in-process with a TypeScript port of the same rules (same verdicts, no Python) and the `guard.py` hook does not run. A value that is not one of the two denies every tool call, as does `"script"` when the embedded `guard.py` is missing. Global setting only: a project `settings.json` cannot change it. |
+| `permissions.engine` | `"native"` | `"native"` | none | Who decides the permission of each tool call: the in-process TypeScript engine, the only one. Any other value denies every tool call; the removed `"script"` engine (`guard.py`) is refused by name. Global setting only: a project `settings.json` cannot change it. |
 | `harness.effortSandwich.enabled` | boolean | `false` | `NYCODE_EFFORT_SANDWICH` | High thinking on the first turns of a top-level headless run. |
 | `harness.effortSandwich.turns` | integer ≥ 1 | `1` | `NYCODE_EFFORT_SANDWICH_TURNS` | Turns that use high thinking. |
 | `subagent.respawn` | boolean | `true` | `NYCODE_SUBAGENT_RESPAWN` | Respawn a crashed foreground subagent. |
@@ -181,68 +181,71 @@ These keys only exist, validate, and are read here; the built-in extensions that
 | `harness.headless.floor` | boolean | `true` | `NYCODE_HEADLESS_FLOOR` | Add the headless instruction floor. |
 | `tools.bash.backgroundOnTimeout` | boolean | `false` | `NYCODE_BASH_TIMEOUT_BG` | Keep a command that hits its timeout running in the background. |
 | `todo.staleReminder` | boolean | `true` | `NYCODE_TODO_SYNC` | Remind the model of a stale todo list. |
+| `todo.sync` | boolean | `false` | `NYCODE_TODO_SYNC_V2` | End-of-turn todo check, items for background runs and subagents, rarer stale reminder (disable only the check with `-builtin:todo-turn-check`). |
 | `harness.prefixCache1h` | boolean \| `"auto"` | `"auto"` | `NYCODE_PREFIX_CACHE_1H` | One-hour prompt-prefix cache TTL; `"auto"` enables it in interactive sessions only. |
 | `harness.autoResume` | boolean | `true` | `NYCODE_AUTO_RESUME` | Resume a turn cut short by a transient failure. |
 | `plan.gate` | boolean | `true` | `NYCODE_PLAN_GATE` | Keep plan mode open until the plan is submitted. |
+| `plan.readOnlyTools` | `string[]` | `[]` | none | Tools plan mode allows besides the read-only built-ins and the MCP tools that declare `readOnlyHint`. Tool names or simple globs, for example `"mcp__docs__*"`. |
 | `harness.completionGate` | boolean | `true` | `NYCODE_COMPLETION_GATE` | Block a final answer while the task has unfinished steps. |
-| `notify.sound` | boolean | `true` | `NYCODE_SOUND_NOTIFY` | Play a sound when the agent finishes. |
+| `bash.mainGuard.enabled` | boolean | `true` | none | In the main interactive session only: cap the `bash` timeout and refuse `sleep` of 30 s or more and polling loops, so control returns to you (`run wait` is capped at 30 s). Subagents and print mode are not affected. |
+| `bash.mainGuard.timeoutSec` | integer ≥ 1 | `120` | none | Timeout in seconds of a `bash` call that sets none, in the main session. |
+| `bash.mainGuard.capSec` | integer ≥ 1 | `600` | none | Longest timeout in seconds a `bash` call may ask for, in the main session. |
+| `footer.stats` | boolean | `false` | none | Show the stats line (tokens, cost and model) in the footer. |
+| `editorMode` | `"normal" \| "vim"` | `"normal"` | none | Prompt editor keys. `"vim"` turns on modal editing; it replaces the removed `/vim` command, as in Claude Code, where the toggle is `/config` → Editor mode. |
+| `notify.sound` | boolean | `true` | `NYCODE_SOUND_NOTIFY` | Play a sound when the agent finishes. Read by the `notify` extension; the `/notifications` panel (alias `/avisos`) toggles it. |
+| `notify.desktop` | boolean | `true` | none | Send a desktop notification when the agent finishes. Read by the `notify` extension; the `/notifications` panel (alias `/avisos`) toggles it. |
 | `terminal.uiState` | string | `ui-state.json` in the agent directory | `NYCODE_UI_STATE` | File that stores the editor UI state. |
 | `terminal.reducedMotion` | boolean | `false` | `NYCODE_REDUCED_MOTION` | Reduce animation. |
 | `terminal.nerdFont` | boolean \| `"auto"` | `"auto"` | `NYCODE_NERD_FONT` | Use Nerd Font icons; `"auto"` detects kitty. |
 | `terminal.asciiIcons` | boolean | `false` | `NYCODE_ASCII_ICONS` | Use plain Unicode icons. |
-| `knowledge.vault` | string | None | `NYCODE_KNOWLEDGE_VAULT` | Absolute path of the knowledge vault. |
-| `knowledge.graphsVault` | string | None | `NYCODE_GRAPHS_VAULT` | Absolute path of the graphs vault. |
-| `codegraph.autoRoot` | string | None | `CODEGRAPH_AUTO_ROOT` | Root where codegraph auto-indexes repositories. |
-| `codegraph.bin` | string | None | `CODEGRAPH_BIN` | codegraph executable. |
-| `codegraph.statusTtl` | number ≥ 0 | None | `CODEGRAPH_STATUS_TTL` | Seconds a codegraph status stays valid; `0` disables. |
-| `codegraph.autoState` | string | None | `CODEGRAPH_AUTO_STATE` | State directory of the codegraph auto-indexer. |
 | `mcp.configPath` | string | `mcp.json` in the agent directory | `NYCODE_MCP_CONFIG` | MCP servers file. |
-| `hooks` | object | Embedded hooks (below) | none | Command hooks by event name, each `[{ "matcher": "Bash", "hooks": [{ "type": "command", "command": "...", "timeout": 30 }] }]`; run by the hooks extension. An event named here replaces that event's embedded default. |
+| `hooks` | object | Embedded hooks (below) | none | Hooks by event name, each `[{ "matcher": "Bash", "hooks": [{ "type": "command", "command": "...", "timeout": 30 }] }]` (a hook of the core is `{ "type": "internal", "name": "core-notes" }`); run by the hooks extension. An event named here replaces that event's embedded default. |
 | `statusLine` | object | Embedded claude-hud launcher (below) | none | `{ "type": "command", "command": "...", "padding": 0 }`; status line command. An empty `command` turns the status line off. |
-| `env` | `Record<string, string>` | `{ "EIO_BACKEND": "posix", "PONYTAIL_QUIET_STARTUP": "1", "PONYTAIL_SUBAGENT_MATCHER": "<writer subagents>" }` | none | Variables exported to the nycode process, so to hooks and the status line command. A value here overrides the default. |
+| `env` | `Record<string, string>` | `{ "EIO_BACKEND": "posix", "PONYTAIL_QUIET_STARTUP": "1" }` | none | Variables exported to the nycode process, so to hooks and the status line command. A value here overrides the default. |
 
-`quietStartup`, `defaultProjectTrust`, `retry`, and `shellCommandPrefix` above carry the Nycode defaults.
+`quietStartup`, `defaultProjectTrust`, `retry`, and `shellCommandPrefix` above carry the pre-migration Nycode defaults.
 
 ### `local.env`
 
 Nycode reads `~/.nycode/agent/local.env` (the agent directory; `NYCODE_LOCAL_ENV` names another file) at startup, before it reads any other variable (D-52). The file is `KEY=VALUE` lines, `#` comments, no `export`, no quoting rules beyond one pair of matching quotes around a value. Values are literal: nothing is expanded or evaluated. Only these keys are read; any other line is ignored with a `local.env:<n> ignored` warning on stderr:
 
-`NYCODE_BYPASS_PERMISSIONS`, `NYCODE_COMPACT_AT`, `PONYTAIL_QUIET_STARTUP`, `NYCODE_KNOWLEDGE_VAULT`, `NYCODE_GRAPHS_VAULT`, `CODEGRAPH_AUTO_ROOT`, `NYCODE_SUBAGENT_RESPAWN`, `NYCODE_EFFORT_SANDWICH`, `NYCODE_EFFORT_SANDWICH_TURNS`.
+`NYCODE_BYPASS_PERMISSIONS`, `NYCODE_COMPACT_AT`, `PONYTAIL_QUIET_STARTUP`, `NYCODE_SUBAGENT_RESPAWN`, `NYCODE_EFFORT_SANDWICH`, `NYCODE_EFFORT_SANDWICH_TURNS`.
 
-The file must belong to you and have mode `0600` or `0400`; otherwise nothing is loaded and a warning says why (not checked on Windows). A variable already set in the real environment wins over the file; the file wins over `settings.json`, like any `NYCODE_*` variable. A missing file is fine. Precedence, highest first: the real environment, then `local.env`, then `settings.json`, then the default. the one-time `nycode migrate` command converts an old `local.env` into `settings.json` keys once; if that `local.env` is also kept in the agent directory, its values win over the converted ones, so edit one place or the other.
+The file must belong to you and have mode `0600` or `0400`; otherwise nothing is loaded and a warning says why (not checked on Windows). A variable already set in the real environment wins over the file; the file wins over `settings.json`, like any `NYCODE_*` variable. A missing file is fine. Precedence, highest first: the real environment, then `local.env`, then `settings.json`, then the default.
 
 ### Embedded hooks and status line
 
-nycode registers these hooks by default. The scripts live in the package's `resources/hooks/`; the commands name them
-through `${NYCODE_RESOURCES}`, which the hooks extension exports. They need `python3` and `jq` on the `PATH`.
+nycode registers one hook of the core by default, `core-notes`, which runs in-process (no `bash`, no `jq`). It only adds
+notes to the model's context and never blocks. The permission guard is not a hook: it is the native engine
+(`permissions.engine`).
 
-| Event | Matcher | Command | Timeout (s) |
-| --- | --- | --- | --- |
-| `PreToolUse` | `Bash\|Edit\|Write\|Read` | `guard.py` | 30 |
-| `SessionStart` | `startup\|resume\|clear\|compact` | `graph_context.py`, `hook-dispatch.sh`, `impeccable_gate.sh hook` | 10, 10, 5 |
-| `SubagentStart` | `*` | `graph_context.py` | 10 |
-| `PostToolUse` | `*` | `hook-dispatch.sh` | 10 |
-| `PostToolUse` | `Edit\|Write` | `impeccable_gate.sh hook` | 5 |
-| `Stop` | none | `impeccable_gate.sh hook` | 30 |
+| Event | Matcher | Hook |
+| --- | --- | --- |
+| `SessionStart` | `startup\|resume\|clear\|compact` | `core-notes` |
+| `PostToolUse` | `*` | `core-notes` |
 
-`guard.py` is the permission guard: it denies catastrophic commands and secret reads, and asks before risky ones (a
-`NYCODE_BYPASS_PERMISSIONS=1` environment turns the asks into allows; denials stay). The guard hook has `onFailure: "block"`:
-if `python3` is missing, or the interpreter fails before the guard runs (exit 127, a broken import), the call is
-blocked, not allowed. A guard that starts but crashes on a Bash call asks instead of allowing. `hook-dispatch.sh` exits 0 without `jq`, and
-`impeccable_gate.sh` then reads the working directory instead of the event's.
+`core-notes` adds three notes:
+
+- Untrusted data: a tool result (except the harness's own edit, todo and question confirmations) that contains imperative
+  prompt-injection phrasing, in English or Portuguese, gets a note not to follow instructions embedded in it. Only the
+  first and last 64 KB of a result are scanned, so a longer result always gets the note. It is a cheap warning, not a
+  security boundary.
+- MCP launchers: at session start, `mcp.json` servers whose absolute launcher path no longer exists are named in one note
+  (bounded to 3 s).
+- Test edits: an `Edit` or `Write` of a test file asks the model to justify the change in its final report.
 
 To turn hooks off or replace them:
 
-- One event: an entry in `settings.json` replaces the default of that event, for example a `Stop` list. `PreToolUse` is
-  the exception: with `permissions.engine` `"script"` the guard always runs, and the entries of the user's or the
-  project's `settings.json` add to it. Only the global `~/.nycode/agent/settings.json` can drop the guard, with
-  `"hooks": { "PreToolUse": [] }`; nycode then warns once per session. The same entry in a project file does nothing.
-- Every hook: set `"disableAllHooks": true`. In `~/.nycode/agent/settings.json` (or the `--settings` file) it turns
-  every hook off, the guard included. In the project's `.claude/settings.json` or `settings.local.json` it turns the
-  other hooks off and the guard keeps running.
+- One event: an entry in `settings.json` replaces the default of that event, for example a `PostToolUse` list; an empty
+  list turns that event's default off. `PreToolUse` has no default (the native engine guards tool calls); the entries of
+  the user's or the project's `settings.json` run as they are.
+- Every hook: set `"disableAllHooks": true` in `~/.nycode/agent/settings.json` (or the `--settings` file) or in the
+  project's `.claude/settings.json` or `settings.local.json`.
 
-The ralph-loop `Stop` hook is embedded and runs before the impeccable gate; the `ponytail` variables (`PONYTAIL_QUIET_STARTUP`,
-`PONYTAIL_SUBAGENT_MATCHER`) are in the default `env`. See [Optional Packages](optional-packages.md#embedded-ponytail-and-ralph-loop).
+The ralph-loop `Stop` hook is not a default: the hooks extension registers it only while a `/ralph-loop` state file
+(`.claude/ralph-loop.local.md`) exists in the working directory. `/ralph-loop` runs up to 20 iterations unless
+`--max-iterations N` says otherwise (`0` is unlimited). The `ponytail` variable `PONYTAIL_QUIET_STARTUP` is in the default
+`env`. See [Optional Packages](optional-packages.md#embedded-ponytail-and-ralph-loop).
 
 The default `statusLine` runs `node "${NYCODE_RESOURCES}/statusline/statusline.mjs"`, the claude-hud launcher. It prints
 the built-in `calm` HUD; the claude-hud renderer (`"renderer": "claude-hud"`) is looked up only under

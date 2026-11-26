@@ -54,8 +54,6 @@ export function buildInitPrompt(opts: InitPromptOptions = {}): string {
 			"Please analyze this codebase and distill what a coding agent needs to work in it effectively:",
 			"- Build, lint, and test commands, including how to run a single test.",
 			"- Code conventions: formatting, imports, naming, types, error handling.",
-			"- Architecture notes: the big-picture structure that takes reading several files to see.",
-			"- Project layout: the important directories and entry points.",
 		].join("\n"),
 	];
 	if (opts.cursorRules)

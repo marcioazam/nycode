@@ -38,7 +38,7 @@ export function restartRequest(r: RestartRequest): string {
 	return `{"v":2,"sessionFile":${JSON.stringify(r.sessionFile)},"permission":{"mode":"${p.mode}","bypass":${p.bypass ? 1 : 0},"eligible":${p.eligible ? 1 : 0},"optin":${p.optin ? 1 : 0}},"argc":${r.argc},"flagValues":[${r.flagValues.join(",")}]}\n`;
 }
 
-/** Estado atual (dono: permissions/controller.ts, que mantém o env). Bypass é independente do modo; bypassPermissions legado = default + bypass. plan não é restaurável: recusa, nunca vira default. */
+/** Estado atual. Bypass é independente do modo; bypassPermissions legado = default + bypass. plan não é restaurável: recusa, nunca vira default. */
 export function permissionState(env: Record<string, string | undefined>): PermissionState | string {
 	const parsed = parseMode(env[MODE_ENV]);
 	if (!parsed.ok) return "modo de permissão ilegível";

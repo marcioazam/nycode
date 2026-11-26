@@ -15,12 +15,15 @@ import {
 } from "../lifecycle.ts";
 import { allCommands, matchingCommands, passesIfFilter } from "../matcher.ts";
 import { type HookRunner, timeoutMs } from "../runners.ts";
+import { ralphStopMatchers } from "./ralph-stop.ts";
 
 export interface StopEventDeps {
 	getConfig: () => HooksConfig;
 	boundRunner: (ctx: ExtensionContext) => HookRunner;
 	getAgentIdentity: () => { agent: string; id?: string } | undefined;
 	inSubagentChild: () => boolean;
+	/** Whether non-managed hooks may run (false under disableAllHooks and allowManagedHooksOnly). */
+	userHooksAllowed: () => boolean;
 }
 
 export interface StopBridge {
@@ -32,7 +35,7 @@ export interface StopBridge {
 }
 
 export function registerStopEvents(nycode: ExtensionAPI, deps: StopEventDeps): StopBridge {
-	const { getConfig, boundRunner, getAgentIdentity, inSubagentChild } = deps;
+	const { getConfig, boundRunner, getAgentIdentity, inSubagentChild, userHooksAllowed } = deps;
 	let stopHookActive = false;
 	/** Consecutive Stop-hook blocks with no user progress between them. Reset on user input
 	 * and on a non-blocking Stop; at the cap the continuation is suppressed and the turn ends. */
@@ -134,7 +137,8 @@ export function registerStopEvents(nycode: ExtensionAPI, deps: StopEventDeps): S
 		if (inSubagentChild()) return;
 		// Stop has no matcher support (a stray matcher is ignored, as Claude documents)
 		// and an `if`-carrying hook never runs on a non-tool event.
-		const commands = allCommands(getConfig().Stop).filter((command) => passesIfFilter(command, undefined));
+		const stop = [...(getConfig().Stop ?? []), ...(userHooksAllowed() ? ralphStopMatchers(ctx.cwd) : [])];
+		const commands = allCommands(stop).filter((command) => passesIfFilter(command, undefined));
 		if (commands.length === 0) {
 			stopHookActive = false;
 			return;

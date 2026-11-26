@@ -41,6 +41,17 @@ def verdict(*files: str, files_changes: dict[str, list[str]] | None = None) -> b
             "packages/coding-agent/src/extensions/footer/a.ts",
             "packages/coding-agent/src/extensions/sticky-prompt/a.ts",
         ),
+        # D-64 (owner, 2026-11-24): UI is never benchmarked, wherever it lives
+        (
+            "packages/tui/src/a.ts",
+            "packages/coding-agent/src/modes/interactive/interactive-mode.ts",
+            "packages/coding-agent/src/core/export-html/template.css",
+            "packages/coding-agent/src/extensions/sound-notify/a.ts",
+            "packages/coding-agent/src/extensions/dev-commands/a.ts",
+            "packages/coding-agent/src/extensions/status-line/index.ts",
+            "packages/coding-agent/src/extensions/code-blocks/a.ts",
+            "packages/coding-agent/src/extensions/avisos/index.ts",
+        ),
     ],
 )
 def test_non_functional(files: tuple[str, ...]) -> None:
@@ -51,11 +62,13 @@ def test_non_functional(files: tuple[str, ...]) -> None:
     "files",
     [
         ("docs/a.md", "packages/coding-agent/src/core/x.ts"),
-        ("packages/tui/src/a.ts",),
+        (
+            "packages/coding-agent/src/modes/print-mode.ts",
+        ),  # the mode the benchmark runs
+        (
+            "packages/coding-agent/src/extensions/session-title/index.ts",
+        ),  # calls the model
         ("packages/coding-agent/src/extensions/mcp/a.ts",),  # not a UI extension
-        # The pre-migration list marked these as UI; the nycode list is deliberately narrower (09 §3.2, D-21), so they fail closed
-        ("packages/coding-agent/src/extensions/sound-notify/a.ts",),
-        ("packages/coding-agent/src/extensions/dev-commands/a.ts",),
         ("packages/coding-agent/src/extensions/up-dequeue/a.ts",),
         ("packages/coding-agent/src/extensions/import-claude-session/a.ts",),
         (

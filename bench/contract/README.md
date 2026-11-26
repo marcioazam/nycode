@@ -23,20 +23,17 @@ redirecionado para um servidor local falso (`fake_api.py`), que devolve um rotei
 
 | Braço | Diretório de agente no stage | Comandos, skills e agentes lidos de |
 |---|---|---|
-| `nycode-harness` (e demais com `pi`) | `<stage>/.pi/agent` | o stage (`claude-home/`, extensões do `pi-code`) |
+| demais (layout `pi`) | `<stage>/.pi/agent` | o stage |
 | `nycode` | `<stage>/.nycode/agent` | o checkout: `packages/coding-agent/src/extensions` e `packages/coding-agent/resources` |
 
 - O mapa está em `LAYOUTS` (`check.py`). O braço `nycode` recebe `NYCODE_OFFLINE=1` (os demais, `PI_OFFLINE=1`); o
   `NYCODE_CODING_AGENT_DIR` é exportado pelo próprio `bench/arms/nycode`.
 - O stage do `nycode` monta `mcp.json` copiando `packages/coding-agent/examples/config/mcp.json` sem alteração (marcadores
-  `${VAR}`, sem segredo, nunca o arquivo do dono). É o mesmo arquivo, byte a byte, que o `install.sh` do Nycode copia do
-  `mcp.json.example` (e4f8729), então os dois braços são medidos com as mesmas declarações (D-40): 6 servidores, nenhum com
+  `${VAR}`, sem segredo, nunca o arquivo do dono). Toda rodada é medida com as mesmas declarações (D-40): 6 servidores, nenhum com
   `exposure` nem `enabled`. Sem `exposure`, a extensão `mcp` ativa o `codemode` a partir da configuração, antes de qualquer
-  servidor conectar; por isso o inventário tem a ferramenta `codemode` nos dois braços, com ou sem rede.
+  servidor conectar; por isso o inventário tem a ferramenta `codemode`, com ou sem rede.
 - Os servidores `npx` sobem na partida do `pi`/`nycode`: sem rede eles só falham (o `pi -p` segue). Fora de um sandbox
   sem rede o `npx` baixa pacotes do npm; rode o verificador num sandbox de rede fechada quando isso importar.
-- Referência Nycode (`nycode-harness`): `import/ny-pi` não tem `bin/pi` (F5), `install.sh` nem `npm/` (F11). Aponte `BENCH_NYCODE_HARNESS_SRC` para um checkout do Nycode (ou um
-  `git archive` extraído; sem `.git` ali, defina também `BENCH_STAGE`). Sem a variável o braço sai 2 com a causa.
 - Medição em rede fechada: monte o stage fora do sandbox (`BENCH_STAGE=<dir> bench/arms/<braço> --version`; o build
   precisa de npm) e rode o verificador dentro de um sandbox sem rede com o mesmo `BENCH_STAGE`. `BENCH_STAGE` que
   começa com `bench-` é recusado.
@@ -45,8 +42,8 @@ redirecionado para um servidor local falso (`fake_api.py`), que devolve um rotei
 
 ```sh
 BENCH_CC_CREDENTIALS=<arquivo de credenciais> BENCH_REPO=x/y \
-  python3 bench/contract/check.py --arm nycode-harness --json /tmp/contract.json
-python3 bench/contract/check.py --arm nycode-harness --only regras
+  python3 bench/contract/check.py --arm nycode --json /tmp/contract.json
+python3 bench/contract/check.py --arm nycode --only regras
 ```
 
 - Exit `0`: contrato íntegro. Exit `1`: algum caso em `falha`. Exit `2`: ambiente indisponível (motivo no stderr).
@@ -85,11 +82,11 @@ python3 bench/contract/check.py --arm nycode-harness --only regras
 Mede a sobrecarga do harness sem modelo e sem depender da API (o tempo de parede do gate varia com a API).
 Cada braço roda `pi -p` no servidor falso (resposta instantânea) com um roteiro fixo de 3 turnos: `bash`
 (`echo ok`), `read` de um arquivo pequeno do diretório de trabalho e texto final. Os braços se intercalam a cada
-repetição (nycode-harness, pi-vanilla, nycode-harness, ...), com relógio monotônico.
+repetição (nycode, pi-vanilla, nycode, ...), com relógio monotônico.
 
 ```sh
-python3 bench/contract/speed.py --arms nycode-harness,pi-vanilla --reps 7 --json /tmp/speed.json
-python3 bench/contract/speed.py --arms nycode-harness,pi-vanilla --reps 5 --cold
+python3 bench/contract/speed.py --arms nycode,pi-vanilla --reps 7 --json /tmp/speed.json
+python3 bench/contract/speed.py --arms nycode,pi-vanilla --reps 5 --cold
 ```
 
 - `boot_s`: início do processo até a 1ª requisição. `turn_gap_s`: mediana por execução do intervalo entre o fim

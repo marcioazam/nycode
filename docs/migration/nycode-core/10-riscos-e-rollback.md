@@ -2,11 +2,11 @@
 
 Registro de riscos, reversão por fase, critérios de parada, pré-mortem e convivência em F12. Fonte dos fatos: os
 documentos canônicos ([00](00-mega-plano.md), [02](02-arquitetura-alvo.md), [11](11-decisoes-e-pendencias.md), anexos
-[A](anexos/A-inventario-nycode-harness.md) e [B](anexos/B-mapa-core-nycode.md)) e a política de sincronização
+A e [B](anexos/B-mapa-core-nycode.md)) e a política de sincronização
 ([08](08-sincronizacao-upstream.md)). Estado: **plano**; nada foi implementado nem executado, e nenhuma medição de risco
 é de campo. Probabilidade e impacto são julgamento do autor do plano (A = alta, M = média, B = baixa), não medição.
 
-Legenda de donos: **Dono** = mantenedor do repositório (autorização e aceite); **Orq.** = sessão orquestradora; **Exec.** = executor da
+Legenda de donos: **Dono** = o dono do repositório (autorização e aceite); **Orq.** = sessão orquestradora; **Exec.** = executor da
 unidade; **Seg.** = `security-reviewer`; **Entrega** = `git-delivery`. Identificadores D-nn, K1..K14, P-n e F0..F12
 são os dos documentos canônicos; PC-n vêm de [08](08-sincronizacao-upstream.md).
 
@@ -53,7 +53,7 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 | R-29 | `build-check` falha sem tag `v*.*.*` | P-6 | F0 | A | B | Exec. |
 | R-30 | Atraso do upstream acumula | 944 arquivos por semana medidos | F4-F12 | M | M | Orq. |
 | R-31 | `import/` entra no build ou no pacote | Fora do `workspaces` mal configurado | F1 | B | M | Exec. |
-| R-32 | Nycode (`nycode-harness`) congelado recebe correção que não migra | Congelamento até F12 | F0-F12 | B | M | Orq. |
+| R-32 | Nycode pré-migração congelado recebe correção que não migra | Congelamento até F12 | F0-F12 | B | M | Orq. |
 | R-33 | PR de correção K1 e K2 ao upstream é fechado | CONTRIBUTING fecha PR sem `lgtm` | F4 | A | B | Dono |
 | R-34 | Patch do `pi-lsp` (4080 linhas) vira dívida | Código de terceiros com patch local | F9 | M | M | Exec. |
 
@@ -61,7 +61,7 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 
 | ID | Sinal de alerta observável | Contenção |
 |---|---|---|
-| R-01 | Braço `nycode-harness@1.6.0` difere da referência do `nycode-harness` | Medir "ny-pi por fora sobre 1.6.0" em F3 (D-25) |
+| R-01 | Braço Nycode pré-migração 1.6.0 difere da referência do Nycode pré-migração | Medir "Nycode pré-migração por fora sobre 1.6.0" em F3 (D-25) |
 | R-02 | Teste de frota ou times falha após a cópia | Cópia byte a byte, depois imports, depois formatação |
 | R-03 | `npm run check` falha nos tipos de evento | Corrigir na primeira unidade de F5 (P-3) |
 | R-04 | `check-seams.sh` abaixo de 14/14 | Marcador, teste por costura ([08](08-sincronizacao-upstream.md#costuras)) |
@@ -92,7 +92,7 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 | R-29 | `build-check` vermelho em `main` | Etiqueta `v1.6.0-base` em F0 |
 | R-30 | Atraso acima de 14 dias | Sincronização semanal; ver [08](08-sincronizacao-upstream.md) |
 | R-31 | Arquivo de `import/` no pacote publicado | `import/` fora de `workspaces`, `files` e gates |
-| R-32 | Commit em `marcioazam/ny-pi` `main` depois do congelamento | Só segurança; cada um vira item no checklist |
+| R-32 | Commit em Nycode pré-migração `main` depois do congelamento | Só segurança; cada um vira item no checklist |
 | R-33 | Issue fechada sem resposta | Manter a costura; baixo risco (K1, K2) |
 | R-34 | Extensão `lsp` com testes vermelhos | Tratar como código próprio; testes migram |
 
@@ -144,9 +144,9 @@ escrevem no GitHub (reverter, apagar, recriar proteção) exigem a autorização
 | Fase | O que desfaz | Até quando é possível |
 |---|---|---|
 | F0 | Apagar a etiqueta `v1.6.0-base`; recriar ramos pelo SHA; reabrir alertas | Sempre, se os SHAs foram guardados |
-| F1 | `git revert -m 1` do merge commit; nada fora de `import/ny-pi/` muda | Até um `git mv` sair de `import/` |
+| F1 | `git revert -m 1` do merge commit; nada fora de `import/origem/` muda | Até um `git mv` sair de `import/` |
 | F2 | Revert do PR de squash; logo e README voltam como eram | Sempre |
-| F3 | `DELETE` do ruleset e recriar a proteção clássica pelo JSON de `evidencias/` | Enquanto o JSON existir |
+| F3 | `DELETE` do ruleset e recriar a proteção clássica pelo JSON de registro do mantenedor | Enquanto o JSON existir |
 | F4 | Revert do PR de cada costura; a migração de dados é por cópia e não altera `~/.pi` | Sempre |
 | F5 | Desligar a extensão em `nycode config`; revert do PR; usar o `pi` | Sempre |
 | F6 | Idem a F5; subagentes voltam ao pi-code do harness Nycode | Sempre |
@@ -155,23 +155,23 @@ escrevem no GitHub (reverter, apagar, recriar proteção) exigem a autorização
 | F9 | Desligar `lsp`; opcionais saem de `nycode install` | Sempre |
 | F10 | Revert do PR que regrava `docs/bench/baseline-main/` | Sempre |
 | F11 | Reversível: o Release e a etiqueta se apagam (`gh release delete --cleanup-tag`); a atestação fica no Sigstore público | Ver ponto sem volta |
-| F12 | Desarquivar `marcioazam/ny-pi`; restaurar `import/ny-pi/` por git; `pi` do dia a dia volta | Enquanto o Nycode (`nycode-harness`) existir |
+| F12 | Desarquivar Nycode pré-migração; restaurar `import/origem/` por git; `pi` do dia a dia volta | Enquanto o Nycode pré-migração existir |
 
 Detalhes por fase, para quem executa:
 
-- **F0.** Antes de apagar qualquer ramo (D-15), gravar a lista de ramos e SHAs em `evidencias/F0.md`; cada ramo é
+- **F0.** Antes de apagar qualquer ramo (D-15), gravar a lista de ramos e SHAs em registro do mantenedor; cada ramo é
   recriado com `git push origin <sha>:refs/heads/<nome>`. A etiqueta se apaga com
   `git push origin :refs/tags/v1.6.0-base`.
 - **F1.** O merge de histórico não relacionado é um commit; `git revert -m 1 <merge>` o desfaz sem tocar o resto. Se o
-  ruleset do `marcioazam/ny-pi` já estiver ativo, o merge nem entra (R-07): a ordem é F1 antes de F3.
-- **F3.** Antes de ativar o ruleset, guardar em `evidencias/` o JSON atual da proteção clássica (checks `build-check`,
-  `test (coding-agent|durable|chord|other)`, `mcp-conformance`; documento: anexo A e mega plano, seção 3). Reverter:
+  ruleset do Nycode pré-migração já estiver ativo, o merge nem entra (R-07): a ordem é F1 antes de F3.
+- **F3.** Antes de ativar o ruleset, guardar em registro do mantenedor o JSON atual da proteção clássica (checks `build-check`,
+  `test (coding-agent|durable|chord|other)`, `mcp-conformance`; documento: registro do mantenedor e mega plano, seção 3). Reverter:
   `DELETE` do ruleset e recriação da proteção a partir do JSON. Se o ruleset bloquear a própria reversão, remover o
   ruleset pela interface do dono.
 - **F4 a F9.** A extensão embutida se desliga em `nycode config` ("Built-in extensions", documento: arquitetura alvo,
   seção 1). Costura de core (K1 a K14): revert do PR de squash correspondente; cada costura tem seu teste e seu PR (08).
 - **F11.** Reverter a infraestrutura (instalador, binários, Nix) é revert de PR. O que já foi para o npm não volta.
-- **F12.** Arquivar `marcioazam/ny-pi` é reversível (desarquivar no GitHub); apagar `import/ny-pi/` é reversível por git (o
+- **F12.** Arquivar Nycode pré-migração é reversível (desarquivar no GitHub); apagar `import/origem/` é reversível por git (o
   histórico fica). O `pi` do harness Nycode continua instalado até F12 (documento: princípio 2).
 
 ### 2.1 Ponto sem volta
@@ -181,9 +181,9 @@ Detalhes por fase, para quem executa:
   2026-11-21), mas quem já baixou o binário o mantém e a atestação segue nos registros públicos (comportamento do
   Sigstore, não verificado). O número `2.0.0` (D-13) deve ser tratado como consumido depois de publicado: a correção sai
   como `2.0.1`. O npm deixou de ser canal (D-17), então `npm deprecate` e `unpublish` não se aplicam.
-- **Arquivar `marcioazam/ny-pi` (F12)** é reversível: o GitHub permite desarquivar (comportamento do GitHub, não verificado
+- **Arquivar Nycode pré-migração (F12)** é reversível: o GitHub permite desarquivar (comportamento do GitHub, não verificado
   nesta etapa).
-- **Apagar `import/ny-pi/`** é reversível por git: o histórico da pasta continua em `main`.
+- **Apagar `import/origem/`** é reversível por git: o histórico da pasta continua em `main`.
 - **Apagar ramos (F0)** é reversível se o SHA foi gravado; sem o SHA, depende do `reflog` remoto, que o GitHub não expõe
   (não verificado).
 - Portanto, o primeiro ponto de difícil volta é o primeiro download do Release `v2.0.0`. Antes dele, só F11 pode ser
@@ -225,7 +225,7 @@ Suposição: a migração falhou. Três histórias plausíveis e o que o plano f
    evita assim: [08](08-sincronizacao-upstream.md) mede o ritmo, fixa cadência semanal e atraso máximo, versiona o
    pipeline de renome (PC-1), troca o conflito de renome pela imagem determinística, mantém as costuras em lista fechada
    com teste, e exige duas sincronizações completas depois de F6 como critério 7. O bus factor (R-28) é o fator
-   agravante; a documentação e o `evidencias/sync-*.md` existem para outra pessoa ou agente refazer o ciclo.
+   agravante; a documentação e o registro do mantenedor existem para outra pessoa ou agente refazer o ciclo.
 3. **"A segurança regrediu em silêncio e dados do usuário se perderam."** O motor nativo de permissão foi ligado sem
    paridade, ou `nycode migrate from-pi` sobrescreveu `auth.json` ou sessões. Causa: pressa para tirar o Python do
    caminho e o wrapper do dia a dia. O plano evita assim: D-08 em duas fases com o corpus de `test_guard.py` como
@@ -240,7 +240,7 @@ Objetivo: o `nycode` substituir o `pi` no dia a dia sem perder a saída de volta
 
 ### 5.1 Duas instalações
 
-- `pi`: wrapper em `~/.local/bin/pi` e launcher em `~/.pi/agent/bin/pi`, dados em `~/.pi/agent` (documento: anexo A,
+- `pi`: wrapper em `~/.local/bin/pi` e launcher em `~/.pi/agent/bin/pi`, dados em `~/.pi/agent` (documento: registro do mantenedor,
   seção 1 e seção 5). Fica instalado e **não é alterado** durante a convivência.
 - `nycode`: binário `nycode`, dados em `~/.nycode/agent` (documento: anexo B, seção 2). Os nomes de comando e de
   diretório são diferentes, então não há colisão de binário nem de diretório.
@@ -269,12 +269,12 @@ Proposta (os números são a calibrar; **não medidos**):
    Também conta: uma diferença visual da UI (R-27), um comando que o guard deixou passar (R-08) e perda de dado.
 3. **Critério de saída:** 50 sessões consecutivas sem regressão, das quais ao menos 10 em modo `print` (`-p`), 10 com
    `subagent` e 5 com `plan-mode`, e ao menos uma sincronização do upstream feita nesse período.
-4. **Reinício da contagem:** uma regressão zera a contagem e abre um registro em `evidencias/F12.md`. Duas regressões
+4. **Reinício da contagem:** uma regressão zera a contagem e abre um registro em registro do mantenedor. Duas regressões
    de segurança ou de perda de dado acionam o critério de parada 2 ou 4 (seção 3).
-5. **Depois do critério:** arquivar `marcioazam/ny-pi` (D-22, autorização do dono) e remover `import/ny-pi/` por PR; o `pi` pode
+5. **Depois do critério:** arquivar Nycode pré-migração (D-22, autorização do dono) e remover `import/origem/` por PR; o `pi` pode
    ser desinstalado só depois, a pedido do dono.
 
-Durante a convivência, o Nycode (`nycode-harness`) segue congelado: entra só correção de segurança (F0), e cada uma é reaplicada no
+Durante a convivência, o Nycode pré-migração segue congelado: entra só correção de segurança (F0), e cada uma é reaplicada no
 Nycode por PR (R-32).
 
 ## 6. Não verificado neste documento
@@ -284,5 +284,5 @@ Nycode por PR (R-32).
 - Divergência de formato de sessão entre `pi` e `nycode`.
 - Todos os valores de probabilidade e impacto (julgamento) e os limiares numéricos das seções 3 e 5.3.
 - Se o GitHub aceita `DELETE` do ruleset e recriação da proteção clássica sem perder a configuração de checks (depende
-  de o JSON guardado ser completo; o anexo D guarda as regras brutas, não relidas aqui).
+  de o JSON guardado ser completo; o registro do mantenedor guarda as regras brutas, não relidas aqui).
 - Estado atual do escopo `@nycode` no npm (o mega plano registra 404 em 2026-11-20; não reconsultado).

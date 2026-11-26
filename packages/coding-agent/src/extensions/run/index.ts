@@ -3,12 +3,13 @@
  * One registry for shells and background subagents (registry.ts); the finish of a run the agent awaits starts a turn.
  */
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
-
+import { backgroundShell } from "../_shared/seams/background-shell.ts";
+import { announceExternalFinish, announceExternalStart } from "../todo/external.ts";
 import { extractPid, type Instrumented, instrument } from "./detect.ts";
 import { type RunRecord, sharedRegistry } from "./registry.ts";
 import { RunSection } from "./section.ts";
-import { registerDetected } from "./shell.ts";
-import { registerRunTool, summary } from "./tool.ts";
+import { registerDetected, startShell } from "./shell.ts";
+import { registerRunTool, registerTaskSurface, summary } from "./tool.ts";
 
 export function finishMessage(r: RunRecord, now: number): { customType: string; content: string; display: boolean } {
 	return { customType: "run-finished", content: `Run terminou:\n${summary(r, now, 20)}`, display: true };
@@ -17,18 +18,56 @@ export function finishMessage(r: RunRecord, now: number): { customType: string; 
 export default function run(nycode: ExtensionAPI): void {
 	const reg = sharedRegistry();
 	const section = new RunSection(reg);
+	registerTaskSurface(nycode, reg);
 	registerRunTool(nycode, reg);
+	// bash run_in_background starts here: the registry owns the process, the Run section shows it, the finish starts a turn.
+	backgroundShell.set((command, cwd) => {
+		const rec = startShell(reg, { command, cwd, awaited: true });
+		return { id: rec.id, logPath: rec.logPath ?? "" };
+	});
 	/** toolCallId → what tool_call changed, read back by tool_result. */
 	const pending = new Map<string, Instrumented & { cwd: string }>();
 	let offFinish: (() => void) | undefined;
+	/** A reminder without a turn: the finish of a run nobody awaits. */
+	const sendQuiet = (content: string): void => {
+		try {
+			nycode.sendMessage({ customType: "run-finished", content, display: false }, { triggerTurn: false });
+		} catch {
+			// stale session: nobody to tell
+		}
+	};
 
 	nycode.on("session_start", (event, ctx: ExtensionContext) => {
 		if (event.reason !== "reload") reg.resetSession();
 		offFinish?.();
 		offFinish = reg.onFinish((r) => {
-			if (r.kind !== "shell" || !r.awaited || r.waiters > 0) return;
+			if (r.kind !== "shell") return;
+			// todo.sync: one reminder naming the item; only when a message goes out (a waiter reads the result itself).
+			// A stale session must not abort finish(): no reminder then.
+			let reminder: string | undefined;
 			try {
-				nycode.sendMessage(finishMessage(r, reg.now()), { triggerTurn: true });
+				reminder =
+					r.waiters > 0
+						? undefined
+						: announceExternalFinish(
+								nycode,
+								`run:${r.id}`,
+								r.state === "done",
+								`${r.name}, exit ${r.exitCode ?? "?"}`,
+								r.state === "stopped",
+							);
+			} catch {
+				// stale session: nobody to tell
+			}
+			if (!r.awaited || r.waiters > 0) {
+				if (reminder) sendQuiet(reminder);
+				return;
+			}
+			try {
+				const msg = finishMessage(r, reg.now());
+				nycode.sendMessage(reminder ? { ...msg, content: `${msg.content}\n${reminder}` } : msg, {
+					triggerTurn: true,
+				});
 			} catch {
 				// stale session: nobody to tell
 			}
@@ -57,6 +96,14 @@ export default function run(nycode: ExtensionAPI): void {
 
 	nycode.on("tool_result", (event) => {
 		if (event.toolName === "subagent") section.sync();
+		if (event.toolName === "run" && (event.input as { action?: unknown }).action === "start" && !event.isError) {
+			const id = event.content
+				.map((c) => (c.type === "text" ? /^iniciado (\S+)/.exec(c.text)?.[1] : undefined))
+				.find(Boolean);
+			const rec = id ? reg.get(id) : undefined;
+			// A run that already ended has had its finish: an item added now would wait forever.
+			if (rec?.state === "running") announceExternalStart(nycode, `run:${rec.id}`, `run ${rec.name}`);
+		}
 		const inst = pending.get(event.toolCallId);
 		if (!inst) return undefined;
 		pending.delete(event.toolCallId);

@@ -1,8 +1,8 @@
 // node --experimental-strip-types --test ~/.nycode/agent/extensions/ui/test/editor.test.ts
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __typed1 from "../../../../../src/extensions/ui/editor.ts";
 
@@ -39,7 +39,7 @@ function editor(vim: { enabled: boolean }, name?: string) {
 	return { e, submitted };
 }
 
-function setup(opts: { hasUI?: boolean; other?: boolean } = {}) {
+function setup(opts: { hasUI?: boolean; other?: boolean; settings?: object } = {}) {
 	const handlers: Record<string, any> = {};
 	const cmds: Record<string, any> = {};
 	const notes: string[] = [];
@@ -50,7 +50,7 @@ function setup(opts: { hasUI?: boolean; other?: boolean } = {}) {
 		on: (n: string, h: unknown) => {
 			handlers[n] = h;
 		},
-		getSettings: () => ({}),
+		getSettings: () => opts.settings ?? {},
 		registerCommand: (n: string, c: unknown) => {
 			cmds[n] = c;
 		},
@@ -94,7 +94,7 @@ function historyCtx(s: ReturnType<typeof setup>, branchText: string, sessionDir 
 
 const strip = (s: string) => s.replace(/\x1b\[[0-9;]*m/g, "").replace(/\x1b_[^\x07]*\x07/g, "");
 
-// Cápsula (dono, 2026-11-18, /barra variante 2): antes réguas retas `───`; agora as pontas viram cantos `╮` e `╯`.
+// Cápsula: antes réguas retas `───`; agora as pontas viram cantos `╮` e `╯`.
 
 // --- compatibilidade Claude Code ---
 function compatEditor(busy = false) {
@@ -114,13 +114,12 @@ function compatEditor(busy = false) {
 }
 const kbWith = (ids: string[]) => ({ matches: (_d: string, id: string) => ids.includes(id) });
 
-test("readState tolera ausente, corrompido e não-objeto; mergeState preserva chaves", () => {
+test("readState tolera ausente, corrompido e não-objeto", () => {
 	const p = join(tmp, "state", "ui-state.json");
 	assert.deepEqual(m.readState(p), {});
-	m.mergeState({ vim: true }, p);
-	writeFileSync(p, JSON.stringify({ vim: true, outra: 1 }));
-	m.mergeState({ vim: false }, p);
-	assert.deepEqual(m.readState(p), { vim: false, outra: 1 });
+	mkdirSync(dirname(p), { recursive: true });
+	writeFileSync(p, JSON.stringify({ outra: 1 }));
+	assert.deepEqual(m.readState(p), { outra: 1 });
 	writeFileSync(p, "{corrompido");
 	assert.deepEqual(m.readState(p), {});
 	writeFileSync(p, "[1]");
@@ -203,38 +202,28 @@ test("/rename define e mostra o nome", async () => {
 	await t.cmds.rename.handler("", t.ctx);
 	assert.match(t.notes[0], /sem nome/);
 });
-test("/vim: indisponível sem editor próprio; alterna, persiste e instala o editor", async () => {
-	const file = join(tmp, "vim-state.json");
-	process.env.NYCODE_UI_STATE = file;
-	try {
-		const noEd = setup({ other: true });
-		noEd.handlers.session_start({}, noEd.ctx);
-		await noEd.cmds.vim.handler("", noEd.ctx);
-		assert.match(noEd.notes[0], /^warning:/);
-		const off = setup({ hasUI: false });
-		off.handlers.session_start({}, off.ctx);
-		assert.equal(off.factory(), undefined);
-
-		writeFileSync(file, JSON.stringify({ outra: 1 }));
-		const s = setup();
+test("editorMode: sem /vim; só editorMode=vim liga o modo modal (Esc → normal), normal e ausente não", () => {
+	const off = setup({ hasUI: false });
+	off.handlers.session_start({}, off.ctx);
+	assert.equal(off.factory(), undefined);
+	const modo = (settings: object) => {
+		const s = setup({ settings });
+		assert.equal(s.cmds.vim, undefined);
 		s.handlers.session_start({}, s.ctx);
 		const ed = s.factory()(tui, theme, kb);
 		assert.ok(ed instanceof m.UiEditor);
-		s.handlers.session_info_changed();
-		await s.cmds.vim.handler("", s.ctx);
-		assert.deepEqual(m.readState(file), { outra: 1, vim: true });
-		assert.match(s.notes[0], /ligado/);
-		// novo session_start lê o flag persistido
-		const s2 = setup();
-		s2.handlers.session_start({}, s2.ctx);
-		s2.factory()(tui, theme, kb).handleInput("\x1b");
-		await s2.cmds.vim.handler("", s2.ctx);
-		assert.equal(m.readState(file).vim, false);
-		assert.match(s2.notes[0], /desligado/);
-		// falha de gravação vira aviso
-		process.env.NYCODE_UI_STATE = join(file, "x", "y.json");
-		await s2.cmds.vim.handler("", s2.ctx);
-		assert.match(s2.notes[1], /^warning:ui-state/);
+		ed.handleInput("\x1b");
+		return ed.mode;
+	};
+	assert.equal(modo({ editorMode: "vim" }), "normal");
+	assert.equal(modo({ editorMode: "normal" }), "insert");
+	assert.equal(modo({}), "insert");
+	// o valor antigo de /vim em ui-state.json é ignorado
+	const file = join(tmp, "legacy-vim.json");
+	writeFileSync(file, JSON.stringify({ vim: true }));
+	process.env.NYCODE_UI_STATE = file;
+	try {
+		assert.equal(modo({}), "insert");
 	} finally {
 		delete process.env.NYCODE_UI_STATE;
 	}
@@ -427,7 +416,7 @@ test("Ctrl+X Ctrl+K exige duas confirmações em 3 s e usa somente o fleet da se
 	}
 });
 
-const MODES_SLOT = Symbol.for("nycode-harness.permission-modes");
+const MODES_SLOT = Symbol.for("nycode.permission-modes");
 
 function _withController(cycle: () => unknown, run: () => void) {
 	const g = globalThis as Record<symbol, unknown>;
@@ -447,16 +436,16 @@ function _withController(cycle: () => unknown, run: () => void) {
 	}
 }
 
-// Pedido do dono (2026-11-14): `❯` no começo da caixa de entrada (antes só o cursor em bloco), alinhado ao `❯` das mensagens enviadas.
-// Cápsula (dono, 2026-11-18): antes ` ❯ texto` e continuação em 3 colunas; agora `│ ❯ texto`, continuação em 4, `│` no fim.
+// `❯` no começo da caixa de entrada (antes só o cursor em bloco), alinhado ao `❯` das mensagens enviadas.
+// Cápsula: antes ` ❯ texto` e continuação em 3 colunas; agora `│ ❯ texto`, continuação em 4, `│` no fim.
 
-// Dono, 2026-11-15: a régua do composer (barra de envio) fica no ciano do sistema; o modo shell mantém a cor do nycode (magenta).
+// A régua do composer (barra de envio) fica no ciano do sistema; o modo shell mantém a cor do nycode (magenta).
 
-// Dono, 2026-11-15: o ciano marca onde está o foco; a régua só fica ciano com o composer focado e nenhuma tab focada.
+// O ciano marca onde está o foco; a régua só fica ciano com o composer focado e nenhuma tab focada.
 
 // Onda 10, P18: o editor vazio lembra as três portas; some na primeira tecla, sem mudar a largura.
 
-// Cápsula (dono, 2026-11-18, /barra variante 2): a borda respira entre a régua e o ciano enquanto o agente trabalha e fica âmbar
+// Cápsula: a borda respira entre a régua e o ciano enquanto o agente trabalha e fica âmbar
 // parada quando o turno está sem resposta; fora do turno, a cor de sempre.
 
 // U7: o getter borderColor roda várias vezes por quadro; o texto (join de todas as linhas) e o respiro valem uma vez por render().

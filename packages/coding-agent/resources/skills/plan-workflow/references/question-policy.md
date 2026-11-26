@@ -67,7 +67,7 @@ Trigger: the user answers "não sei", "tanto faz", "você decide", hedges, or le
 4. If it is still unknown, offer these options:
    - follow the recommendation;
    - a spike task that settles it with evidence (time-boxed, with an output criterion);
-   - ask a third party (`/skill:to-questionnaire`);
+   - ask a third party (write the questions as a short questionnaire);
    - defer it to a named task.
 5. If no answer comes back, record it as `A#` ⚠ and add a validation task before the dependent work. Never block the whole plan on it.
 

@@ -286,7 +286,7 @@ export const SHORTCUTS: readonly KeyRow[] = [
 		claude: "edição modal completa",
 		status: "partial",
 		nycode:
-			"/vim: seis módulos em extensions/claude-compat/vim (modos, movimentos, operadores, visual, objetos, repetição) implementados; verificação pelo gate integrado pendente, sem alegar paridade exata",
+			'setting `editorMode: "vim"`: seis módulos em extensions/claude-compat/vim (modos, movimentos, operadores, visual, objetos, repetição) implementados; verificação pelo gate integrado pendente, sem alegar paridade exata',
 	},
 	{
 		key: "Teclas contextuais (Autocomplete, Confirm, Tabs, Transcript, Diff, ModelPicker, Footer…)",

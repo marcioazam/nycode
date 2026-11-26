@@ -19,7 +19,6 @@ export const PLAN_MODE_TOOLS = [
 	"plan_mode_complete",
 	"tool_search",
 	"web_fetch",
-	"mcp__keenable__search_web_pages",
 	"lsp_diagnostics",
 	"lsp_hover",
 	"lsp_definition",
@@ -33,9 +32,9 @@ export const PLAN_MODE_TOOLS = [
 
 /** The tracker reads only this literal tag from the reply text; prose or ☑ checkboxes do not count. */
 export const DONE_RULE =
-	"When you finish step n, write the literal tag [DONE:n] in the final reply of the turn (the message without a tool call); the tracker reads only this tag, not prose or checkboxes. If the step ended mid-work, repeat the tag in the final reply. In that reply tick box n under `## Progresso` of the task's /docs record.";
+	"When you finish step n, complete its todo item or write the literal tag [DONE:n] in the final reply of the turn (the message without a tool call); only the tag counts, not prose or checkboxes. If it ended mid-work, repeat the tag in the final reply. In it tick box n under `## Progresso` of the /docs record.";
 
-/** Only the end of the plan or an explicit user request ends plan mode (owner contract 2026-11-15): nothing else, no event, no command. */
+/** Only the end of the plan or an explicit user request ends plan mode: nothing else, no event, no command. */
 export const CANCEL_RULE =
 	"Only when the user explicitly asks to leave plan mode or cancel the plan, end your reply with the line PLAN CANCELLED on its own; never on your own initiative.";
 

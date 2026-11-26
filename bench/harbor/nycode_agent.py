@@ -1,6 +1,6 @@
 """Harbor agent that runs the nycode build of this checkout (+ the owner layer) in the task container (09 §2.2).
 
-Sibling of the nycode-harness `pi_harness_agent` (same directory): subclasses Harbor's built-in Pi agent, so the CLI flags, the session-dir
+Subclasses Harbor's built-in Pi agent, so the CLI flags, the session-dir
 trajectory and the cost parsing are inherited (nycode keeps pi's `--print --mode json` contract and session format).
 Only install() (ships the bundle of bundle.sh instead of `npm i -g pi`) and the final invocation differ: the bundled
 `cli.js` runs under Node from nvm, with HOME and NYCODE_CODING_AGENT_DIR inside /opt/nycode-home.
@@ -20,14 +20,23 @@ from harbor.environments.base import BaseEnvironment  # type: ignore[import-not-
 _HOME = "/opt/nycode-home"  # fixed in-container home; independent of the host user
 _AGENT_DIR = f"{_HOME}/.nycode/agent"  # NYCODE_CODING_AGENT_DIR: the owner layer
 _CLI = f"{_HOME}/.local/lib/nycode/dist/bundle/cli.js"
-_REMOTE_BUNDLE = "/tmp/nycode-harness-bundle.tgz"
+_REMOTE_BUNDLE = "/tmp/nycode-bundle.tgz"
 _AGENT_ENV = {
     "HOME": _HOME,
     "NYCODE_CODING_AGENT_DIR": _AGENT_DIR,
     "NYCODE_SKIP_VERSION_CHECK": "1",  # same as bench/arms/nycode: no update check in a measured run
 }
+# Arm switches (bench/arms.toml `env`): run.py sets them in its own env, the container only sees what is forwarded here.
+# Allowlist, never a blanket copy of os.environ: the host env holds secrets.
+_ARM_ENV = ("NYCODE_TODO_SYNC_V2", "NYCODE_MCP_TOOL_SEARCH", "NYCODE_HEADLESS_TRIM")
 
-# curl and tar for nvm and the bundle (the bundle needs no python3 or patch, unlike the pre-migration stage); fails loudly.
+
+def _agent_env() -> dict[str, str]:
+    """Container env of an agent command: the fixed one plus the arm switches set on the host."""
+    return {**_AGENT_ENV, **{k: os.environ[k] for k in _ARM_ENV if k in os.environ}}
+
+
+# curl and tar for nvm and the bundle (the bundle needs no python3 or patch,); fails loudly.
 _ROOT_DEPS = r"""
 set -e
 need=""
@@ -90,9 +99,7 @@ class NycodeAgent(Pi):  # type: ignore[misc]
 
     @override
     async def install(self, environment: BaseEnvironment) -> None:
-        bundle = Path(
-            os.environ.get("NYCODE_HARNESS_BUNDLE", "/tmp/nycode-harness-bundle.tgz")
-        )
+        bundle = Path(os.environ.get("NYCODE_BUNDLE", "/tmp/nycode-bundle.tgz"))
         if not bundle.is_file():
             raise FileNotFoundError(f"{bundle} missing; run bundle.sh first")
         await self.exec_as_root(environment, _ROOT_DEPS)
@@ -117,7 +124,7 @@ class NycodeAgent(Pi):  # type: ignore[misc]
                 # --help warms Node's compile cache (best effort, never fails the install).
                 f"(node {_CLI} --help >/dev/null 2>&1 || true)"
             ),
-            env=dict(_AGENT_ENV),
+            env=_agent_env(),
         )
 
     @override
@@ -147,5 +154,5 @@ class NycodeAgent(Pi):  # type: ignore[misc]
             quoted = getattr(self, "_quoted_instruction", None)
             if quoted and f" {quoted} " in command:
                 command = command.replace(f" {quoted} ", f" -- {quoted} ", 1)
-            env = {**(env or {}), **_AGENT_ENV}
+            env = {**(env or {}), **_agent_env()}
         return await super().exec_as_agent(environment, command, env, cwd, timeout_sec)

@@ -7,10 +7,10 @@ data indicada, ou está marcado como não verificado.
 
 | Fato | Comando | Resultado |
 |---|---|---|
-| Commit da origem | `git -C ~/source/ny-pi rev-parse origin/main` | `e4f8729` |
+| Commit da origem | `git -C $ORIG rev-parse origin/main` | `e4f8729` |
 | Commit do destino | `git -C ~/source/nycode-cli rev-parse origin/main` | `fb05db936` |
-| Arquivos rastreados na origem | `git -C ~/source/ny-pi ls-tree -r --name-only origin/main \| wc -l` | 1485 |
-| Mapa cobre todos os arquivos | `python3 anexos/gerar-mapa.py --onda9 anexos/E-onda9-caminhos.txt < lista; echo $?` | 0, 1529 linhas (1485 do ny-pi `3981d9d` e 44 da onda 9), 109 regras, todas usadas, 0 destino inexistente |
+| Arquivos rastreados na origem | `git -C $ORIG ls-tree -r --name-only origin/main \| wc -l` | 1485 |
+| Mapa cobre todos os arquivos | `python3 gerador do mapa --onda9 registro do mantenedor < lista; echo $?` | 0, 1529 linhas (1485 do Nycode pré-migração `3981d9d` e 44 da onda 9), 109 regras, todas usadas, 0 destino inexistente |
 | Destino é o fork do pi | `git log --oneline -8 origin/main` | `4ecc500eb feat: importa o pi (earendil-works/pi@073b0ba) com histórico`, `f523ebd25 feat: renomeia o fork do pi para nycode` |
 | Versão do fork | `npm view @earendil-works/pi-coding-agent version` e `packages/*/package.json` | 1.6.0 |
 | pi-code | `npm view pi-code version license repository.url` | 1.10.1 (a mais nova), MIT, `github.com/ilovepixelart/pi-code`; instalada: 1.7.0 |
@@ -20,8 +20,8 @@ data indicada, ou está marcado como não verificado.
 | Costura K2 | `rg -n STDIN_CLOSE_GRACE_MS packages/mcp/src/transports/stdio.ts` | linha 10, valor 500 |
 | Escopo npm (D-17: descartado) | `npm view @nycode/coding-agent version` | 404 em 2026-11-20; o plano não usa mais o npm |
 | Arquivos acima de 800 linhas no fork | `git ls-files 'packages/*/src/**/*.ts' \| xargs wc -l \| awk '$1>800'` | 50 de 939 |
-| Ruleset da origem | `gh api repos/marcioazam/ny-pi/rulesets/27240802` | [anexo D](anexos/D-regras-github-brutas.md), seção 2 |
-| Proteção do destino | `gh api repos/marcioazam/nycode/branches/main/protection` | anexo D, seção 3 |
+| Ruleset da origem | `gh api repos/$ORIGREPO/rulesets/27240802` | registro do mantenedor, seção 2 |
+| Proteção do destino | `gh api repos/marcioazam/nycode/branches/main/protection` | registro do mantenedor, seção 3 |
 | Alertas de secret scanning do destino | `gh api 'repos/marcioazam/nycode/secret-scanning/alerts?state=open'` | 8 |
 | CodeQL do destino | `gh api repos/marcioazam/nycode/code-scanning/default-setup` | `configured`, `actions` e `rust` |
 | Logo | `git -C ~/source/nycode-cli show 9ea437bf7:docs/assets/nycode-pixel.svg \| sha256sum` | `7269f242…a9dd2` ([anexo C](anexos/C-logo-historico.md)) |

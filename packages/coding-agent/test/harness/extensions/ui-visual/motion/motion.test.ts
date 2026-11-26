@@ -44,7 +44,7 @@ afterEach(() => {
 });
 afterAll(() => Object.assign(relogio, real));
 
-// Tokens reais dos dois temas do dono (docs/designs/onda10-sota/README.md).
+// Tokens reais dos dois temas do nycode (docs/designs/onda10-sota/README.md).
 const CASOS: [string, number[], number[]][] = [
 	["nycode-noite syntaxType sobre toolPendingBg", [125, 207, 255], [36, 45, 60]],
 	["nycode-noite success sobre o fundo", [158, 206, 106], [26, 27, 38]],

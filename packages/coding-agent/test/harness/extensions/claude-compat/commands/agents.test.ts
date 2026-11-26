@@ -12,7 +12,6 @@ import {
 	TOOL,
 } from "../../../../../src/extensions/claude-compat/commands/agents/advisor.ts";
 import {
-	agentDefDirs,
 	listAgentsText,
 	readAgentDefs,
 	registerListing,
@@ -274,19 +273,16 @@ test("loop: intervalo mínimo, limites, só dispara ocioso, para em plan mode/st
 	assert.equal(clock.timers.at(-1)!.live, false);
 });
 
-test("list-agents: padrão lê os agentes embutidos e os do usuário (não o claude-home antigo)", () => {
-	const user = join(tmp(), "agents");
-	mkdirSync(user);
-	writeFileSync(join(user, "gate-runner.md"), "---\nname: gate-runner\ndescription: meu\n---\n");
-	const dirs = agentDefDirs(join(user, ".."));
-	assert.equal(dirs.at(-1), user);
-	assert.ok(dirs.every((d) => !d.includes("claude-home")));
-	const defs = readAgentDefs(dirs);
-	assert.ok(
-		defs.some((d) => d.name === "code-reviewer"),
-		"agente embutido listado",
-	);
-	assert.equal(defs.find((d) => d.name === "gate-runner")?.description, "meu", "o do usuário vence o embutido");
+test("list-agents sem diretório fixo lista os agentes que o subagent resolve (embutidos e do projeto)", async () => {
+	const cwd = tmp();
+	mkdirSync(join(cwd, ".nycode", "agents"), { recursive: true });
+	writeFileSync(join(cwd, ".nycode", "agents", "local.md"), "---\nname: local-x\ndescription: do projeto\n---\ncorpo");
+	const r = reg();
+	registerListing(r.nycode);
+	const c = mkCtx({ cwd });
+	await r.commands["list-agents"].handler("", c.ctx);
+	assert.match(c.last(), /^\s+Explore\b/m);
+	assert.match(c.last(), /local-x — do projeto/);
 });
 
 test("list-agents lê definições sem executar nada; /stop só aborta se ocupado; fleet ausente informado", async () => {
@@ -294,7 +290,7 @@ test("list-agents lê definições sem executar nada; /stop só aborta se ocupad
 	mkdirSync(dir);
 	writeFileSync(join(dir, "a.md"), '---\nname: alfa\ndescription: "faz x"\nmodel: m1\n---\ncorpo');
 	writeFileSync(join(dir, "b.md"), "sem frontmatter");
-	const defs = readAgentDefs([dir]);
+	const defs = readAgentDefs(dir);
 	assert.deepEqual(
 		defs.map((d) => d.name),
 		["alfa", "b"],
@@ -303,7 +299,7 @@ test("list-agents lê definições sem executar nada; /stop só aborta se ocupad
 	assert.match(listAgentsText(defs, { list: () => [{ id: "1", status: "running", secret: "x" }] }), /"id":"1"/);
 	assert.doesNotMatch(listAgentsText(defs, { list: () => [{ id: "1", secret: "x" }] }), /secret/);
 	const r = reg();
-	registerListing(r.nycode, [dir]);
+	registerListing(r.nycode, dir);
 	const idle = mkCtx();
 	await r.commands.stop.handler("", idle.ctx);
 	assert.match(idle.last(), /Nada em execução/);

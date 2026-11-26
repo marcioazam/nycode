@@ -1,11 +1,18 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import todoExtension from "../../../../src/extensions/todo/index.ts";
-import { EVERY, FOLLOW, registerStaleReminder, reminder } from "../../../../src/extensions/todo/stale-reminder.ts";
+import {
+	EVERY,
+	FOLLOW,
+	registerStaleReminder,
+	reminder,
+	SYNC_EVERY,
+	SYNC_MAX,
+} from "../../../../src/extensions/todo/stale-reminder.ts";
 
 type Result = { content: Array<{ type: string; text: string }> } | undefined;
 
-function load(hasUI?: boolean, enabled = true) {
+function load(hasUI?: boolean, enabled = true, sync = false) {
 	let onResult: (e: unknown) => Result = () => undefined;
 	const onTodos = registerStaleReminder(
 		{
@@ -14,6 +21,7 @@ function load(hasUI?: boolean, enabled = true) {
 			},
 		} as never,
 		() => enabled,
+		() => sync,
 	);
 	const ctx = hasUI === undefined ? undefined : { hasUI };
 	const call = (toolName = "bash", input?: unknown) =>
@@ -167,7 +175,7 @@ test("a extensão todo liga o lembrete: NYCODE_TODO_SYNC=1 e lista aberta lembra
 	try {
 		const handlers = new Map<string, (...a: unknown[]) => unknown>();
 		const nycode = new Proxy(
-			{ on: (n: string, h: never) => handlers.set(n, h), events: { emit: () => {} } },
+			{ on: (n: string, h: never) => handlers.set(n, h), events: { emit: () => {}, on: () => {} } },
 			{ get: (t: Record<string, unknown>, k: string) => t[k] ?? (() => {}) },
 		);
 		todoExtension(nycode as never);
@@ -187,4 +195,50 @@ test("a extensão todo liga o lembrete: NYCODE_TODO_SYNC=1 e lista aberta lembra
 	} finally {
 		delete process.env.NYCODE_TODO_SYNC;
 	}
+});
+
+// Decisão do dono (2026-11-25): com todo.sync a cadência vira 30 chamadas, sem repetição estrita e no máximo 2 por
+// sessão; os testes de 10/3 acima valem para todo.sync desligado (braço A do bench).
+test("todo.sync: lembra na 30ª, sem repetição estrita, no máximo 2 por sessão", () => {
+	for (const hasUI of [false, true]) {
+		const { call, onTodos } = load(hasUI, true, true);
+		onTodos(open);
+		const hits: number[] = [];
+		for (let i = 1; i <= SYNC_EVERY * 4; i++) if (call()) hits.push(i);
+		assert.equal(SYNC_MAX, 2);
+		assert.deepEqual(hits, [SYNC_EVERY, SYNC_EVERY * 2]);
+	}
+});
+
+test("todo.sync desligado: session_start não zera a contagem (igual ao origin/main); ligado, zera", () => {
+	for (const [sync, expected] of [
+		[false, EVERY],
+		[true, SYNC_EVERY],
+	] as const) {
+		const handlers: Record<string, (e: unknown, c?: unknown) => Result> = {};
+		const onTodos = registerStaleReminder(
+			{ on: (n: string, h: never) => (handlers[n] = h) } as never,
+			() => true,
+			() => sync,
+		);
+		onTodos(open);
+		const run = (n: number) => {
+			let out: Result;
+			for (let i = 0; i < n; i++) out = handlers.tool_result({ toolName: "bash", content: [] }, { hasUI: false });
+			return out;
+		};
+		assert.equal(run(4), undefined);
+		handlers.session_start({ reason: "startup" }, { cwd: "/" });
+		// off: 4 + 6 = EVERY reminds; on: the reset means 6 more calls are far from SYNC_EVERY.
+		assert.equal(run(EVERY - 4) !== undefined, !sync, `sync=${sync} expected=${expected}`);
+	}
+});
+
+test("todo.sync: item bloqueado ou falho não conta como aberto", () => {
+	const { call, onTodos } = load(false, true, true);
+	onTodos([
+		{ id: 1, text: "x", status: "blocked" },
+		{ id: 2, text: "y", status: "failed" },
+	]);
+	for (let i = 0; i < SYNC_EVERY * 2; i++) assert.equal(call(), undefined);
 });

@@ -7,7 +7,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import * as fs from "node:fs";
 import type { Api, Model } from "@nycode/ai";
-import { type CompletionRegistry, completeText } from "../_shared/model/model-complete.ts";
+import { type CompletionRegistry, completeText, modelOutputLimit } from "../_shared/model/model-complete.ts";
 import { runAgent } from "../_shared/seams/agent-run.ts";
 import { callMcpTool } from "../_shared/seams/mcp-call.ts";
 import { killProcessTree } from "../_shared/shell/process-tree.ts";
@@ -161,7 +161,7 @@ function hookEnv(
 /** Um registro por execução no sink de diagnóstico do harness (ausente: não faz nada). Nunca lança. */
 function reportHook(command: string, payload: unknown, t0: number, r: HookRunResult): void {
 	try {
-		const sink = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:diag")];
+		const sink = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode:diag")];
 		if (typeof sink !== "function") return;
 		const ev = (payload as { hook_event_name?: unknown } | null)?.hook_event_name;
 		const evento = typeof ev === "string" && ev ? ev : "hook";
@@ -416,7 +416,9 @@ export async function runPromptHook(
 	try {
 		const { text: answer } = await completeText(model, prompt, {
 			system: PROMPT_HOOK_SYSTEM,
-			maxTokens: 512,
+			// Claude Code sets no output cap here: the model's own limit applies, so a long reason is never
+			// cut off mid-JSON.
+			maxTokens: modelOutputLimit(model),
 			signal,
 			registry,
 		});

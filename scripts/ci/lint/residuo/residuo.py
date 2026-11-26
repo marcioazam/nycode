@@ -2,7 +2,7 @@
 """Residue gate (D-30, D-45, P-17 R1, C-F12-06): the pi stays out of the nycode internals.
 
 The search (rg; git grep when rg is missing, said on stderr) is `-i -w` over PI_WORDS: `pi`, `pi-<x>`, `pi.dev`,
-`earendil` and `mariozechner`. Files the plan keeps on purpose are exempt (EXEMPT_*): LICENSE, NOTICE, every
+`earendil`, `mariozechner` and the retired names `nycode-harness` and `ny-pi`. Files the plan keeps on purpose are exempt (EXEMPT_*): LICENSE, NOTICE, every
 CHANGELOG.md, the root README.md (D-31), the migration from pi, docs/fork, docs/migration, docs/harness.
 Every other match must be covered by a line of residuo-allow.txt: `glob | regex | class | reason`.
 
@@ -27,7 +27,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-PI_WORDS = r"pi|pi-[a-z]+|pi\.dev|earendil|mariozechner"
+PI_WORDS = r"pi|pi-[a-z]+|pi\.dev|earendil|mariozechner|nycode-harness|ny-pi"
 PI_RX = re.compile(rf"(?<!\w)(?:{PI_WORDS})(?!\w)", re.IGNORECASE)
 CLASSES = (
     "upstream",  # history and records of the upstream we forked: issue links, session fixtures, archived docs
@@ -36,14 +36,13 @@ CLASSES = (
     "protocolo",  # names on the wire shared with processes we do not rebuild
     "falso-positivo",  # `Math.PI` and the like
     "compat",  # names still accepted from the origin harness
-    "migracao",  # `nycode migrate from-pi` and the trees it reads
+    "migracao",  # records and pointers about the migration from the origin harness
     "ferramenta-fork",  # the fork's own rename and gate machinery
     "produto-externo",  # bench: the arms and records that measure the pi
 )
 EXEMPT_BASENAMES = ("LICENSE", "NOTICE", "CHANGELOG.md")
 EXEMPT_PATHS = ("README.md",)
 EXEMPT_GLOBS = (
-    "packages/coding-agent/src/migrations/from-pi*",
     "docs/fork/*",
     "docs/migration/*",
     "docs/harness/*",

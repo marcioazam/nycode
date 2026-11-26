@@ -1,6 +1,6 @@
 /**
- * Footer só com os status das extensões, pedidos do usuário 2026-11-12: sem a linha de estatísticas
- * (↑↓ R W CH $ contexto modelo) e sem a linha "pasta (branch) • nome da sessão" (o nome já aparece na
+ * Footer só com os status das extensões, pedidos do usuário 2026-11-12: a linha de estatísticas
+ * (↑↓ R W $ contexto modelo, stats.ts) só aparece com o setting `footer.stats` (desligado por padrão) e sem a linha "pasta (branch) • nome da sessão" (o nome já aparece na
  * borda do editor, extensions/rename.ts). Também esconde os status de HIDDEN: "turn N $x" do nycode
  * e o indicador do ponytail. O HUD do status-line é um widget à parte e não é afetado.
  * Ponte (pedido 2026-11-13): publica o provedor de status em FOOTER_BRIDGE_CHANNEL; o HUD (status-line do
@@ -11,8 +11,10 @@
  */
 import { truncateToWidth } from "@nycode/tui";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
+import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
 import { movimento, noColor } from "../ui/a11y.ts";
 import { assinarQuadro } from "../ui-visual/motion/motion.ts";
+import { statsLine } from "./stats.ts";
 
 const rgbDe = (ansi: string | undefined) =>
 	/\[(?:38|48);2;(\d+);(\d+);(\d+)m/
@@ -33,7 +35,7 @@ export function fraca(theme: TemaRgb, s: string): string {
 	return theme.fg("borderMuted", s);
 }
 
-// plan-mode (dono, 2026-11-19): o `⏸ plan` do nycode saía no HUD; agora o modo (ask/auto/plan) aparece junto ao bypass pelo
+// plan-mode: o `⏸ plan` do nycode saía no HUD; agora o modo (ask/auto/plan) aparece junto ao bypass pelo
 // controlador de permissões (claude-compat/permissions), então o do nycode some do rodapé e do HUD.
 const HIDDEN = new Set(["nycode-status", "ponytail", "plan-mode"]);
 /** Mesmo nome de FOOTER_BRIDGE_CHANNEL em nycode/extensions/status-line.ts (sem import entre pacotes). */
@@ -41,11 +43,11 @@ const FOOTER_BRIDGE_CHANNEL = "nycode:footer-bridge";
 /** Navegação das abas do nycode (section-nav/nav.ts `NAV_SLOT`): `shown()` é a aba aberta. */
 const NAV_SLOT = Symbol.for("nycode.group-nav");
 
-// Effort `max` em arco-íris animado (dono, 2026-11-19): o HUD (widget do nycode abaixo do editor, processo à parte) imprime
+// Effort `max` em arco-íris animado: o HUD (widget do nycode abaixo do editor, processo à parte) imprime
 // `(max)` numa cor só; aqui cada letra ganha uma cor do arco-íris que gira (uma volta a cada ARCO_MS). Movimento reduzido: parado.
 const MAX = /\x1b\[[0-9;]*m\(max\)/g;
 const ARCO_MS = 2400;
-const EMBRULHO = Symbol.for("nycode-harness.footer.arco");
+const EMBRULHO = Symbol.for("nycode.footer.arco");
 const hsl = (h: number): string => {
 	const f = (n: number) => {
 		const k = (n + h * 12) % 12;
@@ -68,7 +70,7 @@ function arcoNoHud(tui: { children?: any[]; requestRender?: () => void }): void 
 		ativo = false,
 		nosso = false;
 	wb[EMBRULHO] = true;
-	// Editor mais perto das abas (dono, 2026-11-19): as abas do nycode (fleet-ui/chrome.ts) abrem com uma linha vazia; ela sai.
+	// Editor mais perto das abas: as abas do nycode (fleet-ui/chrome.ts) abrem com uma linha vazia; ela sai.
 	const semVazia = (ls: string[]): string[] => (ls[0] === "" ? ls.slice(1) : ls);
 	wb.render = (w: number): string[] =>
 		semVazia(orig(w)).map((l: string) => {
@@ -97,6 +99,8 @@ function arcoNoHud(tui: { children?: any[]; requestRender?: () => void }): void 
 
 export default function footerExtension(nycode: ExtensionAPI) {
 	nycode.on("session_start", (_event, ctx) => {
+		// read once per session (like editorMode): render runs on every frame
+		const showStats = resolveNycodeSettings(nycode.getSettings(), process.env).footer.stats;
 		ctx.ui.setFooter((tui, theme, footerData) => {
 			arcoNoHud(tui as never);
 			const absorbed = new Set<string>();
@@ -114,6 +118,8 @@ export default function footerExtension(nycode: ExtensionAPI) {
 				render(width: number): string[] {
 					const lines: string[] = [];
 					if (bridge.folded) return lines; // Status Line folded: the footer folds with it
+					if (showStats)
+						lines.push(truncateToWidth(theme.fg("dim", statsLine(ctx)), width, theme.fg("dim", "...")));
 					const statuses = [...footerData.getExtensionStatuses().entries()].filter(
 						([k, t]) => !HIDDEN.has(k) && !absorbed.has(k) && t,
 					);
@@ -128,15 +134,14 @@ export default function footerExtension(nycode: ExtensionAPI) {
 							)
 							.join(theme.fg("dim", " · "));
 						const cut = truncateToWidth(text, width, theme.fg("dim", "..."));
-						// Com uma aba aberta, qualquer uma, inclusive Status: um separador ─ separa o rodapé do conteúdo dela (dono, 2026-11-19;
-						// antes uma linha vazia).
+						// Com uma aba aberta, qualquer uma, inclusive Status: um separador ─ separa o rodapé do conteúdo dela.
 						const aba = (
 							(globalThis as Record<symbol, unknown>)[NAV_SLOT] as
 								| { shown?: () => string | undefined }
 								| undefined
 						)?.shown?.();
-						// Quase invisível (dono, 2026-11-19; antes borderMuted puro, depois 75%): borderMuted puxado 90% ao fundo neutro.
-						// Tracejado ╌ (dono, 2026-11-19; antes ─ contínuo).
+						// Quase invisível (antes borderMuted puro, depois 75%): borderMuted puxado 90% ao fundo neutro.
+						// Tracejado ╌ (antes ─ contínuo).
 						if (aba !== undefined) lines.push(fraca(theme, "╌".repeat(Math.max(1, width))));
 						lines.push(cut); // left-aligned, like the Status Line rows
 					}

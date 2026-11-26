@@ -82,7 +82,7 @@ test("estilo relê o tema a cada chamada", () => {
 	assert.equal(style("a"), "a");
 });
 
-// Bug seen by the owner (2026-11-14): with the arrow and hour on sent messages the sticky showed `❯ ❯ continue ... 14...`.
+// Bug: with the arrow and hour on sent messages the sticky showed `❯ ❯ continue ... 14...`.
 test("stickyLine: não repete a setinha nem mostra a hora que a mensagem já traz", () => {
 	const id = (s: string) => s;
 	assert.equal(
@@ -93,7 +93,7 @@ test("stickyLine: não repete a setinha nem mostra a hora que a mensagem já tra
 	assert.equal(stickyLine("rodar às 14:05", 30, truncateToWidth, visibleWidth, id).trimEnd(), "   ❯ rodar às 14:05"); // hour in the middle stays
 });
 
-// Owner's request (2026-11-15): nothing in the chat takes 100%; the sticky line respects the chat margin.
+// Nothing in the chat takes 100%; the sticky line respects the chat margin.
 test("stickyRect: dentro da margem e sem a barra de rolagem; pad 0 ou estreito ocupa tudo menos a barra", () => {
 	assert.deepEqual(stickyRect({ x: 0, width: 100 }, 1), { col: 1, width: 97 });
 	assert.deepEqual(stickyRect({ x: 3, width: 100 }, 0), { col: 3, width: 99 });
@@ -236,7 +236,7 @@ test("busca por índice: não relê linhas fora das zonas", () => {
 	assert.ok(stripped <= 100, `strip chamado ${stripped}x`);
 });
 
-// Lab /rolagem desenho 6 "Duas linhas" (owner, 2026-11-19): label `▎ você · hora` above the strip.
+// Lab /rolagem desenho 6 "Duas linhas": label `▎ você · hora` above the strip.
 test("stickyLinhas: rótulo você · hora em cima, sem fundo; faixa embaixo; ambas na largura", () => {
 	const tr = (s: string, w: number) => s.slice(0, w);
 	const me = (s: string) => s.split(/<\/?\w*>/g).join("").length;
@@ -251,7 +251,7 @@ test("stickyLinhas: rótulo você · hora em cima, sem fundo; faixa embaixo; amb
 	assert.equal(stickyLinhas("sem hora", 30, tr, me, (s) => s, fg)[0]?.trimEnd(), "  <accent>▎ você</>");
 });
 
-// Bug (owner, 2026-11-19): a one-line prompt arrives as `133;B 133;C 133;A text` and the sticky did not find it.
+// Bug: a one-line prompt arrives as `133;B 133;C 133;A text` and the sticky did not find it.
 test("findSticky acha prompt de uma linha (B e C antes do A na mesma linha)", () => {
 	const l = ["x", `${BC}${A} ❯ arrume o login  23:58`, "resposta 1", "resposta 2", "resposta 3"];
 	assert.deepEqual(findSticky(l, 3, userMatcher(["arrume o login"]), strip), {

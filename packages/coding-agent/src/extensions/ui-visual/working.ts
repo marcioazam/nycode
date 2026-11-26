@@ -42,7 +42,7 @@ export function phaseText(state: PhaseState): string {
 	return `${phase} · ${formatElapsed(state.elapsedMs)} · esc interrompe`;
 }
 
-/** Spinner nas cores do nycode (dono, 2026-11-15; supera o arco-íris): `accent`, como o Loader nativo. Sem movimento: 1 quadro. */
+/** Spinner nas cores do nycode (supera o arco-íris): `accent`, como o Loader nativo. Sem movimento: 1 quadro. */
 export function frames(theme: Fg, motion: boolean): string[] {
 	return (motion ? FRAMES : ["●"]).map((f) => theme.fg("accent", f));
 }
@@ -93,9 +93,9 @@ const fmtTok = (n: number): string =>
 export const tokensTexto = (exatos: number, estimados: number): string =>
 	exatos + estimados <= 0 ? "" : `↓ ${`${estimados > 0 ? "~" : ""}${fmtTok(exatos + estimados)}`.padStart(5)}`;
 
-const DICAS_CHAVE = Symbol.for("nycode-harness:dicas");
+const DICAS_CHAVE = Symbol.for("nycode:dicas");
 /** Turno sem resposta há TRAVA_MS: a cápsula do composer (ui/editor.ts) fica âmbar. */
-export const TRAVADO_CHAVE = Symbol.for("nycode-harness:travado");
+export const TRAVADO_CHAVE = Symbol.for("nycode:travado");
 const marcaTravado = (v: boolean) => {
 	(globalThis as Record<symbol, unknown>)[TRAVADO_CHAVE] = v;
 };

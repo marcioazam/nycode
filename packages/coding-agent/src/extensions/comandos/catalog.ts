@@ -59,11 +59,11 @@ Sessão|tree|||Navega pela árvore da sessão e troca de ramo
 Sessão|export|||Exporta a sessão (HTML ou .jsonl)
 Sessão|import|||Importa uma sessão .jsonl
 Sessão|share|||Compartilha a sessão (artefato ou gist)
-Sessão|puxar|||Importa sessão de um perfil do Claude Code
 Sessão|heapdump|||Grava um heap snapshot local, após confirmação
 Sessão|quit||app.exit|Sai do nycode
 Plano e tarefas|plan||ext.plan|Entra no modo plano
 Plano e tarefas|todos|||Mostra as tarefas do ramo
+Plano e tarefas|todos-widget|off, compact, full||Escolhe como a lista de tarefas aparece
 Plano e tarefas|plan-todos|||Mostra as tarefas do plano
 Plano e tarefas|goal|||Define uma meta que a sessão persegue até ser confirmada
 Plano e tarefas|loop|||Repete um prompt em intervalos, até parar ou atingir o limite
@@ -89,14 +89,14 @@ Configuração|login|||Configura a autenticação do provedor
 Configuração|logout|||Remove a autenticação do provedor
 Configuração|trust|||Salva a confiança neste projeto
 Configuração|bypass||ext.bypass|Alterna as confirmações do guard
-Configuração|vim|||Alterna a edição modal vim no editor
 Configuração|hooks|||Mostra os hooks configurados
 Configuração|mcp|||Mostra servidores MCP e suas ferramentas
 Configuração|skills|||Lista as skills carregadas
 Configuração|skill-doctor|||Valida o frontmatter e as duplicatas das skills
+Configuração|claude-plugins|||Liga ou desliga os plugins do Claude Code instalados
 Configuração|reload|||Recarrega atalhos, extensões, skills e temas
 Configuração|painel|||Visão geral do que está ligado
-Configuração|avisos|||Avisos e notificações do harness
+Configuração|notifications|avisos||Avisos, notificação, som e progresso na aba
 Configuração|diagnostico|||Erros, avisos e eventos do nycode nesta sessão
 Configuração|doctor|||Verifica a saúde do harness
 Configuração|keybindings|||Edita keybindings.json direto (avançado)
@@ -104,8 +104,6 @@ Ajuda|atalhos|hotkeys|ext.atalhos|Ver, buscar e mudar atalhos
 Ajuda|help|||Ajuda: compatibilidade com o Claude Code e comandos carregados
 Ajuda|compat|||Mapa de comandos do Claude Code e seus limites
 Ajuda|changelog|||Mostra as novidades da versão
-Ajuda|upgrade|||Abre a página de upgrade do plano Claude
-Ajuda|stickers|||Mostra o status dos pacotes de stickers
 Ajuda|bug|||Reporta um bug aos desenvolvedores do nycode`;
 
 export const COMMANDS: Cmd[] = RAW.trim()
@@ -213,7 +211,7 @@ export const EXT_ACTIONS: ExtAction[] = [
 	{ id: "ext.diagnostico", label: "Diagnóstico: erros e avisos", keys: ["ctrl+e"], origin: "harness" }, // diagnostico/index.ts (ATALHO)
 ];
 
-/** Alt de paridade com o Claude Code (decisão do dono, 2026-11-14): vale como “intencional”, não !. */
+/** Alt de paridade com o Claude Code: vale como “intencional”, não !. */
 // Alt intencional = o que a paridade Claude Code grava (fonte única: claude-compat/shortcuts.ts).
 export const PARIDADE_ALT: Record<string, string[]> = Object.fromEntries(
 	Object.entries(CLAUDE_KEYBINDINGS)

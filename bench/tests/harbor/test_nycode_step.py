@@ -1,4 +1,4 @@
-"""Harbor step for the nycode arm (S2): agent flags, per-round bundle of the checkout stage, no fall-through to nycode-harness."""
+"""Harbor step for the nycode arm (S2): agent flags, per-round bundle of the checkout stage, no fall-through to other arms."""
 
 from pathlib import Path
 
@@ -34,9 +34,8 @@ def test_nycode_harbor_dir_is_bench_harbor_and_holds_the_agent() -> None:
     assert (rb.HARBOR_DIR / "bundle.sh").stat().st_mode & 0o111
 
 
-def test_harbor_dir_holds_the_nycode_harness_agents_and_their_bundle_script() -> None:
-    for name in ("pi_harness_agent.py", "pi_vanilla_api_agent.py", "pi_bundle.sh"):
-        assert (rb.HARBOR_DIR / name).is_file()
+def test_harbor_dir_holds_the_pi_vanilla_api_agent() -> None:
+    assert (rb.HARBOR_DIR / "pi_vanilla_api_agent.py").is_file()
 
 
 def test_nycode_step_bundles_the_stage_and_runs_the_nycode_agent(
@@ -51,7 +50,7 @@ def test_nycode_step_bundles_the_stage_and_runs_the_nycode_agent(
     # (CI run 44842931760 read the tail of a longer argv line as the env line).
     harbor = script(
         tmp_path / "harbor",
-        f'echo "$@" > {seen}/$$; echo "$NYCODE_HARNESS_BUNDLE|$PYTHONPATH|$ANTHROPIC_OAUTH_TOKEN|${{PI_HARNESS_BUNDLE:-}}" >> {seen}/$$\n',
+        f'echo "$@" > {seen}/$$; echo "$NYCODE_BUNDLE|$PYTHONPATH|$ANTHROPIC_OAUTH_TOKEN" >> {seen}/$$\n',
     )
     monkeypatch.setenv("BENCH_HARBOR", str(harbor))
     monkeypatch.setenv("BENCH_STAGE", str(stage))
@@ -60,15 +59,13 @@ def test_nycode_step_bundles_the_stage_and_runs_the_nycode_agent(
     steps = rb.build_plan("pr", rb.load_toml(BENCH / "suites.toml"), ["s2"], k=1)
     out = tmp_path / "o"
     rb._harbor_step(steps[0], "nycode", "m", out, 5.0)
-    bundle = out / "nycode-harness-bundle.tgz"
+    bundle = out / "nycode-bundle.tgz"
     assert (tmp_path / "bundled").read_text().split() == [str(stage), str(bundle)]
     calls = [f.read_text().splitlines() for f in seen.iterdir()]
     assert len(calls) == len(steps[0]["tasks"])  # one harbor run per task
     for argv, env in calls:
-        assert "-a nycode_agent:NycodeAgent" in argv and "pi_harness_agent" not in argv
-        assert (
-            env == f"{bundle}|{hd}|tok|"
-        )  # the Nycode bundle variable stays unset
+        assert "-a nycode_agent:NycodeAgent" in argv
+        assert env == f"{bundle}|{hd}|tok"
 
 
 def test_nycode_step_refuses_without_stage(tmp_path: Path, monkeypatch: MP) -> None:
@@ -78,4 +75,23 @@ def test_nycode_step_refuses_without_stage(tmp_path: Path, monkeypatch: MP) -> N
     monkeypatch.setattr(rb, "oauth_token", lambda: "tok")
     steps = rb.build_plan("pr", rb.load_toml(BENCH / "suites.toml"), ["s2"], k=1)
     with pytest.raises(RuntimeError, match="nycode stage"):
+        rb._harbor_step(steps[0], "nycode", "m", tmp_path / "o", 5.0)
+
+
+def test_nycode_step_failed_bundle_reports_its_stderr(
+    tmp_path: Path, monkeypatch: MP
+) -> None:
+    """bench-pr logs only the traceback: a failed bundle.sh must carry its own stderr (2026-11-25, PR #429)."""
+    stage, hd = _stage(tmp_path), tmp_path / "hd"
+    hd.mkdir()
+    script(
+        hd / "bundle.sh", 'echo "gzip: stdin: invalid compressed data" >&2; exit 2\n'
+    )
+    monkeypatch.setenv("BENCH_STAGE", str(stage))
+    monkeypatch.setattr(rb, "HARBOR_DIR", hd)
+    monkeypatch.setattr(rb, "oauth_token", lambda: "tok")
+    steps = rb.build_plan("pr", rb.load_toml(BENCH / "suites.toml"), ["s2"], k=1)
+    with pytest.raises(
+        RuntimeError, match="bundle.sh exit 2: gzip: stdin: invalid compressed data"
+    ):
         rb._harbor_step(steps[0], "nycode", "m", tmp_path / "o", 5.0)

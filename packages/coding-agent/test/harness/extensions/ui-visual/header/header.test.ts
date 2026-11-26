@@ -26,7 +26,7 @@ const { marcaLinhas, ponto, MARCA_W, MARCA_H } = __m2;
 const strip = (l: string) => l.replace(/\x1b\[[0-9;]*m/g, "");
 
 const theme = { fg: (_k: string, s: string) => s, bold: (s: string) => s };
-// Marca nycode (dono, 2026-11-18): antes logo do nycode 4 × 2 com `nycode versão` e atalhos em duas linhas; agora 7 linhas da
+// Marca nycode: antes logo do nycode 4 × 2 com `nycode versão` e atalhos em duas linhas; agora 7 linhas da
 // marca, uma em branco e `nycode versão   atalhos` numa linha só.
 test("buildHeaderLines: marca de 7 linhas, linha em branco, versão e atalhos na última", () => {
 	const lines = buildHeaderLines("1.5.2", theme, 200);
@@ -100,8 +100,8 @@ test("sem UI, em subagente ou com NO_COLOR não há cabeçalho", () => {
 	assert.equal(setup(true, { NO_COLOR: "1" }).calls.length, 0);
 });
 
-// Abertura "Letra a letra" (dono, 2026-11-18; antes revela coluna a coluna em 320 ms).
-test("marca: desenho assentado igual à imagem do dono (grade 70 × 13 em meio bloco), degradê do topo à base", () => {
+// Abertura "Letra a letra" (antes revela coluna a coluna em 320 ms).
+test("marca: desenho assentado igual à imagem de referência (grade 70 × 13 em meio bloco), degradê do topo à base", () => {
 	const l = marcaLinhas(Infinity, { claro: false }, "truecolor");
 	assert.equal(l.length, MARCA_H);
 	for (const r of l) assert.equal(visibleWidth(r), MARCA_W);
@@ -187,7 +187,7 @@ test("marca: abertura letra a letra, com cursor de destaque, e assenta em ABERTU
 		assert.ok(!/\x1b\[4[0-9;]*m$/.test(r) || r.endsWith("\x1b[49m"), "linha fecha o fundo");
 });
 
-// Partida calma (dono, 2026-11-18, "trava no final"): antes a abertura começava no 1º desenho, no meio da carga do início
+// Partida calma: antes a abertura começava no 1º desenho, no meio da carga do início
 // (~200 ms de laço ocupado no nycode real), e congelava; agora espera CALMA_QUADROS desenhos calmos (ou ESPERA_MAX_MS) com só o cursor.
 test("abertura no cabeçalho: espera o laço acalmar, depois um travamento atrasa a animação em vez de pular quadros", () => {
 	const real = performance.now;
@@ -310,7 +310,7 @@ test("marca: abertura sem saltos (quadro a quadro, poucos pontos mudam) e o bril
 	);
 });
 
-// Quique (dono, 2026-11-18, /logo variante 4 sem âmbar): antes a letra assentava direto em 2 pontos; agora desloca 4 e quica.
+// Quique: antes a letra assentava direto em 2 pontos; agora desloca 4 e quica.
 test("marca: a letra quica ao assentar (desloca até 4 pontos, volta a 0, sobe de novo e assenta)", () => {
 	const c = { claro: false };
 	const topo = (t: number) => {
@@ -327,7 +327,7 @@ test("marca: a letra quica ao assentar (desloca até 4 pontos, volta a 0, sobe d
 	assert.ok(offs.indexOf(0) < offs.length - 1, `quica depois de tocar: ${offs}`);
 });
 
-// Barra que respira (dono, 2026-11-18, /cursor variante 3): antes o cursor da abertura era um bloco de 2 colunas e as letras
+// Barra que respira: antes o cursor da abertura era um bloco de 2 colunas e as letras
 // entravam a cada 165 ms; agora uma barra de 1 coluna e ~15 % mais rápido.
 test("marca: cursor em barra de 1 coluna e abertura mais rápida", () => {
 	const c = { claro: false, destaque: [255, 0, 0] as const };
@@ -338,7 +338,7 @@ test("marca: cursor em barra de 1 coluna e abertura mais rápida", () => {
 	assert.ok(ABERTURA_MS < 1500, `abertura mais rápida: ${ABERTURA_MS}`);
 });
 
-// Abertura em sequência (dono, 2026-11-19): a linha de texto nasce do fundo; editor, status e rodapé sobem do fundo.
+// Abertura em sequência: a linha de texto nasce do fundo; editor, status e rodapé sobem do fundo.
 const { TEXTO_MS, BASE_MS, subirBase } = __m3;
 const rgbTema = {
 	fg: (_k: string, s: string) => `\x1b[38;2;200;200;210m${s}\x1b[39m`,
@@ -385,7 +385,7 @@ test("abertura: editor, status e rodapé sobem do fundo a partir de t0 e o embru
 	}
 });
 
-// Dono (2026-11-19): o /reload sobe do fundo a tela inteira (chat, editor, abas e rodapé, filhos 0 a 6) em RECARGA_MS a partir do
+// O /reload sobe do fundo a tela inteira (chat, editor, abas e rodapé, filhos 0 a 6) em RECARGA_MS a partir do
 // 1º desenho depois da recarga; do documento só as últimas `linhas` (as visíveis) passam pelo esmaecer, o resto vem intacto.
 const { RECARGA_MS, recarregar } = __m4;
 test("reload: todos os filhos sobem do fundo desde o 1º desenho; só as últimas linhas do documento; embrulho sai no fim", () => {
@@ -422,7 +422,7 @@ test("reload: todos os filhos sobem do fundo desde o 1º desenho; só as última
 	}
 });
 
-// Dono (2026-11-19): o /reload esvazia a tela enquanto carrega (avisos limparTela); quadros vazios nesse meio não podem
+// O /reload esvazia a tela enquanto carrega (avisos limparTela); quadros vazios nesse meio não podem
 // gastar o fade, senão a tela volta já pronta. O relógio começa no 1º desenho com conteúdo.
 test("reload: quadros vazios da carga não começam o fade", () => {
 	const real = performance.now;

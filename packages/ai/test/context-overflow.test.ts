@@ -11,9 +11,8 @@
  * The isContextOverflow() function must return true for all providers.
  */
 
-import type { ChildProcess } from "child_process";
-import { execSync, spawn } from "child_process";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { execSync } from "child_process";
+import { describe, expect, it } from "vitest";
 import { complete, getModel, getModels } from "../src/compat.ts";
 import type { AssistantMessage, Context, Model, Usage } from "../src/types.ts";
 import { isContextOverflow } from "../src/utils/overflow.ts";
@@ -22,8 +21,12 @@ import { hasBedrockCredentials } from "./bedrock-utils.ts";
 import { resolveApiKey } from "./oauth.ts";
 
 // Resolve OAuth tokens at module level (async, runs before tests)
-const oauthTokens = await Promise.all([resolveApiKey("github-copilot"), resolveApiKey("openai-codex")]);
-const [githubCopilotToken, openaiCodexToken] = oauthTokens;
+const oauthTokens = await Promise.all([
+	resolveApiKey("anthropic"),
+	resolveApiKey("github-copilot"),
+	resolveApiKey("openai-codex"),
+]);
+const [anthropicOAuthToken, githubCopilotToken, openaiCodexToken] = oauthTokens;
 
 // Lorem ipsum paragraph for realistic token estimation
 const LOREM_IPSUM = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. `;
@@ -608,98 +611,23 @@ describe("Context overflow error handling", () => {
 	});
 
 	// =============================================================================
-	// Ollama (local)
+	// Anthropic OAuth (Claude Haiku 5.5): replaces the former local Ollama suite (13 GB on CPU, OOM kills)
 	// =============================================================================
 
-	// Check if ollama is installed and local LLM tests are enabled
-	let ollamaInstalled = false;
-	if (!process.env.NYCODE_NO_LOCAL_LLM) {
-		try {
-			execSync("which ollama", { stdio: "ignore" });
-			ollamaInstalled = true;
-		} catch {
-			ollamaInstalled = false;
-		}
-	}
+	describe("Anthropic OAuth (claude-haiku-5-5)", () => {
+		it.skipIf(!anthropicOAuthToken)(
+			"claude-haiku-5-5 - should detect overflow via isContextOverflow",
+			async () => {
+				const model = getModel("anthropic", "claude-haiku-5-5");
+				const result = await testContextOverflow(model, anthropicOAuthToken!);
+				logResult(result);
 
-	describe.skipIf(!ollamaInstalled)("Ollama (local)", () => {
-		let ollamaProcess: ChildProcess | null = null;
-		let model: Model<"openai-completions">;
-
-		beforeAll(async () => {
-			// Check if model is available, if not pull it
-			try {
-				execSync("ollama list | grep -q 'gpt-oss:20b'", { stdio: "ignore" });
-			} catch {
-				console.log("Pulling gpt-oss:20b model for Ollama overflow tests...");
-				try {
-					execSync("ollama pull gpt-oss:20b", { stdio: "inherit" });
-				} catch (_e) {
-					console.warn("Failed to pull gpt-oss:20b model, tests will be skipped");
-					return;
-				}
-			}
-
-			// Start ollama server
-			ollamaProcess = spawn("ollama", ["serve"], {
-				detached: false,
-				stdio: "ignore",
-			});
-
-			// Wait for server to be ready
-			await new Promise<void>((resolve) => {
-				const checkServer = async () => {
-					try {
-						const response = await fetch("http://localhost:11434/api/tags");
-						if (response.ok) {
-							resolve();
-						} else {
-							setTimeout(checkServer, 500);
-						}
-					} catch {
-						setTimeout(checkServer, 500);
-					}
-				};
-				setTimeout(checkServer, 1000);
-			});
-
-			model = {
-				id: "gpt-oss:20b",
-				api: "openai-completions",
-				provider: "ollama",
-				baseUrl: "http://localhost:11434/v1",
-				reasoning: true,
-				input: ["text"],
-				contextWindow: 128000,
-				maxTokens: 16000,
-				cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-				name: "Ollama GPT-OSS 20B",
-			};
-		}, 60000);
-
-		afterAll(() => {
-			if (ollamaProcess) {
-				ollamaProcess.kill("SIGTERM");
-				ollamaProcess = null;
-			}
-		});
-
-		it("gpt-oss:20b - should detect overflow via isContextOverflow (ollama silently truncates)", async () => {
-			const result = await testContextOverflow(model, "ollama");
-			logResult(result);
-
-			// Ollama silently truncates input instead of erroring
-			// It returns stopReason "stop" with truncated usage
-			// We cannot detect overflow via error message, only via usage comparison
-			if (result.stopReason === "stop" && result.hasUsageData) {
-				// Ollama truncated - check if reported usage is less than what we sent
-				// This is a "silent overflow" - we can detect it if we know expected input size
-				console.log("  Ollama silently truncated input to", result.usage.input, "tokens");
-				// For now, we accept this behavior - Ollama doesn't give us a way to detect overflow
-			} else if (result.stopReason === "error") {
+				expect(result.stopReason).toBe("error");
+				expect(result.errorMessage).toMatch(/prompt is too long/i);
 				expect(isContextOverflow(result.response, model.contextWindow)).toBe(true);
-			}
-		}, 300000); // 5 min timeout for local model
+			},
+			120000,
+		);
 	});
 
 	// =============================================================================

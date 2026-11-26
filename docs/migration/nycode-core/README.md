@@ -1,12 +1,12 @@
 # Migração do harness Nycode para o core do Nycode
 
-Plano e guias para levar o harness [`marcioazam/ny-pi`](https://github.com/marcioazam/ny-pi) para dentro do
+Plano e guias para levar o harness Nycode pré-migração para dentro do
 [`marcioazam/nycode`](https://github.com/marcioazam/nycode), o fork do pi.
 
 **Estado: plano. Nada foi implementado.** Estes documentos descrevem o trabalho; nenhuma linha de código, regra do
 GitHub ou arquivo fora desta pasta foi alterado.
 
-Levantamento: 2026-11-20, sobre `marcioazam/ny-pi`@e4f8729` e `nycode@fb05db936`.
+Levantamento: 2026-11-20, sobre Nycode pré-migração e `nycode@fb05db936`.
 
 ## Ordem de leitura
 
@@ -32,11 +32,11 @@ Levantamento: 2026-11-20, sobre `marcioazam/ny-pi`@e4f8729` e `nycode@fb05db936`
 
 | Anexo | Conteúdo |
 |---|---|
-| [A](anexos/A-inventario-nycode-harness.md) | Levantamento bruto do harness Nycode |
+| A | Levantamento bruto do harness Nycode |
 | [B](anexos/B-mapa-core-nycode.md) | Levantamento bruto do core do Nycode |
 | [C](anexos/C-logo-historico.md) | O logo do Nycode no histórico git |
-| [D](anexos/D-regras-github-brutas.md) | Regras do GitHub dos dois repositórios |
-| [E](anexos/E-resumo-por-regra.md) | Mapa por regra; [um arquivo por linha](anexos/E-mapa-arquivo-a-arquivo.tsv); [gerador](anexos/gerar-mapa.py) |
+| D | Regras do GitHub dos dois repositórios |
+| E | Mapa por regra; um arquivo por linha; gerador |
 
 ## Em uma página
 
@@ -59,9 +59,9 @@ Quatro respostas do dono travam o início de alguma fase
 1. D-15: apagar os 213 ramos herdados do antigo Nycode em Rust?
 2. D-16: fechar os 8 alertas de secret scanning como credencial pública do upstream?
 3. ~~D-17: criar a organização `@nycode` no npm?~~ Respondida em 2026-11-20: sem npm, o canal é o repositório (GitHub Releases)
-4. D-22: arquivar o repositório `marcioazam/ny-pi` no corte?
+4. D-22: arquivar o repositório Nycode pré-migração no corte?
 
 ## Evidências
 
-Cada fase executada grava `evidencias/F<n>.md` nesta pasta (modelo em [06](06-guia-de-execucao.md)). A pasta ainda
+Cada fase executada grava registro do mantenedor nesta pasta (modelo em [06](06-guia-de-execucao.md)). A pasta ainda
 não existe porque nada foi executado.

@@ -1,5 +1,5 @@
 // Ported from zzzzzzzzzzzzzzzzzzzzzzzzzzzzz-tab-cyan/tab-cyan.test.ts (nycode patch tests); same cases and expectations.
-// Dono, 2026-11-15: o ciano do sistema (`syntaxType`) marca onde está o foco. Com o foco no composer, a tab aberta fica ciana
+// O ciano do sistema (`syntaxType`) marca onde está o foco. Com o foco no composer, a tab aberta fica ciana
 // (nome e `━`); com uma tab focada (↓ no editor vazio, ← →), o ciano vai para ela e a aberta mantém a cor do nycode.
 import assert from "node:assert/strict";
 import { test } from "vitest";

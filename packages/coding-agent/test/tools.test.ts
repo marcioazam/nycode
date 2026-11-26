@@ -947,6 +947,14 @@ describe("Coding Agent Tools", () => {
 			expect(fullOutput).toContain("2998\n2999\n3000");
 		});
 
+		it("executeBash resolves only after the full-output file is flushed", async () => {
+			// no polling: callers read fullOutputPath right after the promise resolves
+			const result = await executeBashWithOperations("seq 3000", process.cwd(), createLocalBashOperations());
+			const fullOutput = readFileSync(result.fullOutputPath!, "utf-8");
+			expect(fullOutput).toContain("1\n2\n3");
+			expect(fullOutput).toContain("2998\n2999\n3000");
+		});
+
 		it("executeBash should persist full output when truncation happens by line count only", async () => {
 			const result = await executeBashWithOperations("seq 3000", process.cwd(), createLocalBashOperations());
 			const fullOutputPath = result.fullOutputPath;

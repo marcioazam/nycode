@@ -12,16 +12,16 @@ import { ABERTURA_MS, MARCA_W, marcaLinhas } from "./motion/nycode.ts";
 export { ABERTURA_MS };
 export const PASSO_MAX_MS = 34; // 2 quadros de 60 fps
 const TETO_MS = 4 * ABERTURA_MS; // travado demais: assenta de vez
-// Partida calma (dono, 2026-11-18 "trava no final"): o 1º desenho chega no meio da carga do início (skills, hooks, MCP;
+// Partida calma: o 1º desenho chega no meio da carga do início (skills, hooks, MCP;
 // ~200 ms de laço ocupado medidos no nycode real), e a abertura congelava. Ela só começa depois de CALMA_QUADROS desenhos
 // seguidos a menos de CALMA_GAP_MS um do outro, ou ESPERA_MAX_MS após o 1º desenho; até lá, só o cursor parado.
 export const CALMA_QUADROS = 6,
 	CALMA_GAP_MS = 28,
 	ESPERA_MAX_MS = 1500;
-// Abertura em sequência (dono, 2026-11-19): quando a marca começa, a linha `nycode versão   atalhos` nasce do fundo em
+// Abertura em sequência: quando a marca começa, a linha `nycode versão   atalhos` nasce do fundo em
 // TEXTO_MS (como o divisor do /reload), os avisos de regras e memória abrem depois dela (patch de avisos do core
 // lê globalThis[ABERTURA].t0) e editor, status e rodapé sobem do fundo em BASE_MS. Só na partida, só em movimento normal.
-export const ABERTURA = Symbol.for("nycode-harness:abertura");
+export const ABERTURA = Symbol.for("nycode:abertura");
 export const TEXTO_MS = 340,
 	BASE_MS = 360;
 type Abertura = { desde: number; t0?: number };
@@ -51,7 +51,7 @@ const claro = (t: Style): boolean => {
 };
 
 /**
- * Marca nycode (7 linhas, 70 colunas) no lugar do logo do nycode (dono, 2026-11-18), uma linha em branco e
+ * Marca nycode (7 linhas, 70 colunas) no lugar do logo do nycode, uma linha em branco e
  * `nycode versão   atalhos`. Abaixo de 71 colunas fica só a linha de texto. `t`: ms desde a abertura (Infinity = assentada).
  */
 export function buildHeaderLines(version: string, theme: Style, width: number, t = Infinity): string[] {
@@ -115,7 +115,7 @@ export function subirBase(
 	}
 }
 
-// /reload (dono, 2026-11-19): a tela inteira, chat, editor, abas e rodapé, sobe do fundo em RECARGA_MS.
+// /reload: a tela inteira, chat, editor, abas e rodapé, sobe do fundo em RECARGA_MS.
 export const RECARGA_MS = 420;
 /** Embrulha os filhos 0 a 6 do TUI e pede quadros até o fim; `linhas`: altura do terminal (do documento, só as visíveis). */
 export function recarregar(

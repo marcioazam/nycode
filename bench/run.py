@@ -6,7 +6,7 @@
   affects      functional|non-functional verdict of a PR diff (bench/classify/affects.py); bench-pr skips non-functional PRs
   post-status  publish the `bench-pr` commit status of a PR (L1: owner-authored PRs only)
   report       tables per suite and arm from rounds, used for the BASELINE
-  scoreboard   the owner's three goal rules (accuracy, cost ceiling, exception) of Nycode against reference rounds
+  scoreboard   the owner's three goal rules (accuracy, cost ceiling, exception) of nycode against reference rounds
   evidence     per-run log paths, tool usage and cross-arm divergences (local only)
   probe        S6 offline capability probes (`<arm> --help` contains the flag)
 
@@ -44,9 +44,9 @@ NOT_VERIFIED_EXIT = 5
 MAX_ERROR_SHARE = (
     0.10  # a stage with more errored runs than this ends the round (infra, not a score)
 )
-# Arms that build a stage from this checkout (arms.toml `stage_prefix` names it; Nycode keeps the default).
-STAGED_ARMS = ("nycode-harness", "nycode-harness-pi160", "nycode")
-STAGE_PREFIX = "bench-nycode-harness"
+# Arms that build a stage from this checkout (arms.toml `stage_prefix` names it; `bench-nycode` is the default).
+STAGED_ARMS = ("nycode", "nycode-todo-v1", "nycode-todo-v2", "nycode-mcp-hybrid")
+STAGE_PREFIX = "bench-nycode"
 Key = tuple[str, str, int]  # (suite, task_id, rep)
 Step = dict[str, Any]
 
@@ -233,12 +233,12 @@ def arm_meta(
 
 
 def stage_root() -> Path:
-    """Where arms/nycode-harness builds its stage; never /tmp (the eval sandbox hides it behind a private tmpfs)."""
+    """Where arms/nycode builds its stage; never /tmp (the eval sandbox hides it behind a private tmpfs)."""
     return Path(os.environ.get("BENCH_STAGE_ROOT", Path.home() / ".cache/bench"))
 
 
 def harness_stage(short: str, prefix: str = STAGE_PREFIX) -> Path | None:
-    """The stage built from this checkout by arms/nycode-harness, nycode-harness-pi160 or nycode (`prefix` = the arm's stage_prefix),
+    """The stage built from this checkout by arms/nycode (`prefix` = the arm's stage_prefix),
     identified by its .overlay-sha. Only a complete one counts (.ready): a build that failed halfway leaves
     .overlay-sha behind."""
     stage = os.environ.get("BENCH_STAGE")
@@ -271,7 +271,6 @@ def _harbor_step(
     cfg = s["cfg"]
     kf = api_key_file(arm)
     ws = os.environ.get("BENCH_ANTHROPIC_WORKSPACE_ID")
-    nyc = arm == "nycode"
     agent_args, extra, tok_name = runners.harbor_agent(
         arm, model, HARBOR_DIR, api=bool(kf), workspace=ws
     )
@@ -296,18 +295,17 @@ def _harbor_step(
             raise RuntimeError(f"{arm} stage for {short} not built; run the arm first")
         # Per-round path: arms running side by side must not overwrite one shared bundle.
         out.mkdir(parents=True, exist_ok=True)
-        # nycode ships the monorepo build and has its own bundle.sh and variable (09 §2.2); the pre-migration arms ship ~/.pi.
-        script, var, name = (
-            ("bundle.sh", "NYCODE_HARNESS_BUNDLE", "nycode-harness-bundle.tgz")
-            if nyc
-            else ("pi_bundle.sh", "PI_HARNESS_BUNDLE", "pi-harness-bundle.tgz")
-        )
-        bundle = out / name
-        subprocess.run(
-            ["bash", str(HARBOR_DIR / script), str(bundle)],
-            check=True, capture_output=True, env={**os.environ, "HOME": str(stage)},
+        bundle = out / "nycode-bundle.tgz"
+        made = subprocess.run(
+            ["bash", str(HARBOR_DIR / "bundle.sh"), str(bundle)],
+            check=False, capture_output=True, text=True, env={**os.environ, "HOME": str(stage)},
         )  # fmt: skip
-        env[var] = str(bundle)
+        # Its stderr is the only diagnosis: bench-pr logs only this traceback.
+        if made.returncode != 0:
+            raise RuntimeError(
+                f"bundle.sh exit {made.returncode}: {made.stderr.strip()[-2000:]}"
+            )
+        env["NYCODE_BUNDLE"] = str(bundle)
     excl = (
         runners.load_excluded(BENCH / cfg["excluded_file"])
         if cfg.get("excluded_file")
@@ -500,7 +498,7 @@ def execute(
 def probe(
     arms: dict[str, Any], caps: dict[str, Any], env: dict[str, str] | None = None
 ) -> str:
-    """S6: offline flag probes via `--help`; nycode-harness uses the pi-vanilla binary (same pi core)."""
+    """S6: offline flag probes via `--help`; nycode uses the pi-vanilla binary (same pi core)."""
     helps: dict[str, str | None] = {}
     for arm in ("cc-vanilla", "pi-vanilla"):
         try:
@@ -510,14 +508,14 @@ def probe(
             helps[arm] = p.stdout + p.stderr if p.returncode == 0 else None
         except (OSError, subprocess.TimeoutExpired):
             helps[arm] = None
-    helps["nycode-harness"] = helps["pi-vanilla"]
+    helps["nycode"] = helps["pi-vanilla"]
     lines = [
-        "| recurso | cc-vanilla | pi-vanilla | nycode-harness |",
+        "| recurso | cc-vanilla | pi-vanilla | nycode |",
         "|---|---|---|---|",
     ]
     for name, row in caps.items():
         cells = []
-        for arm in ("cc-vanilla", "pi-vanilla", "nycode-harness"):
+        for arm in ("cc-vanilla", "pi-vanilla", "nycode"):
             e = row[arm]
             mark = ""
             if e.get("flag"):
@@ -547,7 +545,16 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument(
         "--tier",
         required=True,
-        choices=["pr", "smoke", "baseline", "full", "vanilla", "tb41", "hard"],
+        choices=[
+            "pr",
+            "smoke",
+            "baseline",
+            "full",
+            "vanilla",
+            "tb41",
+            "hard",
+            "behavior",
+        ],
     )
     r.add_argument("--model", required=True)
     r.add_argument("--budget-usd", type=float, required=True)
@@ -605,9 +612,7 @@ def main(argv: list[str] | None = None) -> int:
     ev = sub.add_parser("evidence")
     ev.add_argument("--runs", nargs="+", type=Path, required=True)
     ev.add_argument("--out", type=Path, required=True)
-    ev.add_argument(
-        "--focus", default="nycode-harness", help="arm whose gaps are detailed"
-    )
+    ev.add_argument("--focus", default="nycode", help="arm whose gaps are detailed")
     ev.add_argument(
         "--strict", action="store_true", help="exit 1 when a run has no transcript"
     )
@@ -618,7 +623,7 @@ def main(argv: list[str] | None = None) -> int:
         "--rounds", nargs="+", required=True, help="round directories (globs allowed)"
     )
     mt.add_argument(
-        "--focus", default="nycode-harness", help="arm compared with every other arm"
+        "--focus", default="nycode", help="arm compared with every other arm"
     )
     mt.add_argument("--json", type=Path, dest="json_out")
     pw = sub.add_parser(
@@ -645,14 +650,18 @@ def main(argv: list[str] | None = None) -> int:
         )
         if a.arm not in arms:
             p.error(f"unknown arm {a.arm}; known: {', '.join(arms)}")
-        # The arm script and its children read these (nycode-harness-pi160 selects pi 1.6.0 and its own stage).
+        # The arm script and its children read these (`stage_prefix` selects the arm's own stage).
         os.environ.update(arms[a.arm].get("env", {}))
         if "stage_prefix" in arms[a.arm]:
             os.environ["BENCH_STAGE_PREFIX"] = arms[a.arm]["stage_prefix"]
         if a.extension:
             a.tasks = [t for t in os.environ["BENCH_EXTEND_TASKS"].split(",") if t]
             a.k = int(os.environ["BENCH_EXTEND_REPS"])
-            a.out = Path(os.environ["BENCH_EXTEND_DIR"]) / "ext"
+            # Each look gets its own directory: reps restart at 0, so a shared one lost the earlier look's artifacts.
+            d, n = Path(os.environ["BENCH_EXTEND_DIR"]), 2
+            a.out = d / "ext"
+            while a.out.exists():
+                a.out, n = d / f"ext-{n}", n + 1
         a.tier = resolve_tier(a.tier, suites_cfg)
         steps = build_plan(a.tier, suites_cfg, a.suites, a.k, a.tasks)
         if a.dry_run:

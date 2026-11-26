@@ -30,9 +30,9 @@ export type Env = Record<string, string | undefined>;
 
 // Nerd Fonts (glyphnames.json): ferramentas em Codicons (traço fino, estilo VS Code).
 const NERD: Record<IconName, string> = {
-	read: "\ueabc", // D1 (onda 12, dono): ler ○ cod-circle, escrever ● cod-circle_filled, executar ▸ cod-triangle_right
-	bash: "\u{f018d}", // md-console, opção 6 do dono (2026-11-19; antes '\uebca' cod-terminal_bash e '\ueb91' cod-debug_alt)
-	edit: "\uea73", // cod-edit: lápis (dono, 2026-11-19; antes o círculo do write)
+	read: "\ueabc", // D1 (onda 12): ler ○ cod-circle, escrever ● cod-circle_filled, executar ▸ cod-triangle_right
+	bash: "\u{f018d}", // md-console, opção 6 (antes '\uebca' cod-terminal_bash e '\ueb91' cod-debug_alt)
+	edit: "\uea73", // cod-edit: lápis (antes o círculo do write)
 	write: "\uea71",
 	grep: "\ueabc",
 	find: "\ueabc",
@@ -43,18 +43,18 @@ const NERD: Record<IconName, string> = {
 	warn: "\uf421",
 	branch: "\uf418",
 	clock: "\uf43a",
-	think: "\u{f0336}", // lâmpada (md-lightbulb_outline); o cérebro ficou para a memória (dono, 2026-11-14)
-	todo: "\ueb67", // cod-tasklist: checklist próprio para Task, distinto da prancheta U+EB9D do Plano (dono, 2026-11-18)
-	agent: "\u{f06a9}", // md-robot preenchido (escolha do dono, 2026-11-18: opção 7)
-	question: "\ueac7", // dois balões (cod-comment_discussion), escolha do dono 2026-11-14
+	think: "\u{f0336}", // lâmpada (md-lightbulb_outline); o cérebro ficou para a memória
+	todo: "\ueb67", // cod-tasklist: checklist próprio para Task, distinto da prancheta U+EB9D do Plano
+	agent: "\u{f06a9}", // md-robot preenchido (escolha: opção 7)
+	question: "\ueac7", // dois balões (cod-comment_discussion)
 	web: "\ueb01",
 	memory: "\uea71",
 	lsp: "\ueabc",
-	plan: "\ueb9d", // cod-clippy prancheta (escolha do dono, 2026-11-18: opção 1)
+	plan: "\ueb9d", // cod-clippy prancheta (escolha: opção 1)
 	run: "\ueb70",
 	tool: "\ueb6d",
-	hook: "\uf024", // fa-flag: o ⚑ dos hooks e gates, mas ampliado pelo kitty como os outros ícones (dono, 2026-11-15)
-	swap: "\u{f06a9}", // md-robot unificado no aviso subagent-background (escolha do dono, 2026-11-18: opção 7)
+	hook: "\uf024", // fa-flag: o ⚑ dos hooks e gates, mas ampliado pelo kitty como os outros ícones
+	swap: "\u{f06a9}", // md-robot unificado no aviso subagent-background (escolha: opção 7)
 };
 
 const UNICODE: Record<IconName, string> = {
@@ -143,7 +143,8 @@ export const iconGap = (env: Env = process.env): string =>
 	!ascii(env) && (env.TERM === "xterm-kitty" || set(env.KITTY_WINDOW_ID)) ? "  " : " ";
 
 const BUILTIN = new Set(["read", "bash", "edit", "write", "grep", "find", "ls"]);
-const WEB = /fetch|web|search_web|perplexity|exa_|brave|keenable|firecrawl|youcom|octen|parallel|nimble/;
+/** Generic words only, no provider names; `tool_search` finds tools, not pages. */
+const WEB = /fetch|web|search|scrape|crawl/;
 
 /** Ferramenta → ícone; a primeira regra que casa vence: nativas, todo, agent, question, web, memory, lsp_, plan, run, tool. */
 export const toolIcon = (toolName: string): IconName => {
@@ -151,7 +152,7 @@ export const toolIcon = (toolName: string): IconName => {
 	if (toolName.includes("todo")) return "todo";
 	if (toolName.includes("agent")) return "agent";
 	if (toolName === "question") return "question";
-	if (WEB.test(toolName)) return "web";
+	if (toolName !== "tool_search" && WEB.test(toolName)) return "web";
 	if (toolName === "memory") return "memory";
 	if (toolName.startsWith("lsp_")) return "lsp";
 	if (toolName.includes("plan")) return "plan";
@@ -160,7 +161,7 @@ export const toolIcon = (toolName: string): IconName => {
 };
 
 // ── estado ───────────────────────────────────────────────────────────────────
-// Vocabulário único (pedido do dono, 2026-11-14): ● ciano = executando, ▲ amarelo = pede atenção, ✓ verde = feito, ✕ vermelho = erro.
+// Vocabulário único: ● ciano = executando, ▲ amarelo = pede atenção, ✓ verde = feito, ✕ vermelho = erro.
 // O fundo acompanha o estado. Ciano = `syntaxType` (o único token ciano dos temas); o aviso não tem token de fundo, é derivado.
 
 export type Estado = "run" | "warn" | "ok" | "err";
@@ -178,7 +179,7 @@ const ESTADO: Record<Estado, { icon: IconName; fg: string; bg?: string }> = {
 };
 export const estadoGlyph = (e: Estado, theme: Pick<EstadoTheme, "fg">, env: Env = process.env): string =>
 	theme.fg(ESTADO[e].fg, icon(ESTADO[e].icon, env));
-/** No chat o estado sai só como nome na cor dele, sem ícone (dono, 2026-11-15); `nome` troca o rótulo padrão. */
+/** No chat o estado sai só como nome na cor dele, sem ícone; `nome` troca o rótulo padrão. */
 export const ESTADO_NOME: Record<Estado, string> = { run: "executando", warn: "atenção", ok: "concluído", err: "erro" };
 export const estadoNome = (e: Estado, theme: Pick<EstadoTheme, "fg">, nome: string = ESTADO_NOME[e]): string =>
 	theme.fg(ESTADO[e].fg, nome);
@@ -218,18 +219,18 @@ export const estadoBg = (e: Estado, theme: EstadoTheme): ((s: string) => string)
 	return (s) => `${open}${s}\x1b[49m`;
 };
 
-/** Dica de atalho (`alt+o abre`): a tecla no azul do tema (`accent`), o verbo em dim (pedido do dono, 2026-11-14). */
+/** Dica de atalho (`alt+o abre`): a tecla no azul do tema (`accent`), o verbo em dim. */
 export const dicaTecla = (theme: Pick<EstadoTheme, "fg">, tecla: string, verbo: string): string =>
 	theme.fg("accent", tecla) + theme.fg("dim", ` ${verbo}`);
 
-/** Bolinha de "executando" pulsando (pedido do dono, 2026-11-14): um quadro a cada PULSE_MS, sempre 1 coluna. */
+/** Bolinha de "executando" pulsando: um quadro a cada PULSE_MS, sempre 1 coluna. */
 export const PULSE_MS = 240;
 const PULSE = ["∙", "•", "●", "•"];
 export const pulseFrame = (ms: number): string =>
 	icon("pending") === "*" ? "*" : PULSE[Math.floor(ms / PULSE_MS) % PULSE.length]!;
 
 // ── mensagem do usuário ──────────────────────────────────────────────────────
-// Pedido do dono (2026-11-14): setinha nas mensagens enviadas. Só a exibição muda (transformador de Markdown).
+// Setinha nas mensagens enviadas. Só a exibição muda (transformador de Markdown).
 export const BLOCO_MD = /^\s*(#{1,6} |[-*+] |\d+[.)] |```|~~~|>|\|)/;
 
 /** Medida de colunas (sem ANSI). O padrão conta code points; quem tem o @nycode/tui à mão passa `visibleWidth` (CJK e emoji largos ocupam 2). */
@@ -276,7 +277,7 @@ export const marcaUsuario = (
 	return `${cima}${" ".repeat(Math.max(0, w - horaW - medir(plano.slice(0, corte))))}${h}${coluna(`\n${linha.slice(corte + extra).trimStart()}${out.slice(fim)}`, teto, medir)}`;
 };
 
-/** Texto do usuário fora da coluna da hora (dono, 2026-11-19): cada linha comum quebra em `teto` colunas (na palavra; sem
+/** Texto do usuário fora da coluna da hora: cada linha comum quebra em `teto` colunas (na palavra; sem
  * espaço, no corte). Cercas de código e linhas de bloco Markdown (lista, título, citação, tabela) ficam como estão. */
 function coluna(texto: string, teto: number, medir: Medir): string {
 	if (teto < 4) return texto;

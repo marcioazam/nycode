@@ -15,9 +15,9 @@ const PermissionsSettingsSchema = Type.Object({
 		}),
 	),
 	engine: Type.Optional(
-		Type.Union([Type.Literal("script"), Type.Literal("native")], {
+		Type.Literal("native", {
 			description:
-				'Who decides the permission of each tool call: "script" (the embedded guard.py through the PreToolUse hook, opt-in) or "native" (the TypeScript engine, same verdicts; the default). Any other value denies every tool call. Global setting only.',
+				'Who decides the permission of each tool call: "native" (the TypeScript engine; the only one). Any other value, the removed "script" included, denies every tool call. Global setting only.',
 			default: SETTINGS_DEFAULTS.permissions.engine,
 		}),
 	),
@@ -83,34 +83,58 @@ const ToolsSettingsSchema = Type.Object({
 
 const TodoSettingsSchema = Type.Object({
 	staleReminder: flag("Remind the model of a stale todo list. NYCODE_TODO_SYNC takes precedence.", true),
+	sync: flag(
+		"Todo sync: end-of-turn check, items for background work, 30-call reminder. NYCODE_TODO_SYNC_V2 takes precedence.",
+		false,
+	),
 });
 
 const PlanSettingsSchema = Type.Object({
 	gate: flag("Keep plan mode open until the plan is submitted. NYCODE_PLAN_GATE takes precedence.", true),
+	readOnlyTools: Type.Optional(
+		Type.Array(Type.String(), {
+			description:
+				'Tools plan mode allows besides the read-only built-ins and the MCP tools that declare readOnlyHint. Names or simple globs, for example "mcp__docs__*".',
+			default: SETTINGS_DEFAULTS.plan.readOnlyTools,
+		}),
+	),
+});
+
+const BashSettingsSchema = Type.Object({
+	mainGuard: Type.Optional(
+		Type.Object({
+			enabled: flag(
+				"In the main interactive session, cap the bash timeout and refuse sleeps of 30 s or more and polling loops, so control returns to you. Subagents and print mode are not affected.",
+				SETTINGS_DEFAULTS.bash.mainGuard.enabled,
+			),
+			timeoutSec: Type.Optional(
+				Type.Integer({
+					minimum: 1,
+					description: "Timeout in seconds of a bash call that sets none, in the main session.",
+					default: SETTINGS_DEFAULTS.bash.mainGuard.timeoutSec,
+				}),
+			),
+			capSec: Type.Optional(
+				Type.Integer({
+					minimum: 1,
+					description: "Longest timeout in seconds a bash call may ask for, in the main session.",
+					default: SETTINGS_DEFAULTS.bash.mainGuard.capSec,
+				}),
+			),
+		}),
+	),
+});
+
+const FooterSettingsSchema = Type.Object({
+	stats: flag("Show the stats line (tokens, cost and model) in the footer.", SETTINGS_DEFAULTS.footer.stats),
 });
 
 const NotifySettingsSchema = Type.Object({
 	sound: flag("Play a sound when the agent finishes. NYCODE_SOUND_NOTIFY takes precedence.", true),
+	desktop: flag("Send a desktop notification when the agent finishes.", SETTINGS_DEFAULTS.notify.desktop),
 });
 
 const text = (description: string) => Type.Optional(Type.String({ description }));
-
-const KnowledgeSettingsSchema = Type.Object({
-	vault: text("Absolute path of the knowledge vault. NYCODE_KNOWLEDGE_VAULT takes precedence."),
-	graphsVault: text("Absolute path of the graphs vault. NYCODE_GRAPHS_VAULT takes precedence."),
-});
-
-const CodegraphSettingsSchema = Type.Object({
-	autoRoot: text("Root where codegraph auto-indexes repositories. CODEGRAPH_AUTO_ROOT takes precedence."),
-	bin: text("codegraph executable. CODEGRAPH_BIN takes precedence."),
-	statusTtl: Type.Optional(
-		Type.Number({
-			minimum: 0,
-			description: "Seconds a codegraph status stays valid; 0 disables. CODEGRAPH_STATUS_TTL takes precedence.",
-		}),
-	),
-	autoState: text("State directory of the codegraph auto-indexer. CODEGRAPH_AUTO_STATE takes precedence."),
-});
 
 const McpSettingsSchema = Type.Object({
 	configPath: text(
@@ -118,11 +142,18 @@ const McpSettingsSchema = Type.Object({
 	),
 });
 
-const HookCommandSchema = Type.Object({
-	type: Type.Literal("command"),
-	command: Type.String(),
-	timeout: Type.Optional(Type.Number({ minimum: 0 })),
-});
+const HookCommandSchema = Type.Union([
+	Type.Object({
+		type: Type.Literal("command"),
+		command: Type.String(),
+		timeout: Type.Optional(Type.Number({ minimum: 0 })),
+	}),
+	Type.Object({
+		type: Type.Literal("internal"),
+		name: Type.String({ description: "A hook of the core, run in-process." }),
+		timeout: Type.Optional(Type.Number({ minimum: 0 })),
+	}),
+]);
 
 const HookMatcherSchema = Type.Object({
 	matcher: Type.Optional(Type.String()),
@@ -143,9 +174,15 @@ export const NycodeSettingsProperties = {
 	tools: Type.Optional(ToolsSettingsSchema),
 	todo: Type.Optional(TodoSettingsSchema),
 	plan: Type.Optional(PlanSettingsSchema),
+	bash: Type.Optional(BashSettingsSchema),
+	footer: Type.Optional(FooterSettingsSchema),
+	editorMode: Type.Optional(
+		Type.Union([Type.Literal("normal"), Type.Literal("vim")], {
+			description: 'Prompt editor keys: "normal" or "vim".',
+			default: SETTINGS_DEFAULTS.editorMode,
+		}),
+	),
 	notify: Type.Optional(NotifySettingsSchema),
-	knowledge: Type.Optional(KnowledgeSettingsSchema),
-	codegraph: Type.Optional(CodegraphSettingsSchema),
 	mcp: Type.Optional(McpSettingsSchema),
 	hooks: Type.Optional(
 		Type.Record(Type.String(), Type.Array(HookMatcherSchema), {

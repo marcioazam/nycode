@@ -1,4 +1,4 @@
-// K11: the Python `os.path` helpers the guard port relies on, on the cases the differential corpus reaches rarely
+// K11: the Python `os.path` helpers the guard port relies on, on edge cases
 // (symlink chains and loops, `~user`, `..` handling). Expected values are what Python 3.12 returns.
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

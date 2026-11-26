@@ -29,7 +29,7 @@ import {
 } from "./base.ts";
 
 const { iconGap } = __m1;
-// Régua Run (dono, 2026-11-18): antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
+// Régua Run: antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
 // Prefixos de icon('bash') e iconGap() da cópia tmp (base.ts fixa o terminal): independem de TERM.
 const G = iconGap();
 const P = `▎ ${" ".repeat(1 + G.length)}`; // corpo e rodapé: trilho + recuo até o `Run`
@@ -46,7 +46,7 @@ test("resolver: só registerToolRenderer, undefined sem base; demais ferramentas
 	assert.equal(other.keep, "y");
 	assert.equal(typeof other.renderResult, "function");
 	assert.notEqual(other.renderCall, base().renderCall);
-	// 2026-11-14 (dono): tool sem renderCall próprio (ex.: run) também ganha estado, ícone e hora, em vez de voltar intacta.
+	// 2026-11-14: tool sem renderCall próprio (ex.: run) também ganha estado, ícone e hora, em vez de voltar intacta.
 	assert.equal(typeof resolver("mcp__x", () => ({ keep: 1 })).renderCall, "function");
 	assert.equal(
 		resolver("mcp__x", () => undefined),
@@ -80,22 +80,22 @@ test("formatDuration: fronteiras", () => {
 	assert.equal(f(Number.NaN), "0.0s");
 });
 
-// Pedido do dono (2026-11-14): título e tarefa separados por bolinha (`bash · cd /tmp`); antes dois espaços e verbo em coluna fixa.
-// Antigo: `✓ ícone read · alvo`. Novo (dono, 2026-11-15): sem ícone de estado; o nome do estado na cor dele vem após o nome da tool.
+// Título e tarefa separados por bolinha (`bash · cd /tmp`); antes dois espaços e verbo em coluna fixa.
+// Antigo: `✓ ícone read · alvo`. Novo: sem ícone de estado; o nome do estado na cor dele vem após o nome da tool.
 test("cabeçalho por ferramenta: ícone, nome, estado por nome, alvo; ícone por tool em muted", () => {
 	assert.equal(header("read", { path: "/work/proj/src/a.ts" }), `  ${icon("read")} read · src/a.ts`);
 	assert.ok(header("write", { path: "/outro/b.ts" }).includes("/outro/b.ts"));
-	// Variante 2 do edit (dono, 2026-11-18): nome do arquivo em destaque + pasta à esquerda, estado à direita.
-	// Edit no estilo do Read (dono, 2026-11-19): antes `  ● y.ts  x/ … concluído`; agora `ícone Edit · arquivo · pasta ───`, na coluna 0 e sem `concluído`.
+	// Variante 2 do edit: nome do arquivo em destaque + pasta à esquerda, estado à direita.
+	// Edit no estilo do Read: antes `  ● y.ts  x/ … concluído`; agora `ícone Edit · arquivo · pasta ───`, na coluna 0 e sem `concluído`.
 	assert.match(header("edit", { file_path: "/work/proj/x/y.ts" }), /^● Edit · y\.ts · x\/ ─+$/);
 	assert.ok(header("ls", {}).endsWith("ls · ."));
 	assert.ok(header("ls", { path: "/work/proj" }).endsWith("ls · ."));
 	assert.ok(header("grep", { pattern: "foo", path: "/work/proj/src" }).endsWith("grep · foo em src"));
 	assert.ok(header("find", { pattern: "x.ts" }).endsWith("find · x.ts"));
-	// Variante 04 (dono, 2026-11-18): antes o bash era uma linha `ícone $ cmd` (com `(timeout 30s)`); agora é o cartão do shell:
+	// Variante 04: antes o bash era uma linha `ícone $ cmd` (com `(timeout 30s)`); agora é o cartão do shell:
 	// trilho `▎` + título régua e rodapé de estado. O timeout deixou de aparecer no título.
-	// (dono, 2026-11-20): antes `Bash ─ cmd ───` e rodapé `OK`; agora `Bash · OK · cmd` e sem rodapé vazio. (2026-11-18: antes `▎ $ cmd` e rodapé `▎ OK`; agora `▎ <ícone> Run ─ cmd ─────` e rodapé recuado até o `Run`.
-	// Largura inteira e respiro (dono, 2026-11-18): antes o cartão parava em 72 colunas em w = 200 e começava no título; agora
+	// antes `Bash ─ cmd ───` e rodapé `OK`; agora `Bash · OK · cmd` e sem rodapé vazio. (2026-11-18: antes `▎ $ cmd` e rodapé `▎ OK`; agora `▎ <ícone> Run ─ cmd ─────` e rodapé recuado até o `Run`.
+	// Largura inteira e respiro: antes o cartão parava em 72 colunas em w = 200 e começava no título; agora
 	// tem w = 200 e uma linha de respiro em cima e embaixo (semRespiro as exige e tira).
 	const bashRows = (args: Record<string, unknown>) =>
 		semRespiro(wrapped("bash").renderCall(args, ansiPlain, ctx({ args })).render(200), 200).map((l: string) =>
@@ -105,13 +105,13 @@ test("cabeçalho por ferramenta: ícone, nome, estado por nome, alvo; ícone por
 	assert.deepEqual(bashRows({ command: "echo a\necho b" }), [regua("echo a…", "", 200)]);
 	assert.equal(bashRows({ command: "sleep 9", timeout: 30 })[0], regua("sleep 9", "", 200));
 	// Fundo de volta (2026-11-15): shell padrão do nycode (Box com fundo e outputPad), nunca 'self'.
-	// Antigo: edit também no shell padrão. Novo: edit é 'self' e pinta a própria caixa neutra (dono: fundo sem verde).
-	// Cartão 08 (dono, 2026-11-18): read/bash/grep/find/ls pintam o próprio cartão ('self'); só o write segue no shell padrão.
-	// Write no estilo do Read (dono, 2026-11-19): antes o write seguia no shell padrão (fundo verde); agora também 'self'.
+	// Antigo: edit também no shell padrão. Novo: edit é 'self' e pinta a própria caixa neutra.
+	// Cartão 08: read/bash/grep/find/ls pintam o próprio cartão ('self'); só o write segue no shell padrão.
+	// Write no estilo do Read: antes o write seguia no shell padrão (fundo verde); agora também 'self'.
 	for (const name of ["read", "write", "bash", "grep", "find", "ls"])
 		assert.equal(wrapped(name).renderShell, "self", name);
 	assert.equal(wrapped("edit").renderShell, "self");
-	// Variante 04 (dono, 2026-11-18): antes o ícone do bash abria o cartão (coluna 3, em muted); agora é o trilho `▎` na cor do estado.
+	// Variante 04: antes o ícone do bash abria o cartão (coluna 3, em muted); agora é o trilho `▎` na cor do estado.
 	const trilho = wrapped("bash")
 		.renderCall({ command: "x" }, theme, ctx({ args: { command: "x" } }))
 		.render(80)[0];
@@ -125,16 +125,16 @@ test("read: offset e limit", () => {
 	assert.ok(header("read", { path: "a", offset: 7 }).includes("a :7"));
 });
 
-// Antigo: bolinha, ✓ e ✕ antes do ícone. Novo (dono, 2026-11-15): só o nome do estado, na cor dele, após o nome da tool.
+// Antigo: bolinha, ✓ e ✕ antes do ícone. Novo: só o nome do estado, na cor dele, após o nome da tool.
 test("status: executando e erro por nome e cor, sucesso sem rótulo; duração a partir de 1 s", () => {
 	const c = wrapped("bash");
 	const args = { command: "x" };
-	// Variante 04 (dono, 2026-11-18): antes o estado ia no título do bash (`· executando`, `· erro`) e a duração no fim da
+	// Variante 04: antes o estado ia no título do bash (`· executando`, `· erro`) e a duração no fim da
 	// linha; agora o estado e a duração ficam no rodapé do cartão (`OK · 1.2s`, `Erro`). Tema `tg`: marcas de largura zero.
-	// Respiro (dono, 2026-11-18): antes o rodapé era a última linha; agora vem antes da linha de respiro (semRespiro a exige e tira).
+	// Respiro: antes o rodapé era a última linha; agora vem antes da linha de respiro (semRespiro a exige e tira).
 	const rows = (o: Record<string, unknown>) =>
 		semRespiro(c.renderCall(args, ansiTags, ctx({ args, ...o })).render(200), 200);
-	// (dono, 2026-11-20): antes o estado abria o rodapé (`OK · 1.2s`); agora está no título e o rodapé final só tem a duração; sem nada, some.
+	// antes o estado abria o rodapé (`OK · 1.2s`); agora está no título e o rodapé final só tem a duração; sem nada, some.
 	const foot = (o: Record<string, unknown>) => (rows(o).length === 1 ? "" : plain(rows(o).at(-1) ?? "").trimEnd());
 	assert.ok(rows({ isPartial: true })[0].includes(tg("accent", "executando")));
 	assert.equal(foot({ isPartial: true }), `${P}executando`);
@@ -149,7 +149,7 @@ test("status: executando e erro por nome e cor, sucesso sem rótulo; duração a
 		assert.ok(
 			plain(rows(o)[0]).startsWith(`▎ ${icon("bash")}${G}Bash · ${e} · x`),
 			"trilho, ícone, Bash e o estado logo depois",
-		); // antes `Bash ─ x` (dono, 2026-11-20)
+		); // antes `Bash ─ x`
 	assert.equal(foot({ durationMs: 1234 }), `${P}1.2s`);
 	assert.equal(foot({ durationMs: 1000 }), `${P}1.0s`);
 	assert.equal(foot({ durationMs: 999 }), "");
@@ -170,9 +170,9 @@ test("args incompletos ou ausentes mostram …", () => {
 		),
 	);
 	assert.ok(header("read", {}).endsWith("read · …"));
-	// Variante 04 (dono, 2026-11-18): antes o bash sem comando mostrava `ícone …`; agora `Run ─ …` dentro do cartão.
-	// Régua Run (dono, 2026-11-18): antes `▎ $ …`; agora `▎ <ícone> Run ─ … ─────`.
-	// Respiro (dono, 2026-11-18): antes título e rodapé; agora com uma linha de respiro em cima e embaixo (semRespiro).
+	// Variante 04: antes o bash sem comando mostrava `ícone …`; agora `Run ─ …` dentro do cartão.
+	// Régua Run: antes `▎ $ …`; agora `▎ <ícone> Run ─ … ─────`.
+	// Respiro: antes título e rodapé; agora com uma linha de respiro em cima e embaixo (semRespiro).
 	assert.deepEqual(
 		semRespiro(
 			wrapped("bash")
@@ -192,7 +192,7 @@ test("args incompletos ou ausentes mostram …", () => {
 	assert.ok(
 		header("read", { path: "/a" }, { ...iniciada, executionStarted: false }).endsWith("read · executando · …"),
 	);
-	// Régua Run (dono, 2026-11-18): antes `▎ $ ls` e, preparando, `▎ $ …`; agora `Run ─ ls` e, preparando, o comando parcial (muted) + cursor (a célula final do esperado).
+	// Régua Run: antes `▎ $ ls` e, preparando, `▎ $ …`; agora `Run ─ ls` e, preparando, o comando parcial (muted) + cursor (a célula final do esperado).
 	const bashPartial = (args: Record<string, unknown>, c: Record<string, unknown>) =>
 		plain(
 			semRespiro(
@@ -201,8 +201,8 @@ test("args incompletos ou ausentes mostram …", () => {
 					.render(80),
 			)[0],
 		).trimEnd();
-	assert.equal(bashPartial({ command: "ls" }, iniciada), regua("ls", "", 80, "executando")); // (dono, 2026-11-20): antes `Bash ─ ls`
-	// Barra que respira (dono, 2026-11-18, /cursor variante 3): antes o cursor do comando chegando era `▌`; agora `▏`.
+	assert.equal(bashPartial({ command: "ls" }, iniciada), regua("ls", "", 80, "executando")); // antes `Bash ─ ls`
+	// Barra que respira: antes o cursor do comando chegando era `▌`; agora `▏`.
 	assert.equal(
 		bashPartial({ command: "ls" }, { ...iniciada, executionStarted: false })
 			.replace("▏", " ")
@@ -211,7 +211,7 @@ test("args incompletos ou ausentes mostram …", () => {
 	);
 });
 
-// (dono, 2026-11-18): antes a linha da chamada parava em 100 colunas e o cartão em 58; agora o cartão (read, grep) tem
+// antes a linha da chamada parava em 100 colunas e o cartão em 58; agora o cartão (read, grep) tem
 // exatamente w e as demais linhas (edit) só não passam de w.
 test("largura: nenhuma linha passa de w; o cartão da chamada ocupa a largura inteira", () => {
 	const long = `/work/proj/${"dir/".repeat(40)}arquivo.ts`;
@@ -233,10 +233,10 @@ test("largura: nenhuma linha passa de w; o cartão da chamada ocupa a largura in
 			);
 			assert.ok(plain(line[0]).includes("1m 05s"), `${name} w=${w}: ${plain(line[0])}`);
 		}
-		// Variante 04 (dono, 2026-11-18): antes o bash entrava neste laço (1 linha, 1m 05s no título) e o resultado era medido aqui;
+		// Variante 04: antes o bash entrava neste laço (1 linha, 1m 05s no título) e o resultado era medido aqui;
 		// agora a largura do cartão do shell é testada em shell.test.ts.
 	}
-	// Antigo (até 2026-11-14): resumo alinhado à direita, linha com exatamente min(w, 100). Novo (pedido do dono):
+	// Antigo (até 2026-11-14): resumo alinhado à direita, linha com exatamente min(w, 100). Novo:
 	// resumo colado ao alvo, à esquerda, separado por ` · `; a linha não é preenchida até a borda.
 	const aligned = (name: string, args: Record<string, unknown>, text: string, w: number) => {
 		const shared = ctx({ args });
@@ -259,7 +259,7 @@ test("largura: nenhuma linha passa de w; o cartão da chamada ocupa a largura in
 
 test("expandido e bash parcial delegam ao nativo, recuados sob o verbo; demais parciais ficam vazios", () => {
 	assert.deepEqual(body("read", result("a"), {}, { expanded: true }), ["    native-result"]);
-	// Variante 04 (dono, 2026-11-18): antes o bash parcial/expandido delegava ao nativo; agora o resultado do bash nunca desenha
+	// Variante 04: antes o bash parcial/expandido delegava ao nativo; agora o resultado do bash nunca desenha
 	// (o cartão da chamada mostra tudo, inclusive expandido).
 	assert.deepEqual(body("bash", result("a"), {}, { isPartial: true }), []);
 	assert.deepEqual(body("bash", result("a"), {}, { expanded: true }), []);
@@ -327,7 +327,7 @@ test("nativo recebe o próprio componente anterior como lastComponent, nunca o n
 });
 
 test("erro: estado após · em error; indentação da saída sem │ no bash", () => {
-	// Antigo: `✕ ícone read · a · erro`. Novo (dono, 2026-11-15): o estado vai por nome no título, logo após a tool.
+	// Antigo: `✕ ícone read · a · erro`. Novo: o estado vai por nome no título, logo após a tool.
 	const read = row("read", { path: "a" }, result("\nENOENT: no such file\nmais"), { isError: true });
 	assert.equal(read[0], `  ${icon("read")} read · erro · a`);
 	assert.deepEqual(read.slice(1), ["    │ ENOENT: no such file"]);
@@ -336,7 +336,7 @@ test("erro: estado após · em error; indentação da saída sem │ no bash", (
 		.renderResult(result("falhou"), { expanded: false }, theme, ctx({ isError: true }))
 		.render(80);
 	assert.equal(raw[0], "    <dim>│</c> <error>falhou</c>");
-	// Variante 04 (dono, 2026-11-18): antes o estado do bash ia a `state.uiStatus` (`código 2`) e a saída era recuada sob o título;
+	// Variante 04: antes o estado do bash ia a `state.uiStatus` (`código 2`) e a saída era recuada sob o título;
 	// agora o resultado grava a saída separada em `state.uiShell` (`Erro 2`); o desenho do cartão está em shell.test.ts.
 	const shared = ctx({ isError: true });
 	const vazio = wrapped("bash").renderResult(
@@ -358,12 +358,12 @@ test("resumos: uma linha por chamada, resumo colado ao alvo após ·", () => {
 	};
 	assert.ok(one("read", { path: "a" }, result("a\nb\nc\n")).endsWith(" · 3 linhas"));
 	assert.ok(one("read", { path: "a" }, result("a")).endsWith(" · 1 linha"));
-	// Margem acima da imagem (dono, 2026-11-19): antes o Read de imagem era só a linha do resumo; agora vem uma linha vazia
+	// Margem acima da imagem: antes o Read de imagem era só a linha do resumo; agora vem uma linha vazia
 	// de margem depois dela (o resultado devolve ['']), e a imagem do nycode entra abaixo.
 	{
 		const l = row("read", { path: "a" }, { content: [{ type: "image" }] });
 		assert.equal(l.length, 2);
-		assert.doesNotMatch(l[0]!, /imagem/); /* sem o tipo (dono, 2026-11-19): antes terminava em ` · imagem` */
+		assert.doesNotMatch(l[0]!, /imagem/); /* sem o tipo: antes terminava em ` · imagem` */
 		assert.equal(l[1]!.trim(), "");
 	}
 	assert.ok(
@@ -379,8 +379,8 @@ test("resumos: uma linha por chamada, resumo colado ao alvo após ·", () => {
 	assert.ok(one("find", { pattern: "x" }, result("a.ts")).endsWith(" · 1 resultado"));
 	assert.ok(one("grep", { pattern: "x" }, result("No matches found")).endsWith(" · nenhum resultado"));
 	assert.ok(one("ls", {}, result("(empty directory)")).endsWith(" · nenhum resultado"));
-	// Variante 04 (dono, 2026-11-18): antes o bash sem saída era 1 linha `ícone $ x`; agora o cartão tem título e rodapé `OK`.
-	// Largura inteira e respiro (dono, 2026-11-18): antes 72 colunas em w = 200, sem respiro; agora w = 200 com respiro.
+	// Variante 04: antes o bash sem saída era 1 linha `ícone $ x`; agora o cartão tem título e rodapé `OK`.
+	// Largura inteira e respiro: antes 72 colunas em w = 200, sem respiro; agora w = 200 com respiro.
 	assert.deepEqual(
 		(() => {
 			const w0 = wrapped("bash"),
@@ -399,7 +399,7 @@ test("resumos: uma linha por chamada, resumo colado ao alvo após ·", () => {
 	);
 });
 
-// Variante 04 (dono, 2026-11-18): o teste 'bash: comando e atalho no cabeçalho, saída recuada sem │' (cartão 08: prévia recuada,
+// Variante 04: o teste 'bash: comando e atalho no cabeçalho, saída recuada sem │' (cartão 08: prévia recuada,
 // `⋯ N linhas acima`, `ctrl+o abre/fecha`, bash-clamp) foi para shell.test.ts, que cobre o cartão novo.
 
 test("edit (Variante 2): arquivo protagonista + placar + barra proporcional à esquerda, estado à direita e sinais +/−", () => {
@@ -411,7 +411,7 @@ test("edit (Variante 2): arquivo protagonista + placar + barra proporcional à e
 		res.render(80).map((l: string) => plain(l).trimEnd()),
 		["  1    a", "  2 −  b", "  2 +  c", "  3 +  d"],
 	);
-	// Edit no estilo do Read (dono, 2026-11-19): antes `  ● a  ·  +2 −1  ━━━ … concluído`; agora `· ` entre as partes, régua e sem `concluído`.
+	// Edit no estilo do Read: antes `  ● a  ·  +2 −1  ━━━ … concluído`; agora `· ` entre as partes, régua e sem `concluído`.
 	assert.match(plain(call.render(200)[0]), /^● Edit · a · \+2 −1 {2}━━━ ─+$/);
 	const native = row("edit", { path: "a" }, result("ok", { diff: "-1 a\n+1 b" }));
 	assert.match(native[0], /^● Edit · a · \+1 −1 {2}━━ ─+$/);
@@ -508,7 +508,7 @@ test("fundo do Box sobrevive ao corte do cabeçalho (…, duração)", () => {
 		assert.equal(unpainted(box(row)), "", `fundo w=${w}`);
 		assert.ok(!row.includes("\x1b[0m"), "sem reset total");
 	}
-	// Variante 04 (dono, 2026-11-18): o trecho do bash (cartão 08 de 60 colunas, `justo`) saiu daqui; o fundo do cartão do shell
+	// Variante 04: o trecho do bash (cartão 08 de 60 colunas, `justo`) saiu daqui; o fundo do cartão do shell
 	// e seu corte estão em shell.test.ts.
 	const short = wrapped("read")
 		.renderCall({ path: "a" }, ansi, ctx({ args: { path: "a" }, durationMs: 400 }))
@@ -518,7 +518,7 @@ test("fundo do Box sobrevive ao corte do cabeçalho (…, duração)", () => {
 });
 
 test("fundo sobrevive ao corte das linhas de resultado; corte não vaza negrito/cor", () => {
-	// Variante 04 (dono, 2026-11-18): o corte da linha de resultado do bash (renderResult com 1 linha `…`) virou o corte do corpo do
+	// Variante 04: o corte da linha de resultado do bash (renderResult com 1 linha `…`) virou o corte do corpo do
 	// cartão, testado em shell.test.ts; aqui fica o contrato de `fitLine`.
 	// Corte dentro do negrito: o reset parcial fecha negrito e cor.
 	const cut = mod.fitLine(`\x1b[1m\x1b[38;5;111m${"z".repeat(50)}\x1b[39m\x1b[22m`, 10);
@@ -527,7 +527,7 @@ test("fundo sobrevive ao corte das linhas de resultado; corte não vaza negrito/
 });
 
 // Contrato D (2026-11-15): ícone também nas demais ferramentas, só na 1ª linha do renderCall.
-// 2026-11-14: o estado (✓ ✕ ▲ ou bolinha) vinha antes do ícone. 2026-11-15 (dono): sem ícone de estado; o nome do estado
+// 2026-11-14: o estado (✓ ✕ ▲ ou bolinha) vinha antes do ícone. 2026-11-15: sem ícone de estado; o nome do estado
 // entra após o nome da tool ou, se a linha nativa não começa por ele, abre a linha.
 test("outras ferramentas: ícone muted na 1ª linha; lastComponent da base guardado em state.uiCall", () => {
 	const seen: unknown[] = [];
@@ -581,13 +581,15 @@ test("toolIcon: regras em ordem", () => {
 		"web_fetch",
 		"fetch",
 		"brave_news_search",
-		"perplexity_ask",
+		"perplexity_search",
 		"exa_search",
 		"firecrawl_scrape",
 		"search_web_pages",
-		"mcp__keenable",
+		"mcp__x__crawl",
 	])
 		assert.equal(t(n), "web");
+	// Generic words only: a provider name alone says nothing about the tool.
+	for (const n of ["perplexity_ask", "mcp__keenable", "tool_search"]) assert.equal(t(n), "tool");
 	assert.equal(t("lsp_hover"), "lsp");
 	for (const n of ["plan_mode_complete", "planner"]) assert.equal(t(n), "plan");
 	assert.equal(t("mcp__linear"), "tool");
@@ -636,9 +638,9 @@ const editBox = (
 	return { call, res };
 };
 
-// Cabeçalho do edit fora da caixa (dono, 2026-11-19): antes a chamada vinha na caixa (linha em branco + cabeçalho com o fundo
+// Cabeçalho do edit fora da caixa: antes a chamada vinha na caixa (linha em branco + cabeçalho com o fundo
 // do estado, recuo outputPad e rodapé enquanto executava); agora é uma linha sem fundo na coluna 0 e só o resultado tem caixa.
-// (dono, 2026-11-20, read/cabecalho-edit.ts): antes o cabeçalho ficava sem fundo na coluna 0; agora tem o MESMO fundo, recuo
+// antes o cabeçalho ficava sem fundo na coluna 0; agora tem o MESMO fundo, recuo
 // (outputPad) e largura das linhas da caixa do diff. Reconstruído depois da perda de tools.test.ts (lane bashtit).
 test("edit: cabeçalho com o fundo e o recuo da caixa, em execução e terminado; o resultado segue na caixa neutra, nunca toolSuccessBg", () => {
 	for (const isPartial of [true, false]) {
@@ -667,7 +669,7 @@ test("edit: com resultado o rodapé em branco é do resultado; erro também", ()
 	assert.equal(editBox(undefined, { isPartial: true, isError: true }).call.length, 1);
 });
 
-// (dono, 2026-11-20): antes o cabeçalho do erro ficava sem fundo; agora leva o mesmo toolErrorBg da caixa.
+// antes o cabeçalho do erro ficava sem fundo; agora leva o mesmo toolErrorBg da caixa.
 test("edit: erro usa toolErrorBg na mensagem e no cabeçalho, dentro da caixa", () => {
 	const { call, res } = editBox(undefined, { isError: true }, {});
 	assert.ok(
@@ -704,7 +706,7 @@ test("edit (Variante 2): diff dentro da caixa com régua divisória ─, mudadas
 
 test("edit: sem cor no tema, sem fundos nem linhas extras (layout anterior)", () => {
 	const { call, res } = editBox(" 1 a", {}, {});
-	assert.equal(call.length, 1); // cabeçalho fora da caixa (dono, 2026-11-19): antes 2, com a linha em branco da caixa
+	assert.equal(call.length, 1); // cabeçalho fora da caixa: antes 2, com a linha em branco da caixa
 	const w0 = wrapped("edit");
 	const sh = ctx({ args: { path: "a" } });
 	assert.equal(w0.renderCall({ path: "a" }, theme, sh).render(40).length, 1);
@@ -718,4 +720,4 @@ test("edit: sem cor no tema, sem fundos nem linhas extras (layout anterior)", ()
 	assert.ok(res.length > 0);
 });
 
-// Pedido do dono (2026-11-14): toda tool mostra no chat, à direita, a hora em que foi executada (como a linha "recarregado").
+// Toda tool mostra no chat, à direita, a hora em que foi executada (como a linha "recarregado").

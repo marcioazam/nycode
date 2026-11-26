@@ -285,6 +285,7 @@ export function createMcpExtension(options: McpExtensionOptions = {}): Extension
 		/** Registered servers that `mcp.json` overrides, shown in `/mcp`. */
 		let overridden: string[] = [];
 		let autoEnableCodemode = true;
+		let autoEnableToolSearch = false;
 		/** Whether the "codemode tools unreachable" warning was shown since the session started. */
 		let warnedUnreachable = false;
 		let pending: Promise<unknown> | undefined;
@@ -494,7 +495,7 @@ export function createMcpExtension(options: McpExtensionOptions = {}): Extension
 		 * Tools that are not declared to the model are reached through the codemode tool (scripts call
 		 * them) or the tool_search tool (it declares them). Either reaches every such tool. Activate the
 		 * one the tools' exposure asks for: codemode for `codemode` unless `autoEnableCodemode` is false,
-		 * tool_search for `deferred`.
+		 * tool_search for `deferred` or, with `autoEnableToolSearch`, for `codemode` too.
 		 */
 		const ensureDiscoveryActive = (ctx: ExtensionContext) => {
 			// From the config, so the tool is active before the servers connect. Resource tools share
@@ -504,7 +505,8 @@ export function createMcpExtension(options: McpExtensionOptions = {}): Extension
 				if (isEnabled(server)) for (const exposure of configuredExposures(server.entry)) exposures.add(exposure);
 			}
 			const needsCodemode = exposures.has("codemode");
-			const needsToolSearch = exposures.has("deferred");
+			// Hybrid: codemode servers also get tool_search (single calls direct, chains in scripts).
+			const needsToolSearch = exposures.has("deferred") || (needsCodemode && autoEnableToolSearch);
 			if (!needsCodemode && !needsToolSearch) return;
 			// Only a tool of these names that declares `reachesTools` can reach MCP tools; another
 			// extension's tool of the same name without it is never activated.
@@ -1114,6 +1116,7 @@ export function createMcpExtension(options: McpExtensionOptions = {}): Extension
 			configErrors = loaded.errors;
 			projectConfig = loaded.projectConfig;
 			autoEnableCodemode = loaded.autoEnableCodemode ?? true;
+			autoEnableToolSearch = loaded.autoEnableToolSearch ?? false;
 			warnedUnreachable = false;
 			waitedForStartup = false;
 			sessionCwd = ctx.cwd;

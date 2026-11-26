@@ -106,13 +106,13 @@ mypy_changed() {
 
 pytest_cov() {
   # source=. + include_namespace_packages: unimported files count as 0% (no per-file exemption);
-  # patch=subprocess measures hooks the tests run as child processes (guard.py), merged by combine
+  # patch=subprocess measures scripts the tests run as child processes (session-transport CLI, structure.py), merged by combine
   printf '[run]\nrelative_files = True\nsource = .\npatch = subprocess\n[report]\ninclude_namespace_packages = True\nomit =\n  */node_modules/*\n  */.git/*\n  bench/suites/*/*/repo/*\n  bench/suites/*/*/hidden/*\n  bench/suites/*/*/oracle/*\n' >"$TMP/coveragerc"
   export COVERAGE_FILE="$TMP/.coverage"
-  # Python test roots; the ones the migration has not created yet (hooks and harness tools: F8, bench: F3 bench lane)
-  # are skipped until they exist, never dropped from the list.
+  # Python test roots; the ones that do not exist in a checkout (bench: F3 bench lane) are skipped, never dropped
+  # from the list.
   local roots=() d
-  for d in scripts packages/coding-agent/resources/skills packages/coding-agent/resources/bin packages/coding-agent/test/harness/hooks packages/coding-agent/test/harness/permissions scripts/harness bench; do
+  for d in scripts packages/coding-agent/resources/skills packages/coding-agent/resources/bin scripts/harness bench; do
     [ -d "$d" ] && roots+=("$d")
   done
   COVERAGE_RCFILE="$TMP/coveragerc" coverage run -m pytest "${roots[@]}" -q -p no:cacheprovider &&

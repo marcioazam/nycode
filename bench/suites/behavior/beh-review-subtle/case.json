@@ -1,0 +1,11 @@
+{
+  "id": "beh-review-subtle",
+  "suite": "behavior",
+  "kind": "outcome",
+  "prompt": "No pacote invoicing (leia README.md), adicione o desconto por volume conforme docs/SPEC.md §4. Todas as regras numeradas do SPEC valem, inclusive as de arredondamento, das linhas com quantidade 0 e da ordem do relatório. Mantenha os testes de tests/ passando. Só biblioteca padrão.",
+  "timeout_s": 900,
+  "budget_usd": 1.5,
+  "split": "dev",
+  "security": false,
+  "test_cmd": "python3 -m pytest -q -p no:cacheprovider hidden"
+}

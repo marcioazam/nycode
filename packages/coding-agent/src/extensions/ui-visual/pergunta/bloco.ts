@@ -1,5 +1,5 @@
 /**
- * Resultado da tool `question` em "Resposta em destaque" (lab /pergunta desenho 7 + "Nasce e sai", dono, 2026-11-20; antes um
+ * Resultado da tool `question` em "Resposta em destaque" (lab /pergunta desenho 7 + "Nasce e sai"; antes um
  * cartão verde toolSuccessBg com `pergunta · cabeçalho  resposta` e o texto atrás de um trilho │). Sem fundo; por pergunta:
  *   ` cabeçalho · texto da pergunta (dim)`   + `ctrl+o abre` e a hora em pílula só na 1ª pergunta
  *   ` ❯ resposta` (negrito: success; sem resposta/tempo esgotado em warning; `(outra)` dim se digitada)
@@ -61,7 +61,7 @@ function resposta(t: Tema, p: Pergunta, now: number): string {
 	);
 }
 
-/** Linhas do bloco para a largura `w`, na margem do chat (dono, 2026-11-20; antes recuo LEAD + 1 espaço, 3 colunas para dentro). */
+/** Linhas do bloco para a largura `w`, na margem do chat (antes recuo LEAD + 1 espaço, 3 colunas para dentro). */
 export function perguntaBloco(
 	ps: Pergunta[],
 	t: Tema,
@@ -73,7 +73,7 @@ export function perguntaBloco(
 	return ps.flatMap((p, i) => {
 		const q = (p.question ?? "").replace(/\s+/g, " ").trim();
 		const esq = `${[p.header ? t.fg("muted", p.header) : "", q ? t.fg("dim", q) : ""].filter(Boolean).join(sep)}`;
-		// Atalho e hora à direita, sem pílula, a hora terminando na margem direita (coluna da hora do Read; dono, 2026-11-20).
+		// Atalho e hora à direita, sem pílula, a hora terminando na margem direita (coluna da hora do Read).
 		const dir =
 			i === 0
 				? [

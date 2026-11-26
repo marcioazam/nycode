@@ -113,7 +113,8 @@ test("referências: skills e comandos citados existem em resources", () => {
 			seen++;
 		}
 	}
-	assert.ok(seen >= 4);
+	// statusline cites the two claude-hud commands; batch lost its skill links when those skills left the package
+	assert.ok(seen >= 2);
 });
 
 test("skill por projeto: só .nycode/skills/run/SKILL.md do projeto, nunca o home", () => {
@@ -125,7 +126,7 @@ test("skill por projeto: só .nycode/skills/run/SKILL.md do projeto, nunca o hom
 
 test("limites de /batch, /team-onboarding e /update-config no texto operacional", () => {
 	assert.match(load("batch").body, /4 writers/);
-	assert.match(load("batch").body, /git-delivery/);
+	assert.match(load("batch").body, /general-purpose/);
 	assert.match(load("team-onboarding").body, /usage\.ts/);
 	assert.match(load("update-config").body, /\/config/);
 });

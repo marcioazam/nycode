@@ -2,7 +2,7 @@
 
 > Estes documentos vieram de `claude-home/docs/` do harness Nycode (cópia de 2026-11-21, checkout na branch
 > `feat/ui-onda9-harness` mais arquivos ainda não commitados) e foram convertidos para o Nycode na F8 (mapa em
-> `docs/migration/nycode-core/anexos/E-mapa-arquivo-a-arquivo.tsv`, decisão D-31). Critério da conversão:
+> registro do mantenedor, decisão D-31). Critério da conversão:
 >
 > - Todos os documentos: caminhos internos trocados pelos do Nycode (`packages/coding-agent/resources/...`,
 >   `scripts/harness/...`, `docs/harness/...`, `${NYCODE_RESOURCES}`, `~/.nycode/agent`).
@@ -12,6 +12,4 @@
 >   `pi-code`, `PI_*`), pois descrevem o que foi medido e decidido na época.
 >
 > Descrições de patches do pi-code, do wrapper `~/.local/bin/pi` e de extensões em `~/.nycode/agent/extensions/` são
-> contexto histórico do `marcioazam/ny-pi`: o comportamento equivalente vive agora no código embutido. Os arquivos citados e ainda
-> ausentes do Nycode podem ser vistos no harness Nycode, no commit `e4f8729bfab57e9e2b222f020710c85d0a578c8d`
-> (`https://github.com/marcioazam/ny-pi/blob/e4f8729bfab57e9e2b222f020710c85d0a578c8d/<caminho>`).
+> contexto histórico do Nycode pré-migração: o comportamento equivalente vive agora no código embutido.

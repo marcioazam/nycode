@@ -7,7 +7,7 @@ import * as __r2 from "../../../../../src/extensions/ui-visual/diff.ts";
 import * as __r1 from "../../../../../src/extensions/ui-visual/icons.ts";
 
 const DIR = new URL("../../../../../src/modes/interactive/theme/", import.meta.url);
-// Fundo do kitty do dono (~/.config/kitty/tokyonight.conf): o tema do nycode não pinta o fundo, então todo tema escuro precisa passar nele também.
+// Fundo do kitty (~/.config/kitty/tokyonight.conf): o tema do nycode não pinta o fundo, então todo tema escuro precisa passar nele também.
 const KITTY_BG = "#1a1b26";
 
 type Theme = {
@@ -82,7 +82,7 @@ const PAIRS: [string, string, number][] = [
 	]),
 	...["customMessageText", "customMessageLabel"].map((k): [string, string, number] => [k, "customMessageBg", 4.5]),
 	...["text", "muted", "accent", "success", "error"].map((k): [string, string, number] => [k, "selectedBg", 4.5]),
-	// Caixas de ferramenta com fundo tingido (pedido do dono, 2026-11-14): título, saída, estado e diff legíveis em cada estado.
+	// Caixas de ferramenta com fundo tingido: título, saída, estado e diff legíveis em cada estado.
 	...["toolPendingBg", "toolSuccessBg", "toolErrorBg", "customMessageBg"].flatMap((bg) =>
 		[
 			"syntaxType",
@@ -154,7 +154,7 @@ for (const t of themes) {
 	);
 }
 
-// Pedido do dono (2026-11-14): a caixa de compactação (customMessageBg) não pode ter o mesmo fundo das mensagens dele.
+// A caixa de compactação (customMessageBg) não pode ter o mesmo fundo das mensagens dele.
 test("nycode-claro/nycode-escuro: mensagem do usuário tem fundo próprio, distinto das caixas de sistema e das tools", () => {
 	for (const t of themes.filter((x) => x.name.startsWith("nycode-"))) {
 		const u = resolve(t, t.colors.userMessageBg!);
@@ -203,7 +203,7 @@ test("nycode-noite: sintaxe com 4 cores, raciocínio sem warn, fundo verde no su
 	for (const [k, name] of Object.entries(want)) assert.equal(c(k), v(name), k);
 	for (const k of Object.keys(t.colors).filter((x) => x.startsWith("thinking") && x !== "thinkingText"))
 		assert.notEqual(c(k), v("warn"), k);
-	// Pedido do dono (2026-11-14, supera D3 da Onda 9): executou = fundo verde, erro = fundo vermelho (matiz a 20%, brilho do fundo).
+	// Executou = fundo verde, erro = fundo vermelho (matiz a 20%, brilho do fundo).
 	assert.equal(c("toolSuccessBg"), "#29302a");
 	assert.equal(c("toolErrorBg"), "#3b2934");
 	assert.equal(c("customMessageBg"), "#262734");

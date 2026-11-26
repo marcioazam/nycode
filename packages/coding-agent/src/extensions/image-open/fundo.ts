@@ -1,5 +1,5 @@
 /**
- * Imagem de resultado de tool dentro do fundo da tool (pedido do usuário 2026-11-14): o nycode desenha o Spacer e a
+ * Imagem de resultado de tool dentro do fundo da tool: o nycode desenha o Spacer e a
  * Image fora do Box com fundo, e a imagem fica "flutuando" no fundo do terminal. Pintamos as últimas linhas
  * (spacer + imagem) com o mesmo fundo e o mesmo recuo do Box.
  * Kitty (C=1, o cursor não anda): recuo, sequência e então espaços até a largura; a imagem (z=0) fica sobre o texto.
@@ -44,7 +44,7 @@ export function pintarImagem(
 	marco?: (s: string) => string,
 ): string[] {
 	if (n <= 0) return lines;
-	// Moldura do resultado (dono, 2026-11-20, lab /pertence desenho 5): `│` dos dois lados e `╰─…─╯` embaixo, em volta da caixa;
+	// Moldura do resultado: `│` dos dois lados e `╰─…─╯` embaixo, em volta da caixa;
 	// sem miniatura emoldurada (iTerm2, estreito, sem cor) fica o desenho de antes, e o cabeçalho (ui-visual) também não dobra.
 	if (marco && fg && width >= 24) {
 		const r = pintarImagem(lines, n, width - 2, bg, 1, fg, ficha),
@@ -85,10 +85,10 @@ export function pintarImagem(
 				const { cols, rows } = cel;
 				const used = pad + cols + 2;
 				const bar = "─".repeat(cols);
-				// Ficha ao lado (dono, 2026-11-19, lab /leitura desenho 5 "Miniatura + ficha"): 3 colunas depois da moldura.
+				// Ficha ao lado: 3 colunas depois da moldura.
 				const livre = width - used - 3;
 				const fl = ficha && livre >= 6 ? [...(ficha.linhas[nImg] ?? [])] : [];
-				// Alinhada à moldura (dono, 2026-11-20, "alinha a img às infos"): a moldura tem F = rows+2 linhas; a ficha ocupa 3 linhas se F é
+				// Alinhada à moldura: a moldura tem F = rows+2 linhas; a ficha ocupa 3 linhas se F é
 				// ímpar e 2 se é par (as últimas se juntam com ` · `), começando em floor((F-n)/2): o centro do texto é o da moldura. Granularidade
 				// de célula: com F ímpar o centro é uma linha; com F par, entre duas.
 				const alvo = (rows + 2) % 2 === 1 ? 3 : 2;
@@ -156,7 +156,7 @@ const rgb = (ansi: string | undefined) =>
 		?.slice(1)
 		.map(Number);
 
-/** Fundo atrás da imagem (dono, 2026-11-19; antes o verde de sucesso / ciano em execução): neutro (customMessageBg); erro
+/** Fundo atrás da imagem (antes o verde de sucesso / ciano em execução): neutro (customMessageBg); erro
  * em toolErrorBg; aviso (truncado) no neutro puxado 28% ao âmbar, como a pílula de truncado do Read. */
 function fundoDe(tool: Tool, theme: Theme): (s: string) => string {
 	if (tool.result?.isError) return (s) => theme.bg("toolErrorBg", s);
@@ -175,7 +175,7 @@ function fundoDe(tool: Tool, theme: Theme): (s: string) => string {
 
 const imagem = (l: string) => l.includes(KITTY) || l.includes(ITERM);
 
-/** Miniatura do Read (dono, 2026-11-19): imagem lida em MINI_COLS colunas, com nome, tipo, tamanho e o clique ao lado. */
+/** Miniatura do Read: imagem lida em MINI_COLS colunas, com nome, tipo, tamanho e o clique ao lado. */
 export const MINI_COLS = 16;
 const EXT: Record<string, string> = {
 	"image/png": "png",
@@ -204,7 +204,7 @@ export function fichaDe(tool: Tool, img: Img): string[] {
 }
 
 /** Envolve ToolExecutionComponent.prototype.render; sem tema ou com erro, devolve o render nativo.
- * Margem do chat (dono, 2026-11-19): quando o chat-margin roda por dentro, as linhas de spacer chegam como 2×margem espaços;
+ * Margem do chat: quando o chat-margin roda por dentro, as linhas de spacer chegam como 2×margem espaços;
  * a pintura vai na largura interna e a margem volta sem fundo dos dois lados. */
 const instalados = new WeakSet<object>();
 const vistos = new WeakMap<object, { parcial: boolean; t0?: number }>();
@@ -217,7 +217,7 @@ export function instalarFundo(
 	if (instalados.has(orig)) return;
 	const render = function (this: Tool, width: number): string[] {
 		const leitura = this.toolName === "read";
-		// Nasce do fundo (dono, 2026-11-20): só quem foi visto executando sobe em NASCE_MS; o histórico já nasce assentado.
+		// Nasce do fundo: só quem foi visto executando sobe em NASCE_MS; o histórico já nasce assentado.
 		const v = vistos.get(this) ?? { parcial: false };
 		vistos.set(this, v);
 		if (this.isPartial) v.parcial = true;
@@ -250,7 +250,7 @@ export function instalarFundo(
 			const n = margem ? nIn : medir(width);
 			const pad = w - 4 >= 20 ? 2 : 1;
 			// A linha da imagem também chega com a margem dos dois lados (` ␛_G… `): sem tirá-la, a moldura e a ficha andavam 2 colunas
-			// (dono, 2026-11-19).
+			//.
 			const mm0 = " ".repeat(m),
 				semMargem = (l: string) =>
 					l.length > 2 * m && l.startsWith(mm0) && l.endsWith(mm0) ? l.slice(m, l.length - m) : l;

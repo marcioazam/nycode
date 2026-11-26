@@ -216,17 +216,13 @@ function migrateToolsToBin(): void {
 }
 
 /**
- * Check for deprecated hooks/ and tools/ directories.
+ * Check for a deprecated tools/ directory.
  * Note: tools/ may contain fd/rg binaries extracted by nycode, so only warn if it has other files.
+ * hooks/ is not checked: in nycode it holds the command-hook scripts settings.json points at (Claude Code layout).
  */
 function checkDeprecatedExtensionDirs(baseDir: string, label: string): string[] {
-	const hooksDir = join(baseDir, "hooks");
 	const toolsDir = join(baseDir, "tools");
 	const warnings: string[] = [];
-
-	if (existsSync(hooksDir)) {
-		warnings.push(`${label} hooks/ directory found. Hooks have been renamed to extensions.`);
-	}
 
 	if (existsSync(toolsDir)) {
 		// Check if tools/ contains anything other than fd/rg (which are auto-extracted binaries)

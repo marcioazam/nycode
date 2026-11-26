@@ -211,9 +211,6 @@ exit 0
 SH
 chmod +x "$T/ak/fake"
 printf '{"providers":{"anthropic":{"baseUrl":"keep","headers":{"x-a":"1"}},"other":{}}}\n' >"$T/ak/models.json"
-mkdir -p "$T/ak/stage/.local/bin" "$T/ak/stage/.pi/agent"
-cp "$T/ak/fake" "$T/ak/stage/.local/bin/pi"
-touch "$T/ak/stage/.ready"
 arm() { # arm [VAR=value...]: runs it with the fake binaries and no inherited auth
   local a=$1
   shift
@@ -233,25 +230,16 @@ check "api/pi-vanilla: chave de API, sem OAuth" bash -c "grep -qx 'ANTHROPIC_API
 check "api/pi-vanilla: models.json ganha o cabeçalho e preserva o resto" "$RPY" -c "
 import json; a=json.load(open('$T/ak/pv/models.json'))['providers']
 assert a['anthropic']['headers']=={'x-a':'1','anthropic-workspace-id':'$WS'} and a['anthropic']['baseUrl']=='keep' and 'other' in a"
-out=$(arm nycode-harness BENCH_API_KEY_FILE="$T/ak/key" BENCH_ANTHROPIC_WORKSPACE_ID=$WS ANTHROPIC_OAUTH_TOKEN=leak)
-check "api/nycode-harness: chave de API, sem OAuth, cabeçalho no models.json do stage" bash -c "grep -qx 'ANTHROPIC_API_KEY=sk-ant-fake' <<<'$out' && ! grep -q OAUTH <<<'$out' && grep -q '$WS' $T/ak/stage/.pi/agent/models.json"
-arm nycode-harness BENCH_API_KEY_FILE="$T/ak/key" BENCH_ANTHROPIC_WORKSPACE_ID=$WS >/dev/null
-check "api/nycode-harness: repetir é idempotente" "$RPY" -c "
-import json; h=json.load(open('$T/ak/stage/.pi/agent/models.json'))['providers']['anthropic']['headers']
-assert h=={'anthropic-workspace-id':'$WS'}"
 out=$(arm pi-vanilla BENCH_API_KEY_FILE="$T/ak/key")
 check "api/pi-vanilla: sem workspace não é erro" bash -c "grep -qx 'ANTHROPIC_API_KEY=sk-ant-fake' <<<'$out'"
-rm -f "$T/ak/stage/.pi/agent/models.json"
-arm nycode-harness BENCH_API_KEY_FILE="$T/ak/key" >/dev/null
-check "api/nycode-harness: sem workspace não cria models.json" test ! -e "$T/ak/stage/.pi/agent/models.json"
-for a in claude-vanilla pi-vanilla nycode-harness; do
+for a in claude-vanilla pi-vanilla; do
   out=$(arm $a)
   check "sem chave/$a: segue no OAuth do plano" bash -c "grep -q 'OAUTH.*=oauth-fake' <<<'$out' && ! grep -q ANTHROPIC_API_KEY <<<'$out'"
   check "chave vazia/$a: falha com mensagem" bash -c "! o=\$(env BENCH_API_KEY_FILE='$T/ak/empty' bash -c \"BENCH_CC_BIN='$T/ak/fake' BENCH_PI_BIN='$T/ak/fake' BENCH_STAGE='$T/ak/stage' BENCH_CC_VANILLA_DIR='$T/ak/cc' BENCH_PI_VANILLA_DIR='$T/ak/pv' BENCH_REAL_HOME='$T/ak/rh' bash '$A/$a'\" 2>&1) && grep -q 'bench: BENCH_API_KEY_FILE' <<<\"\$o\""
 done
-check "overlay: models.json do stage não entra no hash" bash -c "! grep -qx 'models.json' '$A/overlay.list'"
+check "overlay: models.json do stage não entra no hash" bash -c "! grep -qx 'models.json' '$A/overlay-nycode.list'"
 
-# Parallel runs share the Nycode stage: concurrent merges never expose a half-written models.json to readers.
+# Parallel runs share one stage: concurrent merges never expose a half-written models.json to readers.
 # shellcheck disable=SC2329 # invoked through check
 race() {
   local m=$T/race/models.json i
@@ -264,7 +252,7 @@ for _ in range(300): json.load(open(sys.argv[1]))" "$m" || touch "$T/race/bad") 
   wait
   [ ! -e "$T/race/bad" ] && "$RPY" -c "import json,sys; json.load(open(sys.argv[1]))['providers']['anthropic']['baseUrl']" "$m"
 }
-check "api/nycode-harness: merges paralelos do cabeçalho não corrompem o models.json" race
+check "api/nycode: merges paralelos do cabeçalho não corrompem o models.json" race
 
 echo "falhas: $fails"
 exit $((fails > 0))

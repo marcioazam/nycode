@@ -10,7 +10,7 @@
  * without error or user message); then it gives up with a warning. `harness.autoResume` (NYCODE_AUTO_RESUME wins)
  * switches it off. Fails open: any exception releases the session.
  *
- * The pattern list is a copy of @nycode/ai's retry.js (isRetryableAssistantError) and overflow.js, kept inline.
+ * What counts as transient or as an overflow is decided by @nycode/ai (isRetryableAssistantError, isContextOverflow).
  *
  * Account limit: the 429 "would exceed your account's rate limit" is not transient. `message_end` marks the error with
  * "quota exceeded" (a non-retryable pattern), so the 10 internal retries are not spent; the settle waits until the
@@ -21,6 +21,7 @@
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { type AssistantMessage, isContextOverflow, isRetryableAssistantError } from "@nycode/ai";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
 import { userConfigDir } from "../_shared/settings/config-dir.ts";
@@ -36,52 +37,10 @@ export type Decision =
 export const DELAYS_MS = [30_000, 90_000, 180_000, 300_000, 600_000];
 const MAX_ERR = 200;
 
-const NON_RETRYABLE =
-	/GoUsageLimitError|FreeUsageLimitError|Monthly usage limit reached|available balance|insufficient_quota|out of budget|quota exceeded|billing|subscription_sharing_usage_limit_exceeded|subscription_sharing_workplace_individual_usage_limit_exceeded|"code"\s*:\s*"?1308(?![0-9])/i;
-// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp -- fixed literal alternatives joined at load
-const RETRYABLE = new RegExp(
-	[
-		"overloaded",
-		"server_busy",
-		"servers are currently busy",
-		"currently experiencing high demand",
-		"model is at capacity",
-		"rate.?limit",
-		"too many requests",
-		"(?<![a-z0-9])(?:429|500|502|503|504|520|524)(?![a-z0-9])",
-		"service.?(?:is.?)?(?:temporarily.?)?unavailable",
-		"server.?error",
-		"internal.?error",
-		"provider.?returned.?(?:an.?)?error",
-		"exceeded request buffer limit while retrying upstream",
-		"unable to forward upstream",
-		"upstream.?request.?failed",
-		"upstream_stream_read_error",
-		"stream was interrupted",
-		"http/?2 stream failed",
-		"network.?error",
-		"connection.?error",
-		"connection.?refused",
-		"connection.?lost",
-		"other side closed",
-		"fetch failed",
-		"request to \\S+ failed, reason:",
-		"getaddrinfo",
-		"ENOTFOUND",
-		"EAI_AGAIN",
-		"upstream.?connect",
-		"reset before headers",
-		"socket hang up",
-		"socket connection was closed",
-		"timed? out",
-	].join("|"),
-	"i",
-);
-const OVERFLOW =
-	/prompt (?:is )?too long|prompt exceeds max length|request_too_large|input is too long for requested model|exceeds the context window|maximum context length|context window exceed|input token count.*exceeds the maximum|maximum prompt length is \d+|reduce the length of the messages|exceeds (?:the )?maximum allowed input length|is longer than the model'?s context length|exceeds the limit of \d+|exceeds the available context size|greater than the context length|exceeded model token limit|too large for model|model_context_window_exceeded|range of input length should be|context[_ ]length[_ ]exceeded|too many tokens|token limit exceeded|^(?:[\w -]+ API error \(413\):|413(?:\s|:|$))/i;
-
-export function retryable(error: string): boolean {
-	return !NON_RETRYABLE.test(error) && !OVERFLOW.test(error) && RETRYABLE.test(error);
+/** Whether an assistant message that ended in an error is a transient one worth resuming: the classifier of
+ * @nycode/ai, with a context overflow (which resuming cannot fix) excluded first, as that function documents. */
+function retryable(message: AssistantMessage): boolean {
+	return !isContextOverflow(message) && isRetryableAssistantError(message);
 }
 
 const ACCOUNT_LIMIT = /exceed your account'?s rate limit|hit your (?:usage )?limit|usage limit (?:reached|exceeded)/i;
@@ -137,7 +96,7 @@ export const delayText = (ms: number): string =>
 const clock = (ms: number) =>
 	new Date(ms).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 
-const SINAL_LIMITE = Symbol.for("nycode-harness:cartao-limite");
+const SINAL_LIMITE = Symbol.for("nycode:cartao-limite");
 const minutos = (ms: number) => Math.ceil(Math.max(0, ms) / 60_000);
 type TemaCartao = { fg: (cor: string, texto: string) => string; bold: (texto: string) => string };
 
@@ -250,7 +209,7 @@ export function decideResume(
 	const msg = branch[last].message;
 	const error = String(msg.errorMessage ?? "");
 	if (msg.stopReason === "error" && error.startsWith(LIMIT_MARK)) return decideLimit(branch, last, error, env, opts);
-	if (msg.stopReason !== "error" || !retryable(error)) return { action: "none" };
+	if (!retryable(msg)) return { action: "none" };
 
 	let prior = 0;
 	for (let i = last; i >= 0; i--) {
@@ -300,7 +259,7 @@ const TECLA_CANCELA = /^(?:\x1b|\x03|\x1b\[27(?:;1)?(?::[12])?u|\x1b\[99;5(?::[1
 const POLL_FILA_MS = 250;
 
 /** Sinal próprio da espera. Nesta fase (agent_before_settle) o run do agente já terminou: `ctx.signal` é undefined e o abort
- * do nycode não acorda ninguém, então a sessão ficava presa até o reset (bug visto pelo dono, 2026-11-14). Acordam a espera:
+ * do nycode não acorda ninguém, então a sessão ficava presa até o reset (bug observado). Acordam a espera:
  * `ctx.signal` (se houver), esc/ctrl+c, mensagem do usuário na fila e o enviar-agora (`globalThis.__piAutoResumeCancel`). */
 function cancelavel(
 	ctx: any,
@@ -439,7 +398,7 @@ export default function autoResumeExtension(
 			if (!ok) {
 				// O settle nem sempre marca Esc como aborted; não envie uma notificação de erro após cancelar a espera.
 				if (d.kind === "limit")
-					(globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:retry-cancelado")] = now();
+					(globalThis as Record<symbol, unknown>)[Symbol.for("nycode:retry-cancelado")] = now();
 				return;
 			}
 			const entries = [

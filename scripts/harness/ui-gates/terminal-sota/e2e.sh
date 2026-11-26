@@ -6,7 +6,7 @@
 # scratch agent dir, which the EXIT trap deletes; their content is never printed. Without auth.json the model steps
 # (4, 5, 6) print SKIP and the script exits 1 (a skip is not green). Restores the clipboard.
 # Exits 0 only if all pass.
-# Converted from Nycode's claude-home/bin/tests/terminal-sota/e2e.sh: the binary is the repo build, not ~/.local/bin/nycode.
+# Converted from pre-migration Nycode's claude-home/bin/tests/terminal-sota/e2e.sh: the binary is the repo build, not ~/.local/bin/nycode.
 # Needs: npm run build, tmux, rg, git; wl-paste/wl-copy optional (clipboard check 6 reads it).
 set -u
 umask 077

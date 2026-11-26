@@ -1,7 +1,7 @@
 # Mega plano: migrar o harness Nycode para o core do Nycode (fork do pi)
 
 Estado: **plano, nada implementado**. Este conjunto de documentos é o único entregável desta etapa.
-Levantamento feito em 2026-11-20 sobre `marcioazam/ny-pi@e4f8729` (origem) e `marcioazam/nycode@fb05db936` (destino).
+Levantamento feito em 2026-11-20 sobre Nycode pré-migração (origem) e `marcioazam/nycode@fb05db936` (destino).
 
 ## 1. Objetivo
 
@@ -10,9 +10,9 @@ extensões, hooks, agentes, skills, regras, benchmark e instalador) para **dentr
 `earendil-works/pi@073b0ba` que já vive em `marcioazam/nycode`. Ao final:
 
 1. O binário `nycode` entrega, sem wrapper e sem patch em tempo de boot, o mesmo comportamento medido do harness Nycode.
-2. Todas as regras de repositório do `marcioazam/ny-pi` valem no Nycode (configuração do GitHub e arquivos versionados).
+2. Todas as regras de repositório do Nycode pré-migração valem no Nycode (configuração do GitHub e arquivos versionados).
 3. O README do Nycode mostra o logo do Nycode (recuperado do histórico git), sem o logo do pi.
-4. O repositório `marcioazam/ny-pi` fica arquivado, apontando para o Nycode.
+4. O repositório Nycode pré-migração fica arquivado, apontando para o Nycode.
 5. O fork continua recebendo o upstream com custo de conflito controlado.
 
 ## 2. Fora do escopo
@@ -38,8 +38,8 @@ extensões, hooks, agentes, skills, regras, benchmark e instalador) para **dentr
 | Publicação | Não publica no npm; `install.sh` + `publish.list` (symlinks) | `scripts/release.mjs` + `publish.mjs` (para o npm); escopo `@nycode` **não existe** no npm (404) e a D-17 descartou o npm: o canal é o GitHub Releases do repositório |
 | Logo | — | `docs/assets/nycode-pixel.svg` removido em `c410d670e`; recuperável de `9ea437bf7` |
 
-Detalhe completo: [01-inventario-origem.md](01-inventario-origem.md) e anexos [A](anexos/A-inventario-nycode-harness.md),
-[B](anexos/B-mapa-core-nycode.md), [C](anexos/C-logo-historico.md), [D](anexos/D-regras-github-brutas.md).
+Detalhe completo: [01-inventario-origem.md](01-inventario-origem.md) e anexos A,
+[B](anexos/B-mapa-core-nycode.md), [C](anexos/C-logo-historico.md), D.
 
 ## 4. Princípios
 
@@ -55,7 +55,7 @@ Detalhe completo: [01-inventario-origem.md](01-inventario-origem.md) e anexos [A
    junto. Peça opcional não entra no contexto do modelo por padrão.
 7. **Segurança da cadeia de suprimento não regride.** Actions por SHA, dependências exatas, `--ignore-scripts`,
    verificação de vazamento, publicação com atestação de proveniência (`actions/attest`, D-17).
-8. **Evidência registrada.** Cada fase fecha com um registro em `docs/migration/nycode-core/evidencias/` (comandos,
+8. **Evidência registrada.** Cada fase fecha com um registro em registro do mantenedor (comandos,
    SHAs, saídas).
 
 ## 5. Arquitetura alvo em uma página
@@ -87,7 +87,7 @@ Cada fase tem critérios de entrada e de saída verificáveis. O passo a passo c
 | Fase | Nome | Entrega | Tamanho | Depende de |
 |---|---|---|---|---|
 | F0 | Preparação e congelamento | Decisões assinadas, linha de base medida, harness Nycode congelado, limpeza do repositório destino | P | — |
-| F1 | Importação do histórico | Histórico do harness Nycode dentro do Nycode em `import/ny-pi/` | P | F0 |
+| F1 | Importação do histórico | Histórico do harness Nycode dentro do Nycode em `import/origem/` | P | F0 |
 | F2 | Governança versionada e marca | Arquivos de regra, comunidade, logo e README | P | F1 |
 | F3 | CI unificado, gates e benchmark | Workflows, scripts de CI, `bench/` operante, ruleset ativo | G | F2 |
 | F4 | Core nativo | Flags do wrapper, configuração tipada, 2 patches de core, migração de dados do usuário | M | F3 |
@@ -98,7 +98,7 @@ Cada fase tem critérios de entrada e de saída verificáveis. O passo a passo c
 | F9 | Terceiros | `pi-lsp` embutido, demais como opcionais | M | F5 |
 | F10 | Paridade final e nova linha de base | Gate completo, nova linha de base `main`, relatório de paridade | M | F6 a F9 |
 | F11 | Distribuição | GitHub Release `v2.0.0` do repositório com binários e atestação, aviso de versão, Nix removido (D-17, D-42) | G | F10 |
-| F12 | Corte e descomissionamento | Dados do usuário migrados, `marcioazam/ny-pi` arquivado | P | F11 |
+| F12 | Corte e descomissionamento | Dados do usuário migrados, Nycode pré-migração arquivado | P | F11 |
 
 Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza vem das contagens do inventário
 (por exemplo, F6 move cerca de 12 mil linhas de pi-code mais 5,2 mil linhas de patch).
@@ -108,7 +108,7 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
 - Entrada: este plano revisado pelo dono.
 - Trabalho:
   1. Fechar as decisões marcadas "aguarda o dono" em [11](11-decisoes-e-pendencias.md).
-  2. Congelar o harness Nycode: só correção de segurança entra em `marcioazam/ny-pi` `main` até F12; registrar o SHA de congelamento.
+  2. Congelar o harness Nycode: só correção de segurança entra em Nycode pré-migração `main` até F12; registrar o SHA de congelamento.
   3. Medir a linha de base do destino: `npm ci --ignore-scripts`, `npm run build`, `npm run check`, `./test.sh` no
      `nycode@main`; guardar a saída.
   4. Limpar o destino: 213 ramos remotos herdados do antigo Nycode em Rust (`dependabot/cargo/*`, `backup/*`,
@@ -118,16 +118,16 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
      upstream em `packages/ai/src/utils/oauth/` e um `plan.md` histórico).
   6. ~~Reservar o escopo `@nycode` no npm~~ (substituído pela D-17: sem npm; o canal é o repositório).
   7. Criar a etiqueta `v1.6.0-base` no commit do fork, para o `build-check` ter uma tag de referência.
-- Saída: decisões registradas; `evidencias/F0.md` com as saídas; nenhum ramo órfão; alertas triados.
+- Saída: decisões registradas; registro do mantenedor com as saídas; nenhum ramo órfão; alertas triados.
 
-### F1. Importação do histórico do `marcioazam/ny-pi`
+### F1. Importação do histórico do Nycode pré-migração
 
-- Trabalho: reescrever um clone do `marcioazam/ny-pi` para o subdiretório `import/ny-pi/` e fundir no Nycode com histórias não
+- Trabalho: reescrever um clone do Nycode pré-migração para o subdiretório `import/origem/` e fundir no Nycode com histórias não
   relacionadas, em **um PR com merge commit** (o método squash perderia o histórico). Precisa ocorrer **antes** de o
-  ruleset do `marcioazam/ny-pi` (só squash) ser ativado em F3. Comandos em [06](06-guia-de-execucao.md#f1).
-- Saída: `git log --follow import/ny-pi/extensions/plan-gate.ts` mostra os commits originais; nenhum arquivo fora de
-  `import/ny-pi/` muda; `import/` está fora do build, do lint e do pacote publicado.
-- A partir daqui, toda migração é um `git mv` de `import/ny-pi/...` para o destino, o que preserva a autoria.
+  ruleset do Nycode pré-migração (só squash) ser ativado em F3. Comandos em [06](06-guia-de-execucao.md#f1).
+- Saída: `git log --follow import/origem/extensions/plan-gate.ts` mostra os commits originais; nenhum arquivo fora de
+  `import/origem/` muda; `import/` está fora do build, do lint e do pacote publicado.
+- A partir daqui, toda migração é um `git mv` de `import/origem/...` para o destino, o que preserva a autoria.
 
 ### F2. Governança versionada e marca
 
@@ -198,7 +198,7 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
 
 ### F10. Paridade final e nova linha de base
 
-- Trabalho: rodar o gate completo (`tier full`) do braço `nycode` contra a referência guardada do Nycode; fechar as
+- Trabalho: rodar o gate completo (`tier full`) do braço `nycode` contra a referência guardada do Nycode pré-migração; fechar as
   11 dimensões de avaliação; gravar a nova linha de base. Critério em
   [09](09-paridade-e-benchmark.md#criterio-de-paridade).
 - Saída: relatório de paridade assinado; `docs/bench/baseline-main/` regravado por PR.
@@ -214,8 +214,8 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
 ### F12. Corte e descomissionamento
 
 - Trabalho: migrar os dados do dono (`nycode migrate from-pi`), trocar o `pi` do dia a dia por `nycode`, manter os
-  dois lado a lado por um período de observação, arquivar `marcioazam/ny-pi` com aviso no README.
-- Saída: `marcioazam/ny-pi` arquivado; `import/ny-pi/` removido do Nycode (o histórico continua no git); checklist mestre 100%.
+  dois lado a lado por um período de observação, arquivar Nycode pré-migração com aviso no README.
+- Saída: Nycode pré-migração arquivado; `import/origem/` removido do Nycode (o histórico continua no git); checklist mestre 100%.
 
 ## 7. Grafo de dependências e paralelismo
 
@@ -243,7 +243,7 @@ F0 → F1 → F2 → F3 → F4 → F5 ─┬→ F6 ─┬→ F8 ─┐
    falha em linha nova ([D-41](11-decisoes-e-pendencias.md)).
 3. Todos os testes do harness Nycode têm um equivalente verde no Nycode, ou uma linha em
    [03](03-mapa-de-migracao.md) que justifica a remoção.
-4. Gate do benchmark: braço `nycode` não inferior à referência do Nycode em acerto, custo por tarefa não pior além da
+4. Gate do benchmark: braço `nycode` não inferior à referência do Nycode pré-migração em acerto, custo por tarefa não pior além da
    margem definida em [09](09-paridade-e-benchmark.md).
 5. As 60 linhas (R01 a R60) da tabela de regras em [04](04-regras-do-repositorio.md) estão em "igual ou mais estrito".
 6. README sem logo do pi; `docs/assets/nycode-pixel.svg` com sha256
@@ -268,7 +268,7 @@ Registro completo e planos de reversão em [10-riscos-e-rollback.md](10-riscos-e
 
 | Papel | Quem | Responsabilidade |
 |---|---|---|
-| Dono | Mantenedor do repositório | Decisões de [11](11-decisoes-e-pendencias.md), autorizações (apagar ramos, arquivar, publicar o Release), aceite de fase |
+| Dono | dono do repositório | Decisões de [11](11-decisoes-e-pendencias.md), autorizações (apagar ramos, arquivar, publicar o Release), aceite de fase |
 | Orquestrador | sessão principal do agente | Divide em unidades, escreve os briefings, julga a evidência |
 | Executores | subagentes escritores | Um PR por unidade, com teste |
 | Revisor | `plan-reviewer`, `code-reviewer`, `security-reviewer` | Revisão por fase; segurança obrigatória em F4 e F8 |
@@ -278,7 +278,7 @@ Registro completo e planos de reversão em [10-riscos-e-rollback.md](10-riscos-e
 
 1. Ler este plano e [11-decisoes-e-pendencias.md](11-decisoes-e-pendencias.md).
 2. Para executar uma fase: abrir a seção da fase em [06](06-guia-de-execucao.md), seguir os passos, marcar os itens
-   em [12](12-checklist-mestre.md) e gravar `evidencias/F<n>.md`.
+   em [12](12-checklist-mestre.md) e gravar registro do mantenedor.
 3. Para saber onde vai um arquivo: [03](03-mapa-de-migracao.md).
 4. Para uma regra do repositório: [04](04-regras-do-repositorio.md).
-5. Quando um fato do levantamento mudar (novo commit no `marcioazam/ny-pi` ou no upstream), regerar os anexos e revisar o mapa.
+5. Quando um fato do levantamento mudar (novo commit no Nycode pré-migração ou no upstream), regerar os anexos e revisar o mapa.

@@ -53,8 +53,7 @@ export const afinarMensagem = (no: unknown, md: string, prof = 6): void => {
 	for (const c of n.children ?? []) afinarMensagem(c, md, prof - 1);
 };
 
-/** Caixa padrão das mensagens de extensão sem renderer (`[tipo]` + texto) sem a linha de fundo em cima e embaixo (dono,
- * 2026-11-19), como a faixa fina do usuário; o Spacer de fora segue separando do bloco anterior. Idempotente. */
+/** Caixa padrão das mensagens de extensão sem renderer (`[tipo]` + texto) sem a linha de fundo em cima e embaixo, como a faixa fina do usuário; o Spacer de fora segue separando do bloco anterior. Idempotente. */
 export const afinarCaixa = (proto: { rebuild?: (...a: unknown[]) => unknown } | undefined): void => {
 	const orig = proto?.rebuild;
 	if (!proto || typeof orig !== "function" || (orig as { afinada?: boolean }).afinada) return;
@@ -66,7 +65,7 @@ export const afinarCaixa = (proto: { rebuild?: (...a: unknown[]) => unknown } | 
 	proto.rebuild = Object.assign(novo, { afinada: true });
 };
 
-/** Respiro fino na faixa do usuário (dono, 2026-11-19): 1/8 de linha de fundo em cima (▁) e embaixo (▔), só sob a faixa (a
+/** Respiro fino na faixa do usuário: 1/8 de linha de fundo em cima (▁) e embaixo (▔), só sob a faixa (a
  * margem sem fundo do chat-margin fica de fora; sem fundo na 1ª linha, a largura toda). O Spacer de fora segue como margem do
  * bloco anterior. `cor` = RGB de userMessageBg. Idempotente. */
 export const acolchoar = (
@@ -107,8 +106,8 @@ export default function (nycode: ExtensionAPI) {
 	});
 	for (const part of [working, header, tools, compact]) part(nycode);
 	if (process.env.NYCODE_SUBAGENT === "1") return;
-	plano(nycode); // mensagem [plan-mode-execute] (lab /execplano, dono 2026-11-20)
-	// Setinha nas mensagens enviadas pelo usuário (dono, 2026-11-14). A cor vem do tema visto no início da sessão.
+	plano(nycode); // mensagem [plan-mode-execute] (lab /execplano)
+	// Setinha nas mensagens enviadas pelo usuário. A cor vem do tema visto no início da sessão.
 	let fg = (_c: string, t: string) => t;
 	let rgb = (_c: string, _bg = false): number[] | undefined => undefined;
 	let cwd = process.cwd();
@@ -185,7 +184,7 @@ export default function (nycode: ExtensionAPI) {
 		);
 	};
 
-	// Escrita suavizada com tinta secando e raciocínio recolhido animado (dono, 2026-11-18); falha aqui deixa o nycode nativo.
+	// Escrita suavizada com tinta secando e raciocínio recolhido animado; falha aqui deixa o nycode nativo.
 	try {
 		afinarCaixa(CustomMessageComponent.prototype as never);
 		acolchoar(UserMessageComponent.prototype as never, () => rgb("userMessageBg", true));

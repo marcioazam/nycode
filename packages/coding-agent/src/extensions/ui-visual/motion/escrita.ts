@@ -1,7 +1,7 @@
 /**
- * Escrita da resposta e do raciocínio (escolhas do dono, 2026-11-18, laboratórios /escrita e /raciocinio):
+ * Escrita da resposta e do raciocínio (escolhas, laboratórios /escrita e /raciocinio):
  * - Ritmo suavizado: as rajadas do modelo viram um fluxo constante (CPS letras por segundo), nunca mais de ATRASO_MAX_MS atrás.
- * - Tinta secando (animação 6), refinada em "Tinta longa" (/refino escrita 1, dono, 2026-11-18): cada letra nasce apagada e
+ * - Tinta secando (animação 6), refinada em "Tinta longa" (/refino escrita 1): cada letra nasce apagada e
  *   ganha a cor em TINTA_MS com curva suave de entrada e saída (antes 180 ms, saída cúbica). Também vale no comando do Run chegando.
  * - Raciocínio recolhido (variante 2, "Brilho no rótulo"): enquanto pensa, `pensando…` com o brilho da espera, tempo e
  *   palavras; ao terminar, `raciocinou 7 s · 56 palavras · <tecla> abre`.
@@ -11,8 +11,7 @@
 import { icon, iconGap } from "../icons.ts";
 import { anima, assinarQuadro, lerpRgb, shimmerText } from "./motion.ts";
 
-// ~15 % mais rápido (dono, 2026-11-18): antes CPS 310 e TINTA_MS 320. Sem cursor na resposta e no raciocínio (dono, 2026-11-19;
-// antes a "Barra que respira" ▏ após a última letra); barraAlfa segue no comando do Bash chegando (shell.ts).
+// ~15 % mais rápido: antes CPS 310 e TINTA_MS 320. Sem cursor na resposta e no raciocínio; barraAlfa segue no comando do Bash chegando (shell.ts).
 export const CPS = 360;
 export const ATRASO_MAX_MS = 250;
 export const TINTA_MS = 270;
@@ -203,7 +202,7 @@ export type Deps = {
 	redesenha: () => void;
 	agora?: () => number;
 };
-const MARCA = Symbol.for("nycode-harness.escrita");
+const MARCA = Symbol.for("nycode.escrita");
 
 /** Envolve o componente da mensagem do assistente. Idempotente: no /reload só troca as dependências. */
 export function instalarEscrita(d: Deps): void {

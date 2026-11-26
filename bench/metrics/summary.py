@@ -32,6 +32,8 @@ PAIRED = [
     ("tool_err_rate", "diff", "taxa de erro de ferramenta"),
     ("idle_turns", "diff", "turnos ociosos"),
     ("repeat_reads", "diff", "leituras repetidas"),
+    ("todo_only_turn_share", "diff", "turnos só de todo"),
+    ("coherent_end", "diff", "lista coerente no fim"),
     ("boot", "ratio", "boot s"),
     ("model_s", "ratio", "tempo de modelo s"),
     ("tool_s", "ratio", "tempo de ferramentas s"),
@@ -39,7 +41,7 @@ PAIRED = [
 # Neutral metrics (more is neither better nor worse) get no "ahead" verdict; for the rest less is better
 # unless listed in HIGHER.
 NEUTRAL = {"give_up", "asks_user"}
-HIGHER = {"pass_rate", "cache_hit"}
+HIGHER = {"pass_rate", "cache_hit", "coherent_end"}
 # Claimed completion and failed the verifier: strict false success plus the ones that wrote a caveat, so an arm
 # that writes more caveats is not favoured.
 CLAIMED_FAILED = ("false_success", "declared_with_caveat")
@@ -101,6 +103,7 @@ def record(row: dict[str, Any]) -> Rec:
         else 0
     )
     spd = _speed(row, tr) if seen else {}
+    td = trace.todo_metrics(ev.read_text(errors="replace")) if seen and ev else {}
     vals: dict[str, float | None] = {
         "pass_rate": float(passed),
         "cost": row.get("cost_usd"),
@@ -118,6 +121,8 @@ def record(row: dict[str, Any]) -> Rec:
         else None,
         "idle_turns": proc.get("idle_turns") if proc else None,
         "repeat_reads": proc.get("repeat_reads") if proc else None,
+        "todo_only_turn_share": td.get("todo_only_turn_share"),
+        "coherent_end": td.get("coherent_end"),
         **{k: spd.get(k) for k in ("boot", "model_s", "tool_s")},
     }
     return {
@@ -130,6 +135,7 @@ def record(row: dict[str, Any]) -> Rec:
         "outcome": oc,
         "cls": cls,
         "proc": proc,
+        "todo": td,
         "tok": tok,
         "vals": vals,
         "pending": bool(cls.get("pending")),
@@ -210,6 +216,15 @@ def arm_summary(recs: list[Rec]) -> dict[str, Any]:
         "repeat_reads_per_run": _div(tot["repeat_reads"], len(seen)),
         "sleep_runs": sum(bool(r["proc"].get("long_sleeps")) for r in seen),
         "long_sleeps": tot["long_sleeps"],
+        "todo_reminders": sum(r["todo"].get("reminders", 0) for r in seen),
+        "todo_followed": sum(r["todo"].get("reminders_followed", 0) for r in seen),
+        "todo_turn_checks": sum(r["todo"].get("turn_checks", 0) for r in seen),
+        "todo_external": sum(r["todo"].get("external_reminders", 0) for r in seen),
+        "final_open_items": sum(r["todo"].get("final_open_items", 0) for r in seen),
+        "todo_only_share_med": _med(col("todo_only_turn_share", seen)),
+        "coherent_end_rate": _div(
+            sum(col("coherent_end", seen)), len(col("coherent_end", seen))
+        ),
         "boot_med": _med(col("boot")),
         "model_s_med": _med(col("model_s")),
         "tool_s_med": _med(col("tool_s")),
@@ -263,7 +278,7 @@ def paired(
     }
 
 
-def compute(rounds: list[Path], focus: str = "nycode-harness") -> dict[str, Any]:
+def compute(rounds: list[Path], focus: str = "nycode") -> dict[str, Any]:
     recs: dict[str, list[Rec]] = defaultdict(list)
     for row in evidence.collect(rounds):
         recs[row["arm"]].append(record(row))
@@ -359,6 +374,18 @@ TABLES = [
             ("ociosos/run", "idle_per_run", 2, False),
             ("leit. repetidas/run", "repeat_reads_per_run", 2, False),
             ("runs com sleep ≥60 s", "sleep_runs", 0, False),
+        ],
+    ),
+    (
+        "Todo (runs com transcrição)",
+        [
+            ("lembretes", "todo_reminders", 0, False),
+            ("atendidos", "todo_followed", 0, False),
+            ("bloqueios de fim de turno (todo.sync)", "todo_turn_checks", 0, False),
+            ("lembretes de evento externo (todo.sync)", "todo_external", 0, False),
+            ("turnos só de todo (med)", "todo_only_share_med", 3, True),
+            ("coerente no fim", "coherent_end_rate", 3, True),
+            ("itens abertos no fim (soma)", "final_open_items", 0, False),
         ],
     ),
     (

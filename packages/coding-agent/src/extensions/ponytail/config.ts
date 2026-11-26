@@ -1,4 +1,4 @@
-// Port of ponytail hooks/ponytail-config.js (marcioazam/ponytail a75382e, MIT, see LICENSE): mode names and the
+// Port of ponytail hooks/ponytail-config.js (DietrichGebert/ponytail v5.3.3, MIT, see LICENSE): mode names and the
 // default-mode, quiet-startup and hide-status resolvers.
 //
 // Default mode: PONYTAIL_DEFAULT_MODE, then `defaultMode` of $XDG_CONFIG_HOME/ponytail/config.json (or

@@ -1,5 +1,5 @@
 // node --experimental-strip-types --test extensions/ui-visual/test/tools/shell.test.ts
-// Variante 04 "Trilho de status" (dono, 2026-11-18): o bash inteiro é um cartão desenhado por renderCall (motion/shell.ts);
+// Variante 04 "Trilho de status": o bash inteiro é um cartão desenhado por renderCall (motion/shell.ts);
 // renderResult só entrega a saída ao estado. Execução 5 (barra indeterminada) e transição C (dissolver) só são testadas
 // no estado assentado: o laboratório de movimento mede a cadência; aqui nada depende de relógio ou de timer.
 import assert from "node:assert/strict";
@@ -36,7 +36,7 @@ const vivo = __m1;
 const { definirFoco } = __m2;
 const shell = __m3;
 const { iconGap } = __m4;
-// Régua Run (dono, 2026-11-18): antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
+// Régua Run: antes `$ comando` e hora à direita; agora `<ícone> Run ─ comando ───── hora` e corpo/rodapé recuados até o `Run`.
 // O prefixo vem de icon('bash') e iconGap() da cópia tmp (base.ts fixa o terminal), sem depender de TERM.
 const G = iconGap();
 const _P = `▎ ${" ".repeat(1 + G.length)}`; // corpo e rodapé: trilho + recuo até o `Run`
@@ -67,7 +67,7 @@ const lines = (args: Args, texto?: string, c: Record<string, unknown> = {}) =>
 	txt(semRespiro(draw(args, texto, c).rows));
 const nums = (k: number) => Array.from({ length: k }, (_, i) => `o${i}`).join("\n");
 
-// Título sem régua (dono, 2026-11-20): `<ícone> Bash · ESTADO · comando` + espaços + hora; estado colorido logo após o nome.
+// Título sem régua: `<ícone> Bash · ESTADO · comando` + espaços + hora; estado colorido logo após o nome.
 // Marcas SGR de largura zero por token (as tags `<cor>` do `theme` contam como colunas no corte do título).
 const CODS: Record<string, number> = {
 	success: 32,
@@ -81,10 +81,10 @@ const CODS: Record<string, number> = {
 const fgm = (c: string, t: string) => `\x1b[${CODS[c] ?? 39}m${t}\x1b[39m`;
 const _marcas = { fg: fgm, bold: (t: string) => t };
 
-// (dono, 2026-11-18): antes o cartão tinha no máximo 72 colunas (min(72, w)); agora tem exatamente w, sem teto
+// antes o cartão tinha no máximo 72 colunas (min(72, w)); agora tem exatamente w, sem teto
 
 test("respiro: uma linha vazia com trilho e fundo em cima e embaixo do cartão", () => {
-	// (dono, 2026-11-18): antes o cartão começava no título e acabava no rodapé; agora há uma linha de respiro em cada ponta.
+	// antes o cartão começava no título e acabava no rodapé; agora há uma linha de respiro em cada ponta.
 	for (const w of [80, 120]) {
 		for (const [c, texto, bg] of [
 			[{}, nums(8), "customMessageBg"],
@@ -103,7 +103,7 @@ test("respiro: uma linha vazia com trilho e fundo em cima e embaixo do cartão",
 			}
 			assert.match(
 				plain(rows[1]!),
-				/Bash · /, // antes `Bash ─` (dono, 2026-11-20) e `Run ─` (2026-11-19)
+				/Bash · /, // antes `Bash ─` e `Run ─` (2026-11-19)
 				"o título vem logo depois do respiro",
 			);
 		}
@@ -145,7 +145,7 @@ test("fundo: customMessageBg (erro: toolErrorBg) em toda coluna do cartão, tamb
 		assert.equal(fundos(rows).size, 1, "um único fundo, sem buraco nem null");
 		assert.ok(!fundos(rows).has(null));
 	}
-	assert.ok(plain(ok[1]).includes("…"), "título cortado"); // (dono, 2026-11-18): antes ok[0]; agora ok[0] é o respiro
+	assert.ok(plain(ok[1]).includes("…"), "título cortado"); // antes ok[0]; agora ok[0] é o respiro
 	assert.notDeepEqual([...fundos(ok)], [...fundos(err)], "erro usa outro fundo");
 	assert.ok(ok.every((l: string) => l.includes(OPEN("customMessageBg")) || l.includes("\x1b[48;2;")));
 	// corte estreito (w = 20) e largura exata
@@ -279,7 +279,7 @@ test("dissolver: dentro dos 600 ms o texto já é o final; depois do fim da jane
 });
 
 test("dissolver em truecolor: no meio da janela o fundo do sucesso brilha na cor do desfecho e o resto do rodapé nasce do fundo", () => {
-	// Pedido do dono (2026-11-18): no sucesso o fundo inicial e o final são iguais; sem o brilho, a transição não aparecia.
+	// No sucesso o fundo inicial e o final são iguais; sem o brilho, a transição não aparecia.
 	const RGB: Record<string, string> = {
 		customMessageBg: "30;30;40",
 		toolErrorBg: "60;20;20",
@@ -321,7 +321,7 @@ test("dissolver em truecolor: no meio da janela o fundo do sucesso brilha na cor
 });
 
 test("toda troca de estado dissolve: preparando → executando, e executando → OK, OK · avisos e Erro", () => {
-	// Pedido do dono (2026-11-18): todos os status têm transição. No meio da janela o fundo e o trilho estão entre os dois estados.
+	// Todos os status têm transição. No meio da janela o fundo e o trilho estão entre os dois estados.
 	const RGB: Record<string, string> = {
 		customMessageBg: "30;30;40",
 		toolErrorBg: "60;20;20",
@@ -375,7 +375,7 @@ test("toda troca de estado dissolve: preparando → executando, e executando →
 });
 
 test("sem foco: a barra e o cursor continuam no cartão (1 passo por segundo), em preparando e em executando", () => {
-	// Dono, 2026-11-18: antes, sem foco, a barra e o cursor sumiam e `recebendo o comando` parecia travado; agora ficam e andam devagar.
+	// Antes, sem foco, a barra e o cursor sumiam e `recebendo o comando` parecia travado; agora ficam e andam devagar.
 	definirFoco(false);
 	const rid = id();
 	vivo.iniciou(rid);
@@ -386,7 +386,7 @@ test("sem foco: a barra e o cursor continuam no cartão (1 passo por segundo), e
 			argsComplete: false,
 		});
 		assert.match(prep.at(-1)!, /^▎ +[━─]{10} recebendo o comando · 7 caracteres$/);
-		// Barra que respira (dono, 2026-11-18, /cursor variante 3): antes o cursor do comando chegando era `▌`; agora `▏`.
+		// Barra que respira: antes o cursor do comando chegando era `▌`; agora `▏`.
 		assert.ok(prep[0]!.includes("pnpm te▏"), "cursor fixo sem foco");
 		assert.match(
 			lines({ command: "x" }, undefined, { isPartial: true, toolCallId: rid }).at(-1)!,
@@ -416,7 +416,7 @@ test("sem foco: a barra e o cursor continuam no cartão (1 passo por segundo), e
 });
 
 test("tinta longa no comando chegando: letras novas nascem do fundo, as antigas secam no muted; o cursor respira", async () => {
-	// Tinta longa (/refino escrita 1, dono, 2026-11-18): antes o comando parcial vinha inteiro em muted e o cursor piscava a cada
+	// Tinta longa (/refino escrita 1): antes o comando parcial vinha inteiro em muted e o cursor piscava a cada
 	// 400 ms (aceso ou apagado); agora cada letra ganha a cor em TINTA_MS e o cursor muda de intensidade aos poucos.
 	// Manual clock: the ink and the cursor phase follow performance.now, so real sleeps made this flaky under load.
 	let clock = 1000;
@@ -456,7 +456,7 @@ test("tinta longa no comando chegando: letras novas nascem do fundo, as antigas 
 });
 
 test("barra que respira: ao começar a executar, a barra do comando escorrega e some em SAI_MS", async () => {
-	// Barra que respira (dono, 2026-11-18, /cursor variante 3): antes o cursor sumia de uma vez ao executar.
+	// Barra que respira: antes o cursor sumia de uma vez ao executar.
 	const RGB: Record<string, string> = {
 		customMessageBg: "30;30;40",
 		accent: "100;150;250",

@@ -87,7 +87,7 @@ test("iTerm2 continua intacto mesmo com fg", () => {
 	assert.deepEqual(pintarImagem([iterm], 1, 6, bg, 1, fg), [iterm, "<      >"]);
 });
 
-// Dono (2026-11-19): fundo neutro atrás da imagem (customMessageBg); só muda em aviso (truncado: neutro puxado ao âmbar)
+// Fundo neutro atrás da imagem (customMessageBg); só muda em aviso (truncado: neutro puxado ao âmbar)
 // ou erro (toolErrorBg). Antes era o verde de sucesso (toolSuccessBg) e o ciano em execução. O fundo respeita a margem do
 // chat: com o chat-margin por dentro (linhas já com a margem), o fundo fica entre as margens; antes ia de ponta a ponta.
 test("instalarFundo: fundo neutro, âmbar só em aviso e vermelho só em erro; respeita a margem do chat", async () => {
@@ -144,13 +144,13 @@ test("instalarFundo: fundo neutro, âmbar só em aviso e vermelho só em erro; r
 	assert.deepEqual(fundos(c.render(40)), [RGB.customMessageBg], "em execução também neutro");
 });
 
-// Miniatura + ficha (dono, 2026-11-19, lab /leitura desenho 5): imagem do Read em MINI_COLS colunas e, à direita da
+// Miniatura + ficha: imagem do Read em MINI_COLS colunas e, à direita da
 // moldura, nome, tipo · dimensões · tamanho e `clique abre`; outras tools seguem com a imagem na largura de antes.
 test("ficha: linhas ao lado da moldura, cortadas com …; poucas linhas juntam as últimas com ·", () => {
 	const k = seq("c=4,r=2");
 	const ficha = { linhas: [["a.png", "png · 10×5 · 1 KB", "clique abre"]], cor: (_i: number, s: string) => s };
 	const out = pintarImagem(["cab", "", k, ""], 3, 44, bg, 1, fg, ficha);
-	// … (dono, 2026-11-20, "alinha a img às infos"): antes o nome ficava na 1ª linha da imagem e a última linha na borda de baixo;
+	// … antes o nome ficava na 1ª linha da imagem e a última linha na borda de baixo;
 	// agora a ficha é centrada na moldura (4 linhas → 2 de texto, nas duas linhas da imagem).
 	assert.match(strip(out[1]!), /\[╭────╮\] +>$/);
 	assert.match(strip(out[2]!), /\[│\] {3}a\.png +>$/);
@@ -208,7 +208,7 @@ test("instalarFundo: Read encolhe a imagem para MINI_COLS e escreve a ficha; out
 	assert.ok(!ob.includes("foto.png"));
 });
 
-// Moldura alinhada com a margem do chat (dono, 2026-11-19, preview bugada): o chat-margin põe 1 espaço dos dois lados também
+// Moldura alinhada com a margem do chat: o chat-margin põe 1 espaço dos dois lados também
 // na linha da imagem; a moldura somava esses espaços e o `│` direito e a ficha saíam 2 colunas à direita.
 test("instalarFundo: linha da imagem com a margem do chat fica alinhada à moldura", async () => {
 	const { instalarFundo } = __r3;
@@ -229,7 +229,7 @@ test("instalarFundo: linha da imagem com a margem do chat fica alinhada à moldu
 	}
 	instalarFundo(Comp.prototype as any, () => tema);
 	const out = new Comp().render(60).map(strip);
-	// … (dono, 2026-11-20, moldura do resultado): antes o 1º `│` da saída era o da miniatura; agora a moldura externa vem antes, então
+	// … antes o 1º `│` da saída era o da miniatura; agora a moldura externa vem antes, então
 	// a linha da imagem é a seguinte ao topo e os dois `│` da miniatura ficam sob o ╭ e o ╮.
 	const topo = out.find((l) => l.includes("╭"))!,
 		img = out[out.indexOf(topo) + 1]!;
@@ -238,7 +238,7 @@ test("instalarFundo: linha da imagem com a margem do chat fica alinhada à moldu
 	for (const l of out.slice(1)) assert.equal(l.length, 60);
 });
 
-// Moldura do resultado (dono, 2026-11-20, lab /pertence desenho 5 "Moldura" + "Nasce do fundo"): `│` dos dois lados da caixa da miniatura e
+// Moldura do resultado: `│` dos dois lados da caixa da miniatura e
 // `╰─…─╯` embaixo (o cabeçalho dobra em ╮ no ui-visual); a miniatura continua emoldurada por dentro e a caixa mantém o fundo.
 const mf = (s: string) => `{${s}}`;
 test("moldura: a caixa ganha │ dos dois lados e o fecho ╰─╯; a miniatura e a ficha seguem dentro, na largura inteira", () => {
@@ -331,7 +331,7 @@ test("instalarFundo: moldura em borderMuted (error no erro) só no Read; nasce d
 	assert.ok(!b.render(40).some((l) => l.includes("\x1b[38;2;0;0;9m")), "outra tool sem moldura");
 });
 
-// Ficha centrada na moldura (dono, 2026-11-20): para cada proporção e largura, o centro das linhas de texto é o centro da moldura.
+// Ficha centrada na moldura: para cada proporção e largura, o centro das linhas de texto é o centro da moldura.
 test("instalarFundo: a ficha fica centrada na moldura da miniatura (larga, quadrada, alta; 80/110/180)", async () => {
 	const { instalarFundo } = __r5;
 	const tema = { bg: (_c: string, s: string) => s, fg: (_c: string, s: string) => s };

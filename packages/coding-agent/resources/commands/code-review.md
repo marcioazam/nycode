@@ -6,7 +6,7 @@ argument-hint: "<número ou URL do PR> [--comment]"
 
 <!-- Porte para o nycode (2026-11-11) do /code-review:code-review (plugin code-review 1.0.1, desligado no Claude). Mudanças:
 os níveis haiku/sonnet/opus viraram agentes do nycode (o nycode não tem modelo por chamada): triagem em `Explore` (fixado em
-Haiku, somente leitura) e revisão/validação em `code-reviewer` (modelo da sessão); as regras vêm de AGENTS.md e
+Haiku, somente leitura) e revisão/validação em `code-reviewer` (modelo da sessão, com a skill `pr-review`); as regras vêm de AGENTS.md e
 CLAUDE.md (o nycode lê os dois); o MCP github_inline_comment do plugin não existe no nycode, então os comentários saem numa
 única review pela REST (`gh api .../pulls/N/reviews`, event COMMENT, conferido em docs.github.com/rest/pulls). Sem
 `--comment` nada é publicado. -->
@@ -30,7 +30,7 @@ ferramenta com propósito; somente leitura.
    que contêm arquivos modificados pelo PR (`gh pr diff <PR> --name-only`).
 3. **Resumo** (`code-reviewer`): `gh pr view <PR>` e `gh pr diff <PR>`; devolve o resumo das mudanças, título,
    descrição e o SHA do head (`gh pr view <PR> --json headRefOid`).
-4. **Revisão em paralelo**: um `subagent` com `tasks` de 4 `code-reviewer`, cada um com título, descrição e resumo do
+4. **Revisão em paralelo**: um `subagent` com `tasks` de 4 `code-reviewer` (cada um segue a skill `pr-review`), cada um com título, descrição e resumo do
    PR. Cada achado: descrição, `arquivo:linha` e motivo ("regra do AGENTS.md" citando a regra, ou "bug").
    - 1 e 2: aderência às regras; para cada arquivo, só valem os arquivos de regras do diretório dele e dos pais.
    - 3: bugs óbvios só no diff, sem ler contexto de fora; só os significativos.

@@ -1,5 +1,5 @@
 /**
- * Agent fleet contract (local patch, claude-home/patches/nycode/subagent-panel.patch).
+ * Agent fleet contract.
  *
  * Every nycode process that spawns a subagent (the main session at depth 0 and any writer
  * child below it) records that run in one shared directory per main session, the fleet

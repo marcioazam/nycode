@@ -114,10 +114,9 @@ const calmFile = config.renderer !== 'calm' ? undefined
 if (calmFile) {
   const input = await translatedStdin();
   if (input !== null) {
-    const { render, ctxHistory } = await import(pathToFileURL(calmFile).href);
+    const { render } = await import(pathToFileURL(calmFile).href);
     const payload = JSON.parse(input);
-    const history = ctxHistory?.(payload, path.join(configDir, 'plugins', 'claude-hud', 'ctx-historico.json')) ?? [];
-    process.stdout.write(render(payload, { columns: columns > 0 ? columns - 4 : 120, level: config.level, history, gitCacheFile: path.join(configDir, 'plugins', 'claude-hud', 'git-cache.json') }).join('\n') + '\n');
+    process.stdout.write(render(payload, { columns: columns > 0 ? columns - 4 : 120, level: config.level, gitCacheFile: path.join(configDir, 'plugins', 'claude-hud', 'git-cache.json') }).join('\n') + '\n');
   }
 } else if (latest) {
   const input = await translatedStdin();

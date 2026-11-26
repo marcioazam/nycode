@@ -1,5 +1,5 @@
 // Port of the plan-done-view patch tests (nycode 1.7.0) to vitest against the embedded source.
-// Pedido do dono (2026-11-14): [DONE:6] cru no chat é vago; mostrar "etapa 6/8 · título" só na exibição. Sem ícone de estado desde 2026-11-15: "etapa 6 de 8 concluída · título", o estado só por nome e cor. O formato atual (bloco, barra, "a seguir") vem do plan-done-block patch, testado aqui.
+// [DONE:6] cru no chat é vago; mostrar "etapa 6/8 · título" só na exibição. Sem ícone de estado desde 2026-11-15: "etapa 6 de 8 concluída · título", o estado só por nome e cor. O formato atual (bloco, barra, "a seguir") vem do plan-done-block patch, testado aqui.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { renderDoneTags } from "../../../../src/extensions/plan-mode/render/done-view.ts";
@@ -70,7 +70,7 @@ test("plan-mode registra o transformador e guarda os títulos após a última et
 	assert.equal(render("[DONE:2]"), "etapa 2 de 2 concluída · Contar b.txt  ━━ plano concluído");
 });
 
-// Pedido do dono (2026-11-14): "etapa 6 concluída" é abstrato. Com o plano conhecido: número de total, título, barra de progresso e o
+// "etapa 6 concluída" é abstrato. Com o plano conhecido: número de total, título, barra de progresso e o
 // que vem a seguir; etapas seguidas viram um bloco só. Sem plano conhecido: uma linha só, sem repetir.
 test("bloco: linhas seguidas só de tags viram um bloco com barra e fecho", () => {
 	assert.equal(
@@ -112,7 +112,7 @@ test("após /reload os títulos voltam do último plano gravado na sessão", asy
 	);
 });
 
-// Pedido do dono (2026-11-14): "PLAN WAITING: …" cru vira bloco. Primeiro a variante B de /tmp/plano-espera.png; depois a
+// "PLAN WAITING: …" cru vira bloco. Primeiro a variante B de /tmp/plano-espera.png; depois a
 // variante A de /tmp/plano-espera2.png (esta): caixa de fundo neutro, relógio ◷ no lugar da bolinha (removido em 2026-11-15: o estado vai por nome e cor), título em negrito com a
 // etapa e a barra à direita, motivo e o que fazer embaixo. Só exibição (zzzzzzzzzzzzzzzzzzzzz-plan-espera.patch): o plan-gate
 // segue lendo o texto literal da sessão.
@@ -148,7 +148,7 @@ test("espera/bloqueado/cancelado (padrão SOTA 2026-11-18): ícone + plano em to
 		renderDoneTags("PLANO BLOQUEADO: falta autorização para o merge", andamento, p2, false, 0, true, "", env),
 		"  <w>◈</> <t>*plano*</> <m>·</> <w>*bloqueado*</> <m>·</> <m>etapa 2 de 3</>  <ok>━</><m>╌╌</>  <m>33%</>\n<m>│</> <m>atual:</> <t>b</> <m>·</> <m>1 concluída, faltam 2</>\n<m>│</> <t>falta autorização para o merge</>\n<m>│</> <w>▲</> <w>*precisa de você*</> <m>· responda para continuar</>",
 	);
-	// Pedido do dono (2026-11-18): todos os status de plano seguem o MESMO layout padronizado (sem sumir ícone nem palavra "plano").
+	// Todos os status de plano seguem o MESMO layout padronizado (sem sumir ícone nem palavra "plano").
 	assert.equal(
 		renderDoneTags("PLAN WAITING: gate rodando", undefined, p2, false, 0, true, "", env),
 		"  <wait>◈</> <t>*plano*</> <m>·</> <wait>*em espera*</>\n<m>│</> <t>gate rodando</>\n<m>│</> <wait>segundo plano</><m> · retoma sozinho, nada a fazer</>",

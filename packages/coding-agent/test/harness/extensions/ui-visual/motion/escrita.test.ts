@@ -81,7 +81,7 @@ test("tinta: só as letras ainda molhadas mudam de cor, da cor do fundo para a d
 	suavizar(e, m, 20); // 6 letras
 	const cores = { texto: [200, 200, 200] as const, fundo: [0, 0, 0] as const };
 	const linhas = [" \x1b[1mabc\x1b[22mdef "];
-	// Tinta longa (dono, 2026-11-18): antes medido em 20 ms (saída cúbica, 180 ms); agora a curva começa devagar (entrada
+	// Tinta longa: antes medido em 20 ms (saída cúbica, 180 ms); agora a curva começa devagar (entrada
 	// cúbica em 320 ms) e em 20 ms as letras ainda são quase do fundo: mede em 140 ms, com as idades 140 e 130 ms distintas.
 	const out = tinta(linhas, e, 140, cores);
 	assert.equal(strip(out[0]!), " abcdef ", "texto visível igual");
@@ -107,8 +107,8 @@ test("tinta: só as letras ainda molhadas mudam de cor, da cor do fundo para a d
 	assert.equal(tinta(linhas, e, 20, { texto: cores.texto }), linhas, "sem cor de fundo: as mesmas linhas");
 });
 
-test("tinta longa: 270 ms com entrada e saída suaves (dono, 2026-11-18; antes 180 ms com saída cúbica)", () => {
-	// ~15 % mais rápido (dono, 2026-11-18, /cursor): antes 320 ms; agora 270 ms, a mesma curva.
+test("tinta longa: 270 ms com entrada e saída suaves (antes 180 ms com saída cúbica)", () => {
+	// ~15 % mais rápido: antes 320 ms; agora 270 ms, a mesma curva.
 	assert.equal(TINTA_MS, 270);
 	assert.equal(tintaAlfa(0), 0);
 	assert.ok(tintaAlfa(TINTA_MS / 4) < 0.1, "começa devagar (a saída cúbica já daria 0,58)");
@@ -333,7 +333,7 @@ test("U24 texto longo: o tique do suavizador refaz o conteúdo no máximo a cada
 	assert.equal(longo.vistos.at(-1), ML, "alcança o texto inteiro");
 });
 
-// Sem cursor na resposta (dono, 2026-11-19): antes a "Barra que respira" ▏ seguia a última letra (/cursor variante 3,
+// Sem cursor na resposta: antes a "Barra que respira" ▏ seguia a última letra (/cursor variante 3,
 // 2026-11-18); agora a resposta e o raciocínio chegam sem cursor. O brilho barraAlfa segue no comando do Bash chegando.
 test("barraAlfa (cursor do comando chegando): aceso com letras chegando, respira nas pausas; CPS 360", () => {
 	assert.equal(CPS, 360);
@@ -358,7 +358,7 @@ test("componente: resposta e raciocínio em streaming sem cursor ▏, nem parado
 	c.updateContent(m, true);
 	rel.t = 2000;
 	tique(2000);
-	// antes (dono, 2026-11-18) 'Pronto agora▏       ' e o relógio seguia para a barra respirar
+	// antes 'Pronto agora▏       ' e o relógio seguia para a barra respirar
 	assert.equal(strip(c.render(20)[0]!), "Pronto agora        ", "texto inteiro, sem cursor");
 	rel.t = 3000;
 	tique(3000); // a tinta das últimas letras seca

@@ -16,27 +16,7 @@ version = "pi 1.5.2"
 effort = "medium"            # --thinking medium
 profile = "empty PI_CODING_AGENT_DIR (no packages/extensions/skills); eval-only flags dropped"
 
-[nycode-harness]
-bin = "arms/nycode-harness"
-runner = "run_pi.py"
-version = "pi 1.5.2 + pi-code 1.7.0 + this checkout"
-effort = "settings.json"     # from the owner overlay
-profile = "throwaway HOME: install.sh --link --apply of this tree + overlay.list; hash in .overlay-sha"
-
-# Temporary arm (D-25, 09 §2.3): Nycode from this tree on pi 1.6.0, to separate the effect of the base from
-# the effect of the migration. Same script as the arm above; `env` below reaches it (run.py exports it). It needs a pi 1.6.0
-# managed install (BENCH_PI_INSTALL_DIR); without the two pi 1.5.2 core patches (bin/pi skips them on another version).
-# Leaves with F10.
-[nycode-harness-pi160]
-bin = "arms/nycode-harness"
-runner = "run_pi.py"
-version = "1.6.0"
-effort = "settings.json"     # from the owner overlay
-profile = "arms/nycode-harness on pi 1.6.0 (BENCH_PI_VERSION): own stage bench-nycode-harness160-<sha>, core patches skipped"
-stage_prefix = "bench-nycode-harness160"
-env = { BENCH_PI_VERSION = "1.6.0" }
-
-# The product under migration (09 §2.2): the nycode monorepo built from this checkout, no installer, no patches.
+# The measured product (09 §2.2): the nycode monorepo built from this checkout, no installer, no patches.
 [nycode]
 bin = "arms/nycode"
 runner = "run_pi.py"
@@ -44,3 +24,33 @@ version = "nycode (this checkout)"
 effort = "settings.json"     # from the owner layer (overlay-nycode.list)
 profile = "throwaway HOME, NYCODE_CODING_AGENT_DIR in the stage; npm ci --ignore-scripts + npm run build; layer hash in .overlay-sha"
 stage_prefix = "bench-nycode"
+
+# A/B variants of the measured product (docs/harness/plano-todo-sync-codemode-2026-11-25.md): same stage and build,
+# only the env differs (bench/metrics/README.md). Headless runs drop the `todo` tool (headless-lean, item 8), so the
+# todo pair keeps it with NYCODE_HEADLESS_TRIM=0 in both arms: compare nycode-todo-v2 against nycode-todo-v1.
+[nycode-todo-v1]
+bin = "arms/nycode"
+runner = "run_pi.py"
+version = "nycode (this checkout)"
+effort = "settings.json"
+profile = "arm nycode with NYCODE_HEADLESS_TRIM=0 (keeps the todo tool headless; control for nycode-todo-v2)"
+stage_prefix = "bench-nycode"
+env = { NYCODE_HEADLESS_TRIM = "0" }
+
+[nycode-todo-v2]
+bin = "arms/nycode"
+runner = "run_pi.py"
+version = "nycode (this checkout)"
+effort = "settings.json"
+profile = "arm nycode-todo-v1 plus NYCODE_TODO_SYNC_V2=1 (todo.sync: turn-end check, external items, new reminder cadence)"
+stage_prefix = "bench-nycode"
+env = { NYCODE_HEADLESS_TRIM = "0", NYCODE_TODO_SYNC_V2 = "1" }
+
+[nycode-mcp-hybrid]
+bin = "arms/nycode"
+runner = "run_pi.py"
+version = "nycode (this checkout)"
+effort = "settings.json"
+profile = "arm nycode with NYCODE_MCP_TOOL_SEARCH=1 (MCP autoEnableToolSearch: tool_search next to codemode)"
+stage_prefix = "bench-nycode"
+env = { NYCODE_MCP_TOOL_SEARCH = "1" }

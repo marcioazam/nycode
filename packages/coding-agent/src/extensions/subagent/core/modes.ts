@@ -15,6 +15,7 @@ import { runSubagentStartHooks } from "../../_shared/events/subagent-hooks.ts";
 import { isProjectApproved } from "../../_shared/project/project-approval.ts";
 import { cliSettings } from "../../_shared/settings/cli-settings.ts";
 import { capForContext } from "../../_shared/web/output-guard.ts";
+import { announceExternalFinish, announceExternalStart } from "../../todo/external.ts";
 import { activeBackgroundRuns, MAX_BACKGROUND_RUNS, startBackgroundRun } from "../fleet/background.ts";
 import { activeAutoBatchSlots } from "../fleet/detach.ts";
 import { laneCorrelation, laneOutcome } from "../fleet/tracker.ts";
@@ -300,8 +301,20 @@ export async function runBackgroundMode(params: SubagentParamsStatic, context: B
 									...laneOutcome(run.id),
 									...(run.output?.trim() ? { lastAssistantMessage: run.output.trim() } : {}),
 								});
+								// todo.sync: one reminder line naming the "aguardando" item (undefined when off).
+								const reminder = announceExternalFinish(
+									current,
+									`subagent:${run.id}`,
+									run.state === "done",
+									`${run.agent}, ${run.state}`,
+								);
+								const text = backgroundCompletionText(run);
 								current.sendMessage(
-									{ customType: "subagent-background", content: backgroundCompletionText(run), display: true },
+									{
+										customType: "subagent-background",
+										content: reminder ? `${text}\n${reminder}` : text,
+										display: true,
+									},
 									{ triggerTurn: true },
 								);
 							});
@@ -335,6 +348,7 @@ export async function runBackgroundMode(params: SubagentParamsStatic, context: B
 		return backgroundCapResult(makeDetails);
 	}
 	nycode.events.emit(SUBAGENT_CHANNEL, { phase: "start", agentType: agent.name, agentId: id, ...laneCorrelation() });
+	announceExternalStart(nycode, `subagent:${id}`, `subagent ${agent.name} ${id}`);
 	return {
 		content: [
 			{

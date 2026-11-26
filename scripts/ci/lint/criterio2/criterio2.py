@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Global acceptance criterion 2 (docs/migration/nycode-core/00-mega-plano.md, section 8): the search for
-leftovers of the nycode-harness/pi harness comes back empty outside import/, docs/ and the declared exceptions.
+leftovers of the pre-migration/pi harness comes back empty outside import/, docs/ and the declared exceptions.
 
 The search (rg; git grep when rg is missing, said on stderr) uses the five literals in PATTERNS. Every hit
 must be covered by a line of criterio2-allow.txt: `glob | pattern[,pattern] | class | reason`. The glob uses

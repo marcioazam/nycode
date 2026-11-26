@@ -95,7 +95,7 @@ function run(
 	};
 	delete process.env.NO_COLOR;
 	delete process.env.NYCODE_REDUCED_MOTION;
-	process.env.NYCODE_UI_STATE = join(vazio, "ui-state.json"); // isolado do estado real do dono
+	process.env.NYCODE_UI_STATE = join(vazio, "ui-state.json"); // isolado do estado real do usuário
 	process.env.NYCODE_CODING_AGENT_DIR = vazio;
 	Object.assign(process.env, env);
 	const calls: unknown[][] = [];

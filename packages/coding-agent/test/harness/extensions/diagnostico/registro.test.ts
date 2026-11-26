@@ -305,6 +305,17 @@ test("humano: tool sempre com o nome; EXIT=0 de um comando que saiu ≠ 0 vira `
 	assert.deepEqual([h.tipo, h.corpo, h.correcao], ["bash", "EXIT=0\n\nCommand exited with code 1", undefined]);
 });
 
+test("humano: última linha útil de falhas bash", () => {
+	const titulo = (detalhe: string) => humano({ fonte: "tool", tipo: "bash", msg: "saída", detalhe }).titulo;
+	assert.equal(
+		titulo(
+			'Traceback (most recent call last):\n  File "script.py", line 1\nAssertionError\nCommand exited with code 1',
+		),
+		"tool bash: AssertionError",
+	);
+	assert.equal(titulo("stdout 1\nstdout 2\nerro real\nRC=1\nCommand exited with code 1"), "tool bash: erro real");
+});
+
 test("humano: correções das entradas que não são de provedor; a correção que a entrada já traz vence", () => {
 	const c = (fonte: string, tipo: string, msg: string, detalhe?: string) =>
 		humano({ fonte, tipo, msg, detalhe }).correcao;

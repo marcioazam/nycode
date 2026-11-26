@@ -1,18 +1,17 @@
 # residuo.py exceptions (D-45): `glob | regex | class | reason`. A regex covers only the spans it matches; `*` covers the
 # whole file. A line that covers no hit is stale and fails: the list only shrinks. Fixed exemptions (LICENSE, NOTICE,
-# CHANGELOG.md, README.md, from-pi migration, docs/fork, docs/migration, docs/harness) live in residuo.py.
+# CHANGELOG.md, README.md, docs/fork, docs/migration, docs/harness) live in residuo.py.
 
-# bench: the arms nycode-harness and pi-vanilla and the Harbor agents name the product the benchmark measures (D-31, 05 section 6).
+# bench: the arm pi-vanilla and the Harbor agents name the product the benchmark measures (D-31, 05 section 6).
 bench/* | * | produto-externo | arms, runners, metrics and contract of the benchmark that measures the pi as a product
 docs/bench/* | * | produto-externo | baselines and runbook of the benchmark that measures the pi
 
 # the fork's own machinery spells the words it renames and bans.
 scripts/fork/* | * | ferramenta-fork | rename.py, its tests, post scripts and seams list hold the words by design
 scripts/ci/lint/criterio2/* | * | ferramenta-fork | the criterio2 gate lists the pi paths it bans and the migration it allows
-scripts/ci/lint/test_gerar_mapa.py | * | ferramenta-fork | tests of the migration map generator (docs/migration/nycode-core)
 
-# records written about the Nycode origin, kept as written.
-docs/specs/* | * | migracao | specs 0001-0009 describe the port from the Nycode, written before the rename
+# records written about the Nycode pre-migration origin, kept as written.
+docs/specs/* | * | migracao | specs 0001-0009 describe the port from the pre-migration harness, written before the rename
 apps/p3/docs/archive/* | * | upstream | archived design material, not maintained
 
 # session fixtures recorded from the upstream agent: the text is the data under test.
@@ -22,15 +21,12 @@ packages/coding-agent/test/harness/hooks/fixtures/* | * | upstream | hook payloa
 # links to issues and pull requests of the upstream repositories: stable targets, not the brand.
 packages/* | (earendil-works|badlogic)/pi(-mono)?(/(issues|pull|discussions)/\d+|#\d+) | upstream | upstream issue and PR links cited by regression tests and docs
 
-# the migration from the Nycode: its tests carry the origin names on purpose (the code itself is exempt in residuo.py).
-packages/coding-agent/test/harness/migrations/* | * | migracao | tests and fixture of `nycode migrate from-pi`: origin paths, scopes and package names under test
+# the migration from the pre-migration harness: its tests carry the origin names on purpose (the code itself is exempt in residuo.py).
 packages/coding-agent/test/extensions-discovery.test.ts | @mariozechner/pi-coding-agent | compat | proves the legacy module name is not resolved
 packages/coding-agent/test/suite/regressions/11156-nycode-ai-models-virtual-module.test.ts | @mariozechner | compat | proves the legacy scope is gone
 packages/coding-agent/test/harness/extensions/headless-lean/index.test.ts | # Working contract \(pi\) | compat | the headless-lean extension still accepts the origin contract title
 packages/coding-agent/src/extensions/headless-lean/index.ts | \(pi\)|\(\?:pi|nycode\) | compat | the headless-lean extension still accepts the origin contract title
 packages/coding-agent/test/harness/core/resources/builtin-instructions.test.ts | \(pi\) | compat | same title, tested
-packages/coding-agent/src/main.ts | from-pi | migracao | entry point of `nycode migrate from-pi`
-packages/coding-agent/test/harness/core/settings-env.test.ts | from-pi | migracao | comment naming the migration command
 packages/coding-agent/src/utils/changelog.ts | earendil-works\)\\/pi-mono | upstream | legacy repository the changelog links are normalized from
 scripts/release-notes.mjs | earendil-works\)\\/pi-mono | upstream | legacy repository the release-note links are normalized from
 
@@ -67,8 +63,6 @@ packages/coding-agent/examples/* | pi-doom|PI MASCOT | terceiros | names of exam
 apps/p2/* | \bPI\b | falso-positivo | Math.PI and fixtures named PI
 packages/* | Math\.PI | falso-positivo | the constant
 packages/* | (npm:|/)?pi-(tools|formatter|markdown-preview|interactive-subagents|observational-memory|demo-extension|mcp-adapter|tools-filter) | terceiros | names of third-party extension packages used as fixtures and examples
-packages/coding-agent/* | docs/harness/pi-[\w.-]+\.md | migracao | pointers to records kept in docs/harness
-packages/coding-agent/resources/bin/puxar/test_puxar.py | \(pi\) | compat | puxar imports sessions of the origin harness
 scripts/sync-versions.test.mjs | @mariozechner/pi-ai | compat | fixture of a manifest that still holds the legacy name
 scripts/coding-agent-smoke.test.mjs | @earendil-works\\/undeclared | terceiros | scope of an undeclared package used as a fixture
 scripts/check-runtime-deps.test.mjs | @earendil-works\\/pi-server | terceiros | scope of an undeclared package used as a fixture

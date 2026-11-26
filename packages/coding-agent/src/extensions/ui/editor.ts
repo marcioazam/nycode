@@ -2,13 +2,13 @@
  * Editor do nycode: /rename e nome da sessão na borda (antes em rename.ts), `?` com editor vazio abre o painel de atalhos (extensão comandos; sem ela, /hotkeys)
  * Ctrl+R histórico de prompts, Ctrl+S rascunho guardado, Ctrl+C com texto o põe no histórico (↑),
  * estado do composer na ponta direita das réguas (rascunho em cima; shell, NORMAL e avisos embaixo),
- * e /vim alterna edição modal (normal/insert/visual, claude-compat/vim), persistida em terminal.uiState (padrão <agentDir>/ui-state.json).
+ * e o setting `editorMode: "vim"` liga a edição modal (normal/insert/visual, claude-compat/vim); `/vim` não existe mais (Claude Code v2.1.92).
  * Compatibilidade Claude Code: aliases de comando no submit (claude-compat/aliases.ts), Ctrl+L redesenha,
  * Ctrl+T alterna a lista de tarefas (ctrl+shift+t do nycode), Ctrl+C interrompe o agente ocupado.
  */
 
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import type { AutocompleteProvider, EditorTheme, TUI } from "@nycode/tui";
 import { decodeKittyPrintable, matchesKey, truncateToWidth, visibleWidth } from "@nycode/tui";
 import { getAgentDir } from "../../config.ts";
@@ -37,12 +37,6 @@ export function readState(path = STATE_PATH): Record<string, unknown> {
 	}
 }
 
-/** Mescla `patch` no estado preservando as outras chaves. */
-export function mergeState(patch: Record<string, unknown>, path = STATE_PATH): void {
-	mkdirSync(dirname(path), { recursive: true });
-	writeFileSync(path, `${JSON.stringify({ ...readState(path), ...patch }, null, 2)}\n`);
-}
-
 /** Placeholder do editor vazio (Onda 10, P18): as três portas, em dim; é desenho, então some na primeira tecla. */
 export const PLACEHOLDER = "Pergunte, ou / comandos · @ arquivos · ! shell";
 /** Escreve o placeholder no espaço em branco depois do cursor, sem mudar a largura da linha; `reserva` colunas ficam vazias no fim. */
@@ -64,7 +58,7 @@ export function nameLabel(name: string | undefined, width: number): { label: str
 
 export type Mode = VimMode;
 
-/** Estado compartilhado do /vim: `remaps` = pares de teclas (ex.: "jj") que saem do INSERT (vimInsertModeRemaps). */
+/** Estado compartilhado do modo vim (`editorMode`): `remaps` = pares de teclas (ex.: "jj") que saem do INSERT (vimInsertModeRemaps). */
 export interface VimState {
 	enabled: boolean;
 	remaps?: readonly string[];
@@ -108,7 +102,7 @@ export interface EditorUi {
 	warnRgb?: () => [number, number, number] | undefined;
 }
 
-const travado = (): boolean => (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:travado")] === true;
+const travado = (): boolean => (globalThis as Record<symbol, unknown>)[Symbol.for("nycode:travado")] === true;
 export const RESPIRO_MS = 700; // período/2π da respiração da cápsula enquanto o agente trabalha
 
 /**
@@ -233,7 +227,7 @@ export class UiEditor extends CustomEditor {
 		});
 		this.ui = ui;
 		this.vim = vim;
-		// Régua (barra de envio) no ciano do sistema só com o foco no composer (dono, 2026-11-15): com uma tab da barra de
+		// Régua (barra de envio) no ciano do sistema só com o foco no composer: com uma tab da barra de
 		// grupos focada o ciano vai para ela; o modo shell mantém a cor que o nycode atribui.
 		let piBorder = this.borderColor;
 		Object.defineProperty(this, "borderColor", {
@@ -467,7 +461,7 @@ export class UiEditor extends CustomEditor {
 	// Transições curtas do editor (varredura da régua, 225 ms): 60 fps só enquanto duram. O brilho por tecla saiu (Onda 10, P25).
 	private unsubRespiro: (() => void) | undefined;
 	/**
-	 * Cápsula (dono, 2026-11-18, laboratório /barra variante 2): enquanto o agente trabalha a borda respira devagar entre a cor
+	 * Cápsula: enquanto o agente trabalha a borda respira devagar entre a cor
 	 * da régua e o ciano; sem resposta há 10 s fica âmbar parada. Fora do turno, no modo shell ou sem movimento: cor de sempre.
 	 */
 	/** Texto e respiro do quadro em curso: o getter `borderColor` roda várias vezes por render e getText() junta todas as linhas. */
@@ -532,8 +526,7 @@ export class UiEditor extends CustomEditor {
 	}
 
 	/**
-	 * `❯` no respiro esquerdo da 1ª linha visível (dono, 2026-11-14) e cápsula `╭╮│╰╯` em volta (dono, 2026-11-18, /barra
-	 * variante 2): o respiro sobe para 4 colunas, `│ ❯ texto`. A lista de autocompletar, abaixo da base, fica fora da cápsula.
+	 * `❯` no respiro esquerdo da 1ª linha visível e cápsula `╭╮│╰╯` em volta: o respiro sobe para 4 colunas, `│ ❯ texto`. A lista de autocompletar, abaixo da base, fica fora da cápsula.
 	 */
 	render(width: number): string[] {
 		const text = this.getText();
@@ -640,7 +633,6 @@ type ComandosBridge = { openShortcuts?: (insert: (s: string) => void) => void };
 
 export default function (nycode: ExtensionAPI) {
 	let tui: TUI | undefined;
-	let installed = false;
 	let current: ExtensionContext | undefined; // último ctx: o editor sobrevive a /new e /resume
 	let historyOpen = false;
 	const vim: VimState = { enabled: false };
@@ -658,24 +650,6 @@ export default function (nycode: ExtensionAPI) {
 				const current = nycode.getSessionName();
 				ctx.ui.notify(current ? `Sessão: ${current}` : "Sessão sem nome (uso: /rename <nome>)", "info");
 			}
-		},
-	});
-
-	nycode.registerCommand("vim", {
-		description: "Alterna a edição modal vim (normal/insert) no editor",
-		handler: async (_args, ctx) => {
-			if (!installed) return ctx.ui.notify("/vim indisponível: outro editor customizado está ativo", "warning");
-			vim.enabled = !vim.enabled;
-			try {
-				mergeState({ vim: vim.enabled }, statePath());
-			} catch (e) {
-				ctx.ui.notify(`ui-state.json não gravado: ${e instanceof Error ? e.message : e}`, "warning");
-			}
-			ctx.ui.notify(
-				`Modo vim ${vim.enabled ? "ligado (Esc = normal, i = insert, v = visual)" : "desligado"}`,
-				"info",
-			);
-			tui?.requestRender();
 		},
 	});
 
@@ -710,10 +684,8 @@ export default function (nycode: ExtensionAPI) {
 		current = ctx;
 		if (!ctx.hasUI) return;
 		if (ctx.ui.getEditorComponent()) return; // outro editor customizado já assumiu; não sobrepor
-		const state = readState(statePath());
-		vim.enabled = state.vim === true;
+		vim.enabled = resolveNycodeSettings(nycode.getSettings(), process.env).editorMode === "vim";
 		vim.remaps = loadRemaps(settingsPath(), statePath());
-		installed = true;
 		ctx.ui.setEditorComponent((t, theme, keybindings) => {
 			tui = t;
 			const ed = new UiEditor(t, theme, keybindings, vim, () => nycode.getSessionName(), {

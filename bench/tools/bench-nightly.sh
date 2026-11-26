@@ -33,7 +33,7 @@ git -C "$STATE/repo" worktree add --quiet --detach "$wt" "$sha"
 trap 'git -C "$STATE/repo" worktree remove --force "$wt" || true' EXIT
 
 rc=0
-(cd "$wt" && python3 bench/run.py run --arm nycode-harness --tier full --model "$MODEL" --budget-usd "$BUDGET" --out "$out") || rc=$?
+(cd "$wt" && python3 bench/run.py run --arm nycode --tier full --model "$MODEL" --budget-usd "$BUDGET" --out "$out") || rc=$?
 echo "bench-nightly: main ${sha:0:12} -> $out (exit $rc)"
 if [[ $rc -eq 0 ]]; then
   echo "Baseline NOT updated. To propose it, on a branch off main:"

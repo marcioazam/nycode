@@ -1,5 +1,6 @@
 {
   "verdict": "PASS",
+  "alpha": 0.1,
   "rules": {
     "accuracy": "PASS",
     "cost": "PASS",
@@ -19,5 +20,6 @@
   "security_pending": [],
   "score": 100.0,
   "excluded": 0,
-  "missing": []
+  "missing": [],
+  "look": null
 }

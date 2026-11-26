@@ -1,7 +1,6 @@
 import type { InlineExtension } from "../core/extensions/types.ts";
 import bypassPermissionsExtension from "../core/permissions/bypass-command.ts";
 import autoResumeExtension from "./auto-resume/index.ts";
-import avisosExtension from "./avisos/index.ts";
 import bashMainGuardExtension from "./bash-main-guard/index.ts";
 import chatMarginExtension from "./chat-margin/index.ts";
 import claudeCompatExtension from "./claude-compat/index.ts";
@@ -27,12 +26,12 @@ import headlessLeanExtension from "./headless-lean/index.ts";
 import hookMsgsExtension from "./hook-msgs/index.ts";
 import hooksExtension from "./hooks/index.ts";
 import imageOpenExtension from "./image-open/index.ts";
-import importClaudeSessionExtension from "./import-claude-session/index.ts";
 import initExtension from "./init/index.ts";
 import llamaExtension from "./llama/index.ts";
 import lspExtension from "./lsp/index.ts";
 import mcpExtension from "./mcp/index.ts";
 import memoryExtension from "./memory/index.ts";
+import monitorExtension from "./monitor/index.ts";
 import notifyExtension from "./notify/index.ts";
 import outputStylesExtension from "./output-styles/index.ts";
 import planGateExtension from "./plan-gate/index.ts";
@@ -45,13 +44,13 @@ import runExtension from "./run/index.ts";
 import sessionTitleExtension from "./session-title/index.ts";
 import settingsFlagsExtension from "./settings-flags/index.ts";
 import skillsCompatExtension from "./skills-compat/index.ts";
-import soundNotifyExtension from "./sound-notify/index.ts";
 import statusLineExtension from "./status-line/index.ts";
 import stickyPromptExtension from "./sticky-prompt/index.ts";
 import subagentExtension from "./subagent/index.ts";
 import syntaxCheckExtension from "./syntax-check/index.ts";
 import thinkingExtension from "./thinking/index.ts";
 import todoExtension from "./todo/index.ts";
+import { registerTurnCheck } from "./todo/turn-check.ts";
 import toolSearchExtension from "./tool-search/index.ts";
 import travarModelosExtension from "./travar-modelos/index.ts";
 import uiExtension from "./ui/index.ts";
@@ -79,6 +78,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "hooks", factory: hooksExtension, builtin: true },
 	{ name: "init", factory: initExtension, builtin: true },
 	{ name: "memory", factory: memoryExtension, builtin: true },
+	{ name: "monitor", factory: monitorExtension, builtin: true },
 	{ name: "notify", factory: notifyExtension, builtin: true },
 	{ name: "output-styles", factory: outputStylesExtension, builtin: true },
 	{ name: "plan-mode", factory: planModeExtension, builtin: true },
@@ -93,18 +93,17 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "thinking", factory: thinkingExtension, builtin: true },
 	{ name: "todo", factory: todoExtension, builtin: true },
 	{ name: "web", factory: webExtension, builtin: true },
-	// Embedded nycode-lsp: a settings package listed right after nycode in Nycode, so it loads before the Nycode extensions.
+	// Embedded nycode-lsp: a settings package listed right after nycode in pre-migration Nycode, so it loads before the pre-migration Nycode extensions.
 	{ name: "lsp", factory: lspExtension, builtin: true },
-	// Embedded ponytail (D-54): the settings package listed after nycode-lsp in Nycode, on by default.
+	// Embedded ponytail (D-54): the settings package listed after nycode-lsp in pre-migration Nycode, on by default.
 	{ name: "ponytail", factory: ponytailExtension, builtin: true },
-	// Embedded Nycode extensions, in Nycode's load order (after nycode, by source file name).
+	// Embedded pre-migration Nycode extensions, in pre-migration Nycode's load order (after nycode, by source file name).
 	{ name: "auto-resume", factory: autoResumeExtension, builtin: true },
 	{ name: "bash-main-guard", factory: bashMainGuardExtension, builtin: true },
 	// nycode: K11 the logic lives with the permission engine in core/permissions/, this line only registers it.
 	{ name: "bypass-permissions", factory: bypassPermissionsExtension, builtin: true },
 	{ name: "chat-margin", factory: chatMarginExtension, builtin: true },
 	{ name: "claude-compat", factory: claudeCompatExtension, builtin: true },
-	{ name: "avisos", factory: avisosExtension, builtin: true },
 	{ name: "comandos", factory: comandosExtension, builtin: true },
 	{ name: "code-blocks", factory: codeBlocksExtension, builtin: true },
 	{ name: "completion-gate", factory: completionGateExtension, builtin: true },
@@ -118,9 +117,9 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "docs-pointer", factory: docsPointerExtension, builtin: true },
 	{ name: "image-open", factory: imageOpenExtension, builtin: true },
 	{ name: "plan-gate", factory: planGateExtension, builtin: true },
+	// After completion-gate and plan-gate: the todo turn check yields to a gate block already drafted in the same settle.
+	{ name: "todo-turn-check", factory: registerTurnCheck, builtin: true },
 	{ name: "prefix-cache-1h", factory: prefixCache1hExtension, builtin: true },
-	{ name: "import-claude-session", factory: importClaudeSessionExtension, builtin: true },
-	{ name: "sound-notify", factory: soundNotifyExtension, builtin: true },
 	{ name: "sticky-prompt", factory: stickyPromptExtension, builtin: true },
 	{ name: "syntax-check", factory: syntaxCheckExtension, builtin: true },
 	{ name: "travar-modelos", factory: travarModelosExtension, builtin: true },

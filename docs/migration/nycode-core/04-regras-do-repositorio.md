@@ -1,10 +1,10 @@
 # Regras do repositório: do harness Nycode para o Nycode
 
-Estado: **plano, nada aplicado**. Leva as regras de repositório do `marcioazam/ny-pi` ao `marcioazam/nycode` (F2 e F3
+Estado: **plano, nada aplicado**. Leva as regras de repositório do Nycode pré-migração ao `marcioazam/nycode` (F2 e F3
 do [mega plano](00-mega-plano.md)). Identificadores: F0 a F12, D-nn ([11](11-decisoes-e-pendencias.md)), K1 a K14
 ([02](02-arquitetura-alvo.md)), P-1 a P-8.
 
-Base: [anexo D](anexos/D-regras-github-brutas.md) (2026-11-20), reconferido no mesmo dia com `gh api` somente leitura
+Base: registro do mantenedor (2026-11-20), reconferido no mesmo dia com `gh api` somente leitura
 (campos do repositório, Actions, relato privado, correções automáticas e o ruleset 27240802 do harness Nycode conferem).
 Arquivos do harness Nycode lidos de `origin/main` (e4f8729); do Nycode, no worktree (`fb05db936`). O que não foi possível
 verificar vem marcado "não verificado".
@@ -86,7 +86,7 @@ globais do [mega plano](00-mega-plano.md) cita 30 linhas e deve ser corrigido pa
 | R38 | descrição de `dependencies` e `github_actions` | do harness Nycode | padrão GitHub | do harness Nycode | §4.3 | F2 |
 | R39 | perfil de comunidade | 100% | 71% | 100% | R54, R43 | F2 |
 
-### 2.4 Arquivos versionados (anexo D, seção 7)
+### 2.4 Arquivos versionados registro do mantenedor, seção 7)
 
 | nº | arquivo | harness Nycode | hoje | alvo | aplicar | fase |
 |---|---|---|---|---|---|---|
@@ -114,7 +114,7 @@ globais do [mega plano](00-mega-plano.md) cita 30 linhas e deve ser corrigido pa
 
 Notas por regra:
 
-- R13: os 13 tópicos de `marcioazam/ny-pi` mais `nycode`, menos `pi-coding-agent`: 13 tópicos. **Supera** "`pi-coding-agent` fica": o dono tirou o tópico ao trocar a descrição (D-30, D-31 c; [F4](evidencias/F4.md)).
+- R13: os 13 tópicos de Nycode pré-migração mais `nycode`, menos `pi-coding-agent`: 13 tópicos. **Supera** "`pi-coding-agent` fica": o dono tirou o tópico ao trocar a descrição (D-30, D-31 c; F4).
 - R21: o JSON versionado no harness Nycode **não** traz `require_extra_approval_for_unattributed_changes` nem
   `required_reviewers`, mas a API os devolve no ruleset ativo (comparação com `jq -S`, 2026-11-20). O JSON alvo
   traz os dois para o `diff` de conferência fechar. Aceitação dos dois no POST: não verificado.
@@ -129,7 +129,7 @@ Notas por regra:
 
 ## 3. JSON alvo do ruleset (`.github/rulesets/main.json`)
 
-Derivado do ruleset ativo do harness Nycode (anexo D, seção 2) com D-07 (sem `required_linear_history`; `allowed_merge_methods`
+Derivado do ruleset ativo do harness Nycode registro do mantenedor, seção 2) com D-07 (sem `required_linear_history`; `allowed_merge_methods`
 com `squash` e `merge`) e D-05 (10 checks). Versionado em F2 **sem aplicar**; aplicado em F3 pelo passo 4.6.
 
 ```json
@@ -178,7 +178,7 @@ Contra o JSON do harness Nycode mudam só: `required_linear_history` some e `all
 - `bypass_actors: []` significa que nem o dono contorna o ruleset: um ruleset errado trava todo merge, inclusive o que
   o corrigiria. Por isso o passo 4.6 só roda com os 10 checks reportando e a clássica continua até o ruleset ser
   provado; a saída é o `DELETE` do ruleset, que o dono também pode fazer pela interface.
-- `bench-pr` é um status de commit do verificador local, não um workflow (anexo A, seção 6); PR não funcional: D-21.
+- `bench-pr` é um status de commit do verificador local, não um workflow registro do mantenedor, seção 6); PR não funcional: D-21.
 
 ## 4. Comandos, em ordem segura de aplicação
 
@@ -216,7 +216,7 @@ gh api -X PATCH repos/marcioazam/nycode \
 gh api repos/marcioazam/nycode --jq '[.allow_squash_merge,.allow_merge_commit,.allow_rebase_merge,
   .allow_auto_merge,.delete_branch_on_merge,.allow_update_branch,
   .squash_merge_commit_title,.squash_merge_commit_message]|join(" ")'
-# reversão (valores de 2026-11-20, anexo D, seção 1)
+# reversão (valores de 2026-11-20, registro do mantenedor, seção 1)
 gh api -X PATCH repos/marcioazam/nycode -F allow_rebase_merge=true -F allow_auto_merge=false \
   -F delete_branch_on_merge=false -F allow_update_branch=false \
   -f squash_merge_commit_title=COMMIT_OR_PR_TITLE -f squash_merge_commit_message=COMMIT_MESSAGES
@@ -224,7 +224,7 @@ gh api -X PATCH repos/marcioazam/nycode -F allow_rebase_merge=true -F allow_auto
 
 ### 4.3 Rótulos (R36 a R38; R37 em F0)
 
-Cores e descrições lidas do harness Nycode em 2026-11-20 (`gh api 'repos/marcioazam/ny-pi/labels?per_page=100'`). São 14
+Cores e descrições lidas do harness Nycode em 2026-11-20 (`gh api "repos/$ORIGREPO/labels?per_page=100"`). São 14
 (5 `area:`, 4 `P`, 5 `type:`); os 12 rótulos em comum têm a mesma cor.
 
 | Nome | Cor | Descrição |
@@ -248,8 +248,8 @@ As descrições de `area:` citam `extensions/`, `install.sh` e `claude-home`, qu
 ([02](02-arquitetura-alvo.md), seção 8). Proposta: criar com o texto do harness Nycode (paridade) e reescrever em F12.
 
 ```bash
-# criação: o loop lê nome, cor e descrição do Nycode
-gh api 'repos/marcioazam/ny-pi/labels?per_page=100' \
+# criação: o loop lê nome, cor e descrição do Nycode pré-migração
+gh api "repos/$ORIGREPO/labels?per_page=100" \
   --jq '.[] | select(.name | test("^(area: |P[0-3]$|type: )")) | [.name,.color,.description] | @tsv' |
 while IFS=$'\t' read -r name color desc; do
   gh api -X POST repos/marcioazam/nycode/labels -f name="$name" -f color="$color" -f description="$desc" --silent
@@ -274,13 +274,13 @@ gh api -X PUT repos/marcioazam/nycode/topics \
   -f 'names[]=llm' -f 'names[]=nycode' -f 'names[]=pi-coding-agent' -f 'names[]=prompt-caching' \
   -f 'names[]=python' -f 'names[]=typescript'
 gh api -X PATCH repos/marcioazam/nycode \
-  -f description='Terminal coding agent, a fork of pi (earendil-works/pi); the ny-pi harness is being merged in.'
+  -f description='Terminal coding agent, a fork of pi (earendil-works/pi); the Nycode pré-migração harness is being merged in.'
 ```
 
 A descrição tem duas etapas, pela regra de honestidade: a de F2 acima e, em F12 (depois da paridade de F10),
 `Terminal coding agent: a fork of pi with Nycode built in, measured against Claude Code and plain pi.`
 Conferência: seção 7. Reversão: `echo '{"names":[]}' | gh api -X PUT repos/marcioazam/nycode/topics --input -` e
-`PATCH` com a descrição antiga (em `evidencias/F2-repo-antes.json`).
+`PATCH` com a descrição antiga (em registro do mantenedor).
 
 ### 4.5 Segurança (R28 a R35)
 
@@ -339,12 +339,12 @@ Depois, abrir um segundo PR e conferir que o merge exige os 10 contextos e que `
 
 ### 4.7 `DELETE` da proteção clássica (R25), só depois do ruleset ativo
 
-Pré-condição: `IGUAL` em 4.6 e o segundo PR bloqueado. Backup em `evidencias/F3-classica-antes.json` (4.0).
+Pré-condição: `IGUAL` em 4.6 e o segundo PR bloqueado. Backup em registro do mantenedor (4.0).
 
 ```bash
 gh api -X DELETE repos/marcioazam/nycode/branches/main/protection
 gh api repos/marcioazam/nycode/branches/main/protection -i | head -1       # conferência: HTTP/2.0 404
-# reversão (valores do anexo D, seção 3)
+# reversão (valores do registro do mantenedor, seção 3)
 cat > /tmp/classica.json <<'JSON'
 { "required_status_checks": { "strict": true, "contexts": ["build-check","test (coding-agent)",
     "test (durable)","test (chord)","test (other)","mcp-conformance"] },
@@ -412,7 +412,7 @@ Os 3 do harness Nycode contra os 4 do fork. Resultado: **3 arquivos**, `bug.yml`
 - `PULL_REQUEST_TEMPLATE.md` (harness Nycode) vem, sem o item "New files are in `publish.list`" (`publish.list` some) e com
   `scripts/ci/local.sh` condicionado a F3; acrescenta `npm run check` e `./test.sh` (`CONTRIBUTING.md:60-67` do
   Nycode). Mantém "Effect on the benchmark" e "How to revert". Sem ele o perfil de comunidade fica em 71%.
-- `DISCUSSION_TEMPLATE/ideas.yml` e `q-a.yml` vêm; "ny-pi commit and pi version" vira `nycode --version`.
+- `DISCUSSION_TEMPLATE/ideas.yml` e `q-a.yml` vêm; "Nycode pré-migração commit and pi version" vira `nycode --version`.
 
 ### 5.5 `release.yml` (R46), 5.6 `zizmor.yml` (R47)
 
@@ -463,7 +463,7 @@ Cinco do harness Nycode (`ci-static`, `ci-security`, `instruction-budget`, `code
 - `.gitleaksignore` (só Nycode, 23 linhas por fingerprint `commit:arquivo:regra:linha`): **fica** sem mudança.
 
 Os mecanismos se complementam: o ignore silencia histórico por fingerprint; o toml e o `.leak-allow` valem para o
-`check-leaks.sh`. Em F1 o histórico do `marcioazam/ny-pi` **entra no do Nycode**: rodar `gitleaks git` depois do merge e
+`check-leaks.sh`. Em F1 o histórico do Nycode pré-migração **entra no do Nycode**: rodar `gitleaks git` depois do merge e
 fingerprintar só falsos positivos, um a um, nunca por glob. `PI_HARNESS_IDENTIFIERS` e
 `~/.config/pi-harness/identifiers` (do `check-leaks.sh`) são resíduo de nome: renomear em F3 é proposta.
 
@@ -516,7 +516,7 @@ Os dois têm `* text=auto eol=lf`. harness Nycode: 12 extensões binárias. Nyco
 
 ### 5.13 `CODE_OF_CONDUCT.md` e `SUPPORT.md` (R54)
 
-Vêm do harness Nycode. `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1): "ny-pi" vira "Nycode"; a denúncia é o relato privado do
+Vêm do harness Nycode. `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1): "Nycode pré-migração" vira "Nycode"; a denúncia é o relato privado do
 GitHub (R33), sem e-mail de terceiros. `SUPPORT.md`: sai da seção "Not supported" o que deixa de existir
 (pi e pi-code fixados; sobreposição em `~/.pi/agent`, D-09); "outro ramo que `main`" vira "versões anteriores à
 última". Com o modelo de PR (5.4) o perfil deve chegar a 100% (R39): não verificado.
@@ -541,10 +541,10 @@ Conferência: `rg -n earendil SECURITY.md` só pode achar a menção ao upstream
 ### 5.15 `LICENSE` e `NOTICE` (R58)
 
 - `LICENSE` do Nycode: MIT, "Copyright (c) 2025 Mario Zechner". O `docs/fork` exige "LICENSE intacta": o plano a
-  **mantém sem alteração**. Uma segunda linha de copyright ("2026 ny-pi contributors", o MIT do harness Nycode) é opção do dono,
+  **mantém sem alteração**. Uma segunda linha de copyright ("2026 Nycode pré-migração contributors", o MIT do harness Nycode) é opção do dono,
   não adotada. A atribuição do código importado vai ao `NOTICE`.
 - `NOTICE`: hoje cita o upstream, o commit base `073b0bae8488ee20def26e873b77036dac4e9eea` e as mudanças do fork.
-  Acrescentar, cada linha na fase em que o código entra: harness Nycode (MIT, `marcioazam/ny-pi`, F1 e F2); pi-code 1.7.0
+  Acrescentar, cada linha na fase em que o código entra: harness Nycode (MIT, Nycode pré-migração, F1 e F2); pi-code 1.7.0
   (MIT, `Copyright (c) 2025 Mario Zechner` e `2026 ilovepixelart`, `ilovepixelart/pi-code`, com a nota dos 19 patches,
   F5 e F6); `pi-lsp` 0.1.7 (MIT, F9); `ponytail` (MIT), `ralph-loop` e `pr-review-toolkit` (Apache-2.0), `claude-red`
   (MIT) como opcionais (F9); skills com licença própria de `claude-home/docs/third-party/` (P-4).
@@ -556,7 +556,7 @@ Conferência: `rg -n earendil SECURITY.md` só pode achar a menção ao upstream
 O Nycode tem 11 `CHANGELOG.md` por pacote (`git ls-files`) e `AGENTS.md:132-147` manda escrever só em `[Unreleased]`;
 o harness Nycode tem um na raiz (44 linhas). D-19: **não criar** o da raiz; as entradas do harness Nycode vão para
 `packages/coding-agent/CHANGELOG.md`, `## [Unreleased]`, `### Added`, uma por unidade migrada, no PR da unidade. O do
-harness Nycode fica em `import/ny-pi/` até F12 e depois no histórico do git. Seções liberadas continuam imutáveis.
+harness Nycode fica em `import/origem/` até F12 e depois no histórico do git. Seções liberadas continuam imutáveis.
 
 ## 6. Reconciliação de `AGENTS.md`, `CONTRIBUTING.md` e o contrato de trabalho (R57, R59)
 
@@ -635,11 +635,11 @@ Contagem: 26 linhas, 15 com conflito "sim".
   e `patches/third-party/` deixam de existir. Regra nova (proposta): terceiro entra como (a) dependência exata,
   (b) pacote opcional com SHA fixo ou (c) código importado registrado no `NOTICE` com origem, commit e licença
   (5.15); nunca patch em tempo de execução. Fica da regra antiga: commit completo e licença registrada.
-- **A16.** O README do `marcioazam/ny-pi` abre com a regra "How to read this README" (linhas 28-39): afirmação com amostra e
+- **A16.** O README do Nycode pré-migração abre com a regra "How to read this README" (linhas 28-39): afirmação com amostra e
   intervalo, perda ao lado da vitória, intervalo que cruza zero é "não demonstrado", o não medido é dito, o número novo
   substitui o antigo; CP:25-29 a estende aos PRs. O README do fork não tem regra equivalente. Entra no
   `CONTRIBUTING.md` e no README com D-14 e D-25: **números só com medição do braço `nycode`**; até F10 o texto diz
-  "medido como ny-pi sobre pi 1.5.2".
+  "medido como Nycode pré-migração sobre pi 1.5.2".
 - **A19.** `AGENTS.md:56` vale para `packages/*/test`; só `bench/` gasta tokens (`--budget-usd`). Dizer no `AGENTS.md`.
 - **A22.** Manter `AGENTS.md:153-155` e acrescentar "instrução que cita a regra sobreposta já é a confirmação".
 - **A26.** Regra de como o agente trabalha, não do repositório: `resources/instructions/contract.md` (F8).
@@ -650,7 +650,7 @@ orquestração de subagentes, evidência e pesquisa, e o `safety.md` inteiro (se
 ## 7. Critérios de aceite de F2 e F3 para as regras
 
 Só `GET` e leitura local. F2 fecha com as linhas de fase F0 e F2 em `OK`; F3, com as de fase F3, o `diff` do ruleset
-vazio, a clássica em 404 e um PR de teste bloqueado por um check obrigatório. Saída em `evidencias/F2.md` e `F3.md`.
+vazio, a clássica em 404 e um PR de teste bloqueado por um check obrigatório. Saída em registro do mantenedor e `F3.md`.
 
 ```bash
 R=marcioazam/nycode
@@ -694,7 +694,7 @@ for f in .github/APPROVED_CONTRIBUTORS .githooks/pre-commit CHANGELOG.md \
   .github/ISSUE_TEMPLATE/{bug_report,contribution,package-report}.yml; do
   git cat-file -e origin/main:$f 2>/dev/null && echo "AINDA EXISTE $f"; done     # R44, R48, R50, R60: sem saída
 rg -n -i 'lgtm|discord|rfc\.earendil' CONTRIBUTING.md AGENTS.md .github        # R44, R57, R59: vazio
-rg -n earendil SECURITY.md; rg -n 'tgz' .gitattributes; rg -n 'ny-pi|pi-code' NOTICE   # R56, R55, R58
+rg -n earendil SECURITY.md; rg -n 'tgz' .gitattributes; rg -n 'Nycode pré-migração|pi-code' NOTICE   # R56, R55, R58
 git diff --stat fb05db936 origin/main -- LICENSE                                # R58: vazio
 ```
 

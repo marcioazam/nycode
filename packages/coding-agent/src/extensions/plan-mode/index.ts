@@ -22,7 +22,8 @@ import { Type } from "typebox";
 import { getAgentDir } from "../../config.ts";
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
 import type { SessionEntry } from "../../core/session-manager.ts";
-import { PLAN_MODE_CHANNEL } from "../_shared/events/plan-mode-state.ts";
+import { resolveNycodeSettings } from "../../core/settings-nycode.ts";
+import { PLAN_MODE_CHANNEL, TODO_STEP_DONE_CHANNEL } from "../_shared/events/plan-mode-state.ts";
 import type { UiTheme } from "../subagent/fleet-ui/panel.ts";
 import { hudTheme } from "../subagent/fleet-ui/style/palette.ts";
 import { openPlanFile, planMarkdown } from "./manage.ts";
@@ -43,19 +44,27 @@ import { PlanModal, planTitle } from "./modal.ts";
 import { donePaint, fmtSent } from "./render/done-paint.ts";
 import { renderDoneTags } from "./render/done-view.ts";
 import { PlanSection, setPlanPath } from "./section.ts";
+import { createStepPublisher } from "./sync/todo-sync.ts";
 import {
 	isPlanModeToolAllowed,
 	isSafeCommand,
 	lintPlan,
 	markCompletedSteps,
+	type PlanToolPolicy,
 	plansDir,
 	planToTodos,
 	restoredPlanState,
 	type TodoItem,
+	todosToItems,
 } from "./utils.ts";
+
+/** Env marker a subagent spawned from plan mode inherits: its bash keeps plan mode's allowlist and edit/write stay off. */
+const PLAN_CHILD_ENV = "NYCODE_PLAN_READONLY";
 
 export default function planModeExtension(nycode: ExtensionAPI): void {
 	let planModeEnabled = false;
+	// read-only agents may carry bash (A5); without this their child bash could write outside plan mode's rules
+	const planChild = process.env[PLAN_CHILD_ENV] === "1";
 	const planSection = new PlanSection();
 	// Management keys of the Plan section (skip, pause, open) reach the agent and the desktop through here.
 	planSection.host = {
@@ -116,6 +125,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 	// JSON of the last plan-mode entry written or restored: an identical state is not appended again (D1).
 	let lastPersisted = "";
 	let lastProgress = "";
+	const steps = createStepPublisher(nycode);
 	// Títulos da execução mais recente: endExecution zera todoItems, e as tags já mostradas são redesenhadas depois.
 	let finishedTodos: TodoItem[] = [];
 	// Data/hora do envio das mensagens do assistente (mensagens em streaming não trazem timestamp na 1ª chamada: cacheia a hora real).
@@ -164,12 +174,27 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		setPlanPath(planFile);
 	}
 
+	/** Registry and user allowlist the plan-mode verdict reads; fresh on each call (MCP servers connect late, settings reload). */
+	const toolPolicy = (): PlanToolPolicy => ({
+		tools: nycode.getAllTools?.() ?? [],
+		userReadOnly: resolveNycodeSettings(nycode.getSettings(), process.env).plan.readOnlyTools,
+	});
+
 	const registeredTools = (): Set<string> => new Set((nycode.getAllTools?.() ?? []).map((tool) => tool.name));
 
 	function enterPlanTools(): void {
 		savedTools = nycode.getActiveTools();
 		toolsAtSave = registeredTools();
-		nycode.setActiveTools(PLAN_MODE_TOOLS.filter((t) => savedTools.includes(t)));
+		nycode.setActiveTools(planActiveTools());
+	}
+
+	/** The fixed plan set plus the MCP tools that were active and are read-only (readOnlyHint or the user's list). */
+	function planActiveTools(): string[] {
+		const policy = toolPolicy();
+		const mcp = savedTools.filter(
+			(t) => t.startsWith("mcp__") && isPlanModeToolAllowed(t, {}, plansDir(), policy).ok,
+		);
+		return [...PLAN_MODE_TOOLS.filter((t) => savedTools.includes(t)), ...mcp];
 	}
 
 	/** Put back the saved set, plus any tool registered since: nycode activates a late one (an MCP
@@ -224,12 +249,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 	let externalTodos: TodoItem[] = [];
 	let lastCtx: ExtensionContext | undefined;
 	nycode.events.on("nycode:todos", (data) => {
-		externalTodos = (data as Array<{ id: number; text: string; status: string }>).map((t) => ({
-			step: t.id,
-			text: t.text,
-			completed: t.status === "completed",
-			doing: t.status === "in_progress",
-		}));
+		externalTodos = todosToItems(data as Array<{ id: number; text: string; status: string; reason?: string }>);
 		if (!lastCtx) return;
 		try {
 			if (executionMode) updateStatus(lastCtx);
@@ -298,6 +318,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 			done: todoItems.filter((t) => t.completed).length,
 			total: todoItems.length,
 		};
+		if (executionMode) steps.publish(lastCtx, todoItems);
 		const json = JSON.stringify(progress);
 		if (json === lastProgress) return;
 		lastProgress = json;
@@ -309,6 +330,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		executionMode = false;
 		finishedTodos = todoItems;
 		todoItems = [];
+		steps.end(lastCtx);
 		restoreTools();
 		updateStatus(ctx);
 		persistState(); // Save cleared state so resume doesn't restore old execution mode
@@ -335,7 +357,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		persistState();
 		const execMessage =
 			todoItems.length > 0
-				? `Execute the plan. Start with: ${todoItems[0].text}\n${DONE_RULE}\n${CANCEL_RULE}\nFirst materialize the plan file ${planFile} into the repository's /docs record (or the task's existing record) before changing code.\n${PLAN_ENDED_NOTE}`
+				? `Execute the plan. Start with: ${todoItems[0].text}\n${DONE_RULE}\nThe plan steps are already in the todo list and follow the tags; do not add them again.\n${CANCEL_RULE}\nFirst materialize the plan file ${planFile} into the repository's /docs record (or the task's existing record) before changing code.\n${PLAN_ENDED_NOTE}`
 				: `Execute the plan you just created.\n${PLAN_ENDED_NOTE}`;
 		nycode.sendMessage(
 			{ customType: "plan-mode-execute", content: execMessage, display: true },
@@ -495,14 +517,30 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 	// connecting during session_start, or a mid-session list_changed refresh), so the
 	// set alone leaks write-capable tools into plan mode.
 	nycode.on("tool_call", (event, _ctx) => {
-		if (!planModeEnabled) return;
+		// children spawn from process.env during the call, so the marker tracks the mode at every call
+		if (planModeEnabled || planChild) process.env[PLAN_CHILD_ENV] = "1";
+		else delete process.env[PLAN_CHILD_ENV];
+		if (!planModeEnabled) {
+			if (!planChild) return;
+			if (event.toolName === "edit" || event.toolName === "write")
+				return {
+					block: true,
+					reason: `Plan mode (parent session): ${event.toolName} blocked in a read-only subagent.`,
+				};
+			if (event.toolName === "bash" && !isSafeCommand(String(event.input.command ?? "")))
+				return {
+					block: true,
+					reason: `Plan mode (parent session): command blocked (not allowlisted) in a read-only subagent.\nCommand: ${String(event.input.command)}`,
+				};
+			return;
+		}
 		if (!PLAN_MODE_TOOLS.includes(event.toolName) && !event.toolName.startsWith("mcp__")) {
 			return {
 				block: true,
 				reason: `Plan mode: tool blocked (read-only mode). Press Ctrl+Shift+P to leave plan mode first.\nTool: ${event.toolName}`,
 			};
 		}
-		const verdict = isPlanModeToolAllowed(event.toolName, event.input);
+		const verdict = isPlanModeToolAllowed(event.toolName, event.input, plansDir(), toolPolicy());
 		if (!verdict.ok) {
 			return {
 				block: true,
@@ -535,7 +573,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 				message: {
 					customType: "plan-mode-context",
 					content: `[PLAN MODE ACTIVE]
-Read-only planning mode. Allowed: read, bash (allowlisted), lsp_*, tool_search with read-only MCP (search, docs, codegraph), web_fetch, subagent with read-only agents only, question, todo. Use write/edit (bash cannot write) ONLY on the plan file ${planFile}, and only for draft notes in a long session.
+Read-only planning mode. Allowed: read, bash (allowlisted), lsp_*, tool_search with read-only MCP tools, web_fetch, subagent with read-only agents only, question, todo. Use write/edit (bash cannot write) ONLY on the plan file ${planFile}, and only for draft notes in a long session.
 Triage first. T0 = a mechanical edit with no behavior change (typo, rename, comment) and nothing ambiguous: skip the skill, verify with one lookup, submit 1-3 tasks. Anything else: read ${join(getAgentDir(), "skills", "plan-workflow", "SKILL.md")} and follow it (tier, questions, decomposition, checklists).
 Submit the full plan once with plan_mode_complete, which lints it and saves it to the plan file. Lint: first line "Tier: Tn (signals)"; task titles ≤50 chars; every task has ≥1 '-' bullet under it (shown as its description); every A# line has a %; T1+ has "AC1: WHEN … THE SYSTEM SHALL …" lines, each AC cited by a task, and a "check:" per task; T2+ a risks line; T3 a rollback line.
 Only tracked tasks are numbered (1., 2., … globally); phases are headings, steps and checklists are '-' bullets, never numbered.
@@ -583,7 +621,7 @@ ${CANCEL_RULE}`,
 	});
 
 	// Only the end of the plan or an explicit PLAN CANCELLED ends it: Esc, send-now, chat or a run that
-	// stops without progress leave plan mode and execution as they are (owner contract 2026-11-15).
+	// stops without progress leave plan mode and execution as they are.
 	nycode.on("agent_end", async (event, ctx) => {
 		const last = [...event.messages].reverse().find(isAssistantMessage);
 		if (executionMode && todoItems.length > 0) {
@@ -624,6 +662,7 @@ ${CANCEL_RULE}`,
 		finishedTodos = [];
 		planFromTool = false;
 		planFile = "";
+		steps.reset();
 
 		hold = undefined;
 		if (fromFlag && nycode.getFlag("plan") === true) {
@@ -680,7 +719,7 @@ ${CANCEL_RULE}`,
 			// nycode has registered since, so it stays scoped to this branch.
 			savedTools = restored.savedTools ?? nycode.getActiveTools();
 			toolsAtSave = registeredTools();
-			nycode.setActiveTools(PLAN_MODE_TOOLS.filter((t) => savedTools.includes(t)));
+			nycode.setActiveTools(planActiveTools());
 			// --plan enters plan mode without ever toggling, so nothing has persisted yet
 			// and a /reload would find no snapshot to restore from. Record it now, while
 			// the active set still says what was there before the restriction.
@@ -698,12 +737,27 @@ ${CANCEL_RULE}`,
 		}
 		lastPersisted = planModeEntry ? JSON.stringify(planPayload()) : "";
 		updateStatus(ctx);
+		if (!executionMode) steps.end(ctx); // ramo sem plano em execução: nenhum item ligado fica órfão
 	}
 	nycode.on("session_start", (_event, ctx) => restoreFromBranch(ctx, true));
 	nycode.on("session_tree", (_event, ctx) => restoreFromBranch(ctx, false));
 
-	// Nycode permission-control BEGIN
-	// Controle semântico para Shift+Tab e /permissions plan (claude-compat). Fonte: claude-home/patches/nycode/permission-control.
+	// Item ligado concluído pela ferramenta todo: mesmo efeito de um [DONE:n] (o fim do plano segue no agent_end).
+	nycode.events.on(TODO_STEP_DONE_CHANNEL, (data) => {
+		const step = (data as { step?: unknown } | undefined)?.step;
+		const item = executionMode ? todoItems.find((t) => t.step === step) : undefined;
+		if (!item || item.completed) return;
+		item.completed = true;
+		try {
+			if (lastCtx) updateStatus(lastCtx);
+		} catch {
+			lastCtx = undefined; // contexto de sessão velho
+		}
+		persistState();
+	});
+
+	// nycode permission-control BEGIN
+	// Controle semântico para Shift+Tab e /permissions plan (claude-compat).
 	const PLAN_CONTROLLER_SLOT = Symbol.for("nycode.plan-controller");
 	let permissionCtx: ExtensionContext | undefined;
 	const planController = {
@@ -729,7 +783,7 @@ ${CANCEL_RULE}`,
 		const g = globalThis as Record<symbol, unknown>;
 		if (g[PLAN_CONTROLLER_SLOT] === planController) delete g[PLAN_CONTROLLER_SLOT];
 	});
-	// Nycode permission-control END
+	// nycode permission-control END
 
 	nycode.on("session_shutdown", (_event, ctx) => planSection.shutdown(ctx));
 }

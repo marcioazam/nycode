@@ -48,7 +48,7 @@ for (const width of [80, 120, 200]) {
 		p.update(h.ctx, items(12, 3));
 		const f = h.lines(width);
 		assert.equal(f[0], "", "the group starts with a blank spacing line");
-		// Owner request (2026-11-14): time, window and keys moved from the bar to a footer line under the table.
+		// Time, window and keys moved from the bar to a footer line under the table.
 		assert.match(f[1], /^Plan 3\/12\s*$/, "the tab alone");
 		assert.match(f.at(-1) as string, /^00:00 · 3\/6 na tela( · o abrir plano)?$/, "footer: time and window");
 		assert.ok(!/PLAN|[▾▸]/.test(f[1]), "no chip name or fold symbol");
@@ -88,7 +88,7 @@ test("tiny terminal: the viewport shrinks and the section still fits", () => {
 	const h = host(fakeEditor(), 18);
 	const p = new PlanSection();
 	p.update(h.ctx, items(12));
-	assert.equal(h.lines(80).length, 1 + 1 + 1 + 1 + 3 + 1); // footer line (owner, 2026-11-14; was the bar)
+	assert.equal(h.lines(80).length, 1 + 1 + 1 + 1 + 3 + 1); // footer line (was the bar)
 	p.shutdown(h.ctx);
 });
 
@@ -296,7 +296,7 @@ test("progress updates, shrinking lists clamp the offset, empty removes the sect
 	assert.match(h.lines(80)[1], /5\/12/);
 	p.update(h.ctx, items(4, 4));
 	assert.equal(p.offset, 0);
-	assert.equal(h.lines(80).length, 1 + 1 + 1 + 1 + 4 + 1); // footer line (owner, 2026-11-14; was the bar)
+	assert.equal(h.lines(80).length, 1 + 1 + 1 + 1 + 4 + 1); // footer line (was the bar)
 	assert.equal(sec.bridge.planActive(), true);
 	p.update(h.ctx, []);
 	assert.equal(h.below.size, 0);
@@ -332,7 +332,7 @@ for (const [name, cmd] of [
 		assert.deepEqual(tabsOf(f), ["Status", "Agentes 1", "Plan 2/12"], f.join("\n"));
 		assert.equal(f[0], "", "blank between the editor and the bar");
 		assert.match(f[1]!, /^Status {3}Agentes 1 {3}Plan 2\/12\s*$/, "the bar has the tabs only");
-		assert.match(f.at(-1)!, /^\d\d:\d\d · \d\/6 na tela/, "the plan detail is the footer line"); // footer line (owner, 2026-11-14; was the bar)
+		assert.match(f.at(-1)!, /^\d\d:\d\d · \d\/6 na tela/, "the plan detail is the footer line"); // footer line (was the bar)
 		assert.equal(
 			f[2],
 			"─".repeat("Status   Agentes 1   ".length) +

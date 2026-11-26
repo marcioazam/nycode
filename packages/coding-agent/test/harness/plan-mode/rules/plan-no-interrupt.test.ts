@@ -1,5 +1,5 @@
 // Port of the plan-no-interrupt patch test (nycode 1.7.0) to vitest against the embedded source.
-// Contrato do dono (2026-11-15): só o fim do plano ou um pedido explícito ao LLM (PLAN CANCELLED) encerra o plan mode.
+// Contrato: só o fim do plano ou um pedido explícito ao LLM (PLAN CANCELLED) encerra o plan mode.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { assistant, fakeCtx, fakeNycode, fakeUi, type Loose, PLAN } from "../support.ts";

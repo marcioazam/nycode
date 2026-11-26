@@ -1,7 +1,6 @@
 /** /doctor (/checkup) e /skill-doctor: verificações locais e somente leitura; nunca imprimem valores de arquivos de configuração. */
 import { existsSync, readFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { getBuiltinResourcesRoot } from "../../../../core/builtin-resources.ts";
 import type { ExtensionAPI, ExtensionCommandContext } from "../../../../core/extensions/types.ts";
 import { agentDir } from "../settings/store.ts";
 
@@ -28,7 +27,6 @@ export function doctorChecks(
 	commandCount = 0,
 	skillCount = 0,
 	nodeVersion = process.versions.node,
-	guard = join(getBuiltinResourcesRoot(), "hooks", "guard.py"),
 ): Check[] {
 	const major = Number(nodeVersion.split(".")[0]);
 	return [
@@ -37,10 +35,6 @@ export function doctorChecks(
 		jsonCheck("settings.json", join(dir, "settings.json")),
 		jsonCheck("keybindings.json", join(dir, "keybindings.json")),
 		jsonCheck("mcp.json", join(dir, "mcp.json"), "mcpServers"),
-		{
-			ok: existsSync(guard),
-			text: `guarda de segurança (hooks/guard.py): ${existsSync(guard) ? "presente" : "AUSENTE"}`,
-		},
 		{ ok: skillCount > 0, text: `skills carregadas: ${skillCount}` },
 		{ ok: commandCount > 0, text: `comandos carregados: ${commandCount}` },
 	];
@@ -102,7 +96,7 @@ export function registerDoctor(nycode: ExtensionAPI, dir?: string): void {
 			handler: async (_a, ctx: Ctx) => {
 				const cmds = nycode.getCommands();
 				// Com a extensão diagnostico carregada, o /doctor completo é dela; estas checagens entram como itens.
-				const completo = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:doctor")];
+				const completo = (globalThis as Record<symbol, unknown>)[Symbol.for("nycode:doctor")];
 				if (typeof completo === "function")
 					return completo(ctx, doctorChecks(dir, cmds.length, cmds.filter((c) => c.source === "skill").length));
 				ctx.ui.notify(

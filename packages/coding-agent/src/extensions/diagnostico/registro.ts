@@ -369,8 +369,10 @@ export function humano(r: Alvo): Humano {
 			.split(/\r?\n/)
 			.map((l) => l.trim())
 			.filter(Boolean);
-		const codigo = linhas.map((l) => STATUS_BASH.exec(l)?.[1]).find(Boolean);
-		const util = linhas.find((l) => !STATUS_BASH.test(l) && !(codigo && MARCA_SHELL.test(l)));
+		const statusIndex = linhas.findIndex((l) => STATUS_BASH.test(l));
+		const codigo = statusIndex < 0 ? undefined : STATUS_BASH.exec(linhas[statusIndex]!)?.[1];
+		const candidatas = statusIndex < 0 ? linhas : linhas.slice(0, statusIndex).reverse();
+		const util = candidatas.find((l) => !STATUS_BASH.test(l) && !(codigo && MARCA_SHELL.test(l)));
 		return { ...base, titulo: `tool ${nome}: ${util ?? (codigo ? `saiu com código ${codigo}` : r.msg)}` };
 	}
 

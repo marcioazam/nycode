@@ -131,6 +131,7 @@ describe("AgentSession MCP integration", () => {
 		listTools?: () => unknown[],
 		options: {
 			autoEnableCodemode?: boolean;
+			autoEnableToolSearch?: boolean;
 			builtInTools?: string[];
 			/** `--tools` and `--exclude-tools`. */
 			allowedToolNames?: string[];
@@ -631,6 +632,31 @@ return { docs, sameForAliases: aliases.every((alias) => JSON.stringify(alias) ==
 		expect(notifications).toEqual([
 			"MCP tools are only reachable from the codemode or tool_search tool, but neither is active (autoEnableCodemode is false); they cannot be called.",
 		]);
+	});
+
+	it("activates tool_search next to codemode when autoEnableToolSearch is true", async () => {
+		const { harness, notifications } = await setup("codemode", undefined, { autoEnableToolSearch: true });
+		harness.setResponses([fauxAssistantMessage("ready")]);
+		await harness.session.prompt("start");
+
+		expect(harness.session.getActiveToolNames()).toEqual(["codemode", "tool_search"]);
+		expect(notifications).toEqual([]);
+	});
+
+	it("activates only codemode for a codemode server when autoEnableToolSearch is off", async () => {
+		const { harness } = await setup("codemode", undefined, { autoEnableToolSearch: false });
+		harness.setResponses([fauxAssistantMessage("ready")]);
+		await harness.session.prompt("start");
+
+		expect(harness.session.getActiveToolNames()).toEqual(["codemode"]);
+	});
+
+	it("keeps a deferred server on tool_search only with autoEnableToolSearch true", async () => {
+		const { harness } = await setup("deferred", undefined, { autoEnableToolSearch: true });
+		harness.setResponses([fauxAssistantMessage("ready")]);
+		await harness.session.prompt("start");
+
+		expect(harness.session.getActiveToolNames()).toEqual(["tool_search"]);
 	});
 
 	it("treats codemode MCP tools as reachable through an active tool_search", async () => {

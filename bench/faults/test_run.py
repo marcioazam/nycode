@@ -69,7 +69,7 @@ def test_run_one_env_error(monkeypatch: MP) -> None:
         raise run.check.EnvError("sem stage")
 
     monkeypatch.setattr(run, "arm_command", boom)
-    out = run.run_one("nycode-harness", "overloaded", 5, {})
+    out = run.run_one("nycode", "overloaded", 5, {})
     assert out.status == cl.FAILED and "sem stage" in out.note
 
 
@@ -85,16 +85,6 @@ def test_arm_command_claude_and_vanilla(tmp_path: Path) -> None:
     cmd, env = run.arm_command("pi-vanilla", "overloaded", 77, tmp_path, {})
     models = json.loads((Path(env["BENCH_PI_VANILLA_DIR"]) / "models.json").read_text())
     assert models["providers"]["anthropic"]["baseUrl"].endswith(":77")
-
-
-def test_arm_command_nycode_harness_builds_stage(
-    tmp_path: Path, monkeypatch: MP
-) -> None:
-    agent = tmp_path / "stage" / ".pi" / "agent"
-    agent.mkdir(parents=True)
-    monkeypatch.setattr(run.check, "prepare_stage", lambda arm, stage, env: agent)
-    cmd, _ = run.arm_command("nycode-harness", "overloaded", 5, tmp_path, {})
-    assert "--no-session" in cmd and (agent / "models.json").is_file()
 
 
 def test_arm_command_nycode_uses_its_agent_dir_and_offline_switch(
@@ -124,15 +114,13 @@ def test_arm_command_reuses_the_callers_stage(tmp_path: Path, monkeypatch: MP) -
         return tmp_path
 
     monkeypatch.setattr(run.check, "prepare_stage", prepare)
-    run.arm_command(
-        "nycode-harness", "overloaded", 5, tmp_path, {"BENCH_STAGE": str(own)}
-    )
+    run.arm_command("nycode", "overloaded", 5, tmp_path, {"BENCH_STAGE": str(own)})
     assert seen == [(own.resolve(), str(own.resolve()))]
     out = run.run_one(
-        "nycode-harness",
+        "nycode",
         "overloaded",
         5,
-        {"BENCH_STAGE": str(tmp_path / "bench-nycode-harness-abc")},
+        {"BENCH_STAGE": str(tmp_path / "bench-nycode-abc")},
     )
     assert out.status == cl.FAILED and "compartilhado" in out.note
 

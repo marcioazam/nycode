@@ -19,7 +19,7 @@ function start(todos: object[]) {
 	const emitted: any[] = [];
 	const nycode: any = new Proxy(
 		{
-			events: { emit: (c: string, d: any) => emitted.push([c, d]) },
+			events: { emit: (c: string, d: any) => emitted.push([c, d]), on: () => {} },
 			on: (n: string, h: any) => handlers.set(n, h),
 			registerShortcut: (k: string, o: any) => shortcuts.set(k, o),
 		},
@@ -64,7 +64,7 @@ function boot(entries: any[] = [], ctxOver: any = {}) {
 	const appended: any[] = [];
 	let tool: any;
 	const nycode: any = {
-		events: { emit() {} },
+		events: { emit() {}, on() {} },
 		on: (n: string, h: any) => handlers.set(n, h),
 		registerShortcut: () => {},
 		registerCommand: (n: string, c: any) => commands.set(n, c),

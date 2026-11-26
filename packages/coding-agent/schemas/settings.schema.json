@@ -807,17 +807,9 @@
           "default": false
         },
         "engine": {
-          "anyOf": [
-            {
-              "type": "string",
-              "const": "script"
-            },
-            {
-              "type": "string",
-              "const": "native"
-            }
-          ],
-          "description": "Who decides the permission of each tool call: \"script\" (the embedded guard.py through the PreToolUse hook, opt-in) or \"native\" (the TypeScript engine, same verdicts; the default). Any other value denies every tool call. Global setting only.",
+          "type": "string",
+          "const": "native",
+          "description": "Who decides the permission of each tool call: \"native\" (the TypeScript engine; the only one). Any other value, the removed \"script\" included, denies every tool call. Global setting only.",
           "default": "native"
         }
       }
@@ -932,6 +924,11 @@
           "type": "boolean",
           "description": "Remind the model of a stale todo list. NYCODE_TODO_SYNC takes precedence.",
           "default": true
+        },
+        "sync": {
+          "type": "boolean",
+          "description": "Todo sync: end-of-turn check, items for background work, 30-call reminder. NYCODE_TODO_SYNC_V2 takes precedence.",
+          "default": false
         }
       }
     },
@@ -942,8 +939,67 @@
           "type": "boolean",
           "description": "Keep plan mode open until the plan is submitted. NYCODE_PLAN_GATE takes precedence.",
           "default": true
+        },
+        "readOnlyTools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tools plan mode allows besides the read-only built-ins and the MCP tools that declare readOnlyHint. Names or simple globs, for example \"mcp__docs__*\".",
+          "default": []
         }
       }
+    },
+    "bash": {
+      "type": "object",
+      "properties": {
+        "mainGuard": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "In the main interactive session, cap the bash timeout and refuse sleeps of 30 s or more and polling loops, so control returns to you. Subagents and print mode are not affected.",
+              "default": true
+            },
+            "timeoutSec": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Timeout in seconds of a bash call that sets none, in the main session.",
+              "default": 120
+            },
+            "capSec": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Longest timeout in seconds a bash call may ask for, in the main session.",
+              "default": 600
+            }
+          }
+        }
+      }
+    },
+    "footer": {
+      "type": "object",
+      "properties": {
+        "stats": {
+          "type": "boolean",
+          "description": "Show the stats line (tokens, cost and model) in the footer.",
+          "default": false
+        }
+      }
+    },
+    "editorMode": {
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "normal"
+        },
+        {
+          "type": "string",
+          "const": "vim"
+        }
+      ],
+      "description": "Prompt editor keys: \"normal\" or \"vim\".",
+      "default": "normal"
     },
     "notify": {
       "type": "object",
@@ -952,41 +1008,11 @@
           "type": "boolean",
           "description": "Play a sound when the agent finishes. NYCODE_SOUND_NOTIFY takes precedence.",
           "default": true
-        }
-      }
-    },
-    "knowledge": {
-      "type": "object",
-      "properties": {
-        "vault": {
-          "type": "string",
-          "description": "Absolute path of the knowledge vault. NYCODE_KNOWLEDGE_VAULT takes precedence."
         },
-        "graphsVault": {
-          "type": "string",
-          "description": "Absolute path of the graphs vault. NYCODE_GRAPHS_VAULT takes precedence."
-        }
-      }
-    },
-    "codegraph": {
-      "type": "object",
-      "properties": {
-        "autoRoot": {
-          "type": "string",
-          "description": "Root where codegraph auto-indexes repositories. CODEGRAPH_AUTO_ROOT takes precedence."
-        },
-        "bin": {
-          "type": "string",
-          "description": "codegraph executable. CODEGRAPH_BIN takes precedence."
-        },
-        "statusTtl": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Seconds a codegraph status stays valid; 0 disables. CODEGRAPH_STATUS_TTL takes precedence."
-        },
-        "autoState": {
-          "type": "string",
-          "description": "State directory of the codegraph auto-indexer. CODEGRAPH_AUTO_STATE takes precedence."
+        "desktop": {
+          "type": "boolean",
+          "description": "Send a desktop notification when the agent finishes.",
+          "default": true
         }
       }
     },
@@ -1016,24 +1042,49 @@
               "hooks": {
                 "type": "array",
                 "items": {
-                  "type": "object",
-                  "required": [
-                    "type",
-                    "command"
-                  ],
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "const": "command"
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "command"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "const": "command"
+                        },
+                        "command": {
+                          "type": "string"
+                        },
+                        "timeout": {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      }
                     },
-                    "command": {
-                      "type": "string"
-                    },
-                    "timeout": {
-                      "type": "number",
-                      "minimum": 0
+                    {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "name"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "const": "internal"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "A hook of the core, run in-process."
+                        },
+                        "timeout": {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }

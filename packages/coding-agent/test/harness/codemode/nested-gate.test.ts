@@ -1,6 +1,5 @@
 // K11 (C-F8-11) for the tools a codemode script calls: a nested call goes through the same permission gate as a
-// direct one. Native engine: gate.ts denies a command the guard denies. Script engine: the embedded guard.py PreToolUse
-// hook (the `hooks` extension) sees the nested call. The `bash` here is a recorder, so nothing real runs.
+// direct one: gate.ts denies a command the guard denies. The `bash` here is a recorder, so nothing real runs.
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -48,11 +47,11 @@ for (const command of ["ls", "rm -rf /"]) {
 text(JSON.stringify(outcome));
 `;
 
-describe.each(["native", "script"] as const)("permissions.engine %s", (engine) => {
+describe("permissions.engine native", () => {
 	it("judges a bash call made from a codemode script like a direct one", async () => {
 		writeFileSync(
 			join(process.env.NYCODE_CODING_AGENT_DIR ?? "", "settings.json"),
-			JSON.stringify({ permissions: { engine } }),
+			JSON.stringify({ permissions: { engine: "native" } }),
 		);
 		const ran: string[] = [];
 		const bash: AgentTool = {

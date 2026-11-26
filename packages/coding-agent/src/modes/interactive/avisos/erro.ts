@@ -157,7 +157,7 @@ interface Diag {
 /** Reports to the diagnostics sink (if installed); display never breaks because of it. */
 function diag(ev: Diag): void {
 	try {
-		lerGlobal<(e: Diag) => void>(Symbol.for("nycode-harness:diag"))?.(ev);
+		lerGlobal<(e: Diag) => void>(Symbol.for("nycode:diag"))?.(ev);
 	} catch {}
 }
 
@@ -185,7 +185,7 @@ export function retryFim(host: object, ev: EventoRetryFim, t: Theme): void {
 	const r = retry; // ThemedText evaluates the function on every render: do not read `retry`, zeroed below
 	if (ev.finalError === "Retry cancelled") {
 		// agent_settled does not say it was you (aborted=false): the avisos extension reads this mark.
-		gravarGlobal(Symbol.for("nycode-harness:retry-cancelado"), Date.now());
+		gravarGlobal(Symbol.for("nycode:retry-cancelado"), Date.now());
 		esconderAbortado();
 		if (r) add(() => linhaAviso(r.erro, fg));
 		add(() => linhaCanceladas(ev.attempt, r?.max ?? ev.attempt, fg));

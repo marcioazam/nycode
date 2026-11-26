@@ -197,7 +197,7 @@ const walk = (s: string, spans: Span[], wrapSpan: (t: string) => string, outside
 
 // ── renderização ─────────────────────────────────────────────────────────────
 
-/** Recuo do diff dentro da caixa do edit: números na coluna dos ícones das tools (padding interno padrão, dono 2026-11-16). */
+/** Recuo do diff dentro da caixa do edit: números na coluna dos ícones das tools (padding interno padrão). */
 export const RECUO = 2;
 
 /** Parse, ênfase de palavra e numeração: só dependem do texto do diff, não da largura nem do tema. Últimos diffs em memória. */

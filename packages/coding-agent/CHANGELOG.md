@@ -10,6 +10,26 @@
 ### Added
 
 - `/ps`: the session's process tree (MCP servers, run jobs, subagents, hooks) with resident memory and swap from Linux `/proc`, and `/ps kill <pid>` to end one of them with its descendants; pids outside the session are refused
+- Settings `plan.readOnlyTools`, `bash.mainGuard`, `footer.stats`, `editorMode` and `notify.desktop`
+- In-process core hook `core-notes` (untrusted-data note, missing MCP launcher, test-edit note)
+- The guard denies `git commit|push|merge --no-verify` and `gh pr merge --admin`
+- User override of the built-in instructions at `<agentDir>/instructions/<name>.md`
+- `resources/.npmignore`
+- A test that fails when an embedded text cites a missing skill, agent, command or resource
+- MCP setting `autoEnableToolSearch` (default `false`; `NYCODE_MCP_TOOL_SEARCH=1` for one run): activates `tool_search` together with `codemode` for `codemode` servers, so single calls go direct and chains go through a script. Pending a bench A/B before it can become the default
+- Todo statuses `failed`, `blocked` and `cancelled` with an optional reason, and `todo confirm`
+- Setting `todo.sync` (`NYCODE_TODO_SYNC_V2`, default off pending the bench A/B): turn-end check of a stale list, items for background runs and subagents, new reminder cadence
+- The plan-mode `DONE_RULE` tells the model it may complete the step's linked todo item instead of writing the `[DONE:n]` tag
+- Bench todo metrics in `bench/metrics/trace.py` (todo-only turns, reminders followed, turn-check and external reminders, list coherence at the end of a run) and the arms `nycode-todo-v1` (control with the `todo` tool kept headless), `nycode-todo-v2` and `nycode-mcp-hybrid`
+- `bash` `run_in_background`: the command starts as a run of the Run section, its log path comes back at once and its end starts a turn; refused without a UI or under `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`
+- Tool `task_stop` (Claude Code's TaskStop, `KillShell` alias) stops a background command or monitor by id
+- Tool `monitor` (Claude Code's Monitor): each stdout line of a background command comes back as an event, batched over 200 ms, 10 events at once then one every 2 s, stopped after 30 s of suppression, ended at its deadline (5 min default, 30 max); the guard and Bash-matched hooks judge its command as Bash, and it is dropped when `bash` is off
+- `BASH_DEFAULT_TIMEOUT_MS` and `BASH_MAX_TIMEOUT_MS` replace the bash default timeout and cap (the cap is at least the default)
+- Plugin skills register as `/<plugin>:<skill>` and, for the model, through the `plugin_skill` tool, with `${CLAUDE_PLUGIN_ROOT}` and the plugin's variables; a renamed skill also resolves by its directory
+- `/claude-plugins` lists the installed Claude Code plugins with the setting that decides each one and toggles them in the user `settings.json`
+- `/todos-widget off|compact|full` chooses how the task list shows in the Plan section
+- Setting `autoMemoryStorage: "claude"` (user or managed settings only) keeps the auto memory in Claude Code's `~/.claude/projects/<slug>/memory/` with its frontmatter
+- Question form: a "Conversar sobre isto" row ends the call with Claude Code's clarify text and the answers so far; a revisited question shows its confirmed answer in green with ✔
 
 ### Changed
 
@@ -19,19 +39,39 @@
 - While streaming, the status line, sticky-prompt scan, fleet run list, editor sweep and message padding reuse work that did not change
 - Parsing frontmatter copies the YAML header, so a kept `name` or `description` does not retain the rest of the file
 - After the agent goes idle, a garbage collection runs so the streaming heap does not stay at its peak
+- `CLAUDE_PROJECT_DIR` is the directory the session started in, not the git checkout root, for hook commands, `${CLAUDE_PROJECT_DIR}` in command and skill bodies and their shell spans, and the status line's `workspace.project_dir`, as Claude Code passes it. A hook from a project or local settings file gets the folder holding its `.claude` (the checkout root for the repository root's `settings.local.json`)
+- A handler declared in several settings files runs once, as the copy from the highest-precedence source (user < project < local < `--settings` < managed), with all of that copy's fields
+- Plugin manifests may list `hooks` as an array of paths and inline objects; they add to `hooks/hooks.json`, which always loads first, and a path listed twice registers once
+- A local marketplace's `./` plugin entry loads from the marketplace itself rather than the install-time cache; a plugin the marketplace no longer lists, or whose entry leaves the marketplace directory, does not load
+- Prompt hooks, the `/goal` evaluator and the shared model call use the model's declared output limit instead of fixed 512/1024-token caps; a model that declares none gets no cap
+- The status line keeps `rate_limits` across a model switch within the same provider
+- Question form: Esc cancels from anywhere, the answer editor included (the exit menu once a batch has answers), and Enter on a blank answer does the same; the draft is never sent
+- Plugin skills are no longer handed to the skill loader as `/skill:<dir>`
+- The web tool icon matches generic names (`fetch`, `web`, `search`, `scrape`, `crawl`) instead of provider names; `tool_search` shows the tool icon
+- A hook's `updatedInput` for `run` and `monitor` replaces the command and keeps the tool's other fields (it dropped `action`, failing the call)
+- `updatedToolOutput` is read only under `hookSpecificOutput`, and for an MCP tool it wins over `updatedMCPToolOutput`
+- The embedded contract is about 1 KB of generic protection; the system prompt adds a scope rule and an ambiguity rule; `/init` no longer asks for an architecture or layout overview
+- Embedded agents use tier aliases (`haiku`, `sonnet`, `inherit`)
+- Ponytail is updated to v5.3.3 (`shortcut:` marker); subagents get its rules only when their `tools:` include `edit` or `write` or are unrestricted (`PONYTAIL_SUBAGENT_MATCHER` overrides)
+- Plan mode allows MCP tools by `readOnlyHint` or `plan.readOnlyTools`, and read-only agents by their `tools:`
+- Auto-resume uses the `@nycode/ai` classifiers
+- The ralph Stop hook is registered only while a loop runs, and `--max-iterations` defaults to 20 (`0` is unlimited)
+- `avisos`, `sound-notify` and `notify` are one `notify` extension (`/notifications`, alias `/avisos`); it no longer reads Claude's `preferredNotifChannel` nor sends the PowerShell toast
+- Vim editing is the `editorMode` setting
 
 ### Fixed
 
-- `/list-agents` (`/peers`) lists the embedded agents and the user's `~/.nycode/agent/agents`; it read the old `claude-home/agents` directory and always listed none
-- `/doctor` (`/checkup`) checks the embedded `hooks/guard.py`; it looked under the old `claude-home` directory and always reported the guard missing
+- Fixed startup stopping on "Hooks have been renamed to extensions" when `<agentDir>/hooks/` or `.nycode/hooks/` exists: that directory holds command-hook scripts, so it is no longer flagged (custom tools left in `tools/` still warn)
+- Fixed read-only subagents started in plan mode running unrestricted bash: they inherit `NYCODE_PLAN_READONLY`, which keeps plan mode's bash allowlist and blocks edit/write
+- Fixed the git guard reading the value of `--namespace`, `--config-env`, `--attr-source` and `--exec-path` as the subcommand, which skipped the `--no-verify` and force-push denies
+- Fixed `/list-agents`, which read a `claude-home/agents` directory that no longer exists: it now lists the agents the subagent tool resolves
+- Fixed the bash full-output file being read before it was flushed: `executeBash` now resolves only after the temp file is written
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
 - Git fetch of a pinned ref passes `--` before the remote and the ref, including when the checkout already exists, so the ref cannot be read as a git option
 - The built-in Mistral default is `codestral-latest`. The live catalog no longer includes `devstral-medium-latest`
 - Fixed argument substitution, skill-block parsing and diff-line parsing so a long crafted string cannot make those scans take polynomial time
 - Hooks, plugins, rules, CLAUDE.md, skills and agents of another tool's home directory no longer run or reach the prompt in nycode sessions; the HUD config and usage cache are read from `~/.nycode/agent/plugins/claude-hud`
 - A skill path declared in `settings.json` no longer reports a startup collision with a lower-precedence copy of the same skill
-- `nycode migrate from-pi` now carries the harness overlay `claude-home/rules/personal.md` into `~/.nycode/agent/AGENTS.md`, with the pi names converted
-- `nycode migrate from-pi` points the personal `/conta` extension's `pi-conta` helper at `~/.nycode/agent`; before, switching accounts in nycode rewrote `~/.pi/agent/auth.json`
 - The agent directory's CLAUDE.md is not injected twice when nycode already loads it as the global context file
 - An expired or revoked OAuth login (`invalid_grant` on token refresh) is reported as an account problem with `/login` as the action, instead of "Algo falhou no nycode" with `/bug`
 - An idle session no longer renders once a second: the subagent panel asked for a frame on every 1 s fleet poll, even with no subagent
@@ -52,7 +92,8 @@
 
 ### Removed
 
-- The embedded `/claude-tier` command (a probe of Claude Team account plans, unrelated to nycode)
+- `nycode migrate from-pi`, `/puxar`, the codegraph and knowledge-vault integrations, the `guard.py`/`script` permission engine (`permissions.engine` is native-only), `/review-pr`, `/ralph-help`, `/vim`, `/mobile`, `/stickers`, `/upgrade`, `hook-dispatch.sh`, the `claims` hook and `impeccable_gate.sh`
+- 24 skills, 10 agents, 9 commands and the git-deliver, structure, checks, telemetry, mcp-header and nycode-image scripts from the embedded resources (they were the owner's personal setup)
 
 ## [2.0.2] - 2026-11-23
 

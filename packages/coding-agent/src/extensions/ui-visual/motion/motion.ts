@@ -24,7 +24,7 @@ export type AnsiProbeTheme = {
 export const QUADRO_MS = { transicao: 16, continuo: 33, remoto: 66, parado: 1000 } as const;
 const ACORDA_MS = 250; // contínuo parado (sem foco, reduzido): acorda 4×/s para retomar logo, desenha 1×/s
 // Foco do terminal, posto por ui/terminal.ts; cada extensão tem a própria cópia deste módulo, daí o globalThis.
-const FOCO = Symbol.for("nycode-harness:foco");
+const FOCO = Symbol.for("nycode:foco");
 export const definirFoco = (focado: boolean | undefined): void => {
 	(globalThis as Record<symbol, unknown>)[FOCO] = focado;
 };
@@ -47,7 +47,7 @@ type EstadoRelogio = {
 	leituraEm: number | undefined;
 };
 // jiti carrega este arquivo mais de uma vez: o relógio mora em globalThis para não haver dois timers.
-const RELOGIO = Symbol.for("nycode-harness:relogio");
+const RELOGIO = Symbol.for("nycode:relogio");
 const est = (): EstadoRelogio => {
 	const g = globalThis as Record<symbol, EstadoRelogio>;
 	g[RELOGIO] ??= { subs: new Map(), timer: undefined, timerMs: 0, fator: 1, leituraEm: undefined };
@@ -352,7 +352,7 @@ export function pillChip(inner: string, boxBgRgb: Rgb | undefined): string {
 	return `${open} ${body} \x1b[49m`;
 }
 
-/** Respiração (dono, 2026-11-20: spinner braille só na caixa de digitação): o texto de quem aguarda oscila entre dim e `token`
+/** Respiração (spinner braille só na caixa de digitação): o texto de quem aguarda oscila entre dim e `token`
  * (ciclo de 1600 ms). Sem movimento, sem cor ou sem foco, fica em `token`. */
 export function respira(
 	t: { fg: (c: string, s: string) => string; getFgAnsi?: (c: string) => string },

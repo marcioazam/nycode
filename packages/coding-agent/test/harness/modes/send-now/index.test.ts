@@ -575,7 +575,7 @@ test("falha do handler de chord é explícita, sem copiar prefixo nem enviar ras
 	assert.deepEqual(t.submits, []);
 });
 
-// Bug visto pelo dono (2026-11-14): com o auto-resume esperando o reset do limite, o enviar-agora estourava os 10 s. A espera
+// Bug: com o auto-resume esperando o reset do limite, o enviar-agora estourava os 10 s. A espera
 // fica fora do run do agente; o enviar-agora a acorda pelo gancho global que a extensão registra.
 test("enviar-agora acorda a espera do auto-resume antes de abortar", async () => {
 	const t = makeHost({ draft: "oi", busy: true });
@@ -631,7 +631,7 @@ test("Shift+Backspace remove a última mensagem humana da fila (1 por vez), pres
 	assert.equal(t.counts.abort, 0, "excluir da fila não aborta o agente");
 });
 
-// Item escolhido da fila (dono, 2026-11-20): shift+↑/↓ escolhe; shift+⌫ e shift+← agem só nele; sem escolha, como antes.
+// Item escolhido da fila: shift+↑/↓ escolhe; shift+⌫ e shift+← agem só nele; sem escolha, como antes.
 test("fila: shift+↑/↓ escolhe um item; shift+⌫ remove o escolhido e shift+← o leva sozinho ao editor; sem fila as teclas passam", () => {
 	delete (globalThis as any).__piFilaSel;
 	const t = makeHost({

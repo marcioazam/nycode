@@ -26,7 +26,7 @@ from bench import evidence
 ND = NormalDist()
 # "Precise" gate (owner decision, replaces the D6 accuracy rule): non-inferiority margin −10 pp on a two-sided
 # 90% interval, base k12 (tier baseline), candidate k3 plus one +3 extension when inconclusive.
-# Simulated on the real Nycode round (42 tasks): the old rule (base k2, cand k2+2, −6 pp, CI95) approves an
+# Simulated on the real Nycode pre-migration round (42 tasks): the old rule (base k2, cand k2+2, −6 pp, CI95) approves an
 # unchanged PR 41% of the time and blocks a real 10 pp drop 97%; the new rule approves 98%, blocks −10 pp 96%
 # and −15 pp 100%, at ~146 runs per PR.
 MARGIN = -0.10

@@ -18,14 +18,19 @@ function escapeRegex(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function buildFdPathQuery(query: string): string {
+export function buildFdPathQuery(query: string): string {
 	const normalized = toDisplayPath(query);
 	if (!normalized.includes("/")) {
 		return escapeRegex(normalized);
 	}
 
 	const hasTrailingSeparator = normalized.endsWith("/");
-	const trimmed = normalized.replace(/^\/+|\/+$/g, "");
+	// Index scan, not /^\/+|\/+$/: that regex backtracks quadratically on long runs of "/" (CodeQL #247).
+	let start = 0;
+	let end = normalized.length;
+	while (start < end && normalized[start] === "/") start++;
+	while (end > start && normalized[end - 1] === "/") end--;
+	const trimmed = normalized.slice(start, end);
 	if (!trimmed) {
 		return normalized;
 	}

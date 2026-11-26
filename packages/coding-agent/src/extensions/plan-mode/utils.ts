@@ -18,6 +18,7 @@ import {
 	shellWords,
 	splitSegments,
 } from "../_shared/shell/shell-split.ts";
+import { type AgentConfig, discoverAgents } from "../subagent/registry/agents.ts";
 
 // Destructive commands blocked in plan mode. Tested against the segment's command word,
 // the one word that runs: an allowlisted head never executes its arguments, so `code`
@@ -117,7 +118,6 @@ const SAFE_PATTERNS = [
 	/^\s*rg\b/,
 	/^\s*fd\b/,
 	/^\s*fdfind\b/,
-	/^\s*python3\s+\S*\/skills\/obsidian-cli\/scripts\/kb\.py\s+(search|section|outline)\b/,
 	/^\s*bat\b/,
 	/^\s*eza\b/,
 ];
@@ -266,6 +266,20 @@ export interface TodoItem {
 	agent?: string;
 	/** The '-' bullets under the task in the plan text, one per line (plan modal and drawer); absent when it has none. */
 	description?: string;
+}
+
+/** The todo tool's `nycode:todos` payload as Plan rows: cancelled shows as skipped, failed/blocked as is, reason as the note. */
+export function todosToItems(
+	todos: ReadonlyArray<{ id: number; text: string; status: string; reason?: string }>,
+): TodoItem[] {
+	const marks: Record<string, TodoItem["status"]> = { failed: "failed", blocked: "blocked", cancelled: "skipped" };
+	return todos.map((t) => ({
+		step: t.id,
+		text: t.text,
+		completed: t.status === "completed",
+		doing: t.status === "in_progress",
+		...(marks[t.status] ? { status: marks[t.status], note: t.reason } : {}),
+	}));
 }
 
 /** The plan state persisted in a session entry, once each field has been checked.
@@ -559,25 +573,85 @@ export function lintPlan(plan: string): string[] {
 	return problems;
 }
 
-const READ_ONLY_MCP =
-	/^mcp__(keenable|perplexity|exa|brave_search|octen|parallel|youcom|context7|codegraph|paper_search|package_version_check|fetch|firecrawl|nimble)__/;
-
-const READ_ONLY_AGENTS = new Set([
-	"Explore",
-	"code-mapper",
-	"Plan",
-	"perplexity-scout",
-	"web-scout",
-	"research-scout",
-	"scholar-scout",
-	"claim-verifier",
-	"code-reviewer",
-	"security-reviewer",
-	"test-reviewer",
-	"reliability-reviewer",
-	"contract-migration-reviewer",
-	"agent-systems-auditor",
+/**
+ * Built-in tools a subagent may carry in `tools:` for plan mode: no edit, write or subagent. `bash` is allowed for
+ * parity with Claude Code's Explore/Plan agents; the child inherits NYCODE_PLAN_READONLY (index.ts), which holds its bash
+ * to plan mode's allowlist.
+ */
+const PLAN_AGENT_TOOLS = new Set([
+	"read",
+	"bash",
+	"grep",
+	"find",
+	"ls",
+	"tool_search",
+	"web_fetch",
+	"todo",
+	"lsp_diagnostics",
+	"lsp_hover",
+	"lsp_definition",
+	"lsp_references",
+	"lsp_symbols",
 ]);
+
+/** What plan mode knows about the session's tools: the registry (with MCP annotations) and the user's allowlist. */
+export interface PlanToolPolicy {
+	tools: ReadonlyArray<{ name: string; annotations?: { readOnlyHint?: boolean } }>;
+	/** `plan.readOnlyTools` of the settings: tool names or `*` globs such as `mcp__docs__*`. */
+	userReadOnly: readonly string[];
+	/** Agent definitions to judge; defaults to the user-scope agents on disk. */
+	agents?: readonly AgentConfig[];
+}
+
+const EMPTY_POLICY: PlanToolPolicy = { tools: [], userReadOnly: [] };
+
+function globMatches(pattern: string, name: string): boolean {
+	// `*` is the only wildcard: match the fixed parts in order (no regex built from settings text, no backtracking)
+	const parts = pattern.split("*");
+	const head = parts[0];
+	if (parts.length === 1) return name === head;
+	const tail = parts[parts.length - 1];
+	if (name.length < head.length + tail.length || !name.startsWith(head) || !name.endsWith(tail)) return false;
+	let pos = head.length;
+	const end = name.length - tail.length;
+	for (const part of parts.slice(1, -1)) {
+		const at = name.indexOf(part, pos);
+		if (at < 0 || at + part.length > end) return false;
+		pos = at + part.length;
+	}
+	return true;
+}
+
+/** An MCP tool runs in plan mode only when its server marked it `readOnlyHint: true` or the user listed it. */
+function mcpToolVerdict(name: string, policy: PlanToolPolicy): ToolVerdict {
+	if (policy.userReadOnly.some((pattern) => globMatches(pattern, name))) return { ok: true };
+	const tool = policy.tools.find((t) => t.name === name);
+	if (tool?.annotations?.readOnlyHint === true) return { ok: true };
+	return {
+		ok: false,
+		reason: tool
+			? "MCP tool is not marked readOnlyHint; list it in settings plan.readOnlyTools to allow it"
+			: "unknown MCP tool; list it in settings plan.readOnlyTools to allow it",
+	};
+}
+
+/** One entry of an agent's `tools:`: a read-only built-in, or an MCP tool (or `*` glob) that is read-only by the rule above. */
+function agentToolIsReadOnly(entry: string, policy: PlanToolPolicy): boolean {
+	if (PLAN_AGENT_TOOLS.has(entry)) return true;
+	if (!entry.startsWith("mcp__")) return false;
+	if (!entry.includes("*")) return mcpToolVerdict(entry, policy).ok;
+	if (policy.userReadOnly.includes(entry)) return true;
+	const matched = policy.tools.filter((t) => globMatches(entry, t.name));
+	return matched.length > 0 && matched.every((t) => mcpToolVerdict(t.name, policy).ok);
+}
+
+/** Why an agent may not run in plan mode; undefined when its `tools:` are all read-only. Fail closed. */
+function agentRejection(agent: AgentConfig | undefined, policy: PlanToolPolicy): string | undefined {
+	if (!agent) return "unknown agent";
+	if (!agent.tools?.length) return "agent has no tools: field (unrestricted)";
+	const bad = agent.tools.filter((t) => !agentToolIsReadOnly(t, policy));
+	return bad.length === 0 ? undefined : `tools not read-only: ${bad.join(", ")}`;
+}
 
 /** Directory where plan mode may write its plan files. */
 export function plansDir(): string {
@@ -614,7 +688,7 @@ function planFilePathVerdict(input: Record<string, unknown>, dir: string): ToolV
 	return { ok: false, reason: `only .md files inside ${dir}` };
 }
 
-function subagentVerdict(input: Record<string, unknown>): ToolVerdict {
+function subagentVerdict(input: Record<string, unknown>, policy: PlanToolPolicy): ToolVerdict {
 	const items = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 	const names = [
 		input.agent,
@@ -626,19 +700,29 @@ function subagentVerdict(input: Record<string, unknown>): ToolVerdict {
 	if (input.agentScope !== undefined && input.agentScope !== "user")
 		return { ok: false, reason: "only agentScope user" };
 	if (names.length === 0) return { ok: true };
-	const bad = names.filter((n) => typeof n !== "string" || !READ_ONLY_AGENTS.has(n));
-	return bad.length === 0 ? { ok: true } : { ok: false, reason: `non-read-only agent: ${bad.join(", ")}` };
+	const agents = policy.agents ?? discoverAgents(process.cwd(), "user").agents;
+	const bad = names.flatMap((n) => {
+		const why =
+			typeof n === "string"
+				? agentRejection(
+						agents.find((a) => a.name === n),
+						policy,
+					)
+				: "invalid agent name";
+		return why === undefined ? [] : [`${String(n)} (${why})`];
+	});
+	return bad.length === 0 ? { ok: true } : { ok: false, reason: `non-read-only agent: ${bad.join("; ")}` };
 }
 
-/** Plan-mode rules for tools beyond the fixed list: MCP servers, subagent agents, write/edit paths. */
+/** Plan-mode rules for tools beyond the fixed list: MCP tools, subagent agents, write/edit paths. */
 export function isPlanModeToolAllowed(
 	toolName: string,
 	input: Record<string, unknown>,
 	dir: string = plansDir(),
+	policy: PlanToolPolicy = EMPTY_POLICY,
 ): ToolVerdict {
-	if (toolName.startsWith("mcp__"))
-		return READ_ONLY_MCP.test(toolName) ? { ok: true } : { ok: false, reason: "MCP server is not read-only" };
-	if (toolName === "subagent") return subagentVerdict(input ?? {});
+	if (toolName.startsWith("mcp__")) return mcpToolVerdict(toolName, policy);
+	if (toolName === "subagent") return subagentVerdict(input ?? {}, policy);
 	if (toolName === "write" || toolName === "edit") return planFilePathVerdict(input ?? {}, dir);
 	return { ok: true };
 }

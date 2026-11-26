@@ -1,7 +1,7 @@
 # Marca e README do Nycode
 
 Estado: **plano, nada aplicado** (F2 e F12 do [mega plano](00-mega-plano.md)). Este guia fixa o logo do Nycode, o novo
-topo do `README.md`, o destino de cada menção a pi.dev, Earendil e Discord, o que migra do README do `marcioazam/ny-pi` e os pontos
+topo do `README.md`, o destino de cada menção a pi.dev, Earendil e Discord, o que migra do README do Nycode pré-migração e os pontos
 de marca fora do README. Identificadores: F0 a F12, D-nn ([11](11-decisoes-e-pendencias.md)), K1 a K14
 ([02](02-arquitetura-alvo.md)). Fatos do logo: [anexo C](anexos/C-logo-historico.md), reconferidos em 2026-11-20.
 
@@ -68,7 +68,7 @@ Substitui as linhas 1 a 9 (`README.md:1-9`: o `<p>` com o logo do pi e o `<p>` c
 
 O primeiro `<p>` é o bloco que o `README.md` tinha em `9ea437bf7` (anexo C, seção (b)). Não há link para `pi.dev` nem
 para o Discord. O selo do npm fica (linha 8); se `@nycode/coding-agent` está publicado: não verificado (a publicação é
-F11, D-13). Proposta: tirar o selo em F2 e devolvê-lo em F11. Os selos de CI do `marcioazam/ny-pi` (`ci-static`, `ci-security`,
+F11, D-13). Proposta: tirar o selo em F2 e devolvê-lo em F11. Os selos de CI do Nycode pré-migração (`ci-static`, `ci-security`,
 `instruction-budget`, Scorecard, licença) entram em F3, quando os workflows existirem no Nycode.
 
 ### 3.2 Diff proposto, linha a linha
@@ -122,7 +122,7 @@ Inserida antes de `## License`, em inglês (D-04). Texto proposto:
 ## Origin
 
 nycode is a fork of [pi](https://github.com/earendil-works/pi) by Mario Zechner and contributors (MIT). The harness
-built into nycode started as [Nycode](https://github.com/marcioazam/ny-pi), a harness for pi. nycode is not affiliated
+built into nycode started as pre-migration Nycode, a harness for pi. nycode is not affiliated
 with, nor endorsed by, the pi project. The base commit, the changes and the third-party licenses are in
 [NOTICE](NOTICE); the sync policy is in [docs/fork](docs/fork).
 ```
@@ -131,16 +131,16 @@ O `NOTICE` do fork cita o upstream e o commit base `073b0bae8488ee20def26e873b77
 affiliated" é proposta deste plano, não texto existente. O pi-code entra no `NOTICE` conforme
 [04](04-regras-do-repositorio.md), seção 5.15. Os links para o pi são **exceção** (seção 6).
 
-## 4. O que migra do README do `marcioazam/ny-pi` (F12, com partes em F10)
+## 4. O que migra do README do Nycode pré-migração (F12, com partes em F10)
 
-O README do `marcioazam/ny-pi` tem 450 linhas (`origin/main`). Seções: `Contents` (20), `How to read this README` (28),
-`Where Nycode wins and where it loses` (41), `Results at a glance` (71), `Benchmarks` (89), `What you get`
+O README do Nycode pré-migração tem 450 linhas (`origin/main`). Seções: `Contents` (20), `How to read this README` (28),
+`Where Nycode pré-migração wins and where it loses` (41), `Results at a glance` (71), `Benchmarks` (89), `What you get`
 (315), `Install` (333), `Link, backup, restore` (351), `Overlay` (359),
 `Tests` (366), `Configuration` (372), `Quality gates` (389),
 `Comparison with other harnesses` (405), `Community` (423), `Repository layout` (429), `Documentation` (441), `License`
 (450).
 
-- How to read this README (28-39): migra? sim; texto igual, "ny-pi" lido como "o harness"; vira regra em
+- How to read this README (28-39): migra? sim; texto igual, "Nycode pré-migração" lido como "o harness"; vira regra em
   [04](04-regras-do-repositorio.md), A16. Fase: F2.
 - Wins and losses, Results at a glance (41-88): migra? só depois de medir; tabelas só com o braço `nycode` (4.1).
   Fase: F10.
@@ -159,15 +159,15 @@ O README do `marcioazam/ny-pi` tem 450 linhas (`origin/main`). Seções: `Conten
 
 ### 4.1 Regra de honestidade
 
-Todo número do README do nycode vem de uma medição do braço `nycode` (D-14, D-25). **Até F10**, nenhum número do Nycode
-entra como se fosse do Nycode: se aparecer, a frase é "measured on the Nycode ... on pi 1.5.2" (D-48; antes "medido como ny-pi") e a tabela de comparação
+Todo número do README do nycode vem de uma medição do braço `nycode` (D-14, D-25). **Até F10**, nenhum número do Nycode pré-migração
+entra como se fosse do Nycode: se aparecer, a frase é "measured on the Nycode harness ... on pi 1.5.2" (D-48; antes "medido como Nycode pré-migração") e a tabela de comparação
 **não** entra. Depois de F10 o número antigo é substituído, não mantido ao lado do novo (regra do harness Nycode, README:36-37).
-Os números atuais do README do `marcioazam/ny-pi` (97,8% de 42 tarefas, 134 de 168 no Terminal-Bench, 0,57x de custo) não foram
+Os números atuais do README do Nycode pré-migração (97,8% de 42 tarefas, 134 de 168 no Terminal-Bench, 0,57x de custo) não foram
 reverificados neste plano: não verificado.
 
 **Ajustada em 2026-11-21 por D-31:** a pedido do dono o README de F4 já traz as tabelas do harness Nycode, rotuladas como
 medidas no harness Nycode sobre pi 1.5.2 e não no binário Nycode, com a lista do que o `docs/bench/` tem e não tem. Em F10 as
-tabelas são substituídas pelas do braço `nycode` e as menções a Nycode e Pi Agent saem ou mudam de função.
+tabelas são substituídas pelas do braço `nycode` e as menções a Nycode pré-migração e Pi Vanilla saem ou mudam de função.
 
 ### 4.2 Sumário proposto do README final
 
@@ -264,8 +264,8 @@ rg -n 'Share your OSS|auto-closed' README.md           # esperado: vazio
 ```
 
 A renderização nos temas claro e escuro **não** é verificável por linha de comando: exige abrir o `README.md` no GitHub
-nos dois temas (conferência do dono; não verificado). Em F12, `rg -n 'ny-pi' README.md` só acha `import/ny-pi` (some com C-F12-05) e links de `marcioazam/ny-pi` (D-48, D-22) e,
-enquanto F10 não fechou, o README diz "Nycode"; depois de F10, `rg -n 'Nycode' README.md` é vazio.
+nos dois temas (conferência do dono; não verificado). Em F12, `rg -n 'Nycode pré-migração' README.md` só acha `import/origem` (some com C-F12-05) e links do Nycode pré-migração (D-48, D-22) e,
+enquanto F10 não fechou, o README diz "Nycode harness"; depois de F10, `rg -n 'Nycode harness' README.md` é vazio.
 
 ## 9. Não verificado
 
@@ -273,5 +273,5 @@ enquanto F10 não fechou, o README diz "Nycode"; depois de F10, `rg -n 'Nycode' 
 - Se `@nycode/coding-agent` está publicado no npm; se o ref `stable` e a URL `marcioazam/nycode-cli` ainda resolvem.
 - Se `exy.png` é usado fora do rodapé do README; conteúdo de `nix/package.nix:20,28`.
 - Lista dos aliases `@mariozechner/*`; existência de imagem social configurada no GitHub.
-- Números do README do `marcioazam/ny-pi` (4.1): não reverificados.
+- Números do README do Nycode pré-migração (4.1): não reverificados.
 - Nenhum comando de escrita foi executado; só `git show`, `sha256sum`, `rg` e `sed` de leitura.

@@ -7,7 +7,7 @@ import { hasTrustRequiringProjectResources, ProjectTrustStore } from "../trust-m
 import { type CwdSessionManager, type CwdTransaction, setCwdTransaction } from "./transaction.ts";
 
 /** Marker read by the `directory` extension: the transition exists in this core. */
-export const MARK = Symbol.for("nycode-harness.session-cwd");
+export const MARK = Symbol.for("nycode.session-cwd");
 (globalThis as Record<symbol, unknown>)[MARK] = { version: 1 };
 
 export interface CwdInfo {

@@ -36,23 +36,24 @@ import { ancestorDirs } from "../_shared/project/project-root.ts";
 import { runAgent } from "../_shared/seams/agent-run.ts";
 import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { managedSettingsFile } from "../_shared/settings/managed-settings.ts";
-import { installedPlugins, pluginComponentPath } from "../_shared/settings/plugins.ts";
 import { claudeSettingsChain, readSettingsChain } from "../_shared/settings/settings-chain.ts";
 import { errorMessage, isDirectory, isRecord } from "../_shared/util/values.ts";
 import { expandCommand, shellExecutionDisabled } from "../commands/expand.ts";
-
-/** The extra skill directories a manifest declares, as a list. A string is one entry,
- * a list is itself, anything else declares none. */
-function declaredSkillDirs(declared: unknown): string[] {
-	if (Array.isArray(declared)) return declared.map(String);
-	return typeof declared === "string" ? [declared] : [];
-}
+import {
+	type ExpandSkill,
+	findPluginSkill,
+	pluginSkills,
+	registerPluginSkills,
+	type SkillExpansion,
+} from "./plugin-skills.ts";
+import { registerPluginsCommand } from "./plugins-command.ts";
 
 /** Existing `.claude/skills` directories, user first then project. The project
  * directory is included only for approved projects: nycode's loader surfaces every skill's
  * name and description to the model, so an untrusted repository would otherwise get
- * text into the prompt without the user ever agreeing to load its config. */
-export function skillDirs(cwd: string, home: string, trusted: boolean): string[] {
+ * text into the prompt without the user ever agreeing to load its config. Plugin skills
+ * are not here: they register as `/<plugin>:<skill>` (plugin-skills.ts). */
+export function skillDirs(cwd: string, _home: string, trusted: boolean): string[] {
 	// Claude's precedence: enterprise (the skills directory beside the managed
 	// settings file) overrides personal, and personal overrides project; discovery
 	// here is first-match, so higher precedence goes first.
@@ -65,29 +66,6 @@ export function skillDirs(cwd: string, home: string, trusted: boolean): string[]
 			? []
 			: [path.join(path.dirname(managedSettingsFile()), ".claude", "skills")];
 	const candidates = [...enterprise, path.join(userConfigDir(), "skills")];
-	// Enabled plugins contribute their skills directories. nycode's loader names a
-	// skill by its directory, so a plugin skill registers without Claude's
-	// /plugin: prefix; a rename-free approximation, disclosed in the README.
-	for (const plugin of installedPlugins(home)) {
-		// Claude: "Adds to the default: `skills`. The default `skills/` directory is always
-		// scanned, and directories listed in `skills` are loaded alongside it." Treating the
-		// declaration as a replacement silently dropped every skill in the conventional
-		// location. (The reference's one exception, a marketplace entry whose source resolves
-		// to the marketplace root, is a marketplace shape nycode does not model.)
-		const extra = declaredSkillDirs(plugin.manifest.skills);
-		const dirs = [...extra, "skills"];
-		candidates.push(
-			...dirs
-				.map((dir) => pluginComponentPath(plugin, String(dir)))
-				.filter((dir): dir is string => dir !== undefined),
-		);
-		// NOT SUPPORTED: Claude's single-skill layout, "a plugin that ships exactly one skill
-		// can place SKILL.md directly at the plugin root". skillPaths is handed to nycode's own
-		// loader, which owns the layout and looks for <dir>/<name>/SKILL.md; adding the plugin
-		// root here does not surface root/SKILL.md and does start scanning every sibling
-		// directory (hooks/, agents/, commands/) for skills. Supporting it needs a loader that
-		// accepts a directory that IS the skill, which is nycode's call, not this extension's.
-	}
 	// Claude loads skills from every .claude/skills between cwd and the repository
 	// root; the list goes nearest-first so findClaudeSkill's first match is the
 	// closest definition (nycode's loader receives the same order).
@@ -271,7 +249,14 @@ function findClaudeSkill(name: string, roots: string[]): FoundSkill | undefined 
 }
 
 export default function skillsExtension(nycode: ExtensionAPI) {
-	nycode.on("session_start", (_event, ctx) => forkResults.attach(nycode, sessionHasTurns(ctx)));
+	registerPluginsCommand(nycode);
+	const syncPluginSkills = registerPluginSkills(nycode, (text, ctx, options) =>
+		expandSkillInvocation(nycode, text, ctx, options),
+	);
+	nycode.on("session_start", (_event, ctx) => {
+		forkResults.attach(nycode, sessionHasTurns(ctx));
+		syncPluginSkills(ctx);
+	});
 	nycode.on("agent_start", () => forkResults.markPrompted(nycode));
 	nycode.on("session_shutdown", () => forkResults.detach(nycode));
 
@@ -405,28 +390,36 @@ function shadowedByNycode(nycode: ExtensionAPI, name: string, filePath: string):
 	return real(loaded.sourceInfo.path) !== real(filePath);
 }
 
-/** The skill name and arguments of a `/skill:<name> <args>` input, or undefined. */
-function parseSkillInvocation(rawText: string): { name: string; args: string } | undefined {
+/** The skill name and arguments of a `/skill:<name> <args>` or plugin `/<plugin>:<skill> <args>` input. */
+function parseSkillInvocation(rawText: string): { name: string; args: string; plugin: boolean } | undefined {
 	const text = rawText.trimStart();
-	if (!text.startsWith("/skill:")) return undefined;
-	const space = text.indexOf(" ");
-	const name = (space === -1 ? text.slice(7) : text.slice(7, space)).trim();
-	if (!name) return undefined;
-	return { name, args: space === -1 ? "" : text.slice(space + 1).trim() };
+	if (!text.startsWith("/")) return undefined;
+	const plugin = !text.startsWith("/skill:");
+	const space = text.search(/\s/);
+	const name = (space === -1 ? text.slice(plugin ? 1 : 7) : text.slice(plugin ? 1 : 7, space)).trim();
+	if (!name || (plugin && !name.includes(":"))) return undefined;
+	return { name, args: space === -1 ? "" : text.slice(space + 1).trim(), plugin };
 }
 
 async function expandSkillInvocation(
 	nycode: ExtensionAPI,
 	rawText: string,
 	ctx: ExtensionContext,
-): Promise<{ action: "transform"; text: string } | { action: "handled" } | undefined> {
+	options: Parameters<ExpandSkill>[2] = {},
+): Promise<SkillExpansion> {
 	const invocation = parseSkillInvocation(rawText);
 	if (!invocation) return;
-	const { name, args } = invocation;
+	const { args } = invocation;
 	const trusted = isProjectApprovedSilently(ctx);
-	const found = findClaudeSkill(name, skillDirs(ctx.cwd, os.homedir(), trusted));
-	if (!found || shadowedByNycode(nycode, name, found.filePath)) return;
-	const refused = refusedByOverride(name, ctx, trusted);
+	const pluginSkill = invocation.plugin ? findPluginSkill(pluginSkills(), invocation.name) : undefined;
+	if (invocation.plugin && !pluginSkill) return;
+	const name = pluginSkill?.name ?? invocation.name;
+	const found = pluginSkill
+		? { filePath: pluginSkill.filePath, baseDir: path.dirname(pluginSkill.filePath) }
+		: findClaudeSkill(name, skillDirs(ctx.cwd, os.homedir(), trusted));
+	if (!found || (!pluginSkill && shadowedByNycode(nycode, name, found.filePath))) return;
+	// Claude: "Plugin skills are not affected by skillOverrides."
+	const refused = pluginSkill ? undefined : refusedByOverride(name, ctx, trusted);
 	if (refused) return refused;
 	let parsed: ReturnType<typeof parseCommandFile>;
 	let content: string;
@@ -439,6 +432,11 @@ async function expandSkillInvocation(
 		// failing the invocation over the dynamic features it cannot have.
 		return;
 	}
+	// The current file decides, not the listing captured at session start.
+	if (options.modelInvocation && parsed.disableModelInvocation)
+		throw new Error(
+			`/${name} is user-only (disable-model-invocation: true) and was not run. Only the user can invoke it.`,
+		);
 	// Claude registers hooks a skill's frontmatter declares when the skill is
 	// invoked, for the rest of the session; the hooks extension owns running them,
 	// so the declaration is announced over the shared bus.
@@ -449,8 +447,8 @@ async function expandSkillInvocation(
 	}
 	let expanded: string;
 	try {
-		expanded = await expandCommand(nycode, parsed, args, { cwd: ctx.cwd }, found.filePath, undefined, {
-			allowShell: !shellExecutionDisabled(ctx.cwd, os.homedir(), trusted),
+		expanded = await expandCommand(nycode, parsed, args, { cwd: ctx.cwd }, found.filePath, pluginSkill?.plugin, {
+			allowShell: options.allowShell !== false && !shellExecutionDisabled(ctx.cwd, os.homedir(), trusted),
 		});
 	} catch (error) {
 		// A failed injected command aborts the invocation, as it does for a command: nycode logs a
@@ -461,7 +459,8 @@ async function expandSkillInvocation(
 	}
 	if (typeof frontmatter.context === "string" && frontmatter.context.trim().toLowerCase() === "fork") {
 		const agentName = typeof frontmatter.agent === "string" ? frontmatter.agent.trim() : undefined;
-		if (forkWaits(name, frontmatter, ctx)) return runForkedSkill(name, found.filePath, expanded, agentName);
+		if (options.inlineFork || forkWaits(name, frontmatter, ctx))
+			return runForkedSkill(name, found.filePath, expanded, agentName);
 		return startForkedSkill(ctx, { name, filePath: found.filePath, expanded, agentName });
 	}
 	return {

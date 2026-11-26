@@ -34,7 +34,8 @@
           { "context": "mcp-conformance" },
           { "context": "ci-static" },
           { "context": "ci-security" },
-          { "context": "instruction-budget" }
+          { "context": "instruction-budget" },
+          { "context": "bench-pr" }
         ]
       }
     }

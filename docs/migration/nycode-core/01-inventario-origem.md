@@ -1,7 +1,7 @@
 # Inventário da origem e do destino
 
 Resumo do que existe hoje, com as contagens que o resto do plano usa. O levantamento bruto, com caminho e linha,
-está nos anexos [A](anexos/A-inventario-nycode-harness.md) (harness Nycode) e [B](anexos/B-mapa-core-nycode.md) (Nycode).
+está nos anexos A (harness Nycode) e [B](anexos/B-mapa-core-nycode.md) (Nycode).
 
 ## 1. Como o harness Nycode funciona hoje
 
@@ -19,7 +19,7 @@ usuário digita `pi`
 ~/.pi/agent/bin/pi  (pi 1.5.2, instalado de pi.dev)
    │ carrega pacotes de settings.json:
    │   pi-code@1.7.0 (sem extensions/mcp), ./vendor/pi-lsp, ./vendor/ponytail
-   │ carrega ~/.pi/agent/extensions/ (23 unidades do Nycode, por ligação simbólica)
+   │ carrega ~/.pi/agent/extensions/ (23 unidades do Nycode pré-migração, por ligação simbólica)
    ▼
 pi-code lê CLAUDE_CONFIG_DIR: CLAUDE.md, rules/, agents/, skills/, commands/, settings.json (hooks)
    │ hooks: guard.py (PreToolUse), graph_context.py (SessionStart), hook-dispatch.sh, statusline.mjs
@@ -30,7 +30,7 @@ sessão
 Nada disso é um binário único: são quatro camadas instaladas em momentos diferentes (pi, pi-code, terceiros, harness Nycode),
 unidas por um script de shell que reaplica patches a cada início.
 
-## 2. Contagens da origem (`marcioazam/ny-pi@e4f8729`)
+## 2. Contagens da origem (Nycode pré-migração)
 
 | Área | Quantidade | Detalhe |
 |---|---:|---|

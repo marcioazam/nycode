@@ -5,8 +5,8 @@ hook, command and plugin has exactly one table row with a valid class, and no ro
 A type with no shipped piece yet is not compared for stale rows: the pieces arrive in F5-F8 and
 their rows already exist. The first piece of a type turns the stale check on for that type.
 A piece without a row is always a finding. Every `optional` skill must carry
-`disable-model-invocation: true` (D-39: it stays out of the model context, `/skill:<name>` still works).
-D-51 moved the six skills that carried it to `core`; the check stays for any skill classed `optional`.
+`disable-model-invocation: true` (it stays out of the model context, `/skill:<name>` still works).
+No skill is `optional` today; the check stays for any skill classed that way.
 
 Usage: core_scope.py [--root DIR]   (default: repository root)
 Exit 0 clean, 1 findings, 2 spec unreadable or malformed.

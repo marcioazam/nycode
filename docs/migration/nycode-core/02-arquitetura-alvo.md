@@ -1,6 +1,6 @@
 # Arquitetura alvo
 
-Onde cada peça do harness Nycode passa a morar no Nycode e por quê. Fatos de origem: [anexo A](anexos/A-inventario-nycode-harness.md).
+Onde cada peça do harness Nycode passa a morar no Nycode e por quê. Fatos de origem: registro do mantenedor.
 Fatos de destino: [anexo B](anexos/B-mapa-core-nycode.md). Decisões citadas como D-nn: [11](11-decisoes-e-pendencias.md).
 
 ## 1. Três níveis de integração
@@ -26,14 +26,14 @@ tabela, e registre a costura em [08](08-sincronizacao-upstream.md#costuras).
 ```text
 nycode/
 ├── .github/                    regras e workflows unificados (04, 07)
-├── bench/                      benchmark vindo do Nycode (Python), braço `nycode`
+├── bench/                      benchmark vindo do Nycode pré-migração (Python), braço `nycode`
 ├── docs/
 │   ├── assets/                 nycode-pixel.svg, nycode-wordmark-ansi.txt
 │   ├── bench/                  RUNBOOK e linhas de base
 │   ├── fork/                   registro do fork e política de sincronização
 │   ├── harness/                documentos vindos de claude-home/docs
 │   ├── migration/nycode-core/   este plano e as evidências
-│   └── specs/                  especificações 0001-0009 do Nycode
+│   └── specs/                  especificações 0001-0009 do Nycode pré-migração
 ├── packages/
 │   ├── coding-agent/
 │   │   ├── resources/          N3 (novo)
@@ -51,13 +51,13 @@ nycode/
 │   │   │   │   └── settings-*.ts  + chaves do harness (N1)
 │   │   │   ├── extensions/     N2: uma pasta por extensão embutida (seção 3)
 │   │   │   └── migrations/from-pi.ts   importador de ~/.pi/agent (N1)
-│   │   └── test/harness/       testes portados do Nycode
+│   │   └── test/harness/       testes portados do Nycode pré-migração
 │   ├── mcp/src/transports/stdio.ts     STDIN_CLOSE_GRACE_MS = 100 (N1)
 │   └── tui/                    API pública para o que hoje é campo interno (N1)
 ├── scripts/
 │   ├── ci/                     run-static.sh, run-security.sh, lint/, install-tools.sh
 │   └── harness/                ferramentas de repositório vindas de claude-home/bin (as que as instruções embarcadas citam: `resources/bin/`, D-53)
-└── import/ny-pi/               histórico importado; esvazia a cada fase e some em F12
+└── import/origem/               histórico importado; esvazia a cada fase e some em F12
 ```
 
 `import/` fica fora do `workspaces` do `package.json`, do `biome.json`, do `tsconfig.json`, do pacote publicado e de
@@ -112,7 +112,7 @@ contra uma aplicação limpa dos patches sobre o tarball `pi-code@1.7.0`
 Licença: pi-code é MIT (`Copyright (c) 2025 Mario Zechner`, `Copyright (c) 2026 ilovepixelart`). O `NOTICE` do Nycode
 ganha a atribuição e o commit de origem.
 
-<a id="32-vindas-de-extensions-do-nycode-harness"></a>
+<a id="32-vindas-de-extensions-do-nycode"></a>
 
 ### 3.2 Vindas de `extensions/` do harness Nycode
 

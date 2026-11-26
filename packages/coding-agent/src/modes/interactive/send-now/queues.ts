@@ -44,7 +44,7 @@ interface Target {
 	text: string | undefined;
 }
 
-// Chosen queue item (owner, 2026-11-20): index in the displayed list [steering..., followUp...], shared with the queue
+// Chosen queue item: index in the displayed list [steering..., followUp...], shared with the queue
 // view (extensions/up-dequeue) through this global; undefined = none (the keys act on the last one).
 const SEL = "__piFilaSel";
 const globals = globalThis as { __piFilaSel?: number };

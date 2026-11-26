@@ -104,7 +104,7 @@ test("recarregando: palavra e pontos no centro; limparTela esconde os filhos e l
 test("recarregado desenha o divisor com a hora e a confiança salva", () => {
 	vi.stubEnv("NYCODE_REDUCED_MOTION", "1");
 	const h = host();
-	gravarGlobal(Symbol.for("nycode-harness:recarga"), { desde: performance.now(), avisos: [{ dist: 1 }] });
+	gravarGlobal(Symbol.for("nycode:recarga"), { desde: performance.now(), avisos: [{ dist: 1 }] });
 	recarregado(h, theme, true);
 	const txt = plain(h.chatContainer.render(100));
 	assert.match(txt, /recarregado/);
@@ -140,12 +140,12 @@ test("caixaNeutra entrega o cartão de limite da espera ativa e esconde o erro v
 		encerrado: () => encerrado,
 		linhas: () => ["espera de limite", "segunda"],
 	};
-	gravarGlobal(Symbol.for("nycode-harness:cartao-limite"), cartao);
+	gravarGlobal(Symbol.for("nycode:cartao-limite"), cartao);
 	assert.equal(caixaNeutra(h, theme, `${MARCA_CAIXA}${MARCA_CAIXA}x`, "info"), true);
 	assert.match(plain(h.chatContainer.render(100)), /espera de limite/);
 	encerrado = true;
 	assert.match(plain(h.chatContainer.render(100)), /segunda/);
-	gravarGlobal(Symbol.for("nycode-harness:cartao-limite"), undefined);
+	gravarGlobal(Symbol.for("nycode:cartao-limite"), undefined);
 });
 
 test("compactada e confianca: medidor com bolhas, linha de texto sem truecolor", () => {

@@ -39,7 +39,7 @@ test("index liga indicador, cabeçalho e renderizadores, sem registerTool", () =
 		assert.ok(events.includes(e), e);
 });
 
-// Dono, 2026-11-20 (lab /execplano): a mensagem plan-mode-execute ganha renderer; o ramo da sessão vem do ctx de session_start.
+// A mensagem plan-mode-execute ganha renderer; o ramo da sessão vem do ctx de session_start.
 test("index registra o renderer de plan-mode-execute", () => {
 	const saved = process.env.NYCODE_SUBAGENT;
 	delete process.env.NYCODE_SUBAGENT;
@@ -54,7 +54,7 @@ test("index registra o renderer de plan-mode-execute", () => {
 	assert.deepEqual(tipos, ["plan-mode-execute"]);
 });
 
-// Pedido do dono (2026-11-14): setinha nas mensagens enviadas. O índice registra o transformador só para mensagens do usuário.
+// Setinha nas mensagens enviadas. O índice registra o transformador só para mensagens do usuário.
 test("index registra a marca ❯ para mensagens do usuário", async () => {
 	const saved = process.env.NYCODE_SUBAGENT;
 	delete process.env.NYCODE_SUBAGENT;
@@ -71,7 +71,7 @@ test("index registra a marca ❯ para mensagens do usuário", async () => {
 			regs.push({ f, o }),
 	} as never);
 	if (saved !== undefined) process.env.NYCODE_SUBAGENT = saved;
-	// Um só transformador (dono, 2026-11-19): antes eram 2 registros (user, assistant), mas o nycode guarda um por extensão
+	// Um só transformador: antes eram 2 registros (user, assistant), mas o nycode guarda um por extensão
 	// (loader.js: `extension.markdownTransformer = …`) e o 2º apagava o 1º: sem ❯, hora, brilho nem faixa fina.
 	assert.equal(regs.length, 1);
 	assert.deepEqual(regs[0]!.o, { messageTypes: ["user", "assistant"] });
@@ -217,7 +217,7 @@ test("U16 CJK e emoji largos: a hora cabe na 1ª linha e nenhuma linha passa da 
 	assert.equal(visibleWidth(emoji.split("\n")[0]!), 30);
 });
 
-// Dono (2026-11-19): a caixa `[tipo]` das mensagens de extensão perde a linha de fundo em cima e embaixo; só uma vez.
+// A caixa `[tipo]` das mensagens de extensão perde a linha de fundo em cima e embaixo; só uma vez.
 test("afinarCaixa zera o paddingY da caixa padrão após cada rebuild, sem embrulhar duas vezes", async () => {
 	const { afinarCaixa } = __m4;
 	class Caixa {
@@ -244,8 +244,8 @@ test("afinarCaixa zera o paddingY da caixa padrão após cada rebuild, sem embru
 	afinarCaixa(undefined);
 });
 
-// Dono (2026-11-19, /envio "Faixa" com respiro): respiro fino de fundo em cima e embaixo na cor da faixa.
-// Depois (dono, 2026-11-19): antes meia linha ▄/▀ na largura toda; agora 1/8 de linha (▁ em cima, ▔ embaixo) só sob a faixa,
+// Respiro fino de fundo em cima e embaixo na cor da faixa.
+// Depois: antes meia linha ▄/▀ na largura toda; agora 1/8 de linha (▁ em cima, ▔ embaixo) só sob a faixa,
 // com a margem sem fundo do chat-margin à esquerda e à direita (antes sobravam quadradinhos nas pontas).
 test("acolchoar põe ▁ em cima e ▔ embaixo só na extensão da faixa, sem embrulhar duas vezes", async () => {
 	const { acolchoar } = __m5;

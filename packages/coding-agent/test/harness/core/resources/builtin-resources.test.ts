@@ -97,12 +97,12 @@ describe("built-in skills in the resource loader (K6)", () => {
 	});
 });
 
-// D-51 (supersedes D-39): the six skills once `optional` are `core` again and sit in the model's <available_skills>
-// section, as in the harness they came from. The hiding key stays for the skills that really are model-hidden.
+// The core engineering skills sit in the model's <available_skills> section; the skills that declare
+// disable-model-invocation (plan-workflow, the ponytail family) stay out of it.
 const SHIPPED_SKILLS = join(dirname(fileURLToPath(import.meta.url)), "../../../../resources/skills");
-const MODEL_VISIBLE = ["agent-systems", "atualizador", "codegraph", "deep-search", "perplexity-urls", "soteiros"];
+const MODEL_VISIBLE = ["pr-review", "security-audit", "diagnose", "code-simplification"];
 
-describe("shipped skills restored to the model context (D-51)", () => {
+describe("shipped skills in the model context", () => {
 	it("are loaded, invocable and listed in the prompt skills section", () => {
 		const { skills } = loadSkillsFromDir({ dir: SHIPPED_SKILLS, source: "builtin" });
 		const prompt = formatSkillsForPrompt(skills);
@@ -111,7 +111,6 @@ describe("shipped skills restored to the model context (D-51)", () => {
 			expect(skill?.disableModelInvocation).toBe(false);
 			expect(prompt).toContain(`<name>${name}</name>`);
 		}
-		expect(prompt).toContain("<name>tdd</name>");
 	});
 
 	it("still hides the skills that declare disable-model-invocation", () => {

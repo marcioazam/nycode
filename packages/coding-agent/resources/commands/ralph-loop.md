@@ -1,12 +1,13 @@
 ---
 description: "Inicia um Ralph Loop nesta sessão: o mesmo prompt volta a cada parada até a promessa ou o limite de iterações"
-argument-hint: "PROMPT [--max-iterations N] [--completion-promise TEXTO]"
+argument-hint: "PROMPT [--max-iterations N (padrão 20, 0 = sem limite)] [--completion-promise TEXTO]"
 disable-model-invocation: true
 ---
 
 <!-- Porte para o nycode (2026-11-11) do /ralph-loop:ralph-loop (ralph-loop 1.0.1, Apache-2.0). Embutido (D-54, fork
-marcioazam/ralph-loop 9e7f895, resources/ralph-loop/): o Stop hook vem registrado por padrão em hooks.Stop, antes do
-impeccable gate (o nycode roda Stop hooks com a semântica do Claude: decision block devolve o prompt). O hook lê o
+marcioazam/ralph-loop 9e7f895, resources/ralph-loop/): o Stop hook não é padrão; a extensão hooks o registra enquanto
+existir o arquivo de estado criado aqui (o nycode roda Stop hooks com a semântica do Claude: decision block devolve o
+prompt). --max-iterations vale 20 por padrão (o original é ilimitado); 0 pede ilimitado. O hook lê o
 transcript do nycode, que tem o mesmo formato que ele espera
 (`"role":"assistant"`, `.message.content[].text`). A sessão vem de ${CLAUDE_SESSION_ID}, porque o span de command não
 exporta CLAUDE_CODE_SESSION_ID. Os argumentos entram por heredoc em start-ralph-loop.sh (shlex), porque o original os

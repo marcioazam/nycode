@@ -1,16 +1,9 @@
 /** /list-agents (/peers): agentes definidos + subagentes em execução (fleet do nycode); /stop: interrompe a execução atual, e com `agents` os subagentes desta sessão. */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { builtinResourceDir } from "../../../../core/builtin-resources.ts";
 import type { ExtensionAPI, ExtensionCommandContext } from "../../../../core/extensions/types.ts";
+import { discoverAgents } from "../../../subagent/registry/agents.ts";
 import { stopAgents } from "../../fleet.ts";
-import { agentDir } from "../settings/store.ts";
-
-/** Pastas de definições, da menor para a maior precedência: os agentes embutidos, depois os do usuário. */
-export function agentDefDirs(root = agentDir()): string[] {
-	const builtin = builtinResourceDir("agents");
-	return [...(builtin ? [builtin] : []), join(root, "agents")];
-}
 
 export interface AgentDef {
 	name: string;
@@ -18,14 +11,8 @@ export interface AgentDef {
 	model?: string;
 }
 
-/** Frontmatter simples (`chave: valor` entre `---`); sem avaliar nada do arquivo. Nome repetido: vence a pasta posterior. */
-export function readAgentDefs(dirs: readonly string[]): AgentDef[] {
-	const byName = new Map<string, AgentDef>();
-	for (const dir of dirs) for (const d of readDir(dir)) byName.set(d.name, d);
-	return [...byName.values()];
-}
-
-function readDir(dir: string): AgentDef[] {
+/** Frontmatter simples (`chave: valor` entre `---`); sem avaliar nada do arquivo. */
+export function readAgentDefs(dir: string): AgentDef[] {
 	if (!existsSync(dir)) return [];
 	const out: AgentDef[] = [];
 	for (const f of readdirSync(dir)
@@ -47,7 +34,7 @@ function readDir(dir: string): AgentDef[] {
 	return out;
 }
 
-type Ctx = Pick<ExtensionCommandContext, "ui">;
+type Ctx = Pick<ExtensionCommandContext, "ui" | "cwd">;
 export interface Fleet {
 	list(): unknown[];
 }
@@ -80,12 +67,23 @@ function currentFleet(): Fleet | undefined {
 	return s && typeof s.list === "function" ? s : undefined;
 }
 
-export function registerListing(nycode: ExtensionAPI, defsDirs = agentDefDirs()): void {
+/** The agents the subagent tool resolves from `cwd` (embedded, plugin, user and project), same precedence. */
+function resolvedAgentDefs(cwd: string): AgentDef[] {
+	return discoverAgents(cwd, "both")
+		.agents.map((a) => ({ name: a.name, description: a.description.slice(0, 90), model: a.model }))
+		.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** `defsDir` pins one directory (tests); by default the list follows the subagent registry. */
+export function registerListing(nycode: ExtensionAPI, defsDir?: string): void {
 	for (const n of ["list-agents", "peers"])
 		nycode.registerCommand(n, {
 			description: "Lista agentes definidos e subagentes em execução",
 			handler: async (_a, ctx: Ctx) =>
-				ctx.ui.notify(listAgentsText(readAgentDefs(defsDirs), currentFleet()), "info"),
+				ctx.ui.notify(
+					listAgentsText(defsDir ? readAgentDefs(defsDir) : resolvedAgentDefs(ctx.cwd), currentFleet()),
+					"info",
+				),
 		});
 	nycode.registerCommand("stop", {
 		description: "Interrompe a execução atual do agente; `/stop agents` também cancela os subagentes desta sessão",

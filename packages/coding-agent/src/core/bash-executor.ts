@@ -135,7 +135,9 @@ export async function executeBashWithOperations(
 	if (truncationResult.truncated) {
 		ensureTempFile();
 	}
-	tempFileStream?.end();
+	// wait for the flush: callers read fullOutputPath as soon as this resolves
+	const stream = tempFileStream;
+	if (stream) await new Promise<void>((resolve) => stream.end(resolve));
 	const cancelled = options?.signal?.aborted ?? false;
 
 	return {

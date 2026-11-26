@@ -3,11 +3,8 @@
 Moved out of `SKILL.md` on 2026-11-07 to keep the skill small (`security-reviewer` preloads it through its `skills:`
 frontmatter).
 
-The Claude Code plugins this file used to name (Trail of Bits `variant-analysis`, `sharp-edges`, `static-analysis`,
-plus `semgrep-guardian` and `claude-security`) do not exist in nycode; the `offensive-*` skills (claude-red collection) come from an optional package (optional) and are offensive tooling,
-outside this procedure. This skill stays defensive; the steps below replace the plugins with local
-tools. Check availability first: `which semgrep gitleaks trivy cargo-audit codeql` (2026-11 on this host: semgrep
-1.172.0, gitleaks 8.30.1, trivy 0.74.0 and cargo-audit installed; `codeql` not installed). A missing tool is a
+This skill stays defensive: offensive tooling is outside this procedure. The steps below use local tools. Check
+availability first: `which semgrep gitleaks trivy cargo-audit codeql`. A missing tool is a
 coverage limit to report, never a reason to install one without authorization.
 
 ## Variant analysis (after a confirmed root cause)
@@ -15,8 +12,8 @@ coverage limit to report, never a reason to install one without authorization.
 1. State the root cause as a pattern: the sink, the missing or wrong control, and the input shape.
 2. Lexical sweep: `rg -n` for the sink and its wrappers, aliases and sibling entry points (batch, legacy, retry,
    migration, error paths).
-3. Structural sweep: when the repository has `.codegraph`, load `mcp__codegraph__*` with `tool_search`, run
-   `codegraph_status`, then callers/impact of the vulnerable function; confirm negative claims with `rg`.
+3. Structural sweep: callers of the vulnerable function with `lsp_references` (or a configured code-index MCP);
+   confirm negative claims with `rg`.
 4. Semantic sweep with Semgrep, offline: write a rule for the pattern to a scratch file (for example
    `/tmp/<run>/variant.yaml`, with `pattern`/`pattern-not-inside` or taint `pattern-sources`/`pattern-sinks`) and run
    `semgrep scan --metrics=off --disable-version-check --config /tmp/<run>/variant.yaml <paths>`. Never use
@@ -31,7 +28,7 @@ coverage limit to report, never a reason to install one without authorization.
 
 ## Sharp edges (API, configuration and crypto ergonomics)
 
-Without the `sharp-edges` plugin, check directly: dangerous or permissive defaults, silent fallbacks (fail-open on
+Check directly: dangerous or permissive defaults, silent fallbacks (fail-open on
 error, missing key treated as allowed), stringly-typed security options (algorithm or mode names, `"none"`),
 footgun parameters (`verify=False`, disabled TLS checks, wildcard origins), nonce/IV reuse paths, constant-time
 comparison of secrets, and confusing pairs of similar APIs where one is unsafe. Report one only with a concrete
@@ -52,4 +49,4 @@ misuse path and an affected principal; otherwise it is a hardening note.
 The CLI terms (github/codeql-cli-binaries `LICENSE.md`, read 2026-11-04) allow it only on codebases under an
 OSI-approved licence, for academic research, or under a paid GitHub Advanced Security or Code Security licence; they
 forbid databases built for CI or automated analysis otherwise. Do not run `codeql database create` on private or
-unlicensed code. `codeql` is not installed here; use the Semgrep path above.
+unlicensed code. When `codeql` is not installed, use the Semgrep path above.

@@ -1,4 +1,4 @@
-// Mensagem [plan-mode-execute] em "Lista de etapas" + "Desliza" (dono, 2026-11-20, lab /execplano): plano/modelo.ts e plano/mensagem.ts.
+// Mensagem [plan-mode-execute] em "Lista de etapas" + "Desliza": plano/modelo.ts e plano/mensagem.ts.
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, test, vi } from "vitest";
 import * as __m3 from "../../../../../src/extensions/ui-visual/plano/bloco.ts";

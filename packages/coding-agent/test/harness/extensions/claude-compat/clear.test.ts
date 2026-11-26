@@ -132,11 +132,6 @@ test("registra clear, reset, help, skills, compat e os comandos locais; nunca fo
 			"help",
 			"reset",
 			"skills",
-			"mobile",
-			"ios",
-			"android",
-			"stickers",
-			"upgrade",
 			"restart",
 			"update",
 			"terminal-setup",
@@ -151,7 +146,7 @@ test("registra clear, reset, help, skills, compat e os comandos locais; nunca fo
 	const s = setup();
 	await reg.reset.handler("", s.ctx);
 	assert.deepEqual(s.calls, ["newSession:"]);
-	await reg["compat"].handler("", s.ctx);
+	await reg.compat.handler("", s.ctx);
 	assert.match(s.notes[0]!, /\/fork do nycode ≠/);
 	await reg.help.handler("", s.ctx);
 	assert.match(s.notes[1]!, /\/foo \/tpl/);

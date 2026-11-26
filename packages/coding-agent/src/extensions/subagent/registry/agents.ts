@@ -416,7 +416,8 @@ function loadAgentsFromDir(dir: string, source: AgentSource, pluginName?: string
 		}
 
 		const agent = parseAgentFile(
-			source === "builtin" ? resolveResourcesMarker(content) : content,
+			// The user's own agents name built-in files the same way (`${NYCODE_RESOURCES}/rules/ref/agent-contract.md`).
+			source === "builtin" || source === "user" ? resolveResourcesMarker(content) : content,
 			source,
 			filePath,
 			pluginName,

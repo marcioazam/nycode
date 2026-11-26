@@ -1,0 +1,11 @@
+{
+  "id": "beh-coupled-modules",
+  "suite": "behavior",
+  "kind": "outcome",
+  "prompt": "No pacote events (leia README.md), implemente a mudança de docs/SPEC.md §2: Record.ts vira datetime em UTC. A mudança atravessa model, parser, store, aggregate e export; todos precisam ficar coerentes. Mantenha os testes de tests/ passando. Só biblioteca padrão.",
+  "timeout_s": 900,
+  "budget_usd": 1.5,
+  "split": "heldout",
+  "security": false,
+  "test_cmd": "python3 -m pytest -q -p no:cacheprovider hidden"
+}

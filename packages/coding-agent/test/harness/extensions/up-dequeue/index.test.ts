@@ -85,7 +85,7 @@ const native = (...l: string[]) => [
 ];
 
 test("fila Variante C: alinhada à cápsula (sem padding), editar + excluir + enviar agora, sem a dica nativa", () => {
-	// Alinhada à cápsula do editor (dono, 2026-11-19): antes 3 colunas de padding de cada lado; agora ▎ na coluna 0 e nada no fim.
+	// Alinhada à cápsula do editor: antes 3 colunas de padding de cada lado; agora ▎ na coluna 0 e nada no fim.
 	const out = restyleQueue(
 		["saída do bash", ...native("Steering: roda os testes", "Follow-up: atualiza o changelog")],
 		90,
@@ -101,7 +101,7 @@ test("fila Variante C: alinhada à cápsula (sem padding), editar + excluir + en
 });
 
 test("fila: estreita encurta as teclas progressivamente e trunca a mensagem; além do limite resume", () => {
-	// Alinhada à cápsula do editor (dono, 2026-11-19): antes 3 colunas de padding de cada lado; agora ▎ na coluna 0 e nada no fim.
+	// Alinhada à cápsula do editor: antes 3 colunas de padding de cada lado; agora ▎ na coluna 0 e nada no fim.
 	const mid = restyleQueue(native("Steering: uma mensagem bem comprida para caber"), 56, st);
 	assert.match(mid[1], /^▎ Na fila · 1 +shift\+← editar · shift\+⌫ × excluir$/);
 	const narrow = restyleQueue(native("Steering: uma mensagem bem comprida para caber"), 40, st);
@@ -170,7 +170,7 @@ test("fila: largura continua respeitada em terminal estreito e largo", () => {
 	}
 });
 
-// Nasce do fundo (dono, 2026-11-19, lab /fila desenho 1 + animação 1): mensagem nova na fila → o bloco sobe do fundo
+// Nasce do fundo: mensagem nova na fila → o bloco sobe do fundo
 // em NASCE_MS; depois fica como sempre. Sem `nasce` no estilo (tema sem RGB), aparece direto.
 test("fila: mensagem nova nasce do fundo; depois assenta", () => {
 	const amb = { NO_COLOR: process.env.NO_COLOR, NYCODE_REDUCED_MOTION: process.env.NYCODE_REDUCED_MOTION };
@@ -214,7 +214,7 @@ test("fila: mensagem nova nasce do fundo; depois assenta", () => {
 	}
 });
 
-// Item escolhido (dono, 2026-11-20): shift+↑/↓ (patch send-now) marca um item; número em accent e texto em negrito, janela o acompanha.
+// Item escolhido: shift+↑/↓ (patch send-now) marca um item; número em accent e texto em negrito, janela o acompanha.
 test("fila: item escolhido em destaque; fora da janela de MAX_SHOWN ela rola até ele; índice inválido = sem escolha", () => {
 	const tb = { ...tag, bold: (x: string) => `<b>${x}</b>` };
 	const out = restyleQueue(native("Steering: s1", "Follow-up: f1", "Follow-up: f2"), 120, tb, 1).slice(2);

@@ -21,7 +21,7 @@ def tree(tmp_path: Path) -> Path:
     touch(tmp_path / "packages/coding-agent/resources/skills/s1/SKILL.md")
     touch(tmp_path / "packages/coding-agent/resources/agents/a1.md")
     touch(tmp_path / "packages/coding-agent/src/extensions/e1.ts")
-    touch(tmp_path / "packages/coding-agent/resources/hooks/guard.py")
+    touch(tmp_path / "packages/coding-agent/resources/hooks/h1.py")
     touch(tmp_path / "packages/coding-agent/resources/commands/c1.md")
     (tmp_path / "packages/coding-agent/resources/plugins/p1").mkdir(parents=True)
     return tmp_path
@@ -38,7 +38,7 @@ ROWS = [
     "| skill | s1 | core | m |",
     "| agent | a1 | ui | m |",
     "| extension | e1 | optional | m |",
-    "| hook | guard.py | remove | m |",
+    "| hook | h1.py | remove | m |",
     "| command | c1 | core | m |",
     "| plugin | p1 | core | m |",
 ]
@@ -138,7 +138,7 @@ def test_ignore_rules(tmp_path: Path) -> None:
         ("agent", "a1"),
         ("extension", "e1"),
         ("extension", "dir1"),
-        ("hook", "guard.py"),
+        ("hook", "h1.py"),
         ("command", "c1"),
         ("plugin", "p1"),
     }
@@ -194,24 +194,64 @@ def test_real_repo(capsys: pytest.CaptureFixture[str]) -> None:
     assert code == 0, cap.err
 
 
-D51_CORE_SKILLS = (
-    "agent-systems",
-    "atualizador",
-    "codegraph",
-    "deep-search",
-    "perplexity-urls",
-    "soteiros",
+# The shipped skills after the core/harness/personal split (spec 0005): the four generic ones stay in the
+# model context; plan-workflow and the ponytail set are core but hidden (`/skill:<name>` or a command).
+CORE_VISIBLE_SKILLS = ("code-simplification", "diagnose", "pr-review", "security-audit")
+CORE_HIDDEN_SKILLS = (
+    "plan-workflow",
+    "ponytail",
+    "ponytail-audit",
+    "ponytail-debt",
+    "ponytail-gain",
+    "ponytail-help",
+    "ponytail-review",
+)
+CORE_AGENTS = (
+    "Explore",
+    "Plan",
+    "code-reviewer",
+    "gate-runner",
+    "general-purpose",
+    "plan-reviewer",
+    "security-reviewer",
 )
 
 
-def test_d50_skills_are_core_and_in_the_model_context() -> None:
+def _classes(kind: str) -> dict[str, str]:
     root = Path(core_scope.__file__).resolve().parents[3]
     rows = core_scope.parse_table((root / core_scope.SPEC).read_text(encoding="utf-8"))
-    classes = {n: c for t, n, c in rows if t == "skill"}
-    for name in D51_CORE_SKILLS:
+    return {n: c for t, n, c in rows if t == kind}
+
+
+def _skill_text(name: str) -> str:
+    root = Path(core_scope.__file__).resolve().parents[3]
+    path = root / core_scope.RESOURCES / "skills" / name / "SKILL.md"
+    return path.read_text(encoding="utf-8")
+
+
+def test_core_skills_are_core_and_visible() -> None:
+    classes = _classes("skill")
+    for name in CORE_VISIBLE_SKILLS:
         assert classes[name] == "core"
-        skill = root / core_scope.RESOURCES / "skills" / name / "SKILL.md"
-        assert core_scope.HIDDEN_KEY not in skill.read_text(encoding="utf-8")
+        assert core_scope.HIDDEN_KEY not in _skill_text(name)
+
+
+def test_core_hidden_skills_are_core_and_hidden() -> None:
+    classes = _classes("skill")
+    for name in CORE_HIDDEN_SKILLS:
+        assert classes[name] == "core"
+        assert core_scope.HIDDEN_KEY in _skill_text(name)
+
+
+def test_shipped_skills_and_agents_are_exactly_the_core_sets() -> None:
+    root = Path(core_scope.__file__).resolve().parents[3]
+    found = core_scope.discover(root)
+    assert {n for t, n in found if t == "skill"} == {
+        *CORE_VISIBLE_SKILLS,
+        *CORE_HIDDEN_SKILLS,
+    }
+    assert {n for t, n in found if t == "agent"} == set(CORE_AGENTS)
+    assert {n for t, n in found if t == "hook"} == set()
 
 
 def optional_skill(root: Path, hidden: bool) -> None:

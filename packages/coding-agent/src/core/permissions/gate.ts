@@ -1,15 +1,11 @@
-// K11: the permission gate in front of every tool call. `permissions.engine` picks who decides: "script" leaves the call
-// to the embedded guard.py (run by the `hooks` extension at PreToolUse), "native" decides here with the TypeScript port
-// of the guard. An engine that throws, an unknown engine or a missing guard script denies the call (C-F8-12).
-import { existsSync } from "node:fs";
-import { join } from "node:path";
+// K11: the permission gate in front of every tool call. The native engine (the TypeScript guard) decides here;
+// `permissions.engine` only accepts "native". An engine that throws or a value other than "native" denies the call
+// (C-F8-12).
 import { checkoutRoot } from "../../extensions/_shared/project/project-root.ts";
 import { claudePreCall } from "../../extensions/hooks/claude-tools.ts";
-import { getBuiltinResourcesRoot } from "../builtin-resources.ts";
 import type { ExtensionContext, ToolCallEventResult } from "../extensions/types.ts";
-import type { Settings } from "../settings-schema.ts";
 import { isBypassOn } from "./bypass-state.ts";
-import { engineOf, globalPermissionsEngine } from "./global-settings.ts";
+import { globalPermissionsEngine } from "./global-settings.ts";
 import { decide } from "./guard/decide.ts";
 
 /** The tools the embedded guard judges: its hook matcher in settings-defaults.ts is `Bash|run|Edit|Write|Read|Grep`. */
@@ -22,14 +18,12 @@ export interface GateHost {
 
 type NativeOutcome = { kind: "pass" } | { kind: "ask"; reason: string } | { kind: "block"; reason: string };
 
-/** Why no engine can decide, or undefined when the chosen one can: only "script" and "native" exist, and "script" needs its file. */
+/** Why no engine can decide, or undefined for "native". The removed "script" engine is refused by name: fail closed. */
 function engineUnavailable(engine: string): string | undefined {
 	if (engine === "native") return undefined;
-	if (engine !== "script")
-		return `permissions.engine "${engine}" is not known (use "script" or "native"); call denied`;
-	return existsSync(join(getBuiltinResourcesRoot(), "hooks", "guard.py"))
-		? undefined
-		: 'permissions.engine is "script" but the embedded guard script (hooks/guard.py) was not found; call denied';
+	return engine === "script"
+		? 'permissions.engine "script" was removed (the guard.py engine is gone); set "native" or delete the key; call denied'
+		: `permissions.engine "${engine}" is not known (use "native"); call denied`;
 }
 
 /** The native engine's outcome for one call; throws when the engine does, and the caller denies the call. */
@@ -71,7 +65,6 @@ export async function gateToolCall(
 		const engine = globalPermissionsEngine();
 		const unavailable = engineUnavailable(engine);
 		if (unavailable !== undefined) return { block: true, reason: unavailable };
-		if (engine !== "native") return undefined;
 		const ctx = host.runner.createContext();
 		const outcome = nativeOutcome(toolName, input, ctx.cwd);
 		if (outcome.kind === "pass") return undefined;
@@ -85,19 +78,4 @@ export async function gateToolCall(
 		if (failOpen()) return undefined;
 		return { block: true, reason: failure(error) };
 	}
-}
-
-/** The guard opt-out the user wrote in the global settings.json (`"PreToolUse": []`); reported once per session. */
-export function guardOptedOut(global: Settings): boolean {
-	const preToolUse = global.hooks?.PreToolUse;
-	return Array.isArray(preToolUse) && preToolUse.length === 0;
-}
-
-/**
- * Whether the embedded guard.py PreToolUse default runs. Never with the native engine (never both engines), and not
- * when the user's own global settings.json opts out; a project cannot do either (D-08: the guard is never silently
- * absent). `global` is readGlobalSettings().
- */
-export function guardHookEnabled(global: Settings): boolean {
-	return !guardOptedOut(global) && engineOf(global) !== "native";
 }

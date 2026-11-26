@@ -1,5 +1,5 @@
 /**
- * Ferramenta `memory` em uma linha (lab /memoria, desenho 9 "Frase compacta" + "Nasce do fundo", dono, 2026-11-20; antes cartão
+ * Ferramenta `memory` em uma linha (lab /memoria, desenho 9 "Frase compacta" + "Nasce do fundo"; antes cartão
  * neutro `● memory · save nome · descrição` e o texto cru do resultado fora dele):
  *   ` <MEM> <Memory> · <salvou|leu|apagou|listou|falhou> · <nome>` (erro: `· <motivo>`), hora dim à direita, sem fundo.
  * Estado na cor da ação (save success, read accent, delete warning, list syntaxType, erro error); `·` neutros (dim).

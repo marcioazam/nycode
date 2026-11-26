@@ -1,5 +1,5 @@
 // node --experimental-strip-types --test extensions/hook-msgs/index.test.ts
-// Mensagens de hook no ritmo das tools (pedido do dono, 2026-11-14; docs/designs/onda7-tokens/exemplos/sinais-variantes.html#hook):
+// Mensagens de hook no ritmo das tools (docs/designs/onda7-tokens/exemplos/sinais-variantes.html#hook):
 // ✓ executado, ✕ erro, ▲ pede atenção/ação; sem bolinha azul.
 import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
@@ -24,15 +24,13 @@ const _tmp = mkdtempSync(join(tmpdir(), "hook-msgs-test-"));
 // O fim do run desenha o cartão do Bash (ui-visual/motion/shell.ts), que puxa o resto do ui-visual e ui/a11y.ts.
 const { classify, render, summarize } = __m1;
 
-const IMPECCABLE = `[impeccable@1] Findings marked attribution unknown may predate this session; do not treat them as regressions or broaden the task to chase them.
+const HOOK = `[lint-hook@1] Findings may predate this session; do not treat them as regressions.
 
-[impeccable@1] Design hook findings requiring review in code/nycode-harness/docs/designs/onda7-tokens/exemplos/sinais-variantes.html (4 issue(s)):
-- [low-contrast] [attribution unknown] Low contrast text. Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.
-- [low-contrast] [attribution unknown] Low contrast text.
-- [low-contrast] [attribution unknown] Low contrast text.
-- [cramped-padding] [attribution unknown] Cramped padding. Text is too close to the edge of its container.
+[lint-hook@1] Findings requiring review in src/a.ts (2 issue(s)):
+- [low-contrast] Low contrast text.
+- [cramped-padding] Cramped padding.
 
-Triage per the session policy: fix real problems; persist confident false-positive or sanctioned-exception ignores via \`impeccable hooks ignore-value\` and disclose them in your reply; unsure, leave it with a reason.`;
+Triage: fix real problems; unsure, leave it with a reason.`;
 
 const BGN: Record<string, number> = { toolSuccessBg: 42, toolErrorBg: 41, toolPendingBg: 46, customMessageBg: 47 };
 const ansi = {
@@ -51,7 +49,7 @@ const msg = (customType: string, content: string) => ({
 const opts = (expanded = false) => ({ expanded, outputPad: 1, keyText: () => "ctrl+o" });
 
 test("classify: ▲ quando o hook pede ação, ✕ quando falhou, ✓ quando só executou", () => {
-	assert.equal(classify("claude-stop-hook", IMPECCABLE), "warn");
+	assert.equal(classify("claude-stop-hook", HOOK), "warn");
 	assert.equal(classify("claude-stop-hook", "Ainda há tarefas abertas no plano."), "warn");
 	assert.equal(classify("claude-stop-hook", "hook falhou: Traceback (most recent call last)"), "err");
 	assert.equal(classify("claude-async-hook", "Async hook requested attention (exit 2):\nError: lint quebrou"), "err");
@@ -59,16 +57,12 @@ test("classify: ▲ quando o hook pede ação, ✕ quando falhou, ✓ quando só
 	assert.equal(classify("claude-async-hook", "gate terminou: 3 checks verdes"), "ok");
 });
 
-test("summarize: impeccable vira contagem por regra e arquivo; texto livre usa a primeira linha", () => {
-	const s = summarize("claude-stop-hook", IMPECCABLE);
-	assert.equal(s.alvo, "impeccable · 4 achados em sinais-variantes.html · 3 contraste, 1 espaçamento");
+test("summarize: texto de hook usa a primeira linha como alvo e o resto como detalhe, sem parser por fornecedor", () => {
+	const s = summarize("claude-stop-hook", HOOK);
+	assert.equal(s.alvo, "lint-hook · Findings may predate this session; do not treat them as regressions.");
 	assert.equal(s.quando, "ao parar");
-	assert.deepEqual(s.detalhe, [
-		"contraste baixo ×3 · texto abaixo de 4,5:1 (WCAG AA) · pode ser anterior",
-		"espaçamento interno apertado ×1 · texto colado na borda; use 8–16px · pode ser anterior",
-		"arquivo: code/nycode-harness/docs/designs/onda7-tokens/exemplos/sinais-variantes.html",
-		"pedido ao agente: corrigir o real; falso positivo medido vai para impeccable hooks ignore-value",
-	]);
+	assert.equal(s.detalhe[0], "[lint-hook@1] Findings requiring review in src/a.ts (2 issue(s)):");
+	assert.ok(!s.detalhe.some((l) => l.startsWith("arquivo: ")));
 	const livre = summarize("claude-stop-hook", "\n[ralph-loop] Ainda há tarefas abertas no plano.\nitem 3 de 5");
 	assert.equal(livre.alvo, "ralph-loop · Ainda há tarefas abertas no plano.");
 	assert.deepEqual(livre.detalhe, ["item 3 de 5"]);
@@ -83,15 +77,15 @@ test("render: caixa no fundo das tools, linhas na largura exata; aberta mostra o
 		[30, false],
 		[30, true],
 	] as const) {
-		const lines = render(msg("claude-stop-hook", IMPECCABLE), opts(expanded), ansi)!.render(w);
+		const lines = render(msg("claude-stop-hook", HOOK), opts(expanded), ansi)!.render(w);
 		for (const l of lines) assert.equal(visibleWidth(l), w, `${w} ${expanded}: ${JSON.stringify(plain(l))}`);
 	}
-	const fechada = render(msg("claude-stop-hook", IMPECCABLE), opts(), ansi)!.render(130).map(plain) as string[];
-	// Faixa âmbar (dono, 2026-11-19): antes respiro + cabeça + respiro com padding e pílulas; agora a faixa é a linha 0 e o corpo vem logo abaixo, sem fundo.
+	const fechada = render(msg("claude-stop-hook", HOOK), opts(), ansi)!.render(130).map(plain) as string[];
+	// Faixa âmbar: antes respiro + cabeça + respiro com padding e pílulas; agora a faixa é a linha 0 e o corpo vem logo abaixo, sem fundo.
 	assert.equal(fechada.length, 1);
-	assert.match(fechada[0]!, /^ ⚑ hook · atenção · impeccable · 4 achados .* · ao parar +ctrl\+o abre $/);
-	const aberta = render(msg("claude-stop-hook", IMPECCABLE), opts(true), ansi)!.render(120).map(plain) as string[];
-	assert.ok(aberta.some((l) => l.startsWith("   │ contraste baixo ×3")));
+	assert.match(fechada[0]!, /^ ⚑ hook · atenção · lint-hook · Findings may predate .* · ao parar +ctrl\+o abre $/);
+	const aberta = render(msg("claude-stop-hook", HOOK), opts(true), ansi)!.render(120).map(plain) as string[];
+	assert.ok(aberta.some((l) => l.startsWith("   │ - [low-contrast] Low contrast text.")));
 	// o fundo acompanha o estado: ✓ verde, ✕ vermelho; ▲ cai no neutro aqui (tema de teste sem truecolor)
 	const linha = (tipo: string, texto: string) => render(msg(tipo, texto), opts(), ansi)!.render(60)[0]!;
 	assert.ok(
@@ -111,7 +105,7 @@ const GATE =
 test("completion-gate: uma linha ⚑ gate · atenção com resumo em português; ctrl+o lista os arquivos e o pedido", () => {
 	assert.equal(classify("completion-gate", GATE), "warn");
 	const s = summarize("completion-gate", GATE);
-	// Faixa âmbar (dono, 2026-11-19): antes `conclusão · …` e quando `ao parar`; agora só o resumo.
+	// Faixa âmbar: antes `conclusão · …` e quando `ao parar`; agora só o resumo.
 	assert.equal(s.alvo, "2 arquivos editados, nenhum check depois");
 	assert.equal(s.quando, "");
 	assert.deepEqual(s.detalhe, [
@@ -149,7 +143,7 @@ test("subagent-background: done → ⇄ subagente · concluído com agente e tur
 	assert.equal(s.alvo, "swarm-worker · 10 turnos");
 	assert.equal(s.previa, "Resultado");
 	const l = sub(run("done"), false);
-	// Faixa âmbar (dono, 2026-11-19): antes respiro + cabeça + respiro com padding e pílulas; agora a faixa é a linha 0 e o corpo vem logo abaixo, sem fundo.
+	// Faixa âmbar: antes respiro + cabeça + respiro com padding e pílulas; agora a faixa é a linha 0 e o corpo vem logo abaixo, sem fundo.
 	assert.equal(l.length, 2);
 	assert.match(l[0]!, /^ ⇄ subagente · concluído · swarm-worker · 10 turnos +ctrl\+o abre $/);
 	assert.match(l[1]!, /^ {3}│ Resultado +$/);
@@ -161,7 +155,7 @@ test("subagent-background: done → ⇄ subagente · concluído com agente e tur
 
 test("subagent-background: expandido mostra o id e o relatório completo nas linhas │, com quebra", () => {
 	const l = sub(run("done"), true);
-	// Faixa âmbar (dono, 2026-11-19): antes respiro + cabeça + respiro com padding e pílulas; agora a faixa é a linha 0 e o corpo vem logo abaixo, sem fundo.
+	// Faixa âmbar: antes respiro + cabeça + respiro com padding e pílulas; agora a faixa é a linha 0 e o corpo vem logo abaixo, sem fundo.
 	assert.match(l[0]!, / +ctrl\+o fecha $/);
 	assert.match(l[1]!, /^ {3}│ run bg-a16f1baf +$/);
 	assert.ok(l.some((x) => x.startsWith("   │ **Feito**: ajustei `fila.ts`")));
@@ -178,7 +172,7 @@ test("subagent-background: falha ✕, cancelado ▲, vários runs, chamada desta
 	assert.match(sub(run("failed"), false)[0]!, /^ ⇄ subagente · falhou/);
 	assert.match(sub(run("cancelled"), false)[0]!, /^ ⇄ subagente · atenção/);
 	const dois = `${run("done", "a", "bg-1")}\n\n${run("failed", "b", "bg-2").replace("swarm-worker", "Explore")}`;
-	assert.equal(classify(SUB, dois), "warn"); // uns ok e outros com erro = aviso (pedido do dono, 2026-11-14); todos com erro = ✕
+	assert.equal(classify(SUB, dois), "warn"); // uns ok e outros com erro = aviso; todos com erro = ✕
 	assert.equal(classify(SUB, dois.replace(") done", ") failed")), "err");
 	assert.equal(summarize(SUB, dois).alvo, "2 runs · swarm-worker, Explore");
 	assert.deepEqual(summarize(SUB, dois).detalhe.slice(0, 2), ["run bg-1 · swarm-worker", "run bg-2 · Explore"]);
@@ -192,7 +186,7 @@ test("subagent-background: falha ✕, cancelado ▲, vários runs, chamada desta
 test("subagent-background: relatório vazio não gera linha de prévia; largura estreita não estoura", () => {
 	for (const vazio of ["", "(no output)"]) {
 		const l = sub(run("done", vazio), false);
-		assert.equal(l.length, 1); // só a faixa (dono, 2026-11-19: antes respiro, cabeça, respiro)
+		assert.equal(l.length, 1); // só a faixa (antes respiro, cabeça, respiro)
 		assert.equal(
 			l.some((x) => x.includes("│")),
 			false,
@@ -225,11 +219,11 @@ test("subagent-background: tipos antigos seguem iguais e o texto cru vem se o de
 	assert.deepEqual(render(msg(SUB, "x"), opts(), quebrado)!.render(40), ["x"]);
 });
 
-// Pedido do dono (2026-11-14): toda linha de sinal mostra a hora em que aconteceu, à direita, separada do atalho.
+// Toda linha de sinal mostra a hora em que aconteceu, à direita, separada do atalho.
 const plain2 = (rows: string[]) => rows.map(plain);
 test("hora (Solução 2): hook, gate e subagente mostram atalho + HH:MM juntos no cabeçalho; sem timestamp mostra só o atalho", () => {
 	const T = new Date(2026, 10, 14, 14, 15, 0).getTime();
-	// Faixa âmbar (dono, 2026-11-19): antes atalho e hora em pílulas separadas por 2 espaços; agora `atalho · hora`.
+	// Faixa âmbar: antes atalho e hora em pílulas separadas por 2 espaços; agora `atalho · hora`.
 	const linha = (m: any) => plain(render(m, opts(), ansi).render(120)[0]!);
 	assert.match(
 		linha({ ...msg("claude-stop-hook", "Ainda há tarefas abertas no plano."), timestamp: T }),
@@ -250,7 +244,7 @@ test("hora (Solução 2): hook, gate e subagente mostram atalho + HH:MM juntos n
 	assert.doesNotMatch(linha(msg("claude-stop-hook", "Ainda há tarefas abertas no plano.")), /\d\d:\d\d/);
 });
 
-// Pedido do dono (2026-11-14): lote em segundo plano segue o padrão de estado: todos ok = ✓, parte falhou = ▲, todos falharam = ✕.
+// Lote em segundo plano segue o padrão de estado: todos ok = ✓, parte falhou = ▲, todos falharam = ✕.
 test("subagent-background: lote paralelo mostra contagem em português e o estado agregado", () => {
 	const lote = (ok: number, n: number, corpo: string) =>
 		`Background subagent call finished (started in the background):\n\nParallel: ${ok}/${n} succeeded\n\n${corpo}`;
@@ -272,7 +266,7 @@ test("subagent-background: lote paralelo mostra contagem em português e o estad
 
 test("fundo: depois de um reset no meio da linha o fundo do estado é reaberto até o fim", () => {
 	const longo = `Background subagent run bg-1 (swarm-worker) done after 3 turns.\n\n${"palavra ".repeat(40)}`;
-	// Faixa âmbar (dono, 2026-11-19): antes a prévia ficava no fundo; agora só a faixa tem fundo, então o reset é o do corte dela.
+	// Faixa âmbar: antes a prévia ficava no fundo; agora só a faixa tem fundo, então o reset é o do corte dela.
 	const faixa = render({ ...msg("subagent-background", longo), timestamp: 1 }, opts(), ansi).render(30)[0]!;
 	assert.ok(plain(faixa).includes("…"));
 	assert.ok([...faixa.matchAll(/\x1b\[0?m/g)].length > 0);
@@ -280,7 +274,7 @@ test("fundo: depois de um reset no meio da linha o fundo do estado é reaberto a
 		assert.ok(faixa.slice(m.index! + m[0].length).startsWith("\x1b[42m"), "reset sem reabrir o fundo");
 });
 
-// Fim do run = o cartão do Bash (dono, 2026-11-19): antes caixa própria com fundo verde/vermelho de ponta a ponta,
+// Fim do run = o cartão do Bash: antes caixa própria com fundo verde/vermelho de ponta a ponta,
 // `▶ run · terminou nome`, hora em pílula e saída numa barra │; agora o mesmo cartão, efeitos e rodapé do Bash
 // (trilho ▎, título régua `Bash ─ nome ──── hora`, últimas 5 linhas, rodapé `OK`/`Erro N`, dissolver na chegada).
 test("run-finished: mesmo cartão do Bash, com título régua, prévia de 5 linhas e rodapé de desfecho", () => {
@@ -302,7 +296,7 @@ test("run-finished: mesmo cartão do Bash, com título régua, prévia de 5 linh
 	const fechado = render({ ...msg("run-finished", texto("done exit 0")), timestamp: 1 }, opts(), ansi).render(110);
 	const t = fechado.map((l: string) => plain(l).trimEnd());
 	assert.equal(t[0], "▎");
-	// (dono, 2026-11-20): antes `Bash ─ gw-repopol ──── hora` e rodapé `OK · 2:30 · …`; agora `Bash · OK · nome   hora` e o rodapé sem o estado.
+	// antes `Bash ─ gw-repopol ──── hora` e rodapé `OK · 2:30 · …`; agora `Bash · OK · nome   hora` e o rodapé sem o estado.
 	assert.match(t[1]!, /^▎ \S+ Bash · OK · gw-repopol +\d\d:\d\d$/);
 	assert.deepEqual(
 		t.slice(2, 7),
@@ -321,7 +315,7 @@ test("run-finished: mesmo cartão do Bash, com título régua, prévia de 5 linh
 	);
 	const a = aberto.map((l: string) => plain(l).trimEnd());
 	assert.equal(a[2], "▎   rc=0");
-	// (dono, 2026-11-20): antes o rodapé aberto começava por `Erro · 2:30 · …`; o estado foi para o título.
+	// antes o rodapé aberto começava por `Erro · 2:30 · …`; o estado foi para o título.
 	assert.match(a[1]!, /Bash · Erro · /);
 	assert.ok(a.at(-2)!.startsWith("▎   2:30 · 7 linhas · ctrl+o fecha"), a.at(-2));
 	assert.ok(
@@ -397,7 +391,7 @@ test("gate (Solução 2): atalho + hora no cabeçalho; clique esquerdo abre e fe
 		ansi,
 	)!;
 	const ver = () => c.render(120).map(plain) as string[];
-	// Faixa âmbar (dono, 2026-11-19): antes respiro + cabeça + respiro com padding e pílulas; agora a faixa é a linha 0 e o corpo vem logo abaixo, sem fundo.
+	// Faixa âmbar: antes respiro + cabeça + respiro com padding e pílulas; agora a faixa é a linha 0 e o corpo vem logo abaixo, sem fundo.
 	assert.equal(ver().length, 1);
 	assert.match(ver()[0]!, /^ ⚑ gate · atenção · 2 arquivos editados, nenhum check depois +ctrl\+o abre · 16:37 $/);
 	assert.ok(ver().every((l) => l.length === 120));
@@ -415,7 +409,7 @@ test("gate (Solução 2): atalho + hora no cabeçalho; clique esquerdo abre e fe
 	assert.equal(render(msg("claude-async-hook", "gate terminou"), opts(), ansi)!.handleMouse(clique), undefined);
 });
 
-// Faixa âmbar + "Nasce do fundo" (escolha do dono no lab /gate, 2026-11-19): chegando agora, a faixa sobe do fundo em
+// Faixa âmbar + "Nasce do fundo" (lab /gate): chegando agora, a faixa sobe do fundo em
 // 450 ms; do histórico (ou sem hora) vem assentada. O fundo é o do estado, sem linhas em branco em volta.
 test("faixa: chegando agora nasce do fundo; do histórico vem assentada", () => {
 	const RGB: Record<string, string> = { customMessageBg: "40;42;54", text: "220;220;230", warning: "230;180;80" };

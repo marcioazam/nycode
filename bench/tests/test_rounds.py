@@ -33,7 +33,7 @@ def write_round(d: Path, runs: list[dict[str, Any]], **meta: Any) -> Path:
     d.mkdir(parents=True, exist_ok=True)
     (d / "runs.jsonl").write_text("".join(json.dumps(r) + "\n" for r in runs))
     m = {
-        "arm": "nycode-harness",
+        "arm": "nycode",
         "model": "m",
         "arm_version": "v",
         "overlay_sha": "o",
@@ -147,14 +147,14 @@ def test_old_rounds_without_the_new_records_still_load(
 ) -> None:
     monkeypatch.setattr(bg, "changed_paths", lambda *_: [])
     monkeypatch.setattr(ev, "S1_RESULTS", [tmp_path / "none"])
-    old = SONNET / "ny-pi"  # frozen round recorded before tokens/turns existed
+    old = SONNET / "nycode"  # frozen round recorded before tokens/turns existed
     assert "tokens" not in bg.load_round(old)[0][0]
     assert bg.gate(old, old)[2] == 0
     main = BENCH.parent / "docs/bench/baseline-main"
     assert bg.gate(main, main)[2] == 0
-    dirs = [SONNET / "ny-pi", SONNET / "pi-vanilla"]
-    assert "| ny-pi |" in rp.render(dirs)  # recorded arm name
-    text = ev.render(ev.collect(dirs), "ny-pi")
+    dirs = [SONNET / "nycode", SONNET / "pi-vanilla"]
+    assert "| nycode |" in rp.render(dirs)  # recorded arm name
+    text = ev.render(ev.collect(dirs), "nycode")
     assert "## Failure signatures per arm" in text and "## Tokens and turns" not in text
 
 
@@ -248,7 +248,7 @@ def test_post_status_owner_only() -> None:
             calls.append(args)
             if args[:2] == ["repo", "view"]:
                 return json.dumps(
-                    {"nameWithOwner": "me/ny-pi", "owner": {"login": "me"}}
+                    {"nameWithOwner": "me/nycode", "owner": {"login": "me"}}
                 )
             if args[:2] == ["pr", "view"]:
                 return json.dumps({"author": {"login": owner}, "headRefOid": "a" * 40})
@@ -258,7 +258,9 @@ def test_post_status_owner_only() -> None:
 
     assert bg.post_status(7, "success", "ok " * 100, gh("me")) == 0
     api = calls[-1]
-    assert api[1] == f"repos/me/ny-pi/statuses/{'a' * 40}" and "context=bench-pr" in api
+    assert (
+        api[1] == f"repos/me/nycode/statuses/{'a' * 40}" and "context=bench-pr" in api
+    )
     assert (
         len(next(a for a in api if a.startswith("description=")))
         == len("description=") + 140
@@ -283,7 +285,7 @@ def test_evidence_index(tmp_path: Path, monkeypatch: MP) -> None:
             mk("tb", 0, False, suite="s2", error="boom"),
             mk("c", 0, False, cost=None),
         ],
-        arm="nycode-harness",
+        arm="nycode",
     )
     (a / "artifacts").mkdir()
     (a / "artifacts/s4-x-0.agent.out").write_text(cc_ev * 2)
@@ -297,7 +299,7 @@ def test_evidence_index(tmp_path: Path, monkeypatch: MP) -> None:
         (t / "result.json").write_text(json.dumps({"task_name": "terminal-bench/tb"}))
     (a / "harbor/s2-0/broken__z").mkdir()
     (a / "harbor/s2-0/broken__z/result.json").write_text("")  # an interrupted trial
-    s1 = tmp_path / "evals/bench-nycode-harness-vanilla-1"
+    s1 = tmp_path / "evals/bench-nycode-vanilla-1"
     (s1 / "raw").mkdir(parents=True)
     (s1 / "unit/c-0").mkdir(parents=True)
     (s1 / "raw/c-0.jsonl").write_text(pi_ev * 3)
@@ -306,20 +308,20 @@ def test_evidence_index(tmp_path: Path, monkeypatch: MP) -> None:
     args = ["evidence", "--runs", str(tmp_path / "[ab]"), "--out", str(out)]
     assert rb.main(args) == 0
     text = out.read_text()
-    assert "### s4 x rep 0: pass cc-vanilla@m; fail nycode-harness@m" in text
+    assert "### s4 x rep 0: pass cc-vanilla@m; fail nycode@m" in text
     assert "tools (2): Bash×2" in text and "s4-x-0.test.out" in text
     assert "### s2 tb rep 0" in text and "ERR" in text and "error: boom" in text
     assert "tb__abc/agent/pi.txt" in text and "reward.txt" in text
     assert "raw/c-0.jsonl" in text and "unit/c-0" in text and "bash×3" in text
-    assert "| nycode-harness@m | 3 | 4 | bash×4 |" in text
+    assert "| nycode@m | 3 | 4 | bash×4 |" in text
     assert ev.tool_seq(None) == [] and ev.tool_seq(tmp_path / "nope") == []
     # traceability: runs without a transcript are listed, and --strict turns them into a failure
     assert "- agent transcript on disk: 4/6 runs" in text
-    assert "- NO TRANSCRIPT: s4 x rep 0 nycode-harness@m" in text
+    assert "- NO TRANSCRIPT: s4 x rep 0 nycode@m" in text
     assert "- NO TRANSCRIPT: s1 c rep 0 cc-vanilla@m" in text
     assert rb.main([*args, "--strict"]) == 1
     # gaps of the focus arm, with the reference arm that passed
-    assert "## Gaps of nycode-harness@m" in text
+    assert "## Gaps of nycode@m" in text
     assert "| Failed where another arm passed | 1 |" in text
     assert (
         "| Infrastructure or agent error | 2 |" in text
@@ -337,7 +339,7 @@ def test_evidence_explains_a_failed_run(tmp_path: Path, monkeypatch: MP) -> None
     a = write_round(tmp_path / "a", [mk("x", 0, True, cost=0.1, suite="s4"), mk("y", 0, True, cost=0.1, suite="s4"),
                                      mk("z", 0, False, suite="s4"), mk("c", 0, True, cost=0.05)], arm="pi-vanilla")  # fmt: skip
     b = write_round(tmp_path / "b", [mk("x", 0, False, cost=0.3, suite="s4"), mk("y", 0, True, cost=0.4, suite="s4"),
-                                     mk("z", 0, False, suite="s4"), mk("c", 0, True, cost=0.05)], arm="nycode-harness")  # fmt: skip
+                                     mk("z", 0, False, suite="s4"), mk("c", 0, True, cost=0.05)], arm="nycode")  # fmt: skip
     art = b / "artifacts"
     art.mkdir()
     (art / "s4-x-0.agent.out").write_text(pi_ev % "bash" + pi_ev % "bash" + pi_ev % "plan_mode_complete" + fin)  # fmt: skip
@@ -345,12 +347,12 @@ def test_evidence_explains_a_failed_run(tmp_path: Path, monkeypatch: MP) -> None
     (art / "s4-x-0.verdict.json").write_text(json.dumps({"check": "pytest -q", "test_exit": 1, "exit_code": 0}))  # fmt: skip
     (art / "s4-x-0.diff").write_text("")
     # two eval rounds hold the same case: the recorded cost picks the right transcript
-    for arm, cost in (("pi-vanilla", 0.01), ("nycode-harness", 0.05)):
+    for arm, cost in (("pi-vanilla", 0.01), ("nycode", 0.05)):
         for i, c in enumerate((cost, 0.05)):
             raw = tmp_path / f"evals/bench-{arm}-vanilla-{i}/raw"
             raw.mkdir(parents=True)
             (raw / "c-0.jsonl").write_text(json.dumps({"type": "result", "total_cost_usd": c, "result": "r"}))  # fmt: skip
-    text = ev.render(ev.collect([a, b]), "nycode-harness")
+    text = ev.render(ev.collect([a, b]), "nycode")
     assert "### Failed where another arm passed: s4 x rep 0" in text
     assert "verdict: check=pytest -q, test_exit=1, exit_code=0" in text
     assert "tools (3): bash×2 → plan_mode_complete" in text
@@ -360,8 +362,8 @@ def test_evidence_explains_a_failed_run(tmp_path: Path, monkeypatch: MP) -> None
     assert "### Failed in every arm: s4 z rep 0" in text
     assert "### Passed, but over 1.5x the cheapest passing arm: s4 y rep 0" in text
     assert "bench-pi-vanilla-vanilla-1/raw/c-0.jsonl" in text
-    assert "bench-nycode-harness-vanilla-1/raw/c-0.jsonl" in text
-    assert "- no verifier output: s4 y rep 0 nycode-harness@m" in text
+    assert "bench-nycode-vanilla-1/raw/c-0.jsonl" in text
+    assert "- no verifier output: s4 y rep 0 nycode@m" in text
 
 
 def test_report_tables(tmp_path: Path, capsys: CF) -> None:
@@ -373,7 +375,7 @@ def test_report_tables(tmp_path: Path, capsys: CF) -> None:
     b = write_round(
         tmp_path / "r2",
         tasks(4, fail={0}) + [mk("e", 0, False, error="boom", suite="s4")],
-        arm="nycode-harness",
+        arm="nycode",
         not_verified=True,
     )
     out = tmp_path / "rep.md"
@@ -383,7 +385,7 @@ def test_report_tables(tmp_path: Path, capsys: CF) -> None:
         "## s1" in text
         and "## s4" in text
         and "cc-vanilla" in text
-        and "nycode-harness" in text
+        and "nycode" in text
     )
     assert "| 1/1 |" in text  # security cell
     x = rp.suite_row([mk("t", 0, True)])
@@ -397,7 +399,7 @@ def test_scoreboard_goal_met_by_accuracy_and_cost(tmp_path: Path, capsys: CF) ->
         return write_round(tmp_path / name, tasks(6, fail, cost=cost) + (extra or []), arm=name)  # fmt: skip
 
     # the errored task and the one only ny ran are left out of every comparison
-    ny = rnd("nycode-harness", set(), 1.0, [mk("solo", 0, True), mk("bad", 0, False, error="boom")])  # fmt: skip
+    ny = rnd("nycode", set(), 1.0, [mk("solo", 0, True), mk("bad", 0, False, error="boom")])  # fmt: skip
     pi = rnd("pi-vanilla", {0}, 0.2, [mk("bad", 0, True)])
     cc = rnd("cc-vanilla", {0}, 1.5, [mk("bad", 0, True)])
     data, md = rp.scoreboard(ny, [pi, cc])
@@ -408,7 +410,7 @@ def test_scoreboard_goal_met_by_accuracy_and_cost(tmp_path: Path, capsys: CF) ->
     assert data["rows"][1]["cost_ratio"] == pytest.approx(1 / 1.5)
     assert "## R1 acerto: cumprida" in md and "## R2 teto de custo: cumprida" in md
     assert "| pi-vanilla | 6.0000 | 1.2000 | 5.00 | não (informativo) |" in md
-    assert "- Só o nycode-harness resolve: t0" in md and "OBJETIVO: cumprido\n" in md
+    assert "- Só o nycode resolve: t0" in md and "OBJETIVO: cumprido\n" in md
     out = tmp_path / "placar.md"
     args = ["scoreboard", "--ny", str(ny), "--refs", str(pi), str(cc), "--out", str(out)]  # fmt: skip
     assert rb.main(args) == 0 and out.read_text() == md
@@ -420,7 +422,7 @@ def test_scoreboard_rules_fail_one_by_one(tmp_path: Path) -> None:
         return write_round(tmp_path / name, tasks(6, fail, cost=cost), arm=name)
 
     # dearer than cc but one exclusive task: the exception rule (R3) stands in for the cost ceiling (R2)
-    ny, pi = rnd("nycode-harness", set(), 2.0), rnd("pi-vanilla", {0}, 0.2)
+    ny, pi = rnd("nycode", set(), 2.0), rnd("pi-vanilla", {0}, 0.2)
     data, md = rp.scoreboard(ny, [pi, rnd("cc-vanilla", {0}, 1.0)])
     assert data["r1"] and not data["r2"] and data["exclusive"] == ["t0"] and data["met"]
     # cc solves t0: no exclusive task left, so the dearer ny misses the goal on R2 and R3
@@ -430,7 +432,7 @@ def test_scoreboard_rules_fail_one_by_one(tmp_path: Path) -> None:
     data, md = rp.scoreboard(rnd("ny2", {1}, 0.1), [rnd("other", set(), 0.2)])
     assert data["r1"] is False and data["r2"] and "Sem rodada do pi-vanilla" in md
     # below pi-vanilla: R1 fails whatever the cost; the inverse list names the task only ny fails
-    low = write_round(tmp_path / "low", tasks(6, {1}, cost=0.1), arm="nycode-harness")
+    low = write_round(tmp_path / "low", tasks(6, {1}, cost=0.1), arm="nycode")
     data, md = rp.scoreboard(low, [write_round(tmp_path / "p", tasks(6, cost=0.2), arm="pi-vanilla")])  # fmt: skip
     assert not data["r1"] and not data["r2"] and data["inverse"] == ["t1"]
     assert "OBJETIVO: não cumprido (R1, R2, R3)" in md and "Sem outra referência" in md
@@ -439,7 +441,7 @@ def test_scoreboard_rules_fail_one_by_one(tmp_path: Path) -> None:
 def test_scoreboard_of_the_frozen_sonnet_baseline() -> None:
     """Today's state of the goal (rounds of 2026-11): below pi-vanilla, dearer than cc-vanilla, no exclusive task."""
     refs = [SONNET / a for a in ("pi-vanilla", "cc-vanilla", "omp")]
-    data, md = rp.scoreboard(SONNET / "ny-pi", refs)
+    data, md = rp.scoreboard(SONNET / "nycode", refs)
     assert not data["r1"] and not data["r2"] and data["exclusive"] == []
     assert not data["met"] and "OBJETIVO: não cumprido (R1, R2, R3)" in md
     by = {x["arm"]: x for x in data["rows"]}
@@ -484,7 +486,7 @@ def test_evidence_signatures_and_per_run_records(
         tmp_path / "b",
         [mk("x", 0, False, suite="s4", **new), mk("y", 0, False, suite="s4", error="timeout"),
          mk("z", 0, False, suite="s4", cost=None)],
-        arm="nycode-harness",
+        arm="nycode",
     )  # fmt: skip
     art = b / "artifacts"
     art.mkdir()
@@ -496,20 +498,17 @@ def test_evidence_signatures_and_per_run_records(
     (a / "artifacts").mkdir()
     (a / "artifacts/s4-x-0.agent.out").write_text(json.dumps(msg) + "\n")
     rows = ev.collect([a, b])
-    text = ev.render(rows, "nycode-harness")
+    text = ev.render(rows, "nycode")
     assert {(r["arm"], r["task_id"]): r["sig"] for r in rows} == {
         ("pi-vanilla@m", "x"): "pass", ("pi-vanilla@m", "y"): "pass",
-        ("nycode-harness@m", "x"): "no-change", ("nycode-harness@m", "y"): "timeout", ("nycode-harness@m", "z"): "infra-error",
+        ("nycode@m", "x"): "no-change", ("nycode@m", "y"): "timeout", ("nycode@m", "z"): "infra-error",
     }  # fmt: skip
     assert "| arm | failed | infra-error | timeout | plan-tool-then-stop |" in text
-    assert "| nycode-harness@m | 3 | 1 | 1 | 0 | 0 | 1 | 0 | 0 |" in text
+    assert "| nycode@m | 3 | 1 | 1 | 0 | 0 | 1 | 0 | 0 |" in text
     assert "| pi-vanilla@m | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |" in text
-    gaps = text.split("## Gaps of nycode-harness@m")[1].split("## Matrix")[0]
+    gaps = text.split("## Gaps of nycode@m")[1].split("## Matrix")[0]
     assert gaps.count("  - signature: ") == 3 and "  - signature: no-change" in gaps
-    assert (
-        "| nycode-harness@m | 1 | 10.0 | 20.0 | 30.0 | 40.0 | 4.0 | 1.0 | 80.0 |"
-        in text
-    )
+    assert "| nycode@m | 1 | 10.0 | 20.0 | 30.0 | 40.0 | 4.0 | 1.0 | 80.0 |" in text
     assert "| pi-vanilla@m | 1 | 1.0 | 2.0 | 3.0 | 4.0 | 1.0 | 0.0 | 8.0 |" in text
 
 
@@ -545,9 +544,7 @@ def test_suite_row_leaves_infra_rows_out_of_the_rate() -> None:
 
 
 def test_scoreboard_p_ahead_per_metric(tmp_path: Path) -> None:
-    ny = write_round(
-        tmp_path / "ny", tasks(10, cost=1.0, wall=5.0), arm="nycode-harness"
-    )
+    ny = write_round(tmp_path / "ny", tasks(10, cost=1.0, wall=5.0), arm="nycode")
     pi = write_round(tmp_path / "pi", tasks(10, {0, 1, 2}, cost=0.2), arm="pi-vanilla")
     cc = write_round(tmp_path / "cc", tasks(10, {0, 1, 2}, cost=1.5), arm="cc-vanilla")
     data, md = rp.scoreboard(ny, [pi, cc])
@@ -567,9 +564,7 @@ def test_scoreboard_p_ahead_per_metric(tmp_path: Path) -> None:
 
 
 def test_scoreboard_counts_dropped_tasks(tmp_path: Path) -> None:
-    ny = write_round(
-        tmp_path / "ny", tasks(10, cost=1.0, wall=5.0), arm="nycode-harness"
-    )
+    ny = write_round(tmp_path / "ny", tasks(10, cost=1.0, wall=5.0), arm="nycode")
     ref_runs = tasks(10, cost=0.5, wall=5.0)
     ref_runs[0] = mk("t0", 0, False, error="infra: no model spend")
     ref_runs[2] = mk(

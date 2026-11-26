@@ -1,6 +1,6 @@
 // Status line "Calmo" do nycode (docs/designs/statusline): desenho próprio, sem o claude-hud.
 // Ligado por "renderer": "calm" em plugins/claude-hud/config.json; "level": "detalhe" abre o painel.
-// Cores e limiares do claude-hud 0.10.0 (pedido do dono, 2026-11-14, substitui as quatro cores 40/60/80 e 50/75/90):
+// Cores e limiares do claude-hud 0.10.0 (substitui as quatro cores 40/60/80 e 50/75/90):
 // contexto verde <70, amarelo 70-85, vermelho ≥85; uso azul <75, roxo 75-90 ou ritmo de alerta, vermelho ≥90 ou ritmo
 // crítico. Ritmo (usage-pace.ts): projeção linear até a renovação ≥90% é alerta, >100% é crítico; ▲ na cor do ritmo.
 // Paleta: a do tema do nycode em uso (settings.json), não a do claude-hud.
@@ -145,44 +145,6 @@ export function reserveTokens(model, file = path.join(os.homedir(), '.nycode', '
   }
 }
 
-// Histórico do contexto por sessão (Onda 10, P17): últimos 8 valores distintos, guardados num arquivo por sessão.
-const SPARK = '▁▂▃▄▅▆▇█';
-const HIST_N = 8;
-const HIST_SESSOES = 20; // ponytail: o arquivo guarda as 20 sessões mais recentes; mais que isso, a mais antiga sai
-/** Lê o histórico da sessão, acrescenta o percentual atual se mudou e grava; [] sem sessão ou sem arquivo legível. */
-export function ctxHistory(p, file) {
-  const id = p?.session_id;
-  const pct = p?.context_window?.used_percentage;
-  if (!id || !Number.isFinite(pct) || !file) return [];
-  let all = {};
-  try {
-    all = JSON.parse(fs.readFileSync(file, 'utf8'));
-    if (!all || typeof all !== 'object' || Array.isArray(all)) all = {};
-  } catch {}
-  const prev = Array.isArray(all[id]) ? all[id].filter(Number.isFinite) : [];
-  const v = Math.round(pct);
-  if (prev.at(-1) === v) return prev;
-  const hist = [...prev, v].slice(-HIST_N);
-  delete all[id];
-  all[id] = hist;
-  const keys = Object.keys(all);
-  for (const k of keys.slice(0, Math.max(0, keys.length - HIST_SESSOES))) delete all[k];
-  try {
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(`${file}.${process.pid}.tmp`, JSON.stringify(all)); // U21: tmp por pid, como claude-hud-usage
-    fs.renameSync(`${file}.${process.pid}.tmp`, file);
-  } catch {}
-  return hist;
-}
-/** Blocos ▁…█ de 0 a 100%; ASCII (NYCODE_ASCII_ICONS, TERM dumb/linux) fica só com o número. */
-export function sparkline(hist, env = process.env) {
-  const ascii = ['1', 'true', 'yes', 'on'].includes(String(env.NYCODE_ASCII_ICONS ?? '').toLowerCase()) || env.TERM === 'dumb' || env.TERM === 'linux';
-  if (ascii || hist.length < 2) return '';
-  const faixas = hist.map((v) => Math.min(7, Math.max(0, Math.floor((v * 8) / 100.0001))));
-  // Só blocos rasos (▁▂, histórico até 25%) parecem uma barra quebrada (dono, 2026-11-23): fica só o número.
-  if (Math.max(...faixas) < 2) return '';
-  return faixas.map((i) => SPARK[i]).join('');
-}
 /** Limiar escrito ao lado da cor, para não depender só dela (WCAG 1.4.1). */
 export const ctxLabel = (pct) => (pct >= LIMITS.ctx[1] ? `acima de ${LIMITS.ctx[1]}%` : pct >= LIMITS.ctx[0] ? `acima de ${LIMITS.ctx[0]}%` : '');
 
@@ -208,7 +170,7 @@ function bar(pct, cells, level, stale) {
 }
 
 /** Os três medidores como dados: rótulo curto e longo, percentual, nível, nota curta e detalhe do painel. */
-function meters(p, { now, reserve, history = [] }) {
+function meters(p, { now, reserve }) {
   const out = [];
   const cw = p.context_window ?? {};
   if (Number.isFinite(cw.used_percentage)) {
@@ -216,7 +178,7 @@ function meters(p, { now, reserve, history = [] }) {
     const limit = reserve === undefined ? undefined : (cw.context_window_size ?? 0) - reserve;
     const soon = limit > 0 && used >= limit * (CRIT / 100);
     const pct = Math.round(cw.used_percentage);
-    out.push({ short: 'ctx', long: 'Contexto', pct, level: soon ? 'crit' : ctxLevel(pct), note: soon ? 'compacta em breve' : ctxLabel(pct), spark: sparkline(history),
+    out.push({ short: 'ctx', long: 'Contexto', pct, level: soon ? 'crit' : ctxLevel(pct), note: soon ? 'compacta em breve' : ctxLabel(pct),
       detail: [`${tokens(used)} de ${tokens(cw.context_window_size ?? 0)}`, limit > 0 ? `compacta em ${tokens(limit)}` : ''].filter(Boolean).join(' · ') });
   }
   const stale = Number.isFinite(p.rate_limits_at) && now - p.rate_limits_at > STALE_MS;
@@ -224,7 +186,7 @@ function meters(p, { now, reserve, history = [] }) {
     const limit = p.rate_limits?.[key];
     if (!Number.isFinite(limit?.used_percentage)) continue;
     const w = windowState(limit, WINDOW_MS[key], now);
-    // A nota diz quando a janela renova (pedido do dono, 2026-11-14); a projeção de ritmo vira só o ▲ e fica no painel.
+    // A nota diz quando a janela renova; a projeção de ritmo vira só o ▲ e fica no painel.
     const pace = w.eta === undefined || w.level === 'crit' ? '' : `nesse ritmo acaba em ${span(w.eta)}`;
     const renews = w.left === undefined ? '' : `renova em ${span(w.left)}`;
     out.push({ short, long, pct: w.pct, level: w.level, stale, mark: w.pace ? paint(w.pace, ' ▲') : '', note: stale ? '' : renews, detail: [renews, pace].filter(Boolean).join(' · ') });
@@ -235,7 +197,7 @@ function meters(p, { now, reserve, history = [] }) {
 
 function meterText(m, cells) {
   const color = m.stale ? 'sec' : m.level;
-  return [paint('sec', m.short), cells ? bar(m.pct, cells, m.level, m.stale) : '', paint(color, `${m.pct}%${m.stale ? '' : (m.mark ?? '')}`), m.spark ? paint(m.level, m.spark) : '', m.note ? paint('sec', m.note) : ''].filter(Boolean).join(' ');
+  return [paint('sec', m.short), cells ? bar(m.pct, cells, m.level, m.stale) : '', paint(color, `${m.pct}%${m.stale ? '' : (m.mark ?? '')}`), m.note ? paint('sec', m.note) : ''].filter(Boolean).join(' ');
 }
 
 /** Parcela da entrada do último turno lida do cache; undefined sem dado ou com entrada pequena demais para importar. */
@@ -250,7 +212,7 @@ export function cacheRatio(p) {
 // Ramo em Nerd Font (nf-dev-git_branch); sem ela (NYCODE_ASCII_ICONS=1, console linux/dumb) o ⎇ de antes.
 const ramo = (env = process.env) => (env.NYCODE_ASCII_ICONS === '1' || /^(?:dumb|linux)$/.test(env.TERM ?? '') ? '⎇' : '\ue725');
 
-/** Ramo, ↑/↓ e +/− (dono, 2026-11-19, /status "Git"); sujo sem linhas mudadas (só arquivos novos) mostra `*`. */
+/** Ramo, ↑/↓ e +/−; sujo sem linhas mudadas (só arquivos novos) mostra `*`. */
 function gitText(git) {
   const extra = [git.ahead ? `↑${git.ahead}` : '', git.behind ? `↓${git.behind}` : ''].filter(Boolean).join(' ');
   const linhas = [git.added ? paint('ok', `+${git.added}`) : '', git.removed ? paint('crit', `−${git.removed}`) : ''].filter(Boolean).join(' ');
@@ -268,13 +230,13 @@ const EFFORT_COR = { off: 'sec', minimal: 'sec', low: 'ok', medium: 'usage', hig
 function head(p, git) {
   const cwd = p.workspace?.project_dir || p.workspace?.current_dir || p.cwd || '';
   const dir = cwd === os.homedir() ? '~' : path.basename(cwd);
-  // Effort entre parênteses colado ao modelo, na cor da intensidade (dono, 2026-11-19; antes `· medium` em cinza).
+  // Effort entre parênteses colado ao modelo, na cor da intensidade (antes `· medium` em cinza).
   const lv = p.effort?.level;
   const effort = lv ? ' ' + paint(EFFORT_COR[lv] ?? 'sec', `(${lv})`) : '';
   const left = bold(paint('text', p.model?.display_name || p.model?.id || '?')) + effort + paint('sec', dir ? ` · ${dir}` : '') + (git ? dot() + gitText(git) : '');
   const cost = p.cost ?? {};
   const spent = [Number.isFinite(cost.total_duration_ms) ? span(cost.total_duration_ms) : '', Number.isFinite(cost.total_cost_usd) ? `$${cost.total_cost_usd.toFixed(2)}` : ''].filter(Boolean).join(' · ');
-  // Tempo e custo logo depois da identidade, à esquerda, atrás de um traço vertical (pedido do dono, 2026-11-14).
+  // Tempo e custo logo depois da identidade, à esquerda, atrás de um traço vertical.
   return spent ? left + paint('track', ' │ ') + paint('sec', spent) : left;
 }
 
@@ -317,7 +279,7 @@ export function turnStats(file) {
   return Number.isFinite(ms) && ms >= 0 ? { ms, tps: dur > 0 ? Math.round((out * 1000) / dur) : 0 } : undefined;
 }
 
-/** 3ª linha (dono, 2026-11-19, /status "Linha extra" sem o git): tokens do último pedido, cache, turno e velocidade. */
+/** 3ª linha: tokens do último pedido, cache, turno e velocidade. */
 function extraLine(p, turn) {
   const u = p.context_window?.current_usage;
   const partes = [];
@@ -348,9 +310,9 @@ function panel(p, ms) {
 }
 
 /** As linhas da status line. `level`: 'padrao' (2 linhas + avisos) ou 'detalhe' (painel). */
-export function render(p, { columns = 120, now = Date.now(), gitCacheFile, git = gitState(p?.workspace?.current_dir || p?.cwd || '.', { file: gitCacheFile }), reserve = reserveTokens(p?.model), level = 'padrao', palette = themePalette(), history = [], turn = typeof p?.transcript_path === 'string' ? turnStats(p.transcript_path) : undefined } = {}) {
+export function render(p, { columns = 120, now = Date.now(), gitCacheFile, git = gitState(p?.workspace?.current_dir || p?.cwd || '.', { file: gitCacheFile }), reserve = reserveTokens(p?.model), level = 'padrao', palette = themePalette(), turn = typeof p?.transcript_path === 'string' ? turnStats(p.transcript_path) : undefined } = {}) {
   HEX = palette;
-  const ms = meters(p, { now, reserve, history });
+  const ms = meters(p, { now, reserve });
   const lines = [head(p, git)];
   if (level === 'detalhe') lines.push(...panel(p, ms));
   else if (ms.length) {
@@ -360,7 +322,7 @@ export function render(p, { columns = 120, now = Date.now(), gitCacheFile, git =
     else for (const row of [ms.filter((m) => m.short === 'ctx'), ms.filter((m) => m.short !== 'ctx')]) {
       if (!row.length) continue;
       const brief = row.map((m) => ({ ...m, note: m.note.replace('renova em ', '↻ ') }));
-      const bare = row.map((m) => ({ ...m, note: '', spark: '' }));
+      const bare = row.map((m) => ({ ...m, note: '' }));
       const tries = [[row, 8], [brief, 8], [bare, 8], [bare, 0]].map(([list, cells]) => list.map((m) => meterText(m, cells)).join(dot()));
       lines.push(tries.find((l) => width(l) <= columns) ?? tries.at(-1));
     }

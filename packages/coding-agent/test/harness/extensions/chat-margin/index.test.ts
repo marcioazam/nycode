@@ -8,7 +8,7 @@ import { initTheme } from "../../../../src/modes/interactive/theme/theme.ts";
 
 initTheme("dark");
 
-// Dono (2026-11-19): a mensagem do usuário perdeu quase todo o recuo lateral; antes RECUO (2) de cada lado além do padding
+// A mensagem do usuário perdeu quase todo o recuo lateral; antes RECUO (2) de cada lado além do padding
 // do Markdown, agora só o padding (1). Fica a margem do chat (outputPad 1) sem fundo, como o texto da resposta.
 test("mensagem do usuário: só a margem do chat e o padding do Markdown, sem RECUO", () => {
 	chatMargin({ on() {}, getSettings: () => ({}) } as unknown as ExtensionAPI);

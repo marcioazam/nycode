@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Final gate of the ui task (proof that the build looks like Nycode). Read-only outside mktemp. Exits 0 only if all pass.
-# Converted from the Nycode gate (claude-home/bin/tests/nycode-ui-final-gate.sh, 14 checks). Map in README.md. Gone:
+# Final gate of the ui task (proof that nycode looks like pre-migration Nycode). Read-only outside mktemp. Exits 0 only if all pass.
+# Converted from the pre-migration Nycode gate (claude-home/bin/tests/nycode-ui-final-gate.sh, 14 checks). Map in README.md. Gone:
 #  4 hud: claude-hud is the owner's external dependency; its tests move with F8 (R13/R14).
 #  6 hooks, 6 dispatch: python hook tests move with F8 (R10) and run in run-static's pytest.
 #  7 bash -n wrapper: bin/nycode is absorbed by the core (K01); check 13 runs the built binary instead.
@@ -33,15 +33,13 @@ r=$(vcov git-checkpoint $H/git-checkpoint/git-checkpoint.test.ts)
 chk "2 git-checkpoint (rewind-tree) + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov todo $H/todo/todo-collapse.test.ts $H/extensions/todo/stale-reminder.test.ts)
 chk "2 todo (todo-collapse) + cobertura>=80" "${r%%|*}" "${r#*|}"
-r=$(vcov notify $H/notify/notify-focus.test.ts $H/extensions/notify/index.test.ts)
-chk "2 notify (notify-focus) + cobertura>=80" "${r%%|*}" "${r#*|}"
+r=$(vcov notify $H/extensions/notify)
+chk "2 notify + cobertura>=80" "${r%%|*}" "${r#*|}"
 
 # 3: every harness test of the package (was: every nycode test).
 (cd "$CA" && env -u OPENROUTER_API_KEY timeout 900 npx vitest --run $H >"$W/all.log" 2>&1)
 chk "3 vitest test/harness (todos)" $? "$(rg '^ +(Test Files|Tests) ' "$W/all.log" | tr -s ' ' | tr '\n' ' ')"
 
-r=$(vcov sound-notify $H/extensions/sound-notify/index.test.ts)
-chk "5 som + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov syntax-check $H/extensions/syntax-check/index.test.ts)
 chk "5 syntax-check + cobertura>=80" "${r%%|*}" "${r#*|}"
 r=$(vcov docs-pointer $H/extensions/docs-pointer/index.test.ts)

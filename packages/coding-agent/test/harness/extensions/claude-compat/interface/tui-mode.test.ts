@@ -62,7 +62,7 @@ test("sem controlador, sem setTuiMode, valor inválido ou gravação falha: nada
 
 test("getControls aceita runtime sem setTuiMode (opcional) e não o exige", () => {
 	const holder = {
-		[Symbol.for("nycode-harness.ui-controls")]: {
+		[Symbol.for("nycode.ui-controls")]: {
 			apiVersion: 1,
 			mode() {},
 			setFocus() {},

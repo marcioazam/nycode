@@ -1,5 +1,5 @@
 /**
- * Queued message view (steering/follow-up) in Portuguese, variant C (owner's choice, 2026-11-18): accent rail ▎,
+ * Queued message view (steering/follow-up) in Portuguese, variant C: accent rail ▎,
  * symmetric inner indent of 3 columns (1 in a narrow terminal), header with edit (`shift+←`), delete last
  * (`shift+⌫`) and send now (`ctrl+⏎`), `no próximo passo` in cyan and `ao terminar` in dim. Arrow up also restores the
  * queued messages into the editor when the editor is empty (rewrites Up as Alt+Up, app.message.dequeue).
@@ -54,8 +54,7 @@ export interface QueueStyle {
 	nasce?(): [number[], number[]] | undefined;
 }
 
-/** Linhas do contêiner de pendências com a fila em português (Variante C): cabeçalho e itens, sem padding lateral (dono,
- * 2026-11-19: alinhada à cápsula do editor, trilho ▎ na coluna da borda `│`; antes 3 colunas de cada lado). */
+/** Linhas do contêiner de pendências com a fila em português (Variante C): cabeçalho e itens, sem padding lateral. */
 export function restyleQueue(lines: readonly string[], width: number, st: QueueStyle, sel?: number): string[] {
 	const plain = lines.map((l) => l.replace(SGR, "").trimEnd());
 	const items = plain.flatMap((l) => {
@@ -65,7 +64,7 @@ export function restyleQueue(lines: readonly string[], width: number, st: QueueS
 			: [];
 	});
 	if (!items.length) return [...lines];
-	// Item escolhido com shift+↑/↓ (dono, 2026-11-20; patch send-now): número em accent e texto em negrito; a janela de MAX_SHOWN o acompanha.
+	// Item escolhido com shift+↑/↓ (patch send-now): número em accent e texto em negrito; a janela de MAX_SHOWN o acompanha.
 	const escolhido = sel !== undefined && sel >= 0 && sel < items.length ? sel : undefined;
 	const ini = escolhido === undefined ? 0 : Math.max(0, escolhido - MAX_SHOWN + 1);
 	const rawKey = plain.map((l) => HINT.exec(l)?.[1]).find(Boolean);
@@ -112,7 +111,7 @@ export function restyleQueue(lines: readonly string[], width: number, st: QueueS
 	return out;
 }
 
-const WRAPPED = Symbol.for("nycode-harness.queue-view");
+const WRAPPED = Symbol.for("nycode.queue-view");
 
 /** Embrulha o render do contêiner de pendências (2º filho do TUI no nycode 1.5.2); sem ele, não faz nada. */
 export function attachQueueView(
@@ -126,7 +125,7 @@ export function attachQueueView(
 	box[WRAPPED] = style; // /reload troca o estilo sem embrulhar de novo
 	if (hadStyle) return;
 	const native = box.render.bind(box);
-	// Nasce do fundo (dono, 2026-11-19, lab /fila): a cada mensagem nova na fila, o bloco sobe do fundo em NASCE_MS.
+	// Nasce do fundo: a cada mensagem nova na fila, o bloco sobe do fundo em NASCE_MS.
 	let antes = 0,
 		t0 = -Infinity;
 	box.render = (width: number) => {

@@ -786,5 +786,5 @@ test("K23: handleResumeSession diverts to the cwd transition when options.piSess
 });
 
 test("K23: SessionManager has the cwd-aware finders installed at load", () => {
-	assert.equal((SessionManager as any)[Symbol.for("nycode-harness.session-cwd.finders")], true);
+	assert.equal((SessionManager as any)[Symbol.for("nycode.session-cwd.finders")], true);
 });

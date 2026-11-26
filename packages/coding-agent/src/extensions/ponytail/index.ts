@@ -1,9 +1,10 @@
 /**
- * Ponytail ("lazy senior dev" rules), on by default: a port of the extension of marcioazam/ponytail a75382e
+ * Ponytail ("lazy senior dev" rules), on by default: a port of the extension of DietrichGebert/ponytail v5.3.3
  * (MIT, see LICENSE). The rules join the system prompt as the `ponytail` section, at the level of the session
  * (`/ponytail lite|full|ultra|off|status|default <level>`; default `full`, PONYTAIL_DEFAULT_MODE or the config file).
- * A subagent child inherits the parent's level and PONYTAIL_SUBAGENT_MATCHER (unanchored, case-insensitive regex over
- * the agent name) turns it off for agents that do not match. The six `ponytail*` skills are embedded resources.
+ * A subagent child inherits the parent's level, kept only by agents that can write (`tools:` with edit or write, or no
+ * tools restriction); PONYTAIL_SUBAGENT_MATCHER (unanchored, case-insensitive regex over the agent name) overrides that
+ * rule when set. The six `ponytail*` skills are embedded resources.
  */
 
 import type { ExtensionAPI, ExtensionContext } from "../../core/extensions/types.ts";
@@ -48,8 +49,18 @@ export function subagentName(argv: readonly string[]): string | null {
 	return (file && /^prompt-(.+)\.md$/.exec(file)?.[1]) || null;
 }
 
-/** The level of a child process: the parent's, turned off when `matcher` does not match the agent name. An
- * unparseable name or a bad regex keeps the level. */
+/** The `--tools` allowlist the subagent extension passes to a child (its agent's `tools:` frontmatter, already
+ * normalized); null when the agent has no tools restriction and so inherits every tool. */
+export function childTools(argv: readonly string[]): string[] | null {
+	const i = argv.indexOf("--tools");
+	const list = i >= 0 ? argv[i + 1] : undefined;
+	return list === undefined ? null : list.split(",").map((tool) => tool.trim());
+}
+
+/** The level of a child process: the parent's, turned off for an agent that cannot write. `matcher`
+ * (PONYTAIL_SUBAGENT_MATCHER) is an explicit override: when set, only agents whose name it matches keep the level,
+ * and an unparseable name or a bad regex keeps it. Without it, the agent keeps the level when its tools include
+ * `edit` or `write`, or when it has no tools restriction. */
 export function childMode(options: {
 	parentMode?: string;
 	matcher?: string;
@@ -57,7 +68,11 @@ export function childMode(options: {
 	fallback: PonytailMode;
 }): PonytailMode {
 	const mode = normalizePersistedMode(options.parentMode) ?? options.fallback;
-	if (mode === "off" || !options.matcher) return mode;
+	if (mode === "off") return mode;
+	if (!options.matcher) {
+		const tools = childTools(options.argv);
+		return tools === null || tools.some((tool) => tool === "edit" || tool === "write") ? mode : "off";
+	}
 	const name = subagentName(options.argv);
 	if (name === null) return mode;
 	try {

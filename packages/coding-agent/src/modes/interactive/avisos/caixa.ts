@@ -136,7 +136,7 @@ const fundoAviso = (t: Theme): ((x: string) => string) => {
 	return (x) => `${open}${x}\x1b[49m`;
 };
 
-const SINAL_LIMITE = Symbol.for("nycode-harness:cartao-limite");
+const SINAL_LIMITE = Symbol.for("nycode:cartao-limite");
 interface CartaoLimite {
 	erro: string;
 	hora: string;

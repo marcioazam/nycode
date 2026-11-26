@@ -10,7 +10,6 @@ import registerDirectory from "./directory/index.ts";
 import registerInterfaceCommands from "./interface/index.ts";
 import registerLifecycle from "./lifecycle/index.ts";
 import { COMMANDS } from "./matrix.ts";
-import { registerPublicServices } from "./services/public.ts";
 import { CLAUDE_KEYBINDINGS } from "./shortcuts.ts";
 
 type Names = Pick<ExtensionAPI, "getSessionName" | "setSessionName">;
@@ -97,7 +96,6 @@ export function skillsText(nycode: Lister): string {
 
 export default function (nycode: ExtensionAPI) {
 	registerLocalCommands(nycode);
-	registerPublicServices(nycode);
 	registerLifecycle(nycode);
 	registerInterfaceCommands(nycode);
 	registerDirectory(nycode);

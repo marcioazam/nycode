@@ -14,8 +14,14 @@ ROOT = Path(__file__).resolve().parent.parent
 RES = "packages/coding-agent/resources"
 SCAN = (RES, "packages/coding-agent/src/extensions", "scripts/harness", "docs")
 SKIP_PARTS = ("__pycache__", "node_modules", ".git")
-# docs/migration/: the plan cites Nycode paths and targets that do not exist yet; docs/specs/: historical specs.
-SKIP_PREFIX = ("docs/specs/", "docs/migration/", f"{RES}/hooks/fixtures/")
+# docs/migration/: the plan cites pre-migration Nycode paths and targets that do not exist yet; docs/specs/: historical specs;
+# docs/harness/: dated records that cite the pieces moved out of the package (2026-11-24 core/harness/personal split).
+SKIP_PREFIX = (
+    "docs/specs/",
+    "docs/migration/",
+    "docs/harness/",
+    f"{RES}/hooks/fixtures/",
+)
 TEST_FILE = (
     re.compile(  # tests cite synthetic names; patches are third-party diff context
         r"(^|/)(tests?/|test_[^/]*$|[^/]*\.test\.[a-z]+$)|\.patch$"

@@ -1,6 +1,6 @@
 // K7: the built-in contract is the lowest-precedence context file of the system prompt (AGENTS.md comes after it).
 // Print mode swaps it for headless.md through the headless-lean extension; the title may be `(pi)` or `(nycode)`.
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
@@ -77,6 +77,44 @@ describe("system prompt with the built-in contract (K7)", () => {
 		fx.write("instructions/headless.md", HEADLESS);
 		expect(readBuiltinInstruction("headless")).toBe(HEADLESS.trim());
 		expect(readBuiltinInstruction("lite")).toBeUndefined();
+	});
+});
+
+describe("user override of the built-in instructions", () => {
+	const userFile = (name: string, content: string) => {
+		const dir = join(process.env.NYCODE_CODING_AGENT_DIR as string, "instructions");
+		mkdirSync(dir, { recursive: true });
+		writeFileSync(join(dir, `${name}.md`), content);
+		return join(dir, `${name}.md`);
+	};
+
+	it("a user contract replaces the embedded one, keeps comment stripping and resolves the marker", () => {
+		fx.write("instructions/contract.md", CONTRACT);
+		const file = userFile("contract", `<!-- mine -->\n# My contract\n\nSee ${RESOURCES_MARKER}/x.md\n`);
+		const prompt = buildSystemPrompt({ ...options, contextFiles: [agents] });
+		expect(prompt).toContain(`<project_instructions path="${file}">\n# My contract`);
+		expect(prompt).toContain(`See ${fx.resources}/x.md`);
+		expect(prompt).not.toContain("Working contract");
+		expect(prompt).not.toContain("mine");
+	});
+
+	it("without a user file the embedded one is used", () => {
+		fx.write("instructions/contract.md", CONTRACT);
+		expect(readBuiltinInstruction("contract")).toContain("Working contract (nycode)");
+	});
+
+	it("a user file works with no embedded resources at all, and follows a rewrite", () => {
+		userFile("headless", "# First\n");
+		expect(readBuiltinInstruction("headless")).toBe("# First");
+		userFile("headless", "# Second, longer\n");
+		expect(readBuiltinInstruction("headless")).toBe("# Second, longer");
+	});
+
+	it("an empty user file means no instruction: it wins over the embedded one", () => {
+		fx.write("instructions/contract.md", CONTRACT);
+		userFile("contract", "  \n<!-- nothing -->\n");
+		expect(readBuiltinInstruction("contract")).toBeUndefined();
+		expect(withBuiltinInstructions([agents])).toEqual([agents]);
 	});
 });
 

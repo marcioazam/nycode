@@ -1,6 +1,6 @@
 /**
- * Marca "nycode" do cabeçalho (dono, 2026-11-18, laboratório /marca: abertura 3 "Letra a letra", tamanho "grande").
- * Grade de 70 × 13 pontos medida da imagem do dono (letras de 10 pontos, vão de 2), degradê vertical 239 → 122 (no tema
+ * Marca "nycode" do cabeçalho.
+ * Grade de 70 × 13 pontos medida da imagem de referência (letras de 10 pontos, vão de 2), degradê vertical 239 → 122 (no tema
  * claro, espelhado para o escuro); desenhada em meio bloco: 70 colunas × 7 linhas, duas cores por célula.
  * Abertura: n-y-c-o-d-e entram uma a uma (140 ms cada), nascem do escuro, caem 4 pontos quicando e esfriam da luz ao degradê; cursor
  * desliza à frente; brilho diagonal final.
@@ -55,10 +55,10 @@ export const MARCA_H = 7;
 const H = 13;
 const BMP = Array.from({ length: H }, (_, y) => LETRAS.map((l) => l[y]!).join(".."));
 const on = (x: number, y: number): boolean => x >= 0 && x < MARCA_W && y >= 0 && y < H && BMP[y]![x] === "#";
-// Abertura refinada (dono, 2026-11-18 "tudo suave, sem trava"): a letra nasce do escuro, assenta 4 pontos quicando (Quique,
+// Abertura refinada: a letra nasce do escuro, assenta 4 pontos quicando (Quique,
 // laboratório /logo variante 4, no degradê cinza), acende na luz levemente tingida pelo destaque e esfria ao degradê; o cursor
 // desliza contínuo à frente das letras e sai pela direita; um brilho diagonal atravessa a marca e a assenta.
-// ~15 % mais rápido (dono, 2026-11-18, /cursor): antes LETRA_MS 165, QUEDA_MS 420, ACENDE_MS 120, ESFRIA_MS 420.
+// ~15 % mais rápido: antes LETRA_MS 165, QUEDA_MS 420, ACENDE_MS 120, ESFRIA_MS 420.
 const LETRA_MS = 140,
 	QUEDA_MS = 360,
 	QUEDA_PTS = 4,
@@ -67,7 +67,7 @@ const LETRA_MS = 140,
 const BRILHO_INI = 5 * LETRA_MS + 260,
 	BRILHO_MS = 480;
 export const ABERTURA_MS = BRILHO_INI + BRILHO_MS + 35; // 1,5 s
-// Quique (dono, 2026-11-18, laboratório /logo variante 4, sem o âmbar): a letra cai 4 pontos e quica ao pousar.
+// Quique: a letra cai 4 pontos e quica ao pousar.
 const quique = (t: number) => {
 	const x = Math.min(1, Math.max(0, t)),
 		n = 7.5625,
@@ -96,7 +96,7 @@ export function ponto(x: number, y: number, t: number, c: CoresMarca): Rgb | und
 		base: Rgb = c.claro ? [150, 150, 150] : [122, 122, 122];
 	const g = lerpRgb(topo, base, Math.min(1, Math.max(0, y / (H - 1))));
 	if (t >= ABERTURA_MS) return on(x, y) ? g : undefined;
-	// Barra fina (/cursor variante 3, dono, 2026-11-18; antes bloco de 2 colunas) na altura das minúsculas: parada na espera,
+	// Barra fina (/cursor variante 3; antes bloco de 2 colunas) na altura das minúsculas: parada na espera,
 	// depois desliza 12 colunas por letra e sai pela direita.
 	const xc = Math.floor(10 + (12 * Math.max(0, t)) / LETRA_MS);
 	if (c.destaque && y >= 3 && x === xc) return c.destaque;

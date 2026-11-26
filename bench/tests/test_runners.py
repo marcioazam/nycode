@@ -2,8 +2,6 @@
 
 import json
 import shutil
-import subprocess
-import tarfile
 from pathlib import Path
 from typing import Any
 
@@ -218,8 +216,8 @@ def test_harbor_cmd_and_agents(monkeypatch: MP) -> None:
         and cc[1]["CLAUDE_FORCE_OAUTH"]
     )
     assert "version=1.5.2" in rn.harbor_agent("pi-vanilla", "m", Path("/hd"))[0]
-    mp = rn.harbor_agent("nycode-harness", "m", Path("/hd"))
-    assert "pi_harness_agent:PiHarnessAgent" in mp[0] and mp[1] == {"PYTHONPATH": "/hd"}
+    mp = rn.harbor_agent("nycode", "m", Path("/hd"))
+    assert "nycode_agent:NycodeAgent" in mp[0] and mp[1] == {"PYTHONPATH": "/hd"}
     capped = rn.harbor_cmd("ds", [], "j", Path("/o"), ["t"], timeout_mult=0.125)
     assert capped[capped.index("--agent-timeout-multiplier") + 1] == "0.125"
     assert "--agent-timeout-multiplier" not in rn.harbor_cmd(
@@ -534,40 +532,6 @@ def test_s1_case_reps_without_cases_dir_uses_k(tmp_path: Path, monkeypatch: MP) 
     assert rn.s1_case_reps(["x"], 3) == {"x": 3}
 
 
-BUNDLE_SH = BENCH / "harbor/pi_bundle.sh"
-
-
-def test_bundle_dereferences_linked_install(tmp_path: Path) -> None:
-    """bundle.sh: links out of the bundle (a --link install points into the repo) become files; links inside stay."""
-    src = tmp_path / "repo"
-    (src / "extensions").mkdir(parents=True)
-    (src / "extensions/a.ts").write_text("x")
-    (src / "pi").write_text("#!/bin/sh\n")
-    home = tmp_path / "home"
-    (home / ".pi/agent/extensions").mkdir(parents=True)
-    (home / ".local/bin").mkdir(parents=True)
-    (home / ".pi/agent/extensions/a.ts").symlink_to(src / "extensions/a.ts")
-    (home / ".local/bin/pi").symlink_to(src / "pi")
-    # npm's .bin entries are relative links whose script requires siblings: they must stay links.
-    nm = home / ".pi/agent/node_modules"
-    (nm / "pkg/dist").mkdir(parents=True)
-    (nm / "pkg/dist/cli.js").write_text("require('./lib')")
-    (nm / ".bin").mkdir()
-    (nm / ".bin/pkg").symlink_to("../pkg/dist/cli.js")
-    out = tmp_path / "b.tgz"
-    subprocess.run(
-        ["bash", str(BUNDLE_SH), str(out)],
-        env={"HOME": str(home), "PATH": "/usr/bin:/bin"},
-        check=True,
-        capture_output=True,
-    )
-    with tarfile.open(out) as t:
-        links = {m.name: m.linkname for m in t if m.issym()}
-        names = t.getnames()
-    assert ".local/bin/pi" in names and ".pi/agent/extensions/a.ts" in names
-    assert links == {".pi/agent/node_modules/.bin/pkg": "../pkg/dist/cli.js"}
-
-
 def _pi_msg(role: str, **kw: Any) -> str:
     return json.dumps({"type": "message_end", "message": {"role": role, **kw}})
 
@@ -591,6 +555,36 @@ def test_parse_events_per_run_records_pi_and_omp() -> None:
     assert ev["tokens"] == {"input": 10, "output": 150, "cache_read": 3000, "cache_write": 3200}  # fmt: skip
     assert ev["turns"] == 2 and ev["tool_errors"] == 1
     assert ev["first_request_tokens"] == 3004 and ev["cost"] == pytest.approx(0.02)
+
+
+def test_parse_events_pi_adds_the_subagent_children_cost() -> None:
+    # #183: a delegated child bills apart; its cost reaches the transcript only in the subagent tool result.
+    paid = {
+        "input": 1,
+        "output": 1,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 2,
+        "cost": {"total": 0.05},
+    }
+    child = {
+        "input": 6,
+        "output": 452,
+        "cacheRead": 18999,
+        "cacheWrite": 23863,
+        "cost": 0.0034,
+        "turns": 2,
+    }
+    text = "\n".join([
+        _pi_msg("assistant", content=[], usage=paid),
+        _pi_msg("toolResult", toolName="subagent", details={"mode": "parallel", "results": [{"usage": child}, {"usage": child}]}),
+        _pi_msg("toolResult", toolName="bash", details={"results": [{"usage": child}]}),  # not a subagent: ignored
+        _pi_msg("toolResult", toolName="subagent", details={"results": [{"usage": None}, "x"]}),  # malformed: ignored
+        _pi_msg("assistant", content=[{"type": "text", "text": "done"}], usage=paid),
+    ])  # fmt: skip
+    ev = rn.parse_events(text, "pi")
+    assert ev["cost"] == pytest.approx(0.1 + 2 * 0.0034)
+    assert ev["subagents"] is True
 
 
 def test_parse_events_per_run_records_claude_code() -> None:

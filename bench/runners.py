@@ -319,17 +319,9 @@ def harbor_agent(
             {},
             "ANTHROPIC_OAUTH_TOKEN",
         )
-    if (
-        arm == "nycode"
-    ):  # bench/harbor/nycode_agent.py; run.py builds its bundle (bench/harbor/bundle.sh) first
-        return (
-            ["-a", "nycode_agent:NycodeAgent", "-m", m],
-            {"PYTHONPATH": str(harbor_dir)},
-            "ANTHROPIC_OAUTH_TOKEN",
-        )
-    # nycode-harness: bench/harbor/pi_harness_agent.py (run.py builds its bundle with bench/harbor/pi_bundle.sh first)
+    # bench/harbor/nycode_agent.py; run.py builds its bundle (bench/harbor/bundle.sh) first
     return (
-        ["-a", "pi_harness_agent:PiHarnessAgent", "-m", m],
+        ["-a", "nycode_agent:NycodeAgent", "-m", m],
         {"PYTHONPATH": str(harbor_dir)},
         "ANTHROPIC_OAUTH_TOKEN",
     )
@@ -576,6 +568,15 @@ def parse_events(text: str, kind: str) -> dict[str, Any]:
             msg = ev.get("message") or {}
             if msg.get("role") == "toolResult" and msg.get("isError"):
                 tool_errors += 1
+            if msg.get("role") == "toolResult" and msg.get("toolName") in SUBAGENT_NAMES:  # fmt: skip
+                # The child sessions bill apart from the main one: their usage only reaches the transcript in
+                # the subagent tool result (details.results[].usage.cost). Without it, delegating looks free.
+                details = msg.get("details")
+                results = details.get("results") if isinstance(details, dict) else None
+                for r in results if isinstance(results, list) else []:
+                    usage = r.get("usage") if isinstance(r, dict) else None
+                    if isinstance(usage, dict):
+                        cost += float(usage.get("cost") or 0.0)
             if msg.get("role") == "assistant":
                 turns += 1
                 if u := _usage(msg.get("usage"), kind):

@@ -1,5 +1,5 @@
 // Port of patches/nycode/zzzzzzzzzzzzzzzzzzzzzzzz-rules-notice (node:test): the session-start notice of the loaded rules.
-// Owner request (2026-11-15, variant A): "Rules loaded: global yes, project 0" becomes a neutral box
+// "Rules loaded: global yes, project 0" becomes a neutral box
 // `⚖ regras  2 globais · nenhuma do projeto · sempre ativas`, drawn like the memory notice.
 import { describe, expect, it } from "vitest";
 import { rulesLoadedMessage } from "../../../src/extensions/claude-rules/index.ts";

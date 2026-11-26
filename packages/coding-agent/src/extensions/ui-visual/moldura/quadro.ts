@@ -1,5 +1,5 @@
 /**
- * Moldura do resultado de Read/Write (lab /pertence desenho 5 "Moldura" + "Nasce do fundo", dono, 2026-11-20; antes a caixa ficava
+ * Moldura do resultado de Read/Write (lab /pertence desenho 5 "Moldura" + "Nasce do fundo"; antes a caixa ficava
  * solta embaixo do cabeçalho): a régua dobra em `╮` no fim do cabeçalho, `│` desce dos dois lados do corpo e `╰─…─╯` fecha.
  * Cor borderMuted; error no erro. Só quando há corpo (imagem, erro, aberto, aviso de sintaxe do write); sem cor no tema,
  * em ASCII ou estreito, vale o desenho de antes (sem moldura). A imagem é emoldurada por image-open/fundo.ts (mesma regra).
@@ -86,7 +86,7 @@ export function moldurado(e: Entrada): Comp | undefined {
 		st.uiMoldura = v;
 		return c;
 	};
-	// Imagem (kitty): só a linha de respiro, com `│` dos dois lados (dono, 2026-11-20: sem eles abria um buraco entre `╮` e a caixa);
+	// Imagem (kitty): só a linha de respiro, com `│` dos dois lados (sem eles abria um buraco entre `╮` e a caixa);
 	// image-open/fundo.ts emoldura a miniatura e o cabeçalho dobra.
 	if (st.uiLeitura?.img && !e.ctx.isError && getCapabilities().images === "kitty")
 		return sai(

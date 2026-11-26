@@ -86,3 +86,36 @@ describe("keybindings migration", () => {
 		expect(effective["app.interrupt"]).toBe("ctrl+x");
 	});
 });
+
+describe("startup deprecation warnings", () => {
+	const tempDirs: string[] = [];
+	const previousAgentDir = process.env[ENV_AGENT_DIR];
+
+	afterEach(() => {
+		if (previousAgentDir === undefined) delete process.env[ENV_AGENT_DIR];
+		else process.env[ENV_AGENT_DIR] = previousAgentDir;
+		for (const dir of tempDirs.splice(0)) fs.rmSync(dir, { recursive: true, force: true });
+	});
+
+	function agentDirWith(sub: string, file: string): string {
+		const agentDir = fs.mkdtempSync(path.join(os.tmpdir(), "nycode-deprecation-test-"));
+		tempDirs.push(agentDir);
+		fs.mkdirSync(path.join(agentDir, sub));
+		fs.writeFileSync(path.join(agentDir, sub, file), "#!/bin/sh\n");
+		process.env[ENV_AGENT_DIR] = agentDir;
+		return agentDir;
+	}
+
+	// hooks/ holds command-hook scripts that settings.json points at (Claude Code layout), not the old hook API.
+	it("does not flag a hooks/ directory of hook scripts", () => {
+		const agentDir = agentDirWith("hooks", "gate.sh");
+		expect(runMigrations(agentDir).deprecationWarnings).toEqual([]);
+	});
+
+	it("still flags custom tools left in tools/", () => {
+		const agentDir = agentDirWith("tools", "my-tool.ts");
+		expect(runMigrations(agentDir).deprecationWarnings).toEqual([
+			"Global tools/ directory contains custom tools. Custom tools have been merged into extensions.",
+		]);
+	});
+});

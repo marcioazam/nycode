@@ -27,6 +27,9 @@
  *
  * The top-level `autoEnableCodemode` (default true) activates the codemode tool when a server
  * with `codemode` exposure connects. A project value overrides the global one.
+ * The top-level `autoEnableToolSearch` (default false) also activates tool_search for such servers
+ * (hybrid: single calls through tool_search, chains through codemode scripts). `NYCODE_MCP_TOOL_SEARCH=1`
+ * turns it on over the files (bench arms).
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -63,6 +66,8 @@ export interface LoadedMcpConfig {
 	servers: McpServerEntry[];
 	/** Activate the codemode tool when `codemode` servers connect. Default: true. */
 	autoEnableCodemode?: boolean;
+	/** Also activate tool_search for `codemode` servers. Default: false. */
+	autoEnableToolSearch?: boolean;
 	errors: string[];
 	/** The project `mcp.json` when the project is trusted, where `/mcp` saves project overrides. */
 	projectConfig?: string;
@@ -77,6 +82,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 interface McpConfigState {
 	servers: Map<string, McpServerEntry>;
 	autoEnableCodemode?: boolean;
+	autoEnableToolSearch?: boolean;
 	errors: string[];
 }
 
@@ -96,6 +102,8 @@ function readConfigFile(path: string, scope: "global" | "project", state: McpCon
 	}
 	if (typeof parsed.autoEnableCodemode === "boolean") state.autoEnableCodemode = parsed.autoEnableCodemode;
 	else if (parsed.autoEnableCodemode !== undefined) errors.push(`${path}: autoEnableCodemode must be a boolean`);
+	if (typeof parsed.autoEnableToolSearch === "boolean") state.autoEnableToolSearch = parsed.autoEnableToolSearch;
+	else if (parsed.autoEnableToolSearch !== undefined) errors.push(`${path}: autoEnableToolSearch must be a boolean`);
 	for (const [name, value] of Object.entries(parsed.mcpServers ?? {})) {
 		if (scope === "project" && isRecord(value) && isMcpServerOverride(value)) {
 			const base = servers.get(name);
@@ -139,9 +147,11 @@ export function loadMcpConfig(options: { agentDir: string; cwd: string; projectT
 	readConfigFile(join(options.agentDir, "mcp.json"), "global", state);
 	const projectConfig = options.projectTrusted ? join(options.cwd, CONFIG_DIR_NAME, "mcp.json") : undefined;
 	if (projectConfig) readConfigFile(projectConfig, "project", state);
+	const autoEnableToolSearch = process.env.NYCODE_MCP_TOOL_SEARCH === "1" ? true : state.autoEnableToolSearch;
 	return {
 		servers: [...state.servers.values()],
 		...(state.autoEnableCodemode === undefined ? {} : { autoEnableCodemode: state.autoEnableCodemode }),
+		...(autoEnableToolSearch === undefined ? {} : { autoEnableToolSearch }),
 		errors: state.errors,
 		...(projectConfig ? { projectConfig } : {}),
 	};

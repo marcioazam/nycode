@@ -1,5 +1,5 @@
 /**
- * Todo bloco com fundo do chat respeita a margem do texto (outputPad), pedido do usuário 2026-11-15: usuário, tools,
+ * Todo bloco com fundo do chat respeita a margem do texto (outputPad): usuário, tools,
  * mensagens de extensão, resumos e `!bash` pintavam o fundo de ponta a ponta enquanto o texto e os blocos de código
  * ficavam dentro da margem. Embrulha `render`/`handleMouse` dos componentes do core: o bloco renderiza na
  * largura interna e ganha a margem sem fundo dos dois lados. Réguas, avisos soltos e recursos carregados: hookDocument. Erro e
@@ -32,7 +32,7 @@ import {
 	wrapInstance,
 } from "./inset.ts";
 
-const KEY = Symbol.for("nycode-harness.chat-margin");
+const KEY = Symbol.for("nycode.chat-margin");
 
 /** Componente do chat como o embrulho o vê: margem, render, mouse e os campos que decidem o recuo. */
 type Alvo = {
@@ -80,7 +80,7 @@ function restore(): void {
 }
 
 // Blocos com fundo do core cujo padding interno nativo é só outputPad (1): ganham RECUO simétrico dos dois lados
-// (branch, skill, mensagem de extensão na caixa padrão e tool sem definição). A do usuário saiu (dono, 2026-11-19: quase
+// (branch, skill, mensagem de extensão na caixa padrão e tool sem definição). A do usuário saiu (quase
 // sem padding lateral, só o do Markdown).
 const RECUADOS = new Set<object>([BranchSummaryMessageComponent.prototype, SkillInvocationMessageComponent.prototype]);
 const recuoDe = (self: Alvo | undefined, proto: object): number => {

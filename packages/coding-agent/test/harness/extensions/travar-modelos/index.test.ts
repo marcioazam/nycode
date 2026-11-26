@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, test } from "vitest";
 import * as m from "../../../../src/extensions/travar-modelos/index.ts";
 
-const SINK = Symbol.for("nycode-harness:diag");
+const SINK = Symbol.for("nycode:diag");
 const A = { provider: "p", id: "a" };
 const B = { provider: "o", id: "x/y" };
 const C = { provider: "q", id: "c" };
@@ -169,7 +169,7 @@ test("comando com argumentos: env, setModel, setThinkingLevel e status", async (
 		["nivel", "medium"],
 	]);
 	assert.equal(t.status.at(-1), "2 modelos travados");
-	assert.match(t.avisos.at(-1)![0], /^\u2063\u2063Modelos travados nesta sessão:/); // marca de caixa de aviso (dono, 2026-11-14); invisível sem o patch do core
+	assert.match(t.avisos.at(-1)![0], /^\u2063\u2063Modelos travados nesta sessão:/); // marca de caixa de aviso; invisível sem o patch do core
 });
 
 test("comando: modelo desconhecido e erro de sintaxe não aplicam nada", async () => {

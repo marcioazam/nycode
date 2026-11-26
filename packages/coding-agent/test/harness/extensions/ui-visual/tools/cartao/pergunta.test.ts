@@ -1,4 +1,4 @@
-// Resultado da `question` em "Resposta em destaque" (dono, 2026-11-20, lab /pergunta desenho 7 + "Nasce e sai", só a entrada): pergunta/bloco.ts.
+// Resultado da `question` em "Resposta em destaque": pergunta/bloco.ts.
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import * as __m2 from "../../../../../../src/extensions/ui-visual/motion/vivo.ts";
@@ -85,7 +85,7 @@ test("aguardando: `aguardando resposta` respira entre dim e syntaxType, sem spin
 test("aberto: lista as opções sob a resposta, com a escolhida marcada; fechado não lista", () =>
 	amb(() => {
 		const fechado = draw(PS, "q-a", 1e9).map(plain);
-		// (dono, 2026-11-20): na margem do chat; antes `   Cor · …` e `   ❯ …` (recuo LEAD + 1) e opções em 5 colunas.
+		// na margem do chat; antes `   Cor · …` e `   ❯ …` (recuo LEAD + 1) e opções em 5 colunas.
 		assert.deepEqual(
 			fechado.slice(0, 2).map((l) => l.replace(/(?<=\S) {2,}.*$/, "")),
 			["Cor · Qual cor?", "❯ Âmbar"],

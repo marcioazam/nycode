@@ -22,12 +22,13 @@ export interface NycodeSettings {
 	};
 	subagent: { respawn: boolean };
 	tools: { bash: { backgroundOnTimeout: boolean } };
-	todo: { staleReminder: boolean };
-	plan: { gate: boolean };
-	notify: { sound: boolean };
+	todo: { staleReminder: boolean; sync: boolean };
+	plan: { gate: boolean; readOnlyTools: string[] };
+	bash: { mainGuard: { enabled: boolean; timeoutSec: number; capSec: number } };
+	footer: { stats: boolean };
+	editorMode: "normal" | "vim";
+	notify: { sound: boolean; desktop: boolean };
 	terminal: { uiState: string; reducedMotion: boolean; nerdFont: boolean | "auto"; asciiIcons: boolean };
-	knowledge: { vault?: string; graphsVault?: string };
-	codegraph: { autoRoot?: string; bin?: string; statusTtl?: number; autoState?: string };
 	mcp: { configPath: string };
 }
 
@@ -62,6 +63,16 @@ const ENGINE: Field<string> = {
 	fromEnv: () => undefined,
 	fromSettings: (raw) => (raw === undefined ? undefined : typeof raw === "string" ? raw : JSON.stringify(raw)),
 };
+const EDITOR_MODE: Field<"normal" | "vim"> = {
+	fromEnv: () => undefined,
+	fromSettings: (raw) => (raw === "normal" || raw === "vim" ? raw : undefined),
+};
+/** A list of non-empty names; a list with any other entry is malformed as a whole. */
+const NAME_LIST: Field<string[]> = {
+	fromEnv: () => undefined,
+	fromSettings: (raw) =>
+		Array.isArray(raw) && raw.every((item) => typeof item === "string" && item !== "") ? [...raw] : undefined,
+};
 const TEXT: Field<string> = {
 	fromEnv: (raw) => (raw === "" ? undefined : raw),
 	fromSettings: (raw) => (typeof raw === "string" && raw !== "" ? raw : undefined),
@@ -74,11 +85,6 @@ const integerAtLeast = (min: number): Field<number> => {
 		fromSettings: (raw) => valid(typeof raw === "number" ? raw : undefined),
 	};
 };
-const SECONDS: Field<number> = {
-	fromEnv: envNumber,
-	fromSettings: (raw) => (typeof raw === "number" && Number.isFinite(raw) && raw >= 0 ? raw : undefined),
-};
-
 function pickOptional<T>(field: Field<T>, envRaw: string | undefined, settingValue: unknown): T | undefined {
 	return (envRaw === undefined ? undefined : field.fromEnv(envRaw)) ?? field.fromSettings(settingValue);
 }
@@ -109,6 +115,7 @@ export function resolveBypassPermissions(input: { flag?: boolean; env: Env; sett
 export function resolveNycodeSettings(settings: Settings, env: Env): NycodeSettings {
 	const d = SETTINGS_DEFAULTS;
 	const h = settings.harness;
+	const guard = settings.bash?.mainGuard;
 	return {
 		permissions: { engine: pick(ENGINE, undefined, settings.permissions?.engine, d.permissions.engine) },
 		compaction: {
@@ -155,9 +162,27 @@ export function resolveNycodeSettings(settings: Settings, env: Env): NycodeSetti
 				),
 			},
 		},
-		todo: { staleReminder: pick(BOOLEAN, env.NYCODE_TODO_SYNC, settings.todo?.staleReminder, d.todo.staleReminder) },
-		plan: { gate: pick(BOOLEAN, env.NYCODE_PLAN_GATE, settings.plan?.gate, d.plan.gate) },
-		notify: { sound: pick(BOOLEAN, env.NYCODE_SOUND_NOTIFY, settings.notify?.sound, d.notify.sound) },
+		todo: {
+			staleReminder: pick(BOOLEAN, env.NYCODE_TODO_SYNC, settings.todo?.staleReminder, d.todo.staleReminder),
+			sync: pick(BOOLEAN, env.NYCODE_TODO_SYNC_V2, settings.todo?.sync, d.todo.sync),
+		},
+		plan: {
+			gate: pick(BOOLEAN, env.NYCODE_PLAN_GATE, settings.plan?.gate, d.plan.gate),
+			readOnlyTools: pick(NAME_LIST, undefined, settings.plan?.readOnlyTools, [...d.plan.readOnlyTools]),
+		},
+		bash: {
+			mainGuard: {
+				enabled: pick(BOOLEAN, undefined, guard?.enabled, d.bash.mainGuard.enabled),
+				timeoutSec: pick(integerAtLeast(1), undefined, guard?.timeoutSec, d.bash.mainGuard.timeoutSec),
+				capSec: pick(integerAtLeast(1), undefined, guard?.capSec, d.bash.mainGuard.capSec),
+			},
+		},
+		footer: { stats: pick(BOOLEAN, undefined, settings.footer?.stats, d.footer.stats) },
+		editorMode: pick(EDITOR_MODE, undefined, settings.editorMode, d.editorMode),
+		notify: {
+			sound: pick(BOOLEAN, env.NYCODE_SOUND_NOTIFY, settings.notify?.sound, d.notify.sound),
+			desktop: pick(BOOLEAN, undefined, settings.notify?.desktop, d.notify.desktop),
+		},
 		terminal: {
 			uiState: pick(TEXT, env.NYCODE_UI_STATE, settings.terminal?.uiState, join(getAgentDir(), "ui-state.json")),
 			reducedMotion: pick(
@@ -168,16 +193,6 @@ export function resolveNycodeSettings(settings: Settings, env: Env): NycodeSetti
 			),
 			nerdFont: pick(AUTO, env.NYCODE_NERD_FONT, settings.terminal?.nerdFont, d.terminal.nerdFont),
 			asciiIcons: pick(BOOLEAN, env.NYCODE_ASCII_ICONS, settings.terminal?.asciiIcons, d.terminal.asciiIcons),
-		},
-		knowledge: {
-			vault: pickOptional(TEXT, env.NYCODE_KNOWLEDGE_VAULT, settings.knowledge?.vault),
-			graphsVault: pickOptional(TEXT, env.NYCODE_GRAPHS_VAULT, settings.knowledge?.graphsVault),
-		},
-		codegraph: {
-			autoRoot: pickOptional(TEXT, env.CODEGRAPH_AUTO_ROOT, settings.codegraph?.autoRoot),
-			bin: pickOptional(TEXT, env.CODEGRAPH_BIN, settings.codegraph?.bin),
-			statusTtl: pickOptional(SECONDS, env.CODEGRAPH_STATUS_TTL, settings.codegraph?.statusTtl),
-			autoState: pickOptional(TEXT, env.CODEGRAPH_AUTO_STATE, settings.codegraph?.autoState),
 		},
 		mcp: { configPath: pick(TEXT, env.NYCODE_MCP_CONFIG, settings.mcp?.configPath, join(getAgentDir(), "mcp.json")) },
 	};

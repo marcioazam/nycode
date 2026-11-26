@@ -1,5 +1,5 @@
 /**
- * Bloco de progresso do plano no chat em "Trilho" sem a barra lateral + "Pulso" (dono, 2026-11-20, lab /progplano desenho 10).
+ * Bloco de progresso do plano no chat em "Trilho" sem a barra lateral + "Pulso".
  * O nycode (patch zzzz…-plan-bloco-hook) consulta `globalThis.__nyPlanoBloco(estado)` para cada bloco que desenha (tags [DONE:n],
  * `PLAN WAITING|BLOCKED`, `PLAN CANCELLED`); devolver `undefined` mantém a exibição original. Quatro linhas, sem fundo:
  *   ` <ícone>  plano · <estado> · etapa N de T                      hora`   (hora dim, sem pílula)

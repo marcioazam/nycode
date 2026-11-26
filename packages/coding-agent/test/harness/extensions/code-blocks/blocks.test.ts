@@ -136,7 +136,7 @@ test("linha longa quebra dentro do fundo; id estável por conteúdo", () => {
 });
 
 test("detecção sem etiqueta: comandos, linguagens comuns e texto na dúvida", () => {
-	assert.equal(detectLang("cursor ~/code/nycode-harness"), "bash");
+	assert.equal(detectLang("cursor ~/code/nycode"), "bash");
 	assert.equal(detectLang("$ npm install\n$ npm test"), "bash");
 	assert.equal(detectLang("cd /tmp\ngit status\nFOO=1 make build"), "bash");
 	assert.equal(detectLang("#!/usr/bin/env bash\nqualquer coisa"), "bash");

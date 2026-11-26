@@ -1,4 +1,4 @@
-// Ported from zzzzzzzzzzzzzzzzzzzzzzzzz-question-nav.test.ts (owner request 2026-11-15): navigation between the questions of a batch,
+// Ported from zzzzzzzzzzzzzzzzzzzzzzzzz-question-nav.test.ts: navigation between the questions of a batch,
 // tabs, review, esc with answers, list commands. Contract: discarding, esc or skipping goes to the model with its own text
 // (it decides whether to ask again). Assertions are the original ones (node:assert/strict inside vitest).
 import assert from "node:assert/strict";
@@ -145,12 +145,14 @@ test("o e 0 abrem o texto livre; em multi são ignoradas", async () => {
 test("g/G, Home/End e ↑↓ dão a volta", async () => {
 	const three = [{ label: "a" }, { label: "b" }, { label: "c" }];
 	const idx = async (keys: string[]) => (await drive(three, false, [...keys, K.enter]))?.index;
-	assert.equal(await idx(["G"]), 3);
+	// Contract change (upstream 1.9 "Chat about this"): the last row is the chat row, below the options.
+	assert.equal(await idx(["G", K.up]), 3);
 	assert.equal(await idx(["G", "g"]), 1);
-	assert.equal(await idx([K.end]), 3);
+	assert.equal(await idx([K.end, K.up]), 3);
 	assert.equal(await idx([K.end, K.home]), 1);
-	assert.equal(await idx([K.up]), 3);
+	assert.equal(await idx([K.up, K.up]), 3);
 	assert.equal(await idx([K.end, K.down]), 1);
+	assert.equal((await drive(three, false, ["G", K.enter]))?.chat, true);
 });
 
 test("multi: a marca/desmarca todas, i inverte", async () => {
@@ -160,13 +162,40 @@ test("multi: a marca/desmarca todas, i inverte", async () => {
 	assert.equal((await drive(three, true, [" ", "i", K.enter]))?.answer, "b, c");
 });
 
-test("esc no editor volta à lista sem apagar o rascunho; outro uso do editor começa limpo", async () => {
-	assert.deepEqual(await drive([...opts, other], false, ["o", "h", "i", K.esc, "o", K.enter]), {
-		answer: "hi",
-		wasCustom: true,
+// Contract change (upstream 1.8): Esc cancels from anywhere, the editor included, and the draft is never sent.
+test("esc no editor cancela a chamada; Enter com resposta em branco também", async () => {
+	assert.equal(await drive([...opts, other], false, ["o", "h", "i", K.esc]), null);
+	assert.equal(await drive([...opts, other], false, ["o", K.enter]), null);
+	const r = await ask(["o", "h", "i", K.esc], S());
+	assert.equal(r.d.answer, null);
+	// O texto livre não passa para a nota.
+	assert.equal((await ask(["n", K.enter], S())).text, "User selected: 1. alpha");
+});
+
+test("esc no editor com respostas no lote abre o menu de saída", async () => {
+	const batch: Batch = {
+		tabs: [
+			{ label: "A", status: "done" },
+			{ label: "B", status: "pending" },
+		],
+		current: 1,
+		answered: 1,
+	};
+	assert.deepEqual(await drive([...opts, other], false, ["o", "x", K.esc, "1"], batch), {
+		answer: "",
+		wasCustom: false,
+		exit: "send",
 	});
-	const r = await ask(["o", "h", "i", K.esc, "g", "n", K.enter], S()); // a nota não herda o texto livre
-	assert.equal(r.text, "User selected: 1. alpha");
+});
+
+test("Conversar sobre isto encerra com o texto de esclarecimento e o que o envio mandaria", async () => {
+	const single = await ask(["G", K.enter], S());
+	assert.match(single.text, /^The user wants to clarify these questions\./);
+	assert.ok(single.text.includes('- "Qual?"\n  (No answer provided)'));
+	assert.equal(single.d.chat, true);
+	const multi = await ask([" ", "G", K.enter], { ...S(), multiSelect: true } as Params);
+	assert.ok(multi.text.includes("Answer: alpha"));
+	assert.equal((await drive(opts, true, ["G", " ", "a", K.enter]))?.answer, "alpha, beta");
 });
 
 test("e expande a descrição de todas as opções (toggle); ? abre a ajuda e qualquer tecla fecha", async () => {
@@ -425,4 +454,26 @@ test("telas auxiliares: ajuda em uma coluna quando estreita; exit e review cabem
 			narrow.some((l: string) => l.includes("escolhe (multi: marca)") && !l.includes("pergunta anterior")),
 	);
 	assert.ok(limpo(exitLines(60, ansi, 2, 4, 1)).every((l: string) => [...l].length <= 60));
+});
+
+test("a resposta confirmada de uma pergunta revisitada aparece com ✔", async () => {
+	const batch: Batch = {
+		tabs: [{ label: "A", status: "done" }],
+		current: 0,
+		answered: 1,
+		initial: { answer: "beta", wasCustom: false, index: 2 },
+	};
+	const h = harness([K.enter]);
+	const answer = await askViaOverlay(
+		{ question: "Qual?", options: opts },
+		h.ctx,
+		opts,
+		false,
+		undefined,
+		undefined,
+		batch,
+	);
+	assert.ok(h.trace[0].includes("beta ✔"));
+	assert.ok(!h.trace[0].includes("alpha ✔"));
+	assert.equal(answer?.index, 2);
 });

@@ -28,8 +28,8 @@ export const sanitizarExibicao = (texto: string): string =>
 
 export const MOVIMENTOS = ["normal", "reduzido", "desligado"] as const;
 export type Movimento = (typeof MOVIMENTOS)[number];
-// Cada extensão tem a própria cópia deste módulo (jiti sem cache): a escolha do dono mora em globalThis.
-const CHAVE = Symbol.for("nycode-harness:movimento");
+// Cada extensão tem a própria cópia deste módulo (jiti sem cache): a escolha do usuário mora em globalThis.
+const CHAVE = Symbol.for("nycode:movimento");
 const nivel = (v: unknown): number => Math.max(0, MOVIMENTOS.indexOf(v as Movimento));
 /** Chave `movimento` (ui-state.json pelo /movimento, ou settings.json); valor inválido volta a `normal`. */
 export const definirMovimento = (v: unknown): void => {
@@ -54,7 +54,7 @@ export const reducedMotion = (nycode: ExtensionAPI, env: Env = process.env): boo
 	resolveNycodeSettings(nycode.getSettings(), env).terminal.reducedMotion || movimento(env) !== "normal";
 
 const agentDir = () => getAgentDir();
-const uiState = () => process.env.NYCODE_UI_STATE || join(agentDir(), "ui-state.json"); // mesmo arquivo do /vim
+const uiState = () => process.env.NYCODE_UI_STATE || join(agentDir(), "ui-state.json"); // mesmo arquivo do STATE_PATH de ui/editor.ts
 const lerJson = (p: string): Record<string, unknown> => {
 	try {
 		const v: unknown = JSON.parse(readFileSync(p, "utf8"));
@@ -63,7 +63,7 @@ const lerJson = (p: string): Record<string, unknown> => {
 		return {};
 	}
 };
-/** Estado de interface do dono (ui-state.json): ler e mesclar sem perder as outras chaves. */
+/** Estado de interface do usuário (ui-state.json): ler e mesclar sem perder as outras chaves. */
 export const lerEstado = (): Record<string, unknown> => lerJson(uiState());
 export const gravarEstado = (patch: Record<string, unknown>): void => {
 	mkdirSync(dirname(uiState()), { recursive: true });

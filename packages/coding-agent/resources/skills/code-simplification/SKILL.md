@@ -11,10 +11,10 @@ at its root) own scope, structural limits, authorization and risk-based validati
 Use existing conventions and the smallest coherent design. Avoid unrelated
 cleanup or changing working code solely to reduce its line count.
 
-Before editing, identify (codegraph via `tool_search`, `rg` and `lsp_references`) callers, inputs/outputs, errors, side effects, ordering,
+Before editing, identify (`rg` and `lsp_references`) callers, inputs/outputs, errors, side effects, ordering,
 resource lifetime and tests that characterize the behavior. If equivalence is
 unclear, resolve that gap before refactoring. A bug fix or critical behavior
-change uses [tdd](../tdd/SKILL.md) when required; a behavior-preserving refactor
+change uses test-first development when required; a behavior-preserving refactor
 runs existing or necessary characterization tests before and after.
 
 Choose changes from concrete evidence: duplicated domain rules, unnecessary

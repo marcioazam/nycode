@@ -1,5 +1,5 @@
 /**
- * Fundo do cabeçalho do Edit (dono, 2026-11-20; antes o cabeçalho ficava sem fundo e só o diff tinha caixa): a linha ganha o
+ * Fundo do cabeçalho do Edit (antes o cabeçalho ficava sem fundo e só o diff tinha caixa): a linha ganha o
  * MESMO fundo, recuo e largura das linhas da caixa do diff (`boxed` em tools.ts), para cabeçalho e diff lerem como um cartão.
  * Sem cor no tema devolve a linha como está (layout anterior, sem fundo).
  */

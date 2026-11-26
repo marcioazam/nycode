@@ -15,10 +15,19 @@ export const MAX_TIMEOUT_S = 1800;
 /** Extra seconds the tool waits past the script's own deadline so the shell trap fires before the tool kills it. */
 const BACKGROUND_SLACK_S = 60;
 
-/** Timeout to apply, in seconds: the default when missing or invalid, the cap when above it. */
-export function decideTimeout(timeout: number | undefined): number {
-	if (timeout === undefined || !Number.isFinite(timeout) || timeout <= 0) return DEFAULT_TIMEOUT_S;
-	return Math.min(timeout, MAX_TIMEOUT_S);
+const envSeconds = (raw: string | undefined): number | undefined => {
+	const ms = Number(raw);
+	return raw?.trim() && Number.isFinite(ms) && ms > 0 ? ms / 1000 : undefined;
+};
+
+/** Timeout to apply, in seconds: the default when missing or invalid, the cap when above it. Claude Code's
+ * BASH_DEFAULT_TIMEOUT_MS replaces the default and BASH_MAX_TIMEOUT_MS the cap, whose effective value is the larger
+ * of the two. */
+export function decideTimeout(timeout: number | undefined, env: NodeJS.ProcessEnv = process.env): number {
+	const fallback = envSeconds(env.BASH_DEFAULT_TIMEOUT_MS) ?? DEFAULT_TIMEOUT_S;
+	const cap = Math.max(fallback, envSeconds(env.BASH_MAX_TIMEOUT_MS) ?? MAX_TIMEOUT_S);
+	if (timeout === undefined || !Number.isFinite(timeout) || timeout <= 0) return fallback;
+	return Math.min(timeout, cap);
 }
 
 /** Own content block added to a bash "Command timed out" result: the tool only says how long it waited, not that more is capped. */
@@ -69,7 +78,14 @@ export function applyBashTimeout(
 	backgroundOnTimeout: boolean,
 ): { command: string; timeout: number } {
 	const t = decideTimeout(timeout);
-	if (backgroundOnTimeout && command.trim() && !/&\s*$/.test(command) && !/^\s*sleep /.test(command)) {
+	// Claude Code: CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1 stops a command at its timeout.
+	if (
+		backgroundOnTimeout &&
+		process.env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS !== "1" &&
+		command.trim() &&
+		!/&\s*$/.test(command) &&
+		!/^\s*sleep /.test(command)
+	) {
 		const id = toolCallId.replace(/[^A-Za-z0-9_-]/g, "_");
 		return { command: wrapForBackground(command, t, id), timeout: t + BACKGROUND_SLACK_S };
 	}

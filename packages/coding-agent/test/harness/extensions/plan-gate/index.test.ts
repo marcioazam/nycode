@@ -259,7 +259,7 @@ test("handler: bloqueio mantém o content e grava o contador em details; give_up
 	assert.deepEqual(notes, [[giveUpNotice(3, 3), "warning"]]);
 });
 
-// Owner's request (2026-11-14): every signal line shows the hour it happened.
+// Every signal line shows the hour it happened.
 test("gateComponent: mostra HH:MM do timestamp antes da tecla; sem timestamp fica como antes", () => {
 	const T = new Date(2026, 10, 14, 14, 15, 0).getTime();
 	assert.match(
@@ -269,7 +269,7 @@ test("gateComponent: mostra HH:MM do timestamp antes da tecla; sem timestamp fic
 	assert.doesNotMatch(gateComponent(msg(1), opts(false), theme).render(100)[0] as string, /\d\d:\d\d/);
 });
 
-// Owner's request (2026-11-14): every chat block opens and closes with a click, this one included.
+// Every chat block opens and closes with a click, this one included.
 test("bloco do gate: clique esquerdo abre e fecha", () => {
 	const c = gateComponent(msg(1), opts(false), theme) as Clicavel;
 	assert.equal(c.render(100).length, 1);

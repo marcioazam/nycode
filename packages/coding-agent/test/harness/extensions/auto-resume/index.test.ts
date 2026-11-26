@@ -95,6 +95,13 @@ describe("auto-resume", () => {
 		assert.equal(decideResume([err("insufficient_quota 429")]).action, "none");
 	});
 
+	it("o que é transitório vem do @nycode/ai: códigos de socket e api_error também retomam", () => {
+		assert.equal(decideResume([err("read ECONNRESET")]).action, "resume");
+		assert.equal(decideResume([err('{"type":"error","error":{"type":"api_error"}}')]).action, "resume");
+		// overflow tem prioridade sobre um padrão transitório na mesma mensagem
+		assert.equal(decideResume([err("413 request_too_large: prompt is too long, timed out")]).action, "none");
+	});
+
 	it("contagem consecutiva, reset após resposta ok, give_up em 5", () => {
 		const e = err("503 status code (no body)");
 		const chain = (n: number) => [...Array.from({ length: n }, () => [e, resumed]).flat(), e];
@@ -448,7 +455,7 @@ describe("auto-resume", () => {
 					// The avisos module delivers the card by the global signal read during the synchronous notify.
 					ui: {
 						notify: () => {
-							cartao = (globalThis as Record<symbol, any>)[Symbol.for("nycode-harness:cartao-limite")];
+							cartao = (globalThis as Record<symbol, any>)[Symbol.for("nycode:cartao-limite")];
 							cartao.redesenhar = () => renders++;
 						},
 					},
@@ -484,7 +491,7 @@ describe("auto-resume", () => {
 		assert.equal(delayText(600_000), "10 min");
 	});
 
-	// Bug seen by the owner (2026-11-14): during the account-limit wait, esc, ctrl+c and "send now" did nothing: the
+	// Bug: during the account-limit wait, esc, ctrl+c and "send now" did nothing: the
 	// agent run is over and ctx.signal is undefined, so the extension listens to the keyboard and the queue itself.
 	it("espera cancelável: esc, ctrl+c ou mensagem na fila acordam a espera, sem retomar", async () => {
 		for (const acordar of ["\x1b", "\x03", "\x1b[27u", "\x1b[99;5u", "fila"] as const) {

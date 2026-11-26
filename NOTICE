@@ -8,19 +8,16 @@ Componentes de terceiros
 ------------------------
 
 pi-code 1.7.0 (pacote npm `pi-code`, sha1 8ba1f814773da6897f6708c62c7c517cee2baf4e,
-https://github.com/ilovepixelart/pi-code), com os patches do ny-pi, embutido em
+https://github.com/ilovepixelart/pi-code), com patches do nycode, embutido em
 packages/coding-agent/src/extensions/. Licença MIT, Copyright (c) 2025 Mario
 Zechner e Copyright (c) 2026 ilovepixelart; o texto da licença é o mesmo de
 LICENSE.
 
 pi-lsp 0.1.7 (pacote npm `pi-lsp`, sha512
 bEmxw2pZ3lUh5LDJFCShnmjbCltmSZLOp6neIl+sWEfOEwMBi6IdOoQ2W00Fdc+k8i2Sw17p7XGElykWmDQOkg==),
-com os patches do ny-pi, embutido em packages/coding-agent/src/extensions/lsp/.
+com patches do nycode, embutido em packages/coding-agent/src/extensions/lsp/.
 Licença MIT, "Copyright (c) 2026" (sem titular nomeado no pacote); o texto da
 licença está em packages/coding-agent/src/extensions/lsp/LICENSE.
-
-ny-pi, licença MIT, Copyright (c) 2026 ny-pi contributors; o texto da licença
-é o mesmo de LICENSE.
 
 Skills de terceiros (packages/coding-agent/resources/skills/)
 -------------------------------------------------------------
@@ -79,14 +76,18 @@ Embedded third-party components (D-54)
 Estes componentes vêm dentro do nycode, ligados por padrão, num commit fixo; o
 LICENSE do autor está no diretório de cada um.
 
-- ponytail: licença MIT, Copyright (c) 2026 DietrichGebert. Fork
-  https://github.com/marcioazam/ponytail (ramo nycode, commit
-  a75382edeb22ec2917cdfa487c6202d8b6f26c99) de
-  https://github.com/DietrichGebert/ponytail v4.10.3 (ef8ca48), com patches.
-  Embutidos: as 6 skills em packages/coding-agent/resources/skills/ponytail*
-  (sem alteração) e a extensão, portada de JavaScript para TypeScript em
-  packages/coding-agent/src/extensions/ponytail/ (hooks/ponytail-config.js,
-  hooks/ponytail-instructions.js e pi-extension/index.js). LICENSE em
+- ponytail: licença MIT, Copyright (c) 2026 DietrichGebert. Versão
+  https://github.com/DietrichGebert/ponytail v5.3.3 (commit
+  7801d061243d7b753bad0e0b3c057cd250b11755), com patches. Embutidos: as 6 skills
+  em packages/coding-agent/resources/skills/ponytail* (texto do v5.3.3, com
+  `disable-model-invocation: true` no frontmatter e sem a seção "Band" do
+  ponytail-help, que só existe no Claude Code) e a extensão, portada de
+  JavaScript para TypeScript em packages/coding-agent/src/extensions/ponytail/
+  (hooks/ponytail-config.js, hooks/ponytail-instructions.js e
+  pi-extension/index.js). Marcador de comentário do v5: `shortcut:`; o marcador
+  `ponytail:` da geração 4.x continua aceito pelas skills de débito, revisão e
+  auditoria. Patch nycode: os subagentes só recebem as regras se tiverem `edit`
+  ou `write` em `tools:` (ou nenhuma restrição de ferramentas). LICENSE em
   packages/coding-agent/resources/ponytail/.
 - ralph-loop: licença Apache-2.0 (https://www.apache.org/licenses/LICENSE-2.0),
   Anthropic. Fork https://github.com/marcioazam/ralph-loop (commit

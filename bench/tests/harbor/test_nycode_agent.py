@@ -94,10 +94,22 @@ def na() -> Iterator[Any]:
     sys.modules.pop("nycode_agent", None)
 
 
+@pytest.fixture(autouse=True)
+def _no_arm_env(monkeypatch: MP) -> None:
+    """The host's arm switches must not leak into the exact-env assertions."""
+    for k in (
+        "NYCODE_TODO_SYNC_V2",
+        "NYCODE_MCP_TOOL_SEARCH",
+        "NYCODE_HEADLESS_TRIM",
+        "NYCODE_SECRET_TOKEN",
+    ):
+        monkeypatch.delenv(k, raising=False)
+
+
 def _install(na: Any, tmp_path: Path, monkeypatch: MP, **env: str) -> tuple[Any, _Env]:
     bundle = tmp_path / "b.tgz"
     bundle.write_bytes(b"x")
-    monkeypatch.setenv("NYCODE_HARNESS_BUNDLE", str(bundle))
+    monkeypatch.setenv("NYCODE_BUNDLE", str(bundle))
     monkeypatch.delenv("ANTHROPIC_WORKSPACE_ID", raising=False)
     for k, v in env.items():
         monkeypatch.setenv(k, v)
@@ -117,12 +129,12 @@ def test_install_ships_the_bundle_to_opt_nycode_home(
     na: Any, tmp_path: Path, monkeypatch: MP
 ) -> None:
     agent, env = _install(na, tmp_path, monkeypatch)
-    assert env.uploads == [(tmp_path / "b.tgz", "/tmp/nycode-harness-bundle.tgz")]
+    assert env.uploads == [(tmp_path / "b.tgz", "/tmp/nycode-bundle.tgz")]
     kinds = [k for k, _, _ in agent.calls]
     assert kinds == ["root", "root", "agent"]  # deps, extract, then node as the agent
     deps, extract = agent.calls[0][1], agent.calls[1][1]
     assert "curl tar" in deps and "python3" not in deps and "patch" not in deps
-    assert f"tar -xzf /tmp/nycode-harness-bundle.tgz -C {HOME}" in extract
+    assert f"tar -xzf /tmp/nycode-bundle.tgz -C {HOME}" in extract
     assert extract.endswith(f"chmod -R a+rwX {HOME}")
 
 
@@ -145,7 +157,7 @@ def test_install_agent_command_and_env(
 def test_install_without_bundle_fails_loudly(
     na: Any, tmp_path: Path, monkeypatch: MP
 ) -> None:
-    monkeypatch.setenv("NYCODE_HARNESS_BUNDLE", str(tmp_path / "missing.tgz"))
+    monkeypatch.setenv("NYCODE_BUNDLE", str(tmp_path / "missing.tgz"))
     with pytest.raises(FileNotFoundError, match="bundle.sh"):
         asyncio.run(na.NycodeAgent().install(_Env()))
 
@@ -189,6 +201,42 @@ def test_run_invokes_the_bundled_cli_with_the_agent_env(na: Any) -> None:
         "NYCODE_CODING_AGENT_DIR": f"{HOME}/.nycode/agent",
         "NYCODE_SKIP_VERSION_CHECK": "1",
     }
+
+
+ARM_ENV = {
+    "NYCODE_TODO_SYNC_V2": "1",
+    "NYCODE_MCP_TOOL_SEARCH": "1",
+    "NYCODE_HEADLESS_TRIM": "0",
+}
+
+
+def test_arm_env_is_forwarded_to_install_and_run(
+    na: Any, tmp_path: Path, monkeypatch: MP
+) -> None:
+    for k in ARM_ENV:
+        monkeypatch.delenv(k, raising=False)
+    plain, _ = _install(na, tmp_path, monkeypatch)
+    assert not set(ARM_ENV) & set(plain.calls[2][2])
+    plain_run = na.NycodeAgent()
+    asyncio.run(plain_run.run("x", _Env(), None))
+    assert not set(ARM_ENV) & set(plain_run.calls[0][2])
+    for k, v in ARM_ENV.items():
+        monkeypatch.setenv(k, v)
+    agent, _ = _install(na, tmp_path, monkeypatch)
+    assert ARM_ENV.items() <= agent.calls[2][2].items()
+    run_agent = na.NycodeAgent()
+    asyncio.run(run_agent.run("x", _Env(), None))
+    assert ARM_ENV.items() <= run_agent.calls[0][2].items()
+
+
+def test_only_the_allowlisted_arm_env_is_forwarded(
+    na: Any, tmp_path: Path, monkeypatch: MP
+) -> None:
+    monkeypatch.setenv("NYCODE_SECRET_TOKEN", "s3")
+    monkeypatch.setenv("NYCODE_TODO_SYNC_V2", "1")
+    agent, _ = _install(na, tmp_path, monkeypatch)
+    assert "NYCODE_SECRET_TOKEN" not in agent.calls[2][2]
+    assert agent.calls[2][2]["NYCODE_TODO_SYNC_V2"] == "1"
 
 
 def test_run_ends_options_before_an_instruction_starting_with_a_dash(na: Any) -> None:

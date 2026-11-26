@@ -7,10 +7,11 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { SETTINGS_DEFAULTS } from "../../core/settings-defaults.ts";
+import { checkoutRoot } from "../_shared/project/project-root.ts";
 import { userConfigDir } from "../_shared/settings/config-dir.ts";
 import { readManagedSettings } from "../_shared/settings/managed-settings.ts";
 import { type InstalledPlugin, pluginComponentPath, substitutePluginVars } from "../_shared/settings/plugins.ts";
-import { claudeSettingsChain, readSettingsChain } from "../_shared/settings/settings-chain.ts";
+import { claudeSettingsChain, claudeSettingsSources, readSettingsChain } from "../_shared/settings/settings-chain.ts";
 import { errorMessage, escapeRegExp, isRecord } from "../_shared/util/values.ts";
 import { internalHook, internalHookNames } from "./internal/registry.ts";
 
@@ -44,6 +45,11 @@ export interface HookCommand {
 	 * subprocesses", so a script can read them instead of relying on inline substitution. */
 	pluginRoot?: string;
 	pluginDataDir?: string;
+	/** CLAUDE_PROJECT_DIR for a hook from a project or local settings file; other hooks get the session cwd. */
+	projectDir?: string;
+	/** Precedence of the settings source that declared the hook, higher winning when copies of one handler
+	 * collapse (see keepOnce in matcher.ts); unset outside settings sources. */
+	sourceRank?: number;
 	/** http entries: the endpoint POSTed to; `command` mirrors it for dedup and display. */
 	url?: string;
 	headers?: Record<string, string>;
@@ -90,6 +96,29 @@ export function hookFiles(cwd: string, home: string, trusted: boolean): string[]
 	return claudeSettingsChain(cwd, home, trusted);
 }
 
+/** What a settings source stamps on its hooks. */
+export type SourceStamp = Pick<HookCommand, "sourceRank" | "projectDir">;
+/** Managed policy hooks outrank every settings file. */
+const MANAGED_RANK = Number.MAX_SAFE_INTEGER;
+
+/** What each settings file stamps on its hooks: its place in the chain as the dedup precedence (later files
+ * outrank earlier ones; a file listed twice keeps its later place), and for a project or local file the folder
+ * holding its `.claude` as CLAUDE_PROJECT_DIR, so `$CLAUDE_PROJECT_DIR/.claude/hooks/x.sh` in the repository
+ * root's settings.local.json still resolves from a subdirectory session. */
+export function settingsSourceStamps(cwd: string, home: string, trusted: boolean): Map<string, SourceStamp> {
+	const stamps = new Map<string, SourceStamp>();
+	for (const [index, source] of claudeSettingsSources(cwd, home, trusted).entries()) {
+		const stamp: SourceStamp = { sourceRank: index + 1 };
+		if (source.scope === "project" || source.scope === "local") {
+			// A worktree's local file lives in the main checkout; its hooks must still act on the worktree.
+			const dir = path.dirname(path.dirname(source.file));
+			stamp.projectDir = path.resolve(dir) === path.resolve(cwd) ? cwd : checkoutRoot(cwd);
+		}
+		stamps.set(source.file, stamp);
+	}
+	return stamps;
+}
+
 /** The chain files whose `hooks` loadHooks reads: all but nycode's own settings.json, the user-scope file (D-62),
  * whose hooks loadSettingsHooks already merges over the defaults. */
 export function hookSourceFiles(files: string[]): string[] {
@@ -129,7 +158,17 @@ export function loadManagedHooks(
 ): HooksConfig {
 	const config: HooksConfig = {};
 	if (isRecord(managed.hooks))
-		mergeHooksJson(config, JSON.stringify({ hooks: managed.hooks }), "managed settings", sources);
+		mergeHooksJson(
+			config,
+			JSON.stringify({ hooks: managed.hooks }),
+			"managed settings",
+			sources,
+			undefined,
+			undefined,
+			{
+				sourceRank: MANAGED_RANK,
+			},
+		);
 	return config;
 }
 
@@ -206,7 +245,11 @@ export function httpUrlAllowed(url: string, allowlist: string[] | undefined): bo
 	});
 }
 
-export function loadHooks(files: string[], sources?: Map<HookMatcher, string>): HooksConfig {
+export function loadHooks(
+	files: string[],
+	sources?: Map<HookMatcher, string>,
+	stamps?: Map<string, SourceStamp>,
+): HooksConfig {
 	const config: HooksConfig = {};
 	for (const file of files) {
 		let raw: string;
@@ -215,28 +258,27 @@ export function loadHooks(files: string[], sources?: Map<HookMatcher, string>): 
 		} catch {
 			continue;
 		}
-		mergeHooksJson(config, raw, file, sources);
+		mergeHooksJson(config, raw, file, sources, undefined, undefined, stamps?.get(file));
 	}
 	return config;
 }
 
 /** The hooks of nycode's own settings: the embedded defaults, each event replaced whole by the settings.json
- * `hooks` entry of the same name (an empty list turns that event's default off). PreToolUse is the exception: the
- * embedded guard stays in front of the entries the settings add unless `guard` is false (native engine, or the
- * user's global opt-out; see guardHookEnabled), so a project's hooks can never replace it. */
+ * `hooks` entry of the same name (an empty list turns that event's default off). */
 export function loadSettingsHooks(
 	settingsHooks: Record<string, unknown> | undefined,
 	sources?: Map<HookMatcher, string>,
-	guard = true,
+	stamp?: SourceStamp,
 ): HooksConfig {
 	const config: HooksConfig = {};
-	const added = settingsHooks?.PreToolUse;
-	const PreToolUse = [...(guard ? SETTINGS_DEFAULTS.hooks.PreToolUse : []), ...(Array.isArray(added) ? added : [])];
 	mergeHooksJson(
 		config,
-		JSON.stringify({ hooks: { ...SETTINGS_DEFAULTS.hooks, ...settingsHooks, PreToolUse } }),
+		JSON.stringify({ hooks: { ...SETTINGS_DEFAULTS.hooks, ...settingsHooks } }),
 		"nycode settings",
 		sources,
+		undefined,
+		undefined,
+		stamp,
 	);
 	return config;
 }
@@ -274,6 +316,7 @@ function mergeHooksJson(
 	sources?: Map<HookMatcher, string>,
 	origin?: string,
 	plugin?: { root: string; dataDir: string },
+	stamp?: SourceStamp,
 ): void {
 	let parsed: { hooks?: HooksConfig };
 	try {
@@ -293,6 +336,8 @@ function mergeHooksJson(
 		if (usable.length === 0) continue;
 		if (origin !== undefined) stampOrigin(usable, origin, event);
 		if (plugin !== undefined) stampPluginPaths(usable, plugin);
+		if (stamp !== undefined)
+			for (const entry of usable) for (const hook of entry.hooks ?? []) Object.assign(hook, stamp);
 		config[event] = [...(config[event] ?? []), ...usable];
 		// Each parse produces fresh entry objects, so object identity keys the /hooks
 		// viewer's source attribution without touching the entries themselves.
@@ -363,46 +408,61 @@ export function loadPluginHooks(
 ): void {
 	for (const plugin of plugins) {
 		const declared = plugin.manifest.hooks;
-		// An inline hooks object; an array is not a valid hooks map (it would parse to
-		// numeric event keys), so it falls through to the default path rather than
-		// silently registering nothing.
-		if (declared !== null && typeof declared === "object" && !Array.isArray(declared)) {
-			const inlineSource = `${plugin.name} (plugin.json)`;
-			mergeHooksJson(
-				config,
-				substitutePluginVars(
-					withoutUserConfigShellCommands(JSON.stringify({ hooks: declared }), inlineSource),
-					plugin,
-					jsonEscape,
-				),
-				inlineSource,
-				sources,
-				`plugin:${plugin.name}`,
+		let declaredEntries: unknown[] = [];
+		if (Array.isArray(declared)) declaredEntries = declared;
+		else if (declared !== undefined && declared !== null) declaredEntries = [declared];
+		// Claude merges the manifest's paths and inline objects into hooks/hooks.json, which loads first.
+		const loadedFiles = new Set<string>();
+		for (const entry of [path.join("hooks", "hooks.json"), ...declaredEntries])
+			loadPluginHooksEntry(config, plugin, entry, loadedFiles, sources);
+	}
+}
+
+/** One manifest `hooks` entry: an inline hooks object or a path to a hooks file. A file already in
+ * `loadedFiles` is skipped, so a path listed twice registers once. */
+function loadPluginHooksEntry(
+	config: HooksConfig,
+	plugin: InstalledPlugin,
+	entry: unknown,
+	loadedFiles: Set<string>,
+	sources?: Map<HookMatcher, string>,
+): void {
+	if (isRecord(entry)) {
+		const inlineSource = `${plugin.name} (plugin.json)`;
+		mergeHooksJson(
+			config,
+			substitutePluginVars(
+				withoutUserConfigShellCommands(JSON.stringify({ hooks: entry }), inlineSource),
 				plugin,
-			);
-			continue;
-		}
-		const file = pluginComponentPath(
+				jsonEscape,
+			),
+			inlineSource,
+			sources,
+			`plugin:${plugin.name}`,
 			plugin,
-			typeof declared === "string" ? declared : path.join("hooks", "hooks.json"),
 		);
-		if (file === undefined) continue;
-		try {
-			mergeHooksJson(
-				config,
-				substitutePluginVars(
-					withoutUserConfigShellCommands(fs.readFileSync(file, "utf-8"), file),
-					plugin,
-					jsonEscape,
-				),
-				file,
-				sources,
-				`plugin:${plugin.name}`,
-				plugin,
-			);
-		} catch {
-			// a plugin without hooks contributes nothing
-		}
+		return;
+	}
+	if (typeof entry !== "string") {
+		console.warn(
+			`nycode-hooks: ignoring a hooks entry in ${plugin.name} (plugin.json) that is neither a path nor an object`,
+		);
+		return;
+	}
+	const file = pluginComponentPath(plugin, entry);
+	if (file === undefined || loadedFiles.has(file)) return;
+	loadedFiles.add(file);
+	try {
+		mergeHooksJson(
+			config,
+			substitutePluginVars(withoutUserConfigShellCommands(fs.readFileSync(file, "utf-8"), file), plugin, jsonEscape),
+			file,
+			sources,
+			`plugin:${plugin.name}`,
+			plugin,
+		);
+	} catch {
+		// a missing or unreadable hooks file contributes nothing
 	}
 }
 

@@ -6,18 +6,9 @@ import { DEFAULT_MAX_AGENT_RETRY_DELAY_MS } from "@nycode/ai/utils/retry";
 // biome-ignore lint/suspicious/noTemplateCurlyInString: shell variable, expanded when the hook runs
 const RES = "${NYCODE_RESOURCES}";
 
-/** One embedded command hook; `type` is always "command". */
-const hook = (command: string, timeout: number) => ({ type: "command", command, timeout }) as const;
-/** The guard fails closed (D-08): an interpreter that cannot run it (python3 missing, a broken import) blocks the call. */
-const guardHook = { ...hook(`python3 "${RES}/hooks/guard.py"`, 30), onFailure: "block" } as const;
-const graphContext = { type: "internal", name: "graph-context", timeout: 10 } as const;
-const dispatch = hook(`bash "${RES}/hooks/dispatch/hook-dispatch.sh"`, 10);
-/** The embedded ralph-loop Stop hook (D-54). Inert without a loop state file; the guard skips a resources root that lacks
- * the script, and an `if` (not `&&`) keeps the hook's own exit code. Needs bash, and jq once a loop is active. */
-const ralphLoopStop = hook(
-	`if [ -f "${RES}/ralph-loop/hooks/stop-hook.sh" ]; then bash "${RES}/ralph-loop/hooks/stop-hook.sh"; fi`,
-	10,
-);
+/** One core hook, run in-process (`src/extensions/hooks/internal/registry.ts`). */
+const core = (name: string) => ({ type: "internal", name, timeout: 10 }) as const;
+const coreNotes = core("core-notes");
 
 /** Runtime defaults shared by settings accessors and the published JSON Schema. */
 export const SETTINGS_DEFAULTS = {
@@ -101,30 +92,27 @@ export const SETTINGS_DEFAULTS = {
 	},
 	subagent: { respawn: true },
 	tools: { bash: { backgroundOnTimeout: false } },
-	todo: { staleReminder: true },
-	plan: { gate: true },
-	notify: { sound: true },
+	todo: { staleReminder: true, sync: false },
+	plan: { gate: true, readOnlyTools: [] as string[] },
+	bash: { mainGuard: { enabled: true, timeoutSec: 120, capSec: 600 } },
+	footer: { stats: false },
+	editorMode: "normal",
+	notify: { sound: true, desktop: true },
 	// nycode: K4 hooks, statusLine and env defaults
-	// Hooks registered by default, run by the `hooks` extension (the dispatch hook needs jq; python3 only for the opt-in `script` guard engine). A `hooks` entry in settings.json
-	// replaces the default list of that event; `"PreToolUse": []` turns the guard off. The embedded ralph-loop Stop hook
-	// (D-54) is the only Stop hook; the optional impeccable_gate.sh is not registered (onda 9).
+	// Hooks registered by default, run by the `hooks` extension. The permission guard is native (core/permissions), not
+	// a hook. A `hooks` entry in settings.json replaces the default list of that event. The ralph-loop Stop hook is not
+	// a default: the hooks extension registers it while a /ralph-loop state file exists.
 	hooks: {
-		PreToolUse: [{ matcher: "Bash|run|Edit|Write|Read|Grep", hooks: [guardHook] }],
-		SessionStart: [{ matcher: "startup|resume|clear|compact", hooks: [graphContext, dispatch] }],
-		SubagentStart: [{ matcher: "*", hooks: [graphContext] }],
-		PostToolUse: [{ matcher: "*", hooks: [dispatch] }],
-		Stop: [{ hooks: [ralphLoopStop] }],
+		SessionStart: [{ matcher: "startup|resume|clear|compact", hooks: [coreNotes] }],
+		PostToolUse: [{ matcher: "*", hooks: [coreNotes] }],
 	},
 	// Status line: the claude-hud launcher. It prints nothing until the claude-hud plugin is installed (/claude-hud-setup).
 	// A `statusLine` entry in settings.json replaces it; an empty `command` turns it off.
 	statusLine: { type: "command", command: `node "${RES}/statusline/statusline.mjs"`, refreshInterval: 60 },
 	// Exported to every process by the `env-settings` extension; a `env` entry in settings.json adds to or overrides it.
-	// PONYTAIL_*: the embedded ponytail extension (D-54). Rules reach only the writer subagents of the list below (an
-	// unanchored, case-insensitive regex over the agent name; agents of that list absent here simply never match).
+	// PONYTAIL_*: the embedded ponytail extension (D-54).
 	env: {
 		EIO_BACKEND: "posix",
 		PONYTAIL_QUIET_STARTUP: "1",
-		PONYTAIL_SUBAGENT_MATCHER:
-			"^(swarm-worker|go-service-engineer|gateway-engineer|web-platform-engineer|terraform-specialist|zero-legado-builder|dependency-remediator|contract-engineer|test-author|docs-architect|lane-integrator|general-purpose)$",
 	},
 } as const;

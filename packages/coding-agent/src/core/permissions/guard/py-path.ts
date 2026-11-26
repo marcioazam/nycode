@@ -1,5 +1,5 @@
-// Python path and string helpers the guard rules depend on, ported by behavior: the native engine must agree with
-// resources/hooks/guard.py on every input, and Node's `path` and `String` differ from Python's at the edges.
+// Python path and string helpers the guard rules depend on, ported by behavior: the native engine keeps the verdicts of
+// the former Python guard on every input, and Node's `path` and `String` differ from Python's at the edges.
 import * as fs from "node:fs";
 import * as os from "node:os";
 
