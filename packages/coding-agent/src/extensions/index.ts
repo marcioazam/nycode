@@ -14,6 +14,7 @@ import contextImportsExtension from "./context-imports/index.ts";
 import contextUsageExtension from "./context-usage/index.ts";
 import contextoExtension from "./contexto/index.ts";
 import devCommandsExtension from "./dev-commands/index.ts";
+import devinExtension from "./devin/index.ts";
 import diagnosticoExtension from "./diagnostico/index.ts";
 import docsPointerExtension from "./docs-pointer/index.ts";
 import effortSandwichExtension from "./effort-sandwich/index.ts";
@@ -59,6 +60,7 @@ import webExtension from "./web/index.ts";
 
 export const builtInExtensions: InlineExtension[] = [
 	{ name: "llama.cpp", factory: llamaExtension, builtin: true },
+	{ name: "devin", factory: devinExtension, builtin: true },
 	// Replaceable: an extension that registers `codemode`, `tool_search`, or `/mcp` (such as a third-party
 	// MCP extension) takes over instead of running alongside the built-in one.
 	{ name: "codemode", factory: codemodeExtension, replaceable: true, builtin: true },

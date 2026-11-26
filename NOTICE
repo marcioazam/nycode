@@ -19,6 +19,18 @@ com patches do nycode, embutido em packages/coding-agent/src/extensions/lsp/.
 Licença MIT, "Copyright (c) 2026" (sem titular nomeado no pacote); o texto da
 licença está em packages/coding-agent/src/extensions/lsp/LICENSE.
 
+pi-devin-plus 0.1.3 (pacote npm `pi-devin-plus`), com patches do nycode, embutido em
+packages/coding-agent/src/extensions/devin/. Licença MIT, Copyright (c) 2026
+Kashyab Ambarani e Copyright (c) 2026 pi-dal; o texto da licença está em
+packages/coding-agent/src/extensions/devin/LICENSE.
+
+Referências do provider devin (MIT, somente leitura; o código foi reescrito no repositório, sem cópia literal):
+JoShMiQueL/devin-core e JoShMiQueL/opencode-devin (contrato `contract.json`, agrupamento de famílias e faixas gratuitas;
+`contract.json` copiado como fixture de teste em packages/coding-agent/test/devin/fixtures/), cniu6/devin-2api (Copyright (c)
+2026 leookun; números de campo do proto) e dwgx/WindsurfAPI (Copyright (c) 2026 dwgx; classificação de erros do upstream).
+O devin-core e o opencode-devin não trazem arquivo LICENSE no checkout revisado; o aviso MIT vale como declarado nos
+manifestos de pacote deles.
+
 Skills de terceiros (packages/coding-agent/resources/skills/)
 -------------------------------------------------------------
 
