@@ -145,6 +145,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | plan-mode | core | Modo de plano |
 | extension | ponytail | core | Regras de código mínimo no prompt, ligadas por padrão (D-54) |
 | extension | prefix-cache-1h | core | Cache do prefixo |
+| extension | processos | core | `/ps`: árvore de processos da sessão com memória e `kill` |
 | extension | question | core | Pergunta ao usuário com opções |
 | extension | run | core | Processos em segundo plano e a seção de execução |
 | extension | session-title | ui | Título da sessão |
@@ -166,7 +167,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | command | claude-hud-setup | optional | Plugin `claude-hud` |
 | command | code-review | core | Revisão de PR com a skill `pr-review` e o agente `code-reviewer` (C8) |
 | command | ralph-loop | core | Laço de prompt |
-| command | revise-claude-md | core | Aprendizado da sessão vira regra |
+| command | revise-agents-md | core | Aprendizado da sessão vira regra |
 | command | batch | core | Execução em lotes de lanes paralelas |
 | command | run | core | Sobe e dirige o app real para ver a mudança funcionando |
 | command | run-skill-generator | core | Gera a skill por projeto que ensina /run e /verify |
