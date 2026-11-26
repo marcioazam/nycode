@@ -53,6 +53,7 @@
 
 ### Fixed
 
+- Default models for `cloudflare-workers-ai` and `cloudflare-ai-gateway` now use `gpt-oss-120b`, since Cloudflare dropped the kimi models from its catalog
 - Fixed startup stopping on "Hooks have been renamed to extensions" when `<agentDir>/hooks/` or `.nycode/hooks/` exists: that directory holds command-hook scripts, so it is no longer flagged (custom tools left in `tools/` still warn)
 - Fixed read-only subagents started in plan mode running unrestricted bash: they inherit `NYCODE_PLAN_READONLY`, which keeps plan mode's bash allowlist and blocks edit/write
 - Fixed the git guard reading the value of `--namespace`, `--config-env`, `--attr-source` and `--exec-path` as the subcommand, which skipped the `--no-verify` and force-push denies

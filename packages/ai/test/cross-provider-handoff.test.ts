@@ -83,12 +83,12 @@ const PROVIDER_MODEL_PAIRS: ProviderModelPair[] = [
 	// Cerebras
 	{ provider: "cerebras", model: "zai-glm-4.7", label: "cerebras-zai-glm-4.7" },
 	// Cloudflare Workers AI
-	{ provider: "cloudflare-workers-ai", model: "@cf/moonshotai/kimi-k2.6", label: "cloudflare-kimi-k2.6" },
+	{ provider: "cloudflare-workers-ai", model: "@cf/openai/gpt-oss-120b", label: "cloudflare-gpt-oss-120b" },
 	// Cloudflare AI Gateway
 	{
 		provider: "cloudflare-ai-gateway",
-		model: "workers-ai/@cf/moonshotai/kimi-k2.6",
-		label: "cloudflare-gateway-kimi-k2.6",
+		model: "workers-ai/@cf/openai/gpt-oss-120b",
+		label: "cloudflare-gateway-gpt-oss-120b",
 	},
 	{
 		provider: "cloudflare-ai-gateway",
