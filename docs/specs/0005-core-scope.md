@@ -126,6 +126,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | context-imports | core | Imports @ do CLAUDE.md |
 | extension | context-usage | ui | Uso de contexto |
 | extension | dev-commands | ui | `/copy-code` e `/keybindings` |
+| extension | devin | core | Provider `devin`: modelos da assinatura Devin pelo login do Devin CLI, `/devin-status` e `/devin-refresh` (porte de pi-devin-plus 0.1.3; `docs/harness/devin-provider-2026-11-26.md`) |
 | extension | docs-pointer | core | Prompt menor |
 | extension | effort-sandwich | optional | Raciocínio high só no 1º turno do `pi -p` de topo (opt-in, spec 0009) |
 | extension | env-settings | core | Variáveis de ambiente do settings do Claude |
