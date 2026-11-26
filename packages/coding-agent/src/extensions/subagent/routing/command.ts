@@ -33,8 +33,15 @@ const setupModels = (ctx: CommandCtx): SetupModel[] =>
 const runSetup = (ctx: CommandCtx, models: SetupModel[]): Promise<RoutingPolicy | undefined> => {
 	const current = loadPolicy();
 	return ctx.ui.custom<RoutingPolicy | undefined>(
-		(tui, _theme, _kb, done) =>
-			new SetupComponent({ models, current, done, requestRender: () => tui.requestRender() }),
+		(tui, theme, _kb, done) =>
+			new SetupComponent({
+				models,
+				current,
+				done,
+				requestRender: () => tui.requestRender(),
+				theme,
+				rows: () => tui.terminal.rows,
+			}),
 		{ overlay: true, overlayOptions: { ...OVERLAY_OPTIONS } },
 	);
 };

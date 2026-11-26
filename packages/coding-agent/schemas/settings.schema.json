@@ -261,7 +261,7 @@
         }
       ],
       "description": "Global setting only.",
-      "default": "never"
+      "default": "ask"
     },
     "shellCommandPrefix": {
       "type": "string",

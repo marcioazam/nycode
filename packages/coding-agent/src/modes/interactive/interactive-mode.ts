@@ -37,11 +37,9 @@ import { createChatViewport } from "./chat-viewport.ts";
 import type { AssistantMessageComponent } from "./components/assistant-message.ts";
 import type { BashExecutionComponent } from "./components/bash-execution.ts";
 import { CustomEditor } from "./components/custom-editor.ts";
-import { playNycodeLogo3d } from "./components/easter-egg-3d.lazy.ts";
 import { FooterComponent } from "./components/footer.ts";
 import { keyHint, keyText, rawKeyHint } from "./components/keybinding-hints.ts";
 import { createMermaidMarkdownTransformer } from "./components/mermaid.ts";
-import { nycodeLogoLines, nycodeWordmark, supportsNycodeLogo } from "./components/nycode-logo.ts";
 import { IdleStatus, type StatusIndicator } from "./components/status-indicator.ts";
 import type { ThemedText } from "./components/themed-text.ts";
 import type { ToolExecutionComponent } from "./components/tool-execution.ts";
@@ -53,7 +51,6 @@ import {
 	type ExtensionDialogComponent,
 	HeldContainer,
 	type InteractiveModeOptions,
-	noColorRequested,
 } from "./mode/helpers.ts";
 import { refreshModelCatalogs } from "./model-catalog-refresh.ts";
 import { type BlockedStatus, ProgramStatusReporter } from "./program-status-reporter.ts";
@@ -259,9 +256,16 @@ export class InteractiveMode {
 		this.autoTrustOnReloadCwd = options.autoTrustOnReloadCwd;
 		this.runtimeHost.setBeforeSessionInvalidate(() => {
 			this.resetExtensionUI();
+			// Session switch (/clear, /new, /resume, /fork): blank until the new session's extensions set their
+			// header and footer, instead of flashing the built-in ones while the runtime loads.
+			if (!this.isShuttingDown) this.setChromeHidden(true);
 		});
 		this.runtimeHost.setRebindSession(async () => {
-			await this.rebindCurrentSession({ renderBeforeBind: true });
+			try {
+				await this.rebindCurrentSession({ renderBeforeBind: true });
+			} finally {
+				this.setChromeHidden(false);
+			}
 			this.themeController.applyFromSettings();
 			this.showRuntimeDiagnostics(this.runtimeHost.takeUnreportedDiagnostics());
 		});
@@ -387,15 +391,9 @@ export class InteractiveMode {
 		// Add header with keybindings from config (unless silenced)
 		if (this.shouldShowStartupHeader()) {
 			const showDetails = this.shouldShowStartupDetails();
-			// Built on demand so the header follows theme changes. The logo's first line carries the version,
-			// its second line the first line of key hints. Terminals that cannot render the logo get a
-			// "Nycode vX" line instead, with the key hints below it.
-			const showLogo = supportsNycodeLogo();
-			const withLogo = (hints: string) => {
-				if (!showLogo) return `${nycodeWordmark()} ${theme.fg("dim", `v${this.version}`)}\n${hints}`;
-				const [top, bottom] = nycodeLogoLines();
-				return `${top} ${theme.fg("dim", `v${this.version}`)}\n${bottom} ${hints}`;
-			};
+			// Built on demand so the header follows theme changes: a "nycode vX" line, the key hints below it.
+			const withLogo = (hints: string) =>
+				`${theme.bold(theme.fg("text", "nycode"))} ${theme.fg("dim", `v${this.version}`)}\n${hints}`;
 
 			// Build startup instructions using keybinding hint helpers
 			const hint = (keybinding: AppKeybinding, description: string) => keyHint(keybinding, description);
@@ -450,16 +448,12 @@ export class InteractiveMode {
 				1,
 				0,
 			);
-			// nycode: K10 NO_COLOR: the 3D logo easter egg is colored, so it is not wired
-			if (showLogo && !noColorRequested())
-				header.onLogoClick = (column, row) => playNycodeLogo3d(this.renderer, column, row);
 			// The ui-visual extension sets the nycode header on session_start; drawing this one first flashed it.
 			header.hidden = true;
 			this.chatContainer.held = true;
 			this.builtInHeader = header;
 
-			// Setup UI layout
-			this.headerContainer.addChild(new Spacer(1));
+			// Setup UI layout. No spacer above: the nycode mark's top rows are already mostly blank.
 			this.headerContainer.addChild(this.builtInHeader);
 			this.headerContainer.addChild(new Spacer(1));
 		} else {
@@ -489,10 +483,7 @@ export class InteractiveMode {
 			await this.rebindCurrentSession();
 		} finally {
 			// Without an extension header, footer or editor (NO_COLOR, extension disabled) the built-in ones show from here on.
-			if (this.builtInHeader instanceof BuiltInHeader) this.builtInHeader.hidden = false;
-			this.chatContainer.held = false;
-			this.footer.hidden = false;
-			this.defaultEditor.hidden = false;
+			this.setChromeHidden(false);
 		}
 
 		// Render initial messages AFTER showing loaded resources

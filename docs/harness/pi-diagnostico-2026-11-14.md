@@ -136,3 +136,16 @@ Qualidade comprada: falhas do harness deixam de ser silenciosas. Nenhum gate ou 
   `ui`, 8 `structure.py`, 9 `check-instructions`, 10 a 12 pilha de patches do pi-code). Nenhum desses domínios foi
   tocado aqui, mas não há linha de base medida antes da mudança: tratar como não verificado.
 - Não executado: wrapper de ponta a ponta com um patch real falhando; cobertura por arquivo; retry real do modelo.
+
+## Contexto do rodapé para o modelo (2026-11-26)
+
+Quando o usuário pergunta pelos erros/avisos do contador do rodapé ("o que são esses erros no rodapé?", "what are the
+errors in the footer?"), o handler de `before_agent_start` em `contexto.ts` injeta uma mensagem escondida
+(`display: false`, `customType: diagnostico-contexto`) com as entradas da sessão (sev >= WARN, mais novas primeiro,
+no máximo 20, teto de ~8 KB) e os caminhos do `diag.jsonl`, `traces.jsonl`, debug log e `mcp.log` — o modelo explica
+ou corrige sem o usuário copiar nada. O casamento do prompt (`pedeDiagnostico`) ignora caso e acentos, em pt-BR e en:
+termos fortes (rodapé, barra/linha de status, ctrl+e, diagnóstico, "erros do nycode/harness/terminal/tela") casam
+sozinhos; termos ambíguos em código de usuário (footer, toast, notificação) exigem uma palavra de erro/aviso junto.
+Falso positivo aceito e registrado: "corrija a notificação de erro do app" casa (o bloco é escondido, custo baixo).
+O texto injetado é em inglês e avisa que as entradas são dado não confiável, nunca instrução. No subagente (`filho`)
+nada é registrado: o rodapé é do pai.

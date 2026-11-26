@@ -1,6 +1,6 @@
 // Replaces the pre-migration harness: bin/test_nycode_env.sh for the wrapper behavior that moved into the core (K3/K4):
 // the four permission flags, the bypass precedence (flag > NYCODE_BYPASS_PERMISSIONS > settings.json > false) and
-// the `--no-approve` the wrapper injected, now the `defaultProjectTrust: "never"` default.
+// the `--no-approve` the wrapper injected, then the `defaultProjectTrust: "never"` default, now "ask" (owner 2026-11-26).
 // The local.env loader checks (owner, mode 0600, the allowlisted keys) live in local-env.test.ts.
 import { describe, expect, it, vi } from "vitest";
 import { parseArgs, printHelp } from "../../../src/cli/args.ts";
@@ -121,8 +121,8 @@ describe("bypass precedence", () => {
 });
 
 describe("project trust (the wrapper's --no-approve)", () => {
-	it("defaults to never and keeps --approve and --no-approve as explicit overrides", () => {
-		expect(manager().getDefaultProjectTrust()).toBe("never");
+	it("defaults to ask and keeps --approve and --no-approve as explicit overrides", () => {
+		expect(manager().getDefaultProjectTrust()).toBe("ask");
 		expect(parseArgs(["--approve"]).projectTrustOverride).toBe(true);
 		expect(parseArgs(["-a"]).projectTrustOverride).toBe(true);
 		expect(parseArgs(["--no-approve"]).projectTrustOverride).toBe(false);

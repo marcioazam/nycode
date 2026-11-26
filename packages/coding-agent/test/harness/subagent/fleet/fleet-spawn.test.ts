@@ -402,10 +402,8 @@ test("foreground: maxTurns encerra o filho após o N-ésimo turno, sem falha, co
 		const res = await result;
 		assert.equal(res.exitCode, 0, "o SIGTERM do próprio teto não é falha do agente");
 		assert.equal(res.partial, true);
-		assert.match(
-			lastText(res),
-			/fake done[\s\S]*\[Output is partial: the subagent stopped at its maxTurns limit\.\]/,
-		);
+		// A nota continua com o resumo das últimas ações e o transcript (partial-output.test.ts) antes do ']'.
+		assert.match(lastText(res), /fake done[\s\S]*\[Output is partial: the subagent stopped at its maxTurns limit\./);
 		const rec = await waitFor("closed record", () =>
 			store.readRecord(dir, getId())?.state !== "running" ? (store.readRecord(dir, getId()) as Rec) : undefined,
 		);

@@ -39,6 +39,14 @@ function opened(path: string): number {
 	return count;
 }
 
+/** `opened(path)` once the server side has finished: the client can hold the last byte before the request's scope
+ * seals and closes the handle, so under load an immediate read raced it (seen at 1 under `./test.sh`). Waits at most 2 s. */
+async function openedAfterSeal(path: string): Promise<number> {
+	const deadline = Date.now() + 2000;
+	while (opened(path) > 0 && Date.now() < deadline) await new Promise((resolve) => setTimeout(resolve, 10));
+	return opened(path);
+}
+
 describe("fileResponse", () => {
 	// Fable's recheck N1: a missing file was a reported 500, one report per request from anyone.
 	it("answers a missing file 404 (HttpFailure), with or without root", async () => {
@@ -115,11 +123,11 @@ describe("fileResponse", () => {
 			});
 			const { port } = server;
 			const full = await send(port, "GET", "/f");
-			expect([full.status, full.body.length, opened(path)]).toEqual([200, 50 * 1024 * 1024, 0]);
-			expect([(await send(port, "HEAD", "/f")).status, opened(path)]).toEqual([200, 0]);
+			expect([full.status, full.body.length, await openedAfterSeal(path)]).toEqual([200, 50 * 1024 * 1024, 0]);
+			expect([(await send(port, "HEAD", "/f")).status, await openedAfterSeal(path)]).toEqual([200, 0]);
 			const past = await send(port, "GET", "/f", { headers: { range: "bytes=999999999-" } });
-			expect([past.status, opened(path)]).toEqual([416, 0]);
-			expect([(await send(port, "GET", "/wrapped")).status, opened(path)]).toEqual([403, 0]);
+			expect([past.status, await openedAfterSeal(path)]).toEqual([416, 0]);
+			expect([(await send(port, "GET", "/wrapped")).status, await openedAfterSeal(path)]).toEqual([403, 0]);
 			await new Promise<void>((resolve) => {
 				const request = httpRequest({ host: "127.0.0.1", port, path: "/f", agent: false }, (response) => {
 					response.once("data", () => {

@@ -9,15 +9,7 @@ import * as fs from "node:fs";
 import type { AgentMessage } from "@nycode/agent-core";
 import type { AssistantMessage, ImageContent, Model, Usage } from "@nycode/ai/compat";
 import type { AutocompleteItem, EditorComponent } from "@nycode/tui";
-import {
-	type Component,
-	Container,
-	fuzzyFilter,
-	stripTerminalSequences,
-	type Terminal,
-	type TuiMouseEvent,
-	type TuiMouseEventResult,
-} from "@nycode/tui";
+import { type Component, Container, fuzzyFilter, stripTerminalSequences, type Terminal } from "@nycode/tui";
 import { APP_NAME } from "../../../config.ts";
 import type { AgentSessionRuntimeDiagnostic } from "../../../core/agent-session-services.ts";
 import { defaultModelPerProvider } from "../../../core/model-resolver.ts";
@@ -90,25 +82,17 @@ export class HeldContainer extends Container {
 }
 
 /**
- * The built-in header. Clicking its logo (the first two lines, after one column of padding) plays an easter egg.
- * Under NO_COLOR it renders without escape sequences and the click does nothing.
+ * The built-in header, shown when no extension sets one. Under NO_COLOR it renders without escape sequences.
  */
 export class BuiltInHeader extends ExpandableText {
-	onLogoClick: ((column: number, row: number) => void) | undefined;
 	/** True until the startup extensions are bound: a header an extension sets then replaces this one unseen. */
 	hidden = false;
 
-	// nycode: K10 NO_COLOR: the logo's brand colors are fixed, outside the theme, so strip them here
+	// nycode: K10 NO_COLOR: strip colors baked into the text
 	override render(width: number): readonly string[] {
 		if (this.hidden) return [];
 		const lines = super.render(width);
 		return noColorRequested() ? lines.map(stripTerminalSequences) : lines;
-	}
-
-	handleMouse(event: TuiMouseEvent): TuiMouseEventResult | undefined {
-		if (event.type !== "click" || event.y > 1 || event.x < 1 || event.x > 4 || !this.onLogoClick) return undefined;
-		this.onLogoClick(event.screenX - event.x + 1, event.screenY - event.y);
-		return { handled: true };
 	}
 }
 

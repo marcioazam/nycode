@@ -166,6 +166,7 @@ declare module "../interactive-mode.ts" {
 			options?: ExtensionWidgetOptions,
 		): void;
 		clearExtensionWidgets(): void;
+		setChromeHidden(hidden: boolean): void;
 		resetExtensionUI(): void;
 		renderWidgets(): void;
 		renderWidgetContainer(

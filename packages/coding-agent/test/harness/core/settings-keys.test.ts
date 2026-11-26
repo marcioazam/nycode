@@ -319,8 +319,8 @@ describe("settings keys of 02 section 5", () => {
 });
 
 describe("pre-migration Nycode defaults (K4, C-F4-04)", () => {
-	it("starts untrusted for project files", () => {
-		expect(SettingsManager.inMemory().getDefaultProjectTrust()).toBe("never");
+	it("asks before trusting project files", () => {
+		expect(SettingsManager.inMemory().getDefaultProjectTrust()).toBe("ask");
 	});
 
 	it("keeps the header and hides the loaded-resources lists", () => {

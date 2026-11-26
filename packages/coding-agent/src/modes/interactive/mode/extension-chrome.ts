@@ -24,7 +24,7 @@ import { ThemedText } from "../components/themed-text.ts";
 import type { InteractiveMode } from "../interactive-mode.ts";
 import { installSendNow, type SendNowHost } from "../send-now/index.ts";
 import { type Theme, theme } from "../theme/theme.ts";
-import { isEmbeddedStatus, isExpandable } from "./helpers.ts";
+import { BuiltInHeader, isEmbeddedStatus, isExpandable } from "./helpers.ts";
 
 /** Most lines a string-array extension widget shows before "... (widget truncated)". */
 const MAX_WIDGET_LINES = 10;
@@ -244,6 +244,20 @@ export const extensionChromeMethods = {
 		this.extensionWidgetsAbove.clear();
 		this.extensionWidgetsBelow.clear();
 		this.renderWidgets();
+	},
+
+	/**
+	 * Hides the built-in header, footer and editor and holds the chat while extensions bind (startup, session
+	 * switch), so a header or footer an extension sets replaces the built-in one unseen.
+	 */
+	setChromeHidden(this: InteractiveMode, hidden: boolean): void {
+		if (this.builtInHeader instanceof BuiltInHeader) {
+			this.builtInHeader.hidden = hidden;
+			this.chatContainer.held = hidden;
+		}
+		this.footer.hidden = hidden;
+		this.defaultEditor.hidden = hidden;
+		this.ui.requestRender();
 	},
 
 	resetExtensionUI(this: InteractiveMode): void {

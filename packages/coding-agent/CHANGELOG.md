@@ -31,9 +31,12 @@
 - `/todos-widget off|compact|full` chooses how the task list shows in the Plan section
 - Setting `autoMemoryStorage: "claude"` (user or managed settings only) keeps the auto memory in Claude Code's `~/.claude/projects/<slug>/memory/` with its frontmatter
 - Question form: a "Conversar sobre isto" row ends the call with Claude Code's clarify text and the answers so far; a revisited question shows its confirmed answer in green with ✔
+- Asking about the footer's error/warning counter ("what are the errors in the footer?") injects a hidden message with the session's recorded diagnostics entries and the log paths, so the model can explain or fix them without the user copying anything
 
 ### Changed
 
+- `defaultProjectTrust` defaults to `"ask"` (was `"never"`): entering a project with untrusted `.nycode` resources prompts once and saves the decision, with no `/trust` and restart
+- The interactive header has no blank line above the nycode mark
 - The Bun binary is compiled with JSC bytecode (`--bytecode --format=esm`), so startup skips parsing the bundle (`nycode --version` 0.25-0.31 s to 0.04-0.06 s in the 2026-11-24 measurement, `docs/perf/render-leveza-2026-11-24.md`)
 - Highlight.js grammars outside the eager set load on the first request for one of them
 - An MCP server that no call has used disconnects 30 s after it connects. Its tools and instructions stay known and the first call connects again. A server that was used stays connected
@@ -68,6 +71,7 @@
 - Fixed startup stopping on "Hooks have been renamed to extensions" when `<agentDir>/hooks/` or `.nycode/hooks/` exists: that directory holds command-hook scripts, so it is no longer flagged (custom tools left in `tools/` still warn)
 - Fixed read-only subagents started in plan mode running unrestricted bash: they inherit `NYCODE_PLAN_READONLY`, which keeps plan mode's bash allowlist and blocks edit/write
 - Fixed the git guard reading the value of `--namespace`, `--config-env`, `--attr-source` and `--exec-path` as the subcommand, which skipped the `--no-verify` and force-push denies
+- Fixed a maxTurns-capped subagent ending on tool-call-only turns handing the parent a stale text or "(no output)": the partial note now lists the child's last tool calls (up to 10, compact one-line arguments), says when the last text predates them, and cites the transcript the run writes to `nycode-subagent-capped-<run id>.jsonl` in the temp dir, for foreground and background runs
 - Fixed `/list-agents`, which read a `claude-home/agents` directory that no longer exists: it now lists the agents the subagent tool resolves
 - Fixed the bash full-output file being read before it was flushed: `executeBash` now resolves only after the temp file is written
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
@@ -83,6 +87,8 @@
 - The context sparkline in the status line is hidden while the whole history is at or below 25%; its flat low blocks looked like a broken usage bar
 - Fixed a crash on exit in fullscreen mode (`tui.setScrollToEndIndicator is not a function`) when the sticky-prompt extension restored the jump-to-end label after the renderer had left fullscreen mode
 - The upstream startup header (key hints and "Nycode can explain its own features") and footer no longer flash before the nycode header and footer replace them
+- `/clear`, `/new`, `/resume` and `/fork` no longer show the upstream header, logo and footer while the new session loads: the screen stays blank until the nycode header and footer are set. The built-in header (shown only without the ui-visual extension) reads `nycode vX` instead of the upstream logo
+- `/subagents-setup` and `/travar-modelos` scroll: the model list keeps the cursor in view (arrows, PgUp/PgDn, Home/End, mouse wheel) with a scrollbar and above/below counters. Models are grouped by provider with a sticky group label, a search field filters them (substring, fuzzy only when nothing contains the text; `tab` shows only marked ones; `esc` clears before it cancels), and `esc` in the efforts step goes back a page. `/travar-modelos` gets its own title
 - The startup layout no longer jumps: the editor stays put when the status line arrives (its first run is awaited for up to 250 ms and the logo animation waits for it), and the "Regras" notice appears below the header instead of moving down when it renders
 - `/reload` no longer shows the editor alone for about a second before the status line pushes it up: the UI controls reset kept the reload wrapper that was layered over them
 - A running foreground subagent (single and chain mode) is shown as running; its card read "concluído" while the child was still working
