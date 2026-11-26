@@ -16,11 +16,6 @@ function playEasterEgg3d(tui: TUI, egg: EasterEgg3d): boolean {
 	return true;
 }
 
-/** Plays the 3D nycode logo, lifting off the header logo whose top-left cell is at `column`, `row`. */
-export function playNycodeLogo3d(tui: TUI, column: number, row: number): void {
-	playEasterEgg3d(tui, { kind: "nycode-logo", column, row });
-}
-
 /** Plays the 3D Armin. Returns false when it cannot play, so the caller can fall back to the inline version. */
 export function playArmin3d(tui: TUI): boolean {
 	return playEasterEgg3d(tui, { kind: "armin" });

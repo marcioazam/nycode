@@ -36,6 +36,7 @@ export function backgroundCompletionText(
 		output?: string;
 		stderr?: string;
 		partial?: boolean;
+		partialSummary?: string;
 	},
 	userResume?: string,
 ): string {
@@ -44,9 +45,11 @@ export function backgroundCompletionText(
 	// notice reads "failed after 0 turns ... (no output)" with nothing to act on.
 	const diagnostics = run.state === "failed" && run.stderr ? `\n\nstderr tail:\n${capForContext(run.stderr)}` : "";
 	// Claude marks maxTurns-capped output as partial and notes the run can be
-	// resumed to continue from where it stopped.
+	// resumed to continue from where it stopped. The summary lists the run's last
+	// tool calls: a capped run usually ends on tool-call-only turns, and the text
+	// alone (often "(no output)") would lose all trace of the work.
 	const partialNote = run.partial
-		? `\n\n[Output is partial: the run stopped at its maxTurns limit. Resume it with {resume: "${run.id}", task: "..."} to continue.]`
+		? `\n\n[Output is partial: the run stopped at its maxTurns limit. Resume it with {resume: "${run.id}", task: "..."} to continue.${run.partialSummary ? `\n${run.partialSummary}` : ""}]`
 		: "";
 	// A resume the user sent from the agent panel. Unexplained, the model distrusts a run it never resumed;
 	// worded as the user's message alone, it repeats the work (seen live with Haiku): say it is a done report.

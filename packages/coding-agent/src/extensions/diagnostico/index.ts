@@ -42,6 +42,7 @@ import {
 	seguro,
 	VIGIA_MS,
 } from "./base.ts";
+import { caminhosDiagnostico, registrarContexto } from "./contexto.ts";
 import { type Achado, formatarDoctor, verificar } from "./doctor.ts";
 import { criarExportador, lerHeaders } from "./observabilidade/exportar.ts";
 import { criarFio } from "./observabilidade/fio.ts";
@@ -649,6 +650,9 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 	nycode.on("agent_settled", () => lerInbox());
 
 	if (filho) return; // sem comandos nem painel: o pai mostra o que o filho relata
+
+	// Pergunta sobre o contador do rodapé → o modelo recebe as entradas da sessão e os caminhos dos logs.
+	registrarContexto(nycode, reg, caminhosDiagnostico(caminhoLog, caminhoTrilha, agentDir));
 
 	/** Só abre: quem marca as entradas como vistas (/diagnostico, atalho) é que zera o contador; o /doctor não. */
 	const abrirPainel = async (ctx: ExtensionContext, aba: Aba) => {

@@ -16,6 +16,7 @@ import { errorMessage } from "../../_shared/util/values.ts";
 import { taskWithStartContext } from "../core/child.ts";
 import { spawnChild, utf8Chunks } from "../core/run.ts";
 import { childNestingEnv } from "../nesting/index.ts";
+import { buildCappedRunSummary, type CappedAction, compactArgsLine } from "../render/render.ts";
 import { currentFleetDir, fleetChildEnv, stopOrigin } from "./store.ts";
 import { configuredRuntime, startTracking, stopNote } from "./tracker.ts";
 
@@ -41,6 +42,8 @@ export interface BackgroundRun {
 	/** True until the child process actually closes: a cancelled child that ignores
 	 * SIGTERM is still alive and must keep holding its concurrency slot. */
 	live?: boolean;
+	/** The "last actions" block of a maxTurns-capped run, built at close for the completion notice. */
+	partialSummary?: string;
 	/** Monotonic finish order, stamped when the run completes. Eviction drops the
 	 * earliest-finished runs by this, not Map insertion (start) order: a long run
 	 * started first but finished last must not vanish the instant it completes. */
@@ -111,18 +114,29 @@ function evictFinishedRuns(): void {
 	}
 }
 
-/** Line-by-line parser keeping only the last assistant text and a turn count, so a
- * long run's JSONL stdout never accumulates whole in the parent's memory. */
+/** Line-by-line parser keeping only the last assistant text, a turn count and a
+ * bounded tail of the newest 10 tool calls (arguments pre-capped one-liners), so a
+ * long run's JSONL stdout never accumulates whole in the parent's memory. The tail
+ * feeds the partial note of a maxTurns-capped run, matching the foreground path. */
 export function createJsonlOutputParser(onTurn?: (turns: number) => void): {
 	push: (chunk: string) => void;
-	flush: () => { text: string; turns: number };
+	flush: () => { text: string; turns: number; actions: CappedAction[]; lastTextBeforeActions: boolean };
 } {
 	let buffer = "";
 	let text = "";
 	let turns = 0;
+	let order = 0;
+	let lastTextOrder = -1;
+	const tail: Array<{ order: number; name: string; args: string }> = [];
 	const takeLine = (raw: string): void => {
 		if (!raw.trim()) return;
-		let event: { type?: string; message?: { role?: string; content?: Array<{ type: string; text?: string }> } };
+		let event: {
+			type?: string;
+			message?: {
+				role?: string;
+				content?: Array<{ type: string; text?: string; name?: string; arguments?: Record<string, unknown> }>;
+			};
+		};
 		try {
 			event = JSON.parse(raw);
 		} catch {
@@ -133,10 +147,17 @@ export function createJsonlOutputParser(onTurn?: (turns: number) => void): {
 		onTurn?.(turns);
 		// The complete text of the last assistant message, matching getFinalOutput on the
 		// foreground path so a multi-part message reads the same in both.
-		const parts = (event.message.content ?? [])
-			.filter((p) => p.type === "text" && p.text)
-			.map((p) => p.text as string);
+		const content = event.message.content ?? [];
+		const parts = content.filter((p) => p.type === "text" && p.text).map((p) => p.text as string);
 		if (parts.length > 0) text = parts.join("\n");
+		for (const part of content) {
+			order++;
+			if (part.type === "text" && part.text) lastTextOrder = order;
+			else if (part.type === "toolCall" && part.name) {
+				tail.push({ order, name: part.name, args: compactArgsLine(part.arguments ?? {}) });
+				if (tail.length > 10) tail.shift();
+			}
+		}
 	};
 	return {
 		push(chunk) {
@@ -148,7 +169,13 @@ export function createJsonlOutputParser(onTurn?: (turns: number) => void): {
 		flush() {
 			takeLine(buffer);
 			buffer = "";
-			return { text, turns };
+			const lastActionOrder = tail.length > 0 ? tail[tail.length - 1].order : -1;
+			return {
+				text,
+				turns,
+				actions: tail.map(({ name, args }) => ({ name, args })),
+				lastTextBeforeActions: lastTextOrder !== -1 && lastActionOrder !== -1 && lastTextOrder < lastActionOrder,
+			};
 		},
 	};
 }
@@ -254,6 +281,7 @@ export function resumeBackgroundRun(
 	// would still be offered as partial.
 	run.turns = 0;
 	run.partial = undefined;
+	run.partialSummary = undefined;
 	driveRun(run, { ...run.spawn, args }, onComplete);
 	return "resumed";
 }
@@ -279,6 +307,23 @@ function withRebuiltPrompt(spawnSpec: BackgroundSpawn, agent: string): { args: s
 		// says so, hence the notice.
 		console.warn(`nycode-subagent: resuming ${agent} without its agent prompt: ${errorMessage(error)}`);
 		return { args: spawnSpec.args.filter((_arg, i) => i !== flag && i !== flag + 1) };
+	}
+}
+
+/** A capped run's transcript, copied out of the session dir before that dir can be
+ * cleaned up: the parent only gets a bounded summary, so the copy is what a later
+ * diagnosis reads. Never throws — the run's notice matters more than its transcript. */
+function copySessionTranscript(run: BackgroundRun): string | undefined {
+	try {
+		if (!run.sessionDir) return undefined;
+		const file = fs.readdirSync(run.sessionDir).find((name) => name.endsWith(".jsonl"));
+		if (!file) return undefined;
+		const dest = path.join(os.tmpdir(), `nycode-subagent-capped-${run.id}.jsonl`);
+		fs.copyFileSync(path.join(run.sessionDir, file), dest);
+		fs.chmodSync(dest, 0o600);
+		return dest;
+	} catch {
+		return undefined;
 	}
 }
 
@@ -427,7 +472,7 @@ function driveRun(run: BackgroundRun, invocation: BackgroundSpawn, onComplete: (
 	});
 	proc.stderr?.on("error", () => {});
 	proc.on("close", (code) => {
-		const { text, turns } = parser.flush();
+		const { text, turns, actions, lastTextBeforeActions } = parser.flush();
 		run.kill = undefined;
 		run.live = false;
 		// A cancelled run keeps that state: its non-zero exit is the cancellation. A
@@ -435,7 +480,15 @@ function driveRun(run: BackgroundRun, invocation: BackgroundSpawn, onComplete: (
 		if (run.state !== "cancelled") run.state = code === 0 || cappedByMaxTurns ? "done" : "failed";
 		run.exitCode = cappedByMaxTurns ? 0 : (code ?? 0);
 		// Claude marks a maxTurns-capped run's output as partial and offers a resume.
-		if (cappedByMaxTurns) run.partial = true;
+		// The summary carries the run's last tool calls, like the foreground note: the
+		// streamed text alone says nothing about work done after it.
+		if (cappedByMaxTurns) {
+			run.partial = true;
+			run.partialSummary = buildCappedRunSummary(actions, {
+				lastTextBeforeActions,
+				transcriptPath: copySessionTranscript(run),
+			});
+		}
 		run.output = text;
 		run.turns = turns;
 		run.stderr = stderrTail.trim() || undefined;

@@ -392,6 +392,7 @@ export const resourcesMethods = {
 
 	async handleFatalRuntimeError(this: InteractiveMode, prefix: string, error: unknown): Promise<never> {
 		const message = error instanceof Error ? error.message : String(error);
+		this.setChromeHidden(false); // a failed session switch would otherwise leave the error held off screen
 		this.showError(`${prefix}: ${message}`);
 		const extensionHint = this.getCrashExtensionHint(error);
 		if (extensionHint) {

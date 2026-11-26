@@ -37,9 +37,9 @@ export const SETTINGS_DEFAULTS = {
 	},
 	hideThinkingBlock: false,
 	showCacheMissNotices: false,
-	// nycode: K4 nycode defaults: quietStartup "header", defaultProjectTrust "never", retry, permissions and harness blocks
+	// nycode: K4 nycode defaults: quietStartup "header", defaultProjectTrust "ask" (owner 2026-11-26: prompt on entering an untrusted repo instead of /trust + restart), retry, permissions and harness blocks
 	quietStartup: "header",
-	defaultProjectTrust: "never",
+	defaultProjectTrust: "ask",
 	shellCommandPrefix:
 		"export GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true GIT_MERGE_AUTOEDIT=no GIT_PAGER=cat PAGER=cat AWS_PAGER= LESS=FRX",
 	collapseChangelog: false,

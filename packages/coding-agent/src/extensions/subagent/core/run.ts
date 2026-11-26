@@ -25,7 +25,7 @@ import { currentFleetDir, fleetChildEnv, stopOrigin } from "../fleet/store.ts";
 import { configuredRuntime, finishExitCode, startTracking, stopNote } from "../fleet/tracker.ts";
 import { childNestingEnv, claimSpawns, recordSpawnCost } from "../nesting/index.ts";
 import { type AgentConfig, resolveModelAlias } from "../registry/agents.ts";
-import { getFinalOutput } from "../render/render.ts";
+import { buildCappedRunSummary, getFinalOutput, tailCappedActions } from "../render/render.ts";
 import {
 	makeSessionDir,
 	respawnDelayMs,
@@ -155,11 +155,36 @@ function appendWorktreeNote(result: SingleResult, worktree: AgentWorktree): void
 	);
 }
 
+/** The collected messages of a capped run as JSONL (one per line, mode 0o600) for
+ * later diagnosis; the parent only gets a bounded summary. Never throws: a run's
+ * output matters more than its transcript, so a write failure just drops the path. */
+export function writeCappedTranscript(messages: Message[], runId: string): string | undefined {
+	try {
+		const filePath = path.join(os.tmpdir(), `nycode-subagent-capped-${runId}.jsonl`);
+		fs.writeFileSync(filePath, `${messages.map((msg) => JSON.stringify(msg)).join("\n")}\n`, {
+			encoding: "utf-8",
+			mode: 0o600,
+		});
+		return filePath;
+	} catch {
+		return undefined;
+	}
+}
+
 /** Claude marks a maxTurns-capped run's output as partial; the note rides the
  * final assistant message like the worktree note, so the parent model sees it
- * with the output. A no-op for uncapped runs. */
-function appendPartialNote(result: SingleResult): void {
-	if (result.partial) appendResultNote(result, "[Output is partial: the subagent stopped at its maxTurns limit.]");
+ * with the output. A no-op for uncapped runs. The note carries the run's last
+ * tool calls: a capped run usually ends on tool-call-only turns, and without them
+ * the parent reads a stale text (or nothing) and loses all trace of the work. */
+function appendPartialNote(result: SingleResult, runId: string): void {
+	if (!result.partial) return;
+	const { actions, lastTextBeforeActions } = tailCappedActions(result.messages);
+	const transcriptPath = writeCappedTranscript(result.messages, runId);
+	const summary = buildCappedRunSummary(actions, { lastTextBeforeActions, transcriptPath });
+	appendResultNote(
+		result,
+		`[Output is partial: the subagent stopped at its maxTurns limit.${summary ? `\n${summary}` : ""}]`,
+	);
 }
 
 /** A decoder for one child stream. A pipe delivers whatever bytes are ready, so a read can
@@ -571,7 +596,7 @@ async function runSingleAgentInner(options: RunAgentOptions): Promise<SingleResu
 
 		currentResult.exitCode = exitCode;
 		if (wasAborted) throw new Error("Subagent was aborted");
-		appendPartialNote(currentResult);
+		appendPartialNote(currentResult, options.agentId ?? `run-${randomUUID().slice(0, 8)}`);
 		if (routed.note) appendResultNote(currentResult, routed.note);
 		if (respawns.length)
 			appendResultNote(currentResult, `[respawned ${respawns.length} time(s): ${respawns.join(" | ")}]`);

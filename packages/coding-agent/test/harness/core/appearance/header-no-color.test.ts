@@ -1,6 +1,6 @@
 // K10: the built-in header drops its colors under NO_COLOR (it was the ui/a11y plainHeader wrapper in pre-migration Nycode).
 import { afterEach, describe, expect, it } from "vitest";
-import { BuiltInHeader, HeldContainer } from "../../../../src/modes/interactive/interactive-mode.ts";
+import { BuiltInHeader, HeldContainer, InteractiveMode } from "../../../../src/modes/interactive/interactive-mode.ts";
 
 const LOGO = "\x1b[38;2;228;138;122m\x1b[48;2;79;142;179m▀\x1b[0m";
 const header = () =>
@@ -46,6 +46,27 @@ describe("BuiltInHeader under NO_COLOR", () => {
 	it("an empty NO_COLOR counts as unset", () => {
 		process.env.NO_COLOR = "";
 		expect(header().render(40).join("\n")).toContain("\x1b[38;2;228;138;122m");
+	});
+});
+
+// /clear (2026-11-26): the built-in header and footer flashed between the old session's teardown and the new
+// session's extensions setting theirs. A session switch now hides them, as startup does, until the rebind ends.
+describe("setChromeHidden", () => {
+	it("hides and restores the built-in header, footer and editor and holds the chat", () => {
+		const mode = {
+			builtInHeader: header(),
+			chatContainer: new HeldContainer(),
+			footer: { hidden: false },
+			defaultEditor: { hidden: false },
+			ui: { requestRender: () => {} },
+		};
+		const hide = (hidden: boolean) => InteractiveMode.prototype.setChromeHidden.call(mode as never, hidden);
+		hide(true);
+		expect(mode.builtInHeader.render(40)).toEqual([]);
+		expect([mode.chatContainer.held, mode.footer.hidden, mode.defaultEditor.hidden]).toEqual([true, true, true]);
+		hide(false);
+		expect(mode.builtInHeader.render(40).join("\n")).toContain("short");
+		expect([mode.chatContainer.held, mode.footer.hidden, mode.defaultEditor.hidden]).toEqual([false, false, false]);
 	});
 });
 

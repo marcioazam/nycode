@@ -33,7 +33,7 @@ See [Choose a Model](models.md) for model selection and thinking controls.
 | `externalEditor` | string | `$VISUAL`, `$EDITOR`, then platform default | Command opened by the external-editor keybinding. |
 | `doubleEscapeAction` | `"tree" \| "fork" \| "none"` | `"tree"` | Action for double Escape with an empty editor. |
 | `treeFilterMode` | `"default" \| "no-tools" \| "user-only" \| "labeled-only" \| "all"` | `"default"` | Initial filter used by `/tree`. |
-| `defaultProjectTrust` | `"ask" \| "always" \| "never"` | `"never"` | Fallback project-trust behavior. **Can only be set in agent-directory settings.** |
+| `defaultProjectTrust` | `"ask" \| "always" \| "never"` | `"ask"` | Fallback project-trust behavior. **Can only be set in agent-directory settings.** |
 
 ## Tools
 
@@ -203,7 +203,7 @@ These keys only exist, validate, and are read here; the built-in extensions that
 | `statusLine` | object | Embedded claude-hud launcher (below) | none | `{ "type": "command", "command": "...", "padding": 0 }`; status line command. An empty `command` turns the status line off. |
 | `env` | `Record<string, string>` | `{ "EIO_BACKEND": "posix", "PONYTAIL_QUIET_STARTUP": "1" }` | none | Variables exported to the nycode process, so to hooks and the status line command. A value here overrides the default. |
 
-`quietStartup`, `defaultProjectTrust`, `retry`, and `shellCommandPrefix` above carry the pre-migration Nycode defaults.
+`quietStartup`, `retry`, and `shellCommandPrefix` above carry the pre-migration Nycode defaults. `defaultProjectTrust` was `"never"` there; it is `"ask"` now, so entering an untrusted project prompts once and saves the decision instead of needing `/trust` and a restart.
 
 ### `local.env`
 

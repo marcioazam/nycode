@@ -287,12 +287,15 @@ export function montar(nycode: ExtensionAPI, deps: Deps = {}): void {
 				const models = modelosDoSeletor(ctx);
 				if (models.length === 0) return ctx.ui.notify("Nenhum modelo disponível para escolher.", "error");
 				const escolhido = await ctx.ui.custom<unknown>(
-					(tui, _t, _k, done) =>
+					(tui, theme, _k, done) =>
 						new SetupComponent({
 							models,
 							current: trava,
 							done,
 							requestRender: () => tui.requestRender(),
+							theme,
+							rows: () => tui.terminal.rows,
+							title: { name: "Trava de modelos", hint: "quais modelos a sessão pode usar" },
 						}),
 					{ overlay: true, overlayOptions: { ...OVERLAY } },
 				);
