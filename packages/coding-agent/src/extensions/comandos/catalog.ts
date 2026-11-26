@@ -85,6 +85,8 @@ Configuração|scroll-speed|||Define as linhas por giro da roda na tela cheia
 Configuração|color|||Define a cor da barra do prompt desta sessão
 Configuração|terminal-setup|||Instala o Shift+Enter (nova linha) no terminal detectado
 Configuração|login|||Configura a autenticação do provedor
+Configuração|devin-status|||Mostra a autenticação, o catálogo e a versão do Devin CLI
+Configuração|devin-refresh|||Atualiza o catálogo de modelos do Devin
 Configuração|logout|||Remove a autenticação do provedor
 Configuração|trust|||Salva a confiança neste projeto
 Configuração|bypass||ext.bypass|Alterna as confirmações do guard

@@ -1,0 +1,42 @@
+{
+  "_attribution": "Copied from JoShMiQueL/devin-core contract.json (MIT; the upstream checkout carries no LICENSE file, so the notice is recorded in NOTICE). Golden catalog contract, used only as test data.",
+  "$schema": "golden catalog fixture \u2014 every devin-* consumer asserts its parser produces this uid set. Regenerate with the dump tool against GetCliModelConfigs.",
+  "generated_from": "GetCliModelConfigs",
+  "fetched": "2026-11-24",
+  "free_lanes": [
+    "swe-2-medium",
+    "swe-2-high",
+    "swe-2-max",
+    "swe-2-flash-medium",
+    "swe-2-flash-high",
+    "swe-2-flash-max",
+    "swe-2-1-low",
+    "swe-2-1-medium",
+    "swe-2-1-high",
+    "swe-2-1-xhigh",
+    "swe-2-1-max"
+  ],
+  "families": {
+    "swe-2": [
+      "swe-2-medium",
+      "swe-2-high",
+      "swe-2-max"
+    ],
+    "swe-2-flash": [
+      "swe-2-flash-medium",
+      "swe-2-flash-high",
+      "swe-2-flash-max"
+    ],
+    "swe-2-1": [
+      "swe-2-1-low",
+      "swe-2-1-medium",
+      "swe-2-1-high",
+      "swe-2-1-xhigh",
+      "swe-2-1-max"
+    ]
+  },
+  "never_route": {
+    "suffix": "-lightning",
+    "reason": "bills fast-mode credits (12-60 cr/run)"
+  }
+}

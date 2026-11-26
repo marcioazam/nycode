@@ -8,6 +8,7 @@
 
 ### Added
 
+- Built-in `devin` provider (ported from pi-devin-plus 0.1.3, MIT): Devin subscription models with `/login devin` (Devin CLI, browser PKCE or pasted code) or `DEVIN_LLM_API_KEY`, plus `/devin-status` and `/devin-refresh`. Catalog from `GetCascadeModelConfigs` with the CLI as fallback; completion limits, temperature and top_p, token usage from the server, stop reasons, classified errors that match nycode's retry rules, 60 s first-byte timeout, one JWT refresh on 401, tool errors, tool_choice, Gemini thought signatures and last-turn-only images. Tenant hosts only on https `*.codeium.com`, `*.windsurf.com` and `*.devin.ai`. No refusal bypass, account pools or fingerprint spoofing
 - Settings `plan.readOnlyTools`, `bash.mainGuard`, `footer.stats`, `editorMode` and `notify.desktop`
 - In-process core hook `core-notes` (untrusted-data note, missing MCP launcher, test-edit note)
 - The guard denies `git commit|push|merge --no-verify` and `gh pr merge --admin`
