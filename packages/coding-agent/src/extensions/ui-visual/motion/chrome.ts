@@ -3,6 +3,7 @@
  * cartão `Task` conectado ao `plano` e bloco `question`). Extraído para manter cada arquivo abaixo de 800 linhas.
  */
 import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@nycode/tui";
+import { todoProgress } from "../../todo/status.ts";
 import { ascii, dicaTecla, iconGap } from "../icons.ts";
 import { type AnsiProbeTheme, barraOitavos, fracaoAnimada, pillChip, safeAnsi, tomAbaixo } from "./motion.ts";
 
@@ -98,10 +99,10 @@ export const todoLinha = (
 	const cabeca = `${theme.fg(verboCor, (theme.bold ?? ((x: string) => x))(verbo))}${id !== undefined ? ` ${theme.fg("dim", `#${id}`)}` : ""}`;
 	let andamento = "";
 	if (todos.length > 0) {
-		const done = todos.filter((t) => t.status === "completed").length;
-		const frac = done / todos.length;
+		const { done, total } = todoProgress(todos);
+		const frac = total ? done / total : 1; // só cancelados: nada a fazer, a barra fica cheia
 		// Um `complete` acabou de mover a barra: ela sai da fração anterior e chega em 200 ms.
-		const de = d && acao === "complete" && done > 0 ? (done - 1) / todos.length : frac;
+		const de = d && acao === "complete" && done > 0 ? (done - 1) / total : frac;
 		const boxRgb = bgName ? safeAnsi(() => (theme as AnsiProbeTheme).getBgAnsi?.(bgName)) : undefined;
 		const bar = barraOitavos(fracaoAnimada(de, frac, idadeFim?.()), TASK_BAR_CELLS, {
 			ok: (s) => theme.fg("success", s),
@@ -109,7 +110,7 @@ export const todoLinha = (
 			trilho: boxRgb && tomAbaixo(boxRgb),
 			ascii: ascii(process.env),
 		});
-		andamento = `${bar} ${theme.fg("muted", `${done}/${todos.length}`)}`;
+		andamento = `${bar} ${theme.fg("muted", `${done}/${total}`)}`;
 	}
 	return {
 		texto: d && texto ? `${cabeca}  ${theme.fg("text", texto)}` : cabeca,

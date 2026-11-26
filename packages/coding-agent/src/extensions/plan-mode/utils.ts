@@ -282,6 +282,12 @@ export function todosToItems(
 	}));
 }
 
+/** Progress of todo rows (todosToItems): cancelled todos arrive as skipped and leave the count, like todo/status.ts todoProgress. */
+export function todoRowsProgress(items: readonly TodoItem[]): { done: number; total: number } {
+	const scope = items.filter((i) => i.status !== "skipped");
+	return { done: scope.filter((i) => i.completed).length, total: scope.length };
+}
+
 /** The plan state persisted in a session entry, once each field has been checked.
  * A field the restore cannot recognize is simply absent, so the caller keeps its
  * current value. */

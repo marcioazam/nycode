@@ -93,6 +93,7 @@
 - An automatic session title is bounded to the first line of the model's reply without heading marks, at most 80 characters; a provider that ignores the token cap made the whole reply the session name
 
 - The native display tests put each tmux socket in their temporary directory and kill any server still running after the suite; before, `tmux kill-server` left one socket file per server in `/tmp/tmux-<uid>`
+- Todo progress no longer stays one short when an item is cancelled: the `/todos` list, the todo tool card, the TODO widget title, the plan footer summary and the terminal progress count completed items over the items still in scope (a cancelled item leaves the total, failed and blocked stay in it), the `/todos` list names the cancelled items, and a TODO widget whose items all ended, cancelled ones included, hides itself instead of staying on screen as "8/9"
 
 ### Removed
 

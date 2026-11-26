@@ -339,3 +339,14 @@ test("P22 progresso: % do todo, pausa na pergunta e volta ao responder", () => {
 	fim({ toolName: "bash", result: {} });
 	assert.equal(t.out.at(-1), "\x1b]9;4;3\x07");
 });
+
+test("progresso do todo: item cancelado sai da conta (lista encerrada = 100%)", () => {
+	const t = cria(undefined, { NYCODE_TERM_PROGRESS: "1", VTE_VERSION: "7600" });
+	t.h.start();
+	t.h.inicia();
+	const fim = t.handlers.get("tool_execution_end")!;
+	fim({ toolName: "todo", result: { details: { todos: [{ status: "completed" }, { status: "cancelled" }] } } });
+	assert.equal(t.out.at(-1), "\x1b]9;4;1;100\x07");
+	fim({ toolName: "todo", result: { details: { todos: [{ status: "cancelled" }] } } });
+	assert.equal(t.out.at(-1), "\x1b]9;4;1;100\x07");
+});
