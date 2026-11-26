@@ -31,13 +31,13 @@ It is a fork of the pi coding agent. Everything that used to sit outside the age
 
 ## Why Nycode
 
-The goal: **cost close to Pi Vanilla, solve at least as many tasks as Claude Code.**
+The goal: **cost close to Pi Agent, solve at least as many tasks as Claude Code.**
 
 What has been measured so far (same model, Claude Sonnet 5.5, on the pre-migration harness):
 
 | Against | Tasks solved | Cost per task |
 |---|---|---|
-| Pi Vanilla (pi with no harness) | **More**: +3.8 points on 42 tasks, +7.9 on 72 Terminal-Bench 2.0 tasks (both intervals above zero) | Higher: 1.2x to 1.3x |
+| Pi Agent (pi with no harness) | **More**: +3.8 points on 42 tasks, +7.9 on 72 Terminal-Bench 2.0 tasks (both intervals above zero) | Higher: 1.2x to 1.3x |
 | Claude Code (no configuration) | **Not inferior** on Terminal-Bench 2.0 (+1.4 points, 90% interval -3.2 to +6.0), **not shown ahead** | Lower: 0.57x to 0.82x |
 
 These figures come from the harness before it moved into the core. The post-migration binary has not been benchmarked yet; see [Benchmarks](#benchmarks) for intervals, losses and limits.
@@ -134,8 +134,8 @@ Every number here was measured on **pre-migration Nycode** (on pi 1.5.2 with pi-
 | Terminal-Bench 2.0 (72 tasks, 168 runs): solved | **134 of 168** (79.8%) | 125 of 168 | 129 of 168 (76.8%) |
 | Terminal-Bench 2.0: cost per solved task | US$ 0.106 | **US$ 0.087** | US$ 0.144 |
 
-- **Wins:** more tasks than Pi Vanilla (intervals above zero); lower cost than Claude Code.
-- **Losses:** 1.2x to 1.3x the cost of Pi Vanilla; slower than Claude Code on Terminal-Bench 2.0 (225 s against 207 s per run); later first reply than Pi Vanilla (larger fixed prompt).
+- **Wins:** more tasks than Pi Agent (intervals above zero); lower cost than Claude Code.
+- **Losses:** 1.2x to 1.3x the cost of Pi Agent; slower than Claude Code on Terminal-Bench 2.0 (225 s against 207 s per run); later first reply than Pi Agent (larger fixed prompt).
 - **Not shown:** ahead of Claude Code (probability 0.68, below the 0.80 threshold).
 
 <details>
@@ -151,7 +151,7 @@ All three used the same model (Claude Sonnet 5.5). Results are from 2026-11-15; 
 
 ### Where it wins and where it loses
 
-**Against Pi Vanilla**
+**Against Pi Agent**
 
 - Wins: solves more of the 42 tasks, +3.8 points (90% interval +1.2 to +10.5). Solves more on Terminal-Bench 2.0 (72 tasks), +7.9 points (+2.3 to +13.9), probability of being ahead 0.99. On the 52 Terminal-Bench tasks left after removing those corrected in Terminal-Bench 2.1 the lead holds: +9.6 points (+3.2 to +16.7).
 - Loses: costs more per task, 1.23x on the 42 tasks, about 1.2x on the harder suite and 1.30x on Terminal-Bench 2.0. Takes more turns on the harder suite (6.2 against 5.6 per run; no interval computed). Answers later: first reply at 2.3 to 2.6 s against 1.1 to 1.6 s in a one-turn timing of 3 runs per arm, because of the larger fixed prompt (local timing, not in `docs/bench/`).
@@ -160,7 +160,7 @@ All three used the same model (Claude Sonnet 5.5). Results are from 2026-11-15; 
 **Against Claude Code**
 
 - Wins: costs less per task, 0.57x on the 42 tasks, 0.82x on the harder suite (90% interval 0.73 to 0.91), 0.77x on Terminal-Bench 2.0 (US$ 0.106 against 0.144 per solved task). Fewer turns on the harder suite (6.2 against 6.6; no interval computed). **Not inferior** on Terminal-Bench 2.0: +1.4 points (134 of 168 against 129 of 168), interval -3.2 to +6.0.
-- Loses: slower on Terminal-Bench 2.0 (225 s against 207 s mean wall per run; no interval computed). On the 52 Terminal-Bench tasks without those corrected in Terminal-Bench 2.1 the difference is -0.6 points (-6.4 to +4.5). `vulnerable-secret` is out of the new measurement; in the previous one the Nycode harness lost it 0 of 3 against 3 of 3.
+- Loses: slower on Terminal-Bench 2.0 (225 s against 207 s mean wall per run; no interval computed). On the 52 Terminal-Bench tasks without those corrected in Terminal-Bench 2.1 the difference is -0.6 points (-6.4 to +4.5). `vulnerable-secret` is out of the new measurement; in the previous one Nycode lost it 0 of 3 against 3 of 3.
 - Not shown: **ahead**. On Terminal-Bench 2.0 the probability of being ahead is 0.68, below the 0.80 threshold. On the 42 tasks the difference is +2.6 points with an interval of -1.4 to +9.9 (it crosses zero). On the harder suite both solved 36 of 36.
 
 ### Results at a glance
@@ -188,7 +188,7 @@ Same model, same 42 tasks, results of 2026-11-15.
 
 | Nycode against | Difference in tasks solved | 90% interval (paired by task) | Nycode cost |
 |---|---|---|---|
-| Pi Vanilla | +3.8 points | +1.2 to +10.5 | 1.23x |
+| Pi Agent | +3.8 points | +1.2 to +10.5 | 1.23x |
 | Claude Code | +2.6 points | -1.4 to +9.9 | 0.57x |
 
 The 42 tasks: harness evaluations (tool use, refusals, output discipline), 12 plan-first tasks, 10 multi-module tasks with hidden tests, and 4 [Terminal-Bench 2.0](https://www.tbench.ai/) tasks. Against Claude Code the advantage shown here is cost, not accuracy.
@@ -201,7 +201,7 @@ The 42 tasks: harness evaluations (tool use, refusals, output discipline), 12 pl
 |---|---|---|---|
 | Nycode | **36 of 36** | US$ 0.178 | 6.2 |
 | Claude Code | **36 of 36** | US$ 0.219 | 6.6 |
-| Pi Vanilla | 34 of 36 | **US$ 0.156** | **5.6** |
+| Pi Agent | 34 of 36 | **US$ 0.156** | **5.6** |
 
 - This suite does not separate accuracy: all three are at or near the ceiling.
 - It separates cost: paired by task, Nycode costs 0.82x Claude Code (90% interval 0.73 to 0.91) and about 1.2x Pi Vanilla.
@@ -216,8 +216,8 @@ The 24 tasks of the first sample (below) plus 48 more unseen Terminal-Bench 2.0 
 |---|---|---|---|---|---|---|---|
 | Claude Code | 72 | 134 of 168 against 129 of 168 | +1.4 points (-3.2 to +6.0) | 0.68 | 0.77x | 0.106 against 0.144 | 225 s against 207 s |
 | Claude Code, without the tasks corrected in Terminal-Bench 2.1 | 52 | 111 of 120 against 108 of 120 | -0.6 points (-6.4 to +4.5) | 0.42 | 0.70x | 0.081 against 0.119 | 120 s against 134 s |
-| Pi Vanilla | 72 | 134 of 168 against 125 of 168 | +7.9 points (+2.3 to +13.9) | 0.99 | 1.30x | 0.106 against 0.087 | 225 s against 183 s |
-| Pi Vanilla, without the tasks corrected in Terminal-Bench 2.1 | 52 | 111 of 120 against 102 of 120 | +9.6 points (+3.2 to +16.7) | 0.995 | 1.18x | 0.081 against 0.075 | 120 s against 123 s |
+| Pi Agent | 72 | 134 of 168 against 125 of 168 | +7.9 points (+2.3 to +13.9) | 0.99 | 1.30x | 0.106 against 0.087 | 225 s against 183 s |
+| Pi Agent, without the tasks corrected in Terminal-Bench 2.1 | 52 | 111 of 120 against 102 of 120 | +9.6 points (+3.2 to +16.7) | 0.995 | 1.18x | 0.081 against 0.075 | 120 s against 123 s |
 
 - Against Claude Code: **not inferior** (the lower limit, -3.2, is above the -10 point margin the Nycode harness gate uses), **not ahead** (probability 0.68, below the 0.80 threshold). Nycode costs 23% less per task (0.77x) and 26% less per solved task, and is slower on the full set. Without the tasks corrected in Terminal-Bench 2.1 the estimate is -0.6 points, so the +1.4 does not hold on that cut. The -10 point margin is a choice of the Nycode harness gate, not a standard.
 - Against Pi Vanilla: **superior** (interval above zero), at 1.30x the cost per task and US$ 0.106 against 0.087 per solved task: Nycode solves tasks Pi Vanilla does not, and pays for it.
@@ -233,8 +233,8 @@ Same 72 tasks and same references, Nycode at `fd1bfb9`/`127e1be`, 10 agent timeo
 | Claude Code | 73 | 124 of 171 against 132 of 171 | -5.5 points (-11.4 to +0.5) | 0.06 | 0.77x | 0.118 against 0.143 | 247 s against 203 s |
 | Claude Code, without `vulnerable-secret` | 72 | 124 of 168 against 129 of 168 | -4.2 points (-10.2 to +1.4) | 0.10 | 0.79x | 0.117 against 0.144 | 252 s against 207 s |
 | Claude Code, without the tasks corrected in Terminal-Bench 2.1 | 53 | 107 of 123 against 111 of 123 | -5.0 points (-11.3 to +0.6) | 0.07 | 0.73x | 0.090 against 0.119 | 118 s against 132 s |
-| Pi Vanilla | 72 | 124 of 168 against 125 of 168 | +2.3 points (-5.1 to +10.2) | 0.68 | 1.34x | 0.117 against 0.087 | 252 s against 183 s |
-| Pi Vanilla, without the tasks corrected in Terminal-Bench 2.1 | 52 | 107 of 120 against 102 of 120 | +7.1 points (-1.3 to +16.0) | 0.91 | 1.26x | 0.090 against 0.075 | 121 s against 123 s |
+| Pi Agent | 72 | 124 of 168 against 125 of 168 | +2.3 points (-5.1 to +10.2) | 0.68 | 1.34x | 0.117 against 0.087 | 252 s against 183 s |
+| Pi Agent, without the tasks corrected in Terminal-Bench 2.1 | 52 | 107 of 120 against 102 of 120 | +7.1 points (-1.3 to +16.0) | 0.91 | 1.26x | 0.090 against 0.075 | 121 s against 123 s |
 
 What changed: the Nycode arm ran on a `main` that includes the 2026-11-18 changes, and agent timeouts fell from 10 to 7. The re-run is a different sample of the same tasks, not a controlled A/B of those changes, so the data do not attribute the +5.6 point move (-4.2 to +1.4 on the same 72 tasks) to any one of them. In the references Claude Code solves more than Pi Vanilla (+6.5 points, interval 0.0 to +13.4, probability 0.95).
 
@@ -251,7 +251,7 @@ What changed: the Nycode arm ran on a `main` that includes the 2026-11-18 change
 | Nycode against | Difference in tasks solved | 90% interval (paired by task) | Nycode cost per task | Nycode wall per task |
 |---|---|---|---|---|
 | Claude Code | -8.3 points (1 won, 3 lost) | -29.2 to 0.0 | 0.71x | 1.39x |
-| Pi Vanilla | +12.5 points (5 won, 2 lost) | -8.3 to +25.0 | 1.15x | 1.10x |
+| Pi Agent | +12.5 points (5 won, 2 lost) | -8.3 to +25.0 | 1.15x | 1.10x |
 
 - Neither accuracy interval excludes zero: on these tasks Nycode is not shown better or worse than either. It costs less than Claude Code per task and is slower.
 - The first Nycode run lost its local settings inside the container (fixed before the second run); both runs are published in the source. One task (`dna-assembly`) flipped between the two runs of the same harness, so single-attempt differences of one or two tasks are noise.
@@ -279,7 +279,7 @@ Sonnet 5.5, 76 units per arm, 2026-11-14:
 
 | Arm | Solved | Total cost | Median cost per run |
 |---|---|---|---|
-| Pi Vanilla | **74 of 76 (97.4%)** | **US$ 2.10** | US$ 0.0231 |
+| Pi Agent | **74 of 76 (97.4%)** | **US$ 2.10** | US$ 0.0231 |
 | Claude Code | 73 of 76 (96.1%) | US$ 5.57 | US$ 0.0645 |
 | Nycode | 62 of 76 (81.6%) | US$ 7.06 | US$ 0.0861 |
 
@@ -297,7 +297,7 @@ In that round Nycode cost 3.4x Pi Vanilla and 1.3x Claude Code and solved 12 run
 
 What is **not** in the repository:
 
-- The per-run data of the 2026-11-15 rounds of Pi Vanilla and Claude Code, of the harder suite and of the first Terminal-Bench sample.
+- The per-run data of the 2026-11-15 rounds of Pi Agent and Claude Code, of the harder suite and of the first Terminal-Bench sample.
 - The per-run data of the Terminal-Bench 2.0 re-measurement (72 tasks), which come from the maintainer's benchmark log.
 - The local one-turn timing of first-reply latency.
 

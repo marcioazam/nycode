@@ -1,3 +1,5 @@
+import { setFlagsFromString } from "node:v8";
+import { runInNewContext } from "node:vm";
 import { describe, expect, it } from "vitest";
 import { parseFrontmatter, stripFrontmatter } from "../src/utils/frontmatter.ts";
 
@@ -15,6 +17,24 @@ describe("parseFrontmatter", () => {
 		const input = "---\r\nname: test\r\n---\r\nLine one\r\nLine two";
 		const { body } = parseFrontmatter<Record<string, string>>(input);
 		expect(body).toBe("Line one\nLine two");
+	});
+
+	it("does not keep the file alive through the parsed values", () => {
+		setFlagsFromString("--expose-gc");
+		const gc = runInNewContext("gc") as () => void;
+		const kept: unknown[] = [];
+		gc();
+		const before = process.memoryUsage().heapUsed;
+		for (let i = 0; i < 40; i++) {
+			// Each file is ~1 MB of body behind a short header; only the parsed header is kept.
+			const content = `---\nname: skill-${i}\ndescription: A skill description long enough to be sliced\n---\n${"x".repeat(1 << 20)}${i}`;
+			kept.push(parseFrontmatter<Record<string, string>>(content).frontmatter.description);
+		}
+		gc();
+		const retainedMb = (process.memoryUsage().heapUsed - before) / (1 << 20);
+		expect(kept).toHaveLength(40);
+		// Retaining the files would hold ~40 MB.
+		expect(retainedMb).toBeLessThan(10);
 	});
 
 	it("throws on invalid YAML frontmatter", () => {

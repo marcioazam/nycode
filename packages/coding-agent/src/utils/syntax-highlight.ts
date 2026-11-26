@@ -50,23 +50,29 @@ for (const [name, language] of Object.entries(eagerLanguages)) {
 	hljs.registerLanguage(name, language);
 }
 
-let allLanguagesPromise: Promise<void> | undefined;
+/** The shared core instance: the eager grammars now, every grammar after loadAllHighlightLanguages(). */
+export const highlightJs = hljs;
 
+let resolveAllLanguages: () => void = () => {};
+/** Settles once every grammar is registered (or failed to load), without starting the load. */
+export const allHighlightLanguagesLoaded = new Promise<void>((resolve) => {
+	resolveAllLanguages = resolve;
+});
+let allLanguagesRequested = false;
+
+/**
+ * Registers the remaining ~170 grammars. Loaded on the first request for a grammar the eager set lacks, not at startup:
+ * sessions that only show the common languages skip their memory (perf 2026-11-24).
+ */
 export function loadAllHighlightLanguages(): Promise<void> {
-	if (!allLanguagesPromise) {
-		allLanguagesPromise = new Promise((resolve) => {
-			setImmediate(() => {
-				void import("highlight.js/lib/index.js").then(
-					() => resolve(),
-					() => {
-						// Eager languages and plaintext fallback remain available.
-						resolve();
-					},
-				);
-			});
+	if (!allLanguagesRequested) {
+		allLanguagesRequested = true;
+		setImmediate(() => {
+			// On failure the eager languages and the plaintext fallback remain available.
+			void import("highlight.js/lib/index.js").then(resolveAllLanguages, resolveAllLanguages);
 		});
 	}
-	return allLanguagesPromise;
+	return allHighlightLanguagesLoaded;
 }
 
 export type HighlightFormatter = (text: string) => string;
@@ -214,8 +220,11 @@ export function highlight(code: string, options: HighlightOptions = {}): string 
 	return renderHighlightedHtml(html, options.theme);
 }
 
+/** Whether the grammar is registered now; an unregistered name starts loading every grammar for later renders. */
 export function supportsLanguage(name: string): boolean {
-	return hljs.getLanguage(name) !== undefined;
+	if (hljs.getLanguage(name) !== undefined) return true;
+	void loadAllHighlightLanguages();
+	return false;
 }
 
 /**

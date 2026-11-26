@@ -5,7 +5,7 @@ import { CombinedAutocompleteProvider } from "@nycode/tui";
 import { test } from "vitest";
 import { UiEditor } from "../../../../../src/extensions/ui/editor.ts";
 
-const COMMANDS = ["settings", "claude-config", "claude-theme", "claude-tui", "session", "resume", "model", "clone"];
+const COMMANDS = ["settings", "config-set", "theme-set", "tui-set", "session", "resume", "model", "clone"];
 const DEADLINE_MS = 2000;
 
 function setup(registered: readonly string[] = COMMANDS) {
@@ -69,11 +69,11 @@ for (const [bare, target] of [
 	});
 }
 
-test("/config com argumentos segue ao claude-config", async () => {
+test("/config com argumentos segue ao config-set", async () => {
 	const { e, submitted, type } = setup();
 	await type("/config x");
 	e.handleInput("\r");
-	assert.deepEqual(submitted, ["/claude-config x"]);
+	assert.deepEqual(submitted, ["/config-set x"]);
 });
 
 test("comando registrado com o nome exato vence o alias (sombra do usuário)", async () => {
@@ -83,12 +83,12 @@ test("comando registrado com o nome exato vence o alias (sombra do usuário)", a
 	assert.deepEqual(submitted, ["/config"]);
 });
 
-test("escolha deliberada no menu (↓ até claude-config) é respeitada", async () => {
+test("escolha deliberada no menu (↓ até config-set) é respeitada", async () => {
 	const { e, submitted, type } = setup();
 	await type("/config");
 	e.handleInput("\x1b[B");
 	e.handleInput("\r");
-	assert.deepEqual(submitted, ["/claude-config"]);
+	assert.deepEqual(submitted, ["/config-set"]);
 });
 
 test("completação comum segue nativa: /sess + Enter → /session", async () => {
@@ -121,8 +121,8 @@ test("/continue com argumentos recusa: nada é submetido, rascunho exato volta e
 	assert.deepEqual(notes, [["/continue <sessão> não existe; /resume abre o seletor de sessões.", "warning"]]);
 });
 
-test("/copy nu continua nativo com copy e claude-copy registrados", async () => {
-	const { e, submitted, type } = setup([...COMMANDS, "copy", "claude-copy"]);
+test("/copy nu continua nativo com copy e copy-pick registrados", async () => {
+	const { e, submitted, type } = setup([...COMMANDS, "copy", "copy-pick"]);
 	await type("/copy");
 	e.handleInput("\r");
 	assert.deepEqual(submitted, ["/copy"]);

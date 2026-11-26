@@ -39,6 +39,7 @@ import planGateExtension from "./plan-gate/index.ts";
 import planModeExtension from "./plan-mode/index.ts";
 import ponytailExtension from "./ponytail/index.ts";
 import prefixCache1hExtension from "./prefix-cache-1h/index.ts";
+import processosExtension from "./processos/index.ts";
 import questionExtension from "./question/index.ts";
 import runExtension from "./run/index.ts";
 import sessionTitleExtension from "./session-title/index.ts";
@@ -83,6 +84,7 @@ export const builtInExtensions: InlineExtension[] = [
 	{ name: "notify", factory: notifyExtension, builtin: true },
 	{ name: "output-styles", factory: outputStylesExtension, builtin: true },
 	{ name: "plan-mode", factory: planModeExtension, builtin: true },
+	{ name: "processos", factory: processosExtension, builtin: true },
 	{ name: "question", factory: questionExtension, builtin: true },
 	{ name: "run", factory: runExtension, builtin: true },
 	{ name: "session-title", factory: sessionTitleExtension, builtin: true },

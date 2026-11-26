@@ -1,4 +1,4 @@
-/** /claude-branch <nome> (de `/branch <nome>`; `/branch` sem nome segue /clone): fork no ponto atual e nome na nova sessão. */
+/** /clone-as <nome> (de `/branch <nome>`; `/branch` sem nome segue /clone): fork no ponto atual e nome na nova sessão. */
 import type { ExtensionAPI } from "../../../../core/extensions/types.ts";
 
 const PENDING = Symbol.for("claude-compat.pending-branch-name");
@@ -17,7 +17,7 @@ export function registerBranch(nycode: ExtensionAPI): void {
 		holder[PENDING] = undefined;
 		if (name) nycode.setSessionName(name);
 	});
-	nycode.registerCommand("claude-branch", {
+	nycode.registerCommand("clone-as", {
 		description: "Cria uma cópia da conversa no ponto atual com nome: /branch <nome>",
 		handler: async (args, ctx) => {
 			const name = validName(args);

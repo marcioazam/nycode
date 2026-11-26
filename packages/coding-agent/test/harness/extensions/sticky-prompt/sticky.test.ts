@@ -182,6 +182,47 @@ test("mesma entrada não reexecuta a varredura; mudança de comprimento, última
 	assert.deepEqual(findSticky(arr, 13, isUser, strip2), findStickyRef(arr, 13, isUser, strip));
 });
 
+test("índice incremental: arrays novos que repetem, cortam ou trocam linhas do anterior dão o mesmo resultado da varredura completa", () => {
+	const user = userMatcher(["meu pedido", "terceiro"]);
+	const base = [`${A}${BG} meu pedido \x1b[49m`, BC, `${A}resposta`, BC, "texto", `${A}${BG} terceiro \x1b[49m`, BC];
+	const frames = [
+		[...base, "stream 1"],
+		[...base, "stream 1", "stream 2"],
+		[...base.slice(0, 4), "texto trocado", ...base.slice(5), "stream 2"], // linha do meio mudou
+		base.slice(0, 3), // encolheu: a zona do terceiro saiu
+		[`${A}novo topo`, ...base], // tudo deslocado
+		[],
+		base,
+	];
+	for (const [i, f] of frames.entries())
+		for (const top of [0, 2, 5, 7, 9])
+			assert.deepEqual(
+				findSticky(f, top, user, strip),
+				findStickyRef(f, top, user, strip),
+				`quadro ${i} top=${top}`,
+			);
+});
+
+test("resposta longa acima da janela: o matcher de prefixo lê só o começo dela; o prompt achado vem inteiro", () => {
+	const reply = Array.from({ length: 5000 }, (_, i) => `linha ${i} da resposta em stream`);
+	const l = [
+		`${A}${BG} meu pedido \x1b[49m`,
+		`${BG} segunda linha \x1b[49m`,
+		BC,
+		`${A}${reply[0]}`,
+		...reply.slice(1),
+	];
+	let stripped = 0;
+	const s = (x: string) => {
+		stripped++;
+		return strip(x);
+	};
+	const r = findSticky(l, l.length, userMatcher(["meu pedido"]), s);
+	assert.deepEqual(r, { row: 0, text: "meu pedido segunda linha" });
+	assert.ok(stripped <= 10, `strip chamado ${stripped}x`);
+	assert.deepEqual(r, findStickyRef(l, l.length, userMatcher(["meu pedido"]), strip));
+});
+
 test("busca por índice: não relê linhas fora das zonas", () => {
 	const big = Array.from({ length: 20000 }, (_, i) => (i % 100 === 0 ? `${A}pedido ${i}` : `linha ${i}`));
 	big[99] = BC;

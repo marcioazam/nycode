@@ -19,14 +19,14 @@ export interface AliasRule {
 }
 
 export const ALIASES: Readonly<Record<string, AliasRule>> = {
-	config: { target: "settings", args: "none", argsTarget: "claude-config" },
+	config: { target: "settings", args: "none", argsTarget: "config-set" },
 	continue: {
 		target: "resume",
 		args: "none",
 		refuse: "/continue <sessão> não existe; /resume abre o seletor de sessões.",
 	},
 	exit: { target: "quit", args: "none", refuse: "/exit não aceita argumentos." },
-	branch: { target: "clone", args: "none", argsTarget: "claude-branch" },
+	branch: { target: "clone", args: "none", argsTarget: "clone-as" },
 	checkpoint: { target: "rewind", args: "none", refuse: "/checkpoint não aceita argumentos; /rewind abre o seletor." },
 	undo: { target: "rewind", args: "none", refuse: "/undo não aceita argumentos; /rewind abre o seletor." },
 	bashes: { target: "tasks", args: "none", refuse: "/bashes não aceita argumentos; /tasks lista as tarefas." },
@@ -76,16 +76,15 @@ export const ALIASES: Readonly<Record<string, AliasRule>> = {
 		target: "settings",
 		args: "none",
 		notice: "/theme → /settings (sem argumentos); /theme <nome> troca e grava o tema.",
-		argsTarget: "claude-theme",
+		argsTarget: "theme-set",
 	},
 	tui: {
 		target: "settings",
 		args: "none",
 		notice: "/tui → /settings (sem argumentos); /tui regular|fullscreen grava o modo.",
-		argsTarget: "claude-tui",
+		argsTarget: "tui-set",
 	},
-	effort: { target: "claude-effort", args: "pass" },
-	copy: { target: "claude-copy", args: "pass", passBare: true },
+	copy: { target: "copy-pick", args: "pass", passBare: true },
 };
 
 export type Resolved =

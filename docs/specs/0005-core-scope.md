@@ -113,7 +113,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | auto-resume | core | Retoma após erro transitório do provedor |
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
 | extension | chat-margin | core | Margem do texto nos blocos com fundo do chat (D-56) |
-| extension | claude-compat | core | Compatibilidade com o Claude Code: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz (D-56, parte 2) |
+| extension | claude-compat | core | Compatibilidade com o Claude Code: `/clear`, `/reset`, `/help`, `/skills`, `/compat`, comandos locais, serviços públicos e a matriz (D-56, parte 2) |
 | extension | bash-main-guard | core | Na sessão principal interativa o bash não prende o turno: padrão de 120 s, teto de 600 s, sleep longo e laço de consulta recusados, `run wait` limitado a 30 s (D-57) (D-56) |
 | extension | comandos | core | Paleta do `/` em pt-BR, painel `?` e `/atalhos` (ver, buscar e mudar atalhos); a ponte `__nycodeHarnessComandos` serve o editor (D-56) |
 | extension | contexto | core | Limite de compactação por sessão (`/contexto 400k`, restaurado ao retomar) e resumo anterior condensado quando passa de `NYCODE_COMPACT_SUMMARY_MAX` caracteres (D-57, D-58) (D-56) |
@@ -146,6 +146,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | plan-mode | core | Modo de plano |
 | extension | ponytail | core | Regras de código mínimo no prompt, ligadas por padrão (D-54) |
 | extension | prefix-cache-1h | core | Cache do prefixo |
+| extension | processos | core | `/ps`: árvore de processos da sessão com memória e `kill` |
 | extension | question | core | Pergunta ao usuário com opções |
 | extension | run | core | Processos em segundo plano e a seção de execução |
 | extension | session-title | ui | Título da sessão |
@@ -167,7 +168,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | command | claude-hud-setup | optional | Plugin `claude-hud` |
 | command | code-review | core | Revisão de PR com a skill `pr-review` e o agente `code-reviewer` (C8) |
 | command | ralph-loop | core | Laço de prompt |
-| command | revise-claude-md | core | Aprendizado da sessão vira regra |
+| command | revise-agents-md | core | Aprendizado da sessão vira regra |
 | command | batch | core | Execução em lotes de lanes paralelas |
 | command | run | core | Sobe e dirige o app real para ver a mudança funcionando |
 | command | run-skill-generator | core | Gera a skill por projeto que ensina /run e /verify |

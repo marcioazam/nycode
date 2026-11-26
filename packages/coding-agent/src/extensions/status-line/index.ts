@@ -54,7 +54,7 @@ import {
 	tabbed,
 	tidyRow,
 } from "../subagent/fleet-ui/style/chrome.ts";
-import { hudTheme } from "../subagent/fleet-ui/style/palette.ts";
+import { hudTheme, noColor } from "../subagent/fleet-ui/style/palette.ts";
 import { nav } from "../subagent/section-nav/nav.ts";
 import { activeStatusLine, type StatusLineConfig } from "./config.ts";
 import { liveRateLimits, normalizeHeaders, parseRateLimits, type RateLimitSnapshot } from "./rate-limits.ts";
@@ -185,6 +185,9 @@ export default function statusLine(nycode: ExtensionAPI) {
 					? undefined
 					: (tui, theme) => {
 							statusTui = tui;
+							// The frame is laid out again only when an input changes: the TUI redraws ~30×/s while the agent works,
+							// and this layout (truncate per cell) was ~7% of the busy samples (perf 2026-11-24). invalidate() runs on theme change.
+							let framed: { key: string; lines: string[] } | undefined;
 							return {
 								// Fullscreen mode routes the click here with local coordinates: when this group draws the tab bar, rows 0-2 are the bar. Regular mode: ↓ then ←/→/Enter/Space.
 								handleMouse: (event: { type?: string; x?: number; y?: number }) => {
@@ -195,15 +198,22 @@ export default function statusLine(nycode: ExtensionAPI) {
 									nav.stamp("status");
 									const hud = hudTheme(theme);
 									const names = modelNames(ctx.model as { id?: string; name?: string } | undefined);
-									const tidy = dropTodoRows(rows).map((r, i) => tidyRow(r, i === 0, names));
-									const framed = frameStatusLine(
-										layoutStatus(renderStatusRows(tidy, Infinity, footer.trailers()), hud, width),
-										hud,
-										width,
-									);
-									return tabbed("status", framed, "", hud, width, () => tui.requestRender());
+									const trailers = footer.trailers();
+									const key = [width, noColor(), ...names, "", ...trailers].join("\0");
+									if (framed?.key !== key) {
+										const tidy = dropTodoRows(rows).map((r, i) => tidyRow(r, i === 0, names));
+										const lines = frameStatusLine(
+											layoutStatus(renderStatusRows(tidy, Infinity, trailers), hud, width),
+											hud,
+											width,
+										);
+										framed = { key, lines };
+									}
+									return tabbed("status", framed.lines, "", hud, width, () => tui.requestRender());
 								},
-								invalidate() {},
+								invalidate() {
+									framed = undefined;
+								},
 							};
 						},
 				{ placement: "belowEditor" },
@@ -596,7 +606,12 @@ export default function statusLine(nycode: ExtensionAPI) {
 		// editor, it pushed the editor up. A slower script still finishes; the opening keeps waiting through statusPendente.
 		if (!ctx.hasUI) return;
 		let limite: ReturnType<typeof setTimeout> | undefined;
-		await Promise.race([primeira, new Promise((resolve) => (limite = setTimeout(resolve, PRIMEIRA_MAX_MS)))]);
+		await Promise.race([
+			primeira,
+			new Promise((resolve) => {
+				limite = setTimeout(resolve, PRIMEIRA_MAX_MS);
+			}),
+		]);
 		clearTimeout(limite);
 	});
 

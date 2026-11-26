@@ -27,6 +27,45 @@ import type { InteractiveMode } from "../interactive-mode.ts";
 import { isEmbeddedStatus } from "../mode/helpers.ts";
 import { theme } from "../theme/theme.ts";
 
+/**
+ * Quiet time after a run before the idle collection; a later run or call cancels it. `Bun.shrink()` drops JIT code, so
+ * the next run re-warms (~2 points more CPU for its first ~12 s); a minute keeps back-to-back turns warm.
+ */
+const IDLE_GC_DELAY_MS = 60_000;
+/** Startup idle collection waits for MCP discovery and the unused-server disconnect (30 s after connecting). */
+export const STARTUP_IDLE_GC_DELAY_MS = 45_000;
+let idleGcTimer: ReturnType<typeof setTimeout> | undefined;
+const bun = (globalThis as { Bun?: { gc(force: boolean): void; shrink(): void } }).Bun;
+const bunGc = bun
+	? (force: boolean) => {
+			bun.gc(force);
+			// Hands freed heap blocks and allocator pages back to the OS; JIT code is rebuilt on demand.
+			bun.shrink();
+		}
+	: undefined;
+
+/**
+ * Runs one full garbage collection and `Bun.shrink()` once the session has been idle for `delayMs`. JSC keeps freed
+ * heap blocks mapped, most of them left by animation frames; at rest this gives back ~19 MB of private memory
+ * (perf 2026-11-24, see docs/perf/render-leveza-2026-11-24.md). `gc` is Bun's; under Node, which collects on its own,
+ * nothing runs.
+ */
+export function collectWhenIdle(delayMs = IDLE_GC_DELAY_MS, gc: ((force: boolean) => void) | undefined = bunGc): void {
+	clearTimeout(idleGcTimer);
+	if (!gc) return;
+	idleGcTimer = setTimeout(() => {
+		idleGcTimer = undefined;
+		gc(true);
+	}, delayMs);
+	idleGcTimer.unref?.();
+}
+
+/** A run started: a full collection would now pause the stream. */
+export function cancelIdleCollection(): void {
+	clearTimeout(idleGcTimer);
+	idleGcTimer = undefined;
+}
+
 /** Agent session events and status lines. */
 export const eventMethods = {
 	async handleEvent(this: InteractiveMode, event: AgentSessionEvent): Promise<void> {
@@ -39,6 +78,7 @@ export const eventMethods = {
 
 		switch (event.type) {
 			case "agent_start":
+				cancelIdleCollection();
 				this.pendingTools.clear();
 				// Restore main escape handler if retry handler is still active
 				// (retry success event fires later, but we need main handler now)
@@ -295,6 +335,7 @@ export const eventMethods = {
 				// The session records deferred user bash results when the run settles; show them there too.
 				this.flushPendingBashComponents();
 				this.ui.requestRender();
+				collectWhenIdle();
 				await this.checkShutdownRequested();
 				break;
 

@@ -51,6 +51,14 @@ const DEFAULT_TIMEOUT_SECONDS = 60;
 const STDERR_TAIL_CHARS = 2_000;
 /** Delays between attempts to connect to an HTTP server that failed with a transient error. */
 const CONNECT_RETRY_DELAYS_MS = [250, 1_000];
+/**
+ * A server that no call or resource request has used yet is disconnected this long after it connected. Connecting
+ * only discovered its tools and instructions, which stay known (the state stays `connected`), and the first use
+ * connects again. Most sessions never call most servers: an idle stdio server held a process of ~100 MB, an idle HTTP
+ * server an open TLS connection and its client (perf 2026-11-24). A server that was used stays connected, so its own
+ * state (an open page, a session) is never lost.
+ */
+const UNUSED_CLOSE_MS = 30_000;
 
 /**
  * `disconnected`: the connection dropped (for example the stdio server exited); the next call
@@ -164,6 +172,10 @@ export class McpServerConnection implements McpToolCaller, McpResourceServer {
 	private readonly onTools: (connection: McpServerConnection) => void;
 	private readonly onChange: ((connection: McpServerConnection) => void) | undefined;
 	private readonly log: McpServerLog | undefined;
+	/** Whether a call or resource request reached this server; see UNUSED_CLOSE_MS. */
+	private used = false;
+	private unusedTimer: ReturnType<typeof setTimeout> | undefined;
+	private readonly unusedCloseMs: number;
 
 	constructor(options: {
 		entry: McpServerEntry;
@@ -177,7 +189,10 @@ export class McpServerConnection implements McpToolCaller, McpResourceServer {
 		onChange?: (connection: McpServerConnection) => void;
 		/** Receives the server's log messages (`notifications/message`). */
 		log?: McpServerLog;
+		/** Overrides UNUSED_CLOSE_MS (tests). */
+		unusedCloseMs?: number;
 	}) {
+		this.unusedCloseMs = options.unusedCloseMs ?? UNUSED_CLOSE_MS;
 		this.entry = options.entry;
 		this.cwd = options.cwd;
 		this.createTransport = options.createTransport;
@@ -278,6 +293,8 @@ export class McpServerConnection implements McpToolCaller, McpResourceServer {
 	 * HTTP error; tool calls are not, since they may have run.
 	 */
 	private async withClient<T>(run: (client: McpClient) => Promise<T>, readOnly = false): Promise<T> {
+		this.used = true;
+		clearTimeout(this.unusedTimer);
 		for (let attempt = 1; ; attempt++) {
 			const client = await this.getClient();
 			try {
@@ -396,6 +413,7 @@ export class McpServerConnection implements McpToolCaller, McpResourceServer {
 			this.error = undefined;
 			this.onTools(this);
 			this.changed();
+			if (!this.used) this.closeWhenUnused(client);
 			return client;
 		} catch (error) {
 			await closeClient();
@@ -406,6 +424,15 @@ export class McpServerConnection implements McpToolCaller, McpResourceServer {
 		} finally {
 			this.shutdown.signal.removeEventListener("abort", closeClient);
 		}
+	}
+
+	private closeWhenUnused(client: McpClient): void {
+		clearTimeout(this.unusedTimer);
+		this.unusedTimer = setTimeout(() => {
+			this.unusedTimer = undefined;
+			if (!this.used && this.client === client) void this.dropClient(client);
+		}, this.unusedCloseMs);
+		this.unusedTimer.unref?.();
 	}
 
 	private connectFailed(error: unknown): Error {
@@ -443,6 +470,7 @@ export class McpServerConnection implements McpToolCaller, McpResourceServer {
 
 	/** Resolves once no transport of this server is open, including one that was still connecting. */
 	async close(): Promise<void> {
+		clearTimeout(this.unusedTimer);
 		this.shutdown.abort();
 		this.state = "closed";
 		this.changed();

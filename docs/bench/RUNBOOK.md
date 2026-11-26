@@ -614,7 +614,7 @@ real, porque os shims recusam rodar sob o HOME do stage.
 - O valor fica em `meta.json` (`jobs`). O gate devolve `NOT_COMPARABLE` quando o `jobs` do baseline e o do candidato diferem, porque o tempo medido muda com o paralelismo. Rodadas sem a chave contam como 1.
 - Em paralelo, o S1 e o Harbor recebem o saldo do teto no início. A rodada pode passar do teto em até uma etapa de cada; nesse caso ela termina `not_verified`.
 - A etapa Harbor usa janela deslizante: até N `harbor run` simultâneos, cada um com uma tarefa; ao terminar uma, a próxima começa, e o teto de gasto é checado antes de iniciar cada tarefa.
-- Medição de referência (pi vanilla, S4 e S5, 22 execuções, `--jobs 6`): 47 s contra 355 s em sequência, com o mesmo custo e o mesmo tempo mediano por execução.
+- Medição de referência (Pi Agent, S4 e S5, 22 execuções, `--jobs 6`): 47 s contra 355 s em sequência, com o mesmo custo e o mesmo tempo mediano por execução.
 
 ## Evidências por execução (engenharia reversa)
 
@@ -659,7 +659,7 @@ O `evidence` também classifica cada falha por assinatura (primeira regra que ca
 
 ## Referências guardadas (rodam uma vez por conjunto de tarefas)
 
-Regra do dono (2026-11-15): `cc-vanilla` e `pi-vanilla` rodam uma vez em cada conjunto de tarefas que nunca rodaram,
+Regra do dono (2026-11-15): Claude Code (`cc-vanilla`) e Pi Agent (`pi-vanilla`) rodam uma vez em cada conjunto de tarefas que nunca rodaram,
 com tudo guardado (`runs.jsonl`, `meta.json`, jobs do Harbor ou artefatos, custo, tokens, turnos, tempo, versão do
 braço, modelo). Gates e benchmarks seguintes rodam só o `nycode` contra a referência guardada.
 

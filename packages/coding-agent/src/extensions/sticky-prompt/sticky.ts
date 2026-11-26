@@ -9,25 +9,33 @@ export interface Sticky {
 	text: string;
 }
 
+const KEY_CHARS = 30;
 const norm = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
 
 // Prompt do usuário = zona OSC 133 (user e assistente marcam) cujo texto começa como uma mensagem do usuário da sessão.
 // Não usa a cor de fundo: no tema mono userMessageBg é vazio.
-export function userMatcher(texts: readonly string[]): (zone: string) => boolean {
-	const keys = texts.map((t) => norm(t).slice(0, 30)).filter(Boolean);
-	return (zone) => {
+export function userMatcher(texts: readonly string[]): UserTest {
+	const keys = texts.map((t) => norm(t).slice(0, KEY_CHARS)).filter(Boolean);
+	const test = (zone: string) => {
 		const z = norm(zone);
 		return keys.some((k) => z.startsWith(k));
 	};
+	return Object.assign(test, { prefixChars: KEY_CHARS });
 }
 
+/** `prefixChars`: the answer depends only on the first N letters and digits of the zone (norm), so findSticky reads only
+ * that much of each zone it rejects. Without it every candidate zone is read whole. */
+export type UserTest = ((zone: string) => boolean) & { prefixChars?: number };
+
 interface ZoneIndex {
+	lines: readonly string[];
 	len: number;
 	last: string;
 	starts: number[];
 	ends: number[];
 }
-const zoneIndexes = new WeakMap<readonly string[], ZoneIndex>();
+/** Último índice: o próximo reaproveita o prefixo de linhas idênticas (as do histórico não mudam entre quadros). */
+let lastIndex: ZoneIndex | undefined;
 let memo:
 	| {
 			lines: readonly string[];
@@ -42,17 +50,31 @@ let memo:
 
 // Suposição: o @nycode/tui (renderCached) entrega um array novo a cada render; para a mesma referência e o mesmo comprimento
 // só a última linha (stream) pode ter mudado, por isso ela entra na chave do índice e do memo.
+// Array novo: as linhas iguais do início (comparação de strings, quase sempre a mesma referência) mantêm suas zonas e só
+// o resto passa pelas regexes; antes, cada quadro do stream varria o transcript inteiro (perf 2026-11-24).
 function zoneIndex(lines: readonly string[]): ZoneIndex {
 	const len = lines.length,
 		last = lines[len - 1] ?? "";
-	const hit = zoneIndexes.get(lines);
-	if (hit && hit.len === len && hit.last === last) return hit;
-	const idx: ZoneIndex = { len, last, starts: [], ends: [] };
-	for (let i = 0; i < len; i++) {
+	const prev = lastIndex;
+	if (prev && prev.lines === lines && prev.len === len && prev.last === last) return prev;
+	let from = 0;
+	// O mesmo array mutado não tem com o que comparar: varre tudo. A última linha antiga pode ter mudado (stream): refaz.
+	if (prev && prev.lines !== lines) {
+		const shared = Math.min(prev.len - 1, len);
+		while (from < shared && lines[from] === prev.lines[from]) from++;
+	}
+	const idx: ZoneIndex = {
+		lines,
+		len,
+		last,
+		starts: from > 0 && prev ? prev.starts.slice(0, lowerBound(prev.starts, from)) : [],
+		ends: from > 0 && prev ? prev.ends.slice(0, lowerBound(prev.ends, from)) : [],
+	};
+	for (let i = from; i < len; i++) {
 		if (ZONE_START.test(lines[i] ?? "")) idx.starts.push(i);
 		if (ZONE_END.test(lines[i] ?? "")) idx.ends.push(i);
 	}
-	zoneIndexes.set(lines, idx);
+	lastIndex = idx;
 	return idx;
 }
 
@@ -71,7 +93,7 @@ function lowerBound(a: number[], x: number): number {
 export function findSticky(
 	lines: readonly string[],
 	scrollTop: number,
-	isUser: (zone: string) => boolean,
+	isUser: UserTest,
 	strip: (s: string) => string,
 ): Sticky | undefined {
 	const len = lines.length,
@@ -92,19 +114,38 @@ export function findSticky(
 		const row = starts[i];
 		const e = lowerBound(ends, row);
 		const stop = e < ends.length ? ends[e] : len - 1;
-		const parts: string[] = [];
-		for (let r = row; r <= stop; r++) {
-			const t = strip(lines[r] ?? "").trim();
-			if (t) parts.push(t);
-		}
-		const text = parts.join(" ");
-		if (isUser(text)) {
-			result = { row, text };
+		// The streaming reply is the zone right above the window: reading it whole was 21% of the bytes allocated per
+		// second while streaming (perf 2026-11-24). A prefix matcher reads only its prefix; a match reads the whole zone.
+		const head = zoneText(lines, row, stop, strip, isUser.prefixChars);
+		if (isUser(head)) {
+			result = { row, text: isUser.prefixChars === undefined ? head : zoneText(lines, row, stop, strip) };
 			break;
 		}
 	}
 	memo = { lines, len, last, scrollTop, isUser, strip, result };
 	return result;
+}
+
+/** Stripped, trimmed, non-empty lines of a zone joined by spaces; with `prefixChars`, it stops at the first line that
+ * reaches that many letters and digits. */
+function zoneText(
+	lines: readonly string[],
+	row: number,
+	stop: number,
+	strip: (s: string) => string,
+	prefixChars?: number,
+): string {
+	const parts: string[] = [];
+	let letters = 0;
+	for (let r = row; r <= stop; r++) {
+		const t = strip(lines[r] ?? "").trim();
+		if (!t) continue;
+		parts.push(t);
+		if (prefixChars === undefined) continue;
+		letters += norm(t).length;
+		if (letters >= prefixChars) break;
+	}
+	return parts.join(" ");
 }
 
 export function stickyLine(

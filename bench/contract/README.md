@@ -99,7 +99,7 @@ python3 bench/contract/speed.py --arms nycode,pi-vanilla --reps 5 --cold
   novo e diretório temporário novo a cada execução, sem aquecimento. O cache de transpilação das extensões (jiti)
   fica em `<node_modules ao lado do arquivo>/.cache/jiti` ou, sem ele, em `$TMPDIR/jiti`; o medidor aponta
   `TMPDIR` para um diretório próprio, então o frio começa sem cache e o quente reaproveita o dele. Nenhum cache
-  do pi vanilla é apagado (não tem extensões).
+  do Pi Agent é apagado (não tem extensões).
 - `claude-vanilla` também roda (`ANTHROPIC_BASE_URL` para o servidor falso); o token é um valor falso gravado em
   um arquivo temporário (`BENCH_CC_CREDENTIALS`), que só alcança `127.0.0.1`: nenhum gasto de API. Ele grava a
   sessão em `BENCH_CC_VANILLA_DIR`.

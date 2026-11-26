@@ -30,7 +30,7 @@ import type {
 } from "../../core/extensions/index.ts";
 import { FooterDataProvider } from "../../core/footer-data-provider.ts";
 import { type AppKeybinding, KeybindingsManager } from "../../core/keybindings.ts";
-import { loadAllHighlightLanguages } from "../../utils/syntax-highlight.ts";
+import { allHighlightLanguagesLoaded } from "../../utils/syntax-highlight.ts";
 import { ensureTool } from "../../utils/tools-manager.ts";
 import { checkForNewNycodeVersion } from "../../utils/version-check.ts";
 import { createChatViewport } from "./chat-viewport.ts";
@@ -70,7 +70,7 @@ import { startupInfoMethods } from "./mode/startup-info.ts";
 import { authMethods } from "./mode-actions/auth.ts";
 import { chatMethods } from "./mode-actions/chat.ts";
 import { commandMethods } from "./mode-actions/commands.ts";
-import { eventMethods } from "./mode-actions/events.ts";
+import { collectWhenIdle, eventMethods, STARTUP_IDLE_GC_DELAY_MS } from "./mode-actions/events.ts";
 import { lifecycleMethods } from "./mode-actions/lifecycle.ts";
 import { selectorMethods } from "./mode-actions/selectors.ts";
 import { sessionSelectorMethods } from "./mode-actions/session-selectors.ts";
@@ -513,9 +513,10 @@ export class InteractiveMode {
 		// Initialize available provider count for footer display
 		await this.updateAvailableProviderCount();
 
-		// Flush the completed startup state before loading the remaining syntax grammars.
 		this.ui.renderNow();
-		void loadAllHighlightLanguages().then(() => {
+		collectWhenIdle(STARTUP_IDLE_GC_DELAY_MS);
+		// The remaining grammars load when a render first asks for one; redraw with them once they are registered.
+		void allHighlightLanguagesLoaded.then(() => {
 			if (!this.isInitialized) return;
 			this.ui.invalidate();
 			this.ui.requestRender();

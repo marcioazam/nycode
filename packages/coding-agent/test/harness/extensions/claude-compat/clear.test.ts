@@ -78,7 +78,7 @@ const CMDS = [
 	{ name: "skill:a", source: "skill", description: "primeira" },
 ];
 
-test("registra clear, reset, help, skills, claude-help e os comandos locais; nunca fork, share, bug, import, export", async () => {
+test("registra clear, reset, help, skills, compat e os comandos locais; nunca fork, share, bug, import, export", async () => {
 	const reg: Record<string, any> = {};
 	const nycode = {
 		registerCommand: (n: string, o: unknown) => {
@@ -100,12 +100,12 @@ test("registra clear, reset, help, skills, claude-help e os comandos locais; nun
 		"allowed-tools",
 		"autocompact",
 		"checkup",
-		"claude-branch",
-		"claude-config",
-		"claude-copy",
-		"claude-effort",
-		"claude-theme",
-		"claude-tui",
+		"clone-as",
+		"config-set",
+		"copy-pick",
+		"effort",
+		"theme-set",
+		"tui-set",
 		"deep-research",
 		"doctor",
 		"heapdump",
@@ -127,7 +127,7 @@ test("registra clear, reset, help, skills, claude-help e os comandos locais; nun
 		Object.keys(reg).sort(),
 		[
 			...local,
-			"claude-help",
+			"compat",
 			"clear",
 			"help",
 			"reset",
@@ -146,7 +146,7 @@ test("registra clear, reset, help, skills, claude-help e os comandos locais; nun
 	const s = setup();
 	await reg.reset.handler("", s.ctx);
 	assert.deepEqual(s.calls, ["newSession:"]);
-	await reg["claude-help"].handler("", s.ctx);
+	await reg.compat.handler("", s.ctx);
 	assert.match(s.notes[0]!, /\/fork do nycode ≠/);
 	await reg.help.handler("", s.ctx);
 	assert.match(s.notes[1]!, /\/foo \/tpl/);

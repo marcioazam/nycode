@@ -612,6 +612,42 @@ for await (const line of createInterface({ input: process.stdin })) {
 		await connection.close();
 	});
 
+	it("disconnects an unused stdio or HTTP server after discovery, reconnects on first use, then keeps it", async () => {
+		let opened = 0;
+		const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+		const connectWith = (config: McpServerEntry["config"]) =>
+			new McpServerConnection({
+				entry: { name: "fake", config, source: "test" },
+				cwd: process.cwd(),
+				createTransport: () => {
+					opened++;
+					return createTransport();
+				},
+				credentials: new McpOAuthCredentialStore(new InMemoryAuthStorageBackend()),
+				onTools: () => {},
+				unusedCloseMs: 10,
+			});
+		const configs: McpServerEntry["config"][] = [
+			{ command: "unused" },
+			{ url: "http://unused.invalid", headers: { Authorization: "x" } },
+		];
+		for (const config of configs) {
+			opened = 0;
+			const connection = connectWith(config);
+			await connection.getClient();
+			await sleep(30);
+			// Tools stay known while it is disconnected, so the prompt and tool_search do not change.
+			expect(connection.state).toBe("connected");
+			expect(opened).toBe(1);
+			expect(await connection.callTool("echo", {}, {})).toEqual({ content: [{ type: "text", text: "ok" }] });
+			expect(opened).toBe(2);
+			await sleep(30);
+			expect(await connection.callTool("echo", {}, {})).toEqual({ content: [{ type: "text", text: "ok" }] });
+			expect(opened).toBe(2);
+			await connection.close();
+		}
+	});
+
 	it("marks a dropped connection and reconnects on the next call", async () => {
 		const { connection, opened } = connect({ name: "fake", config: { command: "unused" }, source: "test" }, [
 			() => createTransport(),

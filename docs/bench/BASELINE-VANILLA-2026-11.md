@@ -46,7 +46,7 @@ Este é o baseline do benchmark do repositório **Nycode pré-migração**, tira
 
 ## Mudança de regra do avaliador (2026-11-14)
 
-A primeira versão deste baseline exigia, nos 4 casos de pergunta do S4, **todos** os termos de `ask_terms` na resposta. O contrato em `bench/suites/README.md` pede **pelo menos um**: os termos são variantes de grafia, como "período" e "periodo". Com a regra errada esses casos eram quase impossíveis (pi vanilla 1/8, os outros 0/8).
+A primeira versão deste baseline exigia, nos 4 casos de pergunta do S4, **todos** os termos de `ask_terms` na resposta. O contrato em `bench/suites/README.md` pede **pelo menos um**: os termos são variantes de grafia, como "período" e "periodo". Com a regra errada esses casos eram quase impossíveis (Pi Agent 1/8, os outros 0/8).
 
 O avaliador foi corrigido e os 4 casos foram executados de novo em todos os braços. Por isso o S4 e os totais desta versão são maiores que os da primeira: no Sonnet, o Claude Code passou de 65 para 73, o pi vanilla de 67 para 74 e o Nycode pré-migração de 58 para 62. As execuções dos outros casos são as mesmas.
 

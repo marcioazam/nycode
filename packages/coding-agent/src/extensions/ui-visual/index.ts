@@ -74,10 +74,15 @@ export const acolchoar = (
 ): void => {
 	const orig = proto?.render;
 	if (!proto || typeof orig !== "function" || (orig as { acolchoada?: boolean }).acolchoada) return;
-	const novo = function (this: unknown, w: number) {
+	// Mesmas linhas, largura e cor: o mesmo array de antes, para o cache por referência do @nycode/tui pular a mensagem (perf 2026-11-24).
+	const feitos = new WeakMap<object, { linhas: string[]; w: number; c: string; out: string[] }>();
+	const novo = function (this: object, w: number) {
 		const linhas = orig.call(this, w);
 		const c = cor();
 		if (!linhas.length || !c || w <= 0) return linhas;
+		const cs = c.join(";"),
+			visto = feitos.get(this);
+		if (visto && visto.linhas === linhas && visto.w === w && visto.c === cs) return visto.out;
 		const l0 = linhas[0]!.replace(/\x1b\][^\x07]*\x07/g, ""),
 			ini = l0.search(/\x1b\[48;2;/);
 		const pre = ini < 0 ? 0 : visibleWidth(l0.slice(0, ini));
@@ -85,9 +90,10 @@ export const acolchoar = (
 			fim = resto.indexOf("\x1b[49m");
 		const faixa = ini < 0 ? w : Math.min(w - pre, visibleWidth(fim < 0 ? resto : resto.slice(0, fim)));
 		const pos = Math.max(0, w - pre - faixa);
-		const fio = (ch: string) =>
-			`${" ".repeat(pre)}\x1b[38;2;${c.join(";")}m${ch.repeat(faixa)}\x1b[39m${" ".repeat(pos)}`;
-		return [fio("▁"), ...linhas, fio("▔")];
+		const fio = (ch: string) => `${" ".repeat(pre)}\x1b[38;2;${cs}m${ch.repeat(faixa)}\x1b[39m${" ".repeat(pos)}`;
+		const out = [fio("▁"), ...linhas, fio("▔")];
+		feitos.set(this, { linhas, w, c: cs, out });
+		return out;
 	};
 	proto.render = Object.assign(novo, { acolchoada: true });
 };

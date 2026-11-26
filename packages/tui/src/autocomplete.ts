@@ -301,6 +301,9 @@ export interface AutocompleteProvider {
 	shouldTriggerFileCompletion?(lines: string[], cursorLine: number, cursorCol: number): boolean;
 }
 
+/** A "/word" typed after whitespace, partway through a prompt (group 1: the word, which has no further "/"). */
+export const MID_PROMPT_COMMAND = /\s\/([^\s/]*)$/;
+
 // Combined provider that handles both slash commands and file paths
 export class CombinedAutocompleteProvider implements AutocompleteProvider {
 	private commands: (SlashCommand | AutocompleteItem)[];
@@ -337,23 +340,30 @@ export class CombinedAutocompleteProvider implements AutocompleteProvider {
 			};
 		}
 
+		// A "/word" after whitespace, partway through the prompt: commands whose name (or bare skill name) starts with it.
+		const midPromptToken = options.force ? undefined : MID_PROMPT_COMMAND.exec(textBeforeCursor)?.[1];
+		if (midPromptToken !== undefined) {
+			const items = this.commandItems()
+				.filter(
+					(item) =>
+						item.name.startsWith(midPromptToken) ||
+						(item.name.startsWith("skill:") && item.name.slice("skill:".length).startsWith(midPromptToken)),
+				)
+				.map((item) => ({
+					value: item.name,
+					label: item.label,
+					...(item.description && { description: item.description }),
+				}));
+			if (items.length > 0) return { items, prefix: `/${midPromptToken}` };
+		}
+
 		const commandText = textBeforeCursor.trimStart();
 		if (!options.force && commandText.startsWith("/")) {
 			const spaceIndex = commandText.indexOf(" ");
 
 			if (spaceIndex === -1) {
 				const prefix = commandText.slice(1);
-				const commandItems = this.commands.map((cmd) => {
-					const name = "name" in cmd ? cmd.name : cmd.value;
-					const hint = "argumentHint" in cmd && cmd.argumentHint ? cmd.argumentHint : undefined;
-					const desc = cmd.description ?? "";
-					const fullDesc = hint ? (desc ? `${hint} — ${desc}` : hint) : desc;
-					return {
-						name,
-						label: name,
-						description: fullDesc || undefined,
-					};
-				});
+				const commandItems = this.commandItems();
 
 				const bareNameMatches = fuzzyFilter(commandItems, prefix, (item) =>
 					item.name.startsWith("skill:") ? item.name.slice("skill:".length) : item.name,
@@ -400,6 +410,9 @@ export class CombinedAutocompleteProvider implements AutocompleteProvider {
 			};
 		}
 
+		// No command matched the mid-prompt "/word": keep no list open (a path such as "/tmp" is being typed).
+		if (midPromptToken !== undefined) return null;
+
 		const pathMatch = this.extractPathPrefix(textBeforeCursor, options.force ?? false);
 		if (pathMatch === null) {
 			return null;
@@ -412,6 +425,16 @@ export class CombinedAutocompleteProvider implements AutocompleteProvider {
 			items: suggestions,
 			prefix: pathMatch,
 		};
+	}
+
+	private commandItems(): Array<{ name: string; label: string; description: string | undefined }> {
+		return this.commands.map((cmd) => {
+			const name = "name" in cmd ? cmd.name : cmd.value;
+			const hint = "argumentHint" in cmd && cmd.argumentHint ? cmd.argumentHint : undefined;
+			const desc = cmd.description ?? "";
+			const fullDesc = hint ? (desc ? `${hint} — ${desc}` : hint) : desc;
+			return { name, label: name, description: fullDesc || undefined };
+		});
 	}
 
 	applyCompletion(
@@ -433,6 +456,20 @@ export class CombinedAutocompleteProvider implements AutocompleteProvider {
 		// Check if we're completing a slash command (prefix starts with "/" but NOT a file path)
 		// Slash commands are at the start of the line and don't contain path separators after the first /
 		const isSlashCommand = prefix.startsWith("/") && beforePrefix.trim() === "" && !prefix.slice(1).includes("/");
+		// Mid-prompt command: the item is a command name (paths keep their leading "/"), after whitespace.
+		const isMidPromptCommand =
+			!isSlashCommand && MID_PROMPT_COMMAND.test(currentLine.slice(0, cursorCol)) && !item.value.startsWith("/");
+		if (isMidPromptCommand) {
+			const space = /^\s/.test(adjustedAfterCursor) ? "" : " ";
+			const inserted = `/${item.value}${space}`;
+			const newLines = [...lines];
+			newLines[cursorLine] = beforePrefix + inserted + adjustedAfterCursor;
+			return {
+				lines: newLines,
+				cursorLine,
+				cursorCol: beforePrefix.length + inserted.length + (space ? 0 : 1),
+			};
+		}
 		if (isSlashCommand) {
 			// This is a command name completion
 			const newLine = `${beforePrefix}/${item.value} ${adjustedAfterCursor}`;

@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Added
+
+- Slash-command completion partway through a prompt: `/` after whitespace (or at the start of a later line) opens the list of commands and skills whose name, or bare skill name, starts with the typed letters, as many times as needed in one message. Inserting keeps the surrounding text and never submits; a word no command starts with (a path such as `/tmp`) keeps no list open
+
+### Changed
+
+- `matchesKey` remembers its answer for each input, key id and Kitty-protocol flag. Inputs longer than 32 characters, and raw backspace, stay uncached
+- The loader takes its frame from the clock and asks for a render only when that frame changed, so a spinner next to another animation adds no frames of its own
+- `renderChildLines` keeps the previous frame when every child's output is unchanged, and allocates the parts array only from the first child that changed
+
 ### Fixed
 
 - Fixed subscript and superscript normalization so a long run of spaces cannot make the scan take polynomial time

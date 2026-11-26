@@ -9,7 +9,7 @@ import { failingOpener, fileOpener, mkCtx, tmp } from "../commands/helpers.ts";
 
 const withTui = (setTuiMode?: Controls["setTuiMode"]) => ({ ...({} as Controls), apiVersion: 1 as const, setTuiMode });
 
-test("/claude-tui grava e só então aplica ao vivo pelo controlador", async () => {
+test("/tui-set grava e só então aplica ao vivo pelo controlador", async () => {
 	const dir = tmp();
 	const calls: string[] = [];
 	const c = mkCtx({ cwd: dir });

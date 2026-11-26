@@ -278,7 +278,7 @@ gh api -X PATCH repos/marcioazam/nycode \
 ```
 
 A descrição tem duas etapas, pela regra de honestidade: a de F2 acima e, em F12 (depois da paridade de F10),
-`Terminal coding agent: a fork of pi with the Nycode harness built in, measured against Claude Code and plain pi.`
+`Terminal coding agent: a fork of pi with Nycode built in, measured against Claude Code and plain pi.`
 Conferência: seção 7. Reversão: `echo '{"names":[]}' | gh api -X PUT repos/marcioazam/nycode/topics --input -` e
 `PATCH` com a descrição antiga (em registro do mantenedor).
 

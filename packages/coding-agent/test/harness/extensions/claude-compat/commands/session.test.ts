@@ -31,7 +31,7 @@ function reg() {
 test("branch: fork na folha, nome aplicado só no session_start fork; ocupado/cancelado/sem folha", async () => {
 	const r = reg();
 	registerBranch(r.nycode);
-	const h = r.commands["claude-branch"].handler;
+	const h = r.commands["clone-as"].handler;
 	const busy = mkCtx({ idle: false });
 	await h("x", busy.ctx);
 	assert.deepEqual(busy.calls, []);

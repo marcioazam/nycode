@@ -14,10 +14,10 @@ import {
 	visibleWidth,
 	wrapTextWithAnsi,
 } from "@nycode/tui";
-import hljs from "highlight.js";
 import type { ExtensionAPI } from "../../core/extensions/types.ts";
 import type { Theme, ThemeColor } from "../../modes/interactive/theme/theme.ts";
 import { copyToClipboard } from "../../utils/clipboard.ts";
+import { highlightJs as hljs, supportsLanguage } from "../../utils/syntax-highlight.ts";
 import {
 	blockId,
 	detectLang,
@@ -125,6 +125,8 @@ export function syntaxPalette(): { key: string; p: SyntaxPalette } | undefined {
 
 /** Primeira gramática do highlight.js entre a etiqueta e os candidatos do Linguist (nome, aliases, modos, extensões). */
 function grammarFor(lang: Lang): string | undefined {
+	// Same instance as the eager core set; an unregistered first candidate loads the full set and the view redraws.
+	if (lang.grammars.length > 0) supportsLanguage(lang.grammars[0]);
 	return lang.grammars.find((c) => hljs.getLanguage(c));
 }
 

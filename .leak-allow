@@ -6,14 +6,11 @@ scripts/check-leaks.sh:/home/someuser
 README.md:securityscorecards\.dev/projects/github\.com/
 .github/CODEOWNERS:^\* @
 .github/ISSUE_TEMPLATE/config.yml:github\.com/
-# Public GitHub handle (repository slugs, forks, CODEOWNERS) and fake home fixtures in files touched by the
-# 2026-11-24 rename; verified benign, not personal data.
-NOTICE:marcioazam
-README.md:marcioazam
+# Public GitHub account and repositories (marcioazam/nycode, ny-pi, ponytail, ralph-loop, nycode-cli: all PUBLIC, checked 2026-11-26)
 bench/suites/README.md:marcioazam
 docs/bench/RUNBOOK.md:marcioazam
-docs/bench/b1-blueprint-2026-11-24.md:marcioazam
-docs/bench/backlog-nycode-2026-11-24.md:marcioazam
+docs/harness/auditoria-core-vs-harness-2026-11-23.md:marcioazam
+docs/harness/decisoes-nucleo-harness-pessoal-2026-11-24.md:marcioazam
 docs/migration/nycode-core/00-mega-plano.md:marcioazam
 docs/migration/nycode-core/01-inventario-origem.md:marcioazam
 docs/migration/nycode-core/02-arquitetura-alvo.md:marcioazam
@@ -21,18 +18,33 @@ docs/migration/nycode-core/03-mapa-de-migracao.md:marcioazam
 docs/migration/nycode-core/04-regras-do-repositorio.md:marcioazam
 docs/migration/nycode-core/05-marca-e-readme.md:marcioazam
 docs/migration/nycode-core/06-guia-de-execucao.md:marcioazam
-docs/migration/nycode-core/07-ci-qualidade-seguranca.md:marcioazam
-docs/migration/nycode-core/08-sincronizacao-upstream.md:marcioazam
 docs/migration/nycode-core/09-paridade-e-benchmark.md:marcioazam
+docs/migration/nycode-core/10-riscos-e-rollback.md:marcioazam
 docs/migration/nycode-core/11-decisoes-e-pendencias.md:marcioazam
 docs/migration/nycode-core/12-checklist-mestre.md:marcioazam
-docs/migration/nycode-core/13-fontes.md:marcioazam
 docs/migration/nycode-core/14-prompt-goal.md:marcioazam
+docs/migration/nycode-core/anexos/E-resumo-por-regra.md:marcioazam
+docs/migration/nycode-core/evidencias/F12.md:marcioazam
+packages/coding-agent/CHANGELOG.md:marcioazam
+packages/coding-agent/docs/settings.md:marcioazam
+packages/coding-agent/package.json:marcioazam
+packages/tui/CHANGELOG.md:marcioazam
+README.md:marcioazam
+# Example home path in a released changelog entry; not a real user
+packages/coding-agent/CHANGELOG.md:`/home/me2/project` shown as `~2/project` when home is `/home/me`
+# Upstream author's public worktree path cited by the residue allowlist
+scripts/ci/lint/residuo/residuo-allow.txt:/home/badlogic/pi-observers
+# Public GitHub handle (repository slugs, forks, CODEOWNERS) and fake home fixtures in files touched by the
+# 2026-11-24 rename; verified benign, not personal data.
+NOTICE:marcioazam
+docs/bench/b1-blueprint-2026-11-24.md:marcioazam
+docs/bench/backlog-nycode-2026-11-24.md:marcioazam
+docs/migration/nycode-core/07-ci-qualidade-seguranca.md:marcioazam
+docs/migration/nycode-core/08-sincronizacao-upstream.md:marcioazam
+docs/migration/nycode-core/13-fontes.md:marcioazam
 docs/migration/nycode-core/README.md:marcioazam
 docs/migration/nycode-core/anexos/B-mapa-core-nycode.md:marcioazam
 packages/coding-agent/CHANGELOG.md:/home/(u|fulano|me2?|badlogic)/?
-packages/coding-agent/CHANGELOG.md:marcioazam
-packages/coding-agent/docs/settings.md:marcioazam
 packages/coding-agent/test/harness/extensions/diagnostico/index.test.ts:/home/(u|fulano|me2?|badlogic)/?
 packages/coding-agent/test/harness/extensions/diagnostico/obs/correlacao.test.ts:/home/(u|fulano|me2?|badlogic)/?
 packages/coding-agent/test/harness/extensions/hook-msgs/index.test.ts:/home/(u|fulano|me2?|badlogic)/?
@@ -41,8 +53,6 @@ scripts/fork/rename.py:marcioazam
 scripts/fork/tests/test_rename.py:marcioazam
 # 2026-11-24 core/harness/personal split: public GitHub handle (fork slugs, schema $id, upstream benchmark links) and
 # fake home fixtures of the native guard and local-env tests; verified benign, not personal data.
-docs/harness/auditoria-core-vs-harness-2026-11-23.md:marcioazam
-docs/harness/decisoes-nucleo-harness-pessoal-2026-11-24.md:marcioazam
 packages/coding-agent/docs/optional-packages.md:marcioazam
 packages/coding-agent/resources/commands/ralph-loop.md:marcioazam
 packages/coding-agent/schemas/settings.schema.json:marcioazam

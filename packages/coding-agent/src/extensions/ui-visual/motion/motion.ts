@@ -10,7 +10,7 @@ import { movimento, noColor } from "../../ui/a11y.ts";
 
 type Env = Record<string, string | undefined>;
 type Rgb = readonly number[];
-type Rgb3 = [number, number, number];
+export type Rgb3 = [number, number, number];
 
 export type AnsiProbeTheme = {
 	fg: (color: string, text: string) => string;
@@ -139,10 +139,20 @@ export const activeSubscriberCount = (): number => est().subs.size;
 export const intervaloAtual = (): number => est().timerMs;
 
 // ── cor ──────────────────────────────────────────────────────────────────────
-/** Extrai `[R, G, B]` de uma sequência SGR truecolor (`38;2;R;G;B` ou `48;2;R;G;B`). */
+const rgbs = new Map<string, Rgb3 | undefined>();
+/** Extrai `[R, G, B]` de uma sequência SGR truecolor (`38;2;R;G;B` ou `48;2;R;G;B`). Devolve uma cópia: quem recebe pode
+ * mexer no array sem estragar o cache. */
 export const parseRgb = (ansi: string | undefined): Rgb3 | undefined => {
-	const m = /[34]8;2;(\d+);(\d+);(\d+)/.exec(ansi ?? "");
-	return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : undefined;
+	const key = ansi ?? "";
+	let rgb = rgbs.get(key);
+	if (rgb === undefined && !rgbs.has(key)) {
+		const m = /[34]8;2;(\d+);(\d+);(\d+)/.exec(key);
+		rgb = m ? [Number(m[1]), Number(m[2]), Number(m[3])] : undefined;
+		// The theme has a few dozen colors; effects ask for them on every frame of every message (perf 2026-11-24).
+		if (rgbs.size >= 256) rgbs.clear();
+		rgbs.set(key, rgb);
+	}
+	return rgb && [rgb[0], rgb[1], rgb[2]];
 };
 
 export const safeAnsi = (fn: (() => string | undefined) | undefined): Rgb3 | undefined => {

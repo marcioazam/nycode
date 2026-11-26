@@ -12,21 +12,21 @@ test("alias exato reescreve para o comando do nycode", () => {
 });
 
 test("argumentos: passam quando o destino os aceita, recusam quando não", () => {
-	assert.deepEqual(resolveAlias("/effort high"), { kind: "rewrite", text: "/claude-effort high", notice: undefined });
-	assert.deepEqual(resolveAlias("/effort"), { kind: "rewrite", text: "/claude-effort", notice: undefined });
+	// /effort é o próprio comando registrado (sem alias).
+	assert.deepEqual(resolveAlias("/effort high"), { kind: "pass" });
 	assert.deepEqual(resolveAlias("/config theme=dark"), {
 		kind: "rewrite",
-		text: "/claude-config theme=dark",
+		text: "/config-set theme=dark",
 		notice: undefined,
 	});
 	assert.deepEqual(resolveAlias("/branch minha-copia"), {
 		kind: "rewrite",
-		text: "/claude-branch minha-copia",
+		text: "/clone-as minha-copia",
 		notice: undefined,
 	});
 	assert.equal((resolveAlias("/branch") as any).text, "/clone");
-	assert.equal((resolveAlias("/theme escuro") as any).text, "/claude-theme escuro");
-	assert.equal((resolveAlias("/tui regular") as any).text, "/claude-tui regular");
+	assert.equal((resolveAlias("/theme escuro") as any).text, "/theme-set escuro");
+	assert.equal((resolveAlias("/tui regular") as any).text, "/tui-set regular");
 	assert.equal(resolveAlias("/continue abc").kind, "refuse");
 });
 
@@ -65,8 +65,7 @@ test("/fork, /share, /bug, /import e /permissions nunca são aliases (semântica
 
 test("todo destino de alias é comando nativo ou do nycode conhecido", () => {
 	const known = new Set([
-		"claude-effort",
-		"claude-copy",
+		"copy-pick",
 		"settings",
 		"resume",
 		"quit",
@@ -81,9 +80,9 @@ test("todo destino de alias é comando nativo ou do nycode conhecido", () => {
 	for (const [a, r] of Object.entries(ALIASES)) assert.ok(known.has(r.target), a);
 });
 
-test("/copy: sem argumentos continua nativo; com argumentos vai ao /claude-copy", () => {
+test("/copy: sem argumentos continua nativo; com argumentos vai ao /copy-pick", () => {
 	assert.deepEqual(resolveAlias("/copy"), { kind: "pass" });
-	assert.deepEqual(resolveAlias("/copy 2"), { kind: "rewrite", text: "/claude-copy 2", notice: undefined });
+	assert.deepEqual(resolveAlias("/copy 2"), { kind: "rewrite", text: "/copy-pick 2", notice: undefined });
 	assert.deepEqual(
 		resolveAlias("/copy blocks", (n) => n === "copy"),
 		{ kind: "pass" },

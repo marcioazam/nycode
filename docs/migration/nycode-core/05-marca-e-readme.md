@@ -223,7 +223,7 @@ D-31, para nomear a referência do benchmark:
 - `nycode migrate from-pi` (`src/migrations/from-pi*`): lê a configuração antiga do usuário (D-09).
 - `docs/harness/`: cópia de `claude-home/docs` do harness Nycode, trazida por outro PR (D-31 b); `docs/migration/nycode-arquivo` já
   cabe em `docs/migration`.
-- `README.md`: "Pi Vanilla" (pi 1.5.2 sem harness) só nas seções de proposta e de benchmark, para dizer contra o que
+- `README.md`: "Pi Agent" (pi 1.5.2 sem harness) só nas seções de proposta e de benchmark, para dizer contra o que
   os números foram medidos; o nome harness Nycode onde o README explica de onde vem o harness e os números (D-31 a). O gate
   R1 isenta o arquivo inteiro; a revisão do PR confere que "pi" sozinho só aparece nessas seções.
 

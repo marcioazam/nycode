@@ -4,7 +4,7 @@ disable-model-invocation: true
 argument-hint: "[foco opcional]"
 ---
 
-<!-- Porte para o nycode (2026-11-11) do /claude-md-management:revise-claude-md (plugin desligado no Claude). Mudanças: o nycode
+<!-- Porte para o nycode (2026-11-11) do `revise-claude-md` do plugin claude-md-management (plugin desligado no Claude). Mudanças: o nycode
 lê AGENTS.md e CLAUDE.md (e o CLAUDE.local.md pessoal), então os dois entram; a aprovação usa a ferramenta `question`;
 o original procurava `.claude.local.md`, nome que o Claude Code não lê (o certo é `CLAUDE.local.md`, conferido em
 code.claude.com/docs/en/memory); no nycode, CLAUDE.local.md e .claude/CLAUDE.md só carregam em projeto aprovado
