@@ -1,6 +1,6 @@
 # Harness changes: quality floor, then economy
 
-Applies to every change to the nycode harness (`~/.nycode/agent/settings.json`, `mcp.json`, extensions,
+Applies to every change to Nycode (`~/.nycode/agent/settings.json`, `mcp.json`, extensions,
 and `${NYCODE_RESOURCES}`: instructions, rules, commands, skills, agents, hooks, settings) and to a repository's
 harness (gates, CI workflows, local rules and agent instructions, hooks, test and lint configuration).
 
@@ -12,7 +12,7 @@ harness (gates, CI workflows, local rules and agent instructions, hooks, test an
 - Tighten or reuse the existing owner before adding a rule, skill, agent, hook, extension, job or always-on check;
   propose removing what nothing uses, and remove it only with the user's approval. A requirement that must hold
   without exception belongs in a hook (`hooks/guard.py`), not in more emphatic prose.
-- The change's `/docs` record states its expected cost and the quality it buys. nycode harness: run the checks of what
+- The change's `/docs` record states its expected cost and the quality it buys. Nycode: run the checks of what
   changed, then report residual failures: `python3 ${NYCODE_RESOURCES}/bin/checks/check-instructions.py` (instructions,
   rules, commands), `python3 ${NYCODE_RESOURCES}/bin/checks/check-agents.py` (agents),
   `cd packages/coding-agent/test/harness/hooks && for d in . dispatch; do (cd $d && python3 -m unittest test_*.py); done` (hooks),

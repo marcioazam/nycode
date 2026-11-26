@@ -1,5 +1,5 @@
 /**
- * /claude-config (de /config k=v), /theme, /tui, /scroll-speed, /autocompact, /effort.
+ * /config-set (de /config k=v), /theme, /tui, /scroll-speed, /autocompact, /effort.
  * Persistência: SettingsManager nativo (store.ts). Aplicação ao vivo: tema por ui.setTheme, thinking por nycode.setThinkingLevel,
  * demais chaves por ctx.reload() quando ocioso (o reload do nycode relê as configurações); tuiMode ao vivo pelo controlador ui-controls (setTuiMode), senão no próximo início.
  */
@@ -92,7 +92,7 @@ async function show(key: string, ctx: Ctx, d: Deps | undefined, fallback: unknow
 	);
 }
 
-/** `/claude-config` lista; `chave=valor` grava; `chave` mostra. */
+/** `/config-set` lista; `chave=valor` grava; `chave` mostra. */
 export async function configCommand(args: string, ctx: Ctx, d?: Deps): Promise<void> {
 	const a = args.trim();
 	if (!a) {
@@ -163,15 +163,15 @@ export async function effortCommand(nycode: Levels, args: string, ctx: Ctx, d?: 
 
 export function registerConfig(nycode: ExtensionAPI, d: Deps = {}): void {
 	const dd: Deps = { ...d, nycode };
-	nycode.registerCommand("claude-config", {
+	nycode.registerCommand("config-set", {
 		description: "Lista/mostra/grava configurações suportadas (chave=valor)",
 		handler: (a, ctx) => configCommand(a, ctx, dd),
 	});
-	nycode.registerCommand("claude-theme", {
+	nycode.registerCommand("theme-set", {
 		description: "Troca o tema (ao vivo) e grava [nome]",
 		handler: (a, ctx) => themeCommand(a, ctx, dd),
 	});
-	nycode.registerCommand("claude-tui", {
+	nycode.registerCommand("tui-set", {
 		description: "Modo de tela regular|fullscreen (aplica ao vivo; senão no próximo início)",
 		handler: (a, ctx) => tuiCommand(a, ctx, dd),
 	});
@@ -183,7 +183,7 @@ export function registerConfig(nycode: ExtensionAPI, d: Deps = {}): void {
 		description: "Compactação automática on|off",
 		handler: (a, ctx) => autocompactCommand(a, ctx, dd),
 	});
-	nycode.registerCommand("claude-effort", {
+	nycode.registerCommand("effort", {
 		description: "Esforço de raciocínio da sessão: status|auto|off…max",
 		handler: (a, ctx) => effortCommand(nycode, a, ctx, dd),
 	});

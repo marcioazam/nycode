@@ -1,6 +1,7 @@
 /** /doctor (/checkup) e /skill-doctor: verificações locais e somente leitura; nunca imprimem valores de arquivos de configuração. */
 import { existsSync, readFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
+import { getBuiltinResourcesRoot } from "../../../../core/builtin-resources.ts";
 import type { ExtensionAPI, ExtensionCommandContext } from "../../../../core/extensions/types.ts";
 import { agentDir } from "../settings/store.ts";
 
@@ -27,9 +28,9 @@ export function doctorChecks(
 	commandCount = 0,
 	skillCount = 0,
 	nodeVersion = process.versions.node,
+	guard = join(getBuiltinResourcesRoot(), "hooks", "guard.py"),
 ): Check[] {
 	const major = Number(nodeVersion.split(".")[0]);
-	const home = join(dir, "claude-home");
 	return [
 		{ ok: major >= 20, text: `Node ${nodeVersion}${major >= 20 ? "" : " (< 20: atualize)"}` },
 		{ ok: existsSync(dir), text: `diretório do agente: ${existsSync(dir) ? "existe" : "ausente"}` },
@@ -37,8 +38,8 @@ export function doctorChecks(
 		jsonCheck("keybindings.json", join(dir, "keybindings.json")),
 		jsonCheck("mcp.json", join(dir, "mcp.json"), "mcpServers"),
 		{
-			ok: existsSync(join(home, "hooks", "guard.py")),
-			text: `guarda de segurança (hooks/guard.py): ${existsSync(join(home, "hooks", "guard.py")) ? "presente" : "AUSENTE"}`,
+			ok: existsSync(guard),
+			text: `guarda de segurança (hooks/guard.py): ${existsSync(guard) ? "presente" : "AUSENTE"}`,
 		},
 		{ ok: skillCount > 0, text: `skills carregadas: ${skillCount}` },
 		{ ok: commandCount > 0, text: `comandos carregados: ${commandCount}` },

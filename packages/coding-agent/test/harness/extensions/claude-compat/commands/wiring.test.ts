@@ -25,7 +25,7 @@ test("registerLocalCommands: todo handler registrado responde sem exceção e se
 	};
 	registerLocalCommands(nycode);
 	assert.deepEqual(tools, ["advisor"]);
-	const skip = new Set(["heapdump", "stop", "loop", "claude-branch", "simplify", "security-review", "deep-research"]); // com efeitos: cobertos em testes próprios
+	const skip = new Set(["heapdump", "stop", "loop", "clone-as", "simplify", "security-review", "deep-research"]); // com efeitos: cobertos em testes próprios
 	for (const [name, def] of Object.entries(commands)) {
 		if (skip.has(name)) continue;
 		const c = mkCtx({ confirm: false });

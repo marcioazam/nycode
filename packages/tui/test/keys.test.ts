@@ -673,3 +673,33 @@ describe("parseKey", () => {
 		});
 	});
 });
+
+describe("matchesKey cache", () => {
+	it("answers per Kitty protocol state, the same as before caching", () => {
+		setKittyProtocolActive(false);
+		assert.strictEqual(matchesKey("\n", "enter"), true);
+		setKittyProtocolActive(true);
+		assert.strictEqual(matchesKey("\n", "enter"), false);
+		assert.strictEqual(matchesKey("\n", "shift+enter"), true);
+		setKittyProtocolActive(false);
+		assert.strictEqual(matchesKey("\n", "enter"), true);
+		assert.strictEqual(matchesKey("\n", "shift+enter"), false);
+	});
+
+	it("re-reads the environment for raw backspace", () => {
+		setKittyProtocolActive(false);
+		withEnvVars({ WT_SESSION: "1", SSH_CONNECTION: undefined, SSH_CLIENT: undefined, SSH_TTY: undefined }, () => {
+			assert.strictEqual(matchesKey("\x08", "ctrl+backspace"), true);
+		});
+		withEnv("WT_SESSION", undefined, () => {
+			assert.strictEqual(matchesKey("\x08", "ctrl+backspace"), false);
+			assert.strictEqual(matchesKey("\x08", "backspace"), true);
+		});
+	});
+
+	it("matches long input (paste) without caching it", () => {
+		const paste = "x".repeat(200);
+		assert.strictEqual(matchesKey(paste, "enter"), false);
+		assert.strictEqual(matchesKey("a", "a"), true);
+	});
+});

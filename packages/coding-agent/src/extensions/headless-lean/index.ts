@@ -42,7 +42,7 @@ type Debug = (message: string) => void;
 const CWD = /<cwd>\n[^\n]*\n<\/cwd>\n\n?/;
 // o core monta cada contrato como <project_instructions path="..."> ...conteúdo... </project_instructions> e a lista de
 // skills como seção <skills> (introdução + <available_skills>); ver system-prompt.ts e skills.ts do core.
-// o título é `(pi)` no nycode-harness e `(nycode)` no contrato embarcado; os dois valem
+// o título `(pi)` do contrato antigo e `(nycode)` do contrato embarcado valem os dois
 const CONTRACT =
 	/(<project_instructions path="[^"]*">\n)# Working contract \((?:pi|nycode)\)\n[\s\S]*?(\n<\/project_instructions>)/;
 const SKILLS =
@@ -124,7 +124,7 @@ export function trimDocs(payload: unknown): unknown {
 }
 
 /**
- * Texto do contrato headless: `CLAUDE.headless.md` do diretório do agente, se existir (paridade com o nycode-harness), senão
+ * Texto do contrato headless: `CLAUDE.headless.md` do diretório do agente, se existir (paridade com o Nycode), senão
  * `instructions/headless.md` embarcado (K7). undefined, com motivo no debug, se faltar ou estiver vazio.
  */
 function floorContract(debug: Debug): string | undefined {

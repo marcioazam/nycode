@@ -1,5 +1,5 @@
 /**
- * /claude-copy (de `/copy <args>`; `/copy` sem argumentos segue nativo): N-ésima resposta, texto, seletor de blocos.
+ * /copy-pick (de `/copy <args>`; `/copy` sem argumentos segue nativo): N-ésima resposta, texto, seletor de blocos.
  * Extração de blocos própria (autocontida: o layout instalado usa symlinks por arquivo; dev-commands/copy-code.ts tem a mesma regra para /copy-code).
  */
 
@@ -94,7 +94,7 @@ export async function copyCommand(args: string, ctx: Ctx, copy: Copier = default
 }
 
 export function registerCopy(nycode: ExtensionAPI, copy?: Copier): void {
-	nycode.registerCommand("claude-copy", {
+	nycode.registerCommand("copy-pick", {
 		description: "Copia a N-ésima resposta | text [N] | blocks [N] (seletor de blocos)",
 		handler: async (a, ctx) => copyCommand(a, ctx, copy),
 	});

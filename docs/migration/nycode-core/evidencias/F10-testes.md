@@ -193,7 +193,7 @@ SUPERADOS pela remoção do widget.
    deixar os falsos no processo.
 
    Nome com "pi": `pi_harness_agent.py` e `pi_vanilla_api_agent.py` ficam com o nome porque descrevem o produto medido
-   (os braços `ny-pi` e `pi-vanilla`), caso previsto em 05 §6 (D-31: "Pi Vanilla" e "ny-pi" nomeiam a referência do
+   (os braços `ny-pi` e `pi-vanilla`), caso previsto em 05 §6 (D-31: "Pi Agent" e "ny-pi" nomeiam a referência do
    benchmark). O código também cita `~/.pi/agent` e `pi --print`, que é o produto medido, e não pode ser renomeado.
 2. `structure.py`: `git mv` sem alteração, depois caminhos e nomes (cabeçalho, pinos do `VENDORED` do pi-code saem, o
    verificador do `diagram-design` aponta para o checkout), tipos para `mypy --strict`, `ruff format` e o teste sem

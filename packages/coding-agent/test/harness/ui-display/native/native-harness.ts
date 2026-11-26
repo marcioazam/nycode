@@ -15,7 +15,13 @@ const CLI = process.env.NYCODE_E2E_CLI ?? fileURLToPath(new URL("../../../../dis
 const ENTRY = fileURLToPath(new URL("./native-entry.ts", import.meta.url));
 // Short: the tmux socket path of a private server must fit sun_path.
 const root = mkdtempSync(join("/tmp", "nyd-"));
-afterAll(() => rmSync(root, { recursive: true, force: true }));
+// Each server's socket lives in root: tmux leaves the socket file behind after kill-server, and a test that failed before
+// close() would leave its server (and the CLI in it) running.
+const sockets: string[] = [];
+afterAll(() => {
+	for (const sock of sockets) spawnSync("tmux", ["-S", sock, "kill-server"], { stdio: "ignore" });
+	rmSync(root, { recursive: true, force: true });
+});
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export const lines = (t: string) => t.split("\n");
@@ -85,9 +91,11 @@ export async function launch(name: string, cfg: Cfg, rows = 40) {
 		JSON.stringify({ theme: "tokyo-night", tuiMode: "fullscreen", packages: [], quietStartup: true, statusLine }),
 	);
 	const S = `nyd-${process.pid}-${name}`;
+	const sock = join(root, `${name}.sock`);
+	sockets.push(sock);
 	const clicks: string[] = [];
 	const tmux = (args: string[], opts: object = {}) =>
-		spawnSync("tmux", ["-L", S, "-f", "/dev/null", ...args], {
+		spawnSync("tmux", ["-S", sock, "-f", "/dev/null", ...args], {
 			env: { PATH: process.env.PATH ?? "", HOME: join(dir, "home") },
 			...opts,
 		});

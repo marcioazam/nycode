@@ -362,6 +362,35 @@ test("source: send outcomes, list and transcript", () => {
 	assert.deepEqual(sourceMod.fleetStatusLines(), []);
 });
 
+test("source: list() reads the records once while the dir is unchanged and settled, again after a write or POLL_MS", () => {
+	const dir = mainFleet();
+	store.writeRecord(dir, baseRecord(id(60)));
+	const src = sourceMod.createFleetSource({ resume: () => false });
+	const readdir = vi.spyOn(store, "readRecords");
+	try {
+		assert.equal(src.list().length, 1);
+		assert.equal(src.list().length, 1, "fresh mtime: read again (the kernel clock is coarse)");
+		assert.equal(readdir.mock.calls.length, 2);
+		const later = Date.now() + 200;
+		vi.spyOn(Date, "now").mockReturnValue(later);
+		const first = src.list();
+		assert.equal(src.list(), first, "settled and unchanged: same array, no read");
+		assert.equal(readdir.mock.calls.length, 2);
+		store.writeRecord(dir, baseRecord(id(61)));
+		assert.equal(src.list().length, 2, "a write moves the dir mtime");
+		vi.spyOn(Date, "now").mockReturnValue(later + 1500);
+		src.list();
+		const reads = readdir.mock.calls.length;
+		src.list();
+		assert.equal(readdir.mock.calls.length, reads);
+		vi.spyOn(Date, "now").mockReturnValue(later + 3000);
+		src.list();
+		assert.equal(readdir.mock.calls.length, reads + 1, "POLL_MS bounds the reuse (orphans show up)");
+	} finally {
+		vi.restoreAllMocks();
+	}
+});
+
 test("a resume the user sent from the panel says so in the completion notice (fails before: the model saw a run it never resumed)", () => {
 	const run = { id: "bg-0000abcd", agent: "Explore", state: "done", turns: 2, output: "resumed-ok" };
 	const plain = registryText.backgroundCompletionText(run);

@@ -134,7 +134,7 @@ def test_arm_api_key_mode(tmp_path: Path) -> None:
     assert "wrk_1" in models
 
 
-# sha256 of mcp.json.example of nycode-harness at e4f8729, the file its install.sh copies into the stage as mcp.json.
+# sha256 of mcp.json.example of Nycode at e4f8729, the file its install.sh copies into the stage as mcp.json.
 HARNESS_MCP_EXAMPLE_SHA = (
     "faf18e46c15a45b05b525859a4572ca446820dd070d5d2a72fe548bcfc826cc4"
 )

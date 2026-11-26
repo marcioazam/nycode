@@ -64,7 +64,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F3-06 Job `merge-policy` presente (D-07).
 - [x] C-F3-07 `bench/` no destino; testes do bench passam; `bench/suites` fora dos lints.
 - [x] C-F3-08 Tier `smoke` criado (D-27) e modo de paridade (D-28); braço `nycode` definido em `bench/arms.toml`; `bench run --arm nycode --tier smoke` roda.
-- [x] C-F3-09 Braço temporário `nycode-harness@1.6.0` medido (D-25). Prova: `runs.jsonl` e veredito guardados. Feito sob a D-39, sem modelo: contrato 25 ok/2 falhas/4 pulados, caso a caso igual ao `nycode-harness` sobre o pi 1.5.2; 7 de 7 cenários de falha; velocidade e plano `--dry-run`. Sem `runs.jsonl` nem veredito de gate (exigem modelo, D-29), ver [F10-paridade](evidencias/F10-paridade.md).
+- [x] C-F3-09 Braço temporário `nycode-harness@1.6.0` medido (D-25). Prova: `runs.jsonl` e veredito guardados. Feito sob a D-39, sem modelo: contrato 25 ok/2 falhas/4 pulados, caso a caso igual ao `Nycode` sobre o pi 1.5.2; 7 de 7 cenários de falha; velocidade e plano `--dry-run`. Sem `runs.jsonl` nem veredito de gate (exigem modelo, D-29), ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F3-10 Verificador `bench-pr` apontado para o Nycode; classifica mudança não funcional (D-21). Prova: status em um PR de documentação. Feito sob a D-39: `bench/run.py affects` classifica o PR #285 (`f2e5fb7b5`, só `docs/`) como `non-functional` e o status que seria publicado (`success`, "não funcional, sem rodada") foi mostrado em `--dry-run`; **nenhum status foi publicado** (o poster é da máquina do dono, P-16), ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F3-11 PR de teste com os 10 checks obrigatórios verdes. Prova: `gh pr checks`.
 - [x] C-F3-12 Ruleset `main` criado e ativo; JSON versionado em `.github/rulesets/main.json` igual ao aplicado. Prova: comparação.
@@ -106,7 +106,7 @@ Identificador: `C-F<fase>-<n>`. A coluna "prova" diz o que tem de ser observado.
 - [x] C-F6-11 `subagent` registrada como embutida.
 - [x] C-F6-12 `plan-mode` embutida; `plan-done-rule.test.ts` e `plan-sota.test.ts` verdes.
 - [x] C-F6-13 `goal` embutida, sem portão de confiança; `goal.test.ts` e `goal-lifecycle.test.ts` verdes.
-- [x] C-F6-14 Suítes `bench/suites/plan` e `multi` não inferiores à referência. Feito sob a D-39, sem modelo e só até onde há camada: `plan` com os casos `plano/*` (2 de 2 ok, iguais ao `nycode-harness`) e `/plan`; `multi` sem camada de comportamento sem modelo, só o registro de `/agents`, `/tasks` e `/team` e os testes de F6 (C-F6-01 a 10, 15). O acerto das duas suítes não foi medido, ver [F10-paridade](evidencias/F10-paridade.md).
+- [x] C-F6-14 Suítes `bench/suites/plan` e `multi` não inferiores à referência. Feito sob a D-39, sem modelo e só até onde há camada: `plan` com os casos `plano/*` (2 de 2 ok, iguais ao Nycode (`nycode-harness`)) e `/plan`; `multi` sem camada de comportamento sem modelo, só o registro de `/agents`, `/tasks` e `/team` e os testes de F6 (C-F6-01 a 10, 15). O acerto das duas suítes não foi medido, ver [F10-paridade](evidencias/F10-paridade.md).
 - [x] C-F6-15 Aninhamento até a profundidade 3 e limite de 4 escritores preservados. Prova: teste de aninhamento.
 - [x] C-F6-16 `scripts/check-patch-stack.sh` e `claude-home/patches/pi-code/` removidos de `import/`.
 - [x] C-F6-17 Primeira sincronização com o upstream depois de F6 feita e medida.

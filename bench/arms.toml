@@ -23,8 +23,8 @@ version = "pi 1.5.2 + pi-code 1.7.0 + this checkout"
 effort = "settings.json"     # from the owner overlay
 profile = "throwaway HOME: install.sh --link --apply of this tree + overlay.list; hash in .overlay-sha"
 
-# Temporary arm (D-25, 09 §2.3): the nycode-harness of this tree on pi 1.6.0, to separate the effect of the base from
-# the effect of the migration. Same script as `nycode-harness`; `env` below reaches it (run.py exports it). It needs a pi 1.6.0
+# Temporary arm (D-25, 09 §2.3): Nycode from this tree on pi 1.6.0, to separate the effect of the base from
+# the effect of the migration. Same script as the arm above; `env` below reaches it (run.py exports it). It needs a pi 1.6.0
 # managed install (BENCH_PI_INSTALL_DIR); without the two pi 1.5.2 core patches (bin/pi skips them on another version).
 # Leaves with F10.
 [nycode-harness-pi160]

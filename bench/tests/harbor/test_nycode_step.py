@@ -68,7 +68,7 @@ def test_nycode_step_bundles_the_stage_and_runs_the_nycode_agent(
         assert "-a nycode_agent:NycodeAgent" in argv and "pi_harness_agent" not in argv
         assert (
             env == f"{bundle}|{hd}|tok|"
-        )  # the nycode-harness bundle variable stays unset
+        )  # the Nycode bundle variable stays unset
 
 
 def test_nycode_step_refuses_without_stage(tmp_path: Path, monkeypatch: MP) -> None:

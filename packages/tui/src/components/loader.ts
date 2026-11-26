@@ -13,11 +13,16 @@ const DEFAULT_INTERVAL_MS = 80;
 
 /**
  * Loader component that updates with an optional spinning animation.
+ *
+ * The frame comes from the clock, so any render shows the current one. The timer wakes half a frame after each
+ * boundary and asks for a render only when no other render showed the new frame yet: next to another animation
+ * (a status shimmer at 30 fps) the spinner adds no frames of its own.
  */
 export class Loader extends Text {
 	private frames = [...DEFAULT_FRAMES];
 	private intervalMs = DEFAULT_INTERVAL_MS;
 	private currentFrame = 0;
+	private startedAt = 0;
 	private intervalId: NodeJS.Timeout | null = null;
 	private ui: TUI | null = null;
 	private renderIndicatorVerbatim = false;
@@ -41,17 +46,19 @@ export class Loader extends Text {
 	}
 
 	render(width: number): string[] {
+		this.syncFrame();
 		return ["", ...super.render(width)];
 	}
 
 	start(): void {
+		this.startedAt = performance.now() - this.currentFrame * this.intervalMs;
 		this.updateDisplay();
 		this.restartAnimation();
 	}
 
 	stop(): void {
 		if (this.intervalId) {
-			clearInterval(this.intervalId);
+			clearTimeout(this.intervalId);
 			this.intervalId = null;
 		}
 	}
@@ -79,23 +86,43 @@ export class Loader extends Text {
 		if (this.frames.length <= 1) {
 			return;
 		}
-		this.intervalId = setInterval(() => {
-			this.currentFrame = (this.currentFrame + 1) % this.frames.length;
-			this.updateDisplay();
-		}, this.intervalMs);
+		const schedule = (): void => {
+			const elapsed = performance.now() - this.startedAt;
+			const delay = (Math.floor(elapsed / this.intervalMs) + 1.5) * this.intervalMs - elapsed;
+			this.intervalId = setTimeout(() => {
+				if (this.syncFrame()) this.ui?.requestRender();
+				schedule();
+			}, delay);
+		};
+		schedule();
+	}
+
+	/** Moves to the frame the clock says; true when it changed (nothing showed it yet). */
+	private syncFrame(): boolean {
+		if (!this.intervalId) return false;
+		const frame = Math.floor((performance.now() - this.startedAt) / this.intervalMs) % this.frames.length;
+		if (frame === this.currentFrame) return false;
+		this.currentFrame = frame;
+		this.updateText();
+		return true;
 	}
 
 	protected getRenderedIndicator(): string {
+		this.syncFrame();
 		const frame = this.frames[this.currentFrame] ?? "";
 		return this.renderIndicatorVerbatim ? frame : this.spinnerColorFn(frame);
 	}
 
 	private updateDisplay(): void {
-		const renderedFrame = this.getRenderedIndicator();
-		const indicator = renderedFrame.length > 0 ? `${renderedFrame} ` : "";
-		this.setText(`${indicator}${this.messageColorFn(this.message)}`);
+		this.updateText();
 		if (this.ui) {
 			this.ui.requestRender();
 		}
+	}
+
+	private updateText(): void {
+		const renderedFrame = this.getRenderedIndicator();
+		const indicator = renderedFrame.length > 0 ? `${renderedFrame} ` : "";
+		this.setText(`${indicator}${this.messageColorFn(this.message)}`);
 	}
 }

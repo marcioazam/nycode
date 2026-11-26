@@ -215,12 +215,43 @@ function subscribe(listener: () => void): () => void {
 	};
 }
 
+const LIST_SETTLE_NS = 100_000_000n;
+
+/** The panel asks for the list several times per frame: reading every record each time put readdir and JSON.parse in the
+ * render path (perf 2026-11-24). Records are written by rename, so the dir mtime moves on every write; a list is reused
+ * while the mtime is unchanged and older than the coarse kernel clock can blur (LIST_SETTLE_NS), and for at most POLL_MS,
+ * the fallback cadence that also bounds how late an orphaned run (owner pid gone, no write) shows up. */
+function cachedList(): () => RunRecord[] {
+	let cache: { dir: string; mtimeNs: bigint; at: number; records: RunRecord[] } | undefined;
+	return () => {
+		const dir = currentFleetDir();
+		if (!dir) return [];
+		let mtimeNs: bigint;
+		try {
+			// throwIfNoEntry: no fleet dir is the usual case, and an ENOENT error per call built a stack trace per frame.
+			const st = fs.statSync(dir, { bigint: true, throwIfNoEntry: false });
+			if (!st) return [];
+			mtimeNs = st.mtimeNs;
+		} catch {
+			return [];
+		}
+		const now = Date.now();
+		if (
+			cache?.dir === dir &&
+			cache.mtimeNs === mtimeNs &&
+			now - cache.at < POLL_MS &&
+			BigInt(now) * 1_000_000n - mtimeNs > LIST_SETTLE_NS
+		)
+			return cache.records;
+		const records = readRecords(dir);
+		cache = { dir, mtimeNs, at: now, records };
+		return records;
+	};
+}
+
 export function createFleetSource(deps: FleetSourceDeps): FleetSource {
 	return {
-		list: () => {
-			const dir = currentFleetDir();
-			return dir ? readRecords(dir) : [];
-		},
+		list: cachedList(),
 		readTranscript: (id, from) => {
 			const dir = currentFleetDir();
 			return dir ? readTranscript(dir, id, from) : { items: [], next: from };

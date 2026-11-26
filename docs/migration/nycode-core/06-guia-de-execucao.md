@@ -22,8 +22,8 @@ Cada "não verificado" é um item aberto. **[AUTORIZAÇÃO]** marca ação que e
 | jq, patch, rg, gitleaks, trufflehog | recentes | `command -v` de cada | presentes |
 
 ```bash
-export ORIG=/home/marcio/source/ny-pi                 # origem: ler SÓ com git -C "$ORIG" show origin/main:<caminho>
-export DEST=/home/marcio/source/nycode.wt/migration   # worktree do destino
+export ORIG="$HOME/source/ny-pi"                 # origem: ler SÓ com git -C "$ORIG" show origin/main:<caminho>
+export DEST="$HOME/source/nycode.wt/migration"   # worktree do destino
 export UP=marcioazam/nycode ORIGREPO=marcioazam/ny-pi
 ```
 
@@ -50,7 +50,7 @@ O working tree de `$ORIG` está sujo (351 entradas): nunca é lido nem tocado.
 
 ```markdown
 # Evidência F<n>: <nome>
-## Objetivo | SHAs (nycode main antes, nycode-harness congelado, PRs com sha de merge)
+## Objetivo | SHAs (nycode main antes, Nycode congelado, PRs com sha de merge)
 ## Comandos e saídas (com código de saída) | Itens do checklist fechados (12-checklist-mestre.md, com prova)
 ## Desvios (o que diferiu, por quê, quem autorizou) | Não verificado
 ```
@@ -223,7 +223,7 @@ saída do `git log --follow`, os quatro arquivos editados. **Reversão:** `git r
 6. `docs: restore nycode logo and update README` (K14 em F4):
 
    ```bash
-   mkdir -p docs/assets && R=/home/marcio/source/nycode-cli
+   mkdir -p docs/assets && R="$HOME/source/nycode-cli"
    git -C $R show 9ea437bf7:docs/assets/nycode-pixel.svg > docs/assets/nycode-pixel.svg
    git -C $R show 9ea437bf7:docs/assets/nycode-wordmark-ansi.txt > docs/assets/nycode-wordmark-ansi.txt
    sha256sum docs/assets/nycode-pixel.svg   # esperado 7269f242f8f7c6dca765f8a780cf72f3a0d471a40e41e2524fc7f705328a9dd2
@@ -799,9 +799,9 @@ serviço, não verificado). A remoção do Nix e o `release.mjs` novo revertem p
    `bench-pr` (anexo A §6); `bench-pr` é postado localmente, então o poller fica ligado até o merge.
 
    ```markdown
-   > **Este repositório está arquivado.** O nycode-harness foi incorporado ao core do
+   > **Este repositório está arquivado.** O Nycode foi incorporado ao core do
    > [nycode](https://github.com/marcioazam/nycode). Baixe o binário em <https://github.com/marcioazam/nycode/releases>.
-   > **This repository is archived.** nycode-harness now lives in the core of nycode.
+   > **This repository is archived.** Nycode now lives in the core of nycode.
    ```
 
    Depois do merge: `gh api -X PATCH repos/$ORIGREPO -F archived=true` (campo: não verificado; alternativa

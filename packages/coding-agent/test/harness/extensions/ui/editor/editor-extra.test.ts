@@ -212,23 +212,16 @@ test("onSubmit: alias reescrito no submit, args preservados, texto comum intacto
 	e.onSubmit("/hotkeys");
 	e.onSubmit("olá /config");
 	e.onSubmit("/registrado");
-	assert.deepEqual(submitted, [
-		"/resume",
-		"/claude-effort high",
-		"/session",
-		"/hotkeys",
-		"olá /config",
-		"/registrado",
-	]);
+	assert.deepEqual(submitted, ["/resume", "/effort high", "/session", "/hotkeys", "olá /config", "/registrado"]);
 	assert.equal(notes.length, 1); // /cost avisa; /effort usa o handler completo de níveis/status
 });
 
 test("onSubmit: config com argumentos usa o handler real; argumento sem equivalente continua recusado", () => {
 	const { e, submitted, notes } = compatEditor();
 	e.onSubmit("/config theme=dark");
-	assert.deepEqual(submitted, ["/claude-config theme=dark"]);
+	assert.deepEqual(submitted, ["/config-set theme=dark"]);
 	e.onSubmit("/continue inexistente");
-	assert.deepEqual(submitted, ["/claude-config theme=dark"]);
+	assert.deepEqual(submitted, ["/config-set theme=dark"]);
 	assert.equal(e.getText(), "/continue inexistente");
 	assert.match(notes[0]!, /\/resume/);
 });
@@ -353,15 +346,15 @@ test("alias reescrito entra no histórico com a grafia ORIGINAL (↑/Ctrl+P); re
 	e.handleInput("\x10"); // Ctrl+P → ↑ nativo
 	assert.equal(e.getText(), "/config"); // o comando nativo /settings volta ao app sem passar pelo histórico do editor
 	e.setText("");
-	e.onSubmit("/effort high");
+	e.onSubmit("/theme escuro");
 	e.setText("");
 	e.handleInput("\x10");
-	assert.equal(e.getText(), "/effort high"); // argumentos preservados, grafia original
+	assert.equal(e.getText(), "/theme escuro"); // argumentos preservados, grafia original
 	e.setText("");
 	e.onSubmit("/continue inexistente"); // recusado: nada roda, nada é lembrado
 	e.setText("");
 	e.handleInput("\x10");
-	assert.equal(e.getText(), "/effort high");
+	assert.equal(e.getText(), "/theme escuro");
 });
 
 test("histórico do alias só depois que o handler assíncrono termina; falha do handler não o grava", async () => {

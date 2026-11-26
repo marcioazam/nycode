@@ -1,6 +1,6 @@
 # Suítes S4 (plan), S5 (multi) e S8 (hard)
 
-Avaliam o repositório `marcioazam/ny-pi` (braço `nycode-harness`) contra as referências vanilla. Neutras de capacidade: medem o resultado (testes ocultos), nunca o formato de plano ou o uso de subagentes.
+Avaliam o repositório `marcioazam/ny-pi` (braço `Nycode`) contra as referências vanilla. Neutras de capacidade: medem o resultado (testes ocultos), nunca o formato de plano ou o uso de subagentes.
 Plano e decisões: `docs/bench/pi-harness-ci-2026-11-13.md` (D10, D11, D14).
 
 - `plan/`: 12 casos. 8 `outcome` multi-passo (refatoração, migração de formato, bug a rastrear) e 4 `ask`
@@ -18,7 +18,7 @@ Plano e decisões: `docs/bench/pi-harness-ci-2026-11-13.md` (D10, D11, D14).
   chamada" onde o SPEC diz "só esses agregados", tipo de retorno, nome de dia e recuo que o SPEC não fixa,
   ordem de chaves, atributo interno). Cada correção só afrouxa o que o texto não pede; o oracle passa e o
   repositório inicial falha em todos os casos.
-  Limite medido: com Sonnet 5.5 a suíte também saturou em acerto (nycode-harness e Claude Code 36 de 36, pi puro 34 de
+  Limite medido: com Sonnet 5.5 a suíte também saturou em acerto (Nycode e Claude Code 36 de 36, pi puro 34 de
   36), então ela separa custo, turnos e tempo, não acerto.
 
 ## Contrato de caso

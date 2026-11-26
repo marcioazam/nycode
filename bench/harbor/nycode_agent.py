@@ -27,7 +27,7 @@ _AGENT_ENV = {
     "NYCODE_SKIP_VERSION_CHECK": "1",  # same as bench/arms/nycode: no update check in a measured run
 }
 
-# curl and tar for nvm and the bundle (the bundle needs no python3 or patch, unlike the nycode-harness); fails loudly.
+# curl and tar for nvm and the bundle (the bundle needs no python3 or patch, unlike the pre-migration stage); fails loudly.
 _ROOT_DEPS = r"""
 set -e
 need=""

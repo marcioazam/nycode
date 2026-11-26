@@ -201,7 +201,7 @@ These keys only exist, validate, and are read here; the built-in extensions that
 | `statusLine` | object | Embedded claude-hud launcher (below) | none | `{ "type": "command", "command": "...", "padding": 0 }`; status line command. An empty `command` turns the status line off. |
 | `env` | `Record<string, string>` | `{ "EIO_BACKEND": "posix", "PONYTAIL_QUIET_STARTUP": "1", "PONYTAIL_SUBAGENT_MATCHER": "<writer subagents>" }` | none | Variables exported to the nycode process, so to hooks and the status line command. A value here overrides the default. |
 
-`quietStartup`, `defaultProjectTrust`, `retry`, and `shellCommandPrefix` above carry the nycode-harness defaults.
+`quietStartup`, `defaultProjectTrust`, `retry`, and `shellCommandPrefix` above carry the Nycode defaults.
 
 ### `local.env`
 

@@ -23,7 +23,7 @@ HOME = Path.home()
 RESOURCES = Path(__file__).resolve().parents[2]
 AGENTS = RESOURCES / "agents"
 SKILLS = RESOURCES / "skills"
-# Skills that agents name but nycode does not embed (nycode-harness kept them only in the owner's profile);
+# Skills that agents name but nycode does not embed (Nycode kept them only in the owner's profile);
 # a user skill directory may provide them, so they are not reported as missing.
 USER_SKILLS = {"evidence-research", "reliability-operations"}
 CACHE = Path("/tmp/mcp-list.json")

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Final gate of the ui task (proof that nycode looks like nycode-harness). Read-only outside mktemp. Exits 0 only if all pass.
-# Converted from the nycode-harness gate (claude-home/bin/tests/nycode-ui-final-gate.sh, 14 checks). Map in README.md. Gone:
+# Final gate of the ui task (proof that the build looks like Nycode). Read-only outside mktemp. Exits 0 only if all pass.
+# Converted from the Nycode gate (claude-home/bin/tests/nycode-ui-final-gate.sh, 14 checks). Map in README.md. Gone:
 #  4 hud: claude-hud is the owner's external dependency; its tests move with F8 (R13/R14).
 #  6 hooks, 6 dispatch: python hook tests move with F8 (R10) and run in run-static's pytest.
 #  7 bash -n wrapper: bin/nycode is absorbed by the core (K01); check 13 runs the built binary instead.

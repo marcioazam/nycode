@@ -32,7 +32,7 @@ test-first, do not claim a red/green sequence; require the relevant assertion ID
 risk and research requirements; expectations come from the task, not its receipt. Compare actual MCP outputs and chronological test logs before
 accepting a receipt; syntactic diversity or declared red failure is not proof.
 
-Model-behavior evals of the nycode harness go through the `pelo-em-ovo` skill; live tasks need frozen workspace fixtures, (optional)
+Model-behavior evals of the Nycode go through the `pelo-em-ovo` skill; live tasks need frozen workspace fixtures, (optional)
 independent graders and an approved budget. Telemetry already collected from nycode sessions is summarized offline by
 `python3 ${NYCODE_RESOURCES}/bin/telemetry/nycode_telemetry.py`; keep such a summary scoped to the supplied
 measurements: it does not certify collection, billing, completion or upstream model identity.

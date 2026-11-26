@@ -369,7 +369,8 @@ type OverlayFocusRestorePolicy = "clear" | "preserve";
 export interface ChildLines {
 	readonly width: number;
 	readonly children: readonly Component[];
-	readonly parts: readonly (readonly string[])[];
+	/** Refreshed in place with each frame's content-equal child output, so the next frame compares references. */
+	readonly parts: (readonly string[])[];
 	readonly lines: string[];
 }
 
@@ -395,15 +396,25 @@ export function renderChildLines(
 	width: number,
 	previous: ChildLines | undefined,
 ): ChildLines {
-	const parts = children.map((child) => child.render(width));
-	if (
-		previous?.width === width &&
-		previous.children.length === children.length &&
-		children.every(
-			(child, index) => child === previous.children[index] && sameLines(parts[index]!, previous.parts[index]!),
-		)
-	) {
-		return previous;
+	const reusable = previous?.width === width && previous.children.length === children.length ? previous : undefined;
+	// Allocated only from the first changed child: an unchanged container (most of a transcript, every frame of an
+	// animation) renders its children without building a parts array.
+	let parts: (readonly string[])[] | undefined;
+	for (let index = 0; index < children.length; index++) {
+		const child = children[index]!;
+		const part = child.render(width);
+		if (parts) {
+			parts.push(part);
+		} else if (reusable && child === reusable.children[index] && sameLines(part, reusable.parts[index]!)) {
+			reusable.parts[index] = part;
+		} else {
+			parts = reusable ? reusable.parts.slice(0, index) : [];
+			parts.push(part);
+		}
+	}
+	if (!parts) {
+		if (reusable) return reusable;
+		parts = [];
 	}
 	const lines: string[] = [];
 	for (const part of parts) {

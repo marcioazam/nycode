@@ -26,6 +26,7 @@ import {
 	stickyLinhas,
 	stickyRect,
 	stickyStyle,
+	type UserTest,
 	userMatcher,
 } from "./sticky.ts";
 
@@ -36,7 +37,7 @@ function attach(
 	tui: TUI,
 	theme: StickyTheme & StickyLabelTheme,
 	style: (s: string) => string,
-	isUser: () => (zone: string) => boolean,
+	isUser: () => UserTest,
 	pad: number,
 ): () => void {
 	const opts: OverlayOptions = { row: 0, col: 0, width: 1, nonCapturing: true };

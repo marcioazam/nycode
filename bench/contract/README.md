@@ -29,13 +29,13 @@ redirecionado para um servidor local falso (`fake_api.py`), que devolve um rotei
 - O mapa está em `LAYOUTS` (`check.py`). O braço `nycode` recebe `NYCODE_OFFLINE=1` (os demais, `PI_OFFLINE=1`); o
   `NYCODE_CODING_AGENT_DIR` é exportado pelo próprio `bench/arms/nycode`.
 - O stage do `nycode` monta `mcp.json` copiando `packages/coding-agent/examples/config/mcp.json` sem alteração (marcadores
-  `${VAR}`, sem segredo, nunca o arquivo do dono). É o mesmo arquivo, byte a byte, que o `install.sh` do nycode-harness copia do
+  `${VAR}`, sem segredo, nunca o arquivo do dono). É o mesmo arquivo, byte a byte, que o `install.sh` do Nycode copia do
   `mcp.json.example` (e4f8729), então os dois braços são medidos com as mesmas declarações (D-40): 6 servidores, nenhum com
   `exposure` nem `enabled`. Sem `exposure`, a extensão `mcp` ativa o `codemode` a partir da configuração, antes de qualquer
   servidor conectar; por isso o inventário tem a ferramenta `codemode` nos dois braços, com ou sem rede.
 - Os servidores `npx` sobem na partida do `pi`/`nycode`: sem rede eles só falham (o `pi -p` segue). Fora de um sandbox
   sem rede o `npx` baixa pacotes do npm; rode o verificador num sandbox de rede fechada quando isso importar.
-- Referência `nycode-harness`: `import/ny-pi` não tem `bin/pi` (F5), `install.sh` nem `npm/` (F11). Aponte `BENCH_NYCODE_HARNESS_SRC` para um checkout do nycode-harness (ou um
+- Referência Nycode (`nycode-harness`): `import/ny-pi` não tem `bin/pi` (F5), `install.sh` nem `npm/` (F11). Aponte `BENCH_NYCODE_HARNESS_SRC` para um checkout do Nycode (ou um
   `git archive` extraído; sem `.git` ali, defina também `BENCH_STAGE`). Sem a variável o braço sai 2 com a causa.
 - Medição em rede fechada: monte o stage fora do sandbox (`BENCH_STAGE=<dir> bench/arms/<braço> --version`; o build
   precisa de npm) e rode o verificador dentro de um sandbox sem rede com o mesmo `BENCH_STAGE`. `BENCH_STAGE` que
@@ -102,7 +102,7 @@ python3 bench/contract/speed.py --arms nycode-harness,pi-vanilla --reps 5 --cold
   novo e diretório temporário novo a cada execução, sem aquecimento. O cache de transpilação das extensões (jiti)
   fica em `<node_modules ao lado do arquivo>/.cache/jiti` ou, sem ele, em `$TMPDIR/jiti`; o medidor aponta
   `TMPDIR` para um diretório próprio, então o frio começa sem cache e o quente reaproveita o dele. Nenhum cache
-  do pi vanilla é apagado (não tem extensões).
+  do Pi Agent é apagado (não tem extensões).
 - `claude-vanilla` também roda (`ANTHROPIC_BASE_URL` para o servidor falso); o token é um valor falso gravado em
   um arquivo temporário (`BENCH_CC_CREDENTIALS`), que só alcança `127.0.0.1`: nenhum gasto de API. Ele grava a
   sessão em `BENCH_CC_VANILLA_DIR`.

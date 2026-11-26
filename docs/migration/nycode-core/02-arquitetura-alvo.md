@@ -26,14 +26,14 @@ tabela, e registre a costura em [08](08-sincronizacao-upstream.md#costuras).
 ```text
 nycode/
 ├── .github/                    regras e workflows unificados (04, 07)
-├── bench/                      benchmark vindo do nycode-harness (Python), braço `nycode`
+├── bench/                      benchmark vindo do Nycode (Python), braço `nycode`
 ├── docs/
 │   ├── assets/                 nycode-pixel.svg, nycode-wordmark-ansi.txt
 │   ├── bench/                  RUNBOOK e linhas de base
 │   ├── fork/                   registro do fork e política de sincronização
 │   ├── harness/                documentos vindos de claude-home/docs
 │   ├── migration/nycode-core/   este plano e as evidências
-│   └── specs/                  especificações 0001-0009 do nycode-harness
+│   └── specs/                  especificações 0001-0009 do Nycode
 ├── packages/
 │   ├── coding-agent/
 │   │   ├── resources/          N3 (novo)
@@ -51,7 +51,7 @@ nycode/
 │   │   │   │   └── settings-*.ts  + chaves do harness (N1)
 │   │   │   ├── extensions/     N2: uma pasta por extensão embutida (seção 3)
 │   │   │   └── migrations/from-pi.ts   importador de ~/.pi/agent (N1)
-│   │   └── test/harness/       testes portados do nycode-harness
+│   │   └── test/harness/       testes portados do Nycode
 │   ├── mcp/src/transports/stdio.ts     STDIN_CLOSE_GRACE_MS = 100 (N1)
 │   └── tui/                    API pública para o que hoje é campo interno (N1)
 ├── scripts/

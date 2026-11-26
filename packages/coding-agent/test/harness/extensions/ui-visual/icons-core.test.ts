@@ -1,4 +1,4 @@
-// Ports the pre-migration harness: extensions/ui-visual/test/icons.test.ts to vitest. The nycode-harness env switches for the Nerd Font and the
+// Ports the pre-migration harness: extensions/ui-visual/test/icons.test.ts to vitest. The Nycode env switches for the Nerd Font and the
 // ASCII fallback became the terminal.nerdFont / terminal.asciiIcons keys (IconPrefs, resolved from env > settings > default).
 import assert from "node:assert/strict";
 import { test } from "vitest";

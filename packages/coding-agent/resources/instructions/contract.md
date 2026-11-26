@@ -55,7 +55,7 @@ Binding but not preloaded: `read` the file under `${NYCODE_RESOURCES}/rules/ref/
 - `research-and-tools.md`: before any web search, MCP or tool-route choice, codegraph lookup or `subagent` brief.
 - `delivery-and-orchestration.md`: before git delivery (commit, push, PR, merge), plan mode or a "plan first" request, choosing how much process a change needs (`sdd-workflow`), release or CI design, an architecture or dependency choice, designing retried, persistent or otherwise critical workflows, compaction or `/resume`, a findings list, an explicit delegated policy decision, or running subagents or `/goal`.
 - `docs-and-knowledge.md`: before choosing a spec mode or consulting or capturing knowledge in an optional vault.
-- `harness-economy.md`: before changing the nycode harness or a repository's harness.
+- `harness-economy.md`: before changing the Nycode or a repository's harness.
 
 ## Runtime
 

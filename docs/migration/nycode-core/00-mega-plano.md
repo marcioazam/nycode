@@ -198,7 +198,7 @@ Tamanho: P até 5 PRs, M até 15, G até 40, GG acima de 40. A ordem de grandeza
 
 ### F10. Paridade final e nova linha de base
 
-- Trabalho: rodar o gate completo (`tier full`) do braço `nycode` contra a referência guardada do nycode-harness; fechar as
+- Trabalho: rodar o gate completo (`tier full`) do braço `nycode` contra a referência guardada do Nycode; fechar as
   11 dimensões de avaliação; gravar a nova linha de base. Critério em
   [09](09-paridade-e-benchmark.md#criterio-de-paridade).
 - Saída: relatório de paridade assinado; `docs/bench/baseline-main/` regravado por PR.
@@ -243,7 +243,7 @@ F0 → F1 → F2 → F3 → F4 → F5 ─┬→ F6 ─┬→ F8 ─┐
    falha em linha nova ([D-41](11-decisoes-e-pendencias.md)).
 3. Todos os testes do harness Nycode têm um equivalente verde no Nycode, ou uma linha em
    [03](03-mapa-de-migracao.md) que justifica a remoção.
-4. Gate do benchmark: braço `nycode` não inferior à referência do nycode-harness em acerto, custo por tarefa não pior além da
+4. Gate do benchmark: braço `nycode` não inferior à referência do Nycode em acerto, custo por tarefa não pior além da
    margem definida em [09](09-paridade-e-benchmark.md).
 5. As 60 linhas (R01 a R60) da tabela de regras em [04](04-regras-do-repositorio.md) estão em "igual ou mais estrito".
 6. README sem logo do pi; `docs/assets/nycode-pixel.svg` com sha256
@@ -268,7 +268,7 @@ Registro completo e planos de reversão em [10-riscos-e-rollback.md](10-riscos-e
 
 | Papel | Quem | Responsabilidade |
 |---|---|---|
-| Dono | Marcio | Decisões de [11](11-decisoes-e-pendencias.md), autorizações (apagar ramos, arquivar, publicar o Release), aceite de fase |
+| Dono | Mantenedor do repositório | Decisões de [11](11-decisoes-e-pendencias.md), autorizações (apagar ramos, arquivar, publicar o Release), aceite de fase |
 | Orquestrador | sessão principal do agente | Divide em unidades, escreve os briefings, julga a evidência |
 | Executores | subagentes escritores | Um PR por unidade, com teste |
 | Revisor | `plan-reviewer`, `code-reviewer`, `security-reviewer` | Revisão por fase; segurança obrigatória em F4 e F8 |

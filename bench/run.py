@@ -6,7 +6,7 @@
   affects      functional|non-functional verdict of a PR diff (bench/classify/affects.py); bench-pr skips non-functional PRs
   post-status  publish the `bench-pr` commit status of a PR (L1: owner-authored PRs only)
   report       tables per suite and arm from rounds, used for the BASELINE
-  scoreboard   the owner's three goal rules (accuracy, cost ceiling, exception) of nycode-harness against reference rounds
+  scoreboard   the owner's three goal rules (accuracy, cost ceiling, exception) of Nycode against reference rounds
   evidence     per-run log paths, tool usage and cross-arm divergences (local only)
   probe        S6 offline capability probes (`<arm> --help` contains the flag)
 
@@ -44,7 +44,7 @@ NOT_VERIFIED_EXIT = 5
 MAX_ERROR_SHARE = (
     0.10  # a stage with more errored runs than this ends the round (infra, not a score)
 )
-# Arms that build a stage from this checkout (arms.toml `stage_prefix` names it; nycode-harness keeps the default).
+# Arms that build a stage from this checkout (arms.toml `stage_prefix` names it; Nycode keeps the default).
 STAGED_ARMS = ("nycode-harness", "nycode-harness-pi160", "nycode")
 STAGE_PREFIX = "bench-nycode-harness"
 Key = tuple[str, str, int]  # (suite, task_id, rep)
@@ -296,7 +296,7 @@ def _harbor_step(
             raise RuntimeError(f"{arm} stage for {short} not built; run the arm first")
         # Per-round path: arms running side by side must not overwrite one shared bundle.
         out.mkdir(parents=True, exist_ok=True)
-        # nycode ships the monorepo build and has its own bundle.sh and variable (09 §2.2); the nycode-harness arms ship ~/.pi.
+        # nycode ships the monorepo build and has its own bundle.sh and variable (09 §2.2); the pre-migration arms ship ~/.pi.
         script, var, name = (
             ("bundle.sh", "NYCODE_HARNESS_BUNDLE", "nycode-harness-bundle.tgz")
             if nyc

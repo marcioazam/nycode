@@ -26,9 +26,9 @@ python3 bench/faults/run.py --arms nycode-harness,nycode,pi-vanilla,claude-vanil
 python3 -m pytest bench/faults
 ```
 
-Exige o token OAuth dos braços vanilla (`BENCH_CC_CREDENTIALS`), que só é enviado a 127.0.0.1. O stage do `nycode-harness` e do `nycode`
+Exige o token OAuth dos braços vanilla (`BENCH_CC_CREDENTIALS`), que só é enviado a 127.0.0.1. O stage do Nycode (`nycode-harness`) e do `nycode`
 é construído como em `bench/contract/check.py` (`<stage>/.pi/agent` e `<stage>/.nycode/agent`, com `NYCODE_OFFLINE=1`
-para o `nycode`; a referência `nycode-harness` exige `BENCH_NYCODE_HARNESS_SRC`, ver `bench/contract/README.md`). `BENCH_STAGE` reaproveita um stage que você montou antes (o mesmo de `bench/contract/check.py`; um `bench-*` compartilhado é recusado):
+para o `nycode`; a referência Nycode (`nycode-harness`) exige `BENCH_NYCODE_HARNESS_SRC`, ver `bench/contract/README.md`). `BENCH_STAGE` reaproveita um stage que você montou antes (o mesmo de `bench/contract/check.py`; um `bench-*` compartilhado é recusado):
 necessário em sandbox sem rede, onde o braço não consegue montar o stage. Ele é de um braço só: passe um único `--arms`.
 Exit 0 = medido (falha de braço é resultado); 2 = argumento inválido.
 Limite: k=1 por padrão e um cenário por execução; a falha é pontual (primeiro pedido), não persistente.

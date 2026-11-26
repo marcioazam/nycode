@@ -36,8 +36,8 @@ test('normal: duas linhas se couber, três no fallback; sem cor de alerta, com b
   assert.equal(roleOf(largo[1], 9), 'ok');
   assert.equal(roleOf(largo[1], 22), 'usage');
   assert.deepEqual(rest, ['↓ 0 ↑ 0'], 'a 3ª linha zerada vem depois das faixas');
-  // Git com ícone, à frente/atrás e +/− (dono, 2026-11-19, /status "Git"): antes 'nycode-harness ⎇ main*'; sujo sem linhas mudadas segue com *.
-  // Effort entre parênteses colado ao modelo (dono, 2026-11-19): antes 'Fable 5.2 · medium · nycode-harness'.
+  // Git com ícone, à frente/atrás e +/− (dono, 2026-11-19, /status "Git"): antes 'Nycode ⎇ main*'; sujo sem linhas mudadas segue com *.
+  // Effort entre parênteses colado ao modelo (dono, 2026-11-19): antes 'Fable 5.2 · medium · Nycode'.
   assert.equal(l1, 'Fable 5.2 (medium) · nycode-harness · \ue725 main* │ 12m · $1.08');
   assert.equal(l2, 'ctx ━━━━━━━━ 9%');
   assert.equal(l3, '5h ━━━━━━━━ 8% renova em 4h · semana ━━━━━━━━ 22% renova em 4d');

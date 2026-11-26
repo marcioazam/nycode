@@ -87,8 +87,7 @@ Claude's agents, for example `ci-triage`, `test-reviewer`) plus the built-ins `E
 immediately before delegating. The shared agent contract (`docs/harness/agent-contract.md`, which every
 ported agent reads first) owns execution limits and handoff evidence;
 nycode's agent inventory is `${NYCODE_RESOURCES}/agents/` (tier = each file's `model:` pin,
-`swarm-orchestration`); Claude retirements and their routes are in the shared contract and
-~/.claude/docs/agents-sota-2026-10-25.md. Do not fan out a general review and every specialist
+`swarm-orchestration`); retired agents and their routes are in the shared contract. Do not fan out a general review and every specialist
 over the same question. Assign specialist depth only for a concrete unresolved risk.
 
 For an authorized bounded adversarial assessment, use `security-reviewer` with `security-audit`. Prefer a project agent when the repository defines a more specific one.

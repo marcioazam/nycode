@@ -1,6 +1,6 @@
 # Search providers (canonical, nycode)
 
-The single provider map for every search skill and agent in the nycode harness: `perplexity-urls`, `deep-search` and its variants (`fact-check`, `academic-search`, `tech-search`, `entity-search`, `legal-search`, `wide-search`), `evidence-research`, the scouts and `claim-verifier`. Other files point here instead of listing providers.
+The single provider map for every search skill and agent in the Nycode: `perplexity-urls`, `deep-search` and its variants (`fact-check`, `academic-search`, `tech-search`, `entity-search`, `legal-search`, `wide-search`), `evidence-research`, the scouts and `claim-verifier`. Other files point here instead of listing providers.
 
 Tool names are the real nycode names (`mcp__<server>__<tool>`, every character outside `[A-Za-z0-9_]` turned into `_`), confirmed with `tool_search` on 2026-11-11. Every MCP server is deferred: call `tool_search` with a descriptive query (for example "perplexity search", "exa web search company", "octen news broad", "brave news llm context", "firecrawl scrape gov", "paper search arxiv", "package versions registry") before the first call in a session. A tool missing from `tool_search` results is not available: say so and take the next tool; never assume.
 

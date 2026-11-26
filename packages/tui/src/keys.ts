@@ -907,6 +907,32 @@ function parseKeyId(
  * @param keyId - Key identifier (e.g., "ctrl+c", "escape", Key.ctrl("c"))
  */
 export function matchesKey(data: string, keyId: KeyId): boolean {
+	// Raw BS also depends on the environment (isWindowsTerminalSession), so it is never cached.
+	if (data.length > MATCH_CACHE_DATA_MAX || data === "\x08") return matchesKeyUncached(data, keyId);
+	const cache = _kittyProtocolActive ? kittyMatchCache : legacyMatchCache;
+	let byKey = cache.get(data);
+	if (!byKey) {
+		if (cache.size >= MATCH_CACHE_INPUTS_MAX) cache.clear();
+		byKey = new Map();
+		cache.set(data, byKey);
+	}
+	let matched = byKey.get(keyId);
+	if (matched === undefined) {
+		matched = matchesKeyUncached(data, keyId);
+		byKey.set(keyId, matched);
+	}
+	return matched;
+}
+
+// Every handler asks matchesKey about every keystroke (170 call sites), and the answer depends only on the input, the
+// key id and the Kitty protocol flag (raw BS aside, see above). Cached per flag: the uncached matcher is one large function whose optimizing
+// compile once cost ~93 ms and a ~55 MB RSS spike in the Bun binary (perf 2026-11-24). Long inputs (pastes) skip it.
+const MATCH_CACHE_DATA_MAX = 32;
+const MATCH_CACHE_INPUTS_MAX = 512;
+const kittyMatchCache = new Map<string, Map<KeyId, boolean>>();
+const legacyMatchCache = new Map<string, Map<KeyId, boolean>>();
+
+function matchesKeyUncached(data: string, keyId: KeyId): boolean {
 	const parsed = parseKeyId(keyId);
 	if (!parsed) return false;
 

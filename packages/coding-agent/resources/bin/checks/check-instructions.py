@@ -124,7 +124,6 @@ OTHER_NAMES = {
     "mcp-auth",
     "claude-secrets",
     "pytest-xdist",
-    "claude-tier-probe",
     "claude-hud",
     "plan-gate",
     "sound-notify",

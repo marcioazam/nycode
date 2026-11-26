@@ -19,7 +19,7 @@ usuário digita `pi`
 ~/.pi/agent/bin/pi  (pi 1.5.2, instalado de pi.dev)
    │ carrega pacotes de settings.json:
    │   pi-code@1.7.0 (sem extensions/mcp), ./vendor/pi-lsp, ./vendor/ponytail
-   │ carrega ~/.pi/agent/extensions/ (23 unidades do nycode-harness, por ligação simbólica)
+   │ carrega ~/.pi/agent/extensions/ (23 unidades do Nycode, por ligação simbólica)
    ▼
 pi-code lê CLAUDE_CONFIG_DIR: CLAUDE.md, rules/, agents/, skills/, commands/, settings.json (hooks)
    │ hooks: guard.py (PreToolUse), graph_context.py (SessionStart), hook-dispatch.sh, statusline.mjs

@@ -1,4 +1,4 @@
-// One case set per row of docs/migration/nycode-core/02-arquitetura-alvo.md section 5 (C-F4-05) plus the nycode-harness
+// One case set per row of docs/migration/nycode-core/02-arquitetura-alvo.md section 5 (C-F4-05) plus the Nycode
 // defaults of K4 (C-F4-04): default, schema validation and environment override (the variable wins over settings.json).
 import { join } from "node:path";
 import { Compile } from "typebox/compile";
@@ -176,7 +176,7 @@ const rows: Row[] = [
 	{
 		key: "notify.sound",
 		env: "NYCODE_SOUND_NOTIFY",
-		def: true, // nycode-harness parity: sound-notify was on unless NYCODE_SOUND_NOTIFY=0
+		def: true, // Nycode parity: sound-notify was on unless NYCODE_SOUND_NOTIFY=0
 		set: false,
 		invalid: "loud",
 		envRaw: "0",

@@ -21,7 +21,9 @@ const extractFrontmatter = (content: string): { yamlString: string | null; body:
 	}
 
 	return {
-		yamlString: normalized.slice(4, endIndex),
+		// A slice keeps the whole file alive (JSC and V8 substrings point into their source), and so would every
+		// parsed value: copying the header lets callers keep `name`/`description` without the body (170 skills: ~4 MB).
+		yamlString: Buffer.from(normalized.slice(4, endIndex)).toString(),
 		body: normalized.slice(endIndex + 4).trim(),
 	};
 };

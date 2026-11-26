@@ -1,9 +1,9 @@
 # S6: capability matrix, feature x arm. value = what the arm offers; url/doc = official source.
 # CC urls: code.claude.com. pi docs: local ~/.pi/agent/install/releases/1.5.2/node_modules/@earendil-works/pi-coding-agent/docs/<doc>,
 # upstream https://github.com/earendil-works/pi. `flag` = offline probe: `<arm> --help` must list it (`bench probe`).
-# nycode-harness probes run against the pi-vanilla binary (same pi 1.5.2 core; avoids building the stage for --help).
+# Nycode probes run against the Pi Agent binary (`pi-vanilla`, same pi 1.5.2 core; avoids building the stage for --help).
 # Values are from the docs/help of CC 2.1.323 and pi 1.5.2 and were not run as paid probes: treat "partial" and
-# harness rows of nycode-harness as the owner's description until a task exercises them (S4/S5 do for plan_mode, subagents).
+# harness rows of Nycode as the owner's description until a task exercises them (S4/S5 do for plan_mode, subagents).
 
 [headless_json]
 desc = "Headless run with machine-readable output"

@@ -1,4 +1,4 @@
-import type { AutocompleteProvider, AutocompleteSuggestions } from "../autocomplete.ts";
+import { type AutocompleteProvider, type AutocompleteSuggestions, MID_PROMPT_COMMAND } from "../autocomplete.ts";
 import { getKeybindings } from "../keybindings.ts";
 import { decodePrintableKey, matchesKey } from "../keys.ts";
 import { KillRing } from "../kill-ring.ts";
@@ -1330,8 +1330,8 @@ export class Editor implements Component, Focusable {
 
 		// Check if we should trigger or update autocomplete
 		if (!this.autocompleteState) {
-			// Auto-trigger for "/" at the start of a line (slash commands)
-			if (char === "/" && this.isAtStartOfMessage()) {
+			// Auto-trigger for "/" at the start of the message, or partway through it after whitespace
+			if (char === "/" && (this.isAtStartOfMessage() || this.isInMidPromptCommandToken())) {
 				this.tryTriggerAutocomplete();
 			}
 			// Auto-trigger for symbol-based completion like @, #, or provider triggers at token boundaries
@@ -1347,7 +1347,7 @@ export class Editor implements Component, Focusable {
 				const currentLine = this.state.lines[this.state.cursorLine] || "";
 				const textBeforeCursor = currentLine.slice(0, this.state.cursorCol);
 				// Check if we're in a slash command (with or without space for arguments)
-				if (this.isInSlashCommandContext(textBeforeCursor)) {
+				if (this.isInSlashCommandContext(textBeforeCursor) || this.isInMidPromptCommandToken()) {
 					this.tryTriggerAutocomplete();
 				}
 				// Check if we're in a symbol-based completion context like @, #, or provider triggers
@@ -1555,7 +1555,7 @@ export class Editor implements Component, Focusable {
 			const currentLine = this.state.lines[this.state.cursorLine] || "";
 			const textBeforeCursor = currentLine.slice(0, this.state.cursorCol);
 			// Slash command context
-			if (this.isInSlashCommandContext(textBeforeCursor)) {
+			if (this.isInSlashCommandContext(textBeforeCursor) || this.isInMidPromptCommandToken()) {
 				this.tryTriggerAutocomplete();
 			}
 			// Symbol-based completion context like @, #, or provider triggers
@@ -1919,7 +1919,7 @@ export class Editor implements Component, Focusable {
 			const currentLine = this.state.lines[this.state.cursorLine] || "";
 			const textBeforeCursor = currentLine.slice(0, this.state.cursorCol);
 			// Slash command context
-			if (this.isInSlashCommandContext(textBeforeCursor)) {
+			if (this.isInSlashCommandContext(textBeforeCursor) || this.isInMidPromptCommandToken()) {
 				this.tryTriggerAutocomplete();
 			}
 			// Symbol-based completion context like @, #, or provider triggers
@@ -2304,6 +2304,12 @@ export class Editor implements Component, Focusable {
 
 	private isInSlashCommandContext(textBeforeCursor: string): boolean {
 		return this.isSlashMenuAllowed() && textBeforeCursor.trimStart().startsWith("/");
+	}
+
+	// A command name partway through the prompt: "/" after whitespace, or at the start of a later line ("x /mo").
+	private isInMidPromptCommandToken(): boolean {
+		const beforeCursor = (this.state.lines[this.state.cursorLine] || "").slice(0, this.state.cursorCol);
+		return MID_PROMPT_COMMAND.test(beforeCursor) || (this.state.cursorLine > 0 && /^\/[^\s/]*$/.test(beforeCursor));
 	}
 
 	// A slash command name is being typed: "/mo", not "/model cla" or "/open /tm".

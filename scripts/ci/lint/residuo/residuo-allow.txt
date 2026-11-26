@@ -11,8 +11,8 @@ scripts/fork/* | * | ferramenta-fork | rename.py, its tests, post scripts and se
 scripts/ci/lint/criterio2/* | * | ferramenta-fork | the criterio2 gate lists the pi paths it bans and the migration it allows
 scripts/ci/lint/test_gerar_mapa.py | * | ferramenta-fork | tests of the migration map generator (docs/migration/nycode-core)
 
-# records written about the nycode-harness origin, kept as written.
-docs/specs/* | * | migracao | specs 0001-0009 describe the port from the nycode-harness, written before the rename
+# records written about the Nycode origin, kept as written.
+docs/specs/* | * | migracao | specs 0001-0009 describe the port from the Nycode, written before the rename
 apps/p3/docs/archive/* | * | upstream | archived design material, not maintained
 
 # session fixtures recorded from the upstream agent: the text is the data under test.
@@ -22,7 +22,7 @@ packages/coding-agent/test/harness/hooks/fixtures/* | * | upstream | hook payloa
 # links to issues and pull requests of the upstream repositories: stable targets, not the brand.
 packages/* | (earendil-works|badlogic)/pi(-mono)?(/(issues|pull|discussions)/\d+|#\d+) | upstream | upstream issue and PR links cited by regression tests and docs
 
-# the migration from the nycode-harness: its tests carry the origin names on purpose (the code itself is exempt in residuo.py).
+# the migration from the Nycode: its tests carry the origin names on purpose (the code itself is exempt in residuo.py).
 packages/coding-agent/test/harness/migrations/* | * | migracao | tests and fixture of `nycode migrate from-pi`: origin paths, scopes and package names under test
 packages/coding-agent/test/extensions-discovery.test.ts | @mariozechner/pi-coding-agent | compat | proves the legacy module name is not resolved
 packages/coding-agent/test/suite/regressions/11156-nycode-ai-models-virtual-module.test.ts | @mariozechner | compat | proves the legacy scope is gone

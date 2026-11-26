@@ -1,5 +1,5 @@
 // D-39 / D-40: `codemode` is registered inactive; only the MCP rule activates it (`exposure ?? "codemode"` plus
-// `autoEnableCodemode`), the same rule nycode-harness ran on upstream 1.5.2 (mcp/index.ts there, line 61 and 411). A server without an
+// `autoEnableCodemode`), the same rule Nycode ran on upstream 1.5.2 (mcp/index.ts there, line 61 and 411). A server without an
 // `exposure` therefore turns it on, a `deferred` server turns on `tool_search` instead, and with no server neither is
 // active. Covered upstream and not repeated here: explicit `codemode` exposure and `autoEnableCodemode: false`
 // (test/suite/agent-session-mcp.test.ts, "exposes codemode-only MCP tools..." and "does not activate codemode...").

@@ -22,7 +22,7 @@ import { cyclePermissionMode } from "../claude-compat/permissions/slot.ts";
 import { VimEngine, type VimMode } from "../claude-compat/vim/engine.ts";
 import { type EditorAction, EditorHost } from "../claude-compat/vim/host.ts";
 import { highlight } from "../claude-compat/vim/render.ts";
-import { anima, assinarQuadro, highlightPeak, lerpRgb, safeAnsi } from "../ui-visual/motion/motion.ts";
+import { anima, assinarQuadro, highlightPeak, lerpRgb, type Rgb3, safeAnsi } from "../ui-visual/motion/motion.ts";
 import { loadScope, PromptHistory, stashStep } from "./history.ts";
 
 export const STATE_PATH = join(getAgentDir(), "ui-state.json");
@@ -110,6 +110,41 @@ export interface EditorUi {
 
 const travado = (): boolean => (globalThis as Record<symbol, unknown>)[Symbol.for("nycode-harness:travado")] === true;
 export const RESPIRO_MS = 700; // período/2π da respiração da cápsula enquanto o agente trabalha
+
+/**
+ * Brilho que corre pela régua: cada `─` perto do centro (progress * width) ganha uma cor entre `base` e `peak`. Copia
+ * os trechos sem brilho por slice: concatenar char a char alocava ~46 MiB em 28 s de turnos (perf 2026-11-24).
+ */
+export function sweepRow(row: string, width: number, progress: number, base: Rgb3, peak: Rgb3): string {
+	const center = progress * width;
+	const back = `\x1b[38;2;${base[0]};${base[1]};${base[2]}m`;
+	let col = 0;
+	let inEsc = false;
+	let out = "";
+	let from = 0;
+	for (let i = 0; i < row.length; i++) {
+		const ch = row[i]!;
+		if (ch === "\x1b") {
+			inEsc = true;
+			continue;
+		}
+		if (inEsc) {
+			if ((ch >= "A" && ch <= "Z") || (ch >= "a" && ch <= "z") || ch === "\x07") inEsc = false;
+			continue;
+		}
+		if (ch === "─") {
+			const d = Math.abs(col - center);
+			const w = Math.exp(-(d * d) / 90) * (1 - progress * 0.35);
+			if (w > 0.04) {
+				const [r, g, b] = lerpRgb(base, peak, w * 0.85);
+				out += `${row.slice(from, i)}\x1b[38;2;${r};${g};${b}m─${back}`;
+				from = i + 1;
+			}
+		}
+		col++;
+	}
+	return from === 0 ? row : out + row.slice(from);
+}
 
 /** Troca o 1º e o último `─` visíveis (se forem as pontas) pelos cantos da cápsula. */
 export function cantos(row: string, ini: string, fim: string): string {
@@ -493,36 +528,7 @@ export class UiEditor extends CustomEditor {
 		if (!base) return row;
 		const peak = highlightPeak(base);
 		const progress = Math.max(0, Math.min(1, (now - this.sweepStart) / 225));
-		const center = progress * width;
-		let col = 0;
-		let inEsc = false;
-		let out = "";
-		for (let i = 0; i < row.length; i++) {
-			const ch = row[i]!;
-			if (ch === "\x1b") {
-				inEsc = true;
-				out += ch;
-				continue;
-			}
-			if (inEsc) {
-				out += ch;
-				if ((ch >= "A" && ch <= "Z") || (ch >= "a" && ch <= "z") || ch === "\x07") inEsc = false;
-				continue;
-			}
-			if (ch === "─") {
-				const d = Math.abs(col - center);
-				const w = Math.exp(-(d * d) / 90) * (1 - progress * 0.35);
-				if (w > 0.04) {
-					const [r, g, b] = lerpRgb(base, peak, w * 0.85);
-					out += `\x1b[38;2;${r};${g};${b}m─\x1b[38;2;${base[0]};${base[1]};${base[2]}m`;
-					col++;
-					continue;
-				}
-			}
-			out += ch;
-			col++;
-		}
-		return out;
+		return sweepRow(row, width, progress, base, peak);
 	}
 
 	/**

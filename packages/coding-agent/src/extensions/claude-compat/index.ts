@@ -1,5 +1,5 @@
 /**
- * Compatibilidade com o Claude Code: /clear e /reset (sessão nova como /new) e /claude-help.
+ * Compatibilidade com o Claude Code: /clear e /reset (sessão nova como /new) e /compat.
  * Aliases por reescrita (/config, /continue…) vivem no editor (extensions/ui/editor.ts) via aliases.ts.
  */
 
@@ -115,7 +115,7 @@ export default function (nycode: ExtensionAPI) {
 		description: "Lista as skills carregadas",
 		handler: async (_args, ctx) => ctx.ui.notify(skillsText(nycode), "info"),
 	});
-	nycode.registerCommand("claude-help", {
+	nycode.registerCommand("compat", {
 		description: "Mapeamento de comandos e atalhos do Claude Code e seus limites",
 		handler: async (_args, ctx) => ctx.ui.notify(helpText(), "info"),
 	});

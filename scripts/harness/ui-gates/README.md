@@ -1,6 +1,6 @@
-# Portões de ui (paridade visual com o nycode-harness)
+# Portões de ui (paridade visual com o Nycode)
 
-Prova de C-F7-27: o nycode não tem diferença visual em relação ao nycode-harness. Os scripts só leem o repositório; tudo que
+Prova de C-F7-27: a interface não diverge do Nycode. Os scripts só leem o repositório; tudo que
 escrevem fica num `mktemp -d`, apagado ao sair. Saem 0 só se todos os checks passam.
 
 Pré-requisitos: `npm ci --ignore-scripts`, `npm run build` (o binário é `packages/coding-agent/dist/bundle/cli.js`),

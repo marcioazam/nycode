@@ -22,7 +22,7 @@ Matriz de comandos e atalhos do Claude Code mapeados para o nycode (gerada por `
 | /autofix-pr | – | B | unsupported | nuvem do Claude |
 | /background | /bg | B | partial | /background e /bg (background/): condicional, só em sessão iniciada por um supervisor tmux privado (opt-in; fora do core, D-56): desanexa o único cliente sem abortar; [prompt] é enfileirado uma vez como followUp literal. Fora do transporte, subagente ou sem UI recusa com instrução. Não cria sessão em background separada nem fork |
 | /batch | – | S | partial | workflow de prompt do usuário (claude-home/commands/batch.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
-| /branch | – | B | partial | /branch → /clone (sem nome; com argumento recusa). NÃO é o /fork do Claude |
+| /branch | – | B | partial | /branch → /clone; /branch <nome> → /clone-as <nome>. NÃO é o /fork do Claude |
 | /btw | – | B | exact | /btw (extensions/ui/btw.ts) |
 | /bug | /share | B | unsupported | O /bug e /share do Claude enviam feedback/bug report; NÃO são o /bug (relatório aos devs do nycode) nem o /share (upload da sessão) do nycode, que mantêm a semântica do nycode |
 | /cd | – | B | partial | extensions/claude-compat/directory + patch session-cwd do core (ainda não portados): muda o cwd da mesma sessão/arquivo; sem o patch recusa explicitamente; verificação integrada pendente (gate) |
@@ -33,9 +33,9 @@ Matriz de comandos e atalhos do Claude Code mapeados para o nycode (gerada por `
 | /code-review | /review | S | partial | comando de usuário existente com prompt próprio, não a skill do Claude |
 | /color | – | B | partial | /color registrado (interface/color.ts). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /compact | – | B | exact | /compact [instruções] nativo |
-| /config | /settings | B | alias | /config e /settings → /settings (editor TUI). /config chave=valor recusado |
+| /config | /settings | B | alias | /config e /settings → /settings (editor TUI); /config chave=valor → /config-set |
 | /context | – | B | exact | /context do nycode |
-| /copy | – | B | partial | /copy nativo copia a última resposta; /copy N do Claude não existe (veja /copy-code) |
+| /copy | – | B | partial | /copy nativo copia a última resposta; /copy N\|text\|blocks → /copy-pick (veja /copy-code) |
 | /cost | /usage | B | alias | /cost → /session (tokens e custo da sessão) |
 | /dataviz | – | S | unsupported | sem skill empacotada |
 | /debug | – | S | partial | /debug nativo grava nycode-debug.log (outra função) |
@@ -48,7 +48,7 @@ Matriz de comandos e atalhos do Claude Code mapeados para o nycode (gerada por `
 | /desktop | /app | B | unsupported | sem app desktop |
 | /diff | – | B | exact | /diff (extensions/ui/diff.ts) |
 | /doctor | /checkup | S | unsupported | sem /doctor; checks locais em claude-home/bin/checks |
-| /effort | – | B | alias | /effort <nível> → /thinking <nível> (níveis do nycode; níveis do Claude como auto/max são recusados pelo nycode) |
+| /effort | – | B | partial | /effort status\|auto\|off…max (commands/settings/config.ts): esforço de raciocínio da sessão nos níveis do nycode |
 | /exit | /quit | B | alias | /quit nativo; /exit → /quit |
 | /export | – | B | partial | /export do nycode gera HTML/JSONL da sessão; o do Claude grava texto simples |
 | /fast | – | B | unsupported | sem modo rápido |
@@ -118,8 +118,8 @@ Matriz de comandos e atalhos do Claude Code mapeados para o nycode (gerada por `
 | /team-onboarding | – | S | partial | workflow de prompt do usuário (claude-home/commands/team-onboarding.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |
 | /teleport | /tp | B | unsupported | nuvem do Claude |
 | /terminal-setup | – | B | partial | lifecycle/terminal-setup.ts grava configuração do terminal com backup .bak; verificação integrada pendente (gate) |
-| /theme | – | B | alias | /theme → /settings (sem argumentos; sem seletor próprio) |
-| /tui | – | B | alias | /tui → /settings (modo de tela; também --tui-mode) |
+| /theme | – | B | alias | /theme → /settings (sem argumentos); /theme <nome> → /theme-set <nome> |
+| /tui | – | B | alias | /tui → /settings (sem argumentos); /tui regular\|fullscreen → /tui-set (também --tui-mode) |
 | /ultraplan | – | R | removed | removido no Claude |
 | /ultrareview | – | B | unsupported | nuvem do Claude |
 | /update-config | – | S | partial | workflow de prompt do usuário (claude-home/commands/update-config.md, só pelo usuário; não é função nativa nem usa modelo automaticamente). Implementado localmente; verificação integrada pendente (gate); semântica pode diferir do Claude. |

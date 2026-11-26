@@ -138,7 +138,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | extension | auto-resume | core | Retoma após erro transitório do provedor |
 | extension | claude-rules | core | Regras do Claude Code em .claude/rules |
 | extension | chat-margin | core | Margem do texto nos blocos com fundo do chat (D-56) |
-| extension | claude-compat | core | Compatibilidade com o Claude Code: `/clear`, `/reset`, `/help`, `/skills`, `/claude-help`, comandos locais, serviços públicos e a matriz (D-56, parte 2) |
+| extension | claude-compat | core | Compatibilidade com o Claude Code: `/clear`, `/reset`, `/help`, `/skills`, `/compat`, comandos locais, serviços públicos e a matriz (D-56, parte 2) |
 | extension | bash-main-guard | core | Na sessão principal interativa o bash não prende o turno: padrão de 120 s, teto de 600 s, sleep longo e laço de consulta recusados, `run wait` limitado a 30 s (D-57) (D-56) |
 | extension | avisos | core | Dono dos sinais de fim de turno: notificação, som, progresso na aba do terminal e o painel `/avisos` (D-56) |
 | extension | comandos | core | Paleta do `/` em pt-BR, painel `?` e `/atalhos` (ver, buscar e mudar atalhos); a ponte `__nycodeHarnessComandos` serve o editor (D-56) |
@@ -197,7 +197,6 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | command | cancel-ralph | core | Laço de prompt (par do `/loop` do Claude Code) |
 | command | claude-hud-configure | optional | Plugin `claude-hud` |
 | command | claude-hud-setup | optional | Plugin `claude-hud` |
-| command | claude-tier | optional | Sonda de plano de conta Claude Team |
 | command | clean_gone | core | Limpa branches mergeadas |
 | command | code-review | core | Revisão de PR |
 | command | commit | core | Commit |
@@ -208,7 +207,7 @@ chegam por fase e o `core_scope.py` é convertido em F3.
 | command | ralph-help | core | Ajuda do laço de prompt |
 | command | ralph-loop | core | Laço de prompt |
 | command | review-pr | core | Revisão por aspectos |
-| command | revise-claude-md | core | Aprendizado da sessão vira regra |
+| command | revise-agents-md | core | Aprendizado da sessão vira regra |
 | command | skill-gen | optional | Exige o MCP Firecrawl |
 | command | swarm | core | Delegação em lanes |
 | command | batch | core | Execução em lotes de lanes paralelas |

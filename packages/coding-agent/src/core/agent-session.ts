@@ -792,7 +792,7 @@ export class AgentSession {
 
 		const effectiveIsError = hookResult?.isError ?? isError;
 		const hookedContent = hookResult?.content ?? result.content ?? [];
-		// nycode: K8 timeout hint as its own block, after the extension hooks (parity with the nycode-harness extension)
+		// nycode: K8 timeout hint as its own block, after the extension hooks (parity with the Nycode extension)
 		const content = withTimeoutHint(toolCall.name, effectiveIsError, hookedContent);
 		// Runs after the extension hook so images injected or replaced by extensions are normalized too.
 		const resizeOptions = this._limitsModel()?.inputLimits?.images?.resize;

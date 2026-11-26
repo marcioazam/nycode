@@ -29,11 +29,11 @@ Conversa|compact|||Compacta o contexto da sessão
 Conversa|copy||app.message.copy|Copia a última resposta do agente
 Conversa|copy-code|||Copia um bloco de código da última resposta
 Conversa|imagem|||Abre a última imagem do transcript no visualizador
-Conversa|claude-copy|||Copia a N-ésima resposta, só o texto ou um bloco escolhido
+Conversa|copy-pick|||Copia a N-ésima resposta, só o texto ou um bloco escolhido
 Conversa|btw|||Pergunta lateral, sem gravar na sessão
 Conversa|fork|||Nova ramificação a partir de uma mensagem anterior
 Conversa|clone|||Duplica a sessão na posição atual
-Conversa|claude-branch|||Duplica a conversa no ponto atual com um nome
+Conversa|clone-as|||Duplica a conversa no ponto atual com um nome
 Conversa|rewind|||Volta código e/ou conversa a um ponto salvo
 Conversa|stop|||Interrompe o agente; com "agents", cancela também os subagentes
 Conversa|transcript|||Abre a transcrição rolável da conversa
@@ -44,7 +44,7 @@ Configuração|llama|||Gerencia os modelos do roteador llama.cpp
 Configuração|ponytail|||Muda o modo do ponytail e mostra o estado
 Modelo e raciocínio|model||app.model.select|Escolhe o modelo
 Modelo e raciocínio|thinking||app.thinking.cycle|Define o nível de raciocínio
-Modelo e raciocínio|claude-effort|||Define o esforço de raciocínio da sessão
+Modelo e raciocínio|effort|||Define o esforço de raciocínio da sessão
 Modelo e raciocínio|advisor|||Configura ou desliga o modelo consultor
 Modelo e raciocínio|scoped-models||app.model.cycleForward|Escolhe os modelos do ciclo de troca rápida
 Modelo e raciocínio|output-style|||Escolhe o estilo de saída
@@ -69,6 +69,7 @@ Plano e tarefas|goal|||Define uma meta que a sessão persegue até ser confirmad
 Plano e tarefas|loop|||Repete um prompt em intervalos, até parar ou atingir o limite
 Agentes|agents|||Lista os subagentes disponíveis
 Agentes|tasks|||Mostra subagentes em segundo plano
+Agentes|ps|||Árvore de processos da sessão (MCP, run, subagentes) com memória e swap; kill <pid> encerra
 Agentes|team|||Liga ou desliga o modo equipe de agentes
 Agentes|subagents-setup|||Escolhe modelos e esforços dos subagentes
 Agentes|travar-modelos|||Trava a sessão nos modelos e esforços escolhidos
@@ -78,9 +79,9 @@ Arquivos e Git|cd|||Muda o diretório de trabalho desta sessão
 Arquivos e Git|add-dir|||Adiciona, lista ou remove diretórios de trabalho extras
 Arquivos e Git|memory|||Mostra, abre ou liga a memória automática
 Configuração|settings|||Abre as configurações
-Configuração|claude-config|||Lista, mostra ou grava configurações (chave=valor)
-Configuração|claude-theme|||Troca o tema ao vivo e grava a escolha
-Configuração|claude-tui|||Define o modo de tela: regular ou tela cheia
+Configuração|config-set|||Lista, mostra ou grava configurações (chave=valor)
+Configuração|theme-set|||Troca o tema ao vivo e grava a escolha
+Configuração|tui-set|||Define o modo de tela: regular ou tela cheia
 Configuração|scroll-speed|||Define as linhas por giro da roda na tela cheia
 Configuração|color|||Define a cor da barra do prompt desta sessão
 Configuração|terminal-setup|||Instala o Shift+Enter (nova linha) no terminal detectado
@@ -101,7 +102,7 @@ Configuração|doctor|||Verifica a saúde do harness
 Configuração|keybindings|||Edita keybindings.json direto (avançado)
 Ajuda|atalhos|hotkeys|ext.atalhos|Ver, buscar e mudar atalhos
 Ajuda|help|||Ajuda: compatibilidade com o Claude Code e comandos carregados
-Ajuda|claude-help|||Mapa de comandos do Claude Code e seus limites
+Ajuda|compat|||Mapa de comandos do Claude Code e seus limites
 Ajuda|changelog|||Mostra as novidades da versão
 Ajuda|upgrade|||Abre a página de upgrade do plano Claude
 Ajuda|stickers|||Mostra o status dos pacotes de stickers

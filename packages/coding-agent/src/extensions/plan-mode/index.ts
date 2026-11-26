@@ -702,7 +702,7 @@ ${CANCEL_RULE}`,
 	nycode.on("session_start", (_event, ctx) => restoreFromBranch(ctx, true));
 	nycode.on("session_tree", (_event, ctx) => restoreFromBranch(ctx, false));
 
-	// nycode-harness permission-control BEGIN
+	// Nycode permission-control BEGIN
 	// Controle semântico para Shift+Tab e /permissions plan (claude-compat). Fonte: claude-home/patches/nycode/permission-control.
 	const PLAN_CONTROLLER_SLOT = Symbol.for("nycode.plan-controller");
 	let permissionCtx: ExtensionContext | undefined;
@@ -729,7 +729,7 @@ ${CANCEL_RULE}`,
 		const g = globalThis as Record<symbol, unknown>;
 		if (g[PLAN_CONTROLLER_SLOT] === planController) delete g[PLAN_CONTROLLER_SLOT];
 	});
-	// nycode-harness permission-control END
+	// Nycode permission-control END
 
 	nycode.on("session_shutdown", (_event, ctx) => planSection.shutdown(ctx));
 }

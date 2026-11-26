@@ -131,10 +131,14 @@ for platform in "${PLATFORMS[@]}"; do
     # project env files do not leak into nycode's environment (see #10473). Enable
     # package.json autoload so extension dependencies resolve through their
     # package.json main/exports entries instead of only a root index.* (see #12012).
+    #
+    # --bytecode --format=esm: JSC bytecode is precompiled into the binary, so startup skips parsing
+    # the 11 MiB bundle (nycode --version 0.25 s -> 0.05 s, docs/perf/render-leveza-2026-11-24.md). Bytecode needs
+    # the Bun that made it; the executable embeds that same Bun (bun docs/bundler/index.mdx, "Bytecode").
     if [[ "$platform" == windows-* ]]; then
-        bun build --compile --no-compile-autoload-bunfig --no-compile-autoload-dotenv --compile-autoload-package-json --target="$bun_target" ./dist/bun/cli.js ./src/utils/image-resize-worker.ts ./src/extensions/codemode/worker.ts --outfile "$OUTPUT_DIR/$platform/nycode.exe"
+        bun build --compile --bytecode --format=esm --no-compile-autoload-bunfig --no-compile-autoload-dotenv --compile-autoload-package-json --target="$bun_target" ./dist/bun/cli.js ./src/utils/image-resize-worker.ts ./src/extensions/codemode/worker.ts --outfile "$OUTPUT_DIR/$platform/nycode.exe"
     else
-        bun build --compile --no-compile-autoload-bunfig --no-compile-autoload-dotenv --compile-autoload-package-json --target="$bun_target" ./dist/bun/cli.js ./src/utils/image-resize-worker.ts ./src/extensions/codemode/worker.ts --outfile "$OUTPUT_DIR/$platform/nycode"
+        bun build --compile --bytecode --format=esm --no-compile-autoload-bunfig --no-compile-autoload-dotenv --compile-autoload-package-json --target="$bun_target" ./dist/bun/cli.js ./src/utils/image-resize-worker.ts ./src/extensions/codemode/worker.ts --outfile "$OUTPUT_DIR/$platform/nycode"
     fi
 done
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Nightly full tier of nycode-harness on the current origin/main in a throwaway worktree.
+# Nightly full tier of Nycode on the current origin/main in a throwaway worktree.
 # Never updates the baseline: it prints the command that prepares the baseline-update PR.
 set -euo pipefail
 

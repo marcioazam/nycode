@@ -251,7 +251,7 @@ for a in claude-vanilla pi-vanilla nycode-harness; do
 done
 check "overlay: models.json do stage não entra no hash" bash -c "! grep -qx 'models.json' '$A/overlay.list'"
 
-# Parallel runs share the nycode-harness stage: concurrent merges never expose a half-written models.json to readers.
+# Parallel runs share the Nycode stage: concurrent merges never expose a half-written models.json to readers.
 # shellcheck disable=SC2329 # invoked through check
 race() {
   local m=$T/race/models.json i

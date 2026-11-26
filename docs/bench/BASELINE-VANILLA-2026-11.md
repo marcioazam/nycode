@@ -1,6 +1,6 @@
 # Baseline vanilla 2026-11 (congelado)
 
-Este é o baseline do benchmark do repositório **ny-pi**, tirado em 2026-11-14. Ele mede o braço `ny-pi` e três referências fixas: o Claude Code vanilla (`cc-vanilla`), o pi vanilla (`pi-vanilla`) e o Oh My Pi (`omp`). Daqui em diante as PRs rodam só o `ny-pi` e comparam com `docs/bench/baseline-main/`; as referências só são medidas de novo sob demanda (`bench/tools/vanilla-retest.sh`).
+Este é o baseline do benchmark do repositório **ny-pi**, tirado em 2026-11-14. Ele mede o braço `ny-pi` e três referências fixas: o Claude Code vanilla (`cc-vanilla`), o Pi Agent (`pi-vanilla`) e o Oh My Pi (`omp`). Daqui em diante as PRs rodam só o `ny-pi` e comparam com `docs/bench/baseline-main/`; as referências só são medidas de novo sob demanda (`bench/tools/vanilla-retest.sh`).
 
 **Condições da rodada:**
 
@@ -31,8 +31,8 @@ Este é o baseline do benchmark do repositório **ny-pi**, tirado em 2026-11-14.
 
 **Leitura** (Sonnet, as mesmas 76 unidades nos quatro braços):
 
-- O pi vanilla é o mais barato e o que mais acerta: 74/76 por US$ 2.10.
-- O ny-pi acerta 62/76 e custa US$ 7.06: fica 12 execuções abaixo do pi vanilla, custa 3,4x o pi vanilla e 1,3x o Claude Code.
+- O Pi Agent é o mais barato e o que mais acerta: 74/76 por US$ 2.10.
+- O ny-pi acerta 62/76 e custa US$ 7.06: fica 12 execuções abaixo do Pi Agent, custa 3,4x o Pi Agent e 1,3x o Claude Code.
 - A perda do ny-pi está quase toda no **S4**, a suíte de plano: 14/24, contra 24/24 dos dois vanilla e 21/24 do omp.
   - Em 6 execuções de implementação ele chama `plan_mode_complete` fora do modo plano e para à espera de aprovação.
   - Em 4 execuções de pergunta a ferramenta `question` falha sem interface e a resposta final sai sem pergunta.
@@ -40,15 +40,15 @@ Este é o baseline do benchmark do repositório **ny-pi**, tirado em 2026-11-14.
 - No **S1** (comportamento) o ny-pi e o Claude Code empatam em 27/28; o omp faz 25/28.
 - No **S2** (Terminal-Bench 2.0) só o omp perde uma tarefa (3/4).
 - O omp é o braço mais caro (US$ 7.54) e fica entre os vanilla e o ny-pi em acerto.
-- No Opus, o pi vanilla acerta 22/22; o ny-pi e o Claude Code acertam 20/22, e o ny-pi custa 1,6x o Claude Code.
+- No Opus, o Pi Agent acerta 22/22; o ny-pi e o Claude Code acertam 20/22, e o ny-pi custa 1,6x o Claude Code.
 
 **Limitação estatística:** com 76 unidades e IC95 largo por suíte, os números são uma referência de ordem de grandeza. Eles não provam diferenças pequenas entre os braços.
 
 ## Mudança de regra do avaliador (2026-11-14)
 
-A primeira versão deste baseline exigia, nos 4 casos de pergunta do S4, **todos** os termos de `ask_terms` na resposta. O contrato em `bench/suites/README.md` pede **pelo menos um**: os termos são variantes de grafia, como "período" e "periodo". Com a regra errada esses casos eram quase impossíveis (pi vanilla 1/8, os outros 0/8).
+A primeira versão deste baseline exigia, nos 4 casos de pergunta do S4, **todos** os termos de `ask_terms` na resposta. O contrato em `bench/suites/README.md` pede **pelo menos um**: os termos são variantes de grafia, como "período" e "periodo". Com a regra errada esses casos eram quase impossíveis (Pi Agent 1/8, os outros 0/8).
 
-O avaliador foi corrigido e os 4 casos foram executados de novo em todos os braços. Por isso o S4 e os totais desta versão são maiores que os da primeira: no Sonnet, o Claude Code passou de 65 para 73, o pi vanilla de 67 para 74 e o ny-pi de 58 para 62. As execuções dos outros casos são as mesmas.
+O avaliador foi corrigido e os 4 casos foram executados de novo em todos os braços. Por isso o S4 e os totais desta versão são maiores que os da primeira: no Sonnet, o Claude Code passou de 65 para 73, o Pi Agent de 67 para 74 e o ny-pi de 58 para 62. As execuções dos outros casos são as mesmas.
 
 ## Oh My Pi
 

@@ -6,7 +6,7 @@ documentos canônicos ([00](00-mega-plano.md), [02](02-arquitetura-alvo.md), [11
 ([08](08-sincronizacao-upstream.md)). Estado: **plano**; nada foi implementado nem executado, e nenhuma medição de risco
 é de campo. Probabilidade e impacto são julgamento do autor do plano (A = alta, M = média, B = baixa), não medição.
 
-Legenda de donos: **Dono** = Marcio (autorização e aceite); **Orq.** = sessão orquestradora; **Exec.** = executor da
+Legenda de donos: **Dono** = mantenedor do repositório (autorização e aceite); **Orq.** = sessão orquestradora; **Exec.** = executor da
 unidade; **Seg.** = `security-reviewer`; **Entrega** = `git-delivery`. Identificadores D-nn, K1..K14, P-n e F0..F12
 são os dos documentos canônicos; PC-n vêm de [08](08-sincronizacao-upstream.md).
 
@@ -53,7 +53,7 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 | R-29 | `build-check` falha sem tag `v*.*.*` | P-6 | F0 | A | B | Exec. |
 | R-30 | Atraso do upstream acumula | 944 arquivos por semana medidos | F4-F12 | M | M | Orq. |
 | R-31 | `import/` entra no build ou no pacote | Fora do `workspaces` mal configurado | F1 | B | M | Exec. |
-| R-32 | `nycode-harness` congelado recebe correção que não migra | Congelamento até F12 | F0-F12 | B | M | Orq. |
+| R-32 | Nycode (`nycode-harness`) congelado recebe correção que não migra | Congelamento até F12 | F0-F12 | B | M | Orq. |
 | R-33 | PR de correção K1 e K2 ao upstream é fechado | CONTRIBUTING fecha PR sem `lgtm` | F4 | A | B | Dono |
 | R-34 | Patch do `pi-lsp` (4080 linhas) vira dívida | Código de terceiros com patch local | F9 | M | M | Exec. |
 
@@ -61,7 +61,7 @@ O registro está dividido em três tabelas com o mesmo identificador: 1.1 (o que
 
 | ID | Sinal de alerta observável | Contenção |
 |---|---|---|
-| R-01 | Braço `nycode-harness@1.6.0` difere da referência do nycode-harness | Medir "ny-pi por fora sobre 1.6.0" em F3 (D-25) |
+| R-01 | Braço `nycode-harness@1.6.0` difere da referência do `nycode-harness` | Medir "ny-pi por fora sobre 1.6.0" em F3 (D-25) |
 | R-02 | Teste de frota ou times falha após a cópia | Cópia byte a byte, depois imports, depois formatação |
 | R-03 | `npm run check` falha nos tipos de evento | Corrigir na primeira unidade de F5 (P-3) |
 | R-04 | `check-seams.sh` abaixo de 14/14 | Marcador, teste por costura ([08](08-sincronizacao-upstream.md#costuras)) |
@@ -155,7 +155,7 @@ escrevem no GitHub (reverter, apagar, recriar proteção) exigem a autorização
 | F9 | Desligar `lsp`; opcionais saem de `nycode install` | Sempre |
 | F10 | Revert do PR que regrava `docs/bench/baseline-main/` | Sempre |
 | F11 | Reversível: o Release e a etiqueta se apagam (`gh release delete --cleanup-tag`); a atestação fica no Sigstore público | Ver ponto sem volta |
-| F12 | Desarquivar `marcioazam/ny-pi`; restaurar `import/ny-pi/` por git; `pi` do dia a dia volta | Enquanto o `nycode-harness` existir |
+| F12 | Desarquivar `marcioazam/ny-pi`; restaurar `import/ny-pi/` por git; `pi` do dia a dia volta | Enquanto o Nycode (`nycode-harness`) existir |
 
 Detalhes por fase, para quem executa:
 
@@ -274,7 +274,7 @@ Proposta (os números são a calibrar; **não medidos**):
 5. **Depois do critério:** arquivar `marcioazam/ny-pi` (D-22, autorização do dono) e remover `import/ny-pi/` por PR; o `pi` pode
    ser desinstalado só depois, a pedido do dono.
 
-Durante a convivência, o `nycode-harness` segue congelado: entra só correção de segurança (F0), e cada uma é reaplicada no
+Durante a convivência, o Nycode (`nycode-harness`) segue congelado: entra só correção de segurança (F0), e cada uma é reaplicada no
 Nycode por PR (R-32).
 
 ## 6. Não verificado neste documento

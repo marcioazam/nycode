@@ -1,7 +1,7 @@
 <!-- Gerado por gerar-mapa.py a partir de `marcioazam/ny-pi` origin/main 3981d9d (1485 arquivos) e da lista da onda 9 (48 arquivos). Não editar à mão. -->
 # Anexo E: resumo do mapa por regra
 
-Total de arquivos no mapa: **1533** (1485 do nycode-harness e 48 da onda 9). Arquivos sem regra: **0**.
+Total de arquivos no mapa: **1533** (1485 do Nycode e 48 da onda 9). Arquivos sem regra: **0**.
 Lista completa, uma linha por arquivo: [E-mapa-arquivo-a-arquivo.tsv](E-mapa-arquivo-a-arquivo.tsv).
 
 | Regra | Arquivos | Padrão de origem | Destino | Ação | Fase |

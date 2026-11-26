@@ -166,7 +166,7 @@ funcional (tier `pr`), nightly e F10 (tier `full`), e o re-teste vanilla (tier `
 | `nycode-harness` | `run_pi.py` | pi 1.5.2 + pi-code 1.7.0 + este checkout | `arms/nycode-harness`: estágio com `HOME` descartável |
 | `omp` | `run_pi.py` | omp 18.20.0 | **não migra** (D-26) |
 
-### 2.1 Como o braço `nycode-harness` instala hoje
+### 2.1 Como o braço Nycode (`nycode-harness`) instala hoje
 
 `bench/arms/nycode-harness` monta um estágio em `${BENCH_STAGE_ROOT:-~/.cache/bench}/bench-nycode-harness-<sha12>[-dirty]`:
 
@@ -556,7 +556,7 @@ imprime o comando do PR de atualização).
 
 ### 7.1 `docs/bench/baseline-main`
 
-Conteúdo atual (nycode-harness): `meta.json`, `runs.jsonl`, `verdict.json`. O `meta.json` guarda `arm`, `arm_version`, `model`,
+Conteúdo atual (Nycode): `meta.json`, `runs.jsonl`, `verdict.json`. O `meta.json` guarda `arm`, `arm_version`, `model`,
 `git_sha`, `started`, `budget_usd`, `overlay_sha`, `tier`, `jobs`, `not_verified`, `errors`, `cost_usd` e
 `dropped_infra_rows`. A `baseline-main` de 2026-11-18: `arm nycode-harness`, `arm_version 1.5.2`, `model claude-sonnet-5-5`, tier
 `baseline`, 6 jobs, teto US$ 60, custo US$ 17,43, `overlay_sha c06e62526c0540fe` (corrigido em 2026-11-15 para o locale

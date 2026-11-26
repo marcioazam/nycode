@@ -4,10 +4,26 @@
 
 ### Breaking Changes
 
+- Commands no longer carry a `claude-` prefix: `/claude-effort` is `/effort`, `/claude-config` is `/config-set`, `/claude-theme` is `/theme-set`, `/claude-tui` is `/tui-set`, `/claude-branch` is `/clone-as`, `/claude-copy` is `/copy-pick` and `/claude-help` is `/compat`. The Claude Code aliases (`/config k=v`, `/theme <name>`, `/tui <mode>`, `/branch <name>`, `/copy N`) route to the new names. `/revise-claude-md` is `/revise-agents-md`
 - The user scope is `~/.nycode/agent` only (D-62): the user's CLAUDE.md, rules, skills, agents, commands, output styles, plugins and Claude-format settings keys (`hooks`, `env`, `disableAllHooks`, `outputStyle`, ...) are read from there, and the home directories of other tools (`~/.claude`, `~/.agents`) are no longer read. The home directory is never treated as a project. Managed policy moves to `/etc/nycode/managed-settings.json` (`/Library/Application Support/Nycode/`, `C:\Program Files\Nycode\`)
+
+### Added
+
+- `/ps`: the session's process tree (MCP servers, run jobs, subagents, hooks) with resident memory and swap from Linux `/proc`, and `/ps kill <pid>` to end one of them with its descendants; pids outside the session are refused
+
+### Changed
+
+- The Bun binary is compiled with JSC bytecode (`--bytecode --format=esm`), so startup skips parsing the bundle (`nycode --version` 0.25-0.31 s to 0.04-0.06 s in the 2026-11-24 measurement, `docs/perf/render-leveza-2026-11-24.md`)
+- Highlight.js grammars outside the eager set load on the first request for one of them
+- An MCP server that no call has used disconnects 30 s after it connects. Its tools and instructions stay known and the first call connects again. A server that was used stays connected
+- While streaming, the status line, sticky-prompt scan, fleet run list, editor sweep and message padding reuse work that did not change
+- Parsing frontmatter copies the YAML header, so a kept `name` or `description` does not retain the rest of the file
+- After the agent goes idle, a garbage collection runs so the streaming heap does not stay at its peak
 
 ### Fixed
 
+- `/list-agents` (`/peers`) lists the embedded agents and the user's `~/.nycode/agent/agents`; it read the old `claude-home/agents` directory and always listed none
+- `/doctor` (`/checkup`) checks the embedded `hooks/guard.py`; it looked under the old `claude-home` directory and always reported the guard missing
 - Fixed git installs so a repository or ref that starts with `-`, or that names `--upload-pack` or the `ext::` transport, is refused before git runs
 - Git fetch of a pinned ref passes `--` before the remote and the ref, including when the checkout already exists, so the ref cannot be read as a git option
 - The built-in Mistral default is `codestral-latest`. The live catalog no longer includes `devstral-medium-latest`
@@ -31,6 +47,12 @@
 - The editor no longer moves up one row when the first response arrives: the status line's token row (`↓ … ↑ … · turno`) exists from startup as `↓ 0 ↑ 0` instead of appearing with the first turn
 - A nycode started inside another nycode (a `!` shell, a different version) uses its own `resources/` instead of the parent's: an inherited `NYCODE_RESOURCES` that nycode exported (marked by `NYCODE_RESOURCES_AUTO=1`) is replaced, while a value the user set still wins
 - An automatic session title is bounded to the first line of the model's reply without heading marks, at most 80 characters; a provider that ignores the token cap made the whole reply the session name
+
+- The native display tests put each tmux socket in their temporary directory and kill any server still running after the suite; before, `tmux kill-server` left one socket file per server in `/tmp/tmux-<uid>`
+
+### Removed
+
+- The embedded `/claude-tier` command (a probe of Claude Team account plans, unrelated to nycode)
 
 ## [2.0.2] - 2026-11-23
 
