@@ -2,10 +2,11 @@
  * The saved subagent routing policy (local patch zzzzzzzzzzz-subagent-routing, docs/subagent-routing-2026-11-13.md):
  * which models, and for each which efforts, spawned subagents may use. Without a file there is no policy and
  * the harness behaves as before. An invalid file never breaks a spawn: one warning, routing off.
+ * A trusted project's `.nycode/subagent-routing.json` replaces the global file whole (docs/harness/subagents-setup-projeto-2026-11-26.md).
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ENV_AGENT_DIR, getAgentDir } from "../../../config.ts";
+import { CONFIG_DIR_NAME, ENV_AGENT_DIR, getAgentDir } from "../../../config.ts";
 
 type Env = Record<string, string | undefined>;
 
@@ -24,9 +25,14 @@ export const isEffort = (value: unknown): value is Effort =>
 	typeof value === "string" && (EFFORTS as readonly string[]).includes(value);
 export const effortRank = (effort: string): number => (EFFORTS as readonly string[]).indexOf(effort);
 
-export function policyFile(env: Env = process.env): string {
+/** The project's own policy file; it applies only when the caller passes the cwd of a trusted project. */
+export const projectPolicyFile = (cwd: string): string => path.join(cwd, CONFIG_DIR_NAME, "subagent-routing.json");
+
+/** The env override, else the trusted project's file when it exists, else the global one. */
+export function policyFile(env: Env = process.env, trustedCwd?: string): string {
 	const override = env.NYCODE_SUBAGENT_ROUTING_FILE;
 	if (override) return override;
+	if (trustedCwd && fs.existsSync(projectPolicyFile(trustedCwd))) return projectPolicyFile(trustedCwd);
 	return path.join(env[ENV_AGENT_DIR] || getAgentDir(), "subagent-routing.json");
 }
 
@@ -56,8 +62,7 @@ const warnOnce = (message: string): void => {
 };
 
 /** Missing file = no policy. Unreadable or invalid = one warning, no policy. */
-export function loadPolicy(env: Env = process.env): RoutingPolicy | undefined {
-	const file = policyFile(env);
+export function loadPolicy(file: string = policyFile()): RoutingPolicy | undefined {
 	let text: string;
 	try {
 		text = fs.readFileSync(file, "utf-8");
@@ -82,8 +87,7 @@ export function loadPolicy(env: Env = process.env): RoutingPolicy | undefined {
 }
 
 /** Atomic write (tmp + rename), mode 0600. */
-export function savePolicy(policy: RoutingPolicy, env: Env = process.env): void {
-	const file = policyFile(env);
+export function savePolicy(policy: RoutingPolicy, file: string = policyFile()): void {
 	fs.mkdirSync(path.dirname(file), { recursive: true });
 	const tmp = `${file}.${process.pid}.tmp`;
 	try {
@@ -96,9 +100,9 @@ export function savePolicy(policy: RoutingPolicy, env: Env = process.env): void 
 }
 
 /** True when a file was removed, false when there was none (ENOENT); any other failure throws. */
-export function removePolicy(env: Env = process.env): boolean {
+export function removePolicy(file: string = policyFile()): boolean {
 	try {
-		fs.unlinkSync(policyFile(env));
+		fs.unlinkSync(file);
 		return true;
 	} catch (error) {
 		if ((error as NodeJS.ErrnoException).code === "ENOENT") return false;
@@ -106,8 +110,8 @@ export function removePolicy(env: Env = process.env): boolean {
 	}
 }
 
-export function formatPolicy(policy: RoutingPolicy | undefined, env: Env = process.env): string {
-	if (!policy) return `Subagent routing: off (no policy at ${policyFile(env)}).`;
+export function formatPolicy(policy: RoutingPolicy | undefined, file: string = policyFile()): string {
+	if (!policy) return `Subagent routing: off (no policy at ${file}).`;
 	const rows = Object.entries(policy.models).map(([model, efforts]) => `  ${model}: ${efforts.join(", ")}`);
-	return [`Subagent routing: on (${policyFile(env)})`, ...rows].join("\n");
+	return [`Subagent routing: on (${file})`, ...rows].join("\n");
 }

@@ -8,7 +8,7 @@
 import { maxSubagentDepth, subagentDepth } from "../nesting/index.ts";
 import type { AgentConfig } from "../registry/agents.ts";
 import { ALLOWED_AGENTS_ENV, childAllowedAgents, narrowList, narrowSkills } from "./capabilities.ts";
-import { loadPolicy } from "./policy.ts";
+import { loadPolicy, policyFile } from "./policy.ts";
 import { type CatalogModel, routeSpawn } from "./route.ts";
 
 export const PARENT_MODEL_ENV = "NYCODE_SUBAGENT_PARENT_MODEL";
@@ -31,6 +31,8 @@ export interface RoutingSession {
 	/** The session's own model key and thinking level (the parent of a depth-1 spawn). */
 	model?: string;
 	effort?: string;
+	/** The cwd when the project is trusted: its own policy file, if any, replaces the global one. */
+	trustedCwd?: string;
 }
 
 export interface ResolvedSpawn {
@@ -62,7 +64,8 @@ export function resolveSpawn(
 	const base: ResolvedSpawn = { agent, env: { [ALLOWED_AGENTS_ENV]: childAllowedAgents(agent, env) }, args: [] };
 	if (base.env[ALLOWED_AGENTS_ENV] === "") delete base.env[ALLOWED_AGENTS_ENV];
 	try {
-		const policy = loadPolicy(env);
+		const file = policyFile(env, session.trustedCwd);
+		const policy = loadPolicy(file);
 		if (!policy) return base;
 		const degree = subagentDepth(env) + 1;
 		const route = routeSpawn({
@@ -92,6 +95,8 @@ export function resolveSpawn(
 			agent: routed,
 			env: {
 				...base.env,
+				// The child reads the parent's file even from another cwd, so a nested spawn keeps the project policy.
+				NYCODE_SUBAGENT_ROUTING_FILE: file,
 				...(route ? { [PARENT_MODEL_ENV]: route.model, [PARENT_EFFORT_ENV]: route.effort } : {}),
 				[NO_SKILLS_ENV]: "1",
 			},

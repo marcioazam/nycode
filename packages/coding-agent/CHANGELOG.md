@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Per-project subagent routing: a trusted project's `.nycode/subagent-routing.json` replaces the global policy; `/subagents-setup project` edits it and `/subagents-setup project off` removes it. Nested subagents inherit the file their parent used
+
 ## [2.0.3] - 2026-11-26
 
 ### Breaking Changes
