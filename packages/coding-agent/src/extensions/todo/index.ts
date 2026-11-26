@@ -40,7 +40,7 @@ import { setTodoWidgetMode, TODO_WIDGET_MODES, todoWidgetMode } from "../_shared
 import { registerExternal } from "./external.ts";
 import { reconcilePlan } from "./plan-link.ts";
 import { readTodoSyncEnabled, registerStaleReminder } from "./stale-reminder.ts";
-import { isTerminal, toStatus } from "./status.ts";
+import { isTerminal, todoProgress, toStatus } from "./status.ts";
 
 type TodoAction = "add" | "start" | "complete" | "fail" | "block" | "cancel" | "confirm" | "delete" | "clear" | "list";
 /** Actions that close or park an item, and the status each one sets. */
@@ -192,10 +192,10 @@ class TodoListComponent {
 		if (this.todos.length === 0) {
 			lines.push(truncateToWidth(`  ${th.fg("dim", "No todos yet. Ask the agent to add some!")}`, width));
 		} else {
-			const completed = this.todos.filter((t) => t.status === "completed").length;
-			const failed = this.todos.filter((t) => t.status === "failed").length;
-			const blocked = this.todos.filter((t) => t.status === "blocked").length;
-			const completedLabel = `${completed}/${this.todos.length} completed${failed ? ` · ${failed} failed` : ""}${blocked ? ` · ${blocked} blocked` : ""}`;
+			const { done, total } = todoProgress(this.todos);
+			const count = (status: string) => this.todos.filter((t) => t.status === status).length;
+			const [failed, blocked, cancelled] = [count("failed"), count("blocked"), count("cancelled")];
+			const completedLabel = `${done}/${total} completed${failed ? ` · ${failed} failed` : ""}${blocked ? ` · ${blocked} blocked` : ""}${cancelled ? ` · ${cancelled} cancelled` : ""}`;
 			lines.push(truncateToWidth(`  ${th.fg("muted", completedLabel)}`, width), "");
 
 			for (const todo of this.todos) {

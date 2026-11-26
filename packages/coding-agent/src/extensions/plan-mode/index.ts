@@ -55,6 +55,7 @@ import {
 	planToTodos,
 	restoredPlanState,
 	type TodoItem,
+	todoRowsProgress,
 	todosToItems,
 } from "./utils.ts";
 
@@ -233,8 +234,7 @@ export default function planModeExtension(nycode: ExtensionAPI): void {
 		const todo =
 			executionMode && externalTodos.length > 0
 				? {
-						done: externalTodos.filter((t) => t.completed).length,
-						total: externalTodos.length,
+						...todoRowsProgress(externalTodos),
 						doing: externalTodos.find((t) => t.doing && !t.completed)?.text,
 					}
 				: undefined;
