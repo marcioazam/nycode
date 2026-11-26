@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- Fixed Claude Opus 5.5 and Sonnet 5.5 offering thinking "off" on Bedrock, Cloudflare AI Gateway, GitHub Copilot and Vercel AI Gateway: a Claude model now loses "off" whenever Anthropic's own models.dev entry lists no thinking toggle, on every host (same rule as upstream pi).
 - Fixed provider host detection that treated a base URL as a match when the host name appeared anywhere in the URL, and the Cerebras bodyless-overflow check that could backtrack on a long run of spaces
 - Fixed OAuth callback pages so provider error text is escaped before it is written as HTML
 - Qwen Token Plan Individual lists `qwen4-max` instead of `qwen4-max-preview`, which Qwen retired on 2026-11-25 (the model catalog no longer carries the preview id)

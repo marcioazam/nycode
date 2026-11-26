@@ -285,4 +285,24 @@ describe("getSupportedThinkingLevels", () => {
 		expect(getSupportedThinkingLevels(model!)).toContain("max");
 		expect(getSupportedThinkingLevels(model!)).not.toContain("off");
 	});
+
+	// Opus 5.5 and Sonnet 5.5 reject disabled thinking on every host, not only on Anthropic's own API.
+	it.each([
+		["amazon-bedrock", "global.anthropic.claude-opus-5-5"],
+		["amazon-bedrock", "us.anthropic.claude-sonnet-5-5"],
+		["cloudflare-ai-gateway", "claude-opus-5-5"],
+		["github-copilot", "claude-sonnet-5.5"],
+		["vercel-ai-gateway", "anthropic/claude-opus-5.5-fast"],
+	] as const)("excludes off for always-thinking Claude 5.5 on %s %s", (provider, id) => {
+		const model = getModel(provider, id as never);
+		expect(model).toBeDefined();
+		expect(getSupportedThinkingLevels(model!)).not.toContain("off");
+		expect(getSupportedThinkingLevels(model!)).toContain("max");
+	});
+
+	it("keeps off for Claude Haiku 5.5, which accepts disabled thinking", () => {
+		const model = getModel("anthropic", "claude-haiku-5-5");
+		expect(model).toBeDefined();
+		expect(getSupportedThinkingLevels(model!)).toContain("off");
+	});
 });
