@@ -164,7 +164,9 @@ describe("static fallback models", () => {
 		expect(resolveModelUid("swe-2", byId.get("swe-2")?.thinkingLevelMap, "high")).toBe("swe-2-high");
 		expect(resolveModelUid("swe-2", byId.get("swe-2")?.thinkingLevelMap)).toBe("swe-2-high");
 		expect(resolveModelUid("swe-2.1", byId.get("swe-2.1")?.thinkingLevelMap, "low")).toBe("swe-2-1-low");
-		expect(resolveModelUid("swe-2.1", byId.get("swe-2.1")?.thinkingLevelMap)).toBe("swe-2-1");
+		// High is the labelled "SWE-2.1 High" variant, not the unsuffixed "SWE-2.1" (hand-mapped levels, 2026-11-26).
+		expect(resolveModelUid("swe-2.1", byId.get("swe-2.1")?.thinkingLevelMap)).toBe("swe-2-1-high");
+		expect(resolveModelUid("swe-1.7", byId.get("swe-1.7")?.thinkingLevelMap, "max")).toBe("swe-1-7");
 		expect(byId.get("swe-2")?.thinkingLevelMap?.low).toBeNull();
 		expect(byId.get("swe-2")?.input).toContain("image");
 		// Live 2026-11-26: with no cache the fallback let an image reach swe-2-flash, which does not take images.

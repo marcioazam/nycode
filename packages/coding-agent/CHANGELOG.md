@@ -62,6 +62,7 @@
 
 ### Fixed
 
+- Fixed the Devin provider's thinking levels: each Devin family now has a hand-mapped level-to-variant table, so the picker offers only the levels a model serves and sends the right variant (SWE-1.7 Max is `swe-1-7`, SWE-2.1 High is `swe-2-1-high`, Claude Opus/Sonnet 4.6 offer off and high, GLM-5.2 off/high/max). Unknown families still fall back to the variant suffixes.
 - Fixed the "Run project-local agents?" prompt appearing on every project-agent `subagent` call in trusted projects: `confirmProjectAgents` now defaults to `false`; untrusted projects are still always asked, and `true` still forces a prompt
 - Default models for `cloudflare-workers-ai` and `cloudflare-ai-gateway` now use `gpt-oss-120b`, since Cloudflare dropped the kimi models from its catalog
 - Fixed startup stopping on "Hooks have been renamed to extensions" when `<agentDir>/hooks/` or `.nycode/hooks/` exists: that directory holds command-hook scripts, so it is no longer flagged (custom tools left in `tools/` still warn)

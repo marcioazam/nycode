@@ -4,6 +4,7 @@ import type { ThinkingLevelMap } from "@nycode/ai";
 import type { ProviderChatModelConfig } from "../../../core/extensions/types.ts";
 import { runDevin } from "../auth/cli.ts";
 import { EXTRA_COST_VARIANT } from "./effort.ts";
+import { DEVIN_THINKING_LEVELS } from "./levels.ts";
 
 export interface DevinVariant {
 	model_uid: string;
@@ -118,13 +119,8 @@ function familyToModels(family: DevinFamily): ProviderChatModelConfig[] {
 	});
 	const source = usable.length > 0 ? usable : family.variants;
 	if (source.length === 0) return [];
-	const thinkingLevelMap: ThinkingLevelMap = {};
-	for (const variant of source) {
-		const level = thinkingFromSuffix(variantKey(variant.model_uid));
-		if (level && thinkingLevelMap[level] === undefined) {
-			thinkingLevelMap[level] = variant.model_uid;
-		}
-	}
+	const manual = DEVIN_THINKING_LEVELS[family.slug];
+	const thinkingLevelMap = manual ? manualLevels(manual, source) : suffixLevels(source);
 
 	const defaultUid = preferredDefault(thinkingLevelMap) ?? source[0]?.model_uid ?? family.family_uid;
 	const sample = source.find((variant) => variant.model_uid === defaultUid) ?? source[0];
@@ -159,11 +155,33 @@ function familyToModels(family: DevinFamily): ProviderChatModelConfig[] {
 	];
 }
 
+/** The hand-mapped levels whose variant this catalog still lists (the API may drop disabled ones). */
+function manualLevels(manual: Readonly<ThinkingLevelMap>, source: DevinVariant[]): ThinkingLevelMap {
+	const listed = new Set(source.map((variant) => variant.model_uid));
+	const map: ThinkingLevelMap = {};
+	for (const level of THINKING_ORDER) {
+		const uid = manual[level];
+		if (uid && listed.has(uid)) map[level] = uid;
+	}
+	return map;
+}
+
+/** Levels guessed from variant suffixes, for families the hand-mapped table does not know yet. */
+function suffixLevels(source: DevinVariant[]): ThinkingLevelMap {
+	const map: ThinkingLevelMap = {};
+	for (const variant of source) {
+		const level = thinkingFromSuffix(variantKey(variant.model_uid));
+		if (level && map[level] === undefined) map[level] = variant.model_uid;
+	}
+	return map;
+}
+
 const FREE = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
 
-/** A thinking map for a family that ships only some levels (live catalog 2026-11-26): the others are hidden. */
-function sweLevels(levels: Partial<Record<(typeof THINKING_ORDER)[number], string>>): ThinkingLevelMap {
-	return Object.fromEntries(THINKING_ORDER.map((level) => [level, levels[level] ?? null]));
+/** The full thinking map of a hand-mapped family: levels it does not ship are null, so the picker hides them. */
+function familyLevels(slug: string): ThinkingLevelMap {
+	const levels = DEVIN_THINKING_LEVELS[slug];
+	return Object.fromEntries(THINKING_ORDER.map((level) => [level, levels?.[level] ?? null]));
 }
 
 /** Models registered before a catalog has ever been fetched (the swe-2* family is free, so it works without a plan). */
@@ -172,15 +190,7 @@ export const FALLBACK_MODELS: ProviderChatModelConfig[] = [
 		id: "claude-opus-5",
 		name: "Claude Opus 5",
 		reasoning: true,
-		thinkingLevelMap: {
-			off: null,
-			minimal: null,
-			low: "claude-opus-5-low",
-			medium: "claude-opus-5-medium",
-			high: "claude-opus-5-high",
-			xhigh: "claude-opus-5-xhigh",
-			max: "claude-opus-5-max",
-		},
+		thinkingLevelMap: familyLevels("claude-opus-5"),
 		input: ["text", "image"],
 		cost: { input: 5, output: 25, cacheRead: 0.5, cacheWrite: 6.25 },
 		contextWindow: 1_000_000,
@@ -190,15 +200,7 @@ export const FALLBACK_MODELS: ProviderChatModelConfig[] = [
 		id: "claude-fable-5",
 		name: "Claude Fable 5",
 		reasoning: true,
-		thinkingLevelMap: {
-			off: null,
-			minimal: null,
-			low: "claude-5-fable-low",
-			medium: "claude-5-fable-medium",
-			high: "claude-5-fable-high",
-			xhigh: "claude-5-fable-xhigh",
-			max: "claude-5-fable-max",
-		},
+		thinkingLevelMap: familyLevels("claude-fable-5"),
 		input: ["text", "image"],
 		cost: { input: 10, output: 50, cacheRead: 1, cacheWrite: 12.5 },
 		contextWindow: 1_000_000,
@@ -208,15 +210,7 @@ export const FALLBACK_MODELS: ProviderChatModelConfig[] = [
 		id: "gpt-5.6-sol",
 		name: "GPT-5.6 Sol",
 		reasoning: true,
-		thinkingLevelMap: {
-			off: "gpt-5-6-sol-none",
-			minimal: null,
-			low: "gpt-5-6-sol-low",
-			medium: "gpt-5-6-sol-medium",
-			high: "gpt-5-6-sol-high",
-			xhigh: "gpt-5-6-sol-xhigh",
-			max: "gpt-5-6-sol-max",
-		},
+		thinkingLevelMap: familyLevels("gpt-5.6-sol"),
 		input: ["text", "image"],
 		cost: { input: 5, output: 30, cacheRead: 0.5, cacheWrite: 6.25 },
 		contextWindow: 1_000_000,
@@ -226,7 +220,7 @@ export const FALLBACK_MODELS: ProviderChatModelConfig[] = [
 		id: "swe-1.7",
 		name: "SWE-1.7",
 		reasoning: true,
-		thinkingLevelMap: sweLevels({ medium: "swe-1-7-medium", high: "swe-1-7" }),
+		thinkingLevelMap: familyLevels("swe-1.7"),
 		input: ["text", "image"],
 		cost: FREE,
 		contextWindow: 262_000,
@@ -236,7 +230,7 @@ export const FALLBACK_MODELS: ProviderChatModelConfig[] = [
 		id: "swe-2",
 		name: "SWE-2",
 		reasoning: true,
-		thinkingLevelMap: sweLevels({ medium: "swe-2-medium", high: "swe-2-high", max: "swe-2-max" }),
+		thinkingLevelMap: familyLevels("swe-2"),
 		input: ["text", "image"],
 		cost: FREE,
 		contextWindow: 262_000,
@@ -246,7 +240,7 @@ export const FALLBACK_MODELS: ProviderChatModelConfig[] = [
 		id: "swe-2-flash",
 		name: "SWE-2 Flash",
 		reasoning: true,
-		thinkingLevelMap: sweLevels({ medium: "swe-2-flash-medium", high: "swe-2-flash-high", max: "swe-2-flash-max" }),
+		thinkingLevelMap: familyLevels("swe-2-flash"),
 		// Live catalog 2026-11-26: every swe-2-flash variant has supports_images=false.
 		input: ["text"],
 		cost: FREE,
@@ -257,13 +251,7 @@ export const FALLBACK_MODELS: ProviderChatModelConfig[] = [
 		id: "swe-2.1",
 		name: "SWE-2.1",
 		reasoning: true,
-		thinkingLevelMap: sweLevels({
-			low: "swe-2-1-low",
-			medium: "swe-2-1-medium",
-			high: "swe-2-1",
-			xhigh: "swe-2-1-xhigh",
-			max: "swe-2-1-max",
-		}),
+		thinkingLevelMap: familyLevels("swe-2.1"),
 		input: ["text", "image"],
 		cost: FREE,
 		contextWindow: 262_000,

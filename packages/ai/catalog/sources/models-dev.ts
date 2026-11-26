@@ -47,6 +47,8 @@ export interface ModelsDevV2Model {
 	id: string;
 	type: string;
 	name: string;
+	/** The lab's own `<provider>/<id>`, e.g. `anthropic/claude-sonnet-5-5`. Some of the lab's own entries omit it. */
+	canonical_id?: string;
 	status?: string;
 	modalities: { input: string[]; output: string[] };
 	capabilities: {
@@ -87,6 +89,8 @@ export interface ModelsDevApi {
 export interface ModelsDevModel {
 	id: string;
 	name: string;
+	/** The model's id on its lab's own models.dev provider, e.g. `anthropic/claude-sonnet-5-5`. */
+	canonicalId?: string;
 	type: string;
 	status?: string;
 	toolCall: boolean;
@@ -187,6 +191,7 @@ export function normalizeModelsDevModel(model: ModelsDevV2Model): ModelsDevModel
 		name: model.name,
 		type: model.type,
 		status: model.status,
+		canonicalId: model.canonical_id,
 		toolCall: model.capabilities?.tools?.supported === true,
 		structuredOutput: model.capabilities?.structured_output === true,
 		reasoning: reasoning?.supported === true,
