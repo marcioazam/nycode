@@ -1,6 +1,6 @@
 {
 	"name": "@nycode/schema",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "JSON Schema validation without eval: drafts 2020-12 and 7, compiled into plain closures",
 	"type": "module",
 	"main": "./dist/index.js",

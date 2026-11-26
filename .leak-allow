@@ -28,6 +28,16 @@ docs/migration/nycode-core/evidencias/F12.md:marcioazam
 packages/coding-agent/CHANGELOG.md:marcioazam
 packages/coding-agent/docs/settings.md:marcioazam
 packages/coding-agent/package.json:marcioazam
+packages/agent/package.json:marcioazam
+packages/ai/package.json:marcioazam
+packages/chord/package.json:marcioazam
+packages/codemode/package.json:marcioazam
+packages/durable/package.json:marcioazam
+packages/env/package.json:marcioazam
+packages/mcp/package.json:marcioazam
+packages/schema/package.json:marcioazam
+packages/telemetry/package.json:marcioazam
+packages/tui/package.json:marcioazam
 packages/tui/CHANGELOG.md:marcioazam
 README.md:marcioazam
 # Example home path in a released changelog entry; not a real user

@@ -1,6 +1,6 @@
 {
 	"name": "@nycode/evals",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -12,8 +12,8 @@
 		"test": "vitest run --config vitest.test.config.ts"
 	},
 	"devDependencies": {
-		"@nycode/ai": "2.0.2",
-		"@nycode/coding-agent": "2.0.2",
+		"@nycode/ai": "2.0.3",
+		"@nycode/coding-agent": "2.0.3",
 		"@types/node": "22.20.5",
 		"@vitest-evals/core": "0.15.0",
 		"vitest": "4.1.12",

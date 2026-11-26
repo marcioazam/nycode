@@ -1,6 +1,6 @@
 {
 	"name": "@nycode/coding-agent",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "Coding agent CLI with read, bash, edit, write tools and session management",
 	"type": "module",
 	"nycodeConfig": {
@@ -42,11 +42,11 @@
 		"prepublishOnly": "npm run clean && npm run build"
 	},
 	"dependencies": {
-		"@nycode/agent-core": "2.0.2",
-		"@nycode/ai": "2.0.2",
-		"@nycode/codemode": "2.0.2",
-		"@nycode/mcp": "2.0.2",
-		"@nycode/tui": "2.0.2",
+		"@nycode/agent-core": "2.0.3",
+		"@nycode/ai": "2.0.3",
+		"@nycode/codemode": "2.0.3",
+		"@nycode/mcp": "2.0.3",
+		"@nycode/tui": "2.0.3",
 		"@silvia-odwyer/photon-node": "0.3.4",
 		"@vscode/tree-sitter-wasm": "0.3.1",
 		"brace-expansion": "5.0.13",

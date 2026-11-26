@@ -1,6 +1,6 @@
 {
 	"name": "@nycode/env",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "Remote execution environments for Nycode Durable: a small daemon deployed over SSH and its ExecutionEnv client",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -45,8 +45,8 @@
 		"node": ">=22.19.0"
 	},
 	"dependencies": {
-		"@nycode/chord": "2.0.2",
-		"@nycode/durable": "2.0.2"
+		"@nycode/chord": "2.0.3",
+		"@nycode/durable": "2.0.3"
 	},
 	"devDependencies": {
 		"vitest": "4.1.12"
