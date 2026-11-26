@@ -110,7 +110,7 @@ export async function checkProjectAgentGate(
 		requestedProjectAgents.length,
 		approved,
 		ctx.hasUI,
-		params.confirmProjectAgents ?? true,
+		params.confirmProjectAgents ?? false,
 	);
 	// Agent names come from repo-controlled frontmatter; a newline in one would otherwise
 	// let it write its own "Source:" line into the prompt body.

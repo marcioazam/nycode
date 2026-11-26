@@ -57,7 +57,7 @@ This tool executes a separate `nycode` subprocess with a delegated system prompt
 
 Project-local agents (`.claude/agents`, `.nycode/agents`) load once the project is approved: a default call resolves `agentScope` to `"both"` for an approved project and `"user"` otherwise, and an explicit `agentScope` still narrows or widens it. Every invocation passes the project-agent gate either way.
 
-When running interactively, the tool prompts for confirmation before running project-local agents. `confirmProjectAgents: false` skips that prompt for a project you have already approved; an unapproved project is still asked about.
+Project-local agents run without a prompt in an approved project; an unapproved project is always asked about (and refused without a UI), whatever `confirmProjectAgents` says. `confirmProjectAgents: true` forces the prompt even in an approved project.
 
 ## Usage
 
