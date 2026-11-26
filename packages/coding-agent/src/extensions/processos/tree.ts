@@ -26,9 +26,9 @@ export function readProc(reader: ProcReader, pid: number): Proc | undefined {
 	const close = stat.lastIndexOf(")");
 	const comm = stat.slice(stat.indexOf("(") + 1, close);
 	const ppid = Number(stat.slice(close + 2).split(" ")[1]);
-	const kb = (key: string) => Number(new RegExp(`^${key}:\\s+(\\d+)`, "m").exec(status)?.[1] ?? 0);
+	const kb = (re: RegExp) => Number(re.exec(status)?.[1] ?? 0);
 	const argv = (reader.read(pid, "cmdline") ?? "").split("\0").filter(Boolean).join(" ");
-	return { pid, ppid, rssKb: kb("VmRSS"), swapKb: kb("VmSwap"), cmd: argv || `[${comm}]` };
+	return { pid, ppid, rssKb: kb(/^VmRSS:\s+(\d+)/m), swapKb: kb(/^VmSwap:\s+(\d+)/m), cmd: argv || `[${comm}]` };
 }
 
 /** `root` and all its descendants, parents before children; empty when `root` is gone. */
