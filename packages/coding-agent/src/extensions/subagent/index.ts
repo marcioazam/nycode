@@ -86,7 +86,7 @@ import { getFinalOutput } from "./render/render.ts";
 import { setRoutingSession } from "./routing/apply.ts";
 import { filterAllowed } from "./routing/capabilities.ts";
 import { registerRoutingCommand } from "./routing/command.ts";
-import { loadPolicy } from "./routing/policy.ts";
+import { loadPolicy, policyFile } from "./routing/policy.ts";
 import { routingDescription } from "./routing/text.ts";
 import { registerTeam } from "./team/index.ts";
 import { teamEnabled, withTeamTool } from "./team/types.ts";
@@ -343,6 +343,8 @@ export default function subagentExtension(nycode: ExtensionAPI) {
 	// resolves against these roots, and its project or local memory needs the approval.
 	let hookApproved = false;
 	let hookSkillRoots: string[] = [];
+	// The cwd of a trusted project, whose own routing policy file replaces the global one.
+	let routingCwd: string | undefined;
 
 	// Discovery walks the plugin cache, the builtin dir, and every agent dir, parsing
 	// each file: dozens of fs ops per call. The roster injection below runs every turn
@@ -357,6 +359,13 @@ export default function subagentExtension(nycode: ExtensionAPI) {
 		hookApproved = isProjectApprovedSilently(ctx);
 		hookAgentScope = hookApproved ? "both" : "user";
 		hookSkillRoots = skillDirs(ctx.cwd, os.homedir(), hookApproved);
+		routingCwd = hookApproved ? ctx.cwd : undefined;
+		const projectPolicy = loadPolicy(policyFile(process.env, routingCwd));
+		// Re-register only on a change: the tool's description and schema carry the policy.
+		if (JSON.stringify(projectPolicy) !== JSON.stringify(routingPolicy)) {
+			routingPolicy = projectPolicy;
+			registerSubagentTool();
+		}
 		try {
 			hookModels = ctx.modelRegistry?.getAvailable?.() ?? [];
 		} catch {
@@ -556,6 +565,7 @@ export default function subagentExtension(nycode: ExtensionAPI) {
 						catalog: availableModels.map((m) => ({ key: `${m.provider}/${m.id}`, cost: m.cost?.output })),
 						model: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
 						effort: nycode.getThinkingLevel?.(),
+						trustedCwd: projectApproved ? ctx.cwd : undefined,
 					});
 
 					// Root interactive TUI: single, parallel and chain run in the background unless background: false.
@@ -632,7 +642,7 @@ export default function subagentExtension(nycode: ExtensionAPI) {
 	registerSubagentTool();
 	// /subagents-setup: which models and efforts spawned subagents may use (docs/subagent-routing-2026-11-13.md).
 	registerRoutingCommand(nycode, () => {
-		routingPolicy = loadPolicy();
+		routingPolicy = loadPolicy(policyFile(process.env, routingCwd));
 		registerSubagentTool();
 	});
 

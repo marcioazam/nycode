@@ -1,6 +1,6 @@
 // Fiação do roteamento no ponto de entrada do subagente (docs/subagent-routing-2026-11-13.md, AC1-AC7), com nycode e filho falsos (vitest port)
 import assert from "node:assert/strict";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "vitest";
 import skillsExtension from "../../../../src/extensions/skills-compat/index.ts";
@@ -405,5 +405,39 @@ test("AC7: com NYCODE_SUBAGENT_NO_SKILLS o skills.ts não entrega paths por reso
 		assert.equal(discover({}, ctx), undefined);
 	} finally {
 		delete process.env.NYCODE_SUBAGENT_NO_SKILLS;
+	}
+});
+
+test("projeto confiável: .nycode/subagent-routing.json substitui o global no tool e no /subagents-setup project", async () => {
+	const savedFile = process.env.NYCODE_SUBAGENT_ROUTING_FILE;
+	delete process.env.NYCODE_SUBAGENT_ROUTING_FILE;
+	const projectFile = join(tmp, ".nycode", "subagent-routing.json");
+	mkdirSync(join(tmp, ".nycode"), { recursive: true });
+	writeFileSync(projectFile, JSON.stringify({ version: 1, models: { "a/haiku": ["low"] } }));
+	const h = boot({ hasUI: true, custom: async () => ({ version: 1, models: { "a/opus": ["high"] } }) });
+	const ctx = h.ctx as typeof h.ctx & { isProjectTrusted?: () => boolean };
+	const cmd = h.commands.get("subagents-setup") as { handler: Handler };
+	try {
+		await h.fire("session_start");
+		assert.ok(!h.tool().description.includes("Allowed model"), "sem confiança o arquivo do projeto não vale");
+		await cmd.handler("project", ctx);
+		assert.match(h.notes.at(-1)!, /needs a trusted project/);
+		ctx.isProjectTrusted = () => true;
+		await h.fire("session_start");
+		assert.match(h.tool().description, /Allowed model\[efforts\]: a\/haiku\[low\]/);
+		const r = await h.info({ agent: "worker", task: "x" });
+		assert.equal(r.args[r.args.indexOf("--model") + 1], "a/haiku:low");
+		await cmd.handler("show", ctx);
+		assert.ok(h.notes.at(-1)!.includes(`on (${projectFile})`), h.notes.at(-1));
+		await cmd.handler("project", ctx);
+		assert.deepEqual(JSON.parse(readFileSync(projectFile, "utf8")).models, { "a/opus": ["high"] });
+		assert.match(h.tool().description, /a\/opus\[high\]/);
+		await cmd.handler("project off", ctx);
+		assert.equal(existsSync(projectFile), false);
+		assert.ok(!h.tool().description.includes("Allowed model"), "sem o arquivo do projeto volta o global (ausente)");
+	} finally {
+		process.env.NYCODE_SUBAGENT_ROUTING_FILE = savedFile;
+		rmSync(join(tmp, ".nycode"), { recursive: true, force: true });
+		h.restore();
 	}
 });

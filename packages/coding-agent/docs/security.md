@@ -40,6 +40,7 @@ Nycode requires a project-trust decision when it finds any of these resources fr
 - `.nycode/mcp.json`
 - `.nycode/extensions`, `.nycode/skills`, `.nycode/prompts`, or `.nycode/themes`
 - `.nycode/SYSTEM.md` or `.nycode/APPEND_SYSTEM.md`
+- `.nycode/subagent-routing.json`
 - project `.agents/skills` in the current directory or an ancestor directory
 
 A bare `.nycode` directory does not require project trust.
@@ -49,6 +50,7 @@ Granting project trust allows Nycode to load:
 - project settings
 - project MCP servers from `.nycode/mcp.json`
 - extensions, skills, prompt templates, themes, and system-prompt files under `.nycode`
+- the project subagent routing policy (`.nycode/subagent-routing.json`), which replaces the global one
 - missing packages configured through project settings
 - project-local and project-package extensions
 

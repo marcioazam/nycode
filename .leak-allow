@@ -38,6 +38,7 @@ packages/mcp/package.json:marcioazam
 packages/schema/package.json:marcioazam
 packages/telemetry/package.json:marcioazam
 packages/tui/package.json:marcioazam
+packages/coding-agent/docs/security.md:github\.com/marcioazam/nycode/blob/main/SECURITY\.md
 packages/tui/CHANGELOG.md:marcioazam
 README.md:marcioazam
 # Example home path in a released changelog entry; not a real user

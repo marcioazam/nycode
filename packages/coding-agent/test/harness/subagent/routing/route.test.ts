@@ -170,12 +170,12 @@ test("política: validação, escrita atômica 0600, arquivo inválido liga o av
 	const env = { NYCODE_SUBAGENT_ROUTING_FILE: file };
 	assert.equal(policyMod.policyFile(env), file);
 	assert.match(policyMod.policyFile({}), /subagent-routing\.json$/);
-	assert.equal(policyMod.loadPolicy(env), undefined);
-	assert.match(policyMod.formatPolicy(undefined, env), /off/);
-	policyMod.savePolicy({ version: 1, models: { "a/opus": ["high", "low"] } }, env);
+	assert.equal(policyMod.loadPolicy(file), undefined);
+	assert.match(policyMod.formatPolicy(undefined, file), /off/);
+	policyMod.savePolicy({ version: 1, models: { "a/opus": ["high", "low"] } }, file);
 	assert.equal(statSync(file).mode & 0o777, 0o600);
-	assert.deepEqual(policyMod.loadPolicy(env), { version: 1, models: { "a/opus": ["low", "high"] } });
-	assert.match(policyMod.formatPolicy(policyMod.loadPolicy(env), env), /a\/opus: low, high/);
+	assert.deepEqual(policyMod.loadPolicy(file), { version: 1, models: { "a/opus": ["low", "high"] } });
+	assert.match(policyMod.formatPolicy(policyMod.loadPolicy(file), file), /a\/opus: low, high/);
 	assert.equal(existsSync(`${file}.${process.pid}.tmp`), false);
 	assert.equal(JSON.parse(readFileSync(file, "utf8")).version, 1);
 	const errors: string[] = [];
@@ -193,21 +193,17 @@ test("política: validação, escrita atômica 0600, arquivo inválido liga o av
 			'{"version":1,"models":[]}',
 		]) {
 			writeFileSync(file, bad);
-			assert.equal(policyMod.loadPolicy(env), undefined, bad);
+			assert.equal(policyMod.loadPolicy(file), undefined, bad);
 		}
 		writeFileSync(file, "{");
-		policyMod.loadPolicy(env);
+		policyMod.loadPolicy(file);
 	} finally {
 		console.error = orig;
 	}
 	assert.equal(errors.length, 8, "um aviso por causa distinta, nunca repetido");
-	assert.equal(
-		policyMod.loadPolicy({ NYCODE_SUBAGENT_ROUTING_FILE: tmp }),
-		undefined,
-		"ilegível (EISDIR) não derruba",
-	);
-	assert.equal(policyMod.removePolicy(env), true);
-	assert.equal(policyMod.removePolicy(env), false);
+	assert.equal(policyMod.loadPolicy(tmp), undefined, "ilegível (EISDIR) não derruba");
+	assert.equal(policyMod.removePolicy(file), true);
+	assert.equal(policyMod.removePolicy(file), false);
 	assert.equal(policyMod.parsePolicy(null), "not a JSON object");
 	assert.equal(policyMod.parsePolicy({ version: 1, models: null }), "models must be an object");
 });

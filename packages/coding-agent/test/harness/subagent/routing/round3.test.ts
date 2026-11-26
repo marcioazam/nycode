@@ -42,11 +42,10 @@ test("1: ALLOWED do filho = próprio ∩ herdado", () => {
 });
 
 test("2: removePolicy só trata ENOENT como já off; /subagents-setup off notifica o erro", async () => {
-	const env = { NYCODE_SUBAGENT_ROUTING_FILE: join(tmp, "gone.json") };
-	assert.equal(policyMod.removePolicy(env), false);
+	assert.equal(policyMod.removePolicy(join(tmp, "gone.json")), false);
 	const dir = join(tmp, "dirpolicy");
 	mkdirSync(dir);
-	assert.throws(() => policyMod.removePolicy({ NYCODE_SUBAGENT_ROUTING_FILE: dir }));
+	assert.throws(() => policyMod.removePolicy(dir));
 	const handlers = new Map<string, { handler: (...a: unknown[]) => unknown }>();
 	registerRoutingCommand(
 		{
@@ -73,14 +72,12 @@ test("3: savePolicy remove o tmp em falha e força 0600", () => {
 	const dest = join(tmp, "dest-dir.json");
 	mkdirSync(dest);
 	const tmpFile = `${dest}.${process.pid}.tmp`;
-	assert.throws(() =>
-		policyMod.savePolicy({ version: 1, models: { a: ["low"] } }, { NYCODE_SUBAGENT_ROUTING_FILE: dest }),
-	);
+	assert.throws(() => policyMod.savePolicy({ version: 1, models: { a: ["low"] } }, dest));
 	assert.equal(existsSync(tmpFile), false);
 	const ok = join(tmp, "ok.json");
 	writeFileSync(`${ok}.${process.pid}.tmp`, "stale", { mode: 0o644 });
 	chmodSync(`${ok}.${process.pid}.tmp`, 0o644);
-	policyMod.savePolicy({ version: 1, models: { a: ["low"] } }, { NYCODE_SUBAGENT_ROUTING_FILE: ok });
+	policyMod.savePolicy({ version: 1, models: { a: ["low"] } }, ok);
 	assert.equal(statSync(ok).mode & 0o777, 0o600);
 });
 
@@ -101,6 +98,7 @@ test("4: política salva sem rota: capacidades valem, só modelo/esforço caem p
 		assert.ok(r.agent.disallowedTools?.includes("subagent"));
 		assert.match(r.note ?? "", /^route: /);
 		assert.equal(r.env[applyMod.PARENT_MODEL_ENV], undefined);
+		assert.equal(r.env.NYCODE_SUBAGENT_ROUTING_FILE, file);
 	} finally {
 		applyMod.setRoutingSession({ catalog: [] });
 	}
@@ -125,4 +123,25 @@ test("6: parsePolicy rejeita chaves de protótipo", () => {
 		assert.equal(typeof policyMod.parsePolicy(raw), "string", key);
 	}
 	assert.equal(typeof policyMod.parsePolicy({ version: 1, models: { "a/b": ["low"] } }), "object");
+});
+
+test("7: projeto confiável: policyFile prefere o arquivo do projeto, e o filho herda o arquivo usado", () => {
+	const cwd = join(tmp, "proj");
+	const projectFile = policyMod.projectPolicyFile(cwd);
+	assert.equal(projectFile, join(cwd, ".nycode", "subagent-routing.json"));
+	const global = policyMod.policyFile({});
+	assert.equal(policyMod.policyFile({}, cwd), global, "sem arquivo no projeto vale o global");
+	mkdirSync(join(cwd, ".nycode"), { recursive: true });
+	writeFileSync(projectFile, JSON.stringify({ version: 1, models: { "a/haiku": ["low"] } }));
+	assert.equal(policyMod.policyFile({}, cwd), projectFile);
+	assert.equal(policyMod.policyFile({}), global, "sem projeto confiável o arquivo do projeto não conta");
+	assert.equal(policyMod.policyFile({ NYCODE_SUBAGENT_ROUTING_FILE: file }, cwd), file, "o env vence");
+	applyMod.setRoutingSession({ catalog: [{ key: "a/haiku", cost: 1 }], trustedCwd: cwd });
+	try {
+		const r = applyMod.resolveSpawn(agent({ model: "pinned" }), undefined, "x", {});
+		assert.equal(r.agent.model, "a/haiku");
+		assert.equal(r.env.NYCODE_SUBAGENT_ROUTING_FILE, projectFile, "o aninhado lê o mesmo arquivo");
+	} finally {
+		applyMod.setRoutingSession({ catalog: [] });
+	}
 });
