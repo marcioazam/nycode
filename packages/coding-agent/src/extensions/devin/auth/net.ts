@@ -1,4 +1,4 @@
-// Fixed Devin endpoint and fetch with bounded retries. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Fixed Devin endpoint and fetch with bounded retries. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 
 /**
  * The default host. A tenant host replaces it only through `resolveApiHost` (host.ts), and only from a PKCE exchange

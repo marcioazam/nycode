@@ -1,5 +1,5 @@
 // Registers the `devin` provider: cached or fallback models at startup, sign-in (CLI, browser, pasted code), catalog
-// refresh over the Devin API with `devin models list` as fallback. Ported from pi-devin-plus 0.1.3 (MIT), see ./LICENSE.
+// refresh over the Devin API with `devin models list` as fallback. Ported from an MIT-licensed Devin provider extension, see ./LICENSE.
 import type { OAuthCredentials, OAuthLoginCallbacks } from "@nycode/ai";
 import type { ExtensionAPI, ProviderChatModelConfig } from "../../core/extensions/types.ts";
 import { isOfflineModeEnabled } from "../../core/package-manager.ts";

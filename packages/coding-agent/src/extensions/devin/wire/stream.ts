@@ -1,5 +1,5 @@
 // The provider's `streamSimple`: maps a nycode transcript to a Devin chat call and emits assistant events.
-// Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import {
 	type Api,
 	type AssistantMessageEventStream,

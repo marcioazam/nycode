@@ -1,4 +1,4 @@
-// Tolerant parser for tool-call argument JSON that is still streaming. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Tolerant parser for tool-call argument JSON that is still streaming. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import type { JsonObject } from "@nycode/ai";
 
 function asObject(value: unknown): JsonObject {

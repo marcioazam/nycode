@@ -1,4 +1,4 @@
-// Builds the protobuf requests for GetUserJwt and GetChatMessage. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Builds the protobuf requests for GetUserJwt and GetChatMessage. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import type { ChatThinking } from "../context/thinking.ts";
 import { encodeFixed64Field, encodeMessage, encodeString, encodeTimestampBody, encodeVarintField } from "./proto.ts";
 

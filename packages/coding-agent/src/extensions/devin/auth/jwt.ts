@@ -1,4 +1,4 @@
-// Mints and caches the short-lived user JWT the chat endpoint requires. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Mints and caches the short-lived user JWT the chat endpoint requires. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import { randomUUID } from "node:crypto";
 import { postUnary } from "../transport/unary.ts";
 import { encodeMessage, iterFields } from "../wire/proto.ts";

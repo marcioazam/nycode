@@ -1,4 +1,4 @@
-// Decodes GetChatMessage response frames into chat events. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Decodes GetChatMessage response frames into chat events. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import { iterFields } from "./proto.ts";
 
 export type CloudChatEvent =

@@ -1,5 +1,5 @@
 // Devin model catalog: parsing `devin models list`, mapping families to nycode models, thinking-level variants.
-// Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import type { ThinkingLevelMap } from "@nycode/ai";
 import type { ProviderChatModelConfig } from "../../../core/extensions/types.ts";
 import { runDevin } from "../auth/cli.ts";
@@ -125,7 +125,7 @@ function familyToModels(family: DevinFamily): ProviderChatModelConfig[] {
 	const sample = source.find((variant) => variant.model_uid === defaultUid) ?? source[0];
 	if (!sample) return [];
 
-	// pi treats a missing level as supported and only null hides it, so mark every
+	// The host treats a missing level as supported and only null hides it, so mark every
 	// level this family does not ship. The picker then matches the real variants
 	// instead of silently falling back to the default one.
 	for (const level of THINKING_ORDER) {
@@ -135,8 +135,8 @@ function familyToModels(family: DevinFamily): ProviderChatModelConfig[] {
 	const mappedLevels = THINKING_ORDER.filter((level) => typeof thinkingLevelMap[level] === "string");
 	const reasoning = mappedLevels.length > 1;
 
-	// With a thinking map the pi-facing id never reaches the wire — resolveModelUid
-	// always maps it — so keep the family id and let pi's thinking level choose the
+	// With a thinking map the host-facing id never reaches the wire — resolveModelUid
+	// always maps it — so keep the family id and let the host thinking level choose the
 	// variant, instead of baking "-high" into the model id.
 	const familyId = family.slug || family.family_uid || defaultUid;
 

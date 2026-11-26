@@ -1,5 +1,5 @@
 // The GetChatMessage streaming call: time limits, one JWT refresh on 401, Connect framing, classified errors.
-// Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import { randomUUID } from "node:crypto";
 import * as zlib from "node:zlib";
 import { resolveApiHost } from "../auth/host.ts";

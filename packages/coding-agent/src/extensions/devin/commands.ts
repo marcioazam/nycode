@@ -1,4 +1,4 @@
-// /devin-status and /devin-refresh. Ported from pi-devin-plus 0.1.3 (MIT), see ./LICENSE.
+// /devin-status and /devin-refresh. Ported from an MIT-licensed Devin provider extension, see ./LICENSE.
 import type { ExtensionAPI, ExtensionCommandContext } from "../../core/extensions/types.ts";
 import { devinVersion, findDevinBin } from "./auth/cli.ts";
 import { credentialsPath, readCredentials } from "./auth/credentials.ts";

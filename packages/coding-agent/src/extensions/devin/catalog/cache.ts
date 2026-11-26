@@ -1,4 +1,4 @@
-// On-disk cache and validation of the Devin model catalog. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// On-disk cache and validation of the Devin model catalog. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { getAgentDir } from "../../../config.ts";

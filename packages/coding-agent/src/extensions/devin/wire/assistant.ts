@@ -1,4 +1,4 @@
-// Turns chat events into AssistantMessage content blocks and stream events. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Turns chat events into AssistantMessage content blocks and stream events. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import {
 	type Api,
 	type AssistantMessage,

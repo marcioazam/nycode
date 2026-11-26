@@ -1,5 +1,5 @@
 // Reads the sign-in of Devin Desktop (a Windsurf-based editor) from its Electron state database, read-only.
-// Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE. Only used after the user agrees in /login.
+// Ported from an MIT-licensed Devin provider extension, see ../LICENSE. Only used after the user agrees in /login.
 // The raw-file scan fallback of upstream was dropped: without `node:sqlite` there is no Desktop import.
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";

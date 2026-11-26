@@ -71,7 +71,7 @@ vazio). Resposta sem modelos é erro; o motivo da API indisponível é gravado n
 `/devin-status` e no `/devin-refresh`. A lista estática de reserva inclui swe-1.7, swe-2, swe-2-flash e swe-2.1 (gratuitos).
 
 Erros (união etiquetada `DevinFailure`, com código, mensagem e trace ID do corpo HTTP ou do trailer): quota (não repetida, cita
-"quota exceeded" e https://app.devin.ai/settings/usage), `client_version` ("version is out of date", não repetida; com
+"quota exceeded" e <https://app.devin.ai/settings/usage>), `client_version` ("version is out of date", não repetida; com
 identidade CLI vira dica de cota + URL de uso; com a reserva windsurf diz que a identidade de reserva foi recusada e manda
 instalar/logar o Devin CLI), model_unavailable, content_policy, auth (401: renova o JWT uma vez e repete uma vez; depois
 manda rodar `/login devin`), invalid_request (todas não repetidas) e transient (repetida por `packages/ai/src/utils/retry.ts`).

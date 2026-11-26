@@ -1,4 +1,4 @@
-// Locates and runs the local Devin CLI. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Locates and runs the local Devin CLI. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import { execFile, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";

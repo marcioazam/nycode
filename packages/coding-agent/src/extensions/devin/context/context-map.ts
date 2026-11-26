@@ -1,4 +1,4 @@
-// Maps a nycode transcript to the Devin chat history, system prompt and tool list. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Maps a nycode transcript to the Devin chat history, system prompt and tool list. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import {
 	type AssistantMessage,
 	collapseSystemMessages,

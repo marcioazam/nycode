@@ -1,5 +1,5 @@
 // Minimal protobuf and Connect stream-frame codec used by the Devin (Codeium) wire protocol.
-// Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import * as zlib from "node:zlib";
 
 /** Encodes a non-negative integer as a protobuf varint. */

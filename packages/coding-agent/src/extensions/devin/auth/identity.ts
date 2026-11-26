@@ -1,4 +1,4 @@
-// Client identity (ide name and version) the Devin server sees. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Client identity (ide name and version) the Devin server sees. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 import { runDevin } from "./cli.ts";
 
 /**

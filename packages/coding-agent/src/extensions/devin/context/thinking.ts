@@ -1,5 +1,5 @@
 // Packs the server's thinking signature and its type into nycode's single `thinkingSignature` string.
-// Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 //
 // Devin streams thinking as a summary plus an opaque signature and a signature type. The signature lets the server
 // verify and continue a reasoning trace, so it travels back with the thinking text on the next request, as the

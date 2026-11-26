@@ -1,4 +1,4 @@
-// Reads the Devin CLI's credentials file and drives `devin auth login`. Ported from pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Reads the Devin CLI's credentials file and drives `devin auth login`. Ported from an MIT-licensed Devin provider extension, see ../LICENSE.
 // Read-only: the CLI's own file is never written; nycode keeps the key in its auth store (see ../provider.ts).
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";

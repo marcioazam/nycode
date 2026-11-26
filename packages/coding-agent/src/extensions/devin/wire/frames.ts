@@ -1,5 +1,5 @@
 // Incremental parser for Connect stream frames, with a hard cap on frame size.
-// Derived from the framing loop of pi-devin-plus 0.1.3 (MIT), see ../LICENSE.
+// Derived from the framing loop of an MIT-licensed Devin provider extension, see ../LICENSE.
 
 /** Largest frame payload accepted (compressed). A 4 GiB length in a header must not make the reader buffer forever. */
 export const MAX_FRAME_BYTES = 16 * 1024 * 1024;
