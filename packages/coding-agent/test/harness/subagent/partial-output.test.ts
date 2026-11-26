@@ -203,7 +203,10 @@ test("foreground capped grava o transcript JSONL (0o600, uma mensagem por linha)
 		const transcriptPath = join(tmpdir(), `nycode-subagent-capped-${getId()}.jsonl`);
 		assert.ok(existsSync(transcriptPath), `transcript existe em ${transcriptPath}`);
 		const lines = readFileSync(transcriptPath, "utf8").trim().split("\n");
-		assert.ok(lines.length >= 3, "uma linha por mensagem");
+		// Uma linha por mensagem coletada. Quantas chegam antes do SIGTERM do teto varia com a carga (o CI viu menos de 3 com o
+		// teto 2; a primeira versão exigia >= 3), então o contrato é a contagem exata das mensagens, no mínimo o teto.
+		assert.equal(lines.length, res.messages.length, "uma linha por mensagem");
+		assert.ok(lines.length >= 2, "ao menos as mensagens até o teto");
 		for (const line of lines) {
 			const msg = JSON.parse(line) as { role?: string };
 			assert.equal(msg.role, "assistant");
