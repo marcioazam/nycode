@@ -86,6 +86,17 @@ Riscos residuais da evolução: os números de campo do `ClientModelConfig` e do
 (cniu6) e não foram vistos contra o servidor real; a regra "version is out of date" depende do texto do servidor; o fluxo PKCE
 depende de a Cognition manter a rota `/auth/cli/*`.
 
+## Fuzzing
+
+Os bytes do servidor são uma fronteira de confiança, então os decodificadores têm testes de propriedades com `fast-check` (devDependency 4.11.0, semente fixa e 300 a 400 execuções por propriedade, reproduzível em CI) em `packages/coding-agent/test/devin/fuzz/`:
+
+- `proto.fuzz.test.ts`: bytes arbitrários em `decodeVarint` e `iterFields` só retornam ou lançam `Error`; varint de 64 bits faz ida e volta em até 10 bytes; mais de 10 bytes é rejeitado; campos codificados voltam iguais.
+- `frames.fuzz.test.ts`: `ConnectFrameParser` dá os mesmos quadros com qualquer divisão em pedaços (com e sem gzip); cabeçalho acima de `MAX_FRAME_BYTES` lança erro.
+- `decode.fuzz.test.ts`: `decodeChatFrame` nunca lança nada além de `Error`, nem com lixo dentro dos campos 6, 7 e 28.
+- `parse.fuzz.test.ts`: `parseHttpError` e `parseTrailerError` nunca lançam e limitam a mensagem a 600 caracteres.
+
+Limite conhecido: `encodeTag` desloca em int32, então números de campo acima de 2^28-1 lançam `RangeError` (os chamadores usam constantes pequenas).
+
 ## Riscos aceitos e não verificados
 
 - **Endpoint não documentado e Termos de Serviço.** O pacote fala o protocolo interno do Devin/Codeium (`GetUserJwt`,
