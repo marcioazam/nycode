@@ -32,10 +32,15 @@ export interface DevinCatalog {
 
 const THINKING_ORDER = ["off", "minimal", "low", "medium", "high", "xhigh", "max"] as const;
 
+const PRICE_PART = /^\$([0-9.]+)\s*\/\s*(?:1M|MTok)\s+(.+)$/i;
+
 /** Price in dollars per 1M tokens from one `cost_summary` part such as "$0.5 / 1M Input" (the label must match exactly). */
 function priceOf(summary: string, label: string): number | undefined {
-	const match = summary.match(new RegExp(`(?:^|·)\\s*\\$([0-9.]+)\\s*/\\s*(?:1M|MTok)\\s+${label}\\s*(?:·|$)`, "i"));
-	return match ? Number(match[1]) : undefined;
+	for (const part of summary.split("·")) {
+		const match = PRICE_PART.exec(part.trim());
+		if (match && match[2].toLowerCase() === label.toLowerCase()) return Number(match[1]);
+	}
+	return undefined;
 }
 
 /**
