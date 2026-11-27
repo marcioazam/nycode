@@ -1,0 +1,69 @@
+# Inventario: crates-edit
+
+Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+
+| Arquivo | Categoria | Origem | Dono no nycode | Nota |
+|---|---|---|---|---|
+| `crates/edit/BUILD.bazel` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/grammars/apply_patch.lark` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/grammars/hashline.lark` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/grammars/sloppy.lark` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/prompts/apply_patch.md` | prompt | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/prompts/hashline.md` | prompt | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/prompts/patch.md` | prompt | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/prompts/replace.md` | prompt | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/prompts/sloppy.md` | prompt | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/diff_string.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/engine.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/error.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/files.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/fuzzy.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/lib.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/apply_patch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/apply.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/block.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/clipboard.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/format.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/input.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/messages.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/mismatch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/parser.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/patcher.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/prefixes.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/preview.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/recovery.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/syntax.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/tokenizer.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/hashline/types.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/patch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/replace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/sloppy/apply.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/sloppy/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/sloppy/parse.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/sloppy/types.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/modes/sloppy/update_patch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/notebook.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/path_policy.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/scan.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/session.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/store.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/stream_json.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/src/text.rs` | codigo | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/apply_patch.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/apply_patch_exact.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/apply_patch_parity.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/common/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/hashline_apply.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/hashline_parity.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/hashline_parse.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/hashline_patcher.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/patch.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/replace.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/replace_parity.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/session.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/sloppy.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/sloppy_parse.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/sloppy_range_safety.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
+| `crates/edit/tests/sloppy_update_patch.rs` | teste | omp-novo | `packages/coding-agent/src/core/tools/edit.ts` |  |
