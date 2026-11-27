@@ -136,9 +136,12 @@ function hasKnownModelType(model: AnyModel): boolean {
 	return Object.hasOwn(KNOWN_MODEL_TYPES, getModelType(model));
 }
 
-/** Drops stored models whose type this version does not know. */
+/** Drops stored models whose type this version does not know. Stored data is untrusted:
+ * entries from manual edits or older writes can lack `models` entirely, and a crash here
+ * would fail the provider's refresh before it ever runs. */
 function withKnownModelTypes(entry: ModelsStoreEntry): ModelsStoreEntry {
-	return { ...entry, models: entry.models.filter(hasKnownModelType) };
+	const models = Array.isArray(entry.models) ? entry.models : [];
+	return { ...entry, models: models.filter(hasKnownModelType) };
 }
 
 /** Any model a provider with chat APIs `TApi` can list. */

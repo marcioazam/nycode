@@ -284,6 +284,29 @@ describe("Models runtime", () => {
 		expect(second.errors.get("flaky")?.message).toBe("fetch failed");
 	});
 
+	it("treats a stored entry without a models array as empty instead of failing the refresh", async () => {
+		const store = new InMemoryModelsStore();
+		// Disk data is untrusted: manual edits and older writes can leave entries without `models`
+		// (2026-11-27: an `{}` entry crashed before the provider refresh ever ran).
+		await store.write("dynamic", {} as ModelsStoreEntry);
+		const calls: string[] = [];
+		const models = createModels({ modelsStore: store });
+		models.setProvider(
+			testProvider({
+				id: "dynamic",
+				refreshModels: async ({ allowNetwork, stored }) => {
+					calls.push(allowNetwork ? "network" : "cache");
+					expect(stored?.models ?? []).toEqual([]);
+				},
+			}),
+		);
+
+		const result = await models.refresh();
+
+		expect(result.errors.size).toBe(0);
+		expect(calls).toEqual(["cache", "network"]);
+	});
+
 	it("restricts refresh work to selected providers", async () => {
 		const calls: string[] = [];
 		const models = createModels();
