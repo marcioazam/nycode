@@ -173,7 +173,7 @@
 		"diff": "8.0.4"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-plugin": "1.8.3",
+		"@cloudflare/vitest-plugin": "1.8.5",
 		"fake-indexeddb": "6.2.8",
 		"vitest": "4.1.12"
 	}

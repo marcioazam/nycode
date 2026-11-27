@@ -80,7 +80,7 @@
 	},
 	"dependencies": {
 		"@anthropic-ai/sdk": "0.137.0",
-		"@aws-sdk/client-bedrock-runtime": "3.1169.0",
+		"@aws-sdk/client-bedrock-runtime": "3.1173.0",
 		"@aws-sdk/credential-provider-node": "3.972.97",
 		"@nycode/schema": "2.0.3",
 		"@nycode/telemetry": "2.0.3",
@@ -88,7 +88,7 @@
 		"@smithy/node-http-handler": "4.14.2",
 		"http-proxy-agent": "9.1.0",
 		"https-proxy-agent": "9.1.0",
-		"openai": "7.59.0",
+		"openai": "7.62.0",
 		"partial-json": "0.1.7"
 	},
 	"keywords": [
