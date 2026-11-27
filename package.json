@@ -59,7 +59,7 @@
 		"@vitest/coverage-v8": "4.1.12",
 		"esbuild": "0.28.2",
 		"husky": "9.1.7",
-		"pnpm": "11.28.12",
+		"pnpm": "11.28.13",
 		"typescript": "7.0.2",
 		"yaml": "2.9.1"
 	},
