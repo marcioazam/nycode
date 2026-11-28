@@ -1,0 +1,70 @@
+# Inventario `dsh`: `packages-subprocess`
+
+Total: **64** arquivos (`codigo`: 32, `teste`: 32, `gerado`: 0; `sem equivalente`: 0).
+
+| Arquivo `dsh` | Categoria | Equivalente `nycode` | Nota |
+|---|---|---|---|
+| `packages/subprocess/subprocess-local/scripts/ensure-spawn-helper.mjs` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/bin.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/control-spawn.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/index.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/linux-execve.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/linux-scope-selector.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/linux-scope.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/managed-owner.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/output.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/process-inspector.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/runner-launch.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/runner-protocol.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/shell-activity.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/spawn-runner.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/spawn.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/terminal.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/windows-inspector.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/src/windows-job.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/control.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/fixtures/control-child.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/fixtures/hold-linux-bootstrap.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/fixtures/managed-tree.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/fixtures/process-exit-host.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/linux-execve.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/linux-scope-selector.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/linux-scope.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/local.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/native-containment.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/native-windows.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/process-exit.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/process-inspector.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/shell-activity-files.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/shell-activity.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/spawn-runner-built.e2e.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/spawn-runner.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/spawn.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/terminal.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/windows-inspector.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tests/windows-job.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess-local/tsdown.config.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/src/control.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/src/error.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/src/index.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/src/types.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/tests/control.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/tests/egress.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/tests/error.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/tests/service.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/subprocess/tsdown.config.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/src/abi.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/src/control-stdio.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/src/errors.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/src/ffi.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/src/index.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/src/koffi.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/src/process.ts` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/tests/ffi.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/tests/fixtures/console-state.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/tests/ordinary-process.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/tests/process-allocation-failure.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/tests/process-failure-paths.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/tests/process.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/tests/quote.spec.ts` | teste | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
+| `packages/subprocess/win32-process/verify/abi-probe.cpp` | codigo | `packages/coding-agent/src/core/exec.ts` | processos filhos / arvore de processos |
