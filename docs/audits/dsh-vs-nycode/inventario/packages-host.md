@@ -1,0 +1,66 @@
+# Inventario `dsh`: `packages-host`
+
+Total: **60** arquivos (`codigo`: 32, `teste`: 28, `gerado`: 0; `sem equivalente`: 0).
+
+| Arquivo `dsh` | Categoria | Equivalente `nycode` | Nota |
+|---|---|---|---|
+| `packages/host/authentication-desktop/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/authentication-desktop/tests/plugin.host.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/authentication-token/src/browser-auth.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/authentication-token/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/authentication-token/src/types.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/authentication-token/tests/browser-auth.host.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/authentication-token/tests/browser-credentials.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/authentication-token/tests/loader.host.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/authentication-token/tests/plugin.host.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-auto/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-auto/src/probe.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-auto/src/resolve.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-auto/tests/loader-composition.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-auto/tests/resolve.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-browse/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-browse/tests/service.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-browse/tsdown.config.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/src/native-picker.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/src/win32-dialog-bindings.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/src/win32-dialog-host.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/src/win32-dialog-logic.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/src/win32-dialog-worker.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/src/win32-dialog.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/tests/built-worker.e2e.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/tests/native-picker.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/tests/service.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/tests/win32-dialog-bindings.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/tests/win32-dialog-logic.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/tests/win32-dialog.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker-native/tsdown.config.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker/src/types.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/directory-picker/tests/seam.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/frontend-static/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/frontend-static/tests/frontend-static.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/src/catalog.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/src/icons.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/src/internals.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/src/resolver.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/src/shared.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/tests/host-routes.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/tests/icons.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/tests/launch-detached.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/tests/resolver.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/open-in-app/tsdown.config.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/plugin-inventory/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/plugin-inventory/src/types.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/plugin-inventory/tests/inventory.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/product-telemetry-otel/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/product-telemetry-otel/tests/fixtures/driver.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/product-telemetry-otel/tests/fixtures/shutdown.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/product-telemetry-otel/tests/loader-composition.e2e.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/product-telemetry-otel/tests/telemetry.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/webserver/src/index.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/webserver/src/injections.ts` | codigo | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/webserver/tests/event-isolation.host.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/webserver/tests/tls-fixture.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
+| `packages/host/webserver/tests/webserver.spec.ts` | teste | `apps/p2/` | servicos host HTTP/web/auth |
