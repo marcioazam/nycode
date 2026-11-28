@@ -1,122 +1,141 @@
 # Inventario: python-robomp
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `python/robomp/entrypoint.sh` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/scripts/ping.sh` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/__init__.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/__main__.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/autoclose.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/cancellation.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/cli.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/config.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/dashboard.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/db.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/git_ops.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/github_backend.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/github_client.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/github_events.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/host_tools.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/issue_index.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/logging_config.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/manual_triage.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/natives_cache.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/persona.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/pragmas.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/completion_reminder.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/directive.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/dirty_state_reminder.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/finalized_issue_comment.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/finalized_pr_comment.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/followup_comment.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/followup_release.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/followup_review.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/kickoff_directive.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/kickoff_issue.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/kickoff_pr_review.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/kickoff_release.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/question_autoclose_suffix.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/resume_triage.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/review_completion_reminder.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/system_append.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/system_append_pr_review.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/system_append_release.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/prompts/unable_to_reproduce_comment.md` | prompt | omp-novo | sem equivalente |  |
-| `python/robomp/src/proxy/__init__.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/proxy/__main__.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/proxy/server.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/proxy_client.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/proxy_hmac.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/queue.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/sandbox.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/server.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/slot_pool.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/tasks.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/src/worker.py` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/tests/__init__.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/conftest.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_autoclose.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_config.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_db.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_git_ops.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_github_client.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_github_events.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_host_tools.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_issue_index.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_natives_cache.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_permissions_e2e.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_persona.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_pragmas.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_proxy_client.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_proxy_server.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_queue_cancel.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_queue_dispatch.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_queue_shutdown.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_retry.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_sandbox.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_server.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_slot_pool.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_status_contract.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_tasks.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_tasks_directive.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_tasks_release.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_worker.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_worker_pragmas.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/tests/test_worker_smoke.py` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/web/scripts/verify-cards.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/scripts/verify-live.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/App.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/api.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/Browse.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/Events.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/GlassCard.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/IssueCard.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/IssueLink.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/LifecycleStepper.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/Logs.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/Pill.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/Pipeline.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/Releases.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/ThemeToggle.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/Trigger.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/shell/Rail.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/shell/Shell.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/shell/TopBar.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/shell/Vitals.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/views/Activity.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/views/Operations.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/components/views/Triage.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/config.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/env.d.ts` | gerado | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/format.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/main.tsx` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/state.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/theme.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/view.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/work-items.contract.test.ts` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/work-items.test.ts` | teste | omp-novo | sem equivalente |  |
-| `python/robomp/web/src/work-items.ts` | codigo | omp-novo | sem equivalente |  |
-| `python/robomp/web/vite.config.ts` | codigo | omp-novo | sem equivalente |  |
+| `python/robomp/.env.example` | codigo | omp-novo | sem equivalente | 214L; Modelo documentado de variaveis de ambiente do bot roboomp detalhando modos exclusivos gh-proxy HMAC vs PAT, pools de modelos, ... |
+| `python/robomp/.gitignore` | codigo | omp-novo | sem equivalente | 26L; Regras de ignore do subprojeto Python/Vite roboomp (venvs, caches, sqlite e artefatos web compilados). |
+| `python/robomp/AGENTS.md` | doc | omp-novo | sem equivalente | 127L; Guia arquitetural do bot autonomo roboomp (webhook -> fila SQLite -> worktree -> omp --mode rpc com retomada e host tools audit... |
+| `python/robomp/LICENSE` | codigo | omp-novo | sem equivalente | 21L; Licenca MIT do componente python/robomp. |
+| `python/robomp/README.md` | doc | omp-novo | sem equivalente | 276L; Documentacao geral do `robomp`: arquitetura em dois containers (`robomp` e `gh-proxy`), fluxos de triagem, PR review, auto-clos... |
+| `python/robomp/THIRD-PARTY-NOTICES.txt` | doc | omp-novo | sem equivalente | 72L; Avisos de licenca MIT de terceiros para dependencias npm empacotadas no dashboard estatico (`solid-js` e `tailwindcss`). |
+| `python/robomp/assets/icon.jpg` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `python/robomp/assets/icon.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `python/robomp/docker-compose.yml` | config_ou_dado | omp-novo | sem equivalente | 169L; Definicao Docker Compose separando o orquestrador `robomp` do sidecar `gh-proxy` em rede `internal: true`, sem `env_file:` e co... |
+| `python/robomp/docs/pr-review-handoff.md` | doc | omp-novo | sem equivalente | 406L; Documento de design detalhando o fluxo de review de PRs externos (somente `COMMENT`), staging de comentarios em SQLite, checkou... |
+| `python/robomp/entrypoint.sh` | codigo | omp-novo | sem equivalente | 95L; Script de entrada dos containers `robomp` e `gh-proxy`: cria usuarios por slot (`omp-1..N`) compartilhando grupo `omp` (GID 200... |
+| `python/robomp/pyproject.toml` | config_ou_dado | omp-novo | sem equivalente | 78L; Metadados de empacotamento Python (`setuptools`), dependencias (`fastapi`, `httpx`, `pydantic-settings`, `omp-rpc`) e configura... |
+| `python/robomp/scripts/ping.sh` | codigo | omp-novo | sem equivalente | 17L; Script auxiliar de desenvolvimento que envia um evento `ping` assinado com HMAC-SHA256 para `/webhook/github`. |
+| `python/robomp/src/__init__.py` | codigo | omp-novo | sem equivalente | 3L; Modulo raiz do pacote `robomp` definindo apenas `__version__`. |
+| `python/robomp/src/__main__.py` | codigo | omp-novo | sem equivalente | 4L; Ponto de entrada `python -m robomp` delegando para `robomp.cli.main`. |
+| `python/robomp/src/autoclose.py` | codigo | omp-novo | sem equivalente | 194L; Loop assincrono que reclama linhas vencidas em `pending_closures`, verifica reacao `-1` do autor no comentario monitorado e fec... |
+| `python/robomp/src/cancellation.py` | codigo | omp-novo | sem equivalente | 73L; Primitivas baseadas em `contextvars.ContextVar` para propagar o escopo do evento ativo ate threads de worker e registrar hooks ... |
+| `python/robomp/src/cli.py` | codigo | omp-novo | sem equivalente | 235L; Interface Click (`serve`, `triage`, `replay`, `status`, `cleanup`) que valida ausencia de `GITHUB_TOKEN` no orquestrador, confi... |
+| `python/robomp/src/config.py` | codigo | omp-novo | sem equivalente | 466L; Configuracao Pydantic validada por env: exclusao mutua entre `GITHUB_TOKEN` e `gh-proxy`, pool de modelos, backoff de retries, ... |
+| `python/robomp/src/dashboard.py` | codigo | omp-novo | sem equivalente | 139L; Helpers do dashboard: leitura limitada aos ultimos bytes de logs JSONL (`tail_jsonl`) e injecao segura de config/token no `inde... |
+| `python/robomp/src/db.py` | codigo | omp-novo | sem equivalente | 1521L; Schema SQLite (WAL, FTS5 com triggers para `issue_index`, tabelas `events`, `issues`, `releases`, `tool_calls`, `pr_review_comm... |
+| `python/robomp/src/git_ops.py` | codigo | omp-novo | sem equivalente | 1112L; Primitivas git de baixo nivel: injecao efemera de PAT via `--config-env`, bloqueio de proxy/helpers por caminho HTTP, redacao d... |
+| `python/robomp/src/github_backend.py` | codigo | omp-novo | sem equivalente | 122L; Protocolo estrutural compartilhado entre `GitHubClient` (REST direto) e `GitHubProxyClient` (HMAC RPC) para operacoes de leitur... |
+| `python/robomp/src/github_client.py` | codigo | omp-novo | sem equivalente | 1033L; Dataclasses tipadas e cliente `httpx` sync/async para GitHub REST API com retries transitorios idempotentes, streaming de tail ... |
+| `python/robomp/src/github_events.py` | codigo | omp-novo | sem equivalente | 469L; Verificacao HMAC de webhooks GitHub, extracao de mencoes/diretivas de maintainers e reviewer-bots, calculo de teto de rate-limi... |
+| `python/robomp/src/host_tools.py` | codigo | omp-novo | sem equivalente | 2622L; Infraestrutura de host tools via `omp_rpc`: `ToolBindings`, bootstrap `bun install --frozen-lockfile --ignore-scripts`, gates p... |
+| `python/robomp/src/issue_index.py` | codigo | omp-novo | sem equivalente | 251L; Implementa o índice local de busca de issues/PRs em SQLite FTS5: parser de queries no formato GitHub (`parse_search_query`), in... |
+| `python/robomp/src/logging_config.py` | codigo | omp-novo | sem equivalente | 179L; Configura logging do `robomp` com saída ANSI legível em stdout (`PrettyFormatter`), JSON Lines rotacionado em arquivo (`JsonFor... |
+| `python/robomp/src/manual_triage.py` | codigo | omp-novo | sem equivalente | 164L; Sintetiza payloads `issues.opened` a partir de referências/URLs do GitHub e enfileira triagem manual no banco (com ID determiní... |
+| `python/robomp/src/natives_cache.py` | codigo | omp-novo | sem equivalente | 497L; Cache endereçado por conteúdo (via `git cat-file --batch-check`) para artefatos nativos `pi_natives.*.node`, com importação de ... |
+| `python/robomp/src/persona.py` | codigo | omp-novo | sem equivalente | 451L; Carregador e renderizador restrito de templates Mustache (`{{a.b}}`), metadados de tools/todos em TOML e formatador de threads ... |
+| `python/robomp/src/pragmas.py` | codigo | omp-novo | sem equivalente | 182L; Parser de comandos slash estilo chatops (`/model`, `/thinking`) em diretivas de mantenedores, consumindo apenas linhas puras de... |
+| `python/robomp/src/prompts/completion_reminder.md` | prompt | omp-novo | sem equivalente | 14L; Template de lembrete injetado quando o turno de triagem termina sem chamar uma das três tools terminais (`gh_push_branch`+`gh_o... |
+| `python/robomp/src/prompts/directive.md` | prompt | omp-novo | sem equivalente | 31L; Template de prompt para diretivas autoritativas de mantenedores ou bots revisores em threads já existentes, sobrescrevendo o pl... |
+| `python/robomp/src/prompts/dirty_state_reminder.md` | prompt | omp-novo | sem equivalente | 17L; Template de lembrete disparado ao fim do turno quando há alterações não commitadas ou commits não enviados no worktree, instrui... |
+| `python/robomp/src/prompts/finalized_issue_comment.md` | prompt | omp-novo | sem equivalente | 1L; Resposta fixa postada quando chega comentário comum em uma issue já finalizada/fechada. |
+| `python/robomp/src/prompts/finalized_pr_comment.md` | prompt | omp-novo | sem equivalente | 1L; Resposta fixa postada quando chega comentário comum em um PR já fechado ou mergeado. |
+| `python/robomp/src/prompts/followup_comment.md` | prompt | omp-novo | sem equivalente | 25L; Template de prompt para novos comentários em threads acompanhadas, tratando novas informações de reprodução, dispensa imediata ... |
+| `python/robomp/src/prompts/followup_release.md` | prompt | omp-novo | sem equivalente | 14L; Template de prompt para rodadas subsequentes (ou retomadas após crash) de falha de CI em uma tag de release, exigindo correção ... |
+| `python/robomp/src/prompts/followup_review.md` | prompt | omp-novo | sem equivalente | 14L; Template de prompt para responder a comentários inline de revisão em PR aberto pelo bot, exigindo leitura do contexto do diff a... |
+| `python/robomp/src/prompts/host_tools.toml` | config_ou_dado | omp-novo | sem equivalente | 134L; Definições centralizadas de descrições, parâmetros e próximos passos de todas as host tools (`classify_issue`, `gh_open_pr`, `g... |
+| `python/robomp/src/prompts/kickoff_directive.md` | prompt | omp-novo | sem equivalente | 36L; Template inicial quando uma issue não triada recebe menção/diretiva de mantenedor, instruindo a classificar primeiro e executar... |
+| `python/robomp/src/prompts/kickoff_issue.md` | prompt | omp-novo | sem equivalente | 28L; Template inicial para novas issues, orientando busca de duplicatas, aplicação do merit gate antes de classificar como `bug` e e... |
+| `python/robomp/src/prompts/kickoff_pr_review.md` | prompt | omp-novo | sem equivalente | 90L; Guia completo de revisão read-only de PRs externos em 3 fases (orientar, classificar/ranquear `review:p0..p3`, revisar diff e e... |
+| `python/robomp/src/prompts/kickoff_release.md` | prompt | omp-novo | sem equivalente | 14L; Template inicial de reparo de release quando o CI falha na tag cortada, fornecendo dossiê de falhas e instruindo correção e `re... |
+| `python/robomp/src/prompts/question_autoclose_suffix.md` | prompt | omp-novo | sem equivalente | 3L; Sufixo Markdown anexado a respostas de `question` informando sobre auto-fechamento após N horas salvo reação ``. |
+| `python/robomp/src/prompts/resume_triage.md` | prompt | omp-novo | sem equivalente | 6L; Template de retomada após interrupção mid-task, instruindo reconciliar `fetch_issue_thread` caso o estado remoto tenha mudado o... |
+| `python/robomp/src/prompts/review_completion_reminder.md` | prompt | omp-novo | sem equivalente | 13L; Template de lembrete injetado quando um turno de revisão de PR termina sem `submit_pr_review` ou `abort_task`. |
+| `python/robomp/src/prompts/system_append.md` | prompt | omp-novo | sem equivalente | 128L; System prompt append principal do bot de triagem/correção: define taxonomia de classificação, checagem de duplicatas/fixes já m... |
+| `python/robomp/src/prompts/system_append_pr_review.md` | prompt | omp-novo | sem equivalente | 11L; System prompt append restritivo para modo de revisão de PR, bloqueando escrita no repo e restringindo side effects a `classify_... |
+| `python/robomp/src/prompts/system_append_release.md` | prompt | omp-novo | sem equivalente | 12L; System prompt append para o sentinela autônomo de release, fixando contrato de prefixo de commit, proibição de enfraquecer test... |
+| `python/robomp/src/prompts/todo_phases.toml` | config_ou_dado | omp-novo | sem equivalente | 71L; Definição declarativa das fases iniciais de TodoList semeadas para cada tipo de tarefa (`triage_issue`, `review_pr`, `handle_co... |
+| `python/robomp/src/prompts/unable_to_reproduce_comment.md` | prompt | omp-novo | sem equivalente | 9L; Template do comentário público postado quando `mark_unable_to_reproduce` solicita detalhes adicionais ao autor da issue. |
+| `python/robomp/src/proxy/__init__.py` | codigo | omp-novo | sem equivalente | 6L; Docstring de pacote descrevendo o serviço companheiro `gh-proxy` portador do PAT do GitHub. |
+| `python/robomp/src/proxy/__main__.py` | codigo | omp-novo | sem equivalente | 59L; Entrypoint CLI (`python -m robomp.proxy serve`) que valida `GITHUB_TOKEN` + chave HMAC e sobe o servidor uvicorn do `gh-proxy`. |
+| `python/robomp/src/proxy/server.py` | codigo | omp-novo | sem equivalente | 998L; Primeira metade do app FastAPI do `gh-proxy`: validação rigorosa de URLs remotas GitHub HTTPS/refs/comments, leitura limitada d... |
+| `python/robomp/src/proxy_client.py` | codigo | omp-novo | sem equivalente | 750L; Implementa os clientes HMAC-assinados no orchestrator (`GitHubProxyClient` e `ProxyGitTransport`) com retries para erros transi... |
+| `python/robomp/src/proxy_hmac.py` | codigo | omp-novo | sem equivalente | 98L; Assinatura e verificação HMAC-SHA256 compartilhada entre `robomp` e `gh-proxy`, cobrindo método, path+query, timestamp (janela ... |
+| `python/robomp/src/py.typed` | codigo | omp-novo | sem equivalente | 0L; Marcador PEP 561 vazio indicando que o pacote `robomp` possui anotações de tipo. |
+| `python/robomp/src/queue.py` | codigo | omp-novo | sem equivalente | 481L; Dispatcher assíncrono `WorkerPool` sobre fila SQLite: serialização por `issue_key`, isolamento por `SlotPool`/UID ou semáforo, ... |
+| `python/robomp/src/sandbox.py` | codigo | omp-novo | sem equivalente | 1259L; Primeira metade do gerenciador de sandbox: abstração `GitTransport`, renomeação segura de branch, coleta e `SIGKILL` de process... |
+| `python/robomp/src/server.py` | codigo | omp-novo | sem equivalente | 913L; Primeira metade do servidor FastAPI principal do `robomp`: exige modo proxy (proibindo `GITHUB_TOKEN` no orchestrator), inicial... |
+| `python/robomp/src/slot_pool.py` | codigo | omp-novo | sem equivalente | 37L; Pool assíncrono simples baseado em `asyncio.Queue` para alocar e devolver UIDs exclusivos de slots de execução concorrente. |
+| `python/robomp/src/tasks.py` | codigo | omp-novo | sem equivalente | 1074L; Primeira parte dos entrypoints de tarefa despachados pela fila: wrapper uncancellable com `asyncio.shield` para setup de worksp... |
+| `python/robomp/src/worker.py` | codigo | omp-novo | sem equivalente | 914L; Driver síncrono/assíncrono do RpcClient por tarefa no robomp: prepara ambiente isolado com scrubbing de segredos, permissões de... |
+| `python/robomp/tests/__init__.py` | teste | omp-novo | sem equivalente | 0L; Arquivo vazio marcador de pacote de testes Python do `robomp`. |
+| `python/robomp/tests/conftest.py` | teste | omp-novo | sem equivalente | 158L; Fixtures pytest do `robomp` para sintetizar `index.html` mínimo do dashboard, liberar travessia `+x` em `tmp_path` para subproc... |
+| `python/robomp/tests/test_autoclose.py` | teste | omp-novo | sem equivalente | 191L; Testes do `AutocloseScheduler` verificando fechamento automático de issues classificadas como pergunta após prazo, veto por rea... |
+| `python/robomp/tests/test_config.py` | teste | omp-novo | sem equivalente | 197L; Testes de carregamento e validação Pydantic de `Settings` do `robomp` (modo proxy vs PAT, normalização de logins de bot/maintai... |
+| `python/robomp/tests/test_db.py` | teste | omp-novo | sem equivalente | 691L; Testes da camada SQLite do `robomp`: deduplicação de webhooks, claim atômico serializado por issue sob concorrência, migração d... |
+| `python/robomp/tests/test_git_ops.py` | teste | omp-novo | sem equivalente | 328L; Testes de regressão de segurança e operação em `git_ops`: neutralização de proxy/credential helper maliciosos em `.git/config` ... |
+| `python/robomp/tests/test_github_client.py` | teste | omp-novo | sem equivalente | 536L; Testes do cliente REST `GitHubClient` com `httpx.MockTransport` cobrindo erros 4xx, `retry-after`, redirecionamentos, retry ape... |
+| `python/robomp/tests/test_github_events.py` | teste | omp-novo | sem equivalente | 1073L; Primeira parte dos testes de roteamento de eventos GitHub do `robomp`: verificação HMAC de webhooks, filtragem de bots/allowlis... |
+| `python/robomp/tests/test_host_tools.py` | teste | omp-novo | sem equivalente | 5080L; Parte 1 dos testes de `host_tools` do `robomp`: sanitização de segredos e isolamento de env/UID em comandos do repo, instalação... |
+| `python/robomp/tests/test_issue_index.py` | teste | omp-novo | sem equivalente | 189L; Testes do índice local de issues/PRs em SQLite FTS5: parsing de qualificadores estilo GitHub, busca com filtros e quoting de me... |
+| `python/robomp/tests/test_natives_cache.py` | teste | omp-novo | sem equivalente | 456L; Testes unitários do cache compartilhado de binários nativos Rust/N-API: cálculo determinístico de chave git, captura e populaçã... |
+| `python/robomp/tests/test_permissions_e2e.py` | teste | omp-novo | sem equivalente | 468L; Testes E2E (Linux root) de isolamento de permissões entre slots UID omp-N: execução de bun/biome/cargo/git após reentrada, pers... |
+| `python/robomp/tests/test_persona.py` | teste | omp-novo | sem equivalente | 276L; Testes de montagem de prompts do robomp (renderização de threads, diretivas, follow-ups, revisão de PR, lembretes de conclusão,... |
+| `python/robomp/tests/test_pragmas.py` | teste | omp-novo | sem equivalente | 147L; Testes do parser de pragmas inline (/model, /thinking) em comentários/issues: consumo atômico por linha, preservação de paths U... |
+| `python/robomp/tests/test_proxy_client.py` | teste | omp-novo | sem equivalente | 912L; Testes do cliente GitHubProxyClient e ProxyGitTransport via ASGI contra o app proxy: verificação de headers HMAC, round-trip do... |
+| `python/robomp/tests/test_proxy_server.py` | teste | omp-novo | sem equivalente | 1519L; Testes do servidor FastAPI gh-proxy: isolamento de env/safe.directory/slot em _read_remote_urls, validação HMAC (headers ausent... |
+| `python/robomp/tests/test_queue_cancel.py` | teste | omp-novo | sem equivalente | 308L; Testes de cancelamento no WorkerPool via contextvars/hooks (incluindo cancelamento antes do registro), marcação de eventos canc... |
+| `python/robomp/tests/test_queue_dispatch.py` | teste | omp-novo | sem equivalente | 152L; Testes de roteamento de WorkerPool._dispatch mapeando ações de issues para triage_issue, ações de pull_request para review_pr (... |
+| `python/robomp/tests/test_queue_shutdown.py` | teste | omp-novo | sem equivalente | 296L; Testes de concorrência fallback não-root e shutdown drain-then-kill do WorkerPool, validando cancelamento de tasks sem hook pre... |
+| `python/robomp/tests/test_retry.py` | teste | omp-novo | sem equivalente | 225L; Testes de retry automático com backoff exponencial e jitter em três camadas: parsing/cálculo em Settings, gate available_at e l... |
+| `python/robomp/tests/test_sandbox.py` | teste | omp-novo | sem equivalente | 2486L; Testes do SandboxManager cobrindo renomeação/validação de branches farm/*, remoção de worktrees com bad refs, criação de worksp... |
+| `python/robomp/tests/test_server.py` | teste | omp-novo | sem equivalente | 2922L; Testes end-to-end do servidor FastAPI do robomp cobrindo ciclo de vida do pool, HTML do dashboard e injeção de config/replayTok... |
+| `python/robomp/tests/test_slot_pool.py` | teste | omp-novo | sem equivalente | 56L; Testes unitários de SlotPool validando pool vazio, reutilização de UID, rejeição de dupla liberação/slots duplicados e espera a... |
+| `python/robomp/tests/test_status_contract.py` | teste | omp-novo | sem equivalente | 388L; Teste de contrato que compara o JSON normalizado de /api/status contra web/test/fixtures/status-contract.json (com suporte a at... |
+| `python/robomp/tests/test_tasks.py` | teste | omp-novo | sem equivalente | 237L; Testes de tasks.py verificando que ensure_workspace não bloqueia o event loop, que _run_workspace_op drena a thread antes de pr... |
+| `python/robomp/tests/test_tasks_directive.py` | teste | omp-novo | sem equivalente | 267L; Testes garantindo que pragmas e a flag authorizes_impl em _robomp_directive sobrevivem ao parsing do payload, hidratação de thr... |
+| `python/robomp/tests/test_tasks_release.py` | teste | omp-novo | sem equivalente | 364L; Testes de handle_release_ci cobrindo validação de SHA da tag, espera por runs em andamento (ignorando Nix cancelado), falha qua... |
+| `python/robomp/tests/test_worker.py` | teste | omp-novo | sem equivalente | 1119L; Testes unitários de worker._run_rpc_blocking com _FakeRpcClient cobrindo --continue, staging de agent home, isolamento de env/X... |
+| `python/robomp/tests/test_worker_pragmas.py` | teste | omp-novo | sem equivalente | 80L; Testes unitários de resolução de pragmas no worker para seleção de modelo no pool configurado e normalização/validação de nível... |
+| `python/robomp/tests/test_worker_smoke.py` | teste | omp-novo | sem equivalente | 201L; Teste smoke de integração (condicional a ROBOMP_INTEGRATION=1) executando um subprocesso real `omp --mode rpc` sobre um reposit... |
+| `python/robomp/web/index.html` | config_ou_dado | omp-novo | sem equivalente | 20L; HTML raiz do painel web do robomp contendo o placeholder JSON __ROBOMP_CONFIG__ injetado pelo FastAPI e script inline anti-flas... |
+| `python/robomp/web/package.json` | config_ou_dado | omp-novo | sem equivalente | 27L; Manifesto NPM/Bun da interface web SolidJS do robomp (robomp-web) com scripts de build, preview, typecheck e testes usando Vite... |
+| `python/robomp/web/scripts/verify-cards.ts` | codigo | omp-novo | sem equivalente | 1194L; Primeira metade do harness Puppeteer que intercepta APIs do painel robomp para validar estados skeleton, vazio, ordenação e reg... |
+| `python/robomp/web/scripts/verify-live.ts` | codigo | omp-novo | sem equivalente | 178L; Script Puppeteer de verificação ponta a ponta contra o servidor robomp real em 127.0.0.1:8099, checando cards seedados, contrat... |
+| `python/robomp/web/src/App.tsx` | codigo | omp-novo | sem equivalente | 20L; Componente raiz SolidJS que monta Shell e gerencia o ciclo de vida do polling compartilhado (startPolling/stopPolling) no nível... |
+| `python/robomp/web/src/api.ts` | codigo | omp-novo | sem equivalente | 84L; Cliente HTTP tipado do dashboard robomp para /api/status, /api/logs, /api/github/issues, /api/trigger e /api/cancel, enviando A... |
+| `python/robomp/web/src/components/Browse.tsx` | codigo | omp-novo | sem equivalente | 211L; Componente de navegação de issues do GitHub com filtro por estado, busca textual, ocultação de issues já processadas, exibição ... |
+| `python/robomp/web/src/components/Events.tsx` | codigo | omp-novo | sem equivalente | 84L; Tabela de eventos recentes de webhooks exibindo idade, tipo, referência da issue, estado, tentativas, erro e ação de retry quan... |
+| `python/robomp/web/src/components/GlassCard.tsx` | codigo | omp-novo | sem equivalente | 31L; Componente de container visual padrão com cabeçalho, slot acessório e corpo configurável. |
+| `python/robomp/web/src/components/IssueCard.tsx` | codigo | omp-novo | sem equivalente | 162L; Card unificado do ciclo de vida de uma issue ou entrega órfã, renderizando LifecycleStepper, telemetria ao vivo (modelo, última... |
+| `python/robomp/web/src/components/IssueLink.tsx` | codigo | omp-novo | sem equivalente | 44L; Componentes utilitários para renderizar links externos do GitHub para issues e pull requests. |
+| `python/robomp/web/src/components/LifecycleStepper.tsx` | codigo | omp-novo | sem equivalente | 62L; Trilha horizontal de progresso de estágios (5 etapas de código ou 2 simples para não-código) controlada exclusivamente por data... |
+| `python/robomp/web/src/components/Logs.tsx` | codigo | omp-novo | sem equivalente | 168L; Visualizador de logs estruturados do agente com filtro por nível mínimo (LEVEL_ORDER), busca por substring em mensagem e campos... |
+| `python/robomp/web/src/components/Pill.tsx` | codigo | omp-novo | sem equivalente | 24L; Badge de status em pílula com suporte a classes semânticas de estado e ponto pulsante. |
+| `python/robomp/web/src/components/Pipeline.tsx` | codigo | omp-novo | sem equivalente | 57L; Superfície principal de operações que deriva WorkItems a partir de statusResource e renderiza skeleton de carregamento, estado ... |
+| `python/robomp/web/src/components/Releases.tsx` | codigo | omp-novo | sem equivalente | 79L; Tabela de acompanhamento de releases monitoradas pelo sentinela de CI, listando tag, estado, rodadas, SHA curto e último erro. |
+| `python/robomp/web/src/components/ThemeToggle.tsx` | codigo | omp-novo | sem equivalente | 113L; Botão cíclico de alternância de tema (system -> light -> dark) com ícones SVG inline. |
+| `python/robomp/web/src/components/Trigger.tsx` | codigo | omp-novo | sem equivalente | 145L; Formulário de disparo manual (triage e retry) em variantes bar e panel, bloqueado automaticamente em modo read-only quando repl... |
+| `python/robomp/web/src/components/shell/Rail.tsx` | codigo | omp-novo | sem equivalente | 104L; Barra lateral fixa de navegação contendo marca, Vitals, abas Operations/Activity/Triage com ícone de cadeado em modo somente le... |
+| `python/robomp/web/src/components/shell/Shell.tsx` | codigo | omp-novo | sem equivalente | 72L; Layout principal combinando Rail desktop, drawer mobile, TopBar e contêiner de views mantendo todas as três views montadas com ... |
+| `python/robomp/web/src/components/shell/TopBar.tsx` | codigo | omp-novo | sem equivalente | 53L; Cabeçalho superior exibindo título da view ativa, botão de menu mobile e chip contextual de estado replay/read-only. |
+| `python/robomp/web/src/components/shell/Vitals.tsx` | codigo | omp-novo | sem equivalente | 168L; Painel lateral de telemetria contínua com status de sincronização, contagem deduplicada de execuções (running_events U inflight... |
+| `python/robomp/web/src/components/views/Activity.tsx` | codigo | omp-novo | sem equivalente | 38L; View Activity reunindo tabela de Events, status inline de retry (rmp-activity-status) e stream de Logs. |
+| `python/robomp/web/src/components/views/Operations.tsx` | codigo | omp-novo | sem equivalente | 21L; View inicial Operations compondo barra Trigger, grade Pipeline e tabela Releases. |
+| `python/robomp/web/src/components/views/Triage.tsx` | codigo | omp-novo | sem equivalente | 50L; View Triage exibindo Trigger em painel e Browse quando replayEnabled está ativo, ou painel explicativo de configuração em modo ... |
+| `python/robomp/web/src/config.ts` | codigo | omp-novo | sem equivalente | 38L; Lê a configuração JSON injetada no DOM (#robomp-config) pelo FastAPI para expor replayEnabled, AUTH_HEADERS (X-Robomp-Replay-To... |
+| `python/robomp/web/src/env.d.ts` | gerado | omp-novo | sem equivalente | 1L; Lockfile ou artefato gerado automaticamente (excluido) |
+| `python/robomp/web/src/format.ts` | codigo | omp-novo | sem equivalente | 57L; Funções puras de formatação de durações, idades relativas, timestamps, URLs de issue/PR e truncamento de textos. |
+| `python/robomp/web/src/main.tsx` | codigo | omp-novo | sem equivalente | 11L; Ponto de entrada da SPA SolidJS que importa estilos globais e renderiza App em #app. |
+| `python/robomp/web/src/state.ts` | codigo | omp-novo | sem equivalente | 115L; Store reativo global gerenciando polling sincronizado a cada 3s de status e logs, além das ações runTrigger e runCancel com fee... |
+| `python/robomp/web/src/styles/index.css` | config_ou_dado | omp-novo | sem equivalente | 1309L; Primeira parte da folha de estilos Tailwind v4 com tokens oklch para temas escuro/claro, estilos de pills, botões, formulários,... |
+| `python/robomp/web/src/theme.ts` | codigo | omp-novo | sem equivalente | 60L; Store SolidJS de tema que persiste preferência em localStorage (omp-robomp-theme), acompanha prefers-color-scheme e sincroniza ... |
+| `python/robomp/web/src/types.ts` | codigo | omp-novo | sem equivalente | 182L; Tipos TypeScript espelhando os payloads JSON do servidor Python do robomp e constantes de estados terminais e ordenação de logs... |
+| `python/robomp/web/src/view.ts` | codigo | omp-novo | sem equivalente | 12L; Sinal SolidJS compartilhado para controlar a aba/view ativa do dashboard. |
+| `python/robomp/web/src/work-items.contract.test.ts` | teste | omp-novo | sem equivalente | 66L; Teste Bun no frontend web do robomp validando invariantes relacionais de buildWorkItems sobre a fixture compartilhada status-co... |
+| `python/robomp/web/src/work-items.test.ts` | teste | omp-novo | sem equivalente | 800L; Suíte unitária de buildWorkItems e stageOrdinal cobrindo deduplicação entre running/inflight, exclusão de issues terminais, aut... |
+| `python/robomp/web/src/work-items.ts` | codigo | omp-novo | sem equivalente | 263L; Construtor puro do modelo de cards (buildWorkItems) que reconcilia issues, running_events, inflight e recent_events, filtra ite... |
+| `python/robomp/web/test/fixtures/status-contract.json` | teste | omp-novo | sem equivalente | 224L; Fixture JSON normalizada do endpoint /api/status usada nos testes de contrato Python e TypeScript do dashboard do robomp. |
+| `python/robomp/web/tsconfig.json` | config_ou_dado | omp-novo | sem equivalente | 24L; Configuração estrita do compilador TypeScript para o frontend SolidJS/Vite/Bun. |
+| `python/robomp/web/vite.config.ts` | codigo | omp-novo | sem equivalente | 75L; Configuração do Vite que compila o frontend e sincroniza automaticamente dist/ para ../src/static/ após o build para empacotame... |

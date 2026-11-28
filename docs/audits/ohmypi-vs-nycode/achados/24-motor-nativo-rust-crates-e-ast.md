@@ -10,7 +10,7 @@ O `omp` consolida 13 crates Rust (~800k+ linhas com vendoring/fontes/dados em `o
 ```rust
 #[module_init]
 fn install_native_crash_handler() {
-	crash_handler::install();
+   crash_handler::install();
 }
 ```
 
@@ -82,8 +82,8 @@ Workspace `omp` é **MIT** (`omp:Cargo.toml:33`), mas a árvore de dependências
 
 ## Critérios de aceite
 
-1. Zero dependência Rust/Bazel/Nix adicionada ao `nycode`.
-2. Sessões abaixo do limite de imagens não sofrem nenhuma mutação no array de mensagens.
+3. Zero dependência Rust/Bazel/Nix adicionada ao `nycode`.
+4. Sessões abaixo do limite de imagens não sofrem nenhuma mutação no array de mensagens.
 
 ## Rollback
 

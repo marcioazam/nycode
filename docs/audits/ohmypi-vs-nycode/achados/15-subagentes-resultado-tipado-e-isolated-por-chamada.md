@@ -10,20 +10,20 @@
 ```ts
 export function buildOutputValidator(schema: unknown): BuildOutputValidatorResult {
 ...
-	let cached = schemaResults.get(key);
-	if (!cached) {
-		cached = buildOutputValidatorUncached(typeof schema === "string" ? schema : JSON.parse(key.slice(1)));
-		schemaResults.set(key, cached);
-	}
-	return cached;
+   let cached = schemaResults.get(key);
+   if (!cached) {
+      cached = buildOutputValidatorUncached(typeof schema === "string" ? schema : JSON.parse(key.slice(1)));
+      schemaResults.set(key, cached);
+   }
+   return cached;
 }
 ```
 
-2. **Isolamento por chamada + detach `.git`**: `TaskTool` aceita `isolated?: boolean` por tarefa e `ensureIsolation` (`omp:packages/coding-agent/src/task/worktree.ts:662-712`) isola em worktree separado com `mergeMode: "patch" | "branch"`:
+1. **Isolamento por chamada + detach `.git`**: `TaskTool` aceita `isolated?: boolean` por tarefa e `ensureIsolation` (`omp:packages/coding-agent/src/task/worktree.ts:662-712`) isola em worktree separado com `mergeMode: "patch" | "branch"`:
 
 ```ts
-			await detachSubmodules(repoRoot, mergedDir);
-			await vcs.detachGitDir(mergedDir, sourceCommonDir);
+         await detachSubmodules(repoRoot, mergedDir);
+         await vcs.detachGitDir(mergedDir, sourceCommonDir);
 ```
 
 - **Ancestralidade Pi**: `pi0.9.4` não tinha subagentes; `pibase:packages/coding-agent/examples/extensions/subagent/index.ts` spawnava `pi --mode json` sem `outputSchema` nem `worktree`.

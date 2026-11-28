@@ -8,19 +8,19 @@
 O `omp` congela o bloco de memórias injetado no início da sessão e registra um marcador `memory_recall` via `findPersistedRecall` / `persistRecall` (`omp:packages/coding-agent/src/memory-backend/recall-entry.ts:106-147`). Como documentado no comentário literal de `MnemopiSessionState.beforeAgentStartPrompt` (`omp:packages/coding-agent/src/mnemopi/state.ts:819-833`), em turnos seguintes ou retomadas de sessão (`resume`), o bloco inicial do system prompt é reenviado **inalterado** para preservar o prefix cache do provedor:
 
 ```ts
-	async beforeAgentStartPrompt(
-		promptText: string,
-		signal?: AbortSignal,
-		budget: (block: string) => string = block => this.budgetRecallBlock(block),
-	): Promise<MemoryPromptPreparation | undefined> {
-		if (!this.config.autoRecall || this.hasRecalledForFirstTurn) return undefined;
-		const latestPrompt = promptText.trim();
-		if (!latestPrompt) return undefined;
-		const generation = ++this.#recallGeneration;
-		// The transcript's recall is history: a resumed session sends it unchanged, so the
-		// prompt cache still matches, and reports what changed since as a new message.
-		const scope = getMnemopiRecallScope(this.config);
-		const persisted = findPersistedRecall(this.session.sessionManager, scope);
+   async beforeAgentStartPrompt(
+      promptText: string,
+      signal?: AbortSignal,
+      budget: (block: string) => string = block => this.budgetRecallBlock(block),
+   ): Promise<MemoryPromptPreparation | undefined> {
+      if (!this.config.autoRecall || this.hasRecalledForFirstTurn) return undefined;
+      const latestPrompt = promptText.trim();
+      if (!latestPrompt) return undefined;
+      const generation = ++this.#recallGeneration;
+      // The transcript's recall is history: a resumed session sends it unchanged, so the
+      // prompt cache still matches, and reports what changed since as a new message.
+      const scope = getMnemopiRecallScope(this.config);
+      const persisted = findPersistedRecall(this.session.sessionManager, scope);
 ```
 
 - **Ancestralidade Pi**: ausente em `pi0.9.4` e `pibase`. Criação original do `omp` para evitar que atualizações em memória invalidem todo o cache da conversa.
@@ -30,14 +30,14 @@ O `omp` congela o bloco de memórias injetado no início da sessão e registra u
 Em `packages/coding-agent/src/extensions/memory/index.ts:485-531`, a extensão `memory` calcula um `statToken` do arquivo `MEMORY.md` a **cada** evento `before_agent_start` e injeta o conteúdo atual em `sections.memory` (`addPromptSection(event, "memory", text)` em `:524-531`):
 
 ```ts
-	nycode.on("before_agent_start", (event) => {
-		if (inSubagent() || !enabled) return;
-		const index = readIndexCached();
-		if (!index.trim()) return;
-		const text = `Persistent memories from earlier sessions (index):\n\n${capIndexForPrompt(index)}\nUse the memory tool with action "read" to load a memory's full content when relevant.`;
-		if (addPromptSection(event, "memory", text)) return;
-		return { systemPrompt: `${event.systemPrompt}\n\n## Memory\n\n${text}` };
-	});
+   nycode.on("before_agent_start", (event) => {
+      if (inSubagent() || !enabled) return;
+      const index = readIndexCached();
+      if (!index.trim()) return;
+      const text = `Persistent memories from earlier sessions (index):\n\n${capIndexForPrompt(index)}\nUse the memory tool with action "read" to load a memory's full content when relevant.`;
+      if (addPromptSection(event, "memory", text)) return;
+      return { systemPrompt: `${event.systemPrompt}\n\n## Memory\n\n${text}` };
+   });
 ```
 
 Quando o agente chama `memory({ action: "save" })` ou `memory({ action: "delete" })` no turno 4 de uma sessão longa (ou quando outra sessão grava em `MEMORY.md`), `MEMORY.md` muda no disco, `readIndexCached()` devolve um texto diferente e o bloco `systemPrompt` muta imediatamente antes da chamada à API.

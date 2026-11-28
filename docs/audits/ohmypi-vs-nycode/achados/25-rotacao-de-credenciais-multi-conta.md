@@ -9,16 +9,16 @@ O `omp` substituiu `auth.json` por SQLite (`agent.db` via `bun:sqlite`, `omp:pac
 
 ```ts
 export function recordCredentialPin(
-	authStorage: AuthStorage,
-	sessionManager: SessionManager,
-	sessionId: string,
-	provider: string,
+   authStorage: AuthStorage,
+   sessionManager: SessionManager,
+   sessionId: string,
+   provider: string,
 ): void {
-	const identity = authStorage.oauth.identity(provider, sessionId);
-	if (!identity) return;
-	const hash = credentialPinHash(provider, identity);
-	if (!hash || sessionManager.getCredentialPins().get(provider)?.hash === hash) return;
-	sessionManager.appendCredentialPin(provider, hash);
+   const identity = authStorage.oauth.identity(provider, sessionId);
+   if (!identity) return;
+   const hash = credentialPinHash(provider, identity);
+   if (!hash || sessionManager.getCredentialPins().get(provider)?.hash === hash) return;
+   sessionManager.appendCredentialPin(provider, hash);
 }
 ```
 

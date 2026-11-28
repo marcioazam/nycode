@@ -11,23 +11,24 @@ O `omp` captura saídas de comandos elegíveis >= `1.000` caracteres (`MIN_MINIM
 /// Captured outputs shorter than this are returned verbatim without filtering.
 pub const MIN_MINIMIZE_CHARS: usize = 1_000;
 fn is_below_minimize_threshold(captured: &str) -> bool {
-	captured.chars().take(MIN_MINIMIZE_CHARS).count() < MIN_MINIMIZE_CHARS
+   captured.chars().take(MIN_MINIMIZE_CHARS).count() < MIN_MINIMIZE_CHARS
 }
 ```
+
 ```ts
-		const minimized = winner.result.minimized;
-		let minimizedMeta: MinimizedMeta | undefined;
-		if (minimized && minimized.text !== minimized.originalText) {
-			const info = {
-				filter: minimized.filter,
-				inputBytes: minimized.inputBytes,
-				outputBytes: minimized.outputBytes,
-			};
-			const artifactId = options?.onMinimizedSave
-				? await options.onMinimizedSave(minimized.originalText, info)
-				: undefined;
-			if (artifactId) {
-				minimizedMeta = { ...info, artifactId };
+      const minimized = winner.result.minimized;
+      let minimizedMeta: MinimizedMeta | undefined;
+      if (minimized && minimized.text !== minimized.originalText) {
+         const info = {
+            filter: minimized.filter,
+            inputBytes: minimized.inputBytes,
+            outputBytes: minimized.outputBytes,
+         };
+         const artifactId = options?.onMinimizedSave
+            ? await options.onMinimizedSave(minimized.originalText, info)
+            : undefined;
+         if (artifactId) {
+            minimizedMeta = { ...info, artifactId };
 ```
 
 - **Ancestralidade Pi**: `pi0.9.4:packages/coding-agent/src/tools/bash.ts:69-160` apenas bufferizava até 10 MB; `pibase:packages/coding-agent/src/core/bash-executor.ts:48-148` trouxe `truncateTail` (`50 KB`). O `omp` construiu `crates/shell` (377k LOC) + `crates/builtins` (320k LOC) + minimizer inspirado no RTK (`omp:crates/shell/NOTICE:1-15`).

@@ -9,20 +9,20 @@ Antes de despachar a chamada ao provedor, o `omp` executa `fitOutputTokensToCont
 
 ```ts
 export function fitOutputTokensToContextWindow(
-	model: Model,
-	context: Context,
-	maxTokens: number | undefined,
-	tokenizer: Tokenizer,
+   model: Model,
+   context: Context,
+   maxTokens: number | undefined,
+   tokenizer: Tokenizer,
 ): number | undefined {
-	if (maxTokens === undefined && omitsDefaultOutputCap(model.compat)) return undefined;
-	const requested = maxTokens ?? model.maxTokens;
-	const contextWindow = model.contextWindow;
-	if (!requested || !contextWindow || contextWindow <= 0) return maxTokens;
-	if (stopsOutputAtContextWindow(model)) return maxTokens;
+   if (maxTokens === undefined && omitsDefaultOutputCap(model.compat)) return undefined;
+   const requested = maxTokens ?? model.maxTokens;
+   const contextWindow = model.contextWindow;
+   if (!requested || !contextWindow || contextWindow <= 0) return maxTokens;
+   if (stopsOutputAtContextWindow(model)) return maxTokens;
 
-	const room = contextWindow - countPromptTokens(context, tokenizer) - OUTPUT_FIT_HEADWAY_TOKENS;
-	if (room >= requested) return maxTokens;
-	return Math.max(MIN_FITTED_OUTPUT_TOKENS, room);
+   const room = contextWindow - countPromptTokens(context, tokenizer) - OUTPUT_FIT_HEADWAY_TOKENS;
+   if (room >= requested) return maxTokens;
+   return Math.max(MIN_FITTED_OUTPUT_TOKENS, room);
 }
 ```
 

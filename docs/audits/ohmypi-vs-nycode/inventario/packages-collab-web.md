@@ -1,89 +1,113 @@
 # Inventario: packages-collab-web
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `packages/collab-web/bench/client-frames.bench.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/scripts/build-export-viewer.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/scripts/fixture.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/scripts/local-relay.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/scripts/mock-host.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/app.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/agents/AgentDrawer.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/agents/AgentsPanel.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/shell/Banners.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/shell/Composer.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/shell/ConnectScreen.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/shell/HeaderBar.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/shell/OmpMark.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/shell/ThemeToggle.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/shell/Toasts.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/transcript/Markdown.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/transcript/ToolCard.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/transcript/Transcript.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/components/transcript/math.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/env.d.ts` | gerado | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/export-markdown-bridge.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/export-standalone.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/client.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/codec.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/format.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/jsonl.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/link.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/socket.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/theme.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/transcript-poll.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/lib/use-guest.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/main.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/ToolView.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/element.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/generic.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/parts.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/registry.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/standalone.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/ask.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/ast-edit.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/ast-grep.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/bash.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/browser.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/debug.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/edit.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/eval.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/fetch.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/generate-image.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/github.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/glob.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/goal.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/grep.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/irc.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/job.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/lsp.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/memory-recall.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/memory-reflect.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/memory-retain.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/read.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/report-tool-issue.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/resolve.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/task.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/todo.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/wait.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/web-search.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/write.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/tools/yield.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/tool-render/util.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/src/trace-render/standalone.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/client.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/codec.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/composer.test.tsx` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/export-viewer-build.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/link.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/local-relay.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/markdown.test.tsx` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/socket-reconnect.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/tool-view.test.tsx` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/transcript-dom-shim.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/transcript-polling.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/collab-web/test/transcript.test.tsx` | teste | omp-novo | sem equivalente |  |
+| `packages/collab-web/CHANGELOG.md` | doc | omp-novo | sem equivalente | 360L; Historico de versoes do cliente web @oh-my-pi/collab-web documentando protocolo COLLAB_PROTO v2, Markdown/LaTeX em streaming e ... |
+| `packages/collab-web/README.md` | doc | omp-novo | sem equivalente | 37L; Documentacao de uso, requisitos de WebCrypto/HTTPS e arquitetura desacoplada do pacote collab-web. |
+| `packages/collab-web/bench/client-frames.bench.ts` | teste | omp-novo | sem equivalente | 43L; Microbenchmark que envia 5.000 frames `entry` sintéticos em `GuestClient.applyFrameForTest` para medir custo linearizado em vez... |
+| `packages/collab-web/index.html` | config_ou_dado | omp-novo | sem equivalente | 84L; HTML raiz da SPA collab-web com metadados Open Graph/JSON-LD, inicializacao inline anti-FOUC de tema e analytics configurado co... |
+| `packages/collab-web/package.json` | config_ou_dado | omp-novo | sem equivalente | 65L; Manifesto do pacote collab-web com dependencias React/KaTeX e scripts Bun para dev, build estatico, testes e geracao do export ... |
+| `packages/collab-web/public/favicon-16x16.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/collab-web/public/favicon-180x180.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/collab-web/public/favicon-192x192.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/collab-web/public/favicon-32x32.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/collab-web/public/favicon-512x512.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/collab-web/public/favicon.ico` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/collab-web/public/favicon.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/collab-web/public/favicon.svg` | config_ou_dado | omp-novo | sem equivalente | 11L; Icone SVG do aplicativo collab-web com o glifo pi em gradiente sobre fundo escuro. |
+| `packages/collab-web/public/manifest.webmanifest` | codigo | omp-novo | sem equivalente | 16L; Manifesto PWA do cliente web collab-web. |
+| `packages/collab-web/public/og-image.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/collab-web/public/robots.txt` | doc | omp-novo | sem equivalente | 5L; Diretivas robots.txt liberando a raiz e bloqueando rastreamento das rotas de salas /r/. |
+| `packages/collab-web/public/sitemap.xml` | config_ou_dado | omp-novo | sem equivalente | 8L; Sitemap XML estatico para a URL canonica do collab-web. |
+| `packages/collab-web/scripts/build-export-viewer.ts` | codigo | omp-novo | sem equivalente | 148L; Script de build que gera o bundle IIFE do visualizador de exports HTML (export-viewer-<sha256>.js) com React, tool/trace views,... |
+| `packages/collab-web/scripts/fixture.ts` | codigo | omp-novo | sem equivalente | 714L; Massa de dados sintetica para desenvolvimento offline do collab-web, cobrindo entradas de sessao, erros de ferramentas, aliases... |
+| `packages/collab-web/scripts/local-relay.ts` | codigo | omp-novo | sem equivalente | 169L; Relay WebSocket local em Bun.serve que implementa o contrato do relay publico (roteamento por peerId, reescrita de remetente de... |
+| `packages/collab-web/scripts/mock-host.ts` | codigo | omp-novo | sem equivalente | 361L; Host simulado offline que sobe o relay local, cifra frames AES-256-GCM, serve snapshots em chunks, faz replay de turnos e respo... |
+| `packages/collab-web/src/app.tsx` | codigo | omp-novo | sem equivalente | 233L; Componente raiz da SPA collab-web gerenciando conexao automatica por fragmento URL, altura visualViewport em mobile, abertura d... |
+| `packages/collab-web/src/components/agents/AgentDrawer.tsx` | codigo | omp-novo | sem equivalente | 243L; Gaveta flutuante de subagente com metricas ao vivo, polling incremental de transcricao JSONL com parada automatica quando ocios... |
+| `packages/collab-web/src/components/agents/AgentsPanel.tsx` | codigo | omp-novo | sem equivalente | 137L; Painel lateral memoizado exibindo sessao principal e subagentes ordenados por execucao/atividade com cronometro da ferramenta a... |
+| `packages/collab-web/src/components/agents/agents.css` | config_ou_dado | omp-novo | sem equivalente | 460L; Estilos CSS do painel e gaveta de subagentes (ag-*) com tokens de tema, animacao de pulso e ajuste de fonte 16px para dispositi... |
+| `packages/collab-web/src/components/shell/Banners.tsx` | codigo | omp-novo | sem equivalente | 49L; Banners de estado de conexao (connecting, waiting com percentual de snapshot, reconnecting) e dialogo modal para sessao encerra... |
+| `packages/collab-web/src/components/shell/Composer.tsx` | codigo | omp-novo | sem equivalente | 264L; Composer com textarea auto-redimensionavel, guarda de composicao IME para WebKit, fila de mensagens, botao Stop e UI inline par... |
+| `packages/collab-web/src/components/shell/ConnectScreen.tsx` | codigo | omp-novo | sem equivalente | 90L; Tela de entrada em sessao collab para inserir link e nome de exibicao com validacao e aviso de criptografia E2E no fragmento. |
+| `packages/collab-web/src/components/shell/HeaderBar.tsx` | codigo | omp-novo | sem equivalente | 119L; Cabecalho fixo com titulo, cwd abreviado, status da conexao, chip read-only, modelo/thinking, medidor de contexto, avatares, al... |
+| `packages/collab-web/src/components/shell/OmpMark.tsx` | codigo | omp-novo | sem equivalente | 18L; Componente SVG inline da marca omp (pi) com ID de gradiente unico via useId(). |
+| `packages/collab-web/src/components/shell/ThemeToggle.tsx` | codigo | omp-novo | sem equivalente | 37L; Botao ciclico de alternancia de tema (system -> light -> dark) conectado ao store de tema. |
+| `packages/collab-web/src/components/shell/Toasts.tsx` | codigo | omp-novo | sem equivalente | 64L; Gerenciador de notificacoes toast com expiracao automatica para info/warning, persistencia com fechamento manual para error e l... |
+| `packages/collab-web/src/components/shell/shell.css` | config_ou_dado | omp-novo | sem equivalente | 925L; Estilos principais do shell (sh-*): grid travado em minmax(0, 1fr), painel central, rail lateral, header glass, composer, opcoe... |
+| `packages/collab-web/src/components/transcript/Markdown.tsx` | codigo | omp-novo | sem equivalente | 241L; Renderizador Markdown com sanitizacao de links via URL parser, escape de HTML bruto e StreamingMarkdown incremental que congela... |
+| `packages/collab-web/src/components/transcript/ToolCard.tsx` | codigo | omp-novo | sem equivalente | 34L; Adaptador memoizado entre os eventos do Transcript e o componente compartilhado ToolView. |
+| `packages/collab-web/src/components/transcript/Transcript.tsx` | codigo | omp-novo | sem equivalente | 432L; Componente de transcricao com janela de 100 entradas no final, restauracao de ancoragem de scroll ao expandir entradas anterior... |
+| `packages/collab-web/src/components/transcript/math.ts` | codigo | omp-novo | sem equivalente | 82L; Extensao Marked para LaTeX usando KaTeX em modo output: "mathml" e trust: false sobre os delimitadores compartilhados com a TUI. |
+| `packages/collab-web/src/components/transcript/transcript.css` | config_ou_dado | omp-novo | sem equivalente | 477L; Estilos da transcricao (tr-*) incluindo layout em duas colunas, blocos colapsaveis de raciocinio, estilos de Markdown/MathML co... |
+| `packages/collab-web/src/env.d.ts` | gerado | omp-novo | sem equivalente | 1L; Lockfile ou artefato gerado automaticamente (excluido) |
+| `packages/collab-web/src/export-markdown-bridge.ts` | codigo | omp-novo | sem equivalente | 8L; Ponte de importacao do Marked para reutilizar globalThis.ompMarkdown.Marked pre-carregado no bundle do visualizador de exports ... |
+| `packages/collab-web/src/export-standalone.ts` | codigo | omp-novo | sem equivalente | 3L; Ponto de entrada do bundle standalone do visualizador de exports HTML registrando tool-render e trace-render. |
+| `packages/collab-web/src/lib/client.ts` | codigo | omp-novo | sem equivalente | 738L; Store reativo da sessao do guest (useSyncExternalStore) com aplicacao ordenada de frames, montagem de snapshots chunked sem apa... |
+| `packages/collab-web/src/lib/codec.ts` | codigo | omp-novo | sem equivalente | 50L; Codec WebCrypto AES-256-GCM para cifragem e decifragem ponta a ponta dos frames collab com IV de 12 bytes. |
+| `packages/collab-web/src/lib/format.ts` | codigo | omp-novo | sem equivalente | 97L; Funcoes puras de formatacao de tokens, custos, duracoes, caminhos e escape HTML compartilhadas no collab-web. |
+| `packages/collab-web/src/lib/jsonl.ts` | codigo | omp-novo | sem equivalente | 22L; Parser incremental de JSONL tolerante a linhas quebradas entre chunks via retorno de carry. |
+| `packages/collab-web/src/lib/link.ts` | codigo | omp-novo | sem equivalente | 24L; Reexportacao de utilitarios de envelope binario e gramatica de links collab de @oh-my-pi/pi-wire. |
+| `packages/collab-web/src/lib/socket.ts` | codigo | omp-novo | sem equivalente | 231L; Wrapper WebSocket de navegador com filas serializadas de cifra/decifra, buffer de ate 256 envios pendentes, backoff exponencial... |
+| `packages/collab-web/src/lib/theme.ts` | codigo | omp-novo | sem equivalente | 95L; Store de preferencia de tema (system/light/dark) com persistencia em localStorage e sincronizacao via matchMedia. |
+| `packages/collab-web/src/lib/transcript-poll.ts` | codigo | omp-novo | sem equivalente | 35L; Funcao pura de decisao de polling da transcricao de subagente (retry em falha transitoria, stop em erro terminal do host, advan... |
+| `packages/collab-web/src/lib/use-guest.ts` | codigo | omp-novo | sem equivalente | 11L; Hook useSyncExternalStore para assinar snapshots imutaveis do GuestClient. |
+| `packages/collab-web/src/main.tsx` | codigo | omp-novo | sem equivalente | 8L; Ponto de entrada React do collab-web montando App em #root. |
+| `packages/collab-web/src/styles/base.css` | config_ou_dado | omp-novo | sem equivalente | 158L; Reset CSS global, scrollbars finas, ajustes de viewport mobile e animacoes base do collab-web. |
+| `packages/collab-web/src/styles/tokens.css` | config_ou_dado | omp-novo | sem equivalente | 158L; Tokens de design dark/light (superficies, acentos da marca omp, tipografia, raios e sombras). |
+| `packages/collab-web/src/tool-render/ToolView.tsx` | codigo | omp-novo | sem equivalente | 142L; Cartao unificado de ferramenta (tv-card) com status, resumo de intent, corpo especifico por ferramenta, saida parcial em stream... |
+| `packages/collab-web/src/tool-render/element.tsx` | codigo | omp-novo | sem equivalente | 71L; Web component <omp-tool-view> que monta ToolView com React para exports HTML estaticos, resolvendo props via propriedade, __OMP... |
+| `packages/collab-web/src/tool-render/generic.tsx` | codigo | omp-novo | sem equivalente | 29L; Renderizador fallback que exibe resumo compacto de argumentos e corpo em JSON com texto/imagens do resultado. |
+| `packages/collab-web/src/tool-render/index.ts` | codigo | omp-novo | sem equivalente | 6L; Barrel export publico do modulo tool-render. |
+| `packages/collab-web/src/tool-render/parts.tsx` | codigo | omp-novo | sem equivalente | 293L; Biblioteca de primitivas visuais (tv-*) para renderizadores de ferramentas com highlight opcional via hljs, expansao por linhas... |
+| `packages/collab-web/src/tool-render/registry.ts` | codigo | omp-novo | sem equivalente | 76L; Registro que mapeia nomes atuais e aliases legados de ferramentas para seus renderizadores React dedicados ou fallback generico. |
+| `packages/collab-web/src/tool-render/standalone.tsx` | codigo | omp-novo | sem equivalente | 8L; Entrypoint standalone que registra o custom element <omp-tool-view> ao carregar o viewer de exports HTML. |
+| `packages/collab-web/src/tool-render/tool-render.css` | config_ou_dado | omp-novo | sem equivalente | 640L; Sistema de estilos CSS do namespace `tv-` para renderização de ferramentas, com ponte de tokens adaptáveis (`--tv-*`) compatíve... |
+| `packages/collab-web/src/tool-render/tools/ask.tsx` | codigo | omp-novo | sem equivalente | 153L; Renderizador web da ferramenta `ask` (formulários HTML interativos em execução), extraindo contorno de campos ainda durante str... |
+| `packages/collab-web/src/tool-render/tools/ast-edit.tsx` | codigo | omp-novo | sem equivalente | 184L; Renderizador web de `ast_edit`, exibindo pares padrão/substituição por operação, contagem de substituições/arquivos, erros de p... |
+| `packages/collab-web/src/tool-render/tools/ast-grep.tsx` | codigo | omp-novo | sem equivalente | 129L; Renderizador web de `ast_grep`, mostrando padrões AST (string ou array legado), escopos de caminho, badges de linguagem/limites... |
+| `packages/collab-web/src/tool-render/tools/bash.tsx` | codigo | omp-novo | sem equivalente | 99L; Renderizador web de `bash`, formatando prefixo de variáveis de ambiente seguras para shell, badges de cwd/timeout/pty/async/exi... |
+| `packages/collab-web/src/tool-render/tools/browser.tsx` | codigo | omp-novo | sem equivalente | 106L; Renderizador web de `browser` (controle de abas Chromium/Puppeteer), exibindo ação, aba, URL, modo conectado/spawned, viewport,... |
+| `packages/collab-web/src/tool-render/tools/debug.tsx` | codigo | omp-novo | sem equivalente | 209L; Renderizador web de `debug` (sessões DAP), apresentando ação, alvo, grade de argumentos escalares, expressão/JSON customizado e... |
+| `packages/collab-web/src/tool-render/tools/edit.tsx` | codigo | omp-novo | sem equivalente | 240L; Renderizador web de `edit` / `apply_patch`, extraindo caminhos de cabeçalhos hashline/apply_patch, contando ops e linhas +/-, e... |
+| `packages/collab-web/src/tool-render/tools/eval.tsx` | codigo | omp-novo | sem equivalente | 532L; Renderizador web de `eval` (js/python/notebook), com parsers para formatos moderno e legados (`*** Cell`, `*** Begin`, `=====`)... |
+| `packages/collab-web/src/tool-render/tools/fetch.tsx` | codigo | omp-novo | sem equivalente | 89L; Renderizador web de `fetch`, exibindo URL, método, redirecionamento (`finalUrl`), content-type, truncamento e conteúdo em markd... |
+| `packages/collab-web/src/tool-render/tools/generate-image.tsx` | codigo | omp-novo | sem equivalente | 126L; Renderizador web de `generate_image`, combinando imagens de `result.details.images` (mantidas fora do contexto do modelo) aos b... |
+| `packages/collab-web/src/tool-render/tools/github.tsx` | codigo | omp-novo | sem equivalente | 325L; Renderizador web de `github` (`gh` CLI), com sumário por operação (search, PR, run_watch), acompanhamento de runs/jobs do GitHu... |
+| `packages/collab-web/src/tool-render/tools/glob.tsx` | codigo | omp-novo | sem equivalente | 60L; Renderizador web de `glob` (legado `find`), apresentando padrões, flags (`gitignore`/`hidden`/limit/timeout), contagem de arqui... |
+| `packages/collab-web/src/tool-render/tools/goal.tsx` | codigo | omp-novo | sem equivalente | 141L; Renderizador web de `goal`, exibindo operação, status do objetivo, orçamento/uso de tokens, tempo decorrido e relatório de conc... |
+| `packages/collab-web/src/tool-render/tools/grep.tsx` | codigo | omp-novo | sem equivalente | 77L; Renderizador web de `grep` (legado `search`), mostrando padrão regex, escopos de busca, flags, contagens de matches/arquivos e ... |
+| `packages/collab-web/src/tool-render/tools/irc.tsx` | codigo | omp-novo | sem equivalente | 270L; Renderizador web de `irc` (mensageria inter-agentes), exibindo operações `send`/`wait`/`inbox`/`list`, recibos de entrega (`wok... |
+| `packages/collab-web/src/tool-render/tools/job.tsx` | codigo | omp-novo | sem equivalente | 265L; Renderizador web de `job` (`await`/`poll`/`cancel_job`), ordenando jobs por status (running/failed/cancelled/completed), remove... |
+| `packages/collab-web/src/tool-render/tools/lsp.tsx` | codigo | omp-novo | sem equivalente | 212L; Renderizador web de `lsp`, parseando linhas de diagnóstico e localizações (`file:line:col`) para exibição em badges de severida... |
+| `packages/collab-web/src/tool-render/tools/memory-recall.tsx` | codigo | omp-novo | sem equivalente | 92L; Renderizador web de `recall` (memória de longo prazo), extraindo contagem, timestamp e bullets `- <text> [type] (date)` do text... |
+| `packages/collab-web/src/tool-render/tools/memory-reflect.tsx` | codigo | omp-novo | sem equivalente | 28L; Renderizador web de `reflect`, exibindo query, contexto opcional e resposta textual (ou erro silencioso). |
+| `packages/collab-web/src/tool-render/tools/memory-retain.tsx` | codigo | omp-novo | sem equivalente | 77L; Renderizador web de `retain`, listando memórias armazenadas com contexto opcional e badge de confirmação. |
+| `packages/collab-web/src/tool-render/tools/read.tsx` | codigo | omp-novo | sem equivalente | 103L; Renderizador web de `read`, decompondo seletores compostos (`path:line:raw`), exibindo correção de sufixo/caminho resolvido, co... |
+| `packages/collab-web/src/tool-render/tools/report-tool-issue.tsx` | codigo | omp-novo | sem equivalente | 29L; Renderizador web de `report_tool_issue`, destacando a ferramenta reportada e a descrição da falha de QA. |
+| `packages/collab-web/src/tool-render/tools/resolve.tsx` | codigo | omp-novo | sem equivalente | 132L; Renderizador web de `resolve`/`reject`/`propose`, unificando chamadas diretas e comandos aninhados em `bash` para mostrar trans... |
+| `packages/collab-web/src/tool-render/tools/task.tsx` | codigo | omp-novo | sem equivalente | 265L; Renderizador web de `task` (subagentes), suportando lote/steps/isolamento, progresso ao vivo, resultados ordenados por duração,... |
+| `packages/collab-web/src/tool-render/tools/todo.tsx` | codigo | omp-novo | sem equivalente | 152L; Renderizador web de `todo`, normalizando ops unitárias ou em lote e renderizando o quadro de fases em algarismos romanos com st... |
+| `packages/collab-web/src/tool-render/tools/wait.tsx` | codigo | omp-novo | sem equivalente | 26L; Renderizador web de `wait`, delegando para `ircRenderer` quando há mensagem recebida (`details.waited`) ou `jobRenderer` caso c... |
+| `packages/collab-web/src/tool-render/tools/web-search.tsx` | codigo | omp-novo | sem equivalente | 166L; Renderizador web de `web_search`, exibindo query, provedor/modelo/authMode, uso de tokens, resposta sintetizada e lista de font... |
+| `packages/collab-web/src/tool-render/tools/write.tsx` | codigo | omp-novo | sem equivalente | 82L; Renderizador web de `write`, mostrando preview de código com linguagem inferida, badge de permissão executável e diagnósticos L... |
+| `packages/collab-web/src/tool-render/tools/yield.tsx` | codigo | omp-novo | sem equivalente | 28L; Renderizador web de `yield`, formatando o JSON de saída estruturada retornada por um subagente. |
+| `packages/collab-web/src/tool-render/types.ts` | codigo | omp-novo | sem equivalente | 66L; Contrato TypeScript dos renderizadores web de ferramentas (`Summary`/`Body`, blocos de resultado e capacidades opcionais do hos... |
+| `packages/collab-web/src/tool-render/util.ts` | codigo | omp-novo | sem equivalente | 196L; Utilitários puros e tolerantes a JSON não confiável compartilhados pelos renderizadores web (normalização de caminhos/escopos, ... |
+| `packages/collab-web/src/trace-render/standalone.tsx` | codigo | omp-novo | sem equivalente | 170L; Custom element `<omp-session-trace>` com Shadow DOM para exportações HTML offline, sincronizando tema/tokens CSS do host via `M... |
+| `packages/collab-web/test/client.test.ts` | teste | omp-novo | sem equivalente | 656L; Testa máquina de estados de `GuestClient`: snapshot chunked com timeout/resync, ghost de stream até chegada do `entry`, ferrame... |
+| `packages/collab-web/test/codec.test.ts` | teste | omp-novo | sem equivalente | 33L; Testa criptografia autenticada de frames do `collab-web` (`seal`/`open`), vetor de interoperabilidade com `coding-agent` e reje... |
+| `packages/collab-web/test/composer.test.tsx` | teste | omp-novo | sem equivalente | 95L; Testa renderização de pedidos de UI do host (`select`/`editor`) no componente `Composer` e guarda de composição IME (`shouldSub... |
+| `packages/collab-web/test/export-viewer-build.test.ts` | teste | omp-novo | sem equivalente | 261L; Testa build do visualizador de exportação hospedado: hash SHA-256 + SRI, limpeza apenas de artefatos obsoletos, modo `--check`/... |
+| `packages/collab-web/test/link.test.ts` | teste | omp-novo | sem equivalente | 159L; Testa parsing e round-trip de links de colaboração (bare, legacy `#`, deep links web, wrappers, `%23` do macOS, validação de `w... |
+| `packages/collab-web/test/local-relay.test.ts` | teste | omp-novo | sem equivalente | 180L; Testa relay WebSocket local de colaboração: rejeição HTTP/WS sem sala, roteamento opaco de envelopes binários entre host e múlt... |
+| `packages/collab-web/test/markdown.test.tsx` | teste | omp-novo | sem equivalente | 231L; Testa renderização Markdown de transcrição (quebras suaves, escape HTML seguro, remoção de wrappers `<advisory>`/`<span>`/`<tex... |
+| `packages/collab-web/test/socket-reconnect.test.ts` | teste | omp-novo | sem equivalente | 116L; Testa recuperação de sala após queda de host com `WebSocket` scriptado: permanência em `reconnecting` enquanto host recria sala... |
+| `packages/collab-web/test/tool-view.test.tsx` | teste | omp-novo | sem equivalente | 410L; Testa renderização HTML dos cards de ferramentas no `ToolView`: `intent` truncado, comandos aninhados de `bash` (`toolCommands`... |
+| `packages/collab-web/test/transcript-dom-shim.ts` | teste | omp-novo | sem equivalente | 4L; Shim mínimo de `globalThis.HTMLElement` para testes SSR do componente `Transcript` em ambiente Bun sem DOM completo. |
+| `packages/collab-web/test/transcript-polling.test.ts` | teste | omp-novo | sem equivalente | 128L; Testa `GuestClient.fetchTranscript` e `decideTranscriptPoll`: distinção entre erro terminal de frame (para polling) e falha tra... |
+| `packages/collab-web/test/transcript.test.tsx` | teste | omp-novo | sem equivalente | 190L; Testa `Transcript`: deduplicação de tool card ativo com argumentos ao vivo, shimmer de thinking, Markdown em mensagens de host/... |
+| `packages/collab-web/tsconfig.json` | config_ou_dado | omp-novo | sem equivalente | 10L; Configuração TypeScript base do pacote `collab-web` (sem emissão, `react-jsx`, tipos Bun/React). |
+| `packages/collab-web/tsconfig.publish.json` | config_ou_dado | omp-novo | sem equivalente | 16L; Configuração TypeScript para publicação de declarações `.d.ts` do pacote `collab-web`. |

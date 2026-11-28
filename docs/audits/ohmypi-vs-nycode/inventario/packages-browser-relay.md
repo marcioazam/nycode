@@ -1,80 +1,92 @@
 # Inventario: packages-browser-relay
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `packages/browser-relay/extension/background.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/debugger-ownership.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/download-pairing.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/foreign-frames.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/messages.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/offscreen/gifenc.d.ts` | gerado | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/offscreen/layout.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/offscreen/main.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/offscreen/messages.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/chip.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/dom.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/favicon.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/main.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/motion.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/overlay.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/picker.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/pointer.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/presence.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/overlay/styles.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/app.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/composer.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/describe.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/editor.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/env.d.ts` | gerado | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/header.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/images.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/main.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/media.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/model-picker.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/schedule.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/session.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/sessions/collab.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/sessions/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/sessions/rpc.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/sheets/settings.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/sheets/shortcut.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/sheets/teach.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/storage.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/tab-context.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/timeline.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/transcript.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/ui.tsx` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/panel/worker-client.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/teach/element.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/teach/recorder.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/calls.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/capture.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/gif.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/groups.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/identity.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/overlay-host.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/panel-handlers.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/panel-hub.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/relay-events.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/relay-rpc.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/relay.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/rpc-sessions.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/schedules.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/session-store.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/side-panel.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/tabs.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/extension/worker/teach.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/scripts/build-extension.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/scripts/smoke.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/gif-layout.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/overlay-chip.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/overlay-motion.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/panel-rpc-session.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/panel-transcript.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/relay-groups.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/relay-link-fixture.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/relay-link.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/schedules.test.ts` | teste | omp-novo | sem equivalente |  |
-| `packages/browser-relay/test/teach-element.test.ts` | teste | omp-novo | sem equivalente |  |
+| `packages/browser-relay/CHANGELOG.md` | doc | omp-novo | sem equivalente | 122L; Histórico de versões do pacote `@oh-my-pi/browser-relay`, documentando a migração para Native Messaging, painel lateral no Chro... |
+| `packages/browser-relay/README.md` | doc | omp-novo | sem equivalente | 39L; Documentação de arquitetura, instalação, atualização automática e limitações do `@oh-my-pi/browser-relay` (relay CDP via `chrom... |
+| `packages/browser-relay/extension/background.ts` | codigo | omp-novo | sem equivalente | 123L; Service worker MV3 que conecta o hub do painel lateral, sessões RPC via native host, relay CDP, overlay na página, agendamentos... |
+| `packages/browser-relay/extension/debugger-ownership.ts` | codigo | omp-novo | sem equivalente | 21L; Filtra abas anexadas em `chrome.debugger` executando uma sonda no processo do navegador para identificar apenas anexações perte... |
+| `packages/browser-relay/extension/download-pairing.ts` | codigo | omp-novo | sem equivalente | 76L; Correlaciona eventos CDP `Page.downloadWillBegin` (`guid`) com itens do `chrome.downloads.onCreated` (`id`) por URL e ordem tem... |
+| `packages/browser-relay/extension/foreign-frames.ts` | codigo | omp-novo | sem equivalente | 218L; Contorna recusas de `chrome.debugger` causadas por iframes de outras extensões (ex.: gerenciadores de senha), esvaziando-os com... |
+| `packages/browser-relay/extension/icons/omp-128.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/browser-relay/extension/icons/omp-16.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/browser-relay/extension/icons/omp-32.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/browser-relay/extension/icons/omp-48.png` | binario | omp-novo | sem equivalente | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/browser-relay/extension/manifest.json` | config_ou_dado | omp-novo | sem equivalente | 54L; Manifesto MV3 da extensão Chrome do omp declarando permissões (`debugger`, `tabs`, `tabGroups`, `scripting`, `downloads`, `side... |
+| `packages/browser-relay/extension/messages.ts` | codigo | omp-novo | sem equivalente | 316L; Contratos de mensagens e tipos compartilhados entre painel lateral, service worker, overlay de página, gravador Teach e native ... |
+| `packages/browser-relay/extension/offscreen.html` | config_ou_dado | omp-novo | sem equivalente | 9L; Documento HTML mínimo que hospeda o script offscreen de codificação de GIF. |
+| `packages/browser-relay/extension/offscreen/gifenc.d.ts` | gerado | omp-novo | sem equivalente | 17L; Lockfile ou artefato gerado automaticamente (excluido) |
+| `packages/browser-relay/extension/offscreen/layout.ts` | codigo | omp-novo | sem equivalente | 56L; Cálculos puros de geometria em pixels CSS para posicionamento de marca, barra de progresso, pílulas de rótulo e setas de arrast... |
+| `packages/browser-relay/extension/offscreen/main.ts` | codigo | omp-novo | sem equivalente | 164L; Renderizador offscreen em Canvas 2D que anota screenshots de passos (cliques, arrastes, rótulos, barra de progresso e logo) e c... |
+| `packages/browser-relay/extension/offscreen/messages.ts` | codigo | omp-novo | sem equivalente | 10L; Tipos de requisição e resposta entre o service worker e o documento offscreen de exportação de GIF. |
+| `packages/browser-relay/extension/overlay/chip.ts` | codigo | omp-novo | sem equivalente | 76L; Lógica pura de posicionamento do chip de ação junto ao cursor do agente e máquina de estados de gesto (`Clicking`, `Dragging`, ... |
+| `packages/browser-relay/extension/overlay/dom.ts` | codigo | omp-novo | sem equivalente | 105L; Helpers DOM seguros contra Trusted Types (`createElement`/`createElementNS` sem strings HTML), sincronização de pintura `afterF... |
+| `packages/browser-relay/extension/overlay/favicon.ts` | codigo | omp-novo | sem equivalente | 100L; Substitui temporariamente o favicon da aba pelo ícone do omp enquanto o agente trabalha, restaurando os links originais ao term... |
+| `packages/browser-relay/extension/overlay/main.ts` | codigo | omp-novo | sem equivalente | 64L; Entry point do content script de overlay no frame principal, garantindo instância única e auto-descarte via polling de `chrome.... |
+| `packages/browser-relay/extension/overlay/motion.ts` | codigo | omp-novo | sem equivalente | 116L; Planejador cinemático puro para a trajetória do cursor do agente usando duração pela lei de Fitts, curva minimum-jerk, arco lat... |
+| `packages/browser-relay/extension/overlay/overlay.ts` | codigo | omp-novo | sem equivalente | 235L; Controlador do overlay na página usando shadow DOM fechado e `adoptedStyleSheets` (invisível para observadores de mutação do cl... |
+| `packages/browser-relay/extension/overlay/picker.ts` | codigo | omp-novo | sem equivalente | 278L; Seletor visual de elemento (`elementsFromPoint` atravessando shadow roots abertos) e de região retangular na página, garantindo... |
+| `packages/browser-relay/extension/overlay/pointer.ts` | codigo | omp-novo | sem equivalente | 239L; Camada animada do ponteiro do agente via Web Animations API com anéis de clique, chip de verbo, pose de descanso e expiração au... |
+| `packages/browser-relay/extension/overlay/presence.ts` | codigo | omp-novo | sem equivalente | 305L; Barra/borda de presença na página com desvio automático de borda quando o cursor mira nela, botão Stop com confirmação/retry e ... |
+| `packages/browser-relay/extension/overlay/styles.ts` | codigo | omp-novo | sem equivalente | 220L; Folha de estilos isolada para o shadow root fechado do overlay, incluindo tokens escuros, animações, suporte a toque grosso, re... |
+| `packages/browser-relay/extension/panel.html` | config_ou_dado | omp-novo | sem equivalente | 14L; HTML raiz do painel lateral Chrome da extensão omp. |
+| `packages/browser-relay/extension/panel/app.tsx` | codigo | omp-novo | sem equivalente | 1076L; Componente raiz do painel lateral: gerenciamento de sessões RPC e collab, estado de abas/grupos por conversa, sincronização de ... |
+| `packages/browser-relay/extension/panel/composer.tsx` | codigo | omp-novo | sem equivalente | 975L; Compositor de mensagens do painel: gerenciamento de anexos/capturas com cancelamento por Esc, seletor de aba fixada/seguida/ext... |
+| `packages/browser-relay/extension/panel/describe.ts` | codigo | omp-novo | sem equivalente | 428L; Gera descrições legíveis em tempo passado/progressivo, ícones e coordenadas de ação para passos de ferramentas, analisando códi... |
+| `packages/browser-relay/extension/panel/editor.tsx` | codigo | omp-novo | sem equivalente | 283L; Campo `contenteditable="plaintext-only"` com chips não editáveis para `/shortcuts`, detecção de token `/` no cursor, guarda de ... |
+| `packages/browser-relay/extension/panel/env.d.ts` | gerado | omp-novo | sem equivalente | 2L; Lockfile ou artefato gerado automaticamente (excluido) |
+| `packages/browser-relay/extension/panel/header.tsx` | codigo | omp-novo | sem equivalente | 279L; Barra superior do painel com seletor navegável por teclado de hosts collab, sessões RPC do painel, diretórios recentes e criaçã... |
+| `packages/browser-relay/extension/panel/images.ts` | codigo | omp-novo | sem equivalente | 87L; Decodifica e redimensiona imagens via `OffscreenCanvas` limitando a maior aresta a 1568px antes do envio ao modelo, preservando... |
+| `packages/browser-relay/extension/panel/main.tsx` | codigo | omp-novo | sem equivalente | 20L; Bootstrap React do painel lateral aplicando tema espelhado antes da primeira pintura e abrindo a conexão `WorkerClient` para a ... |
+| `packages/browser-relay/extension/panel/media.tsx` | codigo | omp-novo | sem equivalente | 96L; Miniatura 36×28 e lightbox modal de screenshots com marcação proporcional do ponto de clique e seta vetorial de arraste. |
+| `packages/browser-relay/extension/panel/model-picker.tsx` | codigo | omp-novo | sem equivalente | 278L; Seletor de modelos com busca, filtro `@` por papéis rápidos e controle de nível de thinking sincronizado via setas esquerda/dir... |
+| `packages/browser-relay/extension/panel/panel.css` | config_ou_dado | omp-novo | sem equivalente | 2618L; Primeira parte dos estilos do painel lateral (`pn-*`): cabeçalho translúcido, tooltips, menus, popovers, seletor de sessões, ár... |
+| `packages/browser-relay/extension/panel/schedule.ts` | codigo | omp-novo | sem equivalente | 63L; Utilitários de parsing de horário (12h/24h para HH:MM), formatação de data local, rótulos resumidos de recorrência e previsão t... |
+| `packages/browser-relay/extension/panel/session.ts` | codigo | omp-novo | sem equivalente | 113L; Define a interface unificada PanelSession e os tipos de snapshot compartilhados entre sessões collab (guest) e sessões RPC loca... |
+| `packages/browser-relay/extension/panel/sessions/collab.ts` | codigo | omp-novo | sem equivalente | 86L; Adaptador que implementa PanelSession sobre GuestClient do collab-web para conectar o painel lateral a uma instância interativa... |
+| `packages/browser-relay/extension/panel/sessions/index.ts` | codigo | omp-novo | sem equivalente | 18L; Funções fábrica que instanciam CollabPanelSession ou RpcPanelSession conforme a origem da sessão no painel. |
+| `packages/browser-relay/extension/panel/sessions/rpc.ts` | codigo | omp-novo | sem equivalente | 892L; Implementa PanelSession sobre omp --mode rpc via porta do worker: envia comandos com correlação por id, reconstrói histórico in... |
+| `packages/browser-relay/extension/panel/sheets/settings.tsx` | codigo | omp-novo | sem equivalente | 472L; Tela de configurações do painel: status da conexão com o host nativo, padrões de sessão (attach vs panel, cwd), tema/overlay, p... |
+| `packages/browser-relay/extension/panel/sheets/shortcut.tsx` | codigo | omp-novo | sem equivalente | 379L; Editor de shortcuts em sheet modal: validação de nome/prompt, URL inicial opcional, configuração completa de agendamento (once/... |
+| `packages/browser-relay/extension/panel/sheets/teach.tsx` | codigo | omp-novo | sem equivalente | 394L; Interface do modo Teach: inicia/pausa/descarta gravação no worker, captura narração falada via Web Speech API, exibe passos e s... |
+| `packages/browser-relay/extension/panel/storage.ts` | codigo | omp-novo | sem equivalente | 171L; Persistência reativa em chrome.storage.local (configurações, shortcuts e sugestões por host) com normalização defensiva, atuali... |
+| `packages/browser-relay/extension/panel/tab-context.ts` | codigo | omp-novo | sem equivalente | 122L; Serializa e faz parse de blocos <chrome-tab .../> com autorização de controle para os prompts do painel, calcula viewport corri... |
+| `packages/browser-relay/extension/panel/timeline.ts` | codigo | omp-novo | sem equivalente | 362L; Transforma snapshots da sessão em itens de timeline agrupando chamadas de ferramentas e pensamentos intermediários em grupos co... |
+| `packages/browser-relay/extension/panel/transcript.tsx` | codigo | omp-novo | sem equivalente | 771L; Componente de transcrição com janela incremental (WINDOW=80), auto-scroll com ResizeObserver/IntersectionObserver, botões de có... |
+| `packages/browser-relay/extension/panel/ui.tsx` | codigo | omp-novo | sem equivalente | 535L; Biblioteca de primitivos de UI do painel: pilha de roteamento de Esc, detecção de clique externo, botões/switches, Menu acessív... |
+| `packages/browser-relay/extension/panel/worker-client.ts` | codigo | omp-novo | sem equivalente | 174L; Cliente de porta chrome.runtime do painel para o service worker: gerencia requisições com IDs e timeouts por operação, eventos ... |
+| `packages/browser-relay/extension/teach/element.ts` | codigo | omp-novo | sem equivalente | 173L; Calcula papel ARIA (roleFor), nome acessível seguindo precedência aria-labelledby/aria-label/labels/conteúdo (nameFor) e seleto... |
+| `packages/browser-relay/extension/teach/recorder.ts` | codigo | omp-novo | sem equivalente | 205L; Content script injetado pelo modo Teach: escuta eventos confiáveis em fase de captura, agrupa digitação com debounce de 450ms, ... |
+| `packages/browser-relay/extension/worker/calls.ts` | codigo | omp-novo | sem equivalente | 60L; Gerencia chamadas extensão -> relay (call/callResult) com timeout e cancelamento em lote quando a época do link termina. |
+| `packages/browser-relay/extension/worker/capture.ts` | codigo | omp-novo | sem equivalente | 103L; Captura screenshots PNG da aba ativa ocultando temporariamente o overlay da página e realizando recorte proporcional a DPR/zoom... |
+| `packages/browser-relay/extension/worker/gif.ts` | codigo | omp-novo | sem equivalente | 40L; Serializa exportações de GIF criando/fechando o documento offscreen sob demanda, sinalizando estado busy ao relay e baixando o ... |
+| `packages/browser-relay/extension/worker/groups.ts` | codigo | omp-novo | sem equivalente | 135L; Gerencia grupos de abas do relay e do painel com fila sequencial para evitar duplicatas, preservando abas fixadas e desagrupand... |
+| `packages/browser-relay/extension/worker/identity.ts` | codigo | omp-novo | sem equivalente | 66L; Mantém instanceId persistente e browserSession efêmero para derivar códigos SHA-256 de 8 caracteres que isolam IDs de alvos CDP... |
+| `packages/browser-relay/extension/worker/overlay-host.ts` | codigo | omp-novo | sem equivalente | 242L; Orquestra o content script overlay.js sob demanda: injeta após navegações, propaga inputs/atividade visual do painel e grupos d... |
+| `packages/browser-relay/extension/worker/panel-handlers.ts` | codigo | omp-novo | sem equivalente | 63L; Registra os handlers de requisição do painel no worker para status do relay, collabHosts/collabLink, installs, captura de tela,... |
+| `packages/browser-relay/extension/worker/panel-hub.ts` | codigo | omp-novo | sem equivalente | 97L; Hub de comunicação no service worker que mantém portas abertas de painéis laterais por windowId, roteia requisições aos handler... |
+| `packages/browser-relay/extension/worker/relay-events.ts` | codigo | omp-novo | sem equivalente | 77L; Encaminha eventos do chrome.debugger, chrome.tabs e frames ocultos para o relay, e pareia GUIDs de Page.downloadWillBegin com d... |
+| `packages/browser-relay/extension/worker/relay-rpc.ts` | codigo | omp-novo | sem equivalente | 64L; Executa RPCs vindos do relay contra chrome.debugger, chrome.tabs, grupos, downloads e overlay, limpando abas criadas caso a épo... |
+| `packages/browser-relay/extension/worker/relay.ts` | codigo | omp-novo | sem equivalente | 378L; Mantém a conexão Native Messaging de longa duração com o host nativo do omp, gerencia épocas de link (linked/unlinked), timeout... |
+| `packages/browser-relay/extension/worker/rpc-sessions.ts` | codigo | omp-novo | sem equivalente | 201L; Gerencia sessões omp --mode rpc de propriedade do worker (uma porta nativa por sessão), reconcilia sessões encerradas após rein... |
+| `packages/browser-relay/extension/worker/schedules.ts` | codigo | omp-novo | sem equivalente | 297L; Agenda e executa shortcuts via chrome.alarms: cálculo de ocorrência local seguro contra DST, colapso de disparos atrasados, cri... |
+| `packages/browser-relay/extension/worker/session-store.ts` | codigo | omp-novo | sem equivalente | 35L; Wrapper de estado do worker espelhado em chrome.storage.session que carrega uma única vez em memória e persiste o objeto inteir... |
+| `packages/browser-relay/extension/worker/side-panel.ts` | codigo | omp-novo | sem equivalente | 34L; Configura o ícone da barra e o comando toggle-side-panel para abrir ou fechar (no Chrome >=141) o painel lateral mantendo o ges... |
+| `packages/browser-relay/extension/worker/tabs.ts` | codigo | omp-novo | sem equivalente | 81L; Funções auxiliares de abas para gerar TabSnapshot/TabContext (incluindo targetId e viewport ajustado por zoom), focar abas e re... |
+| `packages/browser-relay/extension/worker/teach.ts` | codigo | omp-novo | sem equivalente | 142L; Controla a gravação do modo Teach no worker: injeta recorder.js, reinjeta em navegações, serializa capturas de tela respeitando... |
+| `packages/browser-relay/package.json` | config_ou_dado | omp-novo | sem equivalente | 47L; Manifesto do pacote @oh-my-pi/browser-relay com scripts de build/geração embarcada da extensão e dependências (React, gifenc, l... |
+| `packages/browser-relay/scripts/build-extension.ts` | codigo | omp-novo | sem equivalente | 136L; Script de build da extensão Chrome: compila entrypoints (iife/esm), copia assets estáticos, gera ZIP pré-carimbado e produz ext... |
+| `packages/browser-relay/scripts/smoke.ts` | codigo | omp-novo | sem equivalente | 101L; Script manual de teste end-to-end que replica o padrão de duas conexões Puppeteer (supervisor + worker) contra um relay ativo p... |
+| `packages/browser-relay/test/gif-layout.test.ts` | teste | omp-novo | sem equivalente | 49L; Testes unitários do layout de geração de GIFs no browser-relay (escala de decorações, barra de progresso, delays por ação, posi... |
+| `packages/browser-relay/test/overlay-chip.test.ts` | teste | omp-novo | sem equivalente | 117L; Testes de posicionamento do chip de ação no overlay do browser-relay (inversão nas bordas da viewport) e máquina de estados `na... |
+| `packages/browser-relay/test/overlay-motion.test.ts` | teste | omp-novo | sem equivalente | 141L; Testes da cinemática de movimento do cursor no overlay do browser-relay (duração logarítmica, easing minimum-jerk, overshoot de... |
+| `packages/browser-relay/test/panel-rpc-session.test.ts` | teste | omp-novo | sem equivalente | 370L; Testes da sessão RPC do painel lateral do browser-relay cobrindo reconstrução de transcrição/estado, streaming coalescido por f... |
+| `packages/browser-relay/test/panel-transcript.test.ts` | teste | omp-novo | sem equivalente | 183L; Testes do painel do browser-relay cobrindo blocos `<chrome-tab>` em prompts, rotulagem heurística de passos em código JS/bash, ... |
+| `packages/browser-relay/test/relay-groups.test.ts` | teste | omp-novo | sem equivalente | 153L; Testes de gerenciamento de grupos de abas do relay sob Saved Tab Groups do Chrome, evitando deixar grupos `omp` salvos vazios s... |
+| `packages/browser-relay/test/relay-link-fixture.ts` | teste | omp-novo | sem equivalente | 63L; Fixture de stub da API `chrome` (runtime.connectNative, tabs, debugger, storage) para testes do worker do browser-relay. |
+| `packages/browser-relay/test/relay-link.test.ts` | teste | omp-novo | sem equivalente | 21L; Teste com fake timers garantindo que um native host silencioso é desconectado após timeout e um novo host recebe a requisição `... |
+| `packages/browser-relay/test/schedules.test.ts` | teste | omp-novo | sem equivalente | 65L; Testes de agendamentos (once, daily, weekly, monthly, yearly) cobrindo clamp de fim de mês/ano bissexto, transições de horário ... |
+| `packages/browser-relay/test/teach-element.test.ts` | teste | omp-novo | sem equivalente | 42L; Testes de extração de seletores CSS resilientes (`data-testid`, ancestrais estáveis com escape e `nth-child`), roles e nomes AR... |
+| `packages/browser-relay/tsconfig.json` | config_ou_dado | omp-novo | sem equivalente | 10L; Configuração TypeScript do pacote browser-relay estendendo tsconfig.workspace.json com libs DOM/ES2024 e tipos de bun, chrome e... |

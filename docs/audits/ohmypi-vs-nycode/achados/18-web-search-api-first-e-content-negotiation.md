@@ -12,12 +12,12 @@
 export type FetchProvider = "native" | "trafilatura" | "lynx" | "parallel" | "firecrawl" | "jina";
 
 const FETCH_PROVIDER_ORDER: readonly FetchProvider[] = [
-	"native",
-	"trafilatura",
-	"lynx",
-	"parallel",
-	"firecrawl",
-	"jina",
+   "native",
+   "trafilatura",
+   "lynx",
+   "parallel",
+   "firecrawl",
+   "jina",
 ];
 ```
 

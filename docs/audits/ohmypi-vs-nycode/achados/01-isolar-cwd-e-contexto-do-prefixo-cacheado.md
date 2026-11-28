@@ -11,10 +11,10 @@ O `omp` ancora os breakpoints `cache_control` do bloco de sistema da Anthropic *
 const VOLATILE_SYSTEM_SEGMENT_MARKERS = ["<memories>", "<project-context>"];
 
 function volatileSystemSuffixStart(systemBlocks: readonly AnthropicSystemBlock[]): number {
-	const start = systemBlocks.findIndex(block =>
-		VOLATILE_SYSTEM_SEGMENT_MARKERS.some(marker => block.text.startsWith(marker)),
-	);
-	return start === -1 ? systemBlocks.length : start;
+   const start = systemBlocks.findIndex(block =>
+      VOLATILE_SYSTEM_SEGMENT_MARKERS.some(marker => block.text.startsWith(marker)),
+   );
+   return start === -1 ? systemBlocks.length : start;
 }
 ```
 

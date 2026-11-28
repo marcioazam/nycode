@@ -10,21 +10,21 @@
    - `/commit` em sessão: lê `<artifacts>/changes.jsonl` (`ChangeJournal`) para atribuir linhas tocadas por este agente, cria commit num `index` privado e reconcilia com a `HEAD` real via `repo.commitReconciled` (`omp:crates/vcs`, `gix` + `jj-lib`):
 
 ```ts
-			try {
-				committed = await repo.commitReconciled(
-					message,
-					{
-						indexPath,
-						expectedHead: head ?? undefined,
-						amend: request.amend ?? false,
-						noVerify: request.noVerify ?? false,
-					},
-					joined,
-					context.signal,
-				);
+         try {
+            committed = await repo.commitReconciled(
+               message,
+               {
+                  indexPath,
+                  expectedHead: head ?? undefined,
+                  amend: request.amend ?? false,
+                  noVerify: request.noVerify ?? false,
+               },
+               joined,
+               context.signal,
+            );
 ```
 
-2. **`conflict-detect` e `conflict://`** (`omp:packages/coding-agent/src/tools/conflict-detect.ts:181-874`): detecta marcadores de merge/rebase (`<<<<<<<`, `|||||||`, `=======`, `>>>>>>>`) e permite ler/editar apenas blocos em conflito por região (`ours`/`theirs`/`base`) sem reescrever arquivos enormes de milhares de linhas.
+1. **`conflict-detect` e `conflict://`** (`omp:packages/coding-agent/src/tools/conflict-detect.ts:181-874`): detecta marcadores de merge/rebase (`<<<<<<<`, `|||||||`, `=======`, `>>>>>>>`) e permite ler/editar apenas blocos em conflito por região (`ours`/`theirs`/`base`) sem reescrever arquivos enormes de milhares de linhas.
 
 - **Ancestralidade Pi**: ausente em `pi0.9.4` e `pibase`. Criação original do `omp`.
 

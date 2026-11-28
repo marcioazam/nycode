@@ -9,24 +9,24 @@ Em `omp:packages/coding-agent/src/system-prompt.ts:354-373`, `dedupeContainedCon
 
 ```ts
 export function dedupeContainedContextFiles(
-	contextFiles: Array<{ path: string; content: string; depth?: number }>,
+   contextFiles: Array<{ path: string; content: string; depth?: number }>,
 ): Array<{ path: string; content: string; depth?: number }> {
-	// Sort by depth descending: higher depth (farther from cwd, less
-	// authoritative) first, lower depth (closer to cwd, more authoritative)
-	// last. Stable sort preserves caller order among equal-depth files.
-	const sorted = [...contextFiles].sort((a, b) => {
-		const depthA = a.depth ?? Number.POSITIVE_INFINITY;
-		const depthB = b.depth ?? Number.POSITIVE_INFINITY;
-		return depthB - depthA;
-	});
-	const blocks = sorted.map(file => splitComparablePromptBlocks(file.content));
-	return sorted.filter(
-		(_file, index) =>
-			!blocks.some(
-				(candidateBlocks, candidateIndex) =>
-					candidateIndex > index && promptBlocksContain(candidateBlocks, blocks[index]),
-			),
-	);
+   // Sort by depth descending: higher depth (farther from cwd, less
+   // authoritative) first, lower depth (closer to cwd, more authoritative)
+   // last. Stable sort preserves caller order among equal-depth files.
+   const sorted = [...contextFiles].sort((a, b) => {
+      const depthA = a.depth ?? Number.POSITIVE_INFINITY;
+      const depthB = b.depth ?? Number.POSITIVE_INFINITY;
+      return depthB - depthA;
+   });
+   const blocks = sorted.map(file => splitComparablePromptBlocks(file.content));
+   return sorted.filter(
+      (_file, index) =>
+         !blocks.some(
+            (candidateBlocks, candidateIndex) =>
+               candidateIndex > index && promptBlocksContain(candidateBlocks, blocks[index]),
+         ),
+   );
 }
 ```
 

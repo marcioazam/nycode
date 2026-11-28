@@ -9,32 +9,32 @@
 
 ```ts
 function retainCompletedToolCalls(
-	message: AssistantMessage,
-	completedToolCallIds: ReadonlySet<string>,
+   message: AssistantMessage,
+   completedToolCallIds: ReadonlySet<string>,
 ): AssistantMessage {
-	if (message.stopReason !== "error" && message.stopReason !== "aborted") return message;
-	let droppedIncompleteToolCall = false;
-	const content = message.content.filter(block => {
-		if (block.type !== "toolCall") return true;
-		const keep = completedToolCallIds.has(block.id);
-		if (!keep) droppedIncompleteToolCall = true;
-		return keep;
-	});
-	if (!droppedIncompleteToolCall) return message;
+   if (message.stopReason !== "error" && message.stopReason !== "aborted") return message;
+   let droppedIncompleteToolCall = false;
+   const content = message.content.filter(block => {
+      if (block.type !== "toolCall") return true;
+      const keep = completedToolCallIds.has(block.id);
+      if (!keep) droppedIncompleteToolCall = true;
+      return keep;
+   });
+   if (!droppedIncompleteToolCall) return message;
 ```
 
-2. **Barreira de concorrência `shared`/`exclusive`** (`omp:packages/agent/src/agent-loop.ts:120-131,4039-4078`): leituras (`shared`) executam em paralelo, mas uma ferramenta `exclusive` cria barreira `[lastExclusive, ...sharedTasks]`, e leituras subsequentes aguardam `earlierEffectsSettled` de escritas `shared` anteriores sem serializar o lote inteiro:
+1. **Barreira de concorrência `shared`/`exclusive`** (`omp:packages/agent/src/agent-loop.ts:120-131,4039-4078`): leituras (`shared`) executam em paralelo, mas uma ferramenta `exclusive` cria barreira `[lastExclusive, ...sharedTasks]`, e leituras subsequentes aguardam `earlierEffectsSettled` de escritas `shared` anteriores sem serializar o lote inteiro:
 
 ```ts
-		const concurrency = resolveToolConcurrency(record.tool, record.args);
-		const start = concurrency === "exclusive" ? Promise.all([lastExclusive, ...sharedTasks]) : lastExclusive;
-		const earlierEffectsSettled =
-			concurrency === "shared" && sharedEffects.length > 0
-				? Promise.allSettled(sharedEffects).then(() => undefined)
-				: undefined;
+      const concurrency = resolveToolConcurrency(record.tool, record.args);
+      const start = concurrency === "exclusive" ? Promise.all([lastExclusive, ...sharedTasks]) : lastExclusive;
+      const earlierEffectsSettled =
+         concurrency === "shared" && sharedEffects.length > 0
+            ? Promise.allSettled(sharedEffects).then(() => undefined)
+            : undefined;
 ```
 
-3. **Turnos vazios e sugestão de tool** (`omp:packages/coding-agent/src/session/turn-recovery.ts:1154-1850`, `omp:packages/agent/src/agent-loop.ts:3063-3135`): remove duravelmente turnos `stop` vazios (`EMPTY_STOP_MAX_RETRIES = 3`, `empty-stop-retry.md`) para não poluir histórico, e `formatToolNotFoundMessage` sugere até 3 nomes parecidos (`"Tool ${name} not found. Did you mean ${suggestions[0]}?"`).
+1. **Turnos vazios e sugestão de tool** (`omp:packages/coding-agent/src/session/turn-recovery.ts:1154-1850`, `omp:packages/agent/src/agent-loop.ts:3063-3135`): remove duravelmente turnos `stop` vazios (`EMPTY_STOP_MAX_RETRIES = 3`, `empty-stop-retry.md`) para não poluir histórico, e `formatToolNotFoundMessage` sugere até 3 nomes parecidos (`"Tool ${name} not found. Did you mean ${suggestions[0]}?"`).
 
 - **Ancestralidade Pi**: `pi0.9.4` não tinha recuperação nem concorrência tipada; `pibase` adicionou `failToolCallsFromTruncatedMessage` e flag binária `sequential`. O `omp` construiu todo o restante.
 

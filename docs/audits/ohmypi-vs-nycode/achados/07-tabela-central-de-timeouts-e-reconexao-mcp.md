@@ -9,19 +9,19 @@
 
 ```ts
 export const TOOL_TIMEOUTS = {
-	bash: { default: 300, min: 1, max: 3600 },
-	eval: { default: 30, min: 1, max: 3600 },
-	browser: { default: 30, min: 1, max: 300 },
-	computer: { default: 120, min: 1, max: 300 },
-	ssh: { default: 60, min: 1, max: 3600 },
-	fetch: { default: 20, min: 1, max: 45 },
-	lsp: { default: 20, min: 5, max: 300 },
-	debug: { default: 30, min: 5, max: 300 },
-	dsm: { default: 120, min: 1, max: 3600 },
+   bash: { default: 300, min: 1, max: 3600 },
+   eval: { default: 30, min: 1, max: 3600 },
+   browser: { default: 30, min: 1, max: 300 },
+   computer: { default: 120, min: 1, max: 300 },
+   ssh: { default: 60, min: 1, max: 3600 },
+   fetch: { default: 20, min: 1, max: 45 },
+   lsp: { default: 20, min: 5, max: 300 },
+   debug: { default: 30, min: 5, max: 300 },
+   dsm: { default: 120, min: 1, max: 3600 },
 } as const satisfies Record<string, ToolTimeoutConfig>;
 ```
 
-2. **Reconexão transparente MCP + limite de 64 chars**: em `omp:packages/coding-agent/src/mcp/tool-bridge.ts:59-92`, `isRetriableConnectionError` detecta erros transitórios de transporte (`econnrefused`, `econnreset`, `epipe`, `transport closed`, HTTP `404`/`502`/`503`) e sessões HTTP expiradas (`EXPIRED_SESSION`, JSON-RPC `-32001`), reconectando e tentando **uma vez** de forma transparente para o modelo; adicionalmente normaliza/encurta nomes MCP acima de `MAX_MCP_TOOL_NAME_LENGTH = 64` (exigência da API OpenAI/Anthropic).
+1. **Reconexão transparente MCP + limite de 64 chars**: em `omp:packages/coding-agent/src/mcp/tool-bridge.ts:59-92`, `isRetriableConnectionError` detecta erros transitórios de transporte (`econnrefused`, `econnreset`, `epipe`, `transport closed`, HTTP `404`/`502`/`503`) e sessões HTTP expiradas (`EXPIRED_SESSION`, JSON-RPC `-32001`), reconectando e tentando **uma vez** de forma transparente para o modelo; adicionalmente normaliza/encurta nomes MCP acima de `MAX_MCP_TOOL_NAME_LENGTH = 64` (exigência da API OpenAI/Anthropic).
 
 - **Ancestralidade Pi**: ausente em `pi0.9.4` e `pibase` (`omp` criou `tool-timeouts.ts` e `mcp/tool-bridge.ts`).
 

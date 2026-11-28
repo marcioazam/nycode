@@ -1,118 +1,125 @@
 # Inventario: packages-snapcompact
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `packages/snapcompact/research/anthropic_api.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/bdf.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/bench_gemini.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/bench_kimi.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/bench_kimi_probe.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/diag_glm_forensics.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/diag_glm_mono.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/diag_glm_probe.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/diag_kimi_chunked.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/diag_kimi_forensics.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/diag_kimi_mono.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/diag_kimi_probe.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp01_patchalign.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp02_surprisal.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp03_numhard.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp04_layout.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp05_anchors.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp06_rolecolor.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp07_readtax.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp08_foveate.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp09_cacheappend.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp10_profiles.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp11_memhier.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp12_arbitrage.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp13_extractive.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp14_bestgpt.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp15_bestgemini.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp16_bestfable.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp17_bestopus.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp18_bestkimi.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp19_bestglm.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp20_8x8u.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp21_braille.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/exp22_ttf6pt.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/final.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/mono.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/mono_prod.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/parity_check.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/parity_render.ts` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp02-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp04-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp05-qa-image-ctl.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp05-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp06-prov-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp06-qa-image-tag.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp06-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp07-answer-bands.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp07-locate.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp07-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp08-archive-eager.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp08-archive-phrase.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp08-archive.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp08-zoom.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp09-frame.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp09-page.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp09-qa.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp11-qa-hier.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp13-extract.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp19-qa-doc.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/exp21-qa-braille.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/qa-image-cols.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/qa-image-multi.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/qa-remote-compact.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/qa-text.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/prompts/session-frame.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/providers.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/render_pages.ts` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/run.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_3d_activation_html.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_3d_activation_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_activation_probe.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_blackbox_occlusion.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_blog_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_carrier_convergence.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_convergence_3d.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_convergence_extras.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_convergence_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_lockon_anatomy_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_logit_lens_dump.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_logit_lens_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_materialize_sweep.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_materialize_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_pricing_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_qwen_control_intervention.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_qwen_spotlight_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_r2_chord.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_r2_crystal.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_r2_filmstrip.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_r2_hero.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_r2_metro.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_tensor_heatmap.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_text_image_3d_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_text_image_compare.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_token_entry_dump.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_token_entry_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_atlas.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_circuit.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_city.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_explainer.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_glass_stack.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_glyph_matrix.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_radial.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_token_grid.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_volume.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/snapcompact_viz_waterfall.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/research/squad.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/src/index.ts` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/src/prompts/file-operations.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/src/prompts/snapcompact-summary.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/src/snapcompact.ts` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` |  |
-| `packages/snapcompact/test/snapcompact.test.ts` | teste | omp-novo | `packages/coding-agent/src/core/compaction` |  |
+| `packages/snapcompact/.gitignore` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 2L; Ignora diretórios locais .cache/ e results/ dos experimentos do snapcompact. |
+| `packages/snapcompact/CHANGELOG.md` | doc | omp-novo | `packages/coding-agent/src/core/compaction` | 348L; Histórico detalhado de evolução do @oh-my-pi/snapcompact (v15.11.0 a v19.1.1), documentando descobertas de limites por provedor... |
+| `packages/snapcompact/LICENSE` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 22L; Licença MIT do pacote @oh-my-pi/snapcompact. |
+| `packages/snapcompact/README.md` | doc | omp-novo | `packages/coding-agent/src/core/compaction` | 74L; Documentação do @oh-my-pi/snapcompact explicando a compressão de contexto baseada em frames PNG bitmap para LLMs vision, tabela... |
+| `packages/snapcompact/package.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/compaction` | 66L; Manifesto do pacote @oh-my-pi/snapcompact v19.2.1 com dependências internas (@oh-my-pi/omptype, pi-ai, pi-catalog, pi-natives, ... |
+| `packages/snapcompact/research/anthropic_api.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 79L; Cliente HTTP mínimo em Python para a API Anthropic Messages (com suporte a imagens base64, effort e retries), usado pelos scrip... |
+| `packages/snapcompact/research/bdf.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 284L; Parser de fontes bitmap BDF/HEX e renderizador de protótipo em PIL suportando variantes de cor por linha/sentença, escureciment... |
+| `packages/snapcompact/research/bench_gemini.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 248L; Benchmark direto na API Gemini v1alpha para testar o parâmetro media_resolution por imagem em frames gerados pelo pipeline de p... |
+| `packages/snapcompact/research/bench_kimi.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 316L; Benchmark chunked (janelas sobrepostas de <=8 frames) para modelos Kimi via OpenRouter e Fireworks sobre frames de produção, co... |
+| `packages/snapcompact/research/bench_kimi_probe.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 110L; Sonda de faturamento por resolução do Kimi K2.6 (MoonViT 28px/token) comparando tokens cobrados vs esperados em vários tamanhos... |
+| `packages/snapcompact/research/diag_glm_forensics.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 106L; Script forense offline que reconstrói payloads do benchmark mono_prod para glm-4.6v e inspeciona respostas e usos em cache. |
+| `packages/snapcompact/research/diag_glm_mono.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 167L; Executor diagnóstico de mono_prod para glm-4.6v comparando OpenRouter vs Z.AI direto e aplicando parser tolerante a respostas s... |
+| `packages/snapcompact/research/diag_glm_probe.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 215L; Sondas direcionadas para glm-4.6v (smoke, cobrança por quantidade de imagens, transcrição de frame único e A/B OpenRouter vs Z.... |
+| `packages/snapcompact/research/diag_kimi_chunked.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 159L; Demonstração de correção para Kimi via OpenRouter particionando 21 frames em chunks sobrepostos de 8 imagens e roteando cada pe... |
+| `packages/snapcompact/research/diag_kimi_forensics.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 100L; Script forense offline para inspecionar respostas e tokens cacheados das execuções mono_prod do Kimi K2.6. |
+| `packages/snapcompact/research/diag_kimi_mono.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 160L; Teste diagnóstico do protocolo mono_prod do Kimi roteado diretamente para Fireworks para isolar o truncamento de 8 imagens do O... |
+| `packages/snapcompact/research/diag_kimi_probe.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 197L; Sonda diagnóstica para Kimi comparando curva de prompt_tokens por quantidade de imagens e legibilidade do último frame entre Op... |
+| `packages/snapcompact/research/exp01_patchalign.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 341L; Experimento SQuAD (exp01) testando alinhamento da altura de célula da fonte com patches de ViT (14px/16px e tamanhos 1536/1568)... |
+| `packages/snapcompact/research/exp02_surprisal.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 478L; Experimento SQuAD (exp02) avaliando contraste ponderado por surprisal unigrama (wordfreq) e compressão de texto via remoção de ... |
+| `packages/snapcompact/research/exp03_numhard.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 442L; Experimento SQuAD (exp03) avaliando endurecimento visual de dígitos (negrito horizontal numbold e destaque vermelho numred) par... |
+| `packages/snapcompact/research/exp04_layout.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 426L; Experimento SQuAD (exp04) comparando layout estilo documento em duas colunas (quebra por palavra, títulos e parágrafos) contra ... |
+| `packages/snapcompact/research/exp05_anchors.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 428L; Experimento que adiciona régua lateral de número de linha em azul a cada 5 linhas no render óptico 6x10 e avalia erro de locali... |
+| `packages/snapcompact/research/exp06_rolecolor.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 493L; Experimento que codifica o papel da mensagem (`user`/`assistant`/`tool`) via cor do glifo sem custo de caracteres, comparando F... |
+| `packages/snapcompact/research/exp07_readtax.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 362L; Experimento que mede latência, tokens de raciocínio e custo no protocolo de QA em imagem variando `effort` (low/minimal/none), ... |
+| `packages/snapcompact/research/exp08_foveate.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 477L; Experimento de leitura foveada em dois turnos: arquivo denso 5x8 no turno 1 com pedidos `ZOOM` por banda de linhas ou frase-ânc... |
+| `packages/snapcompact/research/exp09_cacheappend.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 513L; Experimento de economia de prompt-cache comparando páginas ópticas append-only determinísticas contra compactação por reescrita... |
+| `packages/snapcompact/research/exp10_profiles.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 422L; Varredura em 4 fases (triagem, escada de densidade, transferência cruzada e confirmação) para calibrar o perfil óptico (fonte e... |
+| `packages/snapcompact/research/exp11_memhier.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 402L; Experimento de hierarquia de memória em tercis por idade: L3 em resumo narrativo (com apêndice óptico 5x8 opcional), L2 em pági... |
+| `packages/snapcompact/research/exp12_arbitrage.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 399L; Script de medição de arbitragem de janela de contexto: minera chars/token das execuções ótimas, faz probes em 1568/1024/768px c... |
+| `packages/snapcompact/research/exp13_extractive.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 306L; Baseline de compactação extrativa que instrui o modelo a copiar trechos verbatim dentro de orçamento de caracteres equivalente ... |
+| `packages/snapcompact/research/exp14_bestgpt.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 569L; Experimento combinando fonte `8on16` alinhada a patch ViT, layout documental em duas colunas e variante `bw`/`sent` para `gpt-5... |
+| `packages/snapcompact/research/exp15_bestgemini.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 571L; Experimento combinando `8on16`, layout documental em duas colunas e variante `sent-dim` (matiz por sentença com dimming de stop... |
+| `packages/snapcompact/research/exp16_bestfable.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 555L; Experimento avaliando transferência de pitch alinhado (`8on16`, `6on7x14`) e layout documental em duas colunas com variante `di... |
+| `packages/snapcompact/research/exp17_bestopus.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 483L; Experimento avaliando alinhamento de pitch (`8on16`) e layout documental em duas colunas ancorados na variante `bw` para `claud... |
+| `packages/snapcompact/research/exp18_bestkimi.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 487L; Experimento avaliando alinhamento `8on16` e layout documental em duas colunas com variante `sent-dim` para `moonshotai/kimi-k2.... |
+| `packages/snapcompact/research/exp19_bestglm.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 582L; Experimento para `z-ai/glm-4.6v` testando `8on16`, layout em duas colunas em modo escuro (`dark-sent`) e modo claro (`sent`), i... |
+| `packages/snapcompact/research/exp20_8x8u.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 463L; Experimento que substitui a fonte vencedora da rodada 2 de cada um dos 6 modelos por `unscii-8` (`8x8u`, 38.416 chars/página em... |
+| `packages/snapcompact/research/exp21_braille.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 364L; Experimento que renderiza texto em Braille Grau-1 (células 2x3 sem fonte) em PNGs 1568x1568 e avalia QA SQuAD via Gemini/GPT. |
+| `packages/snapcompact/research/exp22_ttf6pt.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 300L; Experimento que rasteriza texto com fontes TTF monoespaçadas (Monaco/DejaVu) a 6px e 8px com antialiasing para comparar com bit... |
+| `packages/snapcompact/research/final.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 456L; Runner principal do benchmark final comparando text, handoff, compact (incluindo /responses/compact da OpenAI) e imagens snapco... |
+| `packages/snapcompact/research/mono.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 209L; Probe monolítico de contexto longo (ex. 800k chars em uma requisição) com F1 por quartil de posição para medir lost-in-the-midd... |
+| `packages/snapcompact/research/mono_prod.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 356L; Probe monolítico que executa o mesmo protocolo do mono.py usando frames gerados pelo pipeline de produção TS/Rust via render_pa... |
+| `packages/snapcompact/research/parity_check.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 277L; Verificador de paridade pixel-a-pixel por classe de cor entre o renderizador PIL de pesquisa e o renderizador de produção Rust/TS. |
+| `packages/snapcompact/research/parity_render.ts` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 27L; Script Bun auxiliar invocado por parity_check.py para renderizar o primeiro frame de produção via snapcompact.renderMany. |
+| `packages/snapcompact/research/prompts/exp02-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 8L; Template de prompt QA para imagem bitmap única com bloco extra configurável e resposta UNREADABLE. |
+| `packages/snapcompact/research/prompts/exp04-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 8L; Template de prompt QA para layout estilo jornal em duas colunas separadas por gutter. |
+| `packages/snapcompact/research/prompts/exp05-qa-image-ctl.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 10L; Prompt controle do experimento 05 instruindo localizar região e responder sem régua de linhas. |
+| `packages/snapcompact/research/prompts/exp05-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 13L; Prompt do experimento 05 usando régua azul numerada à esquerda para localizar e reportar o índice de linha da resposta. |
+| `packages/snapcompact/research/prompts/exp06-prov-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 6L; Prompt para classificar qual papel (user, assistant, tool) contém a resposta no transcript renderizado. |
+| `packages/snapcompact/research/prompts/exp06-qa-image-tag.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 6L; Prompt QA de transcript em bitmap com marcadores textuais de papel [user], [asst] e [tool]. |
+| `packages/snapcompact/research/prompts/exp06-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 6L; Prompt QA de transcript em bitmap onde a cor do glifo codifica o papel do remetente. |
+| `packages/snapcompact/research/prompts/exp07-answer-bands.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 4L; Prompt da segunda etapa do exp07 instruindo responder lendo apenas a faixa de linhas localizada antes. |
+| `packages/snapcompact/research/prompts/exp07-locate.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 5L; Prompt da primeira etapa do exp07 para localizar uma faixa de até 25 linhas antes de responder. |
+| `packages/snapcompact/research/prompts/exp07-qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 7L; Prompt baseline single-pass do exp07 instruindo localizar a região sem transcrever linearmente. |
+| `packages/snapcompact/research/prompts/exp08-archive-eager.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 10L; Prompt agressivo de zoom sob demanda para fontes abaixo do limiar de leitura, pedindo ZOOM rows A-B sempre que houver dúvida. |
+| `packages/snapcompact/research/prompts/exp08-archive-phrase.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 9L; Variante do prompt ZOOM usando âncora textual de 3-8 palavras aproximadas em vez de coordenadas de linha. |
+| `packages/snapcompact/research/prompts/exp08-archive.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 7L; Prompt inicial do exp08 permitindo responder diretamente ou solicitar ZOOM rows A-B em regiões pequenas/degradadas. |
+| `packages/snapcompact/research/prompts/exp08-zoom.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 6L; Prompt do segundo passo do exp08 apresentando re-renderizações em alta resolução das faixas solicitadas. |
+| `packages/snapcompact/research/prompts/exp09-frame.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 3L; Prompt inicial multi-turno do exp09 introduzindo a primeira página bitmap de material de referência. |
+| `packages/snapcompact/research/prompts/exp09-page.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 1L; Prompt curto do exp09 anexando páginas bitmap subsequentes na sessão. |
+| `packages/snapcompact/research/prompts/exp09-qa.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 6L; Prompt de perguntas do exp09 referenciando as páginas bitmap enviadas anteriormente na conversa. |
+| `packages/snapcompact/research/prompts/exp11-qa-hier.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 12L; Prompt de memória hierárquica em 3 tiers por idade: resumo narrativo (Tier 3), páginas bitmap (Tier 2) e texto verbatim (Tier 1). |
+| `packages/snapcompact/research/prompts/exp13-extract.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 10L; Prompt de compactação puramente extrativa literal com limite estrito de caracteres e cobertura uniforme do texto. |
+| `packages/snapcompact/research/prompts/exp19-qa-doc.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 8L; Prompt QA para páginas estilo jornal em duas colunas com títulos em negrito/maiúsculas e quebra por palavra. |
+| `packages/snapcompact/research/prompts/exp21-qa-braille.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 11L; Prompt QA explicando o mapeamento Braille Grau-1 (letras, prefixo numérico, pontuação) para decodificação pelo VLM. |
+| `packages/snapcompact/research/prompts/qa-image-cols.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 6L; Prompt QA genérico para bitmaps em N colunas separadas por linha vertical de gutter. |
+| `packages/snapcompact/research/prompts/qa-image-multi.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 6L; Prompt QA para múltiplas imagens bitmap contínuas em ordem sequencial. |
+| `packages/snapcompact/research/prompts/qa-image.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 6L; Prompt QA padrão para uma única imagem bitmap com grade cols x rows. |
+| `packages/snapcompact/research/prompts/qa-remote-compact.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 8L; Prompt QA após compactação remota de contexto (OpenAI /responses/compact). |
+| `packages/snapcompact/research/prompts/qa-text.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 10L; Prompt QA baseline para referência textual ou resumo delimitado por tag <reference>. |
+| `packages/snapcompact/research/prompts/session-frame.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 5L; Prompt de turno inicial inserindo passagens de referência em tag <passages> para compactação ou handoff posterior. |
+| `packages/snapcompact/research/providers.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 327L; Cliente LLM neutro para Anthropic Messages, OpenAI Responses (incl. /responses/compact) e OpenRouter com cache, imagens base64 ... |
+| `packages/snapcompact/research/render_pages.ts` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 29L; Script Bun que renderiza todas as páginas de um fluxo de texto via snapcompact.renderMany para uso pelo mono_prod.py. |
+| `packages/snapcompact/research/run.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 353L; Harness de avaliação inicial sobre todo o dev set SQuAD v1.1 comparando texto, compact, handoff e múltiplas configurações de fo... |
+| `packages/snapcompact/research/snapcompact_3d_activation_html.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 246L; Gerador de HTML interativo Plotly 3D exibindo deltas de ativações do decoder entre imagem original e com resposta mascarada. |
+| `packages/snapcompact/research/snapcompact_3d_activation_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 319L; Renderizador estático Matplotlib+PIL de terreno 3D dos deltas de hidden states para gráfico de blog. |
+| `packages/snapcompact/research/snapcompact_activation_probe.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 284L; Probe white-box em VLM local (PaddleOCR-VL) comparando CKA, cosseno pareado e norma de delta entre texto, imagem e máscaras de ... |
+| `packages/snapcompact/research/snapcompact_blackbox_occlusion.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 324L; Probe black-box de oclusão contra endpoint OpenAI-compatível medindo queda de F1 ao mascarar células da resposta vs região alea... |
+| `packages/snapcompact/research/snapcompact_blog_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 371L; Script PIL que compõe figura de blog combinando resultados de oclusão Qwen e curvas CKA/delta do PaddleOCR-VL. |
+| `packages/snapcompact/research/snapcompact_carrier_convergence.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 249L; Experimento white-box em Qwen2.5-VL-7B verificando convergência de representações (cosseno centrado, RSA e concordância de resp... |
+| `packages/snapcompact/research/snapcompact_convergence_3d.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 283L; Visualização 3D em Matplotlib+PIL das trajetórias PCA de perguntas nos portadores texto vs imagem ao longo das camadas. |
+| `packages/snapcompact/research/snapcompact_convergence_extras.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 321L; Gerador de gráfico de funil PCA por profundidade e GIF animado da matriz de similaridade cruzada entre portadores. |
+| `packages/snapcompact/research/snapcompact_convergence_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 356L; Visualização composta em PIL das matrizes de similaridade RSA, curvas de convergência por camada e respostas geradas. |
+| `packages/snapcompact/research/snapcompact_lockon_anatomy_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 463L; Diagrama explicativo em PIL ilustrando a metodologia logit-lens de lock-on por camada usando dados reais do sweep. |
+| `packages/snapcompact/research/snapcompact_logit_lens_dump.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 213L; Extração logit-lens por camada nos tokens visuais da resposta e controle no Qwen2.5-VL-7B para verificar decodificação em token... |
+| `packages/snapcompact/research/snapcompact_logit_lens_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 244L; Renderizador em PIL da grade camada x token visual mostrando tokens BPE top-1 extraídos via logit-lens. |
+| `packages/snapcompact/research/snapcompact_materialize_sweep.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 327L; Sweep comparando alinhamento a patches 28x28 e repetição de linhas em cores para medir em qual camada ocorre lock-on BPE da res... |
+| `packages/snapcompact/research/snapcompact_materialize_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 295L; Visualização em PIL das curvas de probabilidade BPE por camada e recortes das condições do sweep de materialização. |
+| `packages/snapcompact/research/snapcompact_pricing_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 248L; Infográfico em PIL comparando tokens de texto carregados por canvas, tokens de imagem faturados, caching e custo de reasoning/d... |
+| `packages/snapcompact/research/snapcompact_qwen_control_intervention.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 644L; Experimento de controle com pergunta distratora e intervenção causal via pre-hook na camada 0 substituindo/zerando tokens visua... |
+| `packages/snapcompact/research/snapcompact_qwen_spotlight_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 470L; Renderizador em PIL de mapa de calor contrastivo (pergunta primária menos distratora) e histograma de percentil vs regiões alea... |
+| `packages/snapcompact/research/snapcompact_r2_chord.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 374L; Diagrama de cordas em Matplotlib ligando estados de perguntas no portador texto aos estados no portador imagem na camada 19. |
+| `packages/snapcompact/research/snapcompact_r2_crystal.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 437L; Script de visualização de pesquisa que gera GIF animado e PNG final (`crystal.gif`, `crystal_final.png`) mostrando o logit-lens... |
+| `packages/snapcompact/research/snapcompact_r2_filmstrip.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 491L; Script matplotlib de pesquisa que renderiza um pôster em estilo película (`filmstrip.png`) comparando matrizes de similaridade ... |
+| `packages/snapcompact/research/snapcompact_r2_hero.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 603L; Script Pillow de pesquisa que compõe o card social/hero (`hero-2400x1260.png`, `hero-1200x630.png`) ilustrando a convergência e... |
+| `packages/snapcompact/research/snapcompact_r2_metro.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 730L; Script matplotlib de pesquisa que desenha um diagrama em estilo mapa de metrô (`metro.png`) da convergência entre linhas de tex... |
+| `packages/snapcompact/research/snapcompact_tensor_heatmap.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 538L; Script de sondagem white-box e renderização de pesquisa que compara estados ocultos do PaddleOCR-VL entre bitmap original, másc... |
+| `packages/snapcompact/research/snapcompact_text_image_3d_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 345L; Script de visualização 3D (matplotlib + Pillow) que plota a superfície de excesso de cosseno entre o estado da resposta em text... |
+| `packages/snapcompact/research/snapcompact_text_image_compare.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 759L; Experimento de pesquisa que executa a mesma passagem SQuAD como texto e como bitmap no VLM para calcular similaridade cosseno p... |
+| `packages/snapcompact/research/snapcompact_token_entry_dump.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 225L; Script de pesquisa que extrai do Qwen2.5-VL-7B os IDs BPE, embeddings de entrada de texto e vetores de saída da torre visual pa... |
+| `packages/snapcompact/research/snapcompact_token_entry_viz.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 385L; Script Pillow de pesquisa que renderiza `token-entry.png` a partir de `token_entry.json`, exibindo tokens BPE, patches 28x28 am... |
+| `packages/snapcompact/research/snapcompact_viz_atlas.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 513L; Script de visualização de pesquisa que projeta deltas de ativação por PCA 2D e k-means em um Activation Atlas (`atlas.png`) com... |
+| `packages/snapcompact/research/snapcompact_viz_circuit.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 642L; Script de visualização de pesquisa que agrupa deltas de ativação em grade 3x3 de tokens e bandas por camada para desenhar um gr... |
+| `packages/snapcompact/research/snapcompact_viz_city.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 375L; Script de visualização de pesquisa que renderiza uma cidade isométrica (`city.png`) comparando distritos de máscara de resposta... |
+| `packages/snapcompact/research/snapcompact_viz_explainer.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 677L; Script de visualização de pesquisa que monta um painel explicativo em 4 estágios (`explainer.png`) ligando bitmap original, int... |
+| `packages/snapcompact/research/snapcompact_viz_glass_stack.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 385L; Script de visualização de pesquisa que renderiza camadas do decoder como lâminas de vidro em perspectiva (`glass-stack.png`) at... |
+| `packages/snapcompact/research/snapcompact_viz_glyph_matrix.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 584L; Script de visualização de pesquisa que sobrepõe o campo de ativação 27x27 ao bitmap OCR original (`glyph-matrix.png`), destacan... |
+| `packages/snapcompact/research/snapcompact_viz_radial.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 360L; Script matplotlib de pesquisa que gera um gráfico polar em estilo radar (`radial.png`) mapeando anéis como camadas e ângulos co... |
+| `packages/snapcompact/research/snapcompact_viz_token_grid.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 592L; Script de pesquisa Python que projeta deltas de ativacao (729 tokens visuais dobrados para grade 27x27 do PaddleOCR-VL) sobre o... |
+| `packages/snapcompact/research/snapcompact_viz_volume.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 375L; Script Python de visualizacao volumetrica 3D (estilo tomografia/CT em matplotlib) de cubos de ativacao (19 camadas x 180 bins x... |
+| `packages/snapcompact/research/snapcompact_viz_waterfall.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 358L; Script Python que gera grafico waterfall/ridgeline sismico das diferencas de ativacao por camada entre mascara de resposta e ma... |
+| `packages/snapcompact/research/squad.py` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 128L; Utilitario Python de avaliacao com dataset SQuAD v1.1 dev: carregamento de paragrafos, fluxo continuo de texto, amostragem dete... |
+| `packages/snapcompact/src/index.ts` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 1L; Barrel de entrada que reexporta todas as APIs de ./snapcompact. |
+| `packages/snapcompact/src/prompts/file-operations.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 5L; Template Handlebars curto que envolve a lista de arquivos em bloco XML <files>. |
+| `packages/snapcompact/src/prompts/snapcompact-summary.md` | prompt | omp-novo | `packages/coding-agent/src/core/compaction` | 27L; Template Handlebars do prompt de resumo do snapcompact explicando marcadores de escopo (¶user/think/ai/call), geometria das gra... |
+| `packages/snapcompact/src/snapcompact.ts` | codigo | omp-novo | `packages/coding-agent/src/core/compaction` | 2721L; Define variantes de forma/tipografia por provedor e modelo (Anthropic 11on16-bw, Google/OpenAI 8on22-bw, fallback Silver para C... |
+| `packages/snapcompact/test/snapcompact.test.ts` | teste | omp-novo | `packages/coding-agent/src/core/compaction` | 2206L; Parte 1/3 dos testes do snapcompact: varredura de renderabilidade (ASCII, Latin-1, fallback Silver CJK), normalizacao NFKD/ANSI... |
+| `packages/snapcompact/tsconfig.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/compaction` | 7L; Configuracao TypeScript do pacote snapcompact estendendo tsconfig.workspace.json para src e test. |
+| `packages/snapcompact/tsconfig.publish.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/compaction` | 25L; Configuracao TypeScript de publicacao emitindo apenas declaracoes .d.ts para dist/types. |

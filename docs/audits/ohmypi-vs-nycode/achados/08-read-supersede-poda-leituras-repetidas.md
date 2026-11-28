@@ -9,11 +9,11 @@ O `omp` combina `isCompleteReadResult` (`omp:packages/coding-agent/src/tools/rea
 
 ```ts
 export function isCompleteReadResult(message: ToolResultMessage): boolean {
-	// Typed through the producer's details so a renamed field is a compile error.
-	const details = message.details as ReadToolDetails | undefined;
-	if (!details || details.summary || details.truncation?.truncated) return false;
-	if (details.meta?.truncation || details.meta?.limits?.columnTruncated) return false;
-	return details.totalLines !== undefined || message.content.some(block => block.type === "image");
+   // Typed through the producer's details so a renamed field is a compile error.
+   const details = message.details as ReadToolDetails | undefined;
+   if (!details || details.summary || details.truncation?.truncated) return false;
+   if (details.meta?.truncation || details.meta?.limits?.columnTruncated) return false;
+   return details.totalLines !== undefined || message.content.some(block => block.type === "image");
 }
 ```
 

@@ -9,15 +9,15 @@
 
 ```ts
 export function toProviderReplayMessage(message: Message): Message | undefined {
-	if (message.role === "assistant") return isProviderRefusalMessage(message) ? undefined : message;
-	if (message.role !== "toolResult" || !isProviderErrorPlaceholder(message)) return message;
-	return { ...message, content: [{ type: "text", text: PROVIDER_ERROR_NOT_EXECUTED_TEXT }] };
+   if (message.role === "assistant") return isProviderRefusalMessage(message) ? undefined : message;
+   if (message.role !== "toolResult" || !isProviderErrorPlaceholder(message)) return message;
+   return { ...message, content: [{ type: "text", text: PROVIDER_ERROR_NOT_EXECUTED_TEXT }] };
 }
 ```
 
-2. **`prewarm` no `CacheWarmer`** (`omp:packages/coding-agent/src/session/cache-warmer.ts:514-1226`): envia pings de aquecimento com `max_tokens: 0` (sem pagar tokens de saída), com fallback automático para `replay` (`maxTokens: 1`) caso o endpoint devolva HTTP 400.
-3. **`/btw` no cache quente** (`omp:packages/coding-agent/src/session/btw-turn.ts:60-95`): executa perguntas paralelas `/btw` reutilizando o **system prompt, ferramentas e prefixo já em cache da sessão principal** via `runEphemeralTurn` + `conversationKey`.
-4. **Checkpoints decimados no Anthropic** (`omp:packages/ai/src/providers/anthropic.ts:4514-4643`): além de tools, system e tail (teto de 4 breakpoints), coloca breakpoints intermediários a cada 15 turnos (`ANTHROPIC_DECIMATION_INTERVAL`), protegendo contra invalidação total quando uma mensagem recente é reescrita/removida.
+1. **`prewarm` no `CacheWarmer`** (`omp:packages/coding-agent/src/session/cache-warmer.ts:514-1226`): envia pings de aquecimento com `max_tokens: 0` (sem pagar tokens de saída), com fallback automático para `replay` (`maxTokens: 1`) caso o endpoint devolva HTTP 400.
+2. **`/btw` no cache quente** (`omp:packages/coding-agent/src/session/btw-turn.ts:60-95`): executa perguntas paralelas `/btw` reutilizando o **system prompt, ferramentas e prefixo já em cache da sessão principal** via `runEphemeralTurn` + `conversationKey`.
+3. **Checkpoints decimados no Anthropic** (`omp:packages/ai/src/providers/anthropic.ts:4514-4643`): além de tools, system e tail (teto de 4 breakpoints), coloca breakpoints intermediários a cada 15 turnos (`ANTHROPIC_DECIMATION_INTERVAL`), protegendo contra invalidação total quando uma mensagem recente é reescrita/removida.
 
 - **Ancestralidade Pi**: `pi0.9.4` não tinha warmer; `pibase` introduziu `CacheWarmer` usando apenas `replay` (`maxTokens: 1`) e apenas 3 breakpoints no Anthropic. Todas as quatro melhorias acima são do `omp`.
 

@@ -1,122 +1,282 @@
 # Inventario: packages-omptype
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `packages/omptype/bench/bench.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/bench/candidate.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/bench/candidates/arktype.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/bench/candidates/omptype.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/bench/candidates/typebox.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/bench/fixtures.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/bench/ir.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/ark.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/compile.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/errors.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/from-json-schema.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/index.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/infer.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/interp.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/ir.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/json-schema.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/jsonschema/codegen.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/jsonschema/interpret.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/jsonschema/pattern.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/jsonschema/plan.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/jsonschema/resolve.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/jsonschema/runtime.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/jsonschema/validator.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/keywords.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/local-ref.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/type.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/typebox.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/src/zod.ts` | codigo | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/arrays/array.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/arrays/base.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/arrays/defaults.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/arrays/intersection.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/arrays/nonVariadicTuple.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/arrays/variadicTuple.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/badDefinitionType.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/basis.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/brand.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/cast.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/clone.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/config.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/dateLiteral.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/declared.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/define.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/discrimination.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/divisor.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/enclosed.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/expressions.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/filter.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/fn.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/generic.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/get.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/group.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/imports.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/instanceOf.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/intersection.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keyof.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/date.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/exclude.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/extract.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/formData.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/format.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/ip.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/json.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/merge.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/number.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/numericStrings.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/object.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/omit.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/parse.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/partial.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/pick.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/record.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/required.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/string.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/tsPrimitives.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/url.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/keywords/uuid.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/literal.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/match.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/narrow.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/nary.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/objects/defaults.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/objects/indexSignatures.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/objects/mapped.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/objects/namedKeys.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/objects/onUndeclaredKey.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/objects/props.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/objects/spread.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/optional.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/pipe.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/range.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/realWorld.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/regex.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/scope.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/select.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/serialization.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/standardSchema.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/string.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/submodule.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/this.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/thunk.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/toJsonSchema.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/traverse.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/type-assert.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/type.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/typeReference.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/unenclosed.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/ark/union.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/from-json-schema.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/infer.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/json-schema-pattern.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/json-schema-suite.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/json-schema.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/type.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/typebox.test.ts` | teste | omp-novo | `packages/schema` |  |
-| `packages/omptype/test/zod.test.ts` | teste | omp-novo | `packages/schema` |  |
+| `packages/omptype/CHANGELOG.md` | doc | omp-novo | `packages/schema` | 107L; Histórico de versões de @oh-my-pi/omptype, documentando o motor JIT lazy, adaptadores Zod/TypeBox/ArkType, fromJsonSchema com f... |
+| `packages/omptype/LICENSE` | codigo | omp-novo | `packages/schema` | 22L; Licença MIT do pacote @oh-my-pi/omptype. |
+| `packages/omptype/README.md` | doc | omp-novo | `packages/schema` | 162L; Documentação de @oh-my-pi/omptype: DSL estilo ArkType, escopos recursivos, adaptadores /typebox, /zod e /ark, import/export JSO... |
+| `packages/omptype/bench/bench.ts` | teste | omp-novo | `packages/schema` | 206L; Harness de benchmark que valida corretude (incluindo não mutação de entrada) e mede compilação, execução fria, hot-path e allow... |
+| `packages/omptype/bench/candidate.ts` | teste | omp-novo | `packages/schema` | 24L; Define a interface Candidate implementada pelos competidores do benchmark de validação de schemas. |
+| `packages/omptype/bench/candidates/arktype.ts` | teste | omp-novo | `packages/schema` | 17L; Adaptador do ArkType para o contrato Candidate do benchmark. |
+| `packages/omptype/bench/candidates/omptype.ts` | teste | omp-novo | `packages/schema` | 18L; Adaptador do omptype para o contrato Candidate do benchmark. |
+| `packages/omptype/bench/candidates/typebox.ts` | teste | omp-novo | `packages/schema` | 172L; Adaptador do TypeBox (TypeCompiler + Value.Default/Value.Clean) para os fixtures e definições geradas do benchmark. |
+| `packages/omptype/bench/fixtures.ts` | teste | omp-novo | `packages/schema` | 152L; Fixtures de benchmark modeladas sobre schemas reais de parâmetros de ferramentas do omp e gerador de definições únicas. |
+| `packages/omptype/bench/ir.ts` | teste | omp-novo | `packages/schema` | 287L; Tokenizer, parser e representação intermediária neutra (IR) para definições estilo ArkType usadas no benchmark. |
+| `packages/omptype/package.json` | config_ou_dado | omp-novo | `packages/schema` | 60L; Manifesto de @oh-my-pi/omptype sem dependências de runtime, expondo código TS diretamente e scripts de check/test/bench. |
+| `packages/omptype/src/ark.ts` | codigo | omp-novo | `packages/schema` | 20L; Fachada de compatibilidade ArkType (@oh-my-pi/omptype/ark), reexportando ./index e aliasando ArkError/ArkErrors para OmpError/O... |
+| `packages/omptype/src/compile.ts` | codigo | omp-novo | `packages/schema` | 1171L; Primeira parte do compilador JIT de @oh-my-pi/omptype via new Function: geração de predicados booleanos puros (Set para uniões/... |
+| `packages/omptype/src/errors.ts` | codigo | omp-novo | `packages/schema` | 446L; Implementa os contêineres de erro de validação (`OmpError`, `OmpErrors`) compatíveis com ArkType, com alocação preguiçosa no ca... |
+| `packages/omptype/src/from-json-schema.ts` | codigo | omp-novo | `packages/schema` | 84L; Importa um documento JSON Schema para um `BaseType` do `omptype` usando `jsonschema/validator.ts`, reatando `allows` ao código ... |
+| `packages/omptype/src/index.ts` | codigo | omp-novo | `packages/schema` | 14L; Arquivo barril de entrada pública de `@oh-my-pi/omptype`, reexportando os módulos principais da biblioteca. |
+| `packages/omptype/src/infer.ts` | codigo | omp-novo | `packages/schema` | 457L; Define a inferência estática de tipos TypeScript (entrada e saída) para a string DSL, utilitários (`Record`, `Pick`, `Omit`, `M... |
+| `packages/omptype/src/interp.ts` | codigo | omp-novo | `packages/schema` | 767L; Implementa o validador interpretado (`walk`, `checks`, `visit`) usado em chamadas frias e subárvores recursivas/de predicado, c... |
+| `packages/omptype/src/ir.ts` | codigo | omp-novo | `packages/schema` | 1798L; Define a representação intermediária (`IR`), o tokenizador e o parser da string DSL (`StrParser`), incluindo caminho rápido par... |
+| `packages/omptype/src/json-schema.ts` | codigo | omp-novo | `packages/schema` | 315L; Converte árvores `IR` em documentos JSON Schema (draft 2020-12 ou draft-07 via `toDraft7`), tratando `io: "input" \| "output"`, ... |
+| `packages/omptype/src/jsonschema/codegen.ts` | codigo | omp-novo | `packages/schema` | 495L; Backend JIT (`new Function`) para grafos `Plan` de JSON Schema, com inline de folhas, `switch` por discriminador em uniões, con... |
+| `packages/omptype/src/jsonschema/interpret.ts` | codigo | omp-novo | `packages/schema` | 724L; Interpretador de `Plan` para JSON Schema: executa validação fria e pós-falha (`Sink` para explicar todos os erros), mantém anot... |
+| `packages/omptype/src/jsonschema/pattern.ts` | codigo | omp-novo | `packages/schema` | 202L; Compila expressões regulares ancoradas ASCII simples (`^...$`, no máximo um segmento de comprimento variável) em funções de ver... |
+| `packages/omptype/src/jsonschema/plan.ts` | codigo | omp-novo | `packages/schema` | 538L; Reduz documentos JSON Schema (drafts 2020-12, 2019-09 e 7) em um grafo `Plan` independente de dialeto com bitmasks `T_*`/`F_*`,... |
+| `packages/omptype/src/jsonschema/resolve.ts` | codigo | omp-novo | `packages/schema` | 333L; Indexa recursos JSON Schema (`$id`, `$anchor`, `$dynamicAnchor`), resolve `$ref` e ponteiros JSON, e infere dialeto e flags de ... |
+| `packages/omptype/src/jsonschema/runtime.ts` | codigo | omp-novo | `packages/schema` | 117L; Fornece primitivas de runtime compartilhadas pelos validadores JSON Schema: igualdade estrutural JSON, `uniqueItems`, `isMultip... |
+| `packages/omptype/src/jsonschema/validator.ts` | codigo | omp-novo | `packages/schema` | 113L; Orquestra o ciclo de vida do validador JSON Schema (`Planner`, interpretador até 64 chamadas, promoção para `generate()` com ca... |
+| `packages/omptype/src/keywords.ts` | codigo | omp-novo | `packages/schema` | 380L; Define o catálogo de keywords embutidas (`string.email`, `string.uuid.*`, `string.ip.*`, `string.creditCard` com Luhn, `string.... |
+| `packages/omptype/src/local-ref.ts` | codigo | omp-novo | `packages/schema` | 41L; Centraliza o parse e a formatação de fragmentos `$ref` locais conforme RFC 6901 (decodificação percentual e escape `~0`/`~1`). |
+| `packages/omptype/src/type.ts` | codigo | omp-novo | `packages/schema` | 4037L; Define a interface pública `Type`/`FluentType`, interoperabilidade `StandardSchemaV1`, contexto de narrowing (`Ctx`), configura... |
+| `packages/omptype/src/typebox.ts` | codigo | omp-novo | `packages/schema` | 551L; Facade de compatibilidade com TypeBox sobre omptype: implementa Type.* (String, Number, Integer, Object, Optional, Pick, Omit, ... |
+| `packages/omptype/src/zod.ts` | codigo | omp-novo | `packages/schema` | 486L; Facade de compatibilidade com Zod v4 sobre omptype: expõe z.* (string, number, boolean, literal, enum, union, array, object, re... |
+| `packages/omptype/test/ark/LICENSE` | teste | omp-novo | `packages/schema` | 7L; Licença MIT da ArkType atribuída aos testes portados em packages/omptype/test/ark. |
+| `packages/omptype/test/ark/arrays/array.test.ts` | teste | omp-novo | `packages/schema` | 24L; Testa spreads múltiplos em tuplas variádicas e modificador .readonly() em arrays e tuplas no omptype/ark. |
+| `packages/omptype/test/ark/arrays/base.test.ts` | teste | omp-novo | `packages/schema` | 58L; Testa validação básica de arrays, aninhamento, expressões em tupla/raiz, método .array() e formatação de múltiplos erros. |
+| `packages/omptype/test/ark/arrays/defaults.test.ts` | teste | omp-novo | `packages/schema` | 65L; Testa elementos com valor padrão em tuplas, combinação com variádicos, erros de ordenação e extração de tipos in/out. |
+| `packages/omptype/test/ark/arrays/intersection.test.ts` | teste | omp-novo | `packages/schema` | 145L; Testa interseções entre arrays, tuplas, tuplas variádicas, redução de minLength e arrays com propriedades extras. |
+| `packages/omptype/test/ark/arrays/nonVariadicTuple.test.ts` | teste | omp-novo | `packages/schema` | 117L; Testa tuplas não variádicas vazias, rasas, aninhadas e com elementos opcionais. |
+| `packages/omptype/test/ark/arrays/variadicTuple.test.ts` | teste | omp-novo | `packages/schema` | 78L; Testa spreads simples, expressões, distribuição em uniões, aliases em scope e erros estruturais de tuplas variádicas. |
+| `packages/omptype/test/ark/badDefinitionType.test.ts` | teste | omp-novo | `packages/schema` | 38L; Testa rejeição em runtime de tipos de definição inválidos e inferência com any/never. |
+| `packages/omptype/test/ark/basis.test.ts` | teste | omp-novo | `packages/schema` | 46L; Testa interseções e insatisfatibilidade envolvendo literais, classes (instanceof) e domínios primitivos. |
+| `packages/omptype/test/ark/brand.test.ts` | teste | omp-novo | `packages/schema` | 67L; Testa branded types via .brand() e sintaxe #brand em primitivas, objetos, uniões e morphs. |
+| `packages/omptype/test/ark/cast.test.ts` | teste | omp-novo | `packages/schema` | 77L; Testa type.cast, .as<T>() e .readonly() para coerção estática de tipos em objetos, arrays e funções. |
+| `packages/omptype/test/ark/clone.test.ts` | teste | omp-novo | `packages/schema` | 43L; Testa comportamento de clonagem padrão antes de morphs, preservação de protótipos, clone: false, clonagem customizada e process... |
+| `packages/omptype/test/ark/config.test.ts` | teste | omp-novo | `packages/schema` | 156L; Testa configuração de metadados e writers de erro (@, .describe(), .configure()) incluindo seletores rasos e thunks. |
+| `packages/omptype/test/ark/dateLiteral.test.ts` | teste | omp-novo | `packages/schema` | 34L; Testa literais de data (d'...') com formatos ISO, espaços, epoch numérico e erro em data inválida. |
+| `packages/omptype/test/ark/declared.test.ts` | teste | omp-novo | `packages/schema` | 119L; Testa declare<T>() para validar definições contra tipos TypeScript declarados, incluindo morphs in/out e valores opcionais. |
+| `packages/omptype/test/ark/define.test.ts` | teste | omp-novo | `packages/schema` | 22L; Testa type.define e $.define para validação estática de definições sem compilação imediata do schema. |
+| `packages/omptype/test/ark/discrimination.test.ts` | teste | omp-novo | `packages/schema` | 286L; Testa compilação discriminada de uniões por literais, domínios, chaves aninhadas/opcionais/strict, símbolos, arrays/tuplas e ti... |
+| `packages/omptype/test/ark/divisor.test.ts` | teste | omp-novo | `packages/schema` | 92L; Testa restrição de divisibilidade (% e .divisibleBy()), combinação com limites numéricos, erros de parsing e interseções de div... |
+| `packages/omptype/test/ark/enclosed.test.ts` | teste | omp-novo | `packages/schema` | 154L; Testa parsing de literais entre aspas simples/duplas, regex (/.../) e regex exec literal (x/.../) com grupos nomeados e escapes. |
+| `packages/omptype/test/ark/expressions.test.ts` | teste | omp-novo | `packages/schema` | 96L; Testa expressões de tupla e raiz (===, instanceof, postfix [], infix \|, =>, :, keyof) e detecção de operandos faltantes. |
+| `packages/omptype/test/ark/filter.test.ts` | teste | omp-novo | `packages/schema` | 27L; Testa .filter() aplicando predicado e type guard sobre a entrada antes de um morph com .pipe(). |
+| `packages/omptype/test/ark/fn.test.ts` | teste | omp-novo | `packages/schema` | 279L; Testa type.fn() para funções tipadas com validação em runtime de parâmetros, retorno explícito (:), morphs, aridade n-ária, sco... |
+| `packages/omptype/test/ark/generic.test.ts` | teste | omp-novo | `packages/schema` | 498L; Testa genéricos standalone e em scope, restrições de parâmetros (extends), HKT por callback, recursão cíclica e helpers externo... |
+| `packages/omptype/test/ark/get.test.ts` | teste | omp-novo | `packages/schema` | 201L; Testa .get() por caminho raso e profundo, uniões, assinaturas de índice, chaves opcionais, arrays, tuplas variádicas e símbolos. |
+| `packages/omptype/test/ark/group.test.ts` | teste | omp-novo | `packages/schema` | 64L; Testa agrupamento por parênteses, precedência de operadores e erros para parênteses vazios ou desbalanceados. |
+| `packages/omptype/test/ark/imports.test.ts` | teste | omp-novo | `packages/schema` | 250L; Testa importação e exportação entre scopes, aliases privados (#), BoundModule e genéricos privados. |
+| `packages/omptype/test/ark/instanceOf.test.ts` | teste | omp-novo | `packages/schema` | 110L; Testa instanceof em sintaxe tupla, raiz e fluente para classes built-in, herdadas, abstratas e definidas pelo usuário. |
+| `packages/omptype/test/ark/intersection.test.ts` | teste | omp-novo | `packages/schema` | 108L; Testa interseção (& e .and()), precedência sobre união, morphs encadeados, detecção de never implícito e subtipagem com never. |
+| `packages/omptype/test/ark/keyof.test.ts` | teste | omp-novo | `packages/schema` | 83L; Testa operador keyof e .keyof() em objetos, uniões com interseção de chaves, precedência em expressões e casos inválidos. |
+| `packages/omptype/test/ark/keywords/date.test.ts` | teste | omp-novo | `packages/schema` | 23L; Testa keywords string.date, string.date.parse e string.date.iso. |
+| `packages/omptype/test/ark/keywords/exclude.test.ts` | teste | omp-novo | `packages/schema` | 24L; Testa utilitário Exclude<T, U> em DSL e método .exclude(). |
+| `packages/omptype/test/ark/keywords/extract.test.ts` | teste | omp-novo | `packages/schema` | 24L; Testa utilitário Extract<T, U> em DSL e método .extract(). |
+| `packages/omptype/test/ark/keywords/formData.test.ts` | teste | omp-novo | `packages/schema` | 38L; Testa parsing e validação de FormData via FormData.parse encadeado com Array.liftFrom e File. |
+| `packages/omptype/test/ark/keywords/format.test.ts` | teste | omp-novo | `packages/schema` | 53L; Testa keywords de normalização e formatação de strings (trim, lower, upper, capitalize, normalize e variantes .preformatted). |
+| `packages/omptype/test/ark/keywords/ip.test.ts` | teste | omp-novo | `packages/schema` | 37L; Testa validação de endereços IP via string.ip, string.ip.v4 e string.ip.v6. |
+| `packages/omptype/test/ark/keywords/json.test.ts` | teste | omp-novo | `packages/schema` | 19L; Testa validação e parsing de JSON via string.json e string.json.parse. |
+| `packages/omptype/test/ark/keywords/merge.test.ts` | teste | omp-novo | `packages/schema` | 79L; Testa utilitário Merge<A, B>, type.keywords.Merge e método .merge() para sobrescrita estrutural de objetos. |
+| `packages/omptype/test/ark/keywords/number.test.ts` | teste | omp-novo | `packages/schema` | 68L; Testa keywords numéricas (integer, epoch, safe, NaN, Infinity, NegativeInfinity) e rejeição padrão de NaN. |
+| `packages/omptype/test/ark/keywords/numericStrings.test.ts` | teste | omp-novo | `packages/schema` | 28L; Testa validação e parsing de strings numéricas e inteiras (string.numeric, string.integer, string.integer.parse). |
+| `packages/omptype/test/ark/keywords/object.test.ts` | teste | omp-novo | `packages/schema` | 64L; Testa keywords Function, Date, object.json, object.json.stringify e Array.liftFrom. |
+| `packages/omptype/test/ark/keywords/omit.test.ts` | teste | omp-novo | `packages/schema` | 42L; Testa utilitário Omit<T, K> em DSL e método .omit(). |
+| `packages/omptype/test/ark/keywords/parse.test.ts` | teste | omp-novo | `packages/schema` | 10L; Testa parsing numérico de strings via string.numeric.parse. |
+| `packages/omptype/test/ark/keywords/partial.test.ts` | teste | omp-novo | `packages/schema` | 32L; Testa utilitário Partial<T> em DSL e método .partial(). |
+| `packages/omptype/test/ark/keywords/pick.test.ts` | teste | omp-novo | `packages/schema` | 53L; Testa utilitário Pick<T, K> em DSL, método .pick() e erros para chaves inexistentes ou não objetos. |
+| `packages/omptype/test/ark/keywords/record.test.ts` | teste | omp-novo | `packages/schema` | 28L; Testa utilitário Record<K, V> em DSL e type.keywords.Record com validação de erros de chave e valor. |
+| `packages/omptype/test/ark/keywords/required.test.ts` | teste | omp-novo | `packages/schema` | 52L; Testa utilitário Required<T> em DSL, método .required() e remoção de valor padrão ao tornar chave obrigatória. |
+| `packages/omptype/test/ark/keywords/string.test.ts` | teste | omp-novo | `packages/schema` | 69L; Testa keywords de validação de strings (alpha, alphanumeric, hex, base64, base64.url, digits, email, creditCard com Luhn, semver). |
+| `packages/omptype/test/ark/keywords/tsPrimitives.test.ts` | teste | omp-novo | `packages/schema` | 43L; Testa primitivas TypeScript (unknown.any, boolean, never, unknown) isoladas e em expressões. |
+| `packages/omptype/test/ark/keywords/url.test.ts` | teste | omp-novo | `packages/schema` | 20L; Testa validação e parsing de URLs via string.url e string.url.parse. |
+| `packages/omptype/test/ark/keywords/uuid.test.ts` | teste | omp-novo | `packages/schema` | 31L; Testa validação de UUIDs (string.uuid, v4, v5) e rejeição de matches parciais. |
+| `packages/omptype/test/ark/literal.test.ts` | teste | omp-novo | `packages/schema` | 54L; Testa operador de igualdade estrita (===) para literais primitivos, símbolos nomeados/anônimos e referências de objeto. |
+| `packages/omptype/test/ark/match.test.ts` | teste | omp-novo | `packages/schema` | 628L; Testa pattern matching tipado (match, .case, .at, .strings, .in, .default) com discriminação, poda de subtipos, morphs e tratam... |
+| `packages/omptype/test/ark/narrow.test.ts` | teste | omp-novo | `packages/schema` | 184L; Testa refinamentos via ':' e .narrow() com rejeições customizadas, erros em caminhos específicos, type guards e destilação in/o... |
+| `packages/omptype/test/ark/nary.test.ts` | teste | omp-novo | `packages/schema` | 715L; Testa operadores n-ários (0 a 17+ operandos e arrays espalhados) para type.or, type.and, type.merge e type.pipe. |
+| `packages/omptype/test/ark/objects/defaults.test.ts` | teste | omp-novo | `packages/schema` | 739L; Testa valores padrão em propriedades de objeto (sintaxe string, tupla, .default(), factories, morphs, interseções e tipos cícli... |
+| `packages/omptype/test/ark/objects/indexSignatures.test.ts` | teste | omp-novo | `packages/schema` | 216L; Testa assinaturas de índice ([string], [symbol], regex, uniões e chaves escapadas) além de validação de erros em definições inv... |
+| `packages/omptype/test/ark/objects/mapped.test.ts` | teste | omp-novo | `packages/schema` | 351L; Testa método .map() em objetos para transformar valores, filtrar/duplicar chaves, alterar opcionalidade, modificar defaults e i... |
+| `packages/omptype/test/ark/objects/namedKeys.test.ts` | teste | omp-novo | `packages/schema` | 173L; Testa chaves nomeadas e simbólicas em objetos (obrigatórias, opcionais, escapadas e morphed) e igualdade por referência. |
+| `packages/omptype/test/ark/objects/onUndeclaredKey.test.ts` | teste | omp-novo | `packages/schema` | 111L; Testa políticas para chaves não declaradas ('+': reject/delete/ignore, .onUndeclaredKey e .onDeepUndeclaredKey) inclusive em un... |
+| `packages/omptype/test/ark/objects/props.test.ts` | teste | omp-novo | `packages/schema` | 107L; Testa introspecção de T.props, chaves mistas string/symbol, erro em uniões, chaves duplicadas e nomes de métodos de Object.prot... |
+| `packages/omptype/test/ark/objects/spread.test.ts` | teste | omp-novo | `packages/schema` | 110L; Testa operador spread ('...') em objetos a partir de aliases, tipos externos, literais, interseções e chave '\\...' escapada. |
+| `packages/omptype/test/ark/optional.test.ts` | teste | omp-novo | `packages/schema` | 14L; Testa proibição de modificador opcional raso em expressões de tupla e definições de módulo/escopo. |
+| `packages/omptype/test/ark/pipe.test.ts` | teste | omp-novo | `packages/schema` | 915L; Testes unitários e de inferência de tipos do módulo ark para pipe, operador \|>, pipe.try, morphs encadeados, interseções e uniõ... |
+| `packages/omptype/test/ark/range.test.ts` | teste | omp-novo | `packages/schema` | 283L; Testes de expressões de intervalo numérico, comprimento de string/array e datas em strings e métodos encadeados do módulo ark. |
+| `packages/omptype/test/ark/realWorld.test.ts` | teste | omp-novo | `packages/schema` | 1302L; Testes de regressão de casos reais portados do ArkType cobrindo referências entre escopos, ciclos, chaves opcionais com morph, ... |
+| `packages/omptype/test/ark/regex.test.ts` | teste | omp-novo | `packages/schema` | 75L; Testes de expressões regulares no ark cobrindo interseções de regex, instâncias com flags, método matching e integração com ark... |
+| `packages/omptype/test/ark/scope.test.ts` | teste | omp-novo | `packages/schema` | 349L; Testes de criação e resolução de escopos no ark, incluindo aliases interdependentes, thunks, ciclos, referências entre escopos ... |
+| `packages/omptype/test/ark/select.test.ts` | teste | omp-novo | `packages/schema` | 21L; Teste de configuração seletiva de metadados (description) via método configure com filtro por kind e predicado where. |
+| `packages/omptype/test/ark/serialization.test.ts` | teste | omp-novo | `packages/schema` | 17L; Teste básico de serialização e desserialização JSON da saída de toJsonSchema. |
+| `packages/omptype/test/ark/standardSchema.test.ts` | teste | omp-novo | `packages/schema` | 121L; Testes de conformidade com StandardSchemaV1 e ~standard.jsonSchema para draft-2020-12, draft-07, libraryOptions e esquemas de e... |
+| `packages/omptype/test/ark/string.test.ts` | teste | omp-novo | `packages/schema` | 23L; Testes de parsing de strings de definição de tipo no ark (espaços em branco, string vazia e literais não terminados). |
+| `packages/omptype/test/ark/submodule.test.ts` | teste | omp-novo | `packages/schema` | 248L; Testes de submódulos, submódulos com alias root, submódulos aninhados e referência via notação de ponto em escopos do ark. |
+| `packages/omptype/test/ark/this.test.ts` | teste | omp-novo | `packages/schema` | 101L; Testes da palavra-chave recursiva this em tipos diretos, caminhos aninhados, tuplas e rejeição em escopos sem contexto raiz. |
+| `packages/omptype/test/ark/thunk.test.ts` | teste | omp-novo | `packages/schema` | 138L; Testes de definições preguiçosas via thunks em type e scope, incluindo validação de erros e exemplos encadeados com brand. |
+| `packages/omptype/test/ark/toJsonSchema.test.ts` | teste | omp-novo | `packages/schema` | 94L; Testes de conversão toJsonSchema verificando dialeto omitido por padrão e sintaxes específicas de draft-2020-12 vs draft-07 (pr... |
+| `packages/omptype/test/ark/traverse.test.ts` | teste | omp-novo | `packages/schema` | 262L; Testes de travessia de validação e formatação de mensagens de erro para divisibilidade, intervalos, regex, uniões, caminhos rel... |
+| `packages/omptype/test/ark/type-assert.ts` | teste | omp-novo | `packages/schema` | 11L; Helper de tipo Eq<a, b> para asserções em tempo de compilação nos testes portados do ArkType. |
+| `packages/omptype/test/ark/type.test.ts` | teste | omp-novo | `packages/schema` | 183L; Testes da API central de Type: allows, assert, distribute, unit, enumerated, ifEquals, ifExtends, valueOf e toJsonSchema. |
+| `packages/omptype/test/ark/typeReference.test.ts` | teste | omp-novo | `packages/schema` | 33L; Testes de referência direta a instâncias Type de forma rasa, profunda em objetos e dentro de escopos. |
+| `packages/omptype/test/ark/unenclosed.test.ts` | teste | omp-novo | `packages/schema` | 111L; Testes de parsing de literais não delimitados no ark: identificadores, números inteiros/decimais, bigints e rejeição de literai... |
+| `packages/omptype/test/ark/union.test.ts` | teste | omp-novo | `packages/schema` | 220L; Testes de uniões no ark cobrindo redução de subtipos, tuplas, estresse de 46 ramos, erros de sintaxe/semântica e describe encad... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/LICENSE` | teste | omp-novo | `packages/schema` | 19L; Licença MIT da JSON-Schema-Test-Suite copiada como fixture de testes do omptype. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/README.md` | teste | omp-novo | `packages/schema` | 7L; Documentação de origem e subconjunto incluído da JSON-Schema-Test-Suite (draft2020-12, draft7 e remotes). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/baseUriChange/folderInteger.json` | teste | omp-novo | `packages/schema` | 3L; Fixture remota da JSON-Schema-Test-Suite para resolução de URI base (schema integer). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/baseUriChangeFolder/folderInteger.json` | teste | omp-novo | `packages/schema` | 3L; Fixture remota da JSON-Schema-Test-Suite para alteração de pasta na URI base (schema integer). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/baseUriChangeFolderInSubschema/folderInteger.json` | teste | omp-novo | `packages/schema` | 3L; Fixture remota da JSON-Schema-Test-Suite para alteração de pasta em subschema (schema integer). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2019-09/dependentRequired.json` | teste | omp-novo | `packages/schema` | 7L; Fixture remota draft2019-09 com schema dependentRequired para testes de referência externa. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2019-09/ignore-prefixItems.json` | teste | omp-novo | `packages/schema` | 7L; Fixture remota draft2019-09 com prefixItems para verificar ignorância de keywords de versões posteriores. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/baseUriChange/folderInteger.json` | teste | omp-novo | `packages/schema` | 4L; Fixture remota draft2020-12 para mudança de URI base (schema integer). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/baseUriChangeFolder/folderInteger.json` | teste | omp-novo | `packages/schema` | 4L; Fixture remota draft2020-12 para mudança de pasta na URI base (schema integer). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/baseUriChangeFolderInSubschema/folderInteger.json` | teste | omp-novo | `packages/schema` | 4L; Fixture remota draft2020-12 para mudança de pasta em subschema (schema integer). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/detached-dynamicref.json` | teste | omp-novo | `packages/schema` | 13L; Fixture remota draft2020-12 testando $dynamicRef para $dynamicAnchor destacado em $defs. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/detached-ref.json` | teste | omp-novo | `packages/schema` | 13L; Fixture remota draft2020-12 testando $ref para $anchor destacado em $defs. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/different-id-ref-string.json` | teste | omp-novo | `packages/schema` | 5L; Fixture remota draft2020-12 com $id distinto do caminho de arquivo apontando para $defs/bar. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/extendible-dynamic-ref.json` | teste | omp-novo | `packages/schema` | 21L; Fixture remota draft2020-12 de array extensível usando $dynamicRef e $dynamicAnchor. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/format-assertion-false.json` | teste | omp-novo | `packages/schema` | 13L; Fixture remota draft2020-12 de metaschema com vocabulário format-assertion desabilitado (false). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/format-assertion-true.json` | teste | omp-novo | `packages/schema` | 13L; Fixture remota draft2020-12 de metaschema com vocabulário format-assertion habilitado (true). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/integer.json` | teste | omp-novo | `packages/schema` | 4L; Fixture remota draft2020-12 simples para tipo integer. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/locationIndependentIdentifier.json` | teste | omp-novo | `packages/schema` | 12L; Fixture remota draft2020-12 testando $anchor independente de localização. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/metaschema-no-validation.json` | teste | omp-novo | `packages/schema` | 13L; Fixture remota draft2020-12 de metaschema apenas com vocabulários core e applicator (sem validation). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/metaschema-optional-vocabulary.json` | teste | omp-novo | `packages/schema` | 14L; Fixture remota draft2020-12 de metaschema com vocabulário customizado opcional (false). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/name-defs.json` | teste | omp-novo | `packages/schema` | 16L; Fixture remota draft2020-12 com definição recursiva $defs/orNull referenciando a raiz #. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/nested-absolute-ref-to-string.json` | teste | omp-novo | `packages/schema` | 9L; Fixture remota draft2020-12 testando $ref absoluto para $id aninhado em $defs. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/nested/foo-ref-string.json` | teste | omp-novo | `packages/schema` | 7L; Fixture remota draft2020-12 em subpasta referenciando string.json por caminho relativo. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/nested/string.json` | teste | omp-novo | `packages/schema` | 4L; Fixture remota draft2020-12 em subpasta definindo tipo string. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/prefixItems.json` | teste | omp-novo | `packages/schema` | 7L; Fixture remota draft2020-12 usando prefixItems com string. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/ref-and-defs.json` | teste | omp-novo | `packages/schema` | 12L; Fixture remota draft2020-12 combinando $id e $ref para #/$defs/inner. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/subSchemas.json` | teste | omp-novo | `packages/schema` | 11L; Fixture remota draft2020-12 definindo subschemas integer e refToInteger em $defs. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/tree.json` | teste | omp-novo | `packages/schema` | 17L; Fixture remota draft2020-12 de árvore recursiva extensível usando $dynamicAnchor e $dynamicRef. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft2020-12/urn-ref-string.json` | teste | omp-novo | `packages/schema` | 5L; Fixture remota draft2020-12 testando $id no formato urn:uuid e $ref local. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft7/detached-ref.json` | teste | omp-novo | `packages/schema` | 13L; Fixture remota draft7 testando $ref para $id #detached em definitions. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft7/ignore-dependentRequired.json` | teste | omp-novo | `packages/schema` | 7L; Fixture remota draft7 contendo dependentRequired para testar ignorância da keyword no draft7. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft7/locationIndependentIdentifier.json` | teste | omp-novo | `packages/schema` | 11L; Fixture remota draft7 testando $id #foo independente de localização. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft7/name.json` | teste | omp-novo | `packages/schema` | 15L; Fixture remota draft7 com definição orNull referenciando #. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft7/ref-and-definitions.json` | teste | omp-novo | `packages/schema` | 11L; Fixture remota draft7 combinando definitions e allOf com $ref local. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/draft7/subSchemas.json` | teste | omp-novo | `packages/schema` | 10L; Fixture remota draft7 definindo subschemas integer e refToInteger em definitions. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/integer.json` | teste | omp-novo | `packages/schema` | 3L; Fixture remota simples sem $schema para tipo integer. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/nested/foo-ref-string.json` | teste | omp-novo | `packages/schema` | 6L; Fixture remota em subpasta sem $schema referenciando string.json relativo. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/remotes/nested/string.json` | teste | omp-novo | `packages/schema` | 3L; Fixture remota simples em subpasta sem $schema para tipo string. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/additionalProperties.json` | teste | omp-novo | `packages/schema` | 219L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para additionalProperties (booleano, schema, não-objetos e interação com ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/allOf.json` | teste | omp-novo | `packages/schema` | 312L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para allOf (esquemas booleanos, vazios, aninhados e combinados com anyOf/... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/anchor.json` | teste | omp-novo | `packages/schema` | 120L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para resolução de $anchor com e sem alteração de URI base. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/anyOf.json` | teste | omp-novo | `packages/schema` | 203L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para anyOf (esquemas base, booleanos, vazios e aninhados). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/boolean_schema.json` | teste | omp-novo | `packages/schema` | 104L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para esquemas booleanos true e false em todos os tipos JSON. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/const.json` | teste | omp-novo | `packages/schema` | 431L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para const (objetos, arrays, igualdade numérica, falsy distintos e Unicode). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/contains.json` | teste | omp-novo | `packages/schema` | 176L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para contains em arrays, subschemas booleanos e combinação com items. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/content.json` | teste | omp-novo | `packages/schema` | 131L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para contentMediaType, contentEncoding e contentSchema como anotações não... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/default.json` | teste | omp-novo | `packages/schema` | 82L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite verificando que default é apenas anotação e não preenche ou valida dados ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/defs.json` | teste | omp-novo | `packages/schema` | 21L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite validando definições $defs contra o metaschema. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/dependentRequired.json` | teste | omp-novo | `packages/schema` | 152L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para dependentRequired incluindo chaves escapadas e não-objetos. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/dependentSchemas.json` | teste | omp-novo | `packages/schema` | 171L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para dependentSchemas incluindo subschemas booleanos e incompatibilidade ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/dynamicRef.json` | teste | omp-novo | `packages/schema` | 874L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para resolução dinâmica de $dynamicRef e $dynamicAnchor (parte 1). \| Caso... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/enum.json` | teste | omp-novo | `packages/schema` | 419L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para enum (heterogêneos, vazios, distinção booleano/numérico e Unicode). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/exclusiveMaximum.json` | teste | omp-novo | `packages/schema` | 31L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para limite numérico exclusiveMaximum. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/exclusiveMinimum.json` | teste | omp-novo | `packages/schema` | 31L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite para limite numérico exclusiveMinimum. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/format.json` | teste | omp-novo | `packages/schema` | 838L; Casos de teste draft2020-12 da JSON-Schema-Test-Suite verificando comportamento padrão de apenas anotação para format (parte 1)... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/if-then-else.json` | teste | omp-novo | `packages/schema` | 308L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação condicional com if/then/else, schemas booleanos e não-interfer... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/infinite-loop-detection.json` | teste | omp-novo | `packages/schema` | 37L; Fixture do JSON Schema Test Suite (draft2020-12) verificando que avaliar a mesma localização de schema e dado duas vezes via $r... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/items.json` | teste | omp-novo | `packages/schema` | 304L; Fixtures do JSON Schema Test Suite (draft2020-12) testando items, interação com prefixItems, schemas booleanos e arrays aninhados. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/maxContains.json` | teste | omp-novo | `packages/schema` | 123L; Fixtures do JSON Schema Test Suite (draft2020-12) para a palavra-chave maxContains isolada e combinada com contains e minContains. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/maxItems.json` | teste | omp-novo | `packages/schema` | 50L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação de comprimento máximo de arrays com maxItems. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/maxLength.json` | teste | omp-novo | `packages/schema` | 55L; Fixtures do JSON Schema Test Suite (draft2020-12) para maxLength, incluindo contagem por code points/grafemas com pares substit... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/maxProperties.json` | teste | omp-novo | `packages/schema` | 94L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação de quantidade máxima de propriedades de objetos via maxPropert... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/maximum.json` | teste | omp-novo | `packages/schema` | 60L; Fixtures do JSON Schema Test Suite (draft2020-12) para limite numérico inclusivo maximum. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/minContains.json` | teste | omp-novo | `packages/schema` | 224L; Fixtures do JSON Schema Test Suite (draft2020-12) para minContains, incluindo minContains=0 e combinação com maxContains. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/minItems.json` | teste | omp-novo | `packages/schema` | 50L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação de tamanho mínimo de arrays com minItems. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/minLength.json` | teste | omp-novo | `packages/schema` | 55L; Fixtures do JSON Schema Test Suite (draft2020-12) para minLength, incluindo tratamento de pares substitutos UTF-16 e decimais. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/minProperties.json` | teste | omp-novo | `packages/schema` | 70L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação de quantidade mínima de propriedades com minProperties. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/minimum.json` | teste | omp-novo | `packages/schema` | 75L; Fixtures do JSON Schema Test Suite (draft2020-12) para limite numérico inclusivo minimum, incluindo inteiros negativos e floats. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/multipleOf.json` | teste | omp-novo | `packages/schema` | 102L; Fixtures do JSON Schema Test Suite (draft2020-12) para divisibilidade com multipleOf, cobrindo decimais pequenos e casos de ove... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/not.json` | teste | omp-novo | `packages/schema` | 301L; Fixtures do JSON Schema Test Suite (draft2020-12) para negação de schema com not, dupla negação e coleta interna de anotações. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/oneOf.json` | teste | omp-novo | `packages/schema` | 293L; Fixtures do JSON Schema Test Suite (draft2020-12) para disjunção exclusiva oneOf com schemas booleanos, complexos e aninhados. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/anchor.json` | teste | omp-novo | `packages/schema` | 60L; Fixture opcional do JSON Schema Test Suite garantindo que $anchor dentro de enum/const não seja tratado como identificador real. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/bignum.json` | teste | omp-novo | `packages/schema` | 110L; Fixture opcional do JSON Schema Test Suite testando validação e comparação de inteiros e floats de precisão arbitrária (bignums). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/cross-draft.json` | teste | omp-novo | `packages/schema` | 18L; Fixture opcional do JSON Schema Test Suite testando referência $ref de draft2020-12 para schema de draft2019-09. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/dependencies-compatibility.json` | teste | omp-novo | `packages/schema` | 282L; Fixture opcional do JSON Schema Test Suite para compatibilidade com a palavra-chave legada dependencies (propriedades e subsche... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/dynamicRef.json` | teste | omp-novo | `packages/schema` | 56L; Fixture opcional do JSON Schema Test Suite testando resolução de $dynamicRef atravessando fronteiras de recursos com $id. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/ecmascript-regex.json` | teste | omp-novo | `packages/schema` | 582L; Fixture opcional do JSON Schema Test Suite verificando semântica ECMA-262 para regex em pattern e patternProperties (Unicode, \... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/float-overflow.json` | teste | omp-novo | `packages/schema` | 17L; Fixture opcional do JSON Schema Test Suite verificando tratamento de overflow em multipleOf com número 1e308. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/format-assertion.json` | teste | omp-novo | `packages/schema` | 44L; Fixture opcional do JSON Schema Test Suite testando metaschemas customizados com vocabulário format-assertion true/false. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/id.json` | teste | omp-novo | `packages/schema` | 53L; Fixture opcional do JSON Schema Test Suite garantindo que $id dentro de enum/const não seja indexado como identificador de schema. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/no-schema.json` | teste | omp-novo | `packages/schema` | 26L; Fixture opcional do JSON Schema Test Suite verificando validação de schema sem declaração explícita de $schema. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/non-bmp-regex.json` | teste | omp-novo | `packages/schema` | 86L; Fixture opcional do JSON Schema Test Suite para pares substitutos UTF-16 fora do BMP em pattern e patternProperties. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/refOfUnknownKeyword.json` | teste | omp-novo | `packages/schema` | 112L; Fixture opcional do JSON Schema Test Suite testando $ref apontando para palavras-chave desconhecidas ou não-aplicadoras via JSO... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/optional/unknownKeyword.json` | teste | omp-novo | `packages/schema` | 57L; Fixture opcional do JSON Schema Test Suite garantindo que $id dentro de palavras-chave desconhecidas não seja tratado como iden... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/pattern.json` | teste | omp-novo | `packages/schema` | 90L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação de strings via regex com pattern e escapes de propriedades Uni... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/patternProperties.json` | teste | omp-novo | `packages/schema` | 211L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação de chaves de objeto por regex via patternProperties. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/prefixItems.json` | teste | omp-novo | `packages/schema` | 104L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação posicional de tuplas em arrays via prefixItems. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/properties.json` | teste | omp-novo | `packages/schema` | 242L; Fixtures do JSON Schema Test Suite (draft2020-12) para properties, interação com patternProperties/additionalProperties e chave... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/propertyNames.json` | teste | omp-novo | `packages/schema` | 178L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação de nomes de propriedades de objetos via propertyNames. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/ref.json` | teste | omp-novo | `packages/schema` | 1085L; Parte 1 das fixtures do JSON Schema Test Suite (draft2020-12) para $ref: ponteiros locais, escapes, recursão, URIs relativas e ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/refRemote.json` | teste | omp-novo | `packages/schema` | 342L; Fixtures do JSON Schema Test Suite (draft2020-12) para resolução de $ref remoto HTTP, fragmentos, âncoras e mudança de URI base. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/required.json` | teste | omp-novo | `packages/schema` | 169L; Fixtures do JSON Schema Test Suite (draft2020-12) para required, cobrindo caracteres escapados e nomes de propriedades do Objec... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/type.json` | teste | omp-novo | `packages/schema` | 501L; Fixtures do JSON Schema Test Suite (draft2020-12) para validação de tipos primitivos e compostos (integer, number, string, obje... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/unevaluatedItems.json` | teste | omp-novo | `packages/schema` | 854L; Parte 1 das fixtures do JSON Schema Test Suite (draft2020-12) para unevaluatedItems com aplicadores, $ref, $dynamicRef e contai... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/unevaluatedProperties.json` | teste | omp-novo | `packages/schema` | 1681L; Parte 1 das fixtures do JSON Schema Test Suite (draft2020-12) para unevaluatedProperties com aplicadores adjacentes/aninhados, ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/uniqueItems.json` | teste | omp-novo | `packages/schema` | 399L; Fixtures da suíte JSON Schema draft 2020-12 testando uniqueItems (true/false), comparação numérica/booleana, objetos aninhados ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft2020-12/vocabulary.json` | teste | omp-novo | `packages/schema` | 57L; Fixtures da suíte JSON Schema draft 2020-12 validando metaschemas customizados sem vocabulário de validação e com vocabulário o... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/additionalItems.json` | teste | omp-novo | `packages/schema` | 190L; Fixtures draft-07 testando additionalItems como schema ou booleano, interação com items em forma de objeto ou array e não-propa... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/additionalProperties.json` | teste | omp-novo | `packages/schema` | 147L; Fixtures draft-07 testando additionalProperties (booleano ou schema), padrões não-ASCII em patternProperties, valores null e is... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/allOf.json` | teste | omp-novo | `packages/schema` | 294L; Fixtures draft-07 testando allOf com schemas base, schemas booleanos, schemas vazios, aninhamento e combinação com anyOf e oneOf. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/anyOf.json` | teste | omp-novo | `packages/schema` | 189L; Fixtures draft-07 testando anyOf com schema base, schemas booleanos, objetos complexos, schema vazio e aninhamento. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/boolean_schema.json` | teste | omp-novo | `packages/schema` | 104L; Fixtures draft-07 testando schemas booleanos puros true e false contra todos os tipos JSON. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/const.json` | teste | omp-novo | `packages/schema` | 384L; Fixtures draft-07 testando const com primitivos, objetos, arrays, distinção estrita entre booleanos e 0/1, precisão de 64 bits,... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/contains.json` | teste | omp-novo | `packages/schema` | 165L; Fixtures draft-07 testando contains com subschemas, const, schemas booleanos, combinação com items e if/else. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/default.json` | teste | omp-novo | `packages/schema` | 79L; Fixtures draft-07 verificando que a keyword default não altera validação nem preenche propriedades ausentes, mesmo quando o def... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/definitions.json` | teste | omp-novo | `packages/schema` | 26L; Fixture draft-07 validando a seção definitions contra o metaschema draft-07. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/dependencies.json` | teste | omp-novo | `packages/schema` | 286L; Fixtures draft-07 testando dependencies como array de propriedades requeridas ou subschema (incluindo booleanos e chaves escapa... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/enum.json` | teste | omp-novo | `packages/schema` | 341L; Fixtures draft-07 testando enum heterogêneo, comparação profunda de objetos, distinção booleano vs 0/1, caracteres escapados, N... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/exclusiveMaximum.json` | teste | omp-novo | `packages/schema` | 30L; Fixture draft-07 testando exclusiveMaximum numérico e ignorando não-números. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/exclusiveMinimum.json` | teste | omp-novo | `packages/schema` | 30L; Fixture draft-07 testando exclusiveMinimum numérico e ignorando não-números. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/format.json` | teste | omp-novo | `packages/schema` | 614L; Fixtures draft-07 verificando que formatos de string (email, regex, ipv4/6, hostname, date/time, json-pointer, uri/iri) ignoram... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/if-then-else.json` | teste | omp-novo | `packages/schema` | 296L; Fixtures draft-07 testando validação condicional if/then/else, branches isolados, schemas booleanos e independência em allOf e ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/infinite-loop-detection.json` | teste | omp-novo | `packages/schema` | 36L; Fixture draft-07 garantindo que avaliar o mesmo $ref duas vezes na mesma instância (via properties e additionalProperties) não ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/items.json` | teste | omp-novo | `packages/schema` | 282L; Fixtures draft-07 testando items como schema único, tupla de schemas, booleanos, subitems aninhados e pseudo-arrays JS. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/maxItems.json` | teste | omp-novo | `packages/schema` | 44L; Fixture draft-07 testando maxItems com inteiro e decimal exato, ignorando não-arrays. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/maxLength.json` | teste | omp-novo | `packages/schema` | 49L; Fixture draft-07 testando maxLength por contagem de codepoints (pares substitutos UTF-16) e ignorando não-strings. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/maxProperties.json` | teste | omp-novo | `packages/schema` | 70L; Fixture draft-07 testando maxProperties (inclusive 0 e decimal) e ignorando não-objetos. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/maximum.json` | teste | omp-novo | `packages/schema` | 54L; Fixture draft-07 testando limite inclusivo maximum e ignorando não-números. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/minItems.json` | teste | omp-novo | `packages/schema` | 44L; Fixture draft-07 testando minItems com inteiro e decimal exato, ignorando não-arrays. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/minLength.json` | teste | omp-novo | `packages/schema` | 49L; Fixture draft-07 testando minLength por contagem de codepoints e ignorando não-strings. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/minProperties.json` | teste | omp-novo | `packages/schema` | 64L; Fixture draft-07 testando minProperties e ignorando arrays, strings, null e booleanos. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/minimum.json` | teste | omp-novo | `packages/schema` | 69L; Fixture draft-07 testando limite inclusivo minimum com positivos e negativos. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/multipleOf.json` | teste | omp-novo | `packages/schema` | 87L; Fixture draft-07 testando multipleOf para inteiros, decimais pequenos (0.0001), 1e308 com risco de overflow e 1e-8. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/not.json` | teste | omp-novo | `packages/schema` | 259L; Fixtures draft-07 testando negação not com tipos simples, objetos, schema vazio, booleanos e dupla negação. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/oneOf.json` | teste | omp-novo | `packages/schema` | 274L; Fixtures draft-07 testando oneOf (exatamente um subschema válido) com schemas base, booleanos, objetos complexos, required e an... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/optional/bignum.json` | teste | omp-novo | `packages/schema` | 93L; Fixture opcional draft-07 testando inteiros e floats de precisão arbitrária (além de 64 bits). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/optional/content.json` | teste | omp-novo | `packages/schema` | 77L; Fixture opcional draft-07 testando validação de contentMediaType (application/json) e contentEncoding (base64). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/optional/cross-draft.json` | teste | omp-novo | `packages/schema` | 25L; Fixture opcional draft-07 testando $ref apontando para schema draft 2019-09 (dependentRequired). |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/optional/ecmascript-regex.json` | teste | omp-novo | `packages/schema` | 552L; Fixture opcional draft-07 testando semântica ECMA-262 para regex em pattern e patternProperties ($, \\d, \\w, \\s, escapes \\c ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/optional/float-overflow.json` | teste | omp-novo | `packages/schema` | 13L; Fixture opcional draft-07 testando multipleOf=0.5 para 1e308 sem overflow de ponto flutuante. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/optional/id.json` | teste | omp-novo | `packages/schema` | 114L; Fixture opcional draft-07 garantindo que $id dentro de valores literais (enum/const) não seja registrado como identificador de ... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/optional/non-bmp-regex.json` | teste | omp-novo | `packages/schema` | 82L; Fixture opcional draft-07 testando caracteres fora do BMP (pares substitutos UTF-16) em pattern e patternProperties. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/optional/unknownKeyword.json` | teste | omp-novo | `packages/schema` | 56L; Fixture opcional draft-07 garantindo que $id dentro de keywords desconhecidas não seja tratado como identificador de schema. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/pattern.json` | teste | omp-novo | `packages/schema` | 59L; Fixture draft-07 testando regex não-ancorada de pattern e ignorância de valores não-string. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/patternProperties.json` | teste | omp-novo | `packages/schema` | 171L; Fixtures draft-07 testando patternProperties simultâneos, sensibilidade a maiúsculas, schemas booleanos e valores null. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/properties.json` | teste | omp-novo | `packages/schema` | 236L; Fixtures draft-07 testando properties, interação com patternProperties/additionalProperties, escapes e nomes de propriedades do... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/propertyNames.json` | teste | omp-novo | `packages/schema` | 164L; Fixtures draft-07 testando propertyNames com maxLength, pattern, booleanos, const e enum. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/ref.json` | teste | omp-novo | `packages/schema` | 1043L; Fixtures draft-07 (parte 1) testando $ref com JSON Pointer, escapes (~0/~1/%25/%22), sobrescrita de keywords irmãs, âncoras, re... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/refRemote.json` | teste | omp-novo | `packages/schema` | 257L; Fixtures draft-07 testando resolução de $ref remoto (http://localhost:1234/...), fragmentos e mudança de base URI via $id. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/required.json` | teste | omp-novo | `packages/schema` | 161L; Fixtures draft-07 testando required com strings escapadas e nomes reservados de Object.prototype (__proto__, toString, construc... |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/type.json` | teste | omp-novo | `packages/schema` | 474L; Fixtures draft-07 testando validação de type para integer, number, string, object, array, boolean, null e listas de tipos. |
+| `packages/omptype/test/fixtures/json-schema-test-suite/tests/draft7/uniqueItems.json` | teste | omp-novo | `packages/schema` | 389L; Fixture oficial do JSON-Schema-Test-Suite (draft7) cobrindo validacao de uniqueItems com tipos heterogeneos, tuplas e additiona... |
+| `packages/omptype/test/fixtures/meta-schemas/README.md` | teste | omp-novo | `packages/schema` | 10L; Documentacao de origem e licenca dos meta-schemas JSON Schema oficiais (draft-07 e draft2020-12). |
+| `packages/omptype/test/fixtures/meta-schemas/draft-07-schema.json` | teste | omp-novo | `packages/schema` | 172L; Fixture oficial do meta-schema JSON Schema draft-07 usada pelos testes de conformidade. |
+| `packages/omptype/test/fixtures/meta-schemas/draft2020-12-meta-applicator.json` | teste | omp-novo | `packages/schema` | 45L; Fixture oficial do vocabulario applicator do JSON Schema draft 2020-12. |
+| `packages/omptype/test/fixtures/meta-schemas/draft2020-12-meta-content.json` | teste | omp-novo | `packages/schema` | 14L; Fixture oficial do vocabulario content do JSON Schema draft 2020-12. |
+| `packages/omptype/test/fixtures/meta-schemas/draft2020-12-meta-core.json` | teste | omp-novo | `packages/schema` | 48L; Fixture oficial do vocabulario core do JSON Schema draft 2020-12. |
+| `packages/omptype/test/fixtures/meta-schemas/draft2020-12-meta-format-annotation.json` | teste | omp-novo | `packages/schema` | 11L; Fixture oficial do vocabulario format-annotation do JSON Schema draft 2020-12. |
+| `packages/omptype/test/fixtures/meta-schemas/draft2020-12-meta-meta-data.json` | teste | omp-novo | `packages/schema` | 34L; Fixture oficial do vocabulario meta-data do JSON Schema draft 2020-12. |
+| `packages/omptype/test/fixtures/meta-schemas/draft2020-12-meta-unevaluated.json` | teste | omp-novo | `packages/schema` | 12L; Fixture oficial do vocabulario unevaluated do JSON Schema draft 2020-12. |
+| `packages/omptype/test/fixtures/meta-schemas/draft2020-12-meta-validation.json` | teste | omp-novo | `packages/schema` | 95L; Fixture oficial do vocabulario validation do JSON Schema draft 2020-12. |
+| `packages/omptype/test/fixtures/meta-schemas/draft2020-12-schema.json` | teste | omp-novo | `packages/schema` | 58L; Fixture oficial do meta-schema raiz do JSON Schema draft 2020-12. |
+| `packages/omptype/test/from-json-schema.test.ts` | teste | omp-novo | `packages/schema` | 196L; Testa fromJsonSchema para resolucao de $ref com escapes URI/JSON-Pointer, schemas remotos e recursivos, formatos customizados, ... |
+| `packages/omptype/test/infer.test.ts` | teste | omp-novo | `packages/schema` | 90L; Testes de tipo em tempo de compilacao verificando inferencia de entrada e saida (InferDef, InferDefIn) para strings DSL, litera... |
+| `packages/omptype/test/json-schema-pattern.test.ts` | teste | omp-novo | `packages/schema` | 81L; Testa o compilador fast-path compileSimplePattern verificando paridade exata contra RegExp com flag u em padroes ancorados, esc... |
+| `packages/omptype/test/json-schema-suite.test.ts` | teste | omp-novo | `packages/schema` | 94L; Executa a suíte JSON-Schema-Test-Suite (drafts 2020-12 e 7) comparando interpretador, validador JIT gerado e coletor de erros S... |
+| `packages/omptype/test/json-schema.test.ts` | teste | omp-novo | `packages/schema` | 162L; Testa irToJsonSchema convertendo IR do omptype para JSON Schema (bounds, enum tipado, defaults/fabricas fora de required, addit... |
+| `packages/omptype/test/type.test.ts` | teste | omp-novo | `packages/schema` | 523L; Testa o nucleo de validacao e morphs do omptype: paridade interpretador/JIT apos 3 chamadas, metodos ArkType (.or, .and, .narro... |
+| `packages/omptype/test/typebox.test.ts` | teste | omp-novo | `packages/schema` | 237L; Testa o adapter TypeBox do omptype: construtores, limites numericos em notacao cientifica e multipleOf, transformacoes Partial/... |
+| `packages/omptype/test/zod.test.ts` | teste | omp-novo | `packages/schema` | 252L; Testa o adapter compativel com Zod do omptype: objetos com strip/strict/passthrough, refine/superRefine/transform/catch, trim c... |
+| `packages/omptype/tsconfig.json` | config_ou_dado | omp-novo | `packages/schema` | 5L; Configuração TypeScript base do pacote omptype estendendo tsconfig.workspace.json. |
+| `packages/omptype/tsconfig.publish.js.json` | config_ou_dado | omp-novo | `packages/schema` | 15L; Configuração TypeScript de publicação para emissão de JS em dist/js sem checagem de tipos. |
+| `packages/omptype/tsconfig.publish.json` | config_ou_dado | omp-novo | `packages/schema` | 16L; Configuração TypeScript de publicação para emissão apenas de arquivos .d.ts em dist/types. |

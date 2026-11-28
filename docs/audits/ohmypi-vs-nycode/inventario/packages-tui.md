@@ -1,227 +1,238 @@
 # Inventario: packages-tui
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `packages/tui/bench/engine.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/examples/debug-demo.tsx` | codigo | omp-novo | `packages/tui` |  |
-| `packages/tui/scripts/gen-glyphs.ts` | codigo | omp-novo | `packages/tui` |  |
-| `packages/tui/scripts/truetype.ts` | codigo | omp-novo | `packages/tui` |  |
-| `packages/tui/src/children.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/debug/server.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/diag/loop-sampler.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/diag/loop-watchdog.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/dispatch.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/caps/color.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/caps/detect.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/caps/env.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/caps/identity.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/contract.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/desktop-notify.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/glyphs.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/images/anchor.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/images/diacritics.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/images/fit.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/images/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/driver/images/iterm.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/images/kitty.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/images/sixel.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/images/store.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/driver/input/clock.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/input/decoder.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/input/keys.ts` | codigo | omp-novo | `packages/tui/src/keys.ts` |  |
-| `packages/tui/src/driver/input/mouse.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/input/replies.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/input/tokenizer.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/input/tsp.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/input/win32.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/io.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/mux/detect.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/mux/notify.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/mux/tmux.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/notify.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/output/ansi.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/output/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/driver/output/shift.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/output/sink.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/output/writer.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/process/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/driver/process/terminal-input.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/driver/session.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/element.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/events.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/flow.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/host.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/index.ts` | codigo | pi0.9.4-modificado | `packages/tui/src/index.ts` | mesmo caminho; existe no Pi 073b0ba; +9/-23 |
-| `packages/tui/src/jsx-dev-runtime.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/jsx-runtime.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/native/apc.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/native/backend.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/native/blobs.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/native/connection.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/native/icons.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/native/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/native/measure.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/native/reconcile.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/native/screens.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/node.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/reactive.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/surface.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/backend.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/term/keymap.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/paint.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/agent.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/ansi.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/badge.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/button.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/buttons.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/card.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/chart.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/checklist.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/code.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/diff.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/doc.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/editor.ts` | codigo | omp-novo | `packages/tui/src/components/editor.ts` |  |
-| `packages/tui/src/term/painters/elapsed.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/icon.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/image.ts` | codigo | omp-novo | `packages/tui/src/components/image.ts` |  |
-| `packages/tui/src/term/painters/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/term/painters/input.ts` | codigo | omp-novo | `packages/tui/src/components/input.ts` |  |
-| `packages/tui/src/term/painters/json.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/kbd.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/kv.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/layout.ts` | codigo | omp-novo | `packages/tui/src/layout.ts` |  |
-| `packages/tui/src/term/painters/list.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/md.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/menu.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/meter.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/overlay.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/picker.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/prefs-model.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/prefs.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/progress.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/rate.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/section.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/seg.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/shimmer.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/spinner.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/state.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/status.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/table.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/tabs.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/toast.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/tool.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/tree.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/painters/web.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/render.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/widgets.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/widgets/button.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/widgets/buttons.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/widgets/editor.ts` | codigo | omp-novo | `packages/tui/src/components/editor.ts` |  |
-| `packages/tui/src/term/widgets/input.ts` | codigo | omp-novo | `packages/tui/src/components/input.ts` |  |
-| `packages/tui/src/term/widgets/menu.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/widgets/picker.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/widgets/prefs.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/term/widgets/tabs.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/testing/cells.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/testing/corpus.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/testing/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/testing/memory-terminal.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/testing/process-driver.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/testing/terminal.ts` | codigo | omp-novo | `packages/tui/src/terminal.ts` |  |
-| `packages/tui/src/text/ansi.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/diff.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/highlight.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/lang.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/latex-block.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/latex.ts` | codigo | omp-novo | `packages/tui/src/latex.ts` |  |
-| `packages/tui/src/text/latex/inline.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/latex/parse.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/latex/symbols.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/text/markdown/inline.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/lexer.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/links.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/look.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/mermaid.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/render.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/stream.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/styles.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/markdown/table.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/osc.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/sanitize.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/shimmer.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/styled-spans.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/text/width.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/theme/color.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/theme/contract.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/theme/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` |  |
-| `packages/tui/src/theme/loader.ts` | codigo | omp-novo | `packages/tui/src/components/loader.ts` |  |
-| `packages/tui/src/theme/plain.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/theme/runtime.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/theme/schema.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/theme/symbols.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/theme/theme.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/src/types.ts` | codigo | omp-novo | `packages/tui/src` |  |
-| `packages/tui/test/chrome/chrome.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/derived-node.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/diag/loop-watchdog-wiring.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/diag/loop-watchdog.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-images/encoders.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-images/store.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-io/caps.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-io/decoder.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-io/fake-clock.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-io/multiplexer.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-io/terminal-input.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-io/tokenizer.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-output/driver.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-output/elastic-slots.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-output/multicell.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-output/resize-burst.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-output/resize.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-output/sink.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-output/vt.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-output/writer.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-session/desktop-notify.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-session/notify.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/driver-session/session.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/editor/field.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/images-paint/image-painter.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/images-paint/primitives.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/layout.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/markdown/corpus.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/markdown/painter.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/markdown/render.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/markdown/stream.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/markdown/text-sizing.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/native/apc.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/native/backend.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/native/fake-tern.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/native/host-optimistic.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/native/screens.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/status/status.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/term/backend.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/term/elastic-slots.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/term/generic-painters.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/term/host-mouse.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/term/keymap.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/term/picker-window.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/testing/terminal.test.tsx` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/corpus-text.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/diff.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/highlight.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/latex-block.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/latex.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/sanitize.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/styled-spans.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/width.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/text/wrap.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/theme/color.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/theme/corpus.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/theme/loader.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/theme/runtime.test.ts` | teste | omp-novo | `packages/tui/test` |  |
-| `packages/tui/test/theme/style.test.ts` | teste | omp-novo | `packages/tui/test` |  |
+| `packages/tui/.gitignore` | codigo | omp-novo | `packages/tui` | 1L; Ignora artefatos de corpus de testes em `test/corpus/`. |
+| `packages/tui/CHANGELOG.md` | doc | omp-novo | `packages/tui/CHANGELOG.md` | mesmo caminho; Pi 073b0ba; 43L; Histórico de versões do `@oh-my-pi/pi-tui` (19.2.0 e 19.2.1), documentando arquitetura TSP, eventos `change` de imagens anotada... |
+| `packages/tui/README.md` | doc | pi0.9.4-modificado | `packages/tui/README.md` | mesmo caminho; Pi 073b0ba; +41/-257; 54L; Visão geral da arquitetura TSP-first do `pi-tui`: sinais síncronos, JSX sem compilador, regiões de superfície (`main`, `dock`, ... |
+| `packages/tui/bench/engine.tsx` | teste | omp-novo | `packages/tui/test` | 214L; Benchmark do motor TUI medindo tempo de importação, renderização fria de Markdown, streaming no md painter, primeiro frame e cu... |
+| `packages/tui/examples/debug-demo.tsx` | codigo | omp-novo | `packages/tui` | 77L; Aplicação mínima em JSX (`input` + `list`) usada para exercitar a ferramenta e o servidor de depuração `OMP_TUI_DEBUG`. |
+| `packages/tui/package.json` | config_ou_dado | pi0.9.4-modificado | `packages/tui/package.json` | mesmo caminho; Pi 073b0ba; +51/-35; 66L; Manifesto do pacote `@oh-my-pi/pi-tui`, scripts (`check`, `test`, `gen:glyphs`, `bench`) e dependências (`pi-natives`, `pi-util... |
+| `packages/tui/scripts/gen-glyphs.ts` | codigo | omp-novo | `packages/tui` | 149L; Script de build que varre codepoints PUA usados em `tui` e `coding-agent`, baixa uma Nerd Font Mono fixa em cache, extrai e val... |
+| `packages/tui/scripts/truetype.ts` | codigo | omp-novo | `packages/tui` | 512L; Leitor e codificador TrueType minimalista (build-time) que lê tabelas `cmap`/`loca`/`glyf`/`hmtx`, achata glifos compostos e se... |
+| `packages/tui/src/children.ts` | codigo | omp-novo | `packages/tui/src` | 83L; Resolve filhos JSX da árvore de UI: achata arrays, converte strings/números em nós `text` e encapsula funções filhas em compute... |
+| `packages/tui/src/debug/server.ts` | codigo | omp-novo | `packages/tui/src` | 575L; Servidor NDJSON sobre IPC (`OMP_TUI_DEBUG`) que intercepta frames do driver e TSP frames nativos, expõe árvore/valores/texto do... |
+| `packages/tui/src/diag/loop-sampler.ts` | codigo | omp-novo | `packages/tui/src` | 216L; Amostrador de pilha via `bun:jsc` (`startSamplingProfiler` a cada 10 ms) que resume janelas de bloqueio do event loop identific... |
+| `packages/tui/src/diag/loop-watchdog.ts` | codigo | omp-novo | `packages/tui/src` | 202L; Monitor sempre ativo de atraso do event loop que diferencia suspensão do sistema de travamento por CPU via `process.cpuUsage()`... |
+| `packages/tui/src/dispatch.ts` | codigo | omp-novo | `packages/tui/src` | 91L; Utilitários de despacho compartilhados pelos backends nativo e terminal para localizar caminhos na árvore de `UiNode` e propaga... |
+| `packages/tui/src/driver/caps/color.ts` | codigo | omp-novo | `packages/tui/src` | 37L; Parser de cores X11 (`rgb:R/G/B`, `rgba:`, `#RRGGBB`) reportadas por OSC 10/11 e cálculo de luminância Rec. 709 para detectar f... |
+| `packages/tui/src/driver/caps/detect.ts` | codigo | omp-novo | `packages/tui/src` | 53L; Consolida identidade e capacidades iniciais do terminal a partir de variáveis de ambiente, WSL/ConPTY, consulta de nome de clie... |
+| `packages/tui/src/driver/caps/env.ts` | codigo | omp-novo | `packages/tui/src` | 178L; Deriva capacidades padrão (DEC 2026, OSC 8, protocolo de imagens, OSC 66, truecolor, `COLORFGBG`, tratamento de `0x08` em Windo... |
+| `packages/tui/src/driver/caps/identity.ts` | codigo | omp-novo | `packages/tui/src` | 171L; Define perfis estáticos por emulador (`kitty`, `ghostty`, `wezterm`, `iterm2`, `warp`, `rio`, `tern`, etc.) com suporte a proto... |
+| `packages/tui/src/driver/contract.ts` | codigo | omp-novo | `packages/tui/src` | 118L; Define a interface contratual do driver de terminal (`TerminalDriver`, `FramePlan`, `InputEvent`, `TerminalCapabilities`, `Fram... |
+| `packages/tui/src/driver/desktop-notify.ts` | codigo | omp-novo | `packages/tui/src` | 123L; Entrega notificações desktop em sessões Linux via `notify-send` ou `gdbus` (org.freedesktop.Notifications) de forma desanexada ... |
+| `packages/tui/src/driver/glyph-bundle.json` | config_ou_dado | omp-novo | `packages/tui/src` | 866L; Primeira metade do bundle JSON gerado contendo contornos TrueType em base64 (`glyf`) de ícones Nerd Font Mono para o Glyph Prot... |
+| `packages/tui/src/driver/glyphs.ts` | codigo | omp-novo | `packages/tui/src` | 75L; Cliente do Glyph Protocol (`APC ESC_25a1`): consulta suporte (`s`), registra em lote os contornos do bundle (`r`), envia consul... |
+| `packages/tui/src/driver/images/anchor.ts` | codigo | omp-novo | `packages/tui/src` | 26L; Gera linhas reservadas (`ESC[0m`) e posiciona sequências de imagem de desenho único (SIXEL, iTerm2) na última linha com save/re... |
+| `packages/tui/src/driver/images/diacritics.ts` | codigo | omp-novo | `packages/tui/src` | 29L; Tabela oficial de diacríticos combinantes usada pelos placeholders Unicode do protocolo gráfico do Kitty para codificar índices... |
+| `packages/tui/src/driver/images/fit.ts` | codigo | omp-novo | `packages/tui/src` | 65L; Calcula dimensões em células (`columns`×`rows`) e pixels escalados preservando proporção sob limites máximos opcionais de largu... |
+| `packages/tui/src/driver/images/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 6L; Reexporta utilitários de ancoragem, ajuste geométrico, encoders iTerm2/Kitty/SIXEL e o store `TerminalImages`. |
+| `packages/tui/src/driver/images/iterm.ts` | codigo | omp-novo | `packages/tui/src` | 20L; Codifica imagens inline no protocolo OSC 1337 do iTerm2 com `width` e `height` explícitos em células e passthrough de multiplex... |
+| `packages/tui/src/driver/images/kitty.ts` | codigo | omp-novo | `packages/tui/src` | 247L; Codificadores do protocolo gráfico Kitty: transmissão em blocos de 4 KiB, colocações diretas fatiadas por linha, colocações vir... |
+| `packages/tui/src/driver/images/sixel.ts` | codigo | omp-novo | `packages/tui/src` | 30L; Define o tipo de encoder SIXEL assíncrono e calcula a cor de fundo (OSC 11 ou preto/branco por `dark`) usada na mistura de tran... |
+| `packages/tui/src/driver/images/store.ts` | codigo | omp-novo | `packages/tui/src` | 501L; Store reativo de imagens inline por terminal: gerencia contagem de referências, orçamento de imagens ativas com fallback estáve... |
+| `packages/tui/src/driver/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 430L; Compõe ProcessInput e FrameWriter em um ProcessTerminalDriver unificado com controle de backlog, StallWatchdog, tratamento de d... |
+| `packages/tui/src/driver/input/clock.ts` | codigo | omp-novo | `packages/tui/src` | 14L; Interface de relógio e agendador injetável (`now`, `schedule`) para tornar determinísticos os timeouts do pipeline de entrada e... |
+| `packages/tui/src/driver/input/decoder.ts` | codigo | omp-novo | `packages/tui/src` | 185L; Orquestra InputTokenizer, Win32RecordDecoder (via tokenizer de relay), parseTspMessage, decodeMouse, parseReply e decodeKey par... |
+| `packages/tui/src/driver/input/keys.ts` | codigo | omp-novo | `packages/tui/src/keys.ts` | 430L; Decodifica sequências completas de teclado (legacy, Alt/ESC, SS3, xterm CSI/modifyOtherKeys, rxvt, console Linux e Kitty CSI u)... |
+| `packages/tui/src/driver/input/mouse.ts` | codigo | omp-novo | `packages/tui/src` | 38L; Decodifica relatórios de mouse SGR (`CSI < b;x;y M\|m`) e X10 legado (`CSI M b x y`) em `MouseEvent` com coordenadas 0-based. |
+| `packages/tui/src/driver/input/replies.ts` | codigo | omp-novo | `packages/tui/src` | 179L; Classifica sequências CSI/OSC/DCS/APC/PM/SOS em respostas tipadas de terminal (DA1/DA2, kittyKeyboard, DECRPM, colorScheme 997,... |
+| `packages/tui/src/driver/input/tokenizer.ts` | codigo | omp-novo | `packages/tui/src` | 815L; Tokenizador de streaming de stdin (parte 1): remonta escapes fragmentados, gerencia timeouts diferenciados, abandono/dormência ... |
+| `packages/tui/src/driver/input/tsp.ts` | codigo | omp-novo | `packages/tui/src` | 47L; Define prefixos APC/OSC 877 do Tern Surface Protocol e faz o parsing de verb, parâmetros `k=v` e corpo de mensagens TSP recebid... |
+| `packages/tui/src/driver/input/win32.ts` | codigo | omp-novo | `packages/tui/src` | 134L; Decodifica registros `win32-input-mode` (`CSI Vk;Sc;Uc;Kd;Cs;Rc _`) em bytes/sequências VT preservando acordes (Shift/Ctrl+Ente... |
+| `packages/tui/src/driver/io.ts` | codigo | omp-novo | `packages/tui/src` | 97L; Define os contratos de fronteira entre a metade de entrada (`driver/process`) e o escritor de frames (`driver/output`), incluin... |
+| `packages/tui/src/driver/mux/detect.ts` | codigo | omp-novo | `packages/tui/src` | 116L; Detecta 7 multiplexadores/hosts (`herdr`, `tmux`, `screen`, `zellij`, `cmux`, `wmux`, `orca`) por marcadores de sessão e fallba... |
+| `packages/tui/src/driver/mux/notify.ts` | codigo | omp-novo | `packages/tui/src` | 109L; Roteia notificações através de multiplexadores do mais interno ao externo: CLIs `herdr` e `cmux`, passthrough + BEL no `tmux` e... |
+| `packages/tui/src/driver/mux/tmux.ts` | codigo | omp-novo | `packages/tui/src` | 141L; Consulta o servidor tmux para identificar emulador cliente, suporte a passthrough/SIXEL/TSP (`@tern-tsp`), alterna `allow-set-t... |
+| `packages/tui/src/driver/notify.ts` | codigo | omp-novo | `packages/tui/src` | 181L; Formata e envia notificações de desktop (BEL + D-Bus fallback, OSC 9, e OSC 99 estruturado com chunking UTF-8 e base64) respeit... |
+| `packages/tui/src/driver/output/ansi.ts` | codigo | omp-novo | `packages/tui/src` | 109L; Define constantes ANSI/DEC, normalização de linhas (tabs, truncamento, fechamento de SGR e OSC 8), desenho respeitando células ... |
+| `packages/tui/src/driver/output/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 19L; Arquivo barrel que reexporta utilitários ANSI, planejador de shift, sink de stream e FrameWriter. |
+| `packages/tui/src/driver/output/shift.ts` | codigo | omp-novo | `packages/tui/src` | 97L; Planeja movimentos de linhas via LCS (`delete`, `insert`, `clear`, `write`) para terminais sem DEC 2026 evitando duplicação vis... |
+| `packages/tui/src/driver/output/sink.ts` | codigo | omp-novo | `packages/tui/src` | 169L; Implementa OutputSink/StreamSink sobre TTY com fragmentação line-bounded para ConPTY, write log com redação de OSC 52 e StallWa... |
+| `packages/tui/src/driver/output/writer.ts` | codigo | omp-novo | `packages/tui/src` | 957L; Escritor de frames (parte 1): gerencia canais de histórico append-only e viewport mutável inline/alternativo, diff de linhas co... |
+| `packages/tui/src/driver/process/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 8L; Barrel que exporta `createProcessInput`, `ProcessTerminalInput` e tipos de stream/processo. |
+| `packages/tui/src/driver/process/terminal-input.ts` | codigo | omp-novo | `packages/tui/src` | 1065L; Metade de entrada do driver (parte 1): raw mode, console VT nativo do Windows, sondas iniciais protegidas por guarda visual, dr... |
+| `packages/tui/src/driver/session.ts` | codigo | omp-novo | `packages/tui/src` | 114L; Gerencia o proprietário ativo do terminal no processo, registro de restauração emergencial no postmortem, consulta de identidad... |
+| `packages/tui/src/element.ts` | codigo | omp-novo | `packages/tui/src` | 35L; Fábrica JSX runtime sem compilação: tags lowercase constroem `UiNode` e componentes funcionais rodam uma única vez dentro de `u... |
+| `packages/tui/src/events.ts` | codigo | omp-novo | `packages/tui/src` | 109L; Define o modelo unificado de eventos de UI semânticos (`UiEvent`), edições primitivas (`TextEdit`), teclas (`KeyEvent` com `aft... |
+| `packages/tui/src/flow.ts` | codigo | omp-novo | `packages/tui/src` | 217L; Primitivas reativas de controle de fluxo JSX (`Show`, `Switch`/`Match`, `For` por identidade com pool, `Index` por posição e `D... |
+| `packages/tui/src/host.ts` | codigo | omp-novo | `packages/tui/src` | 519L; Inicializa driver, LoopWatchdog, debug server opcional e negociação TSP com start otimista (`TspConnection.assume`) em Tern e f... |
+| `packages/tui/src/index.ts` | codigo | pi0.9.4-modificado | `packages/tui/src/index.ts` | mesmo caminho; Pi 073b0ba; +9/-23; 9L; Ponto de entrada público do pacote `@oh-my-pi/pi-tui` reexportando o runtime JSX, fluxo, nós, reatividade, superfície e host. |
+| `packages/tui/src/jsx-dev-runtime.ts` | codigo | omp-novo | `packages/tui/src` | 11L; Entrypoint de desenvolvimento para JSX automático delegando `jsxDEV` para `jsx`. |
+| `packages/tui/src/jsx-runtime.ts` | codigo | omp-novo | `packages/tui/src` | 6L; Entrypoint padrão do runtime automático JSX (`@jsxImportSource`). |
+| `packages/tui/src/native/apc.ts` | codigo | omp-novo | `packages/tui/src` | 280L; Implementa framing APC do TSP com chunking UTF-8 seguro contra limites de bytes e falsos parâmetros (`c=`/`m=1`), remontagem em... |
+| `packages/tui/src/native/backend.ts` | codigo | omp-novo | `packages/tui/src` | 549L; Backend nativo TSP: gerencia abertura/adoção/fechamento de superfícies, envio em lotes com controle de fluxo por créditos e res... |
+| `packages/tui/src/native/blobs.ts` | codigo | omp-novo | `packages/tui/src` | 34L; Registro em memória de blobs endereçados por SHA-256 hex compartilhado entre backends nativo e terminal para imagens e decorações. |
+| `packages/tui/src/native/connection.ts` | codigo | omp-novo | `packages/tui/src` | 431L; Gerencia a conexão TSP: handshake `hello` (normal e otimista `assume`), sinais reativos de ambiente (`cols`, `cell`, `dark`, `r... |
+| `packages/tui/src/native/icons.ts` | codigo | omp-novo | `packages/tui/src` | 183L; Normaliza glifos PUA (Nerd Font) em props/spans TSP separando-os em spans com classe `icon` e removendo espaços de padding adja... |
+| `packages/tui/src/native/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 6L; Barrel que reexporta os módulos do backend nativo TSP. |
+| `packages/tui/src/native/measure.ts` | codigo | omp-novo | `packages/tui/src` | 197L; Estima um limite inferior de linhas terminais ocupadas por uma subárvore TSP para decidir se sheets centralizados devem preench... |
+| `packages/tui/src/native/reconcile.ts` | codigo | omp-novo | `packages/tui/src` | 1029L; Reconciliador TSP (parte 1): mantém árvore de registros reativos por nó/caminho, faz hoisting de `overlay`/`picker` para `layer... |
+| `packages/tui/src/native/screens.ts` | codigo | omp-novo | `packages/tui/src` | 233L; Gerencia a superfície inline nativa e superfícies screen dedicadas para overlays de página, promovendo folhas bare (picker/pref... |
+| `packages/tui/src/node.ts` | codigo | omp-novo | `packages/tui/src` | 301L; Define o nó retido UiNode compartilhado pelos backends nativo e terminal, com props/children cacheados por identidade, seleção ... |
+| `packages/tui/src/reactive.ts` | codigo | omp-novo | `packages/tui/src` | 439L; Sistema reativo síncrono glitch-free com estados CLEAN/CHECK/DIRTY, ownership hierárquico, contexto, batching e suporte a epoch... |
+| `packages/tui/src/surface.ts` | codigo | omp-novo | `packages/tui/src` | 77L; Define Surface (regiões main, dock, layer e foco) e os marcadores reativos settle/isSettled para congelar blocos do transcript. |
+| `packages/tui/src/term/backend.ts` | codigo | omp-novo | `packages/tui/src` | 1110L; Primeira parte do backend terminal in-process: composição de camadas/overlays, verificação de fronteira comprometida e de cabeç... |
+| `packages/tui/src/term/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 5L; Barrel file que reexporta backend, keymap, paint, render e widgets do módulo term. |
+| `packages/tui/src/term/keymap.ts` | codigo | omp-novo | `packages/tui/src` | 101L; Mapa de teclas rebindável compartilhado por todos os widgets de terminal (navegação de listas e ações de edição). |
+| `packages/tui/src/term/paint.ts` | codigo | omp-novo | `packages/tui/src` | 361L; Contrato e cache reativo por (nó, largura x altura) dos painters, incluindo resolução por role/prefixo, hits de mouse, clock de... |
+| `packages/tui/src/term/painters/agent.ts` | codigo | omp-novo | `packages/tui/src` | 75L; Painter de subagente exibindo glifo/spinner de status, nome, tipo, badges, tarefa, ferramenta ativa ou estatísticas, aviso de r... |
+| `packages/tui/src/term/painters/ansi.ts` | codigo | omp-novo | `packages/tui/src` | 228L; Painter de saída ANSI bruta com emulador de tela de linha (SGR, OSC 8, \r, \b, CSI K/J e cursores) e clamping colapsado com fol... |
+| `packages/tui/src/term/painters/badge.ts` | codigo | omp-novo | `packages/tui/src` | 15L; Painter de badge em colchetes com tom configurável e helper compartilhado lineBlock. |
+| `packages/tui/src/term/painters/button.ts` | codigo | omp-novo | `packages/tui/src` | 77L; Painter de botão com ícone, texto, keycaps, variantes de cor, estado focado/ativo e hit de clique. |
+| `packages/tui/src/term/painters/buttons.ts` | codigo | omp-novo | `packages/tui/src` | 37L; Painter de barra horizontal de botões/menus com destaque do botão focado por teclado e hits individuais. |
+| `packages/tui/src/term/painters/card.ts` | codigo | omp-novo | `packages/tui/src` | 85L; Painter de card com borda arredondada colorida por tom/status, variante bare e helpers de disclosure colapsável. |
+| `packages/tui/src/term/painters/chart.ts` | codigo | omp-novo | `packages/tui/src` | 237L; Painter de gráficos em terminal (sparkline, barras verticais em oitavos com marks e heatmap com eixos) e helpers de bucketização. |
+| `packages/tui/src/term/painters/checklist.ts` | codigo | omp-novo | `packages/tui/src` | 185L; Painter de checklist em fases com modos full (numeração romana e ramos ├─/└─), hud e reminder. |
+| `packages/tui/src/term/painters/code.ts` | codigo | omp-novo | `packages/tui/src` | 56L; Painter de código com syntax highlight, numeração/salto de linhas, marcadores por linha e opção de wrap sob a calha. |
+| `packages/tui/src/term/painters/diff.ts` | codigo | omp-novo | `packages/tui/src` | 29L; Painter de diff aceitando hunks estruturados ou texto unified/compacto, com destaque de sintaxe e truncamento ou wrap por largura. |
+| `packages/tui/src/term/painters/doc.ts` | codigo | omp-novo | `packages/tui/src` | 25L; Painter de documento Markdown acompanhado de citações e notas de comentários inline abaixo do texto. |
+| `packages/tui/src/term/painters/editor.ts` | codigo | omp-novo | `packages/tui/src/components/editor.ts` | 638L; Painter de editor/campo de texto com quebra por palavra/grafema, caret/seleção, ranges decorativos animados, labels inline, gho... |
+| `packages/tui/src/term/painters/elapsed.ts` | codigo | omp-novo | `packages/tui/src` | 51L; Painter de duração contínua ancorando o tempo inicial por nó no relógio do terminal até ser parado. |
+| `packages/tui/src/term/painters/icon.ts` | codigo | omp-novo | `packages/tui/src` | 11L; Painter de ícone nomeado resolvido pelo preset de símbolos do tema. |
+| `packages/tui/src/term/painters/image.ts` | codigo | omp-novo | `packages/tui/src/components/image.ts` | 110L; Painter de imagem inline via protocolo do terminal (blobs em cache base64, escala por célula e fallback textual alt). |
+| `packages/tui/src/term/painters/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 45L; Registra todos os painters e widgets embutidos via imports de side-effect. |
+| `packages/tui/src/term/painters/input.ts` | codigo | omp-novo | `packages/tui/src/components/input.ts` | 23L; Painter de input de linha única reutilizando paintField sem wrap e deslizando horizontalmente ao redor do caret. |
+| `packages/tui/src/term/painters/json.ts` | codigo | omp-novo | `packages/tui/src` | 88L; Painter de JSON em árvore expansível até open níveis, dobrando níveis mais profundos em prévia inline colorida. |
+| `packages/tui/src/term/painters/kbd.ts` | codigo | omp-novo | `packages/tui/src` | 10L; Painter de atalho de teclado formatado com + em estilo dim. |
+| `packages/tui/src/term/painters/kv.ts` | codigo | omp-novo | `packages/tui/src` | 48L; Painter de pares chave/valor em layout de grade alinhada (com teto de 40% para chaves) ou inline separado por ·. |
+| `packages/tui/src/term/painters/layout.ts` | codigo | omp-novo | `packages/tui/src/layout.ts` | 229L; Painters estruturais (col, row flex horizontal, spacer, rule, text, canvas, rows) e utilitários stack/offsetBlock propagando st... |
+| `packages/tui/src/term/painters/list.ts` | codigo | omp-novo | `packages/tui/src` | 84L; Painters de item e list com seleção/marcador, hits por item, limite max com indicador de ocultos e estado vazio. |
+| `packages/tui/src/term/painters/md.ts` | codigo | omp-novo | `packages/tui/src` | 69L; Painter de Markdown com suporte a streaming especulativo, linhas estáveis (stable) e hits de mouse para esquemas de links rotea... |
+| `packages/tui/src/term/painters/menu.ts` | codigo | omp-novo | `packages/tui/src` | 89L; Painter de menu dropdown com botão gatilho, borda arredondada, separadores, check/radio, keycaps e hits interativos. |
+| `packages/tui/src/term/painters/meter.ts` | codigo | omp-novo | `packages/tui/src` | 80L; Painter de medidor (barra com partes empilhadas e marcas, anel ou blocos) com limiares warn/bad. |
+| `packages/tui/src/term/painters/overlay.ts` | codigo | omp-novo | `packages/tui/src` | 44L; Painter de sheet flutuante em borda arredondada com título, preenchimento até altura fixa e translação de cursor/hits dos filhos. |
+| `packages/tui/src/term/painters/picker.ts` | codigo | omp-novo | `packages/tui/src` | 491L; Painter e blocos reutilizáveis de picker (itens/grupos, janela de scroll, barra de rolagem, linhas column/inline, busca, rodapé... |
+| `packages/tui/src/term/painters/prefs-model.ts` | codigo | omp-novo | `packages/tui/src` | 210L; Modelo compartilhado da janela de preferências: planificação de seções/resultados de busca, runs, seleção ativa e formatação de... |
+| `packages/tui/src/term/painters/prefs.ts` | codigo | omp-novo | `packages/tui/src` | 819L; Primeira parte do painter de preferências: moldura, barra de abas adaptativa, lista responsiva com sidebar de seções, banner de... |
+| `packages/tui/src/term/painters/progress.ts` | codigo | omp-novo | `packages/tui/src` | 41L; Painter de barra de progresso determinada ou indeterminada animada pelo relógio do terminal. |
+| `packages/tui/src/term/painters/rate.ts` | codigo | omp-novo | `packages/tui/src` | 16L; Painter de taxa/throughput formatada com unidade por segundo. |
+| `packages/tui/src/term/painters/section.ts` | codigo | omp-novo | `packages/tui/src` | 29L; Painter de seção colapsável com indicador de dobra, duração e filhos indentados. |
+| `packages/tui/src/term/painters/seg.ts` | codigo | omp-novo | `packages/tui/src` | 43L; Painter de segmento de barra de status com ícone colorido e truncamento configurável (início ou fim). |
+| `packages/tui/src/term/painters/shimmer.ts` | codigo | omp-novo | `packages/tui/src` | 35L; Painter de texto com efeito shimmer animado (classic/kitt) a 20 Hz e fallback estático sob reduceMotion. |
+| `packages/tui/src/term/painters/spinner.ts` | codigo | omp-novo | `packages/tui/src` | 33L; Painter de spinner com estilos predefinidos ou do tema sincronizados pelo relógio do terminal. |
+| `packages/tui/src/term/painters/state.ts` | codigo | omp-novo | `packages/tui/src` | 15L; Helper nodeState para estado reativo por nó compartilhado entre painter e widget. |
+| `packages/tui/src/term/painters/status.ts` | codigo | omp-novo | `packages/tui/src` | 205L; Painter de barra de status esquerda/direita com encolhimento elástico prioritário de segmentos (min.w) antes de descarte por pr... |
+| `packages/tui/src/term/painters/table.ts` | codigo | omp-novo | `packages/tui/src` | 90L; Painter de tabela com ocultação automática de colunas de menor prioridade, redução gradual de larguras, truncamento direcional ... |
+| `packages/tui/src/term/painters/tabs.ts` | codigo | omp-novo | `packages/tui/src` | 145L; Painter de faixa de abas que encolhe abas mais distantes da ativa para versão curta antes de quebrar em múltiplas linhas, retor... |
+| `packages/tui/src/term/painters/toast.ts` | codigo | omp-novo | `packages/tui/src` | 30L; Painter de notificação toast de uma linha com subtítulo e botão de ação clicável alinhado à direita. |
+| `packages/tui/src/term/painters/tool.ts` | codigo | omp-novo | `packages/tui/src` | 72L; Painter genérico de ferramenta exibindo cabeçalho completo (status/spinner, alvo, meta, badges, nota, código de saída) em card ... |
+| `packages/tui/src/term/painters/tree.ts` | codigo | omp-novo | `packages/tui/src` | 37L; Painter de árvore hierárquica com conectores ├─/└─/│ e indicadores ▸/▾ de nós abertos/fechados. |
+| `packages/tui/src/term/painters/web.ts` | codigo | omp-novo | `packages/tui/src` | 12L; Painter de nó web exibindo placeholder textual ▣ título/URL no terminal. |
+| `packages/tui/src/term/render.ts` | codigo | omp-novo | `packages/tui/src` | 22L; Função renderBlock para renderização offline de árvores UiNode sem driver de terminal (testes e prévias). |
+| `packages/tui/src/term/widgets.ts` | codigo | omp-novo | `packages/tui/src` | 104L; Infraestrutura de widgets de entrada por kind/role emitindo eventos UI sem mutar estado da aplicação, com estado visual isolado... |
+| `packages/tui/src/term/widgets/button.ts` | codigo | omp-novo | `packages/tui/src` | 18L; Widget de teclado para button disparando evento action em Enter/Espaço quando habilitado. |
+| `packages/tui/src/term/widgets/buttons.ts` | codigo | omp-novo | `packages/tui/src` | 38L; Widget de grupo buttons movendo o foco interno com setas/Tab e acionando o botão focado com Enter/Espaço. |
+| `packages/tui/src/term/widgets/editor.ts` | codigo | omp-novo | `packages/tui/src/components/editor.ts` | 462L; Widget de edição de texto para editor/input com navegação por grafema/palavra/layout visual, seleção por Shift, kill ring com y... |
+| `packages/tui/src/term/widgets/input.ts` | codigo | omp-novo | `packages/tui/src/components/input.ts` | 8L; Registra o comportamento de fieldWidget para nós input de linha única. |
+| `packages/tui/src/term/widgets/menu.ts` | codigo | omp-novo | `packages/tui/src` | 73L; Widget de menu dropdown tratando abertura/fechamento, navegação circular, seleção por teclado e cliques no gatilho ou itens. |
+| `packages/tui/src/term/widgets/picker.ts` | codigo | omp-novo | `packages/tui/src` | 111L; Widget de picker traduzindo teclas de navegação, atalhos de ações (com aliases de cancel/confirm), roda do mouse, hover e cliqu... |
+| `packages/tui/src/term/widgets/prefs.ts` | codigo | omp-novo | `packages/tui/src` | 358L; Manipulador de entrada (teclado e mouse/wheel/drag) do widget nativo de preferências (prefs), emitindo intenções de seleção, al... |
+| `packages/tui/src/term/widgets/tabs.ts` | codigo | omp-novo | `packages/tui/src` | 37L; Manipulador de entrada do widget de abas (tabs) para navegação circular via setas e Tab/Shift+Tab, pulando abas marcadas como m... |
+| `packages/tui/src/testing/cells.ts` | codigo | omp-novo | `packages/tui/src` | 356L; Modelo de células renderizadas do terminal (grafemas, cores fg/bg, atributos SGR incluindo sub-parâmetros com dois pontos, e li... |
+| `packages/tui/src/testing/corpus.ts` | codigo | omp-novo | `packages/tui/src` | 193L; Executor de casos de regressão em corpus comparando árvores nativas TSP expandidas e linhas renderizadas em múltiplas larguras ... |
+| `packages/tui/src/testing/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 1L; Arquivo barril que reexporta utilitários de corpus de testing. |
+| `packages/tui/src/testing/memory-terminal.ts` | codigo | omp-novo | `packages/tui/src` | 134L; Terminal TTY em memória para testes que captura bytes escritos e responde automaticamente a consultas DA1 e posição de cursor n... |
+| `packages/tui/src/testing/process-driver.ts` | codigo | omp-novo | `packages/tui/src` | 70L; Helper de teste para inicializar o ProcessTerminalDriver real sobre streams em memória respondendo aos probes iniciais. |
+| `packages/tui/src/testing/terminal.ts` | codigo | omp-novo | `packages/tui/src/terminal.ts` | 227L; Terminal scriptável de alto nível (createTestTerminal) que executa uma Surface real sobre TermBackend e MemoryDriver, com helpe... |
+| `packages/tui/src/text/ansi.ts` | codigo | omp-novo | `packages/tui/src` | 215L; Tokenizador de sequências de escape (CSI, OSC, APC/SOS/PM, DCS inclusive passthrough tmux) e rastreador de estado SGR (SgrState... |
+| `packages/tui/src/text/diff.ts` | codigo | omp-novo | `packages/tui/src` | 308L; Renderizador de diffs em linhas de terminal com highlight de sintaxe no contexto, diff por palavras em substituições 1-para-1, ... |
+| `packages/tui/src/text/highlight.ts` | codigo | omp-novo | `packages/tui/src` | 188L; Syntax highlighting via módulo nativo usando sentinelas SGR convertidas em TspSpan[] (SpanReader), com cache LRU por tema e cla... |
+| `packages/tui/src/text/lang.ts` | codigo | omp-novo | `packages/tui/src` | 125L; Mapeamento de caminhos de arquivo (incluindo basenames especiais como Dockerfile, CMakeLists.txt, GNUmakefile, .emacs, .env.*) ... |
+| `packages/tui/src/text/latex-block.ts` | codigo | omp-novo | `packages/tui/src` | 482L; Layout 2D em caixas para matemática LaTeX em bloco: frações empilhadas, raízes com teto e grau, limites sobre/sob operadores, c... |
+| `packages/tui/src/text/latex.ts` | codigo | omp-novo | `packages/tui/src/latex.ts` | 209L; Ponto de entrada de renderização LaTeX 1D e substituição de matemática em prosa ($...$, $$...$$, \(...\), \[...\], ambientes ba... |
+| `packages/tui/src/text/latex/inline.ts` | codigo | omp-novo | `packages/tui/src` | 407L; Renderizador inline de nós LaTeX em segmentos estilizados e serialização SGR, incluindo resolução completa de cores xcolor (mis... |
+| `packages/tui/src/text/latex/parse.ts` | codigo | omp-novo | `packages/tui/src` | 745L; Tokenizador e parser descendente recursivo de LaTeX matemático produzindo AST tipada (MathNode) para os renderizadores 1D e 2D.... |
+| `packages/tui/src/text/latex/symbols.ts` | codigo | omp-novo | `packages/tui/src` | 615L; Tabelas de símbolos gregos, operadores, setas, integrais, frações vulgares, sub/sobrescritos Unicode e mapeamento de alfabetos ... |
+| `packages/tui/src/text/markdown/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 10L; Arquivo barril exportando API pública do subsistema de Markdown. |
+| `packages/tui/src/text/markdown/inline.ts` | codigo | omp-novo | `packages/tui/src` | 329L; Renderizador de tokens Markdown inline para string ANSI, suportando entidades HTML, swatches de cores hex em prosa/código, tags... |
+| `packages/tui/src/text/markdown/lexer.ts` | codigo | omp-novo | `packages/tui/src` | 254L; Configuração do lexer Marked com extensões do dialeto omp (math block/env/inline, réguas box-drawing, autolinks limitados a fro... |
+| `packages/tui/src/text/markdown/links.ts` | codigo | omp-novo | `packages/tui/src` | 77L; Codificação e extração de marcadores OSC 8 privados para esquemas de links registrados por extensões, convertendo-os em spans d... |
+| `packages/tui/src/text/markdown/look.ts` | codigo | omp-novo | `packages/tui/src` | 26L; Signal reativo global (colorful/mermaid) determinando a aparência padrão de renderização Markdown controlada pelo host. |
+| `packages/tui/src/text/markdown/mermaid.ts` | codigo | omp-novo | `packages/tui/src` | 98L; Renderização de diagramas Mermaid via binding nativo com cache LRU, paleta truecolor do tema e competição entre orientações TD ... |
+| `packages/tui/src/text/markdown/render.ts` | codigo | omp-novo | `packages/tui/src` | 906L; Renderizador de blocos Markdown para linhas de terminal (parágrafos, blocos HTML, headings com suporte a OSC 66 2x, código com ... |
+| `packages/tui/src/text/markdown/stream.ts` | codigo | omp-novo | `packages/tui/src` | 351L; Transformações de código-fonte Markdown em streaming: detecção memoizada de fence aberto, retenção de linha parcial de tabela, ... |
+| `packages/tui/src/text/markdown/styles.ts` | codigo | omp-novo | `packages/tui/src` | 88L; Definição de estilos de papéis Markdown (modo colorido via slots de paleta ANSI ou modo plano via tokens de tema) e utilitário ... |
+| `packages/tui/src/text/markdown/table.ts` | codigo | omp-novo | `packages/tui/src` | 191L; Layout de tabelas GFM em grade box-drawing com ajuste proporcional de colunas à largura disponível e estabilização de célula ab... |
+| `packages/tui/src/text/osc.ts` | codigo | omp-novo | `packages/tui/src` | 86L; Utilitários de codificação, detecção e remoção para hyperlinks OSC 8 (com sanitização de bytes de controle) e texto dimensionad... |
+| `packages/tui/src/text/sanitize.ts` | codigo | omp-novo | `packages/tui/src` | 105L; Sanitização de texto não confiável para terminal: remoção seletiva de controles mantendo escapes, simulação de sobrescrita `\r`... |
+| `packages/tui/src/text/shimmer.ts` | codigo | omp-novo | `packages/tui/src` | 83L; Efeito animado de brilho deslizante em texto (modos classic cossenoidal e kitt com rastro quadrático) dividido em três tiers de... |
+| `packages/tui/src/text/styled-spans.ts` | codigo | omp-novo | `packages/tui/src` | 228L; Conversor de texto com escapes ANSI/OSC8 de volta para TspSpan[] sem escapes, mapeando cores reversamente contra o tema ativo e... |
+| `packages/tui/src/text/width.ts` | codigo | omp-novo | `packages/tui/src` | 397L; Modelo compartilhado de largura e manipulação de texto terminal (paridade com engine nativa, perfil Hangul Jamo, suporte a OSC ... |
+| `packages/tui/src/theme/color.ts` | codigo | omp-novo | `packages/tui/src` | 122L; Conversão de cores de tema para SGR conforme profundidade (truecolor/256/16), incluindo fallback ANSI-16 perceptual via OKLCH (... |
+| `packages/tui/src/theme/contract.ts` | codigo | omp-novo | `packages/tui/src` | 73L; Contrato da interface Theme e SymbolSet consumido pelos painters do TUI sem hardcoding de cores ou glifos. |
+| `packages/tui/src/theme/data/dark.json` | config_ou_dado | omp-novo | `packages/tui/src` | 120L; Definição JSON do tema padrão dark com variáveis, tokens de cor semânticos, export e paleta terminal ANSI-16. |
+| `packages/tui/src/theme/data/defaults.json` | config_ou_dado | omp-novo | `packages/tui/src` | 11595L; Catálogo JSON embutido de temas padrão (início com alabaster, amethyst, anthracite, basalt, birch, dark-abyss e dark-arctic). \|... |
+| `packages/tui/src/theme/data/light.json` | config_ou_dado | omp-novo | `packages/tui/src` | 118L; Definicao JSON do tema padrao claro (`light`) com variaveis, tokens de cores, configuracao de export HTML e paleta ANSI do term... |
+| `packages/tui/src/theme/data/symbols.json` | config_ou_dado | omp-novo | `packages/tui/src` | 994L; Tabela JSON de glifos para os presets `unicode`, `nerd` e parte de `ascii` (status, navegacao, arvores, barras, caixas, separad... |
+| `packages/tui/src/theme/index.ts` | codigo | omp-novo | `packages/tui/src/index.ts` | 8L; Barrel de re-exportacao dos modulos de tema de `@oh-my-pi/pi-tui`. |
+| `packages/tui/src/theme/loader.ts` | codigo | omp-novo | `packages/tui/src/components/loader.ts` | 90L; Carregador de temas embutidos e JSONs customizados em disco (sincrono para first paint e assincrono via `Bun.file`), com valida... |
+| `packages/tui/src/theme/plain.ts` | codigo | omp-novo | `packages/tui/src` | 22L; Implementacao de tema sem cores (`PLAIN_THEME`) para testes e terminais sem suporte/preferencia de cor, mantendo glifos unicode... |
+| `packages/tui/src/theme/runtime.ts` | codigo | omp-novo | `packages/tui/src` | 280L; Signal reativo `currentTheme` e `ThemeController` para gerenciar selecao automatica claro/escuro, troca explicita, preview/rest... |
+| `packages/tui/src/theme/schema.ts` | codigo | omp-novo | `packages/tui/src` | 273L; Definicao manual de tokens obrigatorios/opcionais, tipos e validador `validateThemeJson` (sem dependencias externas como typebo... |
+| `packages/tui/src/theme/symbols.ts` | codigo | omp-novo | `packages/tui/src` | 108L; Resolucao de conjuntos de simbolos por preset (`unicode`/`nerd`/`ascii`), overrides de tema, caixas arredondadas/retas, spinner... |
+| `packages/tui/src/theme/theme.ts` | codigo | omp-novo | `packages/tui/src` | 301L; Resolucao de tema por profundidade de cor (`ResolvedTheme`), suporte a `colorBlindMode`, derivacao de `mdExtensionLink`, `bgFil... |
+| `packages/tui/src/types.ts` | codigo | omp-novo | `packages/tui/src` | 78L; Declaracao do namespace `JSX` para TSX sobre nos TSP (`TspKind`, `canvas`, `overlay` com `PageProps`, `md` com `prepared`) e pr... |
+| `packages/tui/test/chrome/chrome.test.tsx` | teste | omp-novo | `packages/tui/test` | 176L; Testa layout, ajuste de largura (1..120 colunas) e tratamento de teclas dos componentes de chrome (tabs, button, buttons, menu,... |
+| `packages/tui/test/derived-node.test.tsx` | teste | omp-novo | `packages/tui/test` | 57L; Testa derivedNode, verificando sobreposição reativa de props sobre um UiNode existente e delegação/sobrescrita de handlers de a... |
+| `packages/tui/test/diag/loop-watchdog-wiring.test.ts` | teste | omp-novo | `packages/tui/test` | 129L; Testa a integração entre startHost, LoopWatchdog e o decodificador de entrada, garantindo armamento/desarme e uso de isStalled(... |
+| `packages/tui/test/diag/loop-watchdog.test.ts` | teste | omp-novo | `packages/tui/test` | 854L; Testa o LoopWatchdog determinístico: detecção por borda de subida, deduplicação, atribuição por fase e CPU vs suspensão do sist... |
+| `packages/tui/test/driver-images/encoders.test.ts` | teste | omp-novo | `packages/tui/test` | 244L; Testa codificadores de imagem de terminal: chunks Kitty, bandas por linha, placeholders Unicode (U+10EEEE), envelope tmux, cálc... |
+| `packages/tui/test/driver-images/store.test.ts` | teste | omp-novo | `packages/tui/test` | 399L; Testa a máquina de estados reativa de TerminalImages: reuso de transmissões, placeholders vs fallback, estado separado main/alt... |
+| `packages/tui/test/driver-io/caps.test.ts` | teste | omp-novo | `packages/tui/test` | 265L; Testa detecção de identidade de terminal, largura Jamo, multiplexadores/passthrough, defaults e overrides de sync output, hyper... |
+| `packages/tui/test/driver-io/decoder.test.ts` | teste | omp-novo | `packages/tui/test` | 463L; Testa decodificação de teclas legadas, protocolo Kitty/modifyOtherKeys, mouse SGR/X10, focus, mensagens TSP, roteamento de resp... |
+| `packages/tui/test/driver-io/fake-clock.ts` | teste | omp-novo | `packages/tui/test` | 35L; Utilitário de relógio manual para testes determinísticos de timers em driver-io. |
+| `packages/tui/test/driver-io/multiplexer.test.ts` | teste | omp-novo | `packages/tui/test` | 117L; Testa detecção e precedência de multiplexadores (Herdr, tmux, screen, Zellij, cmux, wmux, Orca), exclusão de variáveis só de cl... |
+| `packages/tui/test/driver-io/terminal-input.test.ts` | teste | omp-novo | `packages/tui/test` | 852L; Testa ciclo de vida e negociação de ProcessTerminalInput: sondas atrás de sentinelas DA1, Kitty/modifyOtherKeys/win32-input-mod... |
+| `packages/tui/test/driver-io/tokenizer.test.ts` | teste | omp-novo | `packages/tui/test` | 561L; Testa `InputTokenizer` cobrindo remontagem byte-a-byte de CSI/SS3/Kitty/mouse/OSC/DCS/APC/TSP, UTF-8 e surrogate pairs dividido... |
+| `packages/tui/test/driver-output/driver.test.ts` | teste | omp-novo | `packages/tui/test` | 316L; Testa `createTerminalDriver`: ordenação única no sink, modos de teclado ao entrar/sair da tela alternativa, segurança na inscri... |
+| `packages/tui/test/driver-output/elastic-slots.test.ts` | teste | omp-novo | `packages/tui/test` | 130L; Testa conformidade do `FrameWriter` ao protocolo Elastic Speculative Slots: preservação da última linha de histórico com viewpo... |
+| `packages/tui/test/driver-output/multicell.test.ts` | teste | omp-novo | `packages/tui/test` | 41L; Testa o desenho de linhas em branco sob texto escalado OSC 66 (`\x1b]66;s=2;...`) usando `coveredCells` e `drawRow` para pular ... |
+| `packages/tui/test/driver-output/resize-burst.test.ts` | teste | omp-novo | `packages/tui/test` | 305L; Testa rajadas de resize contra `Vt`: empréstimo único da tela alternativa após limpar viewport e saída+`ED3`+replay fundidos ao... |
+| `packages/tui/test/driver-output/resize.test.ts` | teste | omp-novo | `packages/tui/test` | 248L; Testa políticas de scrollback no resize (`preserve`, `rebuild`, `append`), otimização em crescimento só de altura, contenção de... |
+| `packages/tui/test/driver-output/sink.test.ts` | teste | omp-novo | `packages/tui/test` | 58L; Testa `streamSink` e `chunkForConPTY`: divisão de escritas grandes em `\r` sem quebrar CRLF nem surrogate pairs no ConPTY, escr... |
+| `packages/tui/test/driver-output/vt.ts` | teste | omp-novo | `packages/tui/test` | 168L; Harness de teste `Vt` baseado em `kitty-vt-wasm` e `FrameWriter`, oferecendo inspeção de tela/scrollback/transcrição, disparo s... |
+| `packages/tui/test/driver-output/writer.test.ts` | teste | omp-novo | `packages/tui/test` | 344L; Testa `FrameWriter` via `Vt`: acks idempotentes de histórico, overflow de scrollback, preservação de linhas do shell e início c... |
+| `packages/tui/test/driver-session/desktop-notify.test.ts` | teste | omp-novo | `packages/tui/test` | 213L; Testa fallback de notificação desktop Linux via `notify-send` ou `gdbus`: detecção de sessão D-Bus (inclusive socket systemd), ... |
+| `packages/tui/test/driver-session/notify.test.ts` | teste | omp-novo | `packages/tui/test` | 430L; Testa formatação OSC 99 (rich, base64 para controles, IDs únicos por processo), supressão (`PI_NOTIFICATIONS` / headless), rote... |
+| `packages/tui/test/driver-session/session.test.ts` | teste | omp-novo | `packages/tui/test` | 223L; Testa sessão singleton do driver: ordenação de `writeTerminalSequence` pelo driver vs stdout (`EPIPE`-safe), fallback de identi... |
+| `packages/tui/test/editor/field.test.tsx` | teste | omp-novo | `packages/tui/test` | 296L; Testa os widgets JSX `<editor>` e `<input>`: quebra de palavras em `layoutText`, pintura de cursor barra/bloco e janelas de rol... |
+| `packages/tui/test/images-paint/image-painter.test.tsx` | teste | omp-novo | `packages/tui/test` | 220L; Testa o painter `<image>` nos protocolos alt-text, Kitty (transmissão única de blob + placements por linha), iTerm2, SIXEL assí... |
+| `packages/tui/test/images-paint/primitives.test.tsx` | teste | omp-novo | `packages/tui/test` | 149L; Testa paridade com corpus de `primitives/image` (com desvios documentados em largura 20) e `primitives/sparkline` (`sparkline`,... |
+| `packages/tui/test/layout.test.tsx` | teste | omp-novo | `packages/tui/test` | 26L; Teste smoke da árvore JSX reativa (`<col>`, `<row>`, `<text>`, `<rule>`) verificando memoização de `renderBlock` e re-renderiza... |
+| `packages/tui/test/markdown/corpus.test.ts` | teste | omp-novo | `packages/tui/test` | 169L; Testa paridade de `renderMarkdown` com corpus de amostras estáticas, prefixos em streaming e blocos `md` extraídos de transcriç... |
+| `packages/tui/test/markdown/painter.test.tsx` | teste | omp-novo | `packages/tui/test` | 41L; Testa o painter `<md>`: re-renderização em streaming reativo, omissão de texto em branco e renderização de esquemas registrados... |
+| `packages/tui/test/markdown/render.test.ts` | teste | omp-novo | `packages/tui/test` | 433L; Testa renderização estática de Markdown: blocos, listas aninhadas/tarefas/tabelas internas, blockquotes, tabelas com encolhimen... |
+| `packages/tui/test/markdown/stream.test.ts` | teste | omp-novo | `packages/tui/test` | 259L; Testa streaming de Markdown: invariante monotônico de `stable` em `renderMarkdownFrame`, fechamento especulativo de links/LaTeX... |
+| `packages/tui/test/markdown/text-sizing.test.tsx` | teste | omp-novo | `packages/tui/test` | 165L; Testa H1 escalado via OSC 66 (`textSizing`): cálculo de largura dupla, linha reservada abaixo, spans CJK por grafema (`w=2`), l... |
+| `packages/tui/test/native/apc.test.ts` | teste | omp-novo | `packages/tui/test` | 155L; Testa codificação e decodificação APC do protocolo TSP: chunking por limite de bytes UTF-8 sem partir code points, parâmetros s... |
+| `packages/tui/test/native/backend.test.tsx` | teste | omp-novo | `packages/tui/test` | 1502L; Parte 1 dos testes de `NativeBackend` e `TspConnection`: handshake `hello`/`assume()`, diff estrutural (`add`/`set`/`text`/`spl... |
+| `packages/tui/test/native/fake-tern.ts` | teste | omp-novo | `packages/tui/test` | 479L; Test double `FakeTern` (com `ModelDocument` e `ManualClock`) implementando `TerminalDriver` para testes TSP: remonta chunks APC... |
+| `packages/tui/test/native/host-optimistic.test.tsx` | teste | omp-novo | `packages/tui/test` | 231L; Testa início nativo otimista do `startHost` em painel Tern: abre superfície antes do `hello`, adota reply tardio, faz fallback ... |
+| `packages/tui/test/native/screens.test.tsx` | teste | omp-novo | `packages/tui/test` | 263L; Testa `NativeSurfaces` no modo nativo: páginas full-screen abrindo superfícies `screen` próprias sem destruir a `inline`, rotea... |
+| `packages/tui/test/status/status.test.tsx` | teste | omp-novo | `packages/tui/test` | 59L; Testa `<status>` e `<seg>`: alinhamento esquerda/direita com separador `·`, encolhimento de segmentos elásticos até `min`, remo... |
+| `packages/tui/test/term/backend.test.tsx` | teste | omp-novo | `packages/tui/test` | 631L; Testa `TermBackend`: ticks de animação por relógio, aposentadoria progressiva de blocos `settle` e streaming para histórico, an... |
+| `packages/tui/test/term/elastic-slots.test.tsx` | teste | omp-novo | `packages/tui/test` | 928L; Parte 1 da suíte de conformidade Elastic Speculative Slots para `TermBackend` (ES-01..ES-15): ledger exato sob inserções/substi... |
+| `packages/tui/test/term/generic-painters.test.tsx` | teste | omp-novo | `packages/tui/test` | 110L; Testa os painters genéricos (`badge`, `icon`, `kbd`, `kv`, `list`, `table`, `tree`, `json`, `progress`, `meter`, `rate`, `elaps... |
+| `packages/tui/test/term/host-mouse.test.tsx` | teste | omp-novo | `packages/tui/test` | 87L; Testa `Host.setMouse` e hit-testing de mouse em `TermBackend`: roteia cliques/hover abaixo do histórico aposentado, ignora even... |
+| `packages/tui/test/term/keymap.test.tsx` | teste | omp-novo | `packages/tui/test` | 114L; Testa `setWidgetKeymap` e `widgetKeys` em `picker` e `menu`: atalhos padrão, remapeamento parcial preservando padrões, desvincu... |
+| `packages/tui/test/term/picker-window.test.tsx` | teste | omp-novo | `packages/tui/test` | 66L; Testa `scrollWindow` e `pickerWindow`: centralização inicial ou quando a chave de busca muda, e rolagem incremental pelas borda... |
+| `packages/tui/test/testing/terminal.test.tsx` | teste | omp-novo | `packages/tui/test` | 56L; Testa o utilitário `createTestTerminal` verificando digitação no editor focado, propagação de teclas, inspeção de tela/cursor e... |
+| `packages/tui/test/text/corpus-text.test.ts` | teste | omp-novo | `packages/tui/test` | 80L; Testa paridade de `wrap` e `truncate` (com `replaceTabs` e `padTo`) contra os fixtures capturados do corpus de `primitives/text... |
+| `packages/tui/test/text/diff.test.ts` | teste | omp-novo | `packages/tui/test` | 213L; Testa renderização de diffs com gutter numérico, marcação de indentação e destaque reverso por palavra, wrapping alinhado à col... |
+| `packages/tui/test/text/highlight.test.ts` | teste | omp-novo | `packages/tui/test` | 89L; Testa detecção de linguagem por basename/extensão, geração de spans temáticos, preservação de estado multilinha e paridade do H... |
+| `packages/tui/test/text/latex-block.test.ts` | teste | omp-novo | `packages/tui/test` | 350L; Testa layout 2-D em bloco de expressões LaTeX (frações aninhadas, matrizes, cases, limites, radicais, over/underbrace, align/ga... |
+| `packages/tui/test/text/latex.test.ts` | teste | omp-novo | `packages/tui/test` | 190L; Testa conversão inline de LaTeX para Unicode com cores ANSI/xcolor, atributos de texto aninhados, detecção de ambientes matemát... |
+| `packages/tui/test/text/sanitize.test.ts` | teste | omp-novo | `packages/tui/test` | 109L; Testa sanitização de caracteres de controle, normalização de quebras de linha, encurtamento de diretórios home, links OSC 8 e c... |
+| `packages/tui/test/text/styled-spans.test.ts` | teste | omp-novo | `packages/tui/test` | 51L; Testa conversão de strings com SGR e hyperlinks OSC 8 em spans semânticos de tema mesclados e extração de texto puro com unstyl... |
+| `packages/tui/test/text/width.test.ts` | teste | omp-novo | `packages/tui/test` | 314L; Testa paridade de largura visível com o motor nativo, perfis de Jamo Hangul, tokenização atômica de passthrough tmux/Kitty APC/... |
+| `packages/tui/test/text/wrap.test.ts` | teste | omp-novo | `packages/tui/test` | 107L; Testa quebra de linha por palavra/caractere/CJK, preservação de cores entre linhas fechando apenas underline/strikethrough no f... |
+| `packages/tui/test/theme/color.test.ts` | teste | omp-novo | `packages/tui/test` | 52L; Testa resolução de profundidade de cor (truecolor/256/16), mapeamento SGR de hex e índices de paleta preservando família de mat... |
+| `packages/tui/test/theme/corpus.test.ts` | teste | omp-novo | `packages/tui/test` | 122L; Valida que tokens semânticos dos temas dark e light geram exatamente os bytes SGR registrados nas capturas do corpus TUI. |
+| `packages/tui/test/theme/loader.test.ts` | teste | omp-novo | `packages/tui/test` | 169L; Testa carregamento síncrono/assíncrono de temas embutidos e customizados, resolução de variáveis e ciclos, erros de tokens ause... |
+| `packages/tui/test/theme/runtime.test.ts` | teste | omp-novo | `packages/tui/test` | 165L; Testa signal reativo de tema atual e ThemeController (auto dark/light, troca por profundidade, preview/restore, modo daltônico,... |
+| `packages/tui/test/theme/style.test.ts` | teste | omp-novo | `packages/tui/test` | 158L; Testa métodos fg/bg/bgFill/fgResolved/style do tema, colorBlindMode, ordem de aninhamento SGR, precedência de tokens semânticos... |
+| `packages/tui/tsconfig.json` | config_ou_dado | omp-novo | `packages/tui` | 4L; Configuracao TypeScript do workspace para `packages/tui` incluindo `src`, `test` e `bench`. |
+| `packages/tui/tsconfig.publish.json` | config_ou_dado | omp-novo | `packages/tui` | 16L; Configuracao TypeScript de publicacao para emitir apenas declaracoes `.d.ts` em `dist/types`. |

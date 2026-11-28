@@ -10,24 +10,24 @@ O `omp` substituiu `edit-diff.ts` por um motor Rust (`omp:crates/edit`, 28.941 L
 - As edições referenciam âncoras (`PUT N.=M:`, `<N`, `>N`, `>$`, `N*` bloco AST, `CUT`, `MV`, `REM`) e passam por `assert_seen_lines` (recusa editar linhas não exibidas ao modelo):
 
 ```rust
-	if live_matches {
-		if let Some(max_columns) = seen_line_guard {
-			assert_seen_lines(
-				section,
-				&block_resolutions,
-				expected,
-				canonical,
-				store,
-				normalized,
-				None,
-				max_columns,
-			)?;
-		}
-		let mut result = apply_edits(normalized, &resolved, ApplyOptions {
-			clipboard:      Some(clipboard),
-			path:           Some(canonical.to_string_lossy().as_ref()),
-			on_empty_paste: EmptyPaste::Throw,
-		})?;
+   if live_matches {
+      if let Some(max_columns) = seen_line_guard {
+         assert_seen_lines(
+            section,
+            &block_resolutions,
+            expected,
+            canonical,
+            store,
+            normalized,
+            None,
+            max_columns,
+         )?;
+      }
+      let mut result = apply_edits(normalized, &resolved, ApplyOptions {
+         clipboard:      Some(clipboard),
+         path:           Some(canonical.to_string_lossy().as_ref()),
+         on_empty_paste: EmptyPaste::Throw,
+      })?;
 ```
 
 - Porém, em `omp:packages/coding-agent/src/utils/edit-mode.ts:23-48`, o próprio `omp` desliga `hashline` e volta para `replace` em 8 famílias (`kimi`, `mimo`, `minimax`, `deepseek`, `stepfun`, `codex-spark`, `glm flash 5.3.0`, `qwen 3.8.0`) porque modelos menores erram a DSL customizada.
@@ -40,20 +40,20 @@ O `omp` substituiu `edit-diff.ts` por um motor Rust (`omp:crates/edit`, 28.941 L
 Em `packages/coding-agent/src/core/tools/edit.ts:138-217`, `edit-diff.ts:343-406` (`745` LOC) e `file-mutation-queue.ts:32-61` (`1.027` LOC no total, verificados byte-a-byte idênticos ao `pibase` `073b0ba`):
 
 ```ts
-				const { bom, text: content } = splitBom(rawContent);
-				const normalizedContent = normalizeToLF(content);
-				const { baseContent, newContent, replacements } = applyEditsToNormalizedContent(
-					normalizedContent,
-					edits,
-					path,
-				);
-				// Diff before writing, so diff computation cannot fail after the write.
-				const editDiff = generateEditDiff(path, baseContent, newContent, replacements);
-				throwIfAborted();
+            const { bom, text: content } = splitBom(rawContent);
+            const normalizedContent = normalizeToLF(content);
+            const { baseContent, newContent, replacements } = applyEditsToNormalizedContent(
+               normalizedContent,
+               edits,
+               path,
+            );
+            // Diff before writing, so diff computation cannot fail after the write.
+            const editDiff = generateEditDiff(path, baseContent, newContent, replacements);
+            throwIfAborted();
 
-				const finalContent =
-					bom + (content === normalizedContent ? newContent : applyReplacementsToOriginal(content, replacements));
-				await ops.writeFile(absolutePath, finalContent);
+            const finalContent =
+               bom + (content === normalizedContent ? newContent : applyReplacementsToOriginal(content, replacements));
+            await ops.writeFile(absolutePath, finalContent);
 ```
 
 - `edit.ts` retorna diff em janelas de `32` linhas (`generateEditDiff`), preserva BOM/CRLF e usa `constrainedSampling` (`json_schema`, `strict: "prefer"`). O `read.ts` do `nycode` retorna texto limpo **sem** prefixos `N#TAG` por linha.
@@ -105,8 +105,8 @@ Em `packages/coding-agent/src/core/tools/edit.ts:138-217`, `edit-diff.ts:343-406
 
 ## Critérios de aceite
 
-1. Eval controlado demonstra que o ganho de acerto/economia de saída compensa 100% os tokens extras em `read` + descrição da ferramenta.
-2. Zero dependência Rust/N-API.
+3. Eval controlado demonstra que o ganho de acerto/economia de saída compensa 100% os tokens extras em `read` + descrição da ferramenta.
+4. Zero dependência Rust/N-API.
 
 ## Rollback
 

@@ -8,29 +8,29 @@
 1. **IDs únicos de `toolCall`**: em `omp:packages/agent/src/agent-loop.ts:3190-3229`, `ensureUniqueToolCallIds` rastreia IDs já despachados na sessão/run (`dispatchedIds`) e IDs duplicados ou vazios dentro da mesma mensagem do assistente, sufixando `_dupN` ou cunhando novo ID (`mintToolCallId`) antes da execução para impedir colisão no protocolo de `tool_result`:
 
 ```ts
-		if (block.id?.trim() && !seen.has(block.id) && !dispatchedIds.has(block.id)) {
-			seen.add(block.id);
-			dispatchedIds.add(block.id);
-			continue;
-		}
-		let candidate: string;
-		if (block.id?.trim()) {
-			let suffix = 1;
-			candidate = appendDuplicateSuffix(block.id, `_dup${suffix}`, MAX_TOOL_CALL_ID_LENGTH);
-			while (seen.has(candidate) || reserved.has(candidate) || dispatchedIds.has(candidate)) {
-				suffix += 1;
-				candidate = appendDuplicateSuffix(block.id, `_dup${suffix}`, MAX_TOOL_CALL_ID_LENGTH);
-			}
-		} else {
-			// Process-unique minter: a per-run counter would re-mint `call_1` in
-			// every run and collide with earlier runs' calls in session history.
-			do {
-				candidate = mintToolCallId();
-			} while (seen.has(candidate) || reserved.has(candidate) || dispatchedIds.has(candidate));
-		}
+      if (block.id?.trim() && !seen.has(block.id) && !dispatchedIds.has(block.id)) {
+         seen.add(block.id);
+         dispatchedIds.add(block.id);
+         continue;
+      }
+      let candidate: string;
+      if (block.id?.trim()) {
+         let suffix = 1;
+         candidate = appendDuplicateSuffix(block.id, `_dup${suffix}`, MAX_TOOL_CALL_ID_LENGTH);
+         while (seen.has(candidate) || reserved.has(candidate) || dispatchedIds.has(candidate)) {
+            suffix += 1;
+            candidate = appendDuplicateSuffix(block.id, `_dup${suffix}`, MAX_TOOL_CALL_ID_LENGTH);
+         }
+      } else {
+         // Process-unique minter: a per-run counter would re-mint `call_1` in
+         // every run and collide with earlier runs' calls in session history.
+         do {
+            candidate = mintToolCallId();
+         } while (seen.has(candidate) || reserved.has(candidate) || dispatchedIds.has(candidate));
+      }
 ```
 
-2. **`Retry-After` e curta-circuitagem em `oneshot-retry`**: em `omp:packages/ai/src/oneshot-retry.ts:93-124,156-243`, chamadas auxiliares sem estado (`retryTransientCompletion`) analisam `retry-after-ms` / `Retry-After` via headers de resposta, aplicam teto `maxDelayMs = 30_000` (abortando sem esperar se o provedor pedir mais tempo que o limite do caller, além de `BACKOFF_CEILING_MS = 8_000` com jitter `0.75–1.0`) e jamais retentam `ContextOverflow`, `PayloadRejected`, `ContentBlocked` ou falha determinística de JSON de `llama.cpp`.
+1. **`Retry-After` e curta-circuitagem em `oneshot-retry`**: em `omp:packages/ai/src/oneshot-retry.ts:93-124,156-243`, chamadas auxiliares sem estado (`retryTransientCompletion`) analisam `retry-after-ms` / `Retry-After` via headers de resposta, aplicam teto `maxDelayMs = 30_000` (abortando sem esperar se o provedor pedir mais tempo que o limite do caller, além de `BACKOFF_CEILING_MS = 8_000` com jitter `0.75–1.0`) e jamais retentam `ContextOverflow`, `PayloadRejected`, `ContentBlocked` ou falha determinística de JSON de `llama.cpp`.
 
 - **Ancestralidade Pi**: ausente em `pi0.9.4` e `pibase` (`pibase:packages/agent/src/agent-loop.ts` não deduplica IDs; `pibase:packages/ai/src/utils/retry.ts:174-315` não lê headers `Retry-After` em `retryAssistantCall`).
 

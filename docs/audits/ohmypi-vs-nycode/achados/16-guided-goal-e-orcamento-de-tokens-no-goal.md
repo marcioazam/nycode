@@ -10,17 +10,17 @@
 
 ```ts
 export function goalTokenDelta(current: GoalTokenUsage, baseline: GoalTokenUsage): number {
-	// Diverges from codex-rs: codex omits cache creation because its target providers
-	// do not bill cache writes distinctly through the token-usage stream. Pi receives
-	// cacheWrite separately on Anthropic/Bedrock; rotating a 1h ephemeral cache or
-	// re-anchoring a changed system prompt can write 100K+ tokens, which the goal
-	// budget must account for. cacheRead is excluded because it is reused prefix,
-	// not new work consumed by the goal.
-	return (
-		Math.max(0, current.input - baseline.input) +
-		Math.max(0, current.cacheWrite - baseline.cacheWrite) +
-		Math.max(0, current.output - baseline.output)
-	);
+   // Diverges from codex-rs: codex omits cache creation because its target providers
+   // do not bill cache writes distinctly through the token-usage stream. Pi receives
+   // cacheWrite separately on Anthropic/Bedrock; rotating a 1h ephemeral cache or
+   // re-anchoring a changed system prompt can write 100K+ tokens, which the goal
+   // budget must account for. cacheRead is excluded because it is reused prefix,
+   // not new work consumed by the goal.
+   return (
+      Math.max(0, current.input - baseline.input) +
+      Math.max(0, current.cacheWrite - baseline.cacheWrite) +
+      Math.max(0, current.output - baseline.output)
+   );
 }
 ```
 

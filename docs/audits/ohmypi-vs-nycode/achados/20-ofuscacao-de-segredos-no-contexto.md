@@ -8,12 +8,12 @@
 O `omp` coleta valores sensíveis de `secrets.yml`, variáveis de `process.env` compatíveis com `SECRET_ENV_PATTERNS`, senhas em URLs de conexão e padrões `CREDENTIAL_PATTERNS` (`omp:packages/coding-agent/src/secrets/index.ts:166-293`), constrói um `SecretObfuscator` (`omp:packages/coding-agent/src/secrets/obfuscator.ts:216-350`) acoplado à transformação de mensagens (`sdk.ts:4981,5130`):
 
 ```ts
-	/** Reverse lookup for LIVE deobfuscation (provider output, tool-call args):
-	 *  keyed placeholder → secret plus recursion policy. Only placeholders this
-	 *  obfuscator generated under the per-install key (and their friendly-name-
-	 *  independent aliases) live here, so a prompt-injected model cannot synthesize
-	 *  one without the key. */
-	#deobfuscateMap = new TrackedMap<string, { secret: string; recursive: boolean }>(this.#revision);
+   /** Reverse lookup for LIVE deobfuscation (provider output, tool-call args):
+    *  keyed placeholder → secret plus recursion policy. Only placeholders this
+    *  obfuscator generated under the per-install key (and their friendly-name-
+    *  independent aliases) live here, so a prompt-injected model cannot synthesize
+    *  one without the key. */
+   #deobfuscateMap = new TrackedMap<string, { secret: string; recursive: boolean }>(this.#revision);
 ```
 
 - **Ida (antes do LLM)**: substitui ocorrências reais por placeholders determinísticos gerados com HMAC por instalação (`secret-placeholder.key`) para que um ataque de prompt injection não consiga adivinhar nem fabricar um placeholder.
@@ -63,7 +63,7 @@ O `omp` coleta valores sensíveis de `secrets.yml`, variáveis de `process.env` 
 ## Testes
 
 - `packages/coding-agent/test/harness/extensions/secrets-obfuscator/`:
-  1. `sk-ant-...` e `postgres://admin:SuperSecretPass123@db.internal:5432/app` são substituídos antes da API e restaurados em `edit`/`bash` args.
+  1. Tokens com prefixo conhecido (como chaves Anthropic `sk-ant-...`) e URLs com usuario e senha embutidos (esquema de banco com credencial em URL) sao substituidos antes da API e restaurados em argumentos de `edit`/`bash`.
   2. Placeholder forjado pelo modelo sem HMAC válido **não** resolve para segredo algum.
   3. Valores curtos (`SECRET=foo`, `PORT=5432`) **nunca** são tocados.
 

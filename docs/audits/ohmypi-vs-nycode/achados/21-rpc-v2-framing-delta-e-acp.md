@@ -14,7 +14,7 @@ export const MAX_RPC_FRAME_BYTES = 1024 * 1024;
 export const MAX_RPC_REASSEMBLED_BYTES = 64 * 1024 * 1024;
 ```
 
-2. **ACP (`omp acp`)** (`omp:packages/coding-agent/src/modes/acp/acp-mode.ts:43-55`, `acp-agent.ts:1-250`, `omp:packages/utils/src/acp/protocol.ts:1`): reimplementação TypeScript zero-deps compatível com Agent Client Protocol (Zed etc.), isolando `stdout` -> `stderr`, ponte `ClientBridge` para `fs`/`terminal` com **read-back pós-escrita** para detectar alterações feitas pelo `format_on_save` do editor (`tools/acp-bridge.ts:78-137`) e `acp-permission-gate.ts`.
+1. **ACP (`omp acp`)** (`omp:packages/coding-agent/src/modes/acp/acp-mode.ts:43-55`, `acp-agent.ts:1-250`, `omp:packages/utils/src/acp/protocol.ts:1`): reimplementação TypeScript zero-deps compatível com Agent Client Protocol (Zed etc.), isolando `stdout` -> `stderr`, ponte `ClientBridge` para `fs`/`terminal` com **read-back pós-escrita** para detectar alterações feitas pelo `format_on_save` do editor (`tools/acp-bridge.ts:78-137`) e `acp-permission-gate.ts`.
 
 - **Ancestralidade Pi**: `pi0.9.4` não tinha `modes/rpc` nem `acp`; `pibase` tinha `modes/rpc/` (~1.8k LOC). Toda a camada RPC v2 e ACP é criação do `omp`.
 

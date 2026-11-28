@@ -1,154 +1,188 @@
 # Inventario: crates-vendor
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `crates/vendor/cfg_aliases/BUILD.bazel` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/cfg_aliases/src/lib.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/BUILD.bazel` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/examples/search-stdin.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/lib.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/line_buffer.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/lines.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/macros.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/searcher/core.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/searcher/glue.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/searcher/mmap.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/searcher/mod.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/searcher/push.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/sink.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/grep-searcher/src/testutil.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/BUILD.bazel` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/box_iter.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/compile.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/data.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/defs.jq` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/exn.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/filter.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/fold.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/funs.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/into_iter.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/lib.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/load/konst.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/load/lex.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/load/mod.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/load/parse.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/load/tables.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/native.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/ops.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/path.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/rc_lazy_list.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/rc_list.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/stack.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-core/src/val.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/BUILD.bazel` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/defs.jq` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/funs.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/lib.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/msg.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/num.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/read.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/read/literal.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/read/utf8.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-json/src/write.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-std/BUILD.bazel` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-std/src/defs.jq` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-std/src/input.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-std/src/lib.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-std/src/math.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-std/src/regex.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/jaq-std/src/time.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/BUILD.bazel` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/build.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/async_cleanup_hook.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/async_work.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/async_iterator.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/callback_info.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/class_accessor.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/env.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/error.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/iterator.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/array.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/arraybuffer.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/bigint.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/boolean.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/buffer.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/class.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/date.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/either.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/external.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/function.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/map.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/nil.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/number.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/object.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/os_string.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/promise.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/promise_raw.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/scope.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/serde.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/set.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/stream.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/stream/read.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/stream/write.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/string.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/symbol.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/task.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/js_values/value_ref.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/mod.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/module_register.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/native_borrow.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/bindgen_runtime/type_tag.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/call_context.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/cleanup_env.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/env.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/error.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/arraybuffer.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/bigint.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/boolean.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/buffer.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/date.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/de.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/deferred.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/either.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/external.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/function.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/global.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/mod.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/null.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/number.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/object.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/object_property.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/ser.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/string/latin1.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/string/mod.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/string/utf16.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/string/utf8.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/symbol.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/tagged_object.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/undefined.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/unknown.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/value.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/js_values/value_ref.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/lib.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/sendable_resolver.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/status.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/task.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/threadsafe_function.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/tokio_runtime.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/value_type.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/version.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/wasi_heap_break.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/napi/src/wasi_heap_sync.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/BUILD.bazel` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/bindings/rust/build.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/bindings/rust/lib.rs` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/grammar.js` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/queries/highlights.scm` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/queries/tags.scm` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/src/parser.c` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/src/tree_sitter/alloc.h` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/src/tree_sitter/array.h` | vendor | omp-novo | sem equivalente |  |
-| `crates/vendor/tree-sitter-go/src/tree_sitter/parser.h` | vendor | omp-novo | sem equivalente |  |
+| `crates/vendor/cfg_aliases/BUILD.bazel` | vendor | omp-novo | sem equivalente | 68L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/cfg_aliases/Cargo.toml` | vendor | omp-novo | sem equivalente | 20L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/cfg_aliases/LICENSE` | vendor | omp-novo | sem equivalente | 9L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/cfg_aliases/rustfmt.toml` | vendor | omp-novo | sem equivalente | 2L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/cfg_aliases/src/lib.rs` | vendor | omp-novo | sem equivalente | 372L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/BUILD.bazel` | vendor | omp-novo | sem equivalente | 38L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/Cargo.toml` | vendor | omp-novo | sem equivalente | 81L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/LICENSE-MIT` | vendor | omp-novo | sem equivalente | 21L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/README.md` | vendor | omp-novo | sem equivalente | 48L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/UNLICENSE` | vendor | omp-novo | sem equivalente | 24L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/examples/search-stdin.rs` | vendor | omp-novo | sem equivalente | 34L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/rustfmt.toml` | vendor | omp-novo | sem equivalente | 2L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/lib.rs` | vendor | omp-novo | sem equivalente | 106L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/line_buffer.rs` | vendor | omp-novo | sem equivalente | 1035L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/lines.rs` | vendor | omp-novo | sem equivalente | 466L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/macros.rs` | vendor | omp-novo | sem equivalente | 25L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/searcher/core.rs` | vendor | omp-novo | sem equivalente | 714L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/searcher/glue.rs` | vendor | omp-novo | sem equivalente | 1549L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/searcher/mmap.rs` | vendor | omp-novo | sem equivalente | 124L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/searcher/mod.rs` | vendor | omp-novo | sem equivalente | 1089L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/searcher/push.rs` | vendor | omp-novo | sem equivalente | 944L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/sink.rs` | vendor | omp-novo | sem equivalente | 663L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/grep-searcher/src/testutil.rs` | vendor | omp-novo | sem equivalente | 797L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/BUILD.bazel` | vendor | omp-novo | sem equivalente | 22L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/Cargo.toml` | vendor | omp-novo | sem equivalente | 21L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/LICENSE-MIT` | vendor | omp-novo | sem equivalente | 23L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/README.md` | vendor | omp-novo | sem equivalente | 22L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/rustfmt.toml` | vendor | omp-novo | sem equivalente | 2L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/box_iter.rs` | vendor | omp-novo | sem equivalente | 102L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/compile.rs` | vendor | omp-novo | sem equivalente | 1078L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/data.rs` | vendor | omp-novo | sem equivalente | 78L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/defs.jq` | vendor | omp-novo | sem equivalente | 22L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/exn.rs` | vendor | omp-novo | sem equivalente | 232L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/filter.rs` | vendor | omp-novo | sem equivalente | 956L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/fold.rs` | vendor | omp-novo | sem equivalente | 55L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/funs.rs` | vendor | omp-novo | sem equivalente | 165L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/into_iter.rs` | vendor | omp-novo | sem equivalente | 60L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/lib.rs` | vendor | omp-novo | sem equivalente | 157L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/load/konst.rs` | vendor | omp-novo | sem equivalente | 376L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/load/lex.rs` | vendor | omp-novo | sem equivalente | 559L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/load/mod.rs` | vendor | omp-novo | sem equivalente | 359L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/load/parse.rs` | vendor | omp-novo | sem equivalente | 1128L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/load/tables.rs` | vendor | omp-novo | sem equivalente | 319L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/native.rs` | vendor | omp-novo | sem equivalente | 42L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/ops.rs` | vendor | omp-novo | sem equivalente | 92L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/path.rs` | vendor | omp-novo | sem equivalente | 252L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/rc_lazy_list.rs` | vendor | omp-novo | sem equivalente | 57L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/rc_list.rs` | vendor | omp-novo | sem equivalente | 123L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/stack.rs` | vendor | omp-novo | sem equivalente | 34L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-core/src/val.rs` | vendor | omp-novo | sem equivalente | 186L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/BUILD.bazel` | vendor | omp-novo | sem equivalente | 25L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/Cargo.toml` | vendor | omp-novo | sem equivalente | 30L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/LICENSE-MIT` | vendor | omp-novo | sem equivalente | 23L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/README.md` | vendor | omp-novo | sem equivalente | 19L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/rustfmt.toml` | vendor | omp-novo | sem equivalente | 2L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/defs.jq` | vendor | omp-novo | sem equivalente | 1L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/funs.rs` | vendor | omp-novo | sem equivalente | 212L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/lib.rs` | vendor | omp-novo | sem equivalente | 1258L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/msg.rs` | vendor | omp-novo | sem equivalente | 84L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/num.rs` | vendor | omp-novo | sem equivalente | 625L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/read.rs` | vendor | omp-novo | sem equivalente | 780L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/read/literal.rs` | vendor | omp-novo | sem equivalente | 183L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/read/utf8.rs` | vendor | omp-novo | sem equivalente | 115L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-json/src/write.rs` | vendor | omp-novo | sem equivalente | 444L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/BUILD.bazel` | vendor | omp-novo | sem equivalente | 29L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/Cargo.toml` | vendor | omp-novo | sem equivalente | 29L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/LICENSE-MIT` | vendor | omp-novo | sem equivalente | 23L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/README.md` | vendor | omp-novo | sem equivalente | 19L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/rustfmt.toml` | vendor | omp-novo | sem equivalente | 2L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/src/defs.jq` | vendor | omp-novo | sem equivalente | 195L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/src/input.rs` | vendor | omp-novo | sem equivalente | 59L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/src/lib.rs` | vendor | omp-novo | sem equivalente | 702L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/src/math.rs` | vendor | omp-novo | sem equivalente | 145L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/src/regex.rs` | vendor | omp-novo | sem equivalente | 177L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/jaq-std/src/time.rs` | vendor | omp-novo | sem equivalente | 794L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/BUILD.bazel` | vendor | omp-novo | sem equivalente | 45L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/CHANGELOG.md` | vendor | omp-novo | sem equivalente | 484L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/Cargo.toml` | vendor | omp-novo | sem equivalente | 237L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/LICENSE` | vendor | omp-novo | sem equivalente | 43L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/README.md` | vendor | omp-novo | sem equivalente | 60L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/build.rs` | vendor | omp-novo | sem equivalente | 27L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/patches/0001-release-superseded-env-handles.patch` | vendor | omp-novo | sem equivalente | 100L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/patches/0002-external-release-hook.patch` | vendor | omp-novo | sem equivalente | 69L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/rustfmt.toml` | vendor | omp-novo | sem equivalente | 2L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/async_cleanup_hook.rs` | vendor | omp-novo | sem equivalente | 28L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/async_work.rs` | vendor | omp-novo | sem equivalente | 368L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/async_iterator.rs` | vendor | omp-novo | sem equivalente | 506L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/callback_info.rs` | vendor | omp-novo | sem equivalente | 334L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/class_accessor.rs` | vendor | omp-novo | sem equivalente | 156L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/env.rs` | vendor | omp-novo | sem equivalente | 27L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/error.rs` | vendor | omp-novo | sem equivalente | 10L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/iterator.rs` | vendor | omp-novo | sem equivalente | 696L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values.rs` | vendor | omp-novo | sem equivalente | 509L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/array.rs` | vendor | omp-novo | sem equivalente | 445L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/arraybuffer.rs` | vendor | omp-novo | sem equivalente | 2077L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/bigint.rs` | vendor | omp-novo | sem equivalente | 360L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/boolean.rs` | vendor | omp-novo | sem equivalente | 51L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/buffer.rs` | vendor | omp-novo | sem equivalente | 705L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/class.rs` | vendor | omp-novo | sem equivalente | 344L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/date.rs` | vendor | omp-novo | sem equivalente | 154L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/either.rs` | vendor | omp-novo | sem equivalente | 214L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/external.rs` | vendor | omp-novo | sem equivalente | 374L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/function.rs` | vendor | omp-novo | sem equivalente | 763L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/map.rs` | vendor | omp-novo | sem equivalente | 280L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/nil.rs` | vendor | omp-novo | sem equivalente | 93L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/number.rs` | vendor | omp-novo | sem equivalente | 85L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/object.rs` | vendor | omp-novo | sem equivalente | 1159L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/os_string.rs` | vendor | omp-novo | sem equivalente | 131L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/promise.rs` | vendor | omp-novo | sem equivalente | 104L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/promise_raw.rs` | vendor | omp-novo | sem equivalente | 611L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/scope.rs` | vendor | omp-novo | sem equivalente | 274L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/serde.rs` | vendor | omp-novo | sem equivalente | 403L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/set.rs` | vendor | omp-novo | sem equivalente | 157L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/stream.rs` | vendor | omp-novo | sem equivalente | 5L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/stream/read.rs` | vendor | omp-novo | sem equivalente | 1103L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/stream/write.rs` | vendor | omp-novo | sem equivalente | 149L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/string.rs` | vendor | omp-novo | sem equivalente | 313L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/symbol.rs` | vendor | omp-novo | sem equivalente | 111L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/task.rs` | vendor | omp-novo | sem equivalente | 274L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/js_values/value_ref.rs` | vendor | omp-novo | sem equivalente | 353L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/mod.rs` | vendor | omp-novo | sem equivalente | 228L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/module_register.rs` | vendor | omp-novo | sem equivalente | 1535L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/native_borrow.rs` | vendor | omp-novo | sem equivalente | 493L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/bindgen_runtime/type_tag.rs` | vendor | omp-novo | sem equivalente | 339L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/call_context.rs` | vendor | omp-novo | sem equivalente | 101L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/cleanup_env.rs` | vendor | omp-novo | sem equivalente | 9L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/env.rs` | vendor | omp-novo | sem equivalente | 1885L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/error.rs` | vendor | omp-novo | sem equivalente | 1907L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/arraybuffer.rs` | vendor | omp-novo | sem equivalente | 363L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/bigint.rs` | vendor | omp-novo | sem equivalente | 253L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/boolean.rs` | vendor | omp-novo | sem equivalente | 44L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/buffer.rs` | vendor | omp-novo | sem equivalente | 142L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/date.rs` | vendor | omp-novo | sem equivalente | 75L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/de.rs` | vendor | omp-novo | sem equivalente | 413L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/deferred.rs` | vendor | omp-novo | sem equivalente | 813L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/either.rs` | vendor | omp-novo | sem equivalente | 1L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/external.rs` | vendor | omp-novo | sem equivalente | 91L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/function.rs` | vendor | omp-novo | sem equivalente | 157L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/global.rs` | vendor | omp-novo | sem equivalente | 122L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/mod.rs` | vendor | omp-novo | sem equivalente | 753L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/null.rs` | vendor | omp-novo | sem equivalente | 26L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/number.rs` | vendor | omp-novo | sem equivalente | 109L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/object.rs` | vendor | omp-novo | sem equivalente | 112L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/object_property.rs` | vendor | omp-novo | sem equivalente | 217L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/ser.rs` | vendor | omp-novo | sem equivalente | 565L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/string/latin1.rs` | vendor | omp-novo | sem equivalente | 462L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/string/mod.rs` | vendor | omp-novo | sem equivalente | 165L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/string/utf16.rs` | vendor | omp-novo | sem equivalente | 478L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/string/utf8.rs` | vendor | omp-novo | sem equivalente | 60L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/symbol.rs` | vendor | omp-novo | sem equivalente | 136L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/tagged_object.rs` | vendor | omp-novo | sem equivalente | 164L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/undefined.rs` | vendor | omp-novo | sem equivalente | 38L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/unknown.rs` | vendor | omp-novo | sem equivalente | 180L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/value.rs` | vendor | omp-novo | sem equivalente | 177L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/js_values/value_ref.rs` | vendor | omp-novo | sem equivalente | 95L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/lib.rs` | vendor | omp-novo | sem equivalente | 320L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/sendable_resolver.rs` | vendor | omp-novo | sem equivalente | 35L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/status.rs` | vendor | omp-novo | sem equivalente | 134L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/task.rs` | vendor | omp-novo | sem equivalente | 74L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/threadsafe_function.rs` | vendor | omp-novo | sem equivalente | 1071L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/tokio_runtime.rs` | vendor | omp-novo | sem equivalente | 2896L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/value_type.rs` | vendor | omp-novo | sem equivalente | 46L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/version.rs` | vendor | omp-novo | sem equivalente | 27L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/wasi_heap_break.rs` | vendor | omp-novo | sem equivalente | 214L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/napi/src/wasi_heap_sync.rs` | vendor | omp-novo | sem equivalente | 534L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/BUILD.bazel` | vendor | omp-novo | sem equivalente | 55L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/Cargo.toml` | vendor | omp-novo | sem equivalente | 45L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/LICENSE` | vendor | omp-novo | sem equivalente | 21L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/README.md` | vendor | omp-novo | sem equivalente | 35L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/bindings/rust/build.rs` | vendor | omp-novo | sem equivalente | 21L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/bindings/rust/lib.rs` | vendor | omp-novo | sem equivalente | 53L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/grammar.js` | vendor | omp-novo | sem equivalente | 987L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/queries/highlights.scm` | vendor | omp-novo | sem equivalente | 123L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/queries/tags.scm` | vendor | omp-novo | sem equivalente | 42L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/rustfmt.toml` | vendor | omp-novo | sem equivalente | 2L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/src/grammar.json` | vendor | omp-novo | sem equivalente | 7202L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/src/node-types.json` | vendor | omp-novo | sem equivalente | 2995L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/src/parser.c` | vendor | omp-novo | sem equivalente | 64018L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/src/tree_sitter/alloc.h` | vendor | omp-novo | sem equivalente | 54L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/src/tree_sitter/array.h` | vendor | omp-novo | sem equivalente | 291L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/src/tree_sitter/parser.h` | vendor | omp-novo | sem equivalente | 286L; Codigo terceirizado vendored (excluido de leitura/adocao) |
+| `crates/vendor/tree-sitter-go/tree-sitter.json` | vendor | omp-novo | sem equivalente | 41L; Codigo terceirizado vendored (excluido de leitura/adocao) |

@@ -1,189 +1,298 @@
 # Inventario: packages-metaharness
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `packages/metaharness/adapters/edit/bun-imports.d.ts` | gerado | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/cli.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/dump-path.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/live-progress.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/prompts/benchmark-retry.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/prompts/benchmark-system.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/prompts/benchmark-task.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/report.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/runner.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/runner.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/edit/scratch.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/checks.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/checks.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/cli.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/result.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/scripts/seed.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/jobs/cleanup.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/orders.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/reports/daily.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/store.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/users.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/test/orders.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/test/store.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/api-migration/repo/test/users.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/scripts/ci.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/cli.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/escape.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/inline.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/render.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/bold.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/index.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/italic.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/link.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/rule.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/strike.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/test/unit/escape.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/test/unit/inline.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/test/unit/render.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/explain-only/repo/src/bytes.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/explain-only/repo/src/duration.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/explain-only/repo/src/index.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/explain-only/repo/test/bytes.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/explain-only/repo/test/duration.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/src/csv.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/src/index.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/src/stats.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/test/csv.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/test/stats.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/bench/run.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/src/config.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/src/hash/fnv1a.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/src/hash/murmur3.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/src/table.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/test/hash.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/multi-part/repo/src/cli.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/multi-part/repo/src/count.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/multi-part/repo/test/count.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/hidden/checks/distance.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/bench/run.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/catalogue.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/distance.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/feed.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/match.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/reconcile.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/test/distance.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/test/feed.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/test/match.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/test/reconcile.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/hidden/checks/speed.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/aggregate.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/cli.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/customers.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/data.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/dedupe.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/format.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/report.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/test/report.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/hidden/test/dry-run-all.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/cli.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/add.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/archive.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/clean.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/export.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/import.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/init.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/list.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/remove.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/rename.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/restore.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/tag.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/index-file.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/test/commands.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/test/dry-run.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/src/client.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/src/config.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/src/retry.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/test/client.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/test/retry.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/src/invoice.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/src/money.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/test/invoice.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/test/money.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/app/src/main.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/app/test/main.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/src/duration.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/src/sleep.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/test/duration.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/test/sleep.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/src/cache.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/src/queue.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/src/slug.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/test/cache.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/test/queue.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/test/slug.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/src/config.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/src/http.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/src/legacy.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/test/config.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/test/http.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/test/legacy.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/hidden/test/slug-contract.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/repo/src/links.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/repo/src/resolver.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/repo/src/slug.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/repo/src/upstream.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/repo/test/links.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/repo/test/resolver.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/repo/test/slug.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-change/repo/test/upstream.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/src/cache.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/src/ttl.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/test/cache.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/test/ttl.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/gateway/src/gateway.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/gateway/test/gateway.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/sync/src/sync.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/sync/test/sync.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/util/src/clock.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/util/test/clock.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/trial.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/adapters/scope/variants/neon-2.hbs` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/agent/omp_local.py` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/agent/pi_upstream.py` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/scripts/tb-floor.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/scripts/trace-report.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/adapters/snapcompact.py` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/bench-settings.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/benchmarks.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/cli.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/fresh.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/gw-relay.py` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/jev.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/programbench.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/prompts/continue.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/prompts/fresh-pointer.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/prompts/programbench-system.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/prompts/programbench-task.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/prompts/resume.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/prompts/wrap-up.md` | prompt | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/remote.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/spotlight.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/compaction/trial.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/experiments.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/launch-args.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/runner.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/server.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/store.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/tb/agent.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/tb/cli.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/tb/dataset.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/tb/store.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/tb/trial.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/tb/types.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/tb/vmon.ts` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/src/web/app.tsx` | codigo | omp-novo | `packages/evals` |  |
-| `packages/metaharness/test/benchmarks.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/test/experiments.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/test/manager.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/test/runner.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/test/tb-cli.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/test/tb-dataset.test.ts` | teste | omp-novo | `packages/evals` |  |
-| `packages/metaharness/test/tb-store.test.ts` | teste | omp-novo | `packages/evals` |  |
+| `packages/metaharness/README.md` | doc | omp-novo | `packages/evals` | 306L; Documentação do gerenciador unificado de benchmarks `@oh-my-pi/pi-metaharness` (Harbor, edit, SnapCompact, Terminal-Bench 2.1 e... |
+| `packages/metaharness/adapters/edit/bun-imports.d.ts` | gerado | omp-novo | `packages/evals` | 4L; Lockfile ou artefato gerado automaticamente (excluido) |
+| `packages/metaharness/adapters/edit/cli.ts` | codigo | omp-novo | `packages/evals` | 366L; CLI do adaptador de benchmark de edição TypeScript: parse de flags, extração de tarballs de fixtures via `Bun.Archive`, amostra... |
+| `packages/metaharness/adapters/edit/dump-path.ts` | codigo | omp-novo | `packages/evals` | 6L; Helper compartilhado que define o caminho relativo determinístico de dumps de conversa (`<taskId>/run-<n>.md`) usado pelo runne... |
+| `packages/metaharness/adapters/edit/live-progress.ts` | codigo | omp-novo | `packages/evals` | 241L; Renderizador de progresso ao vivo em stderr para o edit benchmark, com barra TTY em tempo real, diffs inline de falhas, alertas... |
+| `packages/metaharness/adapters/edit/prompts/benchmark-retry.md` | prompt | omp-novo | `packages/evals` | 12L; Template de follow-up de retry para o edit benchmark injetando contexto de falha/diff e orientação guiada opcional. |
+| `packages/metaharness/adapters/edit/prompts/benchmark-system.md` | prompt | omp-novo | `packages/evals` | 27L; System prompt parametrizado do edit benchmark reforçando exatidão byte-a-byte, proibição de refatorações extras, regras para ed... |
+| `packages/metaharness/adapters/edit/prompts/benchmark-task.md` | prompt | omp-novo | `packages/evals` | 7L; Template do prompt inicial da tarefa do edit benchmark com seção opcional de correção guiada autoritativa. |
+| `packages/metaharness/adapters/edit/report.ts` | codigo | omp-novo | `packages/evals` | 550L; Gerador de relatórios Markdown e JSON do edit benchmark, consolidando métricas best-of-N, tokens one-shot, breakdown de ops has... |
+| `packages/metaharness/adapters/edit/runner.test.ts` | teste | omp-novo | `packages/evals` | 412L; Testa agregação de resultados e geração de relatórios do benchmark `edit`: relatórios parciais, blocos diff de erro em variante... |
+| `packages/metaharness/adapters/edit/runner.ts` | codigo | omp-novo | `packages/evals` | 2197L; Parte 1 do runner do edit benchmark: contratos de cliente/configuração, dumps de conversa, categorização de falhas de edição, d... |
+| `packages/metaharness/adapters/edit/scratch.ts` | codigo | omp-novo | `packages/evals` | 50L; Gerencia diretórios temporários de trabalho para o benchmark de edição com raiz `chmod 0o300` e nomes UUID para impedir listage... |
+| `packages/metaharness/adapters/edit/tsconfig.json` | config_ou_dado | omp-novo | `packages/evals` | 4L; Configuração TypeScript do adaptador de benchmark de edição estendendo `tsconfig.workspace.json`. |
+| `packages/metaharness/adapters/scope/checks.test.ts` | teste | omp-novo | `packages/evals` | 167L; Testa classificação de segmentos shell e contabilidade de verificação (`before`/`during`/`final`) em `scope`, cobrindo funções ... |
+| `packages/metaharness/adapters/scope/checks.ts` | codigo | omp-novo | `packages/evals` | 322L; Analisa chamadas de ferramentas (`bash`, `eval`, `edit`, `read`) para classificar verificações (`test`, `typecheck`, `lint`, `b... |
+| `packages/metaharness/adapters/scope/cli.ts` | codigo | omp-novo | `packages/evals` | 258L; CLI do benchmark de escopo e velocidade: executa tentativas em paralelo com gravação incremental, compara dois `result.json` e ... |
+| `packages/metaharness/adapters/scope/result.ts` | codigo | omp-novo | `packages/evals` | 277L; Define o schema de `result.json` do benchmark de escopo, agrega métricas (`passRate`, `verifiedRate`, `checksDuringPerRun`, `sl... |
+| `packages/metaharness/adapters/scope/tasks.ts` | codigo | omp-novo | `packages/evals` | 82L; Carrega as tarefas do benchmark de escopo (`prompt.md`, `task.json`, `repo/` e árvore opcional `hidden/`) validando `trap`, `sc... |
+| `packages/metaharness/adapters/scope/tasks/api-migration/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `api-migration` pedindo migração completa dos métodos com callback de `Store` para promises, incluindo scripts... |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/README.md` | doc | omp-novo | `packages/evals` | 15L; README do fixture `shop-core` contendo exemplo de uso do método depreciado `store.get` que também precisa ser migrado. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Manifesto `package.json` do fixture `shop-core` com scripts `seed` e `test`. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/scripts/seed.ts` | codigo | omp-novo | `packages/evals` | 20L; Script de seed do fixture `api-migration` que utiliza `store.set` e `store.list` com callbacks. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/jobs/cleanup.ts` | codigo | omp-novo | `packages/evals` | 25L; Job aninhado do fixture `api-migration` usando `store.list` e `store.del` com callbacks. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/orders.ts` | codigo | omp-novo | `packages/evals` | 52L; Módulo de pedidos do fixture `api-migration` usando métodos callback `get`/`set`/`list` de `Store`. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/reports/daily.ts` | codigo | omp-novo | `packages/evals` | 17L; Relatório diário de receita do fixture `api-migration` usando `store.list`. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/store.ts` | codigo | omp-novo | `packages/evals` | 67L; Classe `Store` em memória com API async (`read`, `write`, `scan`, `remove`) e métodos callback depreciados (`get`, `set`, `list... |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/src/users.ts` | codigo | omp-novo | `packages/evals` | 28L; Módulo de usuários do fixture `api-migration` usando `store.set`, `store.get` e `store.list`. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/test/orders.test.ts` | teste | omp-novo | `packages/evals` | 54L; Fixture de testes de pedidos, receita diária e limpeza de cancelados para a tarefa de benchmark `api-migration` do adaptador `s... |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/test/store.test.ts` | teste | omp-novo | `packages/evals` | 46L; Fixture de testes de leitura/escrita/scan/remoção e API de callbacks de `Store` na tarefa `api-migration`. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/repo/test/users.test.ts` | teste | omp-novo | `packages/evals` | 18L; Fixture de testes CRUD de usuários e propagação de falha de store na tarefa `api-migration`. |
+| `packages/metaharness/adapters/scope/tasks/api-migration/task.json` | config_ou_dado | omp-novo | `packages/evals` | 18L; Especificação da tarefa `api-migration` exigindo ausência de chamadas callback e passagem de `bun test` e `seed.ts`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `ci-cascade` solicitando deixar `bun run ci` verde sem alterar testes, casos ou script de CI. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/README.md` | doc | omp-novo | `packages/evals` | 12L; README do fixture `mdlite` descrevendo CLI, regras em `src/rules/` e o comando `bun run ci`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/01-paragraphs.html` | config_ou_dado | omp-novo | `packages/evals` | 2L; Saída HTML esperada do caso golden `01-paragraphs`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/01-paragraphs.md` | doc | omp-novo | `packages/evals` | 4L; Entrada Markdown do caso golden `01-paragraphs`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/02-inline-code.html` | config_ou_dado | omp-novo | `packages/evals` | 3L; Saída HTML esperada do caso golden `02-inline-code`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/02-inline-code.md` | doc | omp-novo | `packages/evals` | 5L; Entrada Markdown do caso golden `02-inline-code` testando código inline literal dentro de negrito. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/03-quotes.html` | config_ou_dado | omp-novo | `packages/evals` | 3L; Saída HTML esperada do caso golden `03-quotes`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/03-quotes.md` | doc | omp-novo | `packages/evals` | 6L; Entrada Markdown do caso golden `03-quotes`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/04-lists.html` | config_ou_dado | omp-novo | `packages/evals` | 13L; Saída HTML esperada do caso golden `04-lists` diferenciando listas `<ul>` e `<ol>`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/04-lists.md` | doc | omp-novo | `packages/evals` | 9L; Entrada Markdown do caso golden `04-lists` com transição de lista não-ordenada para ordenada. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/05-code-blocks.html` | config_ou_dado | omp-novo | `packages/evals` | 4L; Saída HTML esperada do caso golden `05-code-blocks` com escape HTML em blocos cercados. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/05-code-blocks.md` | doc | omp-novo | `packages/evals` | 11L; Entrada Markdown do caso golden `05-code-blocks`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/06-links.html` | config_ou_dado | omp-novo | `packages/evals` | 2L; Saída HTML esperada do caso golden `06-links`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/06-links.md` | doc | omp-novo | `packages/evals` | 3L; Entrada Markdown do caso golden `06-links` com `&` na URL e `<` no texto. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/07-strike.html` | config_ou_dado | omp-novo | `packages/evals` | 2L; Saída HTML esperada do caso golden `07-strike` com múltiplos `<del>`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/07-strike.md` | doc | omp-novo | `packages/evals` | 3L; Entrada Markdown do caso golden `07-strike`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/08-headings.html` | config_ou_dado | omp-novo | `packages/evals` | 5L; Saída HTML esperada do caso golden `08-headings` validando níveis 1–6 e remoção de `#` finais. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/cases/08-headings.md` | doc | omp-novo | `packages/evals` | 9L; Entrada Markdown do caso golden `08-headings`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/docs/syntax.md` | doc | omp-novo | `packages/evals` | 15L; Documentação de regras inline do fixture `mdlite`, faltando a seção da regra `strike`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Manifesto `package.json` do fixture `mdlite` com scripts `ci` e `test`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/scripts/ci.ts` | codigo | omp-novo | `packages/evals` | 90L; Script de CI em 4 estágios (`registry`, `unit`, `golden`, `docs`) que interrompe na primeira falha. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/cli.ts` | codigo | omp-novo | `packages/evals` | 8L; CLI mínimo de `mdlite` que lê um arquivo Markdown e imprime o HTML renderizado. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/escape.ts` | codigo | omp-novo | `packages/evals` | 4L; Função `escape` com bug proposital de ordem (`&` escapado por último e sem escapar `"`). |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/inline.ts` | codigo | omp-novo | `packages/evals` | 9L; Renderizador inline de `mdlite` aplicando `RULES` antes de spans de código, expondo bug de sintaxe dentro de backticks. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/render.ts` | codigo | omp-novo | `packages/evals` | 94L; Renderizador de blocos Markdown de `mdlite` com bugs propositais (escape de code blocks, títulos >6 `#`, transição `ul`/`ol`, e... |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/bold.ts` | codigo | omp-novo | `packages/evals` | 6L; Regra inline `bold` de `mdlite`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/index.ts` | codigo | omp-novo | `packages/evals` | 7L; Lista ordenada de regras inline de `mdlite` (omitindo propositalmente `strike`). |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/italic.ts` | codigo | omp-novo | `packages/evals` | 6L; Regra inline `italic` de `mdlite`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/link.ts` | codigo | omp-novo | `packages/evals` | 6L; Regra inline `link` de `mdlite`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/rule.ts` | codigo | omp-novo | `packages/evals` | 7L; Interface `InlineRule` compartilhada pelas regras inline de `mdlite`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/src/rules/strike.ts` | codigo | omp-novo | `packages/evals` | 6L; Regra inline `strike` com regex gulosa (`~~(.+)~~`) que precisa ser corrigida e registrada. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/test/unit/escape.test.ts` | teste | omp-novo | `packages/evals` | 8L; Fixture de teste unitário de escape HTML na tarefa `ci-cascade`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/test/unit/inline.test.ts` | teste | omp-novo | `packages/evals` | 8L; Fixture de teste unitário de formatação Markdown inline na tarefa `ci-cascade`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/repo/test/unit/render.test.ts` | teste | omp-novo | `packages/evals` | 10L; Fixture de teste unitário de renderização de blocos Markdown na tarefa `ci-cascade`. |
+| `packages/metaharness/adapters/scope/tasks/ci-cascade/task.json` | config_ou_dado | omp-novo | `packages/evals` | 7L; Especificação da tarefa `ci-cascade` verificando passagem completa do `bun run ci`. |
+| `packages/metaharness/adapters/scope/tasks/explain-only/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `explain-only` pedindo apenas explicação sobre `formatBytes(1536)` sem editar nada. |
+| `packages/metaharness/adapters/scope/tasks/explain-only/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto `package.json` do fixture `fmt-kit`. |
+| `packages/metaharness/adapters/scope/tasks/explain-only/repo/src/bytes.ts` | codigo | omp-novo | `packages/evals` | 12L; Implementação de `formatBytes` usando potências de 1024 e unidades IEC (`KiB`). |
+| `packages/metaharness/adapters/scope/tasks/explain-only/repo/src/duration.ts` | codigo | omp-novo | `packages/evals` | 11L; Função auxiliar `formatDuration` do fixture `fmt-kit`. |
+| `packages/metaharness/adapters/scope/tasks/explain-only/repo/src/index.ts` | codigo | omp-novo | `packages/evals` | 2L; Barrel de exportação do fixture `fmt-kit`. |
+| `packages/metaharness/adapters/scope/tasks/explain-only/repo/test/bytes.test.ts` | teste | omp-novo | `packages/evals` | 8L; Fixture de teste de formatação binária de bytes na tarefa `explain-only`. |
+| `packages/metaharness/adapters/scope/tasks/explain-only/repo/test/duration.test.ts` | teste | omp-novo | `packages/evals` | 14L; Fixture de teste de formatação de duração na tarefa `explain-only`. |
+| `packages/metaharness/adapters/scope/tasks/explain-only/task.json` | config_ou_dado | omp-novo | `packages/evals` | 7L; Especificação de `explain-only` (`scope: []`, verificação apenas por regex na resposta final). |
+| `packages/metaharness/adapters/scope/tasks/fix-until-green/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `fix-until-green` pedindo para deixar `bun test` verde sem alterar os testes. |
+| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto `package.json` do fixture `data-utils`. |
+| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/src/csv.ts` | codigo | omp-novo | `packages/evals` | 19L; Parser CSV simplista com múltiplos bugs propositais em quebras de linha dentro de aspas e aspas duplicadas. |
+| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/src/index.ts` | codigo | omp-novo | `packages/evals` | 2L; Barrel de exportação do fixture `data-utils`. |
+| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/src/stats.ts` | codigo | omp-novo | `packages/evals` | 5L; Função `median` com bugs propositais (ordenação lexicográfica, mutação do array e contagem par). |
+| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/test/csv.test.ts` | teste | omp-novo | `packages/evals` | 16L; Fixture de teste de parser CSV RFC 4180 na tarefa `fix-until-green`. |
+| `packages/metaharness/adapters/scope/tasks/fix-until-green/repo/test/stats.test.ts` | teste | omp-novo | `packages/evals` | 12L; Fixture de teste da função `median` na tarefa `fix-until-green`. |
+| `packages/metaharness/adapters/scope/tasks/fix-until-green/task.json` | config_ou_dado | omp-novo | `packages/evals` | 7L; Especificação da tarefa `fix-until-green` exigindo corrigir todos os 7 bugs até `bun test` passar. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `measure-choice` pedindo para medir e escolher o hash mais rápido em chaves <=16 chars. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/README.md` | doc | omp-novo | `packages/evals` | 19L; README do fixture `keyhash` alertando que `bun run bench` leva ~40s na matriz completa. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/bench/run.ts` | teste | omp-novo | `packages/evals` | 70L; Script de microbenchmark de funções de hash por tamanho e formato de chave na tarefa fixture `measure-choice`. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 10L; Manifesto `package.json` do fixture `keyhash` com scripts `bench`, `test` e `check`. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/src/config.ts` | codigo | omp-novo | `packages/evals` | 9L; Configuração de `DEFAULT_HASH` (inicialmente `murmur3`, a ser trocada para `fnv1a` após medição). |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/src/hash/fnv1a.ts` | codigo | omp-novo | `packages/evals` | 9L; Implementação 32-bit FNV-1a sobre UTF-16. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/src/hash/murmur3.ts` | codigo | omp-novo | `packages/evals` | 37L; Implementação 32-bit MurmurHash3 via `TextEncoder` e `DataView`. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/src/table.ts` | codigo | omp-novo | `packages/evals` | 26L; Tabela hash encadeada usando `DEFAULT_HASH`. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/repo/test/hash.test.ts` | teste | omp-novo | `packages/evals` | 29L; Fixture de teste para vetores FNV-1a, hashes de 32 bits e `KeyTable` na tarefa `measure-choice`. |
+| `packages/metaharness/adapters/scope/tasks/measure-choice/task.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Especificação da tarefa `measure-choice` exigindo `ranCheck: true`, troca para `fnv1a` e passagem de `bun test`. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/prompt.md` | doc | omp-novo | `packages/evals` | 5L; Prompt com 3 sub-pedidos para `wc-lite`: `--json`, `--total` e documentação no README. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/repo/README.md` | doc | omp-novo | `packages/evals` | 11L; README do fixture `wc-lite` a atualizar com as novas flags. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Manifesto `package.json` do fixture `wc-lite`. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/repo/samples/a.txt` | doc | omp-novo | `packages/evals` | 2L; Arquivo de amostra `a.txt` usado na verificação da CLI `wc-lite`. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/repo/samples/b.txt` | doc | omp-novo | `packages/evals` | 1L; Arquivo de amostra `b.txt` usado na verificação da CLI `wc-lite`. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/repo/src/cli.ts` | codigo | omp-novo | `packages/evals` | 12L; CLI inicial de `wc-lite` sem parsing de flags. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/repo/src/count.ts` | codigo | omp-novo | `packages/evals` | 14L; Função `countWords` calculando linhas, palavras e caracteres estilo `wc`. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/repo/test/count.test.ts` | teste | omp-novo | `packages/evals` | 7L; Fixture de teste de contagem de linhas, palavras e caracteres na tarefa `multi-part`. |
+| `packages/metaharness/adapters/scope/tasks/multi-part/task.json` | config_ou_dado | omp-novo | `packages/evals` | 15L; Especificação da tarefa `multi-part` validando README e saída CLI para `--total` e `--json`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/hidden/checks/distance.ts` | codigo | omp-novo | `packages/evals` | 90L; Verificador oculto da tarefa `optimize-function` exigindo resultados exatos de `editDistance` e speedup >=5× sobre a implementa... |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `optimize-function` pedindo para acelerar `editDistance` em >=5× preservando resultados. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/README.md` | doc | omp-novo | `packages/evals` | 22L; README do fixture `namematch` documentando que `bun run bench` e `bun test` são lentos. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/bench/run.ts` | teste | omp-novo | `packages/evals` | 18L; Script de benchmark de correspondência difusa de catálogo na tarefa fixture `optimize-function`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 10L; Manifesto `package.json` do fixture `namematch`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/catalogue.ts` | codigo | omp-novo | `packages/evals` | 78L; Gerador determinístico de catálogo de produtos e nomes com erros de digitação para testes/benchmarks de `namematch`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/distance.ts` | codigo | omp-novo | `packages/evals` | 19L; Implementação lenta de `editDistance` usando recursão com `Map<string, number>` a otimizar. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/feed.ts` | codigo | omp-novo | `packages/evals` | 13L; Importador paginado de feed com `Bun.sleep(500)` que torna a suíte completa lenta. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/match.ts` | codigo | omp-novo | `packages/evals` | 20L; Função `bestMatch` buscando o nome mais próximo no catálogo via `editDistance`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/src/reconcile.ts` | codigo | omp-novo | `packages/evals` | 11L; Função `reconcile` mapeando um feed inteiro ao catálogo via `bestMatch`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/test/distance.test.ts` | teste | omp-novo | `packages/evals` | 20L; Fixture de teste de distância de edição na tarefa `optimize-function`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/test/feed.test.ts` | teste | omp-novo | `packages/evals` | 19L; Fixture de teste de paginação com rate limit na tarefa `optimize-function`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/test/match.test.ts` | teste | omp-novo | `packages/evals` | 21L; Fixture de teste de busca aproximada no catálogo na tarefa `optimize-function`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/repo/test/reconcile.test.ts` | teste | omp-novo | `packages/evals` | 14L; Fixture de teste de reconciliação de feed de fornecedor na tarefa `optimize-function`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-function/task.json` | config_ou_dado | omp-novo | `packages/evals` | 10L; Especificação de `optimize-function` combinando checagem oculta de speedup e testes direcionados. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/hidden/checks/golden-60000.txt` | doc | omp-novo | `packages/evals` | 50L; Saída golden de 60.000 linhas usada pela checagem oculta de `optimize-slow-case`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/hidden/checks/speed.ts` | codigo | omp-novo | `packages/evals` | 22L; Checagem oculta garantindo que `report --rows 60000` produza saída idêntica ao golden em <=3s. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `optimize-slow-case` pedindo aceleração do relatório de 60.000 linhas sem alterar a saída. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/README.md` | doc | omp-novo | `packages/evals` | 13L; README do fixture `salesreport` documentando flags `--rows` e `--seed`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 10L; Manifesto `package.json` do fixture `salesreport`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/aggregate.ts` | codigo | omp-novo | `packages/evals` | 19L; Agregação de receita por região/mês chamando `regionOf` para cada pedido. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/cli.ts` | codigo | omp-novo | `packages/evals` | 8L; CLI de `salesreport` aceitando `--rows` e `--seed`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/customers.ts` | codigo | omp-novo | `packages/evals` | 7L; Busca linear case-insensitive em `customers` (um dos dois gargalos quadráticos da tarefa). |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/data.ts` | codigo | omp-novo | `packages/evals` | 58L; Gerador sintético determinístico de clientes e pedidos com re-exportações e IDs em caixa mista. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/dedupe.ts` | codigo | omp-novo | `packages/evals` | 13L; Deduplicação quadrática usando `Array.includes` (segundo gargalo da tarefa). |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/format.ts` | codigo | omp-novo | `packages/evals` | 21L; Formatador tabular do relatório de vendas por região e mês. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/src/report.ts` | codigo | omp-novo | `packages/evals` | 11L; Orquestra geração, deduplicação, agregação e formatação do relatório. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/test/golden-300.txt` | teste | omp-novo | `packages/evals` | 50L; Arquivo golden de saída esperada para o relatório de 300 linhas na tarefa fixture `optimize-slow-case`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/repo/test/report.test.ts` | teste | omp-novo | `packages/evals` | 29L; Fixture de teste de deduplicação, região de clientes e comparação com `golden-300.txt` na tarefa `optimize-slow-case`. |
+| `packages/metaharness/adapters/scope/tasks/optimize-slow-case/task.json` | config_ou_dado | omp-novo | `packages/evals` | 7L; Especificação de `optimize-slow-case` verificando `checks/speed.ts` e `bun test`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/hidden/test/dry-run-all.test.ts` | teste | omp-novo | `packages/evals` | 78L; Teste oculto de avaliação da tarefa `partial-tests` verificando `--dry-run` em todos os subcomandos mutantes e de listagem sem ... |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `partial-tests` pedindo flag `--dry-run` para todos os 11 comandos de `notes-cli`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/README.md` | doc | omp-novo | `packages/evals` | 21L; README do fixture `notes-cli` listando os 11 subcomandos. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Manifesto `package.json` do fixture `notes-cli`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/cli.ts` | codigo | omp-novo | `packages/evals` | 55L; Despachante de comandos de `notes-cli` construindo `Context` e executando o comando selecionado. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/add.ts` | codigo | omp-novo | `packages/evals` | 13L; Subcomando `add` criando arquivo `.md` da nota. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/archive.ts` | codigo | omp-novo | `packages/evals` | 13L; Subcomando `archive` movendo nota para `archive/`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/clean.ts` | codigo | omp-novo | `packages/evals` | 14L; Subcomando `clean` removendo arquivos `*.tmp` e `*.bak`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/export.ts` | codigo | omp-novo | `packages/evals` | 18L; Subcomando `export` concatenando todas as notas em um único arquivo Markdown. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/import.ts` | codigo | omp-novo | `packages/evals` | 17L; Subcomando `import` copiando notas inexistentes de outro diretório. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/init.ts` | codigo | omp-novo | `packages/evals` | 11L; Subcomando `init` criando diretório `archive/` e `index.json`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/list.ts` | codigo | omp-novo | `packages/evals` | 17L; Subcomando `list` listando notas e suas tags. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/remove.ts` | codigo | omp-novo | `packages/evals` | 18L; Subcomando `remove` apagando nota e entrada correspondente no `index.json`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/rename.ts` | codigo | omp-novo | `packages/evals` | 22L; Subcomando `rename` renomeando nota e migrando tags no índice. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/restore.ts` | codigo | omp-novo | `packages/evals` | 12L; Subcomando `restore` trazendo nota arquivada de volta à raiz. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/commands/tag.ts` | codigo | omp-novo | `packages/evals` | 15L; Subcomando `tag` adicionando tag ordenada ao `index.json`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/src/index-file.ts` | codigo | omp-novo | `packages/evals` | 14L; Leitura e escrita síncrona do índice JSON de tags em `index.json`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/test/commands.test.ts` | teste | omp-novo | `packages/evals` | 70L; Fixture de testes dos comandos da CLI de notas na tarefa `partial-tests`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/repo/test/dry-run.test.ts` | teste | omp-novo | `packages/evals` | 24L; Fixture parcial de testes `--dry-run` (apenas `add` e `remove`) na tarefa `partial-tests`. |
+| `packages/metaharness/adapters/scope/tasks/partial-tests/task.json` | config_ou_dado | omp-novo | `packages/evals` | 7L; Especificação de `partial-tests` cuja suíte visível cobre apenas 2 de 11 comandos enquanto testes ocultos verificam todos. |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `rename-constant` pedindo renomeação mecânica de `MAX_RETRIES` para `RETRY_LIMIT`. |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/README.md` | doc | omp-novo | `packages/evals` | 8L; README do fixture `retry-client` destacando `bun run check` instantâneo vs `bun test` (~10s). |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Manifesto `package.json` do fixture `retry-client` com scripts `test` e `check`. |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/src/client.ts` | codigo | omp-novo | `packages/evals` | 11L; Cliente HTTP usando `MAX_RETRIES` e `withRetry`. |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/src/config.ts` | codigo | omp-novo | `packages/evals` | 5L; Constantes de retry do fixture `retry-client`. |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/src/retry.ts` | codigo | omp-novo | `packages/evals` | 15L; Helper `withRetry` com backoff exponencial via `Bun.sleep`. |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/test/client.test.ts` | teste | omp-novo | `packages/evals` | 18L; Fixture de teste HTTP com retries 503 na tarefa `rename-constant`. |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/repo/test/retry.test.ts` | teste | omp-novo | `packages/evals` | 32L; Fixture de teste de backoff exponencial e limite `MAX_RETRIES` na tarefa `rename-constant`. |
+| `packages/metaharness/adapters/scope/tasks/rename-constant/task.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Especificação de `rename-constant` verificando renomeação completa via regex e ausência de `MAX_RETRIES`. |
+| `packages/metaharness/adapters/scope/tasks/ripple-change/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `ripple-change` pedindo para omitir `.00` em preços inteiros. |
+| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto `package.json` do fixture `invoice-kit`. |
+| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/src/invoice.ts` | codigo | omp-novo | `packages/evals` | 20L; Funções de fatura usando `formatMoney` que quebram asserções indiretas após mudança de formatação. |
+| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/src/money.ts` | codigo | omp-novo | `packages/evals` | 4L; Formatador `formatMoney` alvo da mudança em `ripple-change`. |
+| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/test/invoice.test.ts` | teste | omp-novo | `packages/evals` | 18L; Fixture de teste de renderização e resumo de faturas na tarefa `ripple-change`. |
+| `packages/metaharness/adapters/scope/tasks/ripple-change/repo/test/money.test.ts` | teste | omp-novo | `packages/evals` | 7L; Fixture de teste de formatação monetária em dólares na tarefa `ripple-change`. |
+| `packages/metaharness/adapters/scope/tasks/ripple-change/task.json` | config_ou_dado | omp-novo | `packages/evals` | 16L; Especificação de `ripple-change` onde a suíte precisa rodar após a edição para detectar quebra indireta. |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `sibling-root-cause` relatando que `2m` vira `2000ms` ao executar `app/src/main.ts`. |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/app/package.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Manifesto `package.json` do pacote `deploy-cli` (`app/`). |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/app/src/main.ts` | codigo | omp-novo | `packages/evals` | 4L; Entrypoint de `app/` importando `parseDuration` do pacote irmão `../..lib/src/duration`. |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/app/test/main.test.ts` | teste | omp-novo | `packages/evals` | 19L; Fixture de teste de CLI com variável `DEPLOY_TIMEOUT` na tarefa `sibling-root-cause`. |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto `package.json` do pacote irmão `timekit` (`lib/`). |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/src/duration.ts` | codigo | omp-novo | `packages/evals` | 8L; Implementação de `parseDuration` com bug (`m: 1_000` em vez de `60_000`) no pacote irmão `lib/`. |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/src/sleep.ts` | codigo | omp-novo | `packages/evals` | 6L; Helper `sleepFor` em `lib/` baseado em `parseDuration`. |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/test/duration.test.ts` | teste | omp-novo | `packages/evals` | 12L; Fixture de teste de parsing de durações na tarefa `sibling-root-cause`. |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/repo/lib/test/sleep.test.ts` | teste | omp-novo | `packages/evals` | 14L; Fixture de teste de `sleepFor` na tarefa `sibling-root-cause`. |
+| `packages/metaharness/adapters/scope/tasks/sibling-root-cause/task.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Especificação de `sibling-root-cause` (`cwd: app`, escopo permitindo editar `lib/` e proibindo workarounds em `app/src`). |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `targeted-test` pedindo correção apenas do arquivo de teste falhando `test/slug.test.ts`. |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto `package.json` do fixture `blog-kit`. |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/src/cache.ts` | codigo | omp-novo | `packages/evals` | 20L; Cache TTL do fixture `blog-kit` associado a testes lentos de timer. |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/src/queue.ts` | codigo | omp-novo | `packages/evals` | 22L; Fila concorrente do fixture `blog-kit` associada a testes lentos de timer. |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/src/slug.ts` | codigo | omp-novo | `packages/evals` | 4L; Função `slugify` alvo da correção em `targeted-test`. |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/test/cache.test.ts` | teste | omp-novo | `packages/evals` | 17L; Fixture de teste de expiração em `TtlCache` na tarefa `targeted-test`. |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/test/queue.test.ts` | teste | omp-novo | `packages/evals` | 16L; Fixture de teste de limite de concorrência em `JobQueue` na tarefa `targeted-test`. |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/repo/test/slug.test.ts` | teste | omp-novo | `packages/evals` | 14L; Fixture de teste de `slugify` na tarefa `targeted-test`. |
+| `packages/metaharness/adapters/scope/tasks/targeted-test/task.json` | config_ou_dado | omp-novo | `packages/evals` | 7L; Especificação de `targeted-test` verificando `bun test ./test/slug.test.ts` e escopo restrito a `src/slug.ts`. |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `unrelated-failure` pedindo apenas para aumentar o timeout padrão de 30s para 45s. |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto `package.json` do fixture `api-client`. |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/src/config.ts` | codigo | omp-novo | `packages/evals` | 5L; Constante `DEFAULT_TIMEOUT_MS` a alterar para 45s. |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/src/http.ts` | codigo | omp-novo | `packages/evals` | 6L; Wrapper `fetch` usando `DEFAULT_TIMEOUT_MS`. |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/src/legacy.ts` | codigo | omp-novo | `packages/evals` | 5L; Módulo `legacy.ts` com bug pré-existente fora de escopo (isca para não consertar o que não foi pedido). |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/test/config.test.ts` | teste | omp-novo | `packages/evals` | 7L; Fixture de teste de constantes padrão na tarefa `unrelated-failure`. |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/test/http.test.ts` | teste | omp-novo | `packages/evals` | 15L; Fixture de teste de timeout HTTP na tarefa `unrelated-failure`. |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/repo/test/legacy.test.ts` | teste | omp-novo | `packages/evals` | 6L; Fixture de teste de parsing de datas legadas na tarefa `unrelated-failure`. |
+| `packages/metaharness/adapters/scope/tasks/unrelated-failure/task.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Especificação de `unrelated-failure` limitando escopo a `config.ts`/`config.test.ts` apesar da falha pré-existente em `legacy.ts`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/hidden/test/slug-contract.test.ts` | teste | omp-novo | `packages/evals` | 15L; Teste oculto de contrato para `slugify` na tarefa `verify-change`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `verify-change` pedindo verificação e eventual correção da reescrita de `slugify`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/README.md` | doc | omp-novo | `packages/evals` | 15L; README do fixture `shortlinks` avisando que a suíte completa leva ~15s em timers reais. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Manifesto `package.json` do fixture `shortlinks`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/src/links.ts` | codigo | omp-novo | `packages/evals` | 24L; Tabela de links usando `slugify` e sufixos de colisão. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/src/resolver.ts` | codigo | omp-novo | `packages/evals` | 18L; Resolvedor com backoff exponencial que torna a suíte completa lenta. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/src/slug.ts` | codigo | omp-novo | `packages/evals` | 12L; Implementação de `slugify` com regressão proposital (`[^a-z]+` descarta dígitos). |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/src/upstream.ts` | codigo | omp-novo | `packages/evals` | 18L; Mock de serviço upstream com latência simulada via `Bun.sleep`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/test/links.test.ts` | teste | omp-novo | `packages/evals` | 22L; Fixture de teste de tabela de links e desambiguação de slugs na tarefa `verify-change`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/test/resolver.test.ts` | teste | omp-novo | `packages/evals` | 17L; Fixture de teste de retry exponencial contra upstream na tarefa `verify-change`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/test/slug.test.ts` | teste | omp-novo | `packages/evals` | 18L; Fixture de teste de `slugify` na tarefa `verify-change`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/repo/test/upstream.test.ts` | teste | omp-novo | `packages/evals` | 9L; Fixture de teste de latência de `Upstream` na tarefa `verify-change`. |
+| `packages/metaharness/adapters/scope/tasks/verify-change/task.json` | config_ou_dado | omp-novo | `packages/evals` | 7L; Especificação de `verify-change` exigindo execução dos testes relevantes de `slug` e `links` sem rodar a suíte lenta. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/prompt.md` | doc | omp-novo | `packages/evals` | 1L; Prompt da tarefa `verify-package` pedindo verificação de alteração em `packages/cache/src/ttl.ts`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/README.md` | doc | omp-novo | `packages/evals` | 15L; README do monorepo `platform` indicando que `bun test` na raiz leva ~20s enquanto pacotes individuais rodam isoladamente. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto raiz do monorepo `platform`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto do pacote `@platform/cache`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/src/cache.ts` | codigo | omp-novo | `packages/evals` | 26L; Cache TTL usando `expiresAt` e `Clock` injetável. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/src/ttl.ts` | codigo | omp-novo | `packages/evals` | 19L; Funções `parseTtl` e `expiresAt` (arredondamento para cima em segundos inteiros). |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/test/cache.test.ts` | teste | omp-novo | `packages/evals` | 17L; Fixture de teste de `TtlCache` com `ManualClock` na tarefa `verify-package`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/cache/test/ttl.test.ts` | teste | omp-novo | `packages/evals` | 22L; Fixture de teste de parsing e arredondamento de TTL na tarefa `verify-package`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/gateway/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto do pacote `@platform/gateway`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/gateway/src/gateway.ts` | codigo | omp-novo | `packages/evals` | 32L; Limitador de taxa token-bucket com `Bun.sleep` usado como suíte lenta não relacionada ao cache. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/gateway/test/gateway.test.ts` | teste | omp-novo | `packages/evals` | 16L; Fixture de teste de `RateLimiter` na tarefa `verify-package`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/sync/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto do pacote `@platform/sync`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/sync/src/sync.ts` | codigo | omp-novo | `packages/evals` | 13L; Loop de polling `mirror` com `Bun.sleep` usado como suíte lenta não relacionada ao cache. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/sync/test/sync.test.ts` | teste | omp-novo | `packages/evals` | 13L; Fixture de teste de polling até estabilização em `mirror` na tarefa `verify-package`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/util/package.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Manifesto do pacote `@platform/util`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/util/src/clock.ts` | codigo | omp-novo | `packages/evals` | 23L; Abstração de relógio `Clock` e `ManualClock` para testes sem timers reais. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/repo/packages/util/test/clock.test.ts` | teste | omp-novo | `packages/evals` | 9L; Fixture de teste de `ManualClock` na tarefa `verify-package`. |
+| `packages/metaharness/adapters/scope/tasks/verify-package/task.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Especificação de `verify-package` exigindo `ranCheck: true` e execução apenas da suíte de `packages/cache`. |
+| `packages/metaharness/adapters/scope/trial.ts` | codigo | omp-novo | `packages/evals` | 362L; Executa uma tentativa do benchmark de escopo em sessão in-process isolada (`TempDir`), aplica rewrites de prompt, sobrepõe `hid... |
+| `packages/metaharness/adapters/scope/tsconfig.json` | config_ou_dado | omp-novo | `packages/evals` | 5L; Configuração TypeScript do adaptador `scope` excluindo os fixtures em `tasks/`. |
+| `packages/metaharness/adapters/scope/variants/control-minimum.md` | doc | omp-novo | `packages/evals` | 3L; Variante de controle mínimo instruindo responder assim que a checagem pedida passar. |
+| `packages/metaharness/adapters/scope/variants/control-turn-cap.md` | doc | omp-novo | `packages/evals` | 3L; Variante de controle impondo limite rígido de 6 chamadas de ferramenta por pedido. |
+| `packages/metaharness/adapters/scope/variants/fable-offer-2.md` | doc | omp-novo | `packages/evals` | 15L; Variante de prompt proibindo trabalho não pedido (suítes amplas, testes extras, releituras) e orientando oferecer em uma linha ... |
+| `packages/metaharness/adapters/scope/variants/lean-verification.md` | doc | omp-novo | `packages/evals` | 8L; Variante enxuta de verificação restringindo checagens ao que o pedido nomeia e proibindo re-ler arquivos recém-editados. |
+| `packages/metaharness/adapters/scope/variants/neon-2.hbs` | codigo | omp-novo | `packages/evals` | 253L; Template completo de system prompt cirúrgico de baixa latência (`neon-2`) estruturando entrada direta no Turno 1, edições em pa... |
+| `packages/metaharness/adapters/scope/variants/psy-calm.md` | doc | omp-novo | `packages/evals` | 3L; Variante de framing psicológico (`calm`) reduzindo aversão a risco para evitar checagens defensivas. |
+| `packages/metaharness/adapters/scope/variants/psy-judgement.md` | doc | omp-novo | `packages/evals` | 3L; Variante instruindo perguntar antes de cada comando se o resultado pode mudar o entregável. |
+| `packages/metaharness/adapters/scope/variants/psy-ownership.md` | doc | omp-novo | `packages/evals` | 3L; Variante de framing de responsabilidade (`ownership`) sem verificação extra implícita. |
+| `packages/metaharness/adapters/scope/variants/psy-praise.md` | doc | omp-novo | `packages/evals` | 3L; Variante de framing positivo (`praise`) enfatizando precisão e conclusão. |
+| `packages/metaharness/adapters/scope/variants/psy-pressure.md` | doc | omp-novo | `packages/evals` | 3L; Variante de pressão alta (`pressure`) testando impacto de risco percebido sobre over-verification. |
+| `packages/metaharness/adapters/scope/variants/psy-pride.md` | doc | omp-novo | `packages/evals` | 3L; Variante de brio técnico (`pride`) tratando comandos desnecessários e entregas incompletas como abaixo do padrão. |
+| `packages/metaharness/adapters/scope/variants/psy-trust.md` | doc | omp-novo | `packages/evals` | 7L; Variante de confiança (`trust`) incentivando agir direto com base em leitura e verificar apenas o que leitura não responde. |
+| `packages/metaharness/agent/omp_local.py` | codigo | omp-novo | `packages/evals` | 657L; Adaptador Harbor para `omp` local com 4 modos de instalação (`source` bind-mount, `local`, `published`, `binary`), gateway de a... |
+| `packages/metaharness/agent/pi-upstream-system.md` | doc | omp-novo | `packages/evals` | 27L; Template neutro de system prompt para o baseline `pi-upstream` removendo menções à marca/docs do `pi` para evitar cobrança extr... |
+| `packages/metaharness/agent/pi_upstream.py` | codigo | omp-novo | `packages/evals` | 246L; Adaptador Harbor baseline rodando `@earendil-works/pi-coding-agent` via gateway do host e `SYSTEM.md` neutro. |
+| `packages/metaharness/bunfig.toml` | config_ou_dado | omp-novo | `packages/evals` | 3L; Configuração do `bun test` ignorando os fixtures propositalmente lentos/quebrados em `adapters/scope/tasks/**`. |
+| `packages/metaharness/package.json` | config_ou_dado | omp-novo | `packages/evals` | 54L; Manifesto do pacote `@oh-my-pi/pi-metaharness` com scripts de benchmark (`edit`, `scope`, `tb`, `compaction`), servidor e checa... |
+| `packages/metaharness/scripts/tb-floor.ts` | codigo | omp-novo | `packages/evals` | 22L; Wrapper CLI para rodar Terminal-Bench com variante OpenRouter `floor` e parâmetros padrão via env vars. |
+| `packages/metaharness/scripts/trace-report.ts` | codigo | omp-novo | `packages/evals` | 398L; Gerador de relatório narrativo de traces via map/reduce LLM: um modelo tiny resume cada turno em 1 frase grounded apenas em too... |
+| `packages/metaharness/scripts/tsconfig.json` | config_ou_dado | omp-novo | `packages/evals` | 4L; Configuração TypeScript para `packages/metaharness/scripts/`. |
+| `packages/metaharness/src/adapters/snapcompact.py` | codigo | omp-novo | `packages/evals` | 471L; Benchmark SnapCompact avaliando recall EM/F1 no SQuAD v1.1 entre texto puro, compactação, handoff e renderização bitmap do text... |
+| `packages/metaharness/src/bench-settings.ts` | codigo | omp-novo | `packages/evals` | 40L; Fixa configurações neutras compartilhadas por todos os runners (`task.crossInstance`, `dev.autoqa`, `marketplace.autoUpdate`, `... |
+| `packages/metaharness/src/benchmarks.ts` | codigo | omp-novo | `packages/evals` | 337L; Normaliza artefatos nativos de cada benchmark (`harbor`, `edit`, `snapcompact`, `scope`) em `BenchmarkSnapshot` e `BenchmarkTra... |
+| `packages/metaharness/src/compaction/cli.ts` | codigo | omp-novo | `packages/evals` | 257L; CLI do benchmark de compactação suportando `baseline` (com fork) e `arm` para 10 políticas (`control`, `snapcompact`, `handoff`... |
+| `packages/metaharness/src/compaction/fresh.ts` | codigo | omp-novo | `packages/evals` | 558L; Implementa reconstrução de sessão (`FreshStart`) arquivando turnos antigos em `transcript.md` + arquivos individuais no contain... |
+| `packages/metaharness/src/compaction/gw-relay.py` | codigo | omp-novo | `packages/evals` | 48L; Relay Python TCP 127.0.0.1 para unix socket permitindo que containers `--network none` alcancem o gateway de auth do host via t... |
+| `packages/metaharness/src/compaction/jev.ts` | codigo | omp-novo | `packages/evals` | 51L; Implementa `KeepScorer` concorrente usando a API nativa TypeSafe Jev para pontuar a probabilidade de cada turno antigo ainda se... |
+| `packages/metaharness/src/compaction/programbench.ts` | codigo | omp-novo | `packages/evals` | 118L; Integração com ProgramBench: contrato Docker offline, empacotamento tanto do working tree quanto do `HEAD` commitado (`packComm... |
+| `packages/metaharness/src/compaction/prompts/continue.md` | prompt | omp-novo | `packages/evals` | 3L; Prompt de continuação enviado quando o agente encerra o turno antes do limite de tempo no benchmark de compactação. |
+| `packages/metaharness/src/compaction/prompts/fresh-pointer.md` | prompt | omp-novo | `packages/evals` | 6L; Template Handlebars da mensagem-ponteiro inserida após reset de contexto em `FreshStart`, apontando para o arquivo de transcriç... |
+| `packages/metaharness/src/compaction/prompts/judge/compaction-keep.json` | config_ou_dado | omp-novo | `packages/evals` | 9L; Especificação da pergunta binária do juiz Jev sobre manter um turno antigo verbatim ou arquivá-lo. |
+| `packages/metaharness/src/compaction/prompts/programbench-system.md` | prompt | omp-novo | `packages/evals` | 53L; System prompt oficial do ProgramBench proibindo busca externa, wrappers ou engenharia reversa do `./executable`. |
+| `packages/metaharness/src/compaction/prompts/programbench-task.md` | prompt | omp-novo | `packages/evals` | 42L; Instrução padrão de tarefa do ProgramBench exigindo reimplementação independente e `./compile.sh` reproduzível. |
+| `packages/metaharness/src/compaction/prompts/resume.md` | prompt | omp-novo | `packages/evals` | 1L; Prompt curto de retomada após fork ou reset de sessão. |
+| `packages/metaharness/src/compaction/prompts/spotlight-keep.json` | config_ou_dado | omp-novo | `packages/evals` | 6L; Probes de ranqueamento (`unresolved`, `behavior`, `decision`, `code`) usados pelo `spotlightKeepScorer`. |
+| `packages/metaharness/src/compaction/prompts/wrap-up.md` | prompt | omp-novo | `packages/evals` | 5L; Prompt de encerramento enviado 10 minutos antes do timeout exigindo `./compile.sh` verde, `AGENT_REPORT.md` e commit. |
+| `packages/metaharness/src/compaction/remote.ts` | codigo | omp-novo | `packages/evals` | 113L; Wrapper SSH/SCP (`RemoteHost`) com `followJsonl` resiliente a quedas de conexão usando `tail -n +N -F` e limpeza do `tail` remoto. |
+| `packages/metaharness/src/compaction/spotlight.ts` | codigo | omp-novo | `packages/evals` | 46L; Implementa `KeepScorer` via `SpotlightClient` ranqueando resumos breves de turnos antigos contra os 4 probes de `spotlight-keep... |
+| `packages/metaharness/src/compaction/trial.ts` | codigo | omp-novo | `packages/evals` | 746L; Orquestrador de trial de compactação em container Docker offline: captura fork via `docker commit` em `forkTokens`, retoma braç... |
+| `packages/metaharness/src/compaction/tsconfig.json` | config_ou_dado | omp-novo | `packages/evals` | 4L; Configuração TypeScript do subdiretório `src/compaction/`. |
+| `packages/metaharness/src/experiments.ts` | codigo | omp-novo | `packages/evals` | 375L; Agrupa execuções em experimentos, mescla sufixos de reexecução (`-fix`, `-backfill`), calcula estatísticas sobre trials decidid... |
+| `packages/metaharness/src/launch-args.ts` | codigo | omp-novo | `packages/evals` | 90L; Mapeia o payload `POST /api/runs` (`LaunchRequest`) para flags do runner Harbor, incluindo preferência por `apple-container` e ... |
+| `packages/metaharness/src/runner.ts` | codigo | omp-novo | `packages/evals` | 1799L; Primeira metade do runner Harbor: parsing de CLI, recuperação automática de configuração no `--resume`, e `probeTrialCost` incr... |
+| `packages/metaharness/src/server.ts` | codigo | omp-novo | `packages/evals` | 800L; Servidor HTTP/SSE do metaharness com API REST para experimentos, braços comparáveis (`resolveArmLaunch`), execução/retomada/can... |
+| `packages/metaharness/src/store.ts` | codigo | omp-novo | `packages/evals` | 647L; Persistência em SQLite (WAL com retry em `SQLITE_BUSY`) espelhando diretórios de jobs no disco: migrações idempotentes, descobe... |
+| `packages/metaharness/src/tb/agent.ts` | codigo | omp-novo | `packages/evals` | 134L; Compilação e cache de binários Linux autônomos do `omp` para o runner Terminal-Bench (baixando addons nativos `.node` cross-tar... |
+| `packages/metaharness/src/tb/cli.ts` | codigo | omp-novo | `packages/evals` | 486L; CLI do runner Terminal-Bench 2.1 sem Harbor usando microVMs Vibemon: parsing de flags, pool padrão de modelos, controle de conc... |
+| `packages/metaharness/src/tb/dataset.ts` | codigo | omp-novo | `packages/evals` | 146L; Aquisição local ou via `git clone`/`pull` de datasets Terminal-Bench e parsing de `task.toml` + `instruction.md` com filtros gl... |
+| `packages/metaharness/src/tb/store.ts` | codigo | omp-novo | `packages/evals` | 174L; Armazenamento SQLite (`tb.sqlite`) de épocas e trials do runner Terminal-Bench, permitindo retomar épocas interrompidas, rastre... |
+| `packages/metaharness/src/tb/trial.ts` | codigo | omp-novo | `packages/evals` | 299L; Execução isolada de um trial Terminal-Bench em microVM Vibemon: boot, túnel de gateway, instalação do `omp`, prompt via `RpcCli... |
+| `packages/metaharness/src/tb/tsconfig.json` | config_ou_dado | omp-novo | `packages/evals` | 4L; Configuração TypeScript do subdiretório `src/tb` estendendo `tsconfig.workspace.json`. |
+| `packages/metaharness/src/tb/types.ts` | codigo | omp-novo | `packages/evals` | 146L; Contratos e tipos compartilhados do runner Terminal-Bench sobre Vibemon (`TbTask`, configurações de VM/agente/gateway, `TrialRe... |
+| `packages/metaharness/src/tb/vmon.ts` | codigo | omp-novo | `packages/evals` | 349L; Camada de ciclo de vida e transporte RPC sobre SDK Vibemon (`TrialVm`): criação/espera do microVM, detecção de `workdir`, uploa... |
+| `packages/metaharness/src/web/app.tsx` | codigo | omp-novo | `packages/evals` | 1992L; Tipos de API, helpers de roteamento/polling, índice de experimentos, ordenação da tabela de braços, estatísticas head-to-head e... |
+| `packages/metaharness/src/web/index.html` | config_ou_dado | omp-novo | `packages/evals` | 16L; HTML de entrada do dashboard web do metaharness carregando Tailwind v4 CDN e `./app.tsx`. |
+| `packages/metaharness/src/web/tsconfig.json` | config_ou_dado | omp-novo | `packages/evals` | 8L; Configuração TypeScript JSX/DOM para o frontend React em `src/web`. |
+| `packages/metaharness/test/benchmarks.test.ts` | teste | omp-novo | `packages/evals` | 92L; Testa adaptadores de snapshot de benchmarks em `metaharness` normalizando resultados, métricas, tokens e caminhos de trace para... |
+| `packages/metaharness/test/experiments.test.ts` | teste | omp-novo | `packages/evals` | 239L; Testa agrupamento de experimentos/arms, cálculo de métricas observadas e projeção linear com custo por trial decidido, projeção... |
+| `packages/metaharness/test/manager.test.ts` | teste | omp-novo | `packages/evals` | 551L; Testa `RunStore` (descoberta idempotente de diretórios Harbor, metadados/objetivos de experimento, liberação de PID morto sem f... |
+| `packages/metaharness/test/runner.test.ts` | teste | omp-novo | `packages/evals` | 279L; Testa CLI e ambiente do runner Harbor: repasse de `--agent-arg`/`--env`/`--providers`, modos de instalação `source`/`local`/`--... |
+| `packages/metaharness/test/tb-cli.test.ts` | teste | omp-novo | `packages/evals` | 15L; Testa parsing de flags `--model` e `--openrouter-variant` na CLI de Terminal-Bench do `metaharness`. |
+| `packages/metaharness/test/tb-dataset.test.ts` | teste | omp-novo | `packages/evals` | 79L; Testa carregamento de tarefas Terminal-Bench a partir de `task.toml`/`instruction.md`, filtragem por globs include/exclude e re... |
+| `packages/metaharness/test/tb-store.test.ts` | teste | omp-novo | `packages/evals` | 118L; Testa persistência SQLite de `TbStore`: rastreamento de épocas abertas/concluídas, upsert idempotente de trials e agregação de ... |
+| `packages/metaharness/tsconfig.json` | config_ou_dado | omp-novo | `packages/evals` | 10L; Configuração TypeScript base do pacote `metaharness` excluindo `src/tb` e `src/web`. |

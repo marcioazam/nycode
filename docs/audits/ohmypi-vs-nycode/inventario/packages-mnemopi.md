@@ -1,156 +1,163 @@
 # Inventario: packages-mnemopi
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `packages/mnemopi/bench/embed-session-threads.bench.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/bench/native-vectors.bench.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/cli.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/config.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/aaak.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/annotations.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/banks.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/beam/consolidate.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/beam/helpers.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/beam/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/beam/recall.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/beam/schema.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/beam/store.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/beam/types.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/binary-vectors.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/chat-normalize.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/content-sanitizer.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/cost-log.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/embeddings.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/entities.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/episodic-graph.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/extraction.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/extraction/client.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/extraction/diagnostics.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/extraction/prompts.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/fastembed-model-cache.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/fastembed-runtime.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/llm-backends.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/local-llm.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/memory.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/migrations/e6-triplestore-split.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/migrations/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/mmr.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/orchestrator.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/patterns.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/plugins.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/polyphonic-recall.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/query-cache.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/query-intent.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/recall-diagnostics.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/runtime-options.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/shmr.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/streaming.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/synonyms.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/temporal-parser.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/text-window.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/token-counter.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/triples.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/typed-memory.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/vector-index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/vector-math.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/veracity-consolidation.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/core/weibull.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/db.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/diagnose.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/dr/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/dr/recovery.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/mcp-server.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/mcp-tools.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/migrations/e6-triplestore-split.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/migrations/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/types.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/util/datetime.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/util/env.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/util/ids.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/util/lru.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/src/util/regex.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/annotations.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/beam-consolidate-unit.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/beam-e3-e4-e6.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/beam-helpers.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/beam-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/beam-recall-unit.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/beam-store.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/binary-vectors.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/c25-deltasync-allowlist.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/cli-errors-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/cli-stats-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/cli.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/configurable-scoring.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/consolidate-fact-concurrency.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/consolidate-fact-id-collision.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/consolidate-fact-sibling-races.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/content-sanitizer.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/corrupt-model-quarantine.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/corrupt-model-retry.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/db-page-size.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/degrade-vector.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/diagnose.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/e5a-vector-voice-dense-rewire.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/embed-session-budget.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/embedding-api-requests.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/embedding-cache-invalidation.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/embedding-failure-logging.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/embedding-input-cap.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/embedding-model-reconcile.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/embedding-query-role.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/embeddings-multilingual.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/entities.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/env-flag.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/extraction-integration.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/extraction-wiring.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/extraction.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/fastembed-model-cache.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/fastembed-runtime.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/fts-superseded.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/graph-tools.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/identity-memory-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/invalidate-clears-caches.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/issue-1832-embedding-population.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/llm-backends.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/local-llm.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/loop-phase-coverage.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/mcp-server.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/memory-banks.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/memory-facade.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/migrate-triplestore-split.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/native-vector-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/optional-embeddings.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/orchestrator.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/orphan-vec-episodes-cleanup.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/patterns.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/plugins.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/polyphonic-recall.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/pre-experiment-fidelity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/proactive-linking.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/provider-all-15-tools-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/provider-all-15-tools.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/query-cache-synonyms.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/recall-diagnostics.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/recall-feature-flags.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/recall-feature-wiring.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/recall-precision-regressions.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/recovery.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/setup.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/shmr.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/stale-model-vector-recall.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/statement-lifetime.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/streaming.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/telemetry-env-followups.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/temporal-parser.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/temporal-recall.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/text-utilities.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/triples-data-dir.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/typed-memory-aaak.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/vector-index.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/veracity-consolidation.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
-| `packages/mnemopi/test/weibull-mmr-intent.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` |  |
+| `packages/mnemopi/CHANGELOG.md` | doc | omp-novo | `packages/coding-agent/src/extensions/memory` | 473L; Histórico de versões e correções do pacote `@oh-my-pi/pi-mnemopi` até a v19.1.0. |
+| `packages/mnemopi/LICENSE` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 22L; Licença MIT do pacote `@oh-my-pi/pi-mnemopi`. |
+| `packages/mnemopi/README.md` | doc | omp-novo | `packages/coding-agent/src/extensions/memory` | 115L; Documentação de uso, opções de configuração de LLM/embeddings, variáveis de ambiente e comandos do `@oh-my-pi/pi-mnemopi`. |
+| `packages/mnemopi/bench/embed-session-threads.bench.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 127L; Benchmark que mede custo de CPU/wall-time por query de embedding local com `fastembed` antes e depois de `applyEmbedSessionBudg... |
+| `packages/mnemopi/bench/native-vectors.bench.json` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 100L; Registro JSON de resultados do benchmark `native-vectors.bench.ts` em Apple M1 (bun 1.3.14), mostrando speedups de ~1.6-2.5x em... |
+| `packages/mnemopi/bench/native-vectors.bench.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 201L; Benchmark inclusivo de crossing comparando loops TS contra kernels nativos de `mnemopi` (`searchExactVectorIndex`, `cosineSimil... |
+| `packages/mnemopi/package.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/extensions/memory` | 107L; Manifesto npm do `@oh-my-pi/pi-mnemopi` v19.2.1 com dependências, peerDependencies opcionais (`fastembed`, `onnxruntime-node`) ... |
+| `packages/mnemopi/src/cli.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 403L; CLI do Mnemopi (`store`, `recall`, `update`, `delete`, `export`, `import`, `stats`, `sleep`, `scratchpad`, `bank`, `diagnose`, ... |
+| `packages/mnemopi/src/config.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 385L; Resolução de configuração via variáveis `MNEMOPI_*` e defaults globais em memória: diretórios, dimensões e limites de embedding... |
+| `packages/mnemopi/src/core/aaak.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 161L; Codificador compacto AAAK para comprimir resumos consolidados de memória substituindo categorias, frases comuns e conectivos es... |
+| `packages/mnemopi/src/core/annotations.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 456L; Tabela e loja SQLite `annotations` (menções, fatos, datas e fontes ligadas a `memory_id`) com filtragem de stopwords de entidad... |
+| `packages/mnemopi/src/core/banks.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 133L; Gerenciador de bancos isolados de memória (`BankManager`), validando nomes alfanuméricos, resolvendo caminhos `mnemopi.db` e su... |
+| `packages/mnemopi/src/core/beam/consolidate.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 1275L; Primeira parte do módulo de consolidação do BeamMemory: chunking/truncamento de episódios de sono via AAAK, consolidação para `... |
+| `packages/mnemopi/src/core/beam/helpers.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 841L; Funções auxiliares do Beam: normalização de pesos, parsing/cache de timestamps UTC, decaimento temporal, busca FTS5 com fallbac... |
+| `packages/mnemopi/src/core/beam/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 366L; Classe facade BeamMemory que inicializa SQLite, esquema Beam, migração de anotações, AnnotationStore, EpisodicGraph e expõe API... |
+| `packages/mnemopi/src/core/beam/recall.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 1426L; Motor completo de recuperação híbrida (FTS5 + embeddings densos + relevância lexical com sinônimos + decaimento temporal + peso... |
+| `packages/mnemopi/src/core/beam/schema.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 426L; Definição idempotente de esquema SQLite e migrações de colunas para working_memory, episodic_memory, scratchpad, tabelas virtua... |
+| `packages/mnemopi/src/core/beam/store.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 1160L; Operações de escrita, atualização, leitura, invalidação, limpeza em cascata, scratchpad, exportação/importação JSON e reconcili... |
+| `packages/mnemopi/src/core/beam/types.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 320L; Contratos e tipos TypeScript públicos e internos do subsistema Beam (configuração, opções de escrita/recall, linhas de tabela, ... |
+| `packages/mnemopi/src/core/binary-vectors.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 317L; Quantização int8 e binarização informacional de embeddings, distância de Hamming via tabela popcount, armazenamento SQLite em B... |
+| `packages/mnemopi/src/core/chat-normalize.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 160L; Normalizador de mensagens informais de chat que expande contrações/gírias, remove fillers e caracteres repetidos, descarta frag... |
+| `packages/mnemopi/src/core/content-sanitizer.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 135L; Sanitizador que detecta URIs data:, payloads > 1MB ou strings > 100KB de alta entropia (>5.0 bits/char) e os move para armazena... |
+| `packages/mnemopi/src/core/cost-log.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 101L; Registro SQLite de telemetria de custo por sessão para chamadas de injeção de memória, contabilizando memórias, tokens e USD es... |
+| `packages/mnemopi/src/core/embeddings.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 691L; Pipeline unificado de embeddings (provider customizado, API HTTP OpenRouter/OpenAI com withAuth/retry/lotes e fastembed local c... |
+| `packages/mnemopi/src/core/entities.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 265L; Extração determinística de entidades via regex (@menções, #tags, aspas, nomes próprios capitalizados) com filtragem de stopword... |
+| `packages/mnemopi/src/core/episodic-graph.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 781L; Grafo episódico em SQLite (gists, facts, graph_edges) que extrai participantes Unicode, local, emoção, escopo temporal e fatos ... |
+| `packages/mnemopi/src/core/extraction.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 489L; Orquestrador de extração de fatos estruturados em 5 categorias MEMORIA (facts, instructions, preferences, timelines, kg) com ca... |
+| `packages/mnemopi/src/core/extraction/client.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 187L; Cliente HTTP OpenRouter para extração de fatos em JSON array com rotação de chave via withAuth, backoff exponencial em erros tr... |
+| `packages/mnemopi/src/core/extraction/diagnostics.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 193L; Coletor singleton de métricas por tier de extração (host, remote, local, cloud, wrapper) com buffer circular de amostras de err... |
+| `packages/mnemopi/src/core/extraction/prompts.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 31L; Templates de prompt de sistema e usuário para extração estruturada de fatos SPO em formato JSON array. |
+| `packages/mnemopi/src/core/fastembed-model-cache.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 49L; Verifica no sistema de arquivos se os pesos ONNX e tokenizers de um modelo fastembed já estão em cache sem importar o módulo na... |
+| `packages/mnemopi/src/core/fastembed-runtime.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 365L; Instalador e carregador sob demanda de fastembed/onnxruntime-node com suporte a binários compilados, resolução de DLL no Window... |
+| `packages/mnemopi/src/core/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 39L; Barrel de re-exportação da API pública de mnemopi/src/core. |
+| `packages/mnemopi/src/core/llm-backends.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 54L; Registro global e wrapper de adaptador LLM fornecido pelo host para chamadas de completude síncronas/assíncronas na extração. |
+| `packages/mnemopi/src/core/local-llm.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 472L; Orquestra chamadas de LLM para sumarização/consolidação de memórias (priorizando completion/Model pi-ai configurado, depois hos... |
+| `packages/mnemopi/src/core/memory.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 737L; Fachada principal e singleton/por-banco da biblioteca Mnemopi sobre BeamMemory. Resolve opções de embeddings/LLM via AsyncLocal... |
+| `packages/mnemopi/src/core/migrations/e6-triplestore-split.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 211L; Migração idempotente (E6) que copia predicados de anotação (mentions, fact, occurred_on, has_source) da tabela triples para a n... |
+| `packages/mnemopi/src/core/migrations/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 1L; Barrel file que reexporta a migração e6-triplestore-split. |
+| `packages/mnemopi/src/core/mmr.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 101L; Implementa re-ranqueamento Maximal Marginal Relevance (MMR) para diversidade de resultados de busca. Delega para o kernel nativ... |
+| `packages/mnemopi/src/core/orchestrator.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 68L; Roteador de recall que decide entre o caminho polifônico (polyphonicRecall) e o linear (beam.recall / beam.recallEnhanced) conf... |
+| `packages/mnemopi/src/core/patterns.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 484L; Implementa compressão heurística de memórias (dicionário de frases comuns, RLE, truncamento semântico) e detecção estatística d... |
+| `packages/mnemopi/src/core/plugins.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 375L; Define sistema extensível de plugins de ciclo de vida de memória (onRemember, onRecall, onConsolidate, onInvalidate) com implem... |
+| `packages/mnemopi/src/core/polyphonic-recall.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 773L; Motor de recall polifônico que consulta cinco vozes (hybrid, vector, graph via BFS limitado em EpisodicGraph, fact via Veracity... |
+| `packages/mnemopi/src/core/query-cache.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 368L; Cache multi-tier de resultados de consulta isolado por escopo, com match exato normalizado (tier 1), similaridade por embedding... |
+| `packages/mnemopi/src/core/query-intent.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 139L; Classifica a intenção da consulta por regex (temporal, factual, entity, preference, procedural, general) e ajusta dinamicamente... |
+| `packages/mnemopi/src/core/recall-diagnostics.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 157L; Telemetria em memória por tier de recall (wm_fts, wm_vec, wm_fallback, em_fts, em_vec, em_fallback) contabilizando taxa de fall... |
+| `packages/mnemopi/src/core/runtime-options.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 177L; Define tipos e armazenamento assíncrono isolado por contexto (AsyncLocalStorage) para opções de runtime de embeddings e LLM (pr... |
+| `packages/mnemopi/src/core/shmr.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 567L; Implementa SHMR (Semantic Harmonic Memory Resonance): agrupa fatos e episódios recentes por similaridade de cosseno via kernel ... |
+| `packages/mnemopi/src/core/streaming.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 419L; Fornece barramento de eventos em tempo real com buffer e AsyncIterator (MemoryStream/StreamIterator) e sincronização incrementa... |
+| `packages/mnemopi/src/core/synonyms.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 197L; Mapa de sinônimos técnicos e stop words em inglês para normalização de consultas (canônico ordenado) e expansão booleana OR `(a... |
+| `packages/mnemopi/src/core/temporal-parser.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 363L; Parser determinístico de datas naturais e relativas em inglês (ISO, MM/DD, nomes de meses, dias da semana com this/last/next, d... |
+| `packages/mnemopi/src/core/text-window.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 31L; Recorta textos longos preservando início e fim (janela head+tail com marcador [...]) evitando quebrar pares substitutos UTF-16 ... |
+| `packages/mnemopi/src/core/token-counter.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 30L; Estimador simples de tokens (length/4) e tabela fixa de custo USD por 1M de tokens para alguns modelos. |
+| `packages/mnemopi/src/core/triples.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 452L; Armazenamento bitemporal de triplas RDF (subject, predicate, object, valid_from, valid_until) em SQLite com versionamento autom... |
+| `packages/mnemopi/src/core/typed-memory.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 407L; Classificador heurístico por regex que atribui um de 14 tipos semânticos de memória (fact, preference, decision, commitment, go... |
+| `packages/mnemopi/src/core/vector-index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 83L; Constrói índice vetorial denso normalizado em Float32Array contíguo e realiza busca top-K exata delegando ao kernel nativo N-AP... |
+| `packages/mnemopi/src/core/vector-math.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 23L; Calcula similaridade de cosseno em TypeScript entre dois vetores ArrayLike tratando comprimentos diferentes com zero-padding e ... |
+| `packages/mnemopi/src/core/veracity-consolidation.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 514L; Consolida fatos com pesos de veracidade (stated, inferred, tool, imported, unknown), ID determinístico por SHA256 com length-pr... |
+| `packages/mnemopi/src/core/weibull.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 124L; Calcula fator de decaimento temporal usando distribuição de Weibull (exp(-(t/eta)^k)) parametrizada por tipo de memória (ex.: r... |
+| `packages/mnemopi/src/db.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 192L; Wrapper de abertura e transação para bun:sqlite configurando foreign_keys, busy_timeout=5000, WAL, synchronous=NORMAL, page_siz... |
+| `packages/mnemopi/src/diagnose.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 174L; Utilitário de diagnóstico (e CLI via import.meta.main) que verifica ambiente, PRAGMA integrity_check, presença de tabelas/colun... |
+| `packages/mnemopi/src/dr/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 1L; Barrel file que reexporta o módulo ./recovery de disaster recovery. |
+| `packages/mnemopi/src/dr/recovery.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 404L; Implementa backup comprimido (Bun SQLite serialize + gzip + metadados JSON com checksum SHA-256), restauração com validação via... |
+| `packages/mnemopi/src/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 33L; Barrel de exportação pública do pacote `@oh-my-pi/pi-mnemopi` (configuração, beam, embeddings, backends LLM e API principal de ... |
+| `packages/mnemopi/src/mcp-server.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 155L; Servidor MCP JSON-RPC 2.0 sobre stdio (Bun.stdin/stdout) que expõe as ferramentas de memória do mnemopi para clientes externos. |
+| `packages/mnemopi/src/mcp-tools.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 975L; Define os schemas JSON e os primeiros handlers das 23 ferramentas MCP do mnemopi (remember, recall híbrido, sleep, stats, scrat... |
+| `packages/mnemopi/src/migrations/e6-triplestore-split.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 1L; Re-exportação simples da migração `e6-triplestore-split` localizada em `core/migrations/`. |
+| `packages/mnemopi/src/migrations/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 1L; Barrel de re-exportação das migrações do mnemopi. |
+| `packages/mnemopi/src/types.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 157L; Define os contratos TypeScript de linhas SQLite, entradas/saídas de memória de trabalho e episódica, resultados de recall com d... |
+| `packages/mnemopi/src/util/datetime.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 69L; Utilitários de data/hora UTC com cache LRU de parsing ISO (`parseTsFast`) e funções exponenciais de decaimento por recência e b... |
+| `packages/mnemopi/src/util/env.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 72L; Helpers tipados para leitura e validação de variáveis de ambiente (booleanos, flags, inteiros, floats e enums). |
+| `packages/mnemopi/src/util/ids.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 19L; Geração de IDs SHA-256 de 16 caracteres hexadecimais (únicos com nonce por processo/timestamp ou determinísticos por conteúdo e... |
+| `packages/mnemopi/src/util/lru.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 48L; Implementação enxuta de cache LRU baseada em `Map` nativo com capacidade máxima configurável. |
+| `packages/mnemopi/src/util/regex.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/memory` | 187L; Tokenização de consultas de recall, lista de stopwords, mapa de sinônimos, matching morfológico restrito de formas de palavras,... |
+| `packages/mnemopi/test/annotations.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 155L; Testa `AnnotationStore` em SQLite (múltiplos valores sem colunas temporais, consultas por memória/tipo/valor, deduplicação idem... |
+| `packages/mnemopi/test/beam-consolidate-unit.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 499L; Testa consolidação de memória de trabalho em episódica, criação de gists/arestas, sleep dry-run/real/multi-sessão, truncamento ... |
+| `packages/mnemopi/test/beam-e3-e4-e6.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 227L; Testa paridade E3/E4/E6 do BeamMemory: idempotência aditiva de sleep, dry-run sem efeitos colaterais, migração única com backup... |
+| `packages/mnemopi/test/beam-helpers.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 160L; Testa helpers puros do Beam: geração de IDs, normalização de pesos/importância/metadados, tokenização e sinônimos FTS, termos C... |
+| `packages/mnemopi/test/beam-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 125L; Testa paridade TS do BeamMemory: criação de diretórios pai do SQLite, enriquecimento em rememberBatch com annotations por linha... |
+| `packages/mnemopi/test/beam-recall-unit.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 730L; Testa funções livres de recall: rejeição de substrings espúrias, cobertura de loop-phase mnemopi.recall, aliases compostos, ord... |
+| `packages/mnemopi/test/beam-store.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 502L; Testa operações de armazenamento do Beam: deduplicação e eventos, scratchpad por sessão, export/import idempotente, retenção de... |
+| `packages/mnemopi/test/binary-vectors.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 92L; Testa binarização MIB, quantização int8, distância de Hamming, similaridade de cosseno, resolução de MNEMOPI_VEC_TYPE, BinaryVe... |
+| `packages/mnemopi/test/c25-deltasync-allowlist.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 235L; Testa allowlist de tabelas e colunas do DeltaSync contra injeção SQL e bypass por objeto String, qualificação main.<table> cont... |
+| `packages/mnemopi/test/cli-errors-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 150L; Testa códigos de saída e mensagens amigáveis (sem stacktraces) da CLI do mnemopi para argumentos ausentes, erros de parse, coma... |
+| `packages/mnemopi/test/cli-stats-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 139L; Testa paridade de saída e estrutura de estatísticas da CLI (working, episodic, triples, banks, caminho do DB), respeito ao data... |
+| `packages/mnemopi/test/cli.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 173L; Testa handlers da CLI do mnemopi: store/recall end-to-end, stats, tratamento de erros, espera do subcomando mcp até o fechament... |
+| `packages/mnemopi/test/configurable-scoring.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 164L; Testa configuração e normalização de pesos de recall (por chamada, por config explícito e via variáveis MNEMOPI_*_WEIGHT), peso... |
+| `packages/mnemopi/test/consolidate-fact-concurrency.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 131L; Testa serialização SQLite de VeracityConsolidator.consolidateFact: incremento composto de confiança para SPO repetido, escritas... |
+| `packages/mnemopi/test/consolidate-fact-id-collision.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 152L; Testa computeFactId (formato SHA-256 com length-prefix framing, normalização Unicode, resistência a colisões/separadores), pres... |
+| `packages/mnemopi/test/consolidate-fact-sibling-races.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 153L; Testa métodos de escrita irmãos de VeracityConsolidator: semântica first-writer-wins em resolveConflict, resolveConflictByFacts... |
+| `packages/mnemopi/test/content-sanitizer.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 130L; Testa sanitização de conteúdo: extração de data URIs, payloads acima do limite de tamanho e blobs base64 de alta entropia para ... |
+| `packages/mnemopi/test/corrupt-model-quarantine.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 68L; Testa quarentena de arquivo ONNX corrompido em erros 'Protobuf parsing failed', garantindo renomeação apenas dentro do diretóri... |
+| `packages/mnemopi/test/corrupt-model-retry.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 98L; Testa o retry único de defaultLocalModelInitializer após falha de Protobuf (com quarentena do arquivo entre tentativas) e propa... |
+| `packages/mnemopi/test/db-page-size.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 77L; Testa configuração de PRAGMA page_size em openDatabase: aplicação em novos arquivos válidos, descarte de tamanhos inválidos, pr... |
+| `packages/mnemopi/test/degrade-vector.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 81L; Testa invalidação de vetores densos e binários quando degradeEpisodic comprime conteúdo de tier 2 para tier 3, mantendo os veto... |
+| `packages/mnemopi/test/diagnose.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 85L; Testa helpers de diagnóstico do banco SQLite do mnemopi: integridade, presença de tabelas/colunas obrigatórias, contagens por t... |
+| `packages/mnemopi/test/e5a-vector-voice-dense-rewire.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 92L; Testa a voz vetorial densa de PolyphonicRecallEngine lendo memory_embeddings para working/episodic, filtragem de linhas superse... |
+| `packages/mnemopi/test/embed-session-budget.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 256L; Testa aplicação escopada de orçamento de threads e desabilitação de spin-wait no onnxruntime-node (InferenceSession.create) res... |
+| `packages/mnemopi/test/embedding-api-requests.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 162L; Testa fatiamento de lotes em embed() contra APIs com limite por requisição (batchSize), retorno null em falhas parciais ou resp... |
+| `packages/mnemopi/test/embedding-cache-invalidation.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 135L; Testa que a gravação assíncrona de embeddings em background invalida o queryCache exatamente uma vez após o commit, e não inval... |
+| `packages/mnemopi/test/embedding-failure-logging.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 213L; Testa logging estruturado de falhas de embeddings (carregamento do modelo local, provedor em stream e verificação de disponibil... |
+| `packages/mnemopi/test/embedding-input-cap.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 141L; Testa limite de entrada MNEMOPI_EMBEDDING_MAX_INPUT_CHARS e maxInputChars em embed(), incluindo desativação com 0, recorte head... |
+| `packages/mnemopi/test/embedding-model-reconcile.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 273L; Testa reconciliação de modelo de embedding na abertura do Mnemopi: re-embedagem e troca transacional ao mudar de modelo, preser... |
+| `packages/mnemopi/test/embedding-query-role.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 155L; Testa condicionamento assimétrico (input_type query vs passage e queryPrefix), isolamento de cache por inputType e disparo tole... |
+| `packages/mnemopi/test/embeddings-multilingual.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 115L; Testa inferência de dimensões de embeddings para modelos multilíngues/OpenAI/Jina, override via MNEMOPI_EMBEDDING_DIM e roteame... |
+| `packages/mnemopi/test/entities.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 61L; Testa utilitários de entidades: distância de Levenshtein, similaridade por prefixo/substring, extração regex com filtragem de s... |
+| `packages/mnemopi/test/env-flag.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 20L; Testa parsing de flags booleanas em variáveis de ambiente via envFlag (default para vazio/ausente, rejeição de valores malforma... |
+| `packages/mnemopi/test/extraction-integration.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 140L; Testa integração HTTP da extração de fatos com endpoint compatível OpenAI, parsing estruturado em ExtractionClient, registro di... |
+| `packages/mnemopi/test/extraction-wiring.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 280L; Testa fiação completa de remember({ extract: true }): execução do LLM configurado, roteamento de categorias JSON para tabelas M... |
+| `packages/mnemopi/test/extraction.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 228L; Testa extração estruturada de fatos: prompts, parsing JSON/markdown/think-tags, fallback heurístico (inclusive evitando falsas ... |
+| `packages/mnemopi/test/fastembed-model-cache.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 49L; Testa detecção de cache completo de modelos fastembed@3 no layout <cacheDir>/<Qdrant repo>/ exigindo todos os arquivos de peso ... |
+| `packages/mnemopi/test/fastembed-runtime.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 55L; Testa pinagem exata das peerDependencies fastembed/onnxruntime-node, preservação do ORT transitivo e override de tokenizers no ... |
+| `packages/mnemopi/test/fts-superseded.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 202L; Testa que linhas superseded ou expiradas por valid_until são excluídas já na busca FTS e no fallback CJK antes do LIMIT k, impe... |
+| `packages/mnemopi/test/graph-tools.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 244L; Testa CRUD e extração heurística de EpisodicGraph: gists, fatos multi-palavra, locais capitalizados, participantes não latinos ... |
+| `packages/mnemopi/test/identity-memory-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 129L; Testa identidade em Mnemopi: armazenamento de author_id, author_type e channel_id, isolamento de recall por autor/tipo/canal co... |
+| `packages/mnemopi/test/invalidate-clears-caches.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 98L; Testa que invalidate() limpa o queryCache após aposentar linha working ou episodic e não toca o cache quando nenhum registro co... |
+| `packages/mnemopi/test/issue-1832-embedding-population.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 500L; Testa regressões de embeddings (#1832/#1833/#15804): população de memory_embeddings em remember/rememberBatch/consolidate, deri... |
+| `packages/mnemopi/test/llm-backends.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 24L; Testa registro global de backend LLM do host, garantindo retorno null quando ausente e captura segura de exceções lançadas pelo... |
+| `packages/mnemopi/test/local-llm.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 200L; Testa módulo local-llm em TS: chamadas HTTP OpenAI-compatible, remoção de blocos <think> iniciais, precedência de backend do ho... |
+| `packages/mnemopi/test/loop-phase-coverage.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 196L; Testa cobertura de currentLoopPhase ('mnemopi.*') sobre todas as execuções SQLite de bun:sqlite durante fluxos completos da fac... |
+| `packages/mnemopi/test/mcp-server.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 143L; Testa servidor MCP do mnemopi: transporte stdio JSON-RPC (silêncio em notificações, recuperação de erro de parse), envelopament... |
+| `packages/mnemopi/test/memory-banks.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 47L; Testa BankManager: criação, listagem, renomeação, estatísticas e exclusão de bancos isolados, além de validação de nomes contra... |
+| `packages/mnemopi/test/memory-facade.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 201L; Testa fachada Mnemopi: ciclo CRUD completo, aceitação de handle Database externo com grafo e anotações, aliases de compatibilid... |
+| `packages/mnemopi/test/migrate-triplestore-split.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 202L; Testa migração E6 de separação de triples de anotação para a tabela annotations: preservação de triples temporais, idempotência... |
+| `packages/mnemopi/test/native-vector-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 188L; Testa paridade numérica e determinística entre os kernels nativos Rust (@oh-my-pi/pi-natives) e implementações TS para similari... |
+| `packages/mnemopi/test/optional-embeddings.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 324L; Testa embeddings opcionais: desativação por env/construtor, cache de consultas, endpoint customizado sem API key, lotes assíncr... |
+| `packages/mnemopi/test/orchestrator.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 132L; Testa `orchestrateRecall` verificando roteamento entre recall linear, recall aprimorado e motor polifônico conforme feature gat... |
+| `packages/mnemopi/test/orphan-vec-episodes-cleanup.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 123L; Testa limpeza de vetores órfãos e remapeamento de `rowid` em `vec_episodes` ao reimportar memórias episódicas com `force=true` ... |
+| `packages/mnemopi/test/patterns.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 96L; Testa compressão de memórias (dicionário, RLE, truncamento semântico em lote) e detecção de padrões temporais, de conteúdo e de... |
+| `packages/mnemopi/test/plugins.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 79L; Testa registro, carregamento lazy, notificação de hooks de ciclo de vida e descarregamento no `PluginManager`, além dos plugins... |
+| `packages/mnemopi/test/polyphonic-recall.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 264L; Testa fusão RRF das 4 vozes (vector, graph, fact, temporal), gates por voz, reportagem ao watchdog de loop (`mnemopi.recall`), ... |
+| `packages/mnemopi/test/pre-experiment-fidelity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 89L; Testa fidelidade determinística de recall apenas FTS sem LLM/embeddings e regras de upgrade/preservação de `veracity` em duplic... |
+| `packages/mnemopi/test/proactive-linking.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 534L; Testa criação proativa de arestas `related_to` e `references`, precedência entre env/host/instância, exclusão de memórias inval... |
+| `packages/mnemopi/test/provider-all-15-tools-parity.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 160L; Testa paridade das 23 ferramentas MCP do mnemopi, validação de schemas JSON, erros de argumento, export/import entre bancos e h... |
+| `packages/mnemopi/test/provider-all-15-tools.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 122L; Testa fluxos representativos das ferramentas MCP (remember, recall, update, get, stats, invalidate, forget, scratchpad, sleep, ... |
+| `packages/mnemopi/test/query-cache-synonyms.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 193L; Testa expansão/normalização de sinônimos e os 4 tiers do `QueryCache` (exato, vetorial, composto, overlap lexical com limiares ... |
+| `packages/mnemopi/test/recall-diagnostics.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 64L; Testa contadores diagnósticos por tier de recall, cálculo e clamping de taxa de fallback e geração de explicações textuais. |
+| `packages/mnemopi/test/recall-feature-flags.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 75L; Testa precedência de flags de recall (env var > configuração por instância > configuração global > padrão desligado). |
+| `packages/mnemopi/test/recall-feature-wiring.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 361L; Testa integração ponta a ponta de `polyphonicRecall` e `enhancedRecall` no `recallEnhanced`, backfill único de fatos consolidad... |
+| `packages/mnemopi/test/recall-precision-regressions.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 194L; Testa regressões de precisão de recall: ranking factual específico, abstenção em consultas sem sentido, preservação de múltiplo... |
+| `packages/mnemopi/test/recovery.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 172L; Testa criação de backups SQLite comprimidos com gzip, unicidade no mesmo segundo, restauração com check de integridade e proteç... |
+| `packages/mnemopi/test/setup.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 46L; Helpers e hooks `beforeEach`/`afterEach` de teste para resetar estado global de instância e backend LLM fake no mnemopi. |
+| `packages/mnemopi/test/shmr.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 136L; Testa integração de embeddings do SHMR (provedor em lote, fallback de hash determinístico, reuso de `memory_embeddings`) e harm... |
+| `packages/mnemopi/test/stale-model-vector-recall.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 158L; Testa exclusão de vetores de modelos antigos no recall linear, voz vetorial polifônica e após falha parcial de rebuild do corpus. |
+| `packages/mnemopi/test/statement-lifetime.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 69L; Testa finalização completa de prepared statements via `db.close(true)` e liberação do arquivo SQLite no disco após operações de... |
+| `packages/mnemopi/test/streaming.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 95L; Testa serialização de `MemoryEvent`, pub/sub síncrono e assíncrono com buffer limitado e isolamento de exceções em `MemoryStrea... |
+| `packages/mnemopi/test/telemetry-env-followups.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 75L; Testa exposição explícita de `dense_score` numérico e chaves de `voice_scores` nos caminhos principal e fallback episódico de r... |
+| `packages/mnemopi/test/temporal-parser.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 216L; Testa parsing determinístico de datas ISO, barra US/EU, meses nomeados, referências relativas/qualificadas, intervalos e datas ... |
+| `packages/mnemopi/test/temporal-recall.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 139L; Testa decaimento temporal (`temporalBoost`), parsing de `queryTime`, overrides de meia-vida por chamada e inferência de datas-a... |
+| `packages/mnemopi/test/text-utilities.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 89L; Testa estimativa heurística de tokens e custo por modelo, registro de custos em SQLite e normalização de texto de chat com taxa... |
+| `packages/mnemopi/test/triples-data-dir.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 99L; Testa resolução de diretório `triples.db` com `MNEMOPI_DATA_DIR`, migração de banco legado `~/.hermes/mnemopi/data/triples.db` ... |
+| `packages/mnemopi/test/typed-memory-aaak.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 95L; Testa classificação tipada de memórias (prioridades, decaimento, consolidação) e compactação simbólica AAAK compatível com a im... |
+| `packages/mnemopi/test/vector-index.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 26L; Testa normalização e busca por cosseno exata em `buildExactVectorIndex`/`searchExactVectorIndex`, incluindo consultas inválidas... |
+| `packages/mnemopi/test/veracity-consolidation.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 35L; Testa preservação de handle `Database` externo no `VeracityConsolidator.close()` e registro de conflitos apenas para predicados... |
+| `packages/mnemopi/test/weibull-mmr-intent.test.ts` | teste | omp-novo | `packages/coding-agent/src/extensions/memory` | 153L; Testa decaimento de Weibull por tipo de memória, classificação de intenção de consulta com ajuste de pesos e reordenação por di... |
+| `packages/mnemopi/tsconfig.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/extensions/memory` | 7L; Configuração TypeScript do pacote mnemopi estendendo `tsconfig.workspace.json`. |
+| `packages/mnemopi/tsconfig.publish.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/extensions/memory` | 22L; Configuração TypeScript de publicação para emissão de declarações `.d.ts` em `dist/types`. |

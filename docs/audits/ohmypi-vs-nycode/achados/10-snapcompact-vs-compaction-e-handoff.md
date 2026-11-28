@@ -12,17 +12,17 @@ O `omp` encadeia 5 métodos configurados em `compaction.methodOrder = ["remote",
 ```ts
 const HIGH_RES_ANTHROPIC_VARIANT = { variant: "11on16-bw", frameSize: 1932 } as const satisfies IdealShape;
 const MODEL_VARIANTS: readonly (readonly [RegExp, IdealShape])[] = [
-	[/claude.*(fable|mythos)/i, HIGH_RES_ANTHROPIC_VARIANT],
-	[/claude/i, { variant: "11on16-bw" }],
-	[/gemini/i, { variant: "8on22-bw", frameSize: 2048 }],
-	[/gpt|codex/i, { variant: "8on22-bw" }],
-	[/kimi/i, { variant: "8on22-bw" }],
-	[/glm/i, { variant: "8on16-bw" }],
+   [/claude.*(fable|mythos)/i, HIGH_RES_ANTHROPIC_VARIANT],
+   [/claude/i, { variant: "11on16-bw" }],
+   [/gemini/i, { variant: "8on22-bw", frameSize: 2048 }],
+   [/gpt|codex/i, { variant: "8on22-bw" }],
+   [/kimi/i, { variant: "8on22-bw" }],
+   [/glm/i, { variant: "8on16-bw" }],
 ];
 ```
 
-3. **`SessionHandoff`** (`omp:packages/coding-agent/src/session/session-handoff.ts:82-208` + `omp:packages/agent/src/compaction/compaction.ts:1218-1262`): gera o resumo/handoff via requisição oneshot usando o **mesmo system prompt, tools e `promptCacheKey` do turno vivo** (hit no prefix cache quente!), produzindo documento estruturado (`## Goal` obrigatório, `handoff-document.md`, 328 tokens).
-4. **`shake`** (`omp:packages/agent/src/compaction/shake.ts:48-76,151-480`): elisão mecânica síncrona **sem LLM** de `toolResult` e blocos XML/código `>= 400` tokens para `local://N.log`, preservando o texto recente.
+1. **`SessionHandoff`** (`omp:packages/coding-agent/src/session/session-handoff.ts:82-208` + `omp:packages/agent/src/compaction/compaction.ts:1218-1262`): gera o resumo/handoff via requisição oneshot usando o **mesmo system prompt, tools e `promptCacheKey` do turno vivo** (hit no prefix cache quente!), produzindo documento estruturado (`## Goal` obrigatório, `handoff-document.md`, 328 tokens).
+2. **`shake`** (`omp:packages/agent/src/compaction/shake.ts:48-76,151-480`): elisão mecânica síncrona **sem LLM** de `toolResult` e blocos XML/código `>= 400` tokens para `local://N.log`, preservando o texto recente.
 
 - **Ancestralidade Pi**: `pi0.9.4` não tinha compactação (`pi0.9.4:packages/coding-agent/src/session-manager.ts:1-451`); `pibase` tinha apenas compactação textual síncrona (`1673` LOC).
 

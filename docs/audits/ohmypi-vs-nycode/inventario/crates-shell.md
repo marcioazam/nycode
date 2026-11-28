@@ -1,610 +1,990 @@
 # Inventario: crates-shell
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `crates/shell/BUILD.bazel` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/common/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/common/statistics.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/create.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/fork.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/frames.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/memory.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/overhead.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/sys_spawn.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/benches/workloads/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/build.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/cow_map.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/diag.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/engine.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/error.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/event.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/fd.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/fs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/host.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/ids.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/image.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/indexed_array.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/invocation.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/ir/asm.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/ir/brace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/ir/lower.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/ir/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/mem.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/mem_store.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/packed_names.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/class.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/ere/exec.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/ere/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/ere/nfa.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/ere/parse.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/ere/set.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/ere/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/ere/unit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/glob.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/strmatch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/class.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/compile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/exec.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/getmatch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/mbchar.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/prog.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/pattern/zsh/token.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/signal.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/snapshot.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/socket.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/store.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/ast.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/features.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/json.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/parser/cursor.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/parser/grammar.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/parser/lex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/parser/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/parser/raw.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/parser/word.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/print.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/span.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/regen.py` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case1.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case10.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case11.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case12.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case13.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case14.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case15.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case2.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case3.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case4.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case5.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case6.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case7.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case8.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/shfmt/case9.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/data/zsh_regen.py` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/goldens.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/json.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/parser.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/suites/zsh_parser.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/assign.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/code.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/command.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/cond.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/ids.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/list.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/redir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/stored.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/tree/word.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/util.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/zsh/driver.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/zsh/lex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/zsh/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/zsh/parse.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/zsh/text.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/zsh/tok.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/syntax/zsh/wordcode.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/term.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/text.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/history.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/nodes.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/syntax.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/analysis.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/analysis_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/embedded.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/incremental_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/model.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/printer.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/raw.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/runtime.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/runtime_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/semantic_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/source.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/trace/viz/words.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/api.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/arith.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/caller.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/dir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/dirstack.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/doc_table.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/flow.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/getopts.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/help.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history/bang.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history/bash.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history/file.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history/io.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history/model.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history/words.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history/zfc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/history/zsh.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/io.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/kill.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/mapfile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/misc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/names.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/options.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/printf.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/strftime.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/test.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/trap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/vars.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_args.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_dir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_kill.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_attr.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_cap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_clone.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_curses.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_curses/screen.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_datetime.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_example.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_files.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_langinfo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_mapfile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_mathfunc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_nearcolor.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_newuser.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_pcre.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_private.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_regex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_rlimits.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_sched.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_socket.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_stat.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_system.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_tcp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_termcap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_terminfo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_util.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_watch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_zftp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_zftp/io.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_zprof.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_zpty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_zselect.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_mod_zutil.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_module.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_names.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_print.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_prompt.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_quote.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_typeset.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_vars.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/builtins/zsh_zcompile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/callstack.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/command.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/control.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/exec.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/expand.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/fdprobe.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/frames.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/fsprobe.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/glob.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/jobctl.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/locale.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/mode.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/nested.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/orphans.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/pattern.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/probe.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/proc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/quote.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/redir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/state.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/xtrace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/bindings.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/bindkey.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/builtin.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compcore.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compcore/add.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compcore/perm.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compcore/run.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compcore/strings.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compctl/generate.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compctl/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/complete.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/complist.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/complist/colors.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/complist/menu.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/complist/print.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compmatch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compmatch/join.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compmatch/parse.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compmatch/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compresult.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compresult/list.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/compresult/suffix.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/computil/args.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/computil/describe.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/computil/files.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/computil/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/computil/quote.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/computil/tags.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/computil/values.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/tricky.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/tricky/compstring.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/tricky/expand.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/tricky/spell.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/tricky/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/comp/types.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/deltochar.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/display.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/exec.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/hist.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/keymap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/params.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/reader.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/refresh/line.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/refresh/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/refresh/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/thingy.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/tty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/undo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/utils.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/vared.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/args.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/edit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/hist_search.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/isearch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/misc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/motion.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/named.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/stack.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/textobjects.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/vi.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/vi_edit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/vi_move.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/word.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zle/widgets/yank.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/arith.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/assoc_order.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/brace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/cond.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/math.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/modify.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/nameddir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/params.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/specials.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/subscript.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/subst.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/terminfo_db.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/text.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/wcwidth.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/zexit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/zglob.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/zpattern.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/vm/zsh/zwc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bash/zshopt.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bin/obash/alloc_stats.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bin/obash/fault.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bin/obash/main.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/bin/obash/syntax.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/cancel.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/child_session.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/cmd_dialect.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/commands.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/extras.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/git/guard.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/git/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/host.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/host/loopback.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/host/urls.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/lib.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/config.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/detect.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/engine.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/binary_tools.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/bun.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/cargo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/cloud.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/cpp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/docker.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/dotnet.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/generic.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/gh.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/git.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/glab.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/go.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/gt.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/js_tools.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/jvm.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/lint.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/listing.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/node_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/pkg.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/python.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/ruby.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/rust_tools.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/filters/system.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/pipeline.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/plan.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/minimizer/primitives.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/mounts.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/output_decode.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/paths.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/process/host.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/process/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/process/pending_fs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/process/pretty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/process/signals.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/process/timer.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/proctree.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/session.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell/tests/builtins.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell/tests/direnv.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell/tests/env_cwd.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell/tests/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell/tests/process_control.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell/tests/redirections.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell/tests/session.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/shell/tests/urlmap.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/suites/extras.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/suites/loopback.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/suites/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/suites/tools.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/suites/vfs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/cmdline.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/console.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/fs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/fs_ops.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/job.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/langinfo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/lifecycle.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/park.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/pathext.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/pcre.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/proc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/pump.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/pump/orphan.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/pump/os.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/ready.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/regex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/relay.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/rlimit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/shebang.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/socket.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/spawn/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/spawn/unix.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/spawn/unix/measure.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/spawn/unix/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/spawn/windows.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/spawn/windows/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/suites/cancel_externals.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/suites/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/tty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/uname.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/user.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/sys/utmp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/taps.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/conformance.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fault.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/events/for-loop.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/01-and-or.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/02-and-or-chain.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/03-assign-append.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/04-assign-basic.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/05-assign-empty.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/06-assign-quoted.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/07-assign-status.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/08-at-quoted.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/09-bang.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/10-brace-group.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/11-braced-param.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/12-cmd-not-found.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/13-cmd-not-found-loop.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/14-comments.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/15-echo-basic.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/16-echo-e.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/17-echo-n.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/18-echo-options-end.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/19-for-bad-name.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/20-for-basic.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/21-for-empty.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/22-for-nested.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/23-for-newlines.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/24-for-positional.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/25-for-positional-in.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/26-for-split.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/27-for-status.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/28-for-var-persists.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/29-if-basic.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/30-if-elif.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/31-if-else.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/32-if-multiline-cond.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/33-if-nested.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/34-if-status.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/35-ifs-empty.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/36-ifs-mixed.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/37-ifs-split.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/38-keywords-as-args.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/39-line-continuation.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/40-long-loop.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/41-positional.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/42-quotes-adjacent.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/43-quotes-double.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/44-quotes-escape.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/45-quotes-single.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/46-star-unquoted.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/47-syntax-eof.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/48-syntax-fi.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/49-syntax-quote.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/50-true-false.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/51-unset-var.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/52-until-true.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/skeleton/53-while-false.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/zcompile/compound.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/zcompile/cond.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/zcompile/funcs.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/zcompile/misc.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/zcompile/redir.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/zcompile/simple.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/zcompile/zcalc.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/fixtures/zcompile/zmv.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/golden.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/host.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/memfs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/rng.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/run.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/bang_pid.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/cancel_latency.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/cancel_traps.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/control.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/coproc_jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/errexit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/events.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/executor.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/expand.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/getopts.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/host_hooks.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/interactive_builtins.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/kill.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/lineage.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/mem_fds.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/modes.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/nested_shell.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/orphan_jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/procsub.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/restore_fidelity.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/skeleton.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/startup_vars.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/stdin_script.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/test_chain_depth.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/tool_profile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/trace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/trap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/vars.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/windows_platform.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_builtins.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_compctl.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_cond.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_history.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_attr.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_cap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_curses.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_datetime.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_example.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_files.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_mapfile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_mathfunc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_net.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_p10k.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_pcre.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_private.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_regex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_rlimits.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_sched.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_stat.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_system.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_terminfo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_watch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_zftp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_zmodload.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_zprof.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_zpty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_zselect.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_mod_zutil.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_parity.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_prompt_names.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/testkit/suites/zsh_zcompile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/tools/extra.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/tools/git.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/tools/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/tools/nohup.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/tools/time.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/tools/timeout.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/tools/urlmap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/vfs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/src/windows.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/background_job_bang.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/background_job_cancel.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/callout_in_function.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/comp_support/comptest.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/comp_support/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/descriptor_limit.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/exit_trap_fatal_status.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/flock.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/heredoc_cmdsubst.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/minimizer_fixtures.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/nonutf8_env.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/obash.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/obash_fault_modes.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/obash_kill.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/obash_os_traps.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/obash_support/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/process_shell.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/pty_harness.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/pty_support/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/pty_support/vt.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/session_commands.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/streaming_smoke.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/subshell_exit_trap_frames.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/ulimit_isolation.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/vfs.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zle_hist_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zle_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zle_widgets_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_comp_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_comp_y01.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_comp_y02.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_comp_y03.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_compctl_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_computil_args_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_computil_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_jobs_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_mod_curses.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_mod_files.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_mod_net.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_mod_rlimits.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_mod_system.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_mod_watch.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_mod_zftp.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_mod_zpty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_parity_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
-| `crates/shell/tests/zsh_zcompile.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` |  |
+| `crates/shell/BUILD.bazel` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 126L; Definições Bazel da biblioteca `omp_shell`, do binário `obash` e das suítes de teste (incluindo flags `-Copt-level=1` para evit... |
+| `crates/shell/Cargo.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 89L; Manifesto Cargo da crate `omp-shell` com dependências de runtime/regex/VFS/VCS, features de instrumentação (`alloc-stats`, `no-... |
+| `crates/shell/LICENSE` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 22L; Licença MIT padrão da crate `omp-shell`. |
+| `crates/shell/NOTICE` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 35L; Aviso de atribuição documentando a adaptação do algoritmo `build_pytest_summary` do projeto RTK (MIT) no minimizador de saída d... |
+| `crates/shell/benches/common/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 124L; Utilitários compartilhados dos benchmarks do omp-shell: NullHost (FakeHost com sink de eventos nulo para não medir serde_json) ... |
+| `crates/shell/benches/common/statistics.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 13L; Helper de estatística dos benchmarks do shell calculando mediana e p99 in-place de amostras de Duration. |
+| `crates/shell/benches/create.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 82L; Benchmark de latência para criação de Shell e execução de comando mínimo ':' com meta <= 100 µs (mediana e p99) compartilhando ... |
+| `crates/shell/benches/fork.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 191L; Benchmark de custo de fork (subshell, cmdsub, cmdsub+bg, child loop e MemStore::clone) comparando estado pequeno (10 globais) v... |
+| `crates/shell/benches/frames.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 250L; Benchmark e validação de externalização/restauração de Frames em safepoint (loop for na profundidade 3): verifica blob <= 1 KiB... |
+| `crates/shell/benches/memory.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 343L; Benchmark com alocador global contador que mede bytes próprios do Shell (meta <= 64 KiB), custo por vproc ocioso (meta <= 2 KiB... |
+| `crates/shell/benches/overhead.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 368L; Benchmark de overhead de eventos (`EventMask::NONE`, `DEFAULT`, `ALL`) e da checagem de safepoint (`no-safepoint-check`), combi... |
+| `crates/shell/benches/sys_spawn.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 162L; Benchmark de latência spawn-to-exit de `/usr/bin/true` comparando `std::process::Command` com `NativeSpawner` nos caminhos `pos... |
+| `crates/shell/benches/workloads/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 38L; Define os scripts parametrizáveis (`loop`, `func`, `strops`) reutilizados in-proc pelos benchmarks de memória e overhead. |
+| `crates/shell/build.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 77L; Script de build que aplica flags de linker para `obash` e concatena definições TOML de filtros do minimizador em `OUT_DIR/built... |
+| `crates/shell/src/bash/cow_map.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 470L; Mapa hash persistente copy-on-write shardado em `2^bits` `HashTable<Arc<(K, V)>>` para clones O(1) de processos virtuais, `Weak... |
+| `crates/shell/src/bash/diag.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 749L; Catálogo central de diagnósticos do motor com formatação exata do bash 5.3 e zsh 5.9, códigos estáveis `DiagCode` para eventos ... |
+| `crates/shell/src/bash/engine.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 332L; Estado compartilhado do motor bash/zsh: configurações globais (`end_orphan_jobs`, limites de profundidade e cache), cache LRU d... |
+| `crates/shell/src/bash/error.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 98L; Tipos de erro do ciclo de vida do shell (`create`, `restore` com incompatibilidade de frames/IR/build, `externalize`). |
+| `crates/shell/src/bash/event.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1029L; Infraestrutura de eventos em tempo de execução (struct `Event` de 104 bytes, máscara de bits `EventMask`, `EventSink`, metadado... |
+| `crates/shell/src/bash/fd.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 562L; Implementa descritores de arquivo virtuais com contagem de referências (FdRef) e tabela por vproc (FdTable) para o engine bash/... |
+| `crates/shell/src/bash/fs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 613L; Define o seam não-bloqueante de sistema de arquivos (Fs, File, DirIter) baseado em polling (FsPoll/FsPending) com controle de r... |
+| `crates/shell/src/bash/host.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 941L; Especifica a interface Host entre o engine de shell e o ambiente hospedeiro: resolução de comandos (tools, nativos, dispositivo... |
+| `crates/shell/src/bash/ids.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 629L; Declara os identificadores compartilhados pelo engine, hosts e eventos (RunId, CallId, Vpid, JobId, UnitId com hasher dedicado ... |
+| `crates/shell/src/bash/image.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 419L; Implementa o estado global forkável de um vproc (Image) sobre mapas persistentes copy-on-write (CowMap), com inicialização preg... |
+| `crates/shell/src/bash/indexed_array.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 136L; Implementa arrays indexados esparsos ordenados (IndexedArray) apoiados em VectorSync (trie persistente da crate rpds), permitin... |
+| `crates/shell/src/bash/invocation.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1244L; Implementa o parser de linha de comando de invocação do bash 5.3 e zsh 5.9 (ShellArgs::parse / parse_exe / parse_zsh), cobrindo... |
+| `crates/shell/src/bash/ir/asm.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 339L; Implementa o formatador (disasm) e parser (asm) da representação textual de unidades IR (usada por obash --ir e testes de backe... |
+| `crates/shell/src/bash/ir/brace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 646L; Implementa a expansão sintática de chaves (brace_expand do bash) sobre palavras da AST: suporta alternativas aninhadas com vírg... |
+| `crates/shell/src/bash/ir/lower.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2089L; Primeira parte do lowering de AST para IR (Unit): entrypoints para compilação imediata ou diferida, geração de unidades de erro... |
+| `crates/shell/src/bash/ir/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1293L; Especifica a arquitetura do IR intermediário (IR_VERSION = 17): tabela de opcodes de VM em 16 bytes (Op com flags e máscara de ... |
+| `crates/shell/src/bash/mem.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 616L; Implementa objetos de descritor de arquivo em memória (pipes não-bloqueantes de 64 KiB com Waker e PipeMirror, buffers MemBuf c... |
+| `crates/shell/src/bash/mem_store.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 542L; Implementa MemStore, o StateStore em memória com snapshots O(1) via Image/CowMap, pilha de escopos locais indexada por bloom fi... |
+| `crates/shell/src/bash/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 102L; Módulo raiz de omp_shell::bash (#![forbid(unsafe_code)]); organiza e reexporta a API pública do motor bash 5.3 cooperativo (Eng... |
+| `crates/shell/src/bash/packed_names.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 182L; Define PackedNames e a macro packed_names! para empacotar nomes de variantes de enums sem campos em um único array de bytes e o... |
+| `crates/shell/src/bash/pattern/class.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 211L; Implementa classes de caracteres POSIX ([:alpha:], [:word:], [:ascii:], etc.) nos modos C locale e UTF-8, além da tabela collsy... |
+| `crates/shell/src/bash/pattern/ere/exec.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 528L; Executa EREs reproduzindo regexec/set_regs da glibc em O(n*m) via simulação de Pike NFA (início mais à esquerda e fim mais long... |
+| `crates/shell/src/bash/pattern/ere/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 176L; Define a API pública do motor POSIX ERE (Regex, RegexErrorKind, RegexError) usado em [[ string =~ regex ]], documentando parida... |
+| `crates/shell/src/bash/pattern/ere/nfa.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 230L; Compila a árvore sintática de ERE em um NFA (Prog) com numeração pós-ordem e prioridade de sucessores idênticas às da glibc, al... |
+| `crates/shell/src/bash/pattern/ere/parse.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 709L; Parser de EREs (RE_SYNTAX_POSIX_EXTENDED) fiel à glibc: trata âncoras, escapes GNU, back-references \1..\9, desenrolamento limi... |
+| `crates/shell/src/bash/pattern/ere/set.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 53L; Representa expressões de colchetes compiladas de ERE (Set/Item) com bitmask u128 pré-computado para ASCII e fallback para inter... |
+| `crates/shell/src/bash/pattern/ere/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 359L; Suíte de testes de comportamento da engine ERE comparando resultados e erros com regcomp/regexec da glibc 2.36 (C locale, UTF-8... |
+| `crates/shell/src/bash/pattern/ere/unit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 102L; Define unidades de casamento para ERE (bytes no C locale ou code points UTF-8 com sentinela INVALID para bytes soltos), case fo... |
+| `crates/shell/src/bash/pattern/glob.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 168L; Auxiliares de expansão de pathname portados de glob.c do bash: detecção de metacaracteres glob/extglob, localização da última b... |
+| `crates/shell/src/bash/pattern/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 608L; API unificada de pattern matching do bash (Pattern, PatOpts) para case, [[ == ]], ${x#p}, ${x/p/r} e globbing, com especializaç... |
+| `crates/shell/src/bash/pattern/strmatch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 739L; Porte genérico sobre Unit (u8 ou u32) de lib/glob/sm_loop.c do bash (gmatch, brackmatch, extmatch, patscan, collsym) preservand... |
+| `crates/shell/src/bash/pattern/zsh/class.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 295L; Implementa conjuntos e classes de caracteres de padrões zsh 5.9 (incluindo [:IDENT:], [:IFS:], [:IFSSPACE:], [:WORD:], [:INCOMP... |
+| `crates/shell/src/bash/pattern/zsh/compile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1193L; Primeira parte do compilador de padrões zsh 5.9 (patcompile, compswitch, compbranch, getglobflags): gera programas em nós Upat ... |
+| `crates/shell/src/bash/pattern/zsh/exec.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1111L; Primeira parte do executor de padrões zsh 5.9 (pattryrefs, patmatch, approximate, numeric): mantém Prog imutável separando esta... |
+| `crates/shell/src/bash/pattern/zsh/getmatch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 648L; Implementa casamento de padrões em expansão de parâmetros do zsh 5.9 (${x#p}, ${x%p}, ${x/p/r}, ${x:#p} e flags (S), (I:n:), (B... |
+| `crates/shell/src/bash/pattern/zsh/mbchar.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 251L; Implementa o passo caractere a caractere em strings UTF-8/unmetafied e padrões metafied do zsh 5.9 (equivalente a `pattern.c`/`... |
+| `crates/shell/src/bash/pattern/zsh/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 327L; Módulo raiz do motor de casamento de padrões zsh 5.9 (`patcompile`/`pattry`/`getmatch`), definindo opções (`Opts`), operadores ... |
+| `crates/shell/src/bash/pattern/zsh/prog.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 256L; Define a representação compilada de padrões zsh (`Prog` e instruções `Upat` com opcodes `P_*`, flags `GF_*`, offsets relativos ... |
+| `crates/shell/src/bash/pattern/zsh/testdata/globtests.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 194L; Tabela de casos de teste `Misc/globtests` importada do zsh 5.9 cobrindo closures, exclusões (`~`/`^`), classes POSIX, flags `(#... |
+| `crates/shell/src/bash/pattern/zsh/testdata/globtests_ksh.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 86L; Tabela de casos de teste `Misc/globtests.ksh` do zsh 5.9 validando operadores `KSH_GLOB` (`@( ) *( ) +( ) ?( ) !( )`) e flags i... |
+| `crates/shell/src/bash/pattern/zsh/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 982L; Suite de testes unitários comparando o compilador/matcher de padrões zsh contra saídas esperadas do zsh 5.9 (tabelas globtests,... |
+| `crates/shell/src/bash/pattern/zsh/token.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 165L; Port de `tokenize`, `shtokenize`, `remnulargs` e `haswilds` do zsh 5.9 para tokenizar caracteres especiais de padrão in-place, ... |
+| `crates/shell/src/bash/signal.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 445L; Implementa o barramento virtual de sinais POSIX do motor de shell, mapeando números/nomes/descrições `strsignal` para Linux/mac... |
+| `crates/shell/src/bash/snapshot.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 148L; Define os tipos de contrato de externalização e restauração de snapshot do shell (`RestoreOpts`, `ExternalizeReport`, `RestoreR... |
+| `crates/shell/src/bash/socket.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 126L; Define a interface `Sockets` (resolução DNS, connect, listen, accept, endereços, `MSG_OOB`) para os módulos `zsh/net/socket`, `... |
+| `crates/shell/src/bash/store.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1823L; Define a trait `StateStore` (armazenamento persistente write-through no host), tabelas, chaves/registros de variáveis/escopos/f... |
+| `crates/shell/src/bash/syntax/ast.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 201L; Define `Program`, `CompleteCommand` (com `Tree`, `AliasUse` e `ParseWarning`) e os tipos de valor compartilhados da AST (separa... |
+| `crates/shell/src/bash/syntax/features.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 176L; Define bitmask `Features` de opções gramaticais bash/zsh e charsets multibyte (`DOUBLE_BYTE`, `GB18030`, `SHIFT_JIS`), além da ... |
+| `crates/shell/src/bash/syntax/json.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2640L; Implementa o serializador JSON de AST (`to_json`), ajuste de spans para expansões de alias (`clip`/`clip_spans`), mapeamento de... |
+| `crates/shell/src/bash/syntax/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 153L; Fachada do submódulo de sintaxe bash 5.3 (`no_std`, `#![forbid(unsafe_code)]`), documentando a numeração determinística de `Nod... |
+| `crates/shell/src/bash/syntax/parser/cursor.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 294L; Implementa o cursor de entrada do parser com pilha de buffers de expansão de aliases, saltos de corpos de heredoc (`Skip`), con... |
+| `crates/shell/src/bash/syntax/parser/grammar.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1172L; Primeira metade do parser descendente recursivo da gramática bash 5.3 (`top_list`, listas compostas, pipelines, comandos compos... |
+| `crates/shell/src/bash/syntax/parser/lex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1546L; Define os códigos de token do Bash (`T`), tabela de palavras reservadas, arena de payloads (`TokArena`) e estado léxico (`LexSt... |
+| `crates/shell/src/bash/syntax/parser/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 666L; Define a API pública do parser incremental de Bash 5.3 / Zsh (`Parser`, `Resume`, `TextMode`, `parse_text`, `ParseError`), gere... |
+| `crates/shell/src/bash/syntax/parser/raw.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 462L; Porta `parse_matched_pair` (`raw_scan`), `parse_dollar_word` (`raw_dollar`), varredura de campos `${x:off:len}` (`raw_until_col... |
+| `crates/shell/src/bash/syntax/parser/word.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1559L; Define estruturas de token de palavra (`WordTok`, `AsgSplit`, `Acc`, `Stop`), implementa `read_word` com fast-path `PLAIN_WORD_... |
+| `crates/shell/src/bash/syntax/print.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1659L; Define os estilos de impressão (`PrintStyle`: `DeclareF`, `Compact`, `Zsh`), funções públicas de renderização, reconstrução da ... |
+| `crates/shell/src/bash/syntax/span.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 71L; Define `Span` (intervalo `[lo, hi)` com `slice` e `rebase`), `NodeId` (índice determinístico em pré-ordem) e `Pos` (offset e li... |
+| `crates/shell/src/bash/syntax/suites/data/aliases.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 56L; Fixture golden (gerado por `regen.py` via Bash 5.3) com casos de expansão de aliases e suas saídas esperadas de `declare -f`. |
+| `crates/shell/src/bash/syntax/suites/data/declare_f.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 831L; Primeira parte do fixture golden com trechos Bash e respectivas saídas exatas de `declare -f` produzidas pelo Bash 5.3. \| Parte... |
+| `crates/shell/src/bash/syntax/suites/data/errors.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 163L; Fixture golden contendo scripts inválidos e as mensagens de erro de sintaxe exatas (com linha e eco de linha) emitidas pelo Bas... |
+| `crates/shell/src/bash/syntax/suites/data/regen.py` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 207L; Script Python que executa `/opt/homebrew/bin/bash` 5.3 (`$BASH53`) para regenerar os arquivos golden `declare_f.txt`, `errors.t... |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case1.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 385L; Fixture JSON de AST gerado pelo `shfmt` para o caso `case1.sh` (`echo "a $b" 'c' $d ${e:-f}`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case1.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de entrada do fixture `shfmt` caso 1 (`echo "a $b" 'c' $d ${e:-f}`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case10.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 249L; Fixture JSON de AST gerado pelo `shfmt` para o caso `case10.sh` (`{ a; }; (b)`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case10.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de entrada do fixture `shfmt` caso 10 (`{ a; }; (b)`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case11.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 191L; Fixture JSON de AST gerado pelo `shfmt` para o caso `case11.sh` (`f() { a; }`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case11.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de entrada do fixture `shfmt` caso 11 (`f() { a; }`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case12.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 333L; Fixture JSON de AST gerado pelo `shfmt` para o caso `case12.sh` (`echo $(a b) ${x#y}`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case12.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de entrada do fixture `shfmt` caso 12 (`echo $(a b) ${x#y}`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case13.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 247L; Fixture JSON de AST gerado pelo `shfmt` para o caso `case13.sh` (here-document com expansão `$x`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case13.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de entrada do fixture `shfmt` caso 13 (`cat <<EOF` com `hi $x`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case14.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Fixture JSON de AST gerado pelo `shfmt` para entrada vazia (`case14.sh`). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case14.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Arquivo de entrada vazio para o fixture `shfmt` caso 14. |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case15.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3592L; Snapshot JSON da AST (formato shfmt) para o caso de teste case15.sh (parte 1/5): cobre blocos, subshells, if, while e início de... |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case15.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 25L; Script shell de entrada para o caso de teste shfmt case15: testa continuação de linha antes de redirecionamento, cláusulas case... |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case2.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 408L; Snapshot JSON da AST (formato shfmt) para case2.sh: representa atribuições de prefixo (a=1 b=2), invocação de comando e redirec... |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case2.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script shell de entrada para o teste shfmt case2 (a=1 b=2 cmd x >out 2>&1). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case3.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 297L; Snapshot JSON da AST (formato shfmt) para case3.sh: representa precedência/associatividade à esquerda de operadores lógicos && ... |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case3.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script shell de entrada para o teste shfmt case3 (a && b \|\| c). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case4.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 297L; Snapshot JSON da AST (formato shfmt) para case4.sh: representa pipelines encadeados com operadores \| e \|& via BinaryCmd. |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case4.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script shell de entrada para o teste shfmt case4 (a \| b \|& c). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case5.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 167L; Snapshot JSON da AST (formato shfmt) para case5.sh: representa negação de comando (! a) e execução em background (b &). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case5.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script shell de entrada para o teste shfmt case5 (! a; b &). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case6.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 494L; Snapshot JSON da AST (formato shfmt) para case6.sh: representa cadeia if/then/elif/then/else/fi com IfClause aninhadas no campo... |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case6.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script shell de entrada para o teste shfmt case6 (if a; then b; elif c; then d; else e; fi). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case7.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 312L; Snapshot JSON da AST (formato shfmt) para case7.sh: representa loop for com WordIter e expansão curta de parâmetro $i. |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case7.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script shell de entrada para o teste shfmt case7 (for i in 1 2; do echo $i; done). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case8.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 214L; Snapshot JSON da AST (formato shfmt) para case8.sh: representa estrutura WhileClause simples (condição e corpo). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case8.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script shell de entrada para o teste shfmt case8 (while a; do b; done). |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case9.json` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 416L; Snapshot JSON da AST (formato shfmt) para case9.sh: representa CaseClause com múltiplos padrões separados por \| e ramo padrão *. |
+| `crates/shell/src/bash/syntax/suites/data/shfmt/case9.sh` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script shell de entrada para o teste shfmt case9 (case $x in a\|b) c;; *) d;; esac). |
+| `crates/shell/src/bash/syntax/suites/data/zsh_corpus.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5474L; Corpus de casos de teste sintáticos extraídos da suíte do Zsh (parte 1): seções A01grammar, A02alias, A03quoting e início de A0... |
+| `crates/shell/src/bash/syntax/suites/data/zsh_errors.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 32L; Arquivo golden com 32 entradas malformadas ou ambiguas e a primeira mensagem de erro de parse emitida pelo zsh 5.9. |
+| `crates/shell/src/bash/syntax/suites/data/zsh_regen.py` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 133L; Script Python gerador dos arquivos golden (`zsh_corpus.txt`, `zsh_text.txt`, `zsh_errors.txt`) executando o binario `zsh 5.9` s... |
+| `crates/shell/src/bash/syntax/suites/data/zsh_text.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 272L; Arquivo golden contendo definicoes de funcoes zsh (`f () { ... }`) e o texto canonico impresso por `functions f`. |
+| `crates/shell/src/bash/syntax/suites/goldens.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 196L; Suite de testes orientada a dados comparando o parser/printer contra goldens do bash 5.3.20 para `declare -f`, mensagens de err... |
+| `crates/shell/src/bash/syntax/suites/json.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 195L; Testes da exportacao JSON nos dialetos `Shfmt` (comparado ao `shfmt v3.14.1`) e `Native`, validando `NodeId`, offsets em bytes/... |
+| `crates/shell/src/bash/syntax/suites/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 6L; Modulo agregador das suites de teste do parser bash/zsh. |
+| `crates/shell/src/bash/syntax/suites/parser.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1377L; Primeira metade dos testes comportamentais do parser e printer bash: erros do bash 5.3, determinismo de `NodeId` em pre-ordem, ... |
+| `crates/shell/src/bash/syntax/suites/zsh_parser.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 967L; Primeira metade da suite de testes do parser zsh: tokens metaficados, construcoes compostas zsh (`repeat`, `always`, funcao ano... |
+| `crates/shell/src/bash/syntax/tree/assign.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 126L; Definicao dos builders e views `Copy` na `Tree` para atribuicoes escalares/indexadas (`Assign`) e elementos de arrays compostos... |
+| `crates/shell/src/bash/syntax/tree/code.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 117L; Codificacao bidirecional compacta em `u16` (`Code` trait e macros `code_enum!`/`codes!`) para tipos de partes de palavra, condi... |
+| `crates/shell/src/bash/syntax/tree/command.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 723L; Builders e views de todos os tipos de comando da AST (`Simple`, `If`, `While`, `For`, `ArithFor`, `Case`, `FuncDef`, `Coproc`, ... |
+| `crates/shell/src/bash/syntax/tree/cond.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 105L; Builders e views para expressoes condicionais `[[ ... ]]` (`Unary`, `Binary`, `Word`, `Not`, `And`, `Or`, `Group`). |
+| `crates/shell/src/bash/syntax/tree/ids.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 129L; Passo pos-parse de numeracao densa em pre-ordem (`NodeId`) para os nos da arvore completa de um comando, mantendo ordem canonic... |
+| `crates/shell/src/bash/syntax/tree/list.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 238L; Builders e views para listas de comandos, operadores `&&`/`\|\|` (`AndOr`), separadores (`Sep`) e pipelines com flags `bang` e `t... |
+| `crates/shell/src/bash/syntax/tree/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 847L; Nucleo da AST em arena plana (`Tree` com `Node` de 28 bytes, buffer unico `text`, `kids`, pilha `scratch` com `Mark<S>` tipado,... |
+| `crates/shell/src/bash/syntax/tree/redir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 156L; Builders e views para redirecionamentos (`Redir` com fd numerico ou `{var}`) e here-documents (`HereDoc` com delimitador bruto/... |
+| `crates/shell/src/bash/syntax/tree/stored.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 276L; Serializacao e desserializacao `serde` compacta de `Tree` para armazenamento de funcoes/traces, omitindo campos zerados no head... |
+| `crates/shell/src/bash/syntax/tree/word.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 678L; Builders e views de palavras e partes (`Lit`, `Escaped`, `SQuote`, `DQuote`, `AnsiC`, `Param`, `Comsub`, `Arith`, `ProcSub`, `C... |
+| `crates/shell/src/bash/syntax/util.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 234L; Helpers de bytes compartilhados entre parser, printer e JSON: identificadores, delimitadores shell, `sh_single_quote`, `ansi_de... |
+| `crates/shell/src/bash/syntax/zsh/driver.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 187L; Driver incremental `ZshParser` que executa o port do parser zsh 5.9 por evento top-level, suportando reciclagem de `Tree`, reto... |
+| `crates/shell/src/bash/syntax/zsh/lex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3142L; Primeira parte do port do lexer zsh 5.9 (`Src/lex.c`/`input.c`/`exec.c`): enum de tokens `T`, palavras reservadas, classes `lex... |
+| `crates/shell/src/bash/syntax/zsh/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 28L; Declara os submódulos da gramática zsh (`driver`, `lex`, `parse`, `text`, `tok`, `wordcode`) e re-exporta símbolos públicos do ... |
+| `crates/shell/src/bash/syntax/zsh/parse.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1719L; Port do parser zsh 5.9 construindo a `Tree` da crate: auxiliares de atribuição/padrões/redirecionamentos e regras de alto nível... |
+| `crates/shell/src/bash/syntax/zsh/text.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 956L; Port de `Src/text.c` do zsh 5.9 sobre a AST: funções públicas de formatação de funções/listas/jobs (`getpermtext`, `getjobtext`... |
+| `crates/shell/src/bash/syntax/zsh/tok.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 256L; Define a representação interna de strings do zsh (`META`, tokens `0x84..=0xa2`, `ZTOKENS`), predicados (`is_tok`, `is_meta`, `i... |
+| `crates/shell/src/bash/syntax/zsh/wordcode.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2156L; Implementa o compilador de wordcode `.zwc` compatível com `zcompile` do zsh 5.9: estrutura `Eprog`, tabela de constantes `WC_*`... |
+| `crates/shell/src/bash/term.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 459L; Define a interface portátil de terminal e PTY do motor shell (`Terminal`, `Termios`, `TermFlag`, `CtlChar`, `SetWhen`, `Shtty`,... |
+| `crates/shell/src/bash/text.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 54L; Fornece helpers serde (`Text`, `bytes`, `list`, `pairs`) que serializam `BString` como string em formatos legíveis quando UTF-8... |
+| `crates/shell/src/bash/trace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1269L; Implementa o acumulador de trace de execução do shell (`RunTrace`, `SegmentObserver`, `Snapshot`, `Unit`, `Node`): recebe event... |
+| `crates/shell/src/bash/trace/history.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 572L; Journal limitado de replay que registra eventos semânticos e saída observada com proveniência exata por byte/produtor através d... |
+| `crates/shell/src/bash/trace/nodes.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 35L; Calcula a hierarquia de nós ancestrais por contenção de spans e lista filhos executáveis diretos excluindo palavras e atribuições. |
+| `crates/shell/src/bash/trace/syntax.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 348L; Encapsula a árvore sintática canônica imutável de unidades compiladas, com contexto de modo/features/aliases, restauração de fr... |
+| `crates/shell/src/bash/trace/viz/analysis.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1185L; Walk estático sobre sintaxe canônica que extrai pais reais, donos, nós folha, condições/guardas de branch, slots de fonte, arid... |
+| `crates/shell/src/bash/trace/viz/analysis_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 518L; Suíte de testes unitários validando slots determinísticos, inlining conservador, guardas de condição, propagação de taint e det... |
+| `crates/shell/src/bash/trace/viz/embedded.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 628L; Infere linguagens embutidas em argumentos e heredocs após desempacotar launchers (env, sudo, timeout, uv run, ssh) e realiza to... |
+| `crates/shell/src/bash/trace/viz/incremental_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 316L; Testes de renderização incremental, invalidação de cache, combinações de camadas de visualização, scripts remotos/aninhados e i... |
+| `crates/shell/src/bash/trace/viz/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 313L; Ponto de entrada da visualização ao vivo e de snapshots JSON persistidos, restaurando sintaxe arquivada (incluindo versões ante... |
+| `crates/shell/src/bash/trace/viz/model.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 315L; Define o modelo de apresentação serializável (linhas, segmentos, chips, efeitos, watches e timeline) compartilhado entre render... |
+| `crates/shell/src/bash/trace/viz/printer.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3639L; Infraestrutura de cache incremental, entrada principal de renderização em modos Raw/Pseudo, parsing antecipado de código ainda ... |
+| `crates/shell/src/bash/trace/viz/raw.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 508L; Renderizador do modo Raw que projeta spans canônicos, trivia protegida e observações de runtime sobre linhas originais em coord... |
+| `crates/shell/src/bash/trace/viz/runtime.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 539L; Reduz o journal limitado até o cursor de replay em observações por NodeKey, ramos ativos, pilha de chamadas por vpid e watches ... |
+| `crates/shell/src/bash/trace/viz/runtime_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1251L; Testes de integração de runtime da visualização de traces (`viz`): validam reparo e renderização de rascunhos em streaming (asp... |
+| `crates/shell/src/bash/trace/viz/semantic_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 586L; Testes semânticos do renderizador `viz` usando `Fixture`: verificam exatidão da visão `Raw`, conversão para pseudo-Python, inli... |
+| `crates/shell/src/bash/trace/viz/source.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 448L; Mapeamento exato entre bytes canônicos das unidades compiladas (incluindo unidades aninhadas de literais `eval`/`sh -c` com asp... |
+| `crates/shell/src/bash/trace/viz/words.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 508L; Impressão de palavras, atribuições, expansões de parâmetros, condições `[[ ... ]]`, aritmética e pipelines inline da AST canôni... |
+| `crates/shell/src/bash/vm/api.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 275L; Interface `ShellApi` exposta a callouts externos do host durante `Step::Call`: provê leitura/escrita não-bloqueante em fds virt... |
+| `crates/shell/src/bash/vm/arith.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1825L; Primeira parte do subsistema aritmético do bash na VM: define `Value`, trait `Env`, tipos de erro compatíveis com bash 5.3, cac... |
+| `crates/shell/src/bash/vm/builtins/caller.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 70L; Implementação do builtin `caller [expr]` da VM bash, consultando `BASH_LINENO`, `BASH_SOURCE` e a pilha de chamadas (`FUNCNAME`... |
+| `crates/shell/src/bash/vm/builtins/dir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 412L; Implementação dos builtins `cd`, `pwd` e `umask` na VM: resolução lógica (`-L`, incluindo URLs `scheme://` e caminhos Windows/M... |
+| `crates/shell/src/bash/vm/builtins/dirstack.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 411L; Implementação da pilha de diretórios (`dirs`, `pushd`, `popd`), visão de variável `DIRSTACK` e expansão `~±N` sobre o registro ... |
+| `crates/shell/src/bash/vm/builtins/doc_table.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2068L; Primeira parte da tabela estática `TABLE` com documentação curta e longa dos builtins e palavras reservadas do bash 5.3 (de `!`... |
+| `crates/shell/src/bash/vm/builtins/flow.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 758L; Implementação dos builtins de controle de fluxo (`eval`, `source`/`.`, `return`, `exit`, `logout`, `break`, `continue`, `wait`)... |
+| `crates/shell/src/bash/vm/builtins/getopts.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 283L; Implementação completa do builtin `getopts` da VM bash (baseado em `getopt.c`), controlando `OPTIND`, `OPTARG`, `OPTERR`, escop... |
+| `crates/shell/src/bash/vm/builtins/help.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 291L; Implementação do builtin `help [-dms]` e `--help` para builtins da VM bash sobre a tabela `TABLE` (e `STRMATCH`), com formataçã... |
+| `crates/shell/src/bash/vm/builtins/history.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 666L; Módulo principal de histórico da VM: implementa `List` (carregamento/salvamento na `StateStore`), `recording` (desativado para ... |
+| `crates/shell/src/bash/vm/builtins/history/bang.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1630L; Primeira parte da expansão de histórico estilo zsh/bash (`!` e `^old^new`): rastreador léxico de aspas/comentários/heredocs (`L... |
+| `crates/shell/src/bash/vm/builtins/history/bash.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 532L; Suporte de histórico específico do dialeto bash: timestamps `HISTTIMEFORMAT`, matching de `HISTIGNORE`, `history -p` e `histexp... |
+| `crates/shell/src/bash/vm/builtins/history/file.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 874L; Porte de `hist.c` (zsh 5.9) para leitura, escrita e locking de arquivo de histórico: formato metaficado com continuações `\` e ... |
+| `crates/shell/src/bash/vm/builtins/history/io.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 468L; Abstração de I/O assíncrono por replay (`Steps` / `HistOp` / `HistOut` / `Pending`) e executor não-bloqueante `perform` sobre `... |
+| `crates/shell/src/bash/vm/builtins/history/model.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 893L; Modelo de dados e armazenamento do histórico zsh (`Hist`, `Entry`, `ZState`, `EventsCache`): anel de eventos com `Arc<Vec<Entry... |
+| `crates/shell/src/bash/vm/builtins/history/words.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 289L; Segmentação de palavras de eventos de histórico compatível com zsh (`lex_words` para tokens de shell incluindo redirecionamento... |
+| `crates/shell/src/bash/vm/builtins/history/zfc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 900L; Implementação dos builtins zsh `fc`, `history` e `r`: pilha local de históricos (`fc -p`/`-a`/`-P`), operações de arquivo (`-R`... |
+| `crates/shell/src/bash/vm/builtins/history/zsh.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1237L; Controlador zsh do ciclo de histórico no leitor e parâmetros especiais (`HISTCMD`, `HISTSIZE`, `SAVEHIST`, `histchars`, `$histo... |
+| `crates/shell/src/bash/vm/builtins/io.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1191L; Implementação dos builtins `echo` (incl. `xpg_echo` e escapes `\0`/`\x`/`\u`/`\c`) e `read` (`-r`, `-a`, `-d`, `-n`, `-N`, `-p`... |
+| `crates/shell/src/bash/vm/builtins/jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 594L; Implementa os builtins de controle de jobs do bash (jobs, fg, bg, disown, suspend) e comandos %jobspec: resolve especificacoes,... |
+| `crates/shell/src/bash/vm/builtins/kill.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 264L; Implementa o builtin kill (-s, -n, -SIG, -l/-L): roteia sinais para vprocs/jobs pelo barramento interno (incluindo probe 0, con... |
+| `crates/shell/src/bash/vm/builtins/mapfile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 284L; Implementa mapfile/readarray com delimitador, origem, skip, contagem e callbacks (-C/-c) usando Probe::Input incremental por pa... |
+| `crates/shell/src/bash/vm/builtins/misc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 591L; Implementa enable (habilitar/desabilitar builtins e carregar strmatch sem dlopen), usable (filtragem por Profile::Tool e modulo... |
+| `crates/shell/src/bash/vm/builtins/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 725L; Nucleo e ABI dos builtins nativos da VM: define Ctx, Need, Control, Outcome, bufferizacao ordenada (Chunk), replay de probes (p... |
+| `crates/shell/src/bash/vm/builtins/names.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 908L; Primeira parte de names.rs: tabelas de aliases bash/zsh (Aliases), alias/unalias, resolucao de comandos (kinds, flush_hash, res... |
+| `crates/shell/src/bash/vm/builtins/options.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 423L; Implementa emulate (ambos dialetos), setopt e unsetopt (zsh), cobrindo opcoes fixas/monitor com TTY, listagem kshoptionprint, e... |
+| `crates/shell/src/bash/vm/builtins/printf.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1453L; Primeira parte de printf.rs (port bash 5.3): parsing de -v var, reuso da string de formato, flush por linha antes de diagnostic... |
+| `crates/shell/src/bash/vm/builtins/strftime.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 333L; Implementacao propria de strftime em locale C para printf %(...)T: matematica de calendario gregoriano proleptico, semana ISO 8... |
+| `crates/shell/src/bash/vm/builtins/test.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 903L; Primeira parte de test.rs: avaliador compartilhado de test, [ e [[ ]], com primarios unarios/binarios (stat/access via probes, ... |
+| `crates/shell/src/bash/vm/builtins/trap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 732L; Implementa trap para bash (-l, -p, -P, HardIgnored de ENOEXEC, limpeza em subshells) e zsh (TRAPNAL sincronizado, ZshEntryIgnor... |
+| `crates/shell/src/bash/vm/builtins/vars.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3395L; Primeira parte de vars.rs: telemetria EventData::Assign com preview limitado, conversao de atributos (-i, -u, -l, -c), resoluca... |
+| `crates/shell/src/bash/vm/builtins/zsh_args.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 754L; Define a tabela de builtins do zsh 5.9, flags BINF_*, estrutura Ops (OPT_ISSET/MINUS/PLUS/ARG), parser de opcoes execbuiltin, h... |
+| `crates/shell/src/bash/vm/builtins/zsh_dir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 841L; Implementa a logica de cd/chdir/pushd/popd do zsh 5.9 sobre a pilha de diretorios da VM: normalizacao textual fixdir, verificac... |
+| `crates/shell/src/bash/vm/builtins/zsh_jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 471L; Implementa os builtins de controle de jobs do zsh (jobs, fg, bg, disown, suspend), resolucao de especificadores %job/nome, manu... |
+| `crates/shell/src/bash/vm/builtins/zsh_kill.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 289L; Porta bin_kill do zsh 5.9 (kill -l, -s, -n, -SIG, status de saida e retomada automatica com SIGCONT de jobs parados) sobre targ... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_attr.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 126L; Implementa o modulo zsh/attr (zgetattr, zsetattr, zdelattr, zlistattr, suporte a -h para symlinks) usando FsReq xattr sobre a c... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_cap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 19L; Stub do modulo zsh/cap (cap, getcap, setcap) retornando 'not available on this system' com status 1, equivalente ao zsh compila... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_clone.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 43L; Implementa zsh/clone validando existencia e permissao RW do TTY via probes e emitindo Diag::Unsupported porque vprocs in-proces... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_curses.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1492L; Define parametros especiais zcurses_*, tabelas de cores/atributos/teclas e os subcomandos de zcurses (init, end, addwin, delwin... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_curses/screen.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1121L; Implementa o modelo de buffer/janelas/subjanelas compartilhadas da ncurses (Cell, Win, Curses), manipulacao de caracteres largo... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_datetime.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1064L; Porta o modulo zsh/datetime (strftime, ztrftime com %N/%. e flags BSD, parser reverso strftime -r e integracao com TZ e locale)... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_example.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 426L; Porta o modulo didatico/de teste zsh/example (builtin example, parametros exint/exstr/exarr, condicoes -len/-ex, funcoes matema... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_files.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1073L; Implementação do módulo `zsh/files` (parte 1): fila reexecutável de requisições de filesystem `Fsq` com confirmação interativa ... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_langinfo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 121L; Implementação do módulo `zsh/langinfo`: associação especial `$langinfo` consultando `nl_langinfo` da libc via `sys::langinfo` r... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_mapfile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 173L; Implementação do módulo `zsh/mapfile`: associação especial `$mapfile` mapeando nomes de arquivo do diretório atual para leitura... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_mathfunc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 270L; Implementação do módulo `zsh/mathfunc`: catálogo de funções matemáticas padrão de zsh (`sin`, `lgamma`/`signgam`, Bessel, `ilog... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_nearcolor.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 151L; Implementação do módulo `zsh/nearcolor`: conversão sRGB para CIE L*a*b* e busca pela cor mais próxima por Delta E nas paletas d... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_newuser.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 130L; Implementação do módulo `zsh/newuser`: verificação de dotfiles de usuário novo (`.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`) e ... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_pcre.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 353L; Implementação do módulo `zsh/pcre`: cache em processo de padrões PCRE2 compilados, estado por shell em `MiscKey::ZshPcre`, buil... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_private.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 254L; Implementação do módulo `zsh/param/private`: builtin `private` e suporte a `local -P` marcando variáveis de escopo com `Attrs::... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_regex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 126L; Implementação do módulo `zsh/regex`: condição `-regex-match` usando ERE da libc (`ere_match`), preenchendo `MATCH`/`MBEGIN`/`ME... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_rlimits.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 865L; Implementação do módulo `zsh/rlimits` (parte 1): tabelas `RESINFO` por plataforma, virtualização de limites por `Vproc` e `Misc... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_sched.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 340L; Implementação do módulo `zsh/sched`: fila ordenada de comandos agendados persistida em `MiscKey::ZshSched`, variável `$zsh_sche... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_socket.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 198L; Implementação do módulo `zsh/net/socket`: builtin `zsocket` para sockets Unix stream (listen, accept com `-t` via `Select`, con... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_stat.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 702L; Implementação do módulo `zsh/stat`: builtin `zstat`/`stat` com opções de formato, saída em array (`-A`) ou hash (`-H`), `stat_f... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_system.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1072L; Implementação do módulo `zsh/system` (parte 1): helpers compartilhados (`fd_probe`, `setiparam`, `setsparam`, `atoi`, `zstrtol`... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_tcp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 411L; Implementação do módulo `zsh/net/tcp`: tabela de sessões TCP em `MiscKey::ZshTcpSessions` (compartilhada com `zftp`) e builtin ... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_termcap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 148L; Implementação do módulo `zsh/termcap`: builtin `echotc` (com contagem de argumentos para `tgoto_bc`) e associação especial `$te... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_terminfo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 364L; Implementação do módulo `zsh/terminfo`: ciclo de vida de `cur_term` (`ZshCurTerm`), leitura de `TERM`/`TERMINFO`/`LINES`/`COLUM... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_util.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 114L; Helpers compartilhados pelos módulos zsh: formatação de erro `zsh_errmsg` (minúsculas exceto `EIO` e `"interrupt"`), `zstrtol`,... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_watch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 563L; Implementação do módulo `zsh/watch`: monitoramento de logins/logouts (`Host::logins` / utmpx), estado em `MiscKey::ZshWatch`, v... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_zftp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2218L; Implementação do módulo `zsh/zftp` (parte 1): tabelas de subcomandos/parâmetros, estado serializado em postcard (`MiscKey::Zftp... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_zftp/io.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1064L; Camada de I/O pollable de zsh/zftp: define ZftpOp, XferSpec/XferOut, ZftpAns, estado em voo (ZftpLive/Step/Xfer) e a função per... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_zprof.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 443L; Módulo zsh/zprof de profiling de funções shell: rastreia chamadas e arcos em Prof (MiscKey::ZshZprof), descarta entradas obsole... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_zpty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 885L; Módulo zsh/zpty: gerencia comandos em pseudo-terminal rodando em subshells Vproc com retenção do descritor slave (hold/Ctty), l... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_zselect.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 178L; Builtin zselect (zsh/zselect): analisa descritores -r/-w/-e, timeout em centésimos de segundo (-t) e arrays de saída (-a/-A), d... |
+| `crates/shell/src/bash/vm/builtins/zsh_mod_zutil.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2217L; Parte 1 de zsh/zutil: infraestrutura de suspensão/retomada para código shell (ZshCodePending/ZshCodeError), cálculo de largura ... |
+| `crates/shell/src/bash/vm/builtins/zsh_module.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2873L; Sistema de módulos zsh (parte 1): catálogo estático de módulos/features/builtins do zsh 5.9, tabelas padrão DEFAULT, ordenação ... |
+| `crates/shell/src/bash/vm/builtins/zsh_names.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1979L; Builtins de tabelas de nomes do zsh (parte 1): alias (-g/-s/-r/-L/-m), unhash/unalias/unfunction (incluindo diretórios nomeados... |
+| `crates/shell/src/bash/vm/builtins/zsh_print.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1499L; Porte de `bin_print` do zsh 5.9 para `print`, `echo`, `printf` e `pushln`: processamento de escapes (`getkeystring`), expansão ... |
+| `crates/shell/src/bash/vm/builtins/zsh_prompt.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1816L; Define atributos de texto (`Zattr`), capacidades terminfo (`Cap`, `TermCaps`), sequências de cor (`ColourSeqs`), ambiente de pr... |
+| `crates/shell/src/bash/vm/builtins/zsh_quote.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 311L; Implementa rotinas de formatação e quoting de bytes para builtins zsh (`nicechar_sel`, `mb_niceformat`, `quotedzputs` com `RC_Q... |
+| `crates/shell/src/bash/vm/builtins/zsh_typeset.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1488L; Define flags `PM_*`, tabela `PMTYPES`, impressão de parâmetros (`printparamnode`/`printparamvalue` para `typeset -p`/`+` e pare... |
+| `crates/shell/src/bash/vm/builtins/zsh_vars.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1154L; Implementa builtins de variáveis e opções do zsh (`set`, `unset`, `shift`, `let`, `getopts` com save/restore de `OPTIND` por es... |
+| `crates/shell/src/bash/vm/builtins/zsh_zcompile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 562L; Implementa `zcompile` (`-t`, compilação de arquivos e funções autoloaded para `.zwc` compatível com zsh 5.9) e os helpers de co... |
+| `crates/shell/src/bash/vm/callstack.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 484L; Gerencia a pilha de chamadas da VM (`Vproc::calls`) para materializar `FUNCNAME`, `BASH_SOURCE`, `BASH_LINENO`, `BASH_ARGC` e `... |
+| `crates/shell/src/bash/vm/command.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5351L; Implementa a máquina de estados em estágios (`Expand`, `Redirect`, `Lookup`, `Dispatch`, `Await`, `Output`, `Finish`) para coma... |
+| `crates/shell/src/bash/vm/control.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 250L; Define a palavra atômica de controle (`Ctl`) e o waker do motor, além de `ControlHandle` (pause/resume/cancel/signal/suspend/po... |
+| `crates/shell/src/bash/vm/exec.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5681L; Loop principal de despacho da VM (`run_slice`) com checagem de safepoint, flush de saída, traps pendentes (`DEBUG`, `ERR`, `SIG... |
+| `crates/shell/src/bash/vm/expand.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4346L; Infraestrutura principal de expansão de palavras (`Expander`), tipos de suspensão (`Stop`), log de replay (`Atom`), cache inlin... |
+| `crates/shell/src/bash/vm/fdprobe.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 776L; Probes assíncronos de descritores de arquivo para módulos zsh (`sysread`, `syswrite`, `zselect`, `sysopen`, sockets `connect`/`... |
+| `crates/shell/src/bash/vm/frames.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1405L; Serialização (`Shell::externalize`) e início da restauração (`Shell::restore`) do estado transitório de execução da VM (`Frames... |
+| `crates/shell/src/bash/vm/fsprobe.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 720L; Probes serializáveis de sistema de arquivos (`FsReq`/`FsAns`/`FsErr`) para builtins e parâmetros especiais do zsh, mapeamento c... |
+| `crates/shell/src/bash/vm/glob.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 937L; Expansão de caminhos (`glob_filename`/`glob_vector`, `globstar`, `GLOBSORT`, `GLOBIGNORE`) desacoplada de I/O: o avaliador puro... |
+| `crates/shell/src/bash/vm/jobctl.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1585L; Estado e primitivas de controle de jobs interativo (grupos de processo, terminal `SHTTY`, captura/entrega de sinais em modo int... |
+| `crates/shell/src/bash/vm/locale.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 410L; Resolução de charset e ponto decimal a partir de `LC_ALL`/`LC_CTYPE`/`LC_NUMERIC`/`LANG` com cache por token de locale, cálculo... |
+| `crates/shell/src/bash/vm/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3275L; Definição central da VM de shell: `Shell`, `Kernel`, `ShellInit`, `Profile` (`User` vs `Tool`), `Script`/`VprocSel`, `Budget`, ... |
+| `crates/shell/src/bash/vm/mode.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 738L; Gerenciamento de modos e emulação (`bash`/`sh`/`zsh`), troca e restauração de opções em chamadas de função (`localoptions`, `st... |
+| `crates/shell/src/bash/vm/nested.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 481L; Execução in-engine de shells aninhadas (`bash`/`sh`) e fallback de scripts `ENOEXEC` sem shebang em uma `Vproc` filha com image... |
+| `crates/shell/src/bash/vm/orphans.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 170L; Limpeza automática de jobs órfãos (`end_orphan_jobs`) encerrando com `TERM` árvores cujo pai subshell saiu quando executam loop... |
+| `crates/shell/src/bash/vm/pattern.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 65L; Cache thread-safe compartilhado por `Engine` (até 4096 textos de padrão distintos) de `Pattern` compilados indexados por texto ... |
+| `crates/shell/src/bash/vm/probe.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 892L; Sistema de probes assíncronos pollables e cacheados por op (`Stat`, `StatAll`, `Access`, `Chdir`, `Path`, `Read`, `DumpHas`, `G... |
+| `crates/shell/src/bash/vm/proc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1828L; Estruturas de processo virtual (`Vproc`, `VprocZsh`, `OwnTraps`, `GetoptsState`), tabela de jobs estilo bash (`JobTable`, `set_... |
+| `crates/shell/src/bash/vm/quote.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 236L; Implementa os estilos de quoting e escaping do bash (declare -p, ${x@Q}, alias, printf %q, nomes de arquivo em diagnósticos e g... |
+| `crates/shell/src/bash/vm/redir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1447L; Aplica listas de redirecionamento com progresso resumível em scratch, expansão de alvos bash/zsh, alocação de FDs {var}, notifi... |
+| `crates/shell/src/bash/vm/state.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3989L; Implementa o gerador $RANDOM do bash, ordenação FNV-1 de arrays associativos, tipos Var/Scope e a estrutura Root que mantém cac... |
+| `crates/shell/src/bash/vm/xtrace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 432L; Implementa o traço set -x (xtrace) para bash e zsh, incluindo nível de indireção, expansão de PS4 (${PS4@P} ou promptexpand com... |
+| `crates/shell/src/bash/vm/zle/bindings.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 348L; Define as tabelas constantes de mapeamento de teclas padrão do ZLE portadas do zsh 5.9 (EMACS, META, VIINS e VICMD). |
+| `crates/shell/src/bash/vm/zle/bindkey.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1042L; Implementa o builtin bindkey do zsh (listagem, seleção de keymaps -e/-v/-a/-M, criação/link/remoção -N/-A/-D/-d, binding/unbind... |
+| `crates/shell/src/bash/vm/zle/builtin.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 761L; Implementa o builtin zle do zsh (-l, -D, -A, -N, -C, -R, -M, -U, -K, -I, -f, -F, -T e invocação direta de widgets), além da pon... |
+| `crates/shell/src/bash/vm/zle/comp/compcore.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 189L; Reexporta os submódulos de compcore (add, perm, run, strings) e define compcore::State com todos os campos globais de estado do... |
+| `crates/shell/src/bash/vm/zle/comp/compcore/add.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1379L; Implementa gerenciamento de grupos e explicações de completion (begcmgroup, endcmgroup, addexpl), pré-coleta de caminhos para s... |
+| `crates/shell/src/bash/vm/zle/comp/compcore/perm.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 597L; Ordenação e deduplicação de grupos de matches (`zstrcmp` ignorando contrabarras e com ordenação numérica/collation, `matchcmp`,... |
+| `crates/shell/src/bash/vm/zle/comp/compcore/run.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 903L; Orquestração em estilo CPS do ciclo de completion do ZLE: inicialização de opções/estado em `do_completion`, despacho de result... |
+| `crates/shell/src/bash/vm/zle/comp/compcore/strings.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 836L; Utilitários de manipulação de strings de completion do zsh: aplicação recursiva da pilha de aspas (`multiquote`, `tildequote`),... |
+| `crates/shell/src/bash/vm/zle/comp/compctl/generate.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3505L; Estrutura do motor de geração `compctl`/`compcall`: modelo de replay determinístico (`Run`, `Halt::Need`/`Call`), builtin `comp... |
+| `crates/shell/src/bash/vm/zle/comp/compctl/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1476L; Definições de flags e AST serializável do módulo `zsh/compctl` (`Cc`, `Cond`, `Xor`, `State`), persistência na store do vproc e... |
+| `crates/shell/src/bash/vm/zle/comp/complete.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1704L; Estado e interface dos parâmetros especiais de `zsh/complete` (`words`, `redirections`, `CURRENT`, `PREFIX`, `SUFFIX`, `IPREFIX... |
+| `crates/shell/src/bash/vm/zle/comp/complist.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 308L; Módulo raiz de zsh/complist na VM ZLE: define o estado de listagem/seleção (State, Mg, Menusearch), verifica carregamento do mó... |
+| `crates/shell/src/bash/vm/zle/comp/complist/colors.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 515L; Parser de ZLS_COLORS/ZLS_COLOURS para Listcols (tipos de arquivo, extensões, padrões com grupos de captura (#b) e filtro por gr... |
+| `crates/shell/src/bash/vm/zle/comp/complist/menu.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2236L; Infraestrutura CPS do menu-select (seq, zrefresh, unmeta_call, Snap), hook complistmatches e cl_rest com paginação por replay (... |
+| `crates/shell/src/bash/vm/zle/comp/complist/print.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2099L; Estruturas e primitivas de impressão colorida/paginada (Mt, ScrollKey, Penv com buffer para replay), medição de largura multiby... |
+| `crates/shell/src/bash/vm/zle/comp/compmatch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1731L; Port de zsh compmatch.c: helpers de strings metafied/multibyte, gerenciamento de lista de bmatchers e pool de Clines (freecl), ... |
+| `crates/shell/src/bash/vm/zle/comp/compmatch/join.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1230L; Síntese e unificação de prefixo comum em completions com matchers: pattern_match_restrict e bld_line (reconstrução via equivalê... |
+| `crates/shell/src/bash/vm/zle/comp/compmatch/parse.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 553L; Parser completo de especificações -M do zsh (m:/l:/r:/b:/e:/M:/L:/R:/B:/E:/x:), padrões e classes de caracteres/equivalência ([... |
+| `crates/shell/src/bash/vm/zle/comp/compmatch/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 251L; Testes unitários do parser e executor de especificações de casamento (`compmatch`) do autocompletar ZLE (classes de equivalênci... |
+| `crates/shell/src/bash/vm/zle/comp/compresult.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1749L; Primeira parte do port do `compresult.c` do zsh 5.9: estrutura de estado, helpers de linha metafied, construção e corte da stri... |
+| `crates/shell/src/bash/vm/zle/comp/compresult/list.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1358L; Primeira parte da listagem de matches (`compresult.c`/`zle_tricky.c`): ambiente e buffer de saída (`ListEnv`, `Pr`), largura Un... |
+| `crates/shell/src/bash/vm/zle/comp/compresult/suffix.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 350L; Gerenciamento de sufixos auto-removíveis do autocompletar (port de `zle_misc.c`): registro por string/faixa ou função ZLE (`mak... |
+| `crates/shell/src/bash/vm/zle/comp/computil/args.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2008L; Primeira parte de `comparguments` (`computil.c`): tipos de especificação de opções e argumentos (`Cadef`, `Caopt`, `Caarg`, `Ca... |
+| `crates/shell/src/bash/vm/zle/comp/computil/describe.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 789L; Primeira parte de `compdescribe` (`computil.c`): agrupamento de matches por descrição idêntica, ordenação com `LC_COLLATE`, cál... |
+| `crates/shell/src/bash/vm/zle/comp/computil/files.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 839L; Primeira parte de `compfiles`/`compgroups` (`computil.c`): helpers de `stat` via `Probe::Stat`, expansão de padrões com matcher... |
+| `crates/shell/src/bash/vm/zle/comp/computil/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 308L; Módulo raiz de `zsh/computil`: reexportação dos builtins, helpers compartilhados de parâmetros/quoting/diagnóstico e persistênc... |
+| `crates/shell/src/bash/vm/zle/comp/computil/quote.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 81L; Builtin `compquote`: aplica `quotestring` ao conteúdo de parâmetros escalares ou arrays conforme a pilha de quoting atual (`com... |
+| `crates/shell/src/bash/vm/zle/comp/computil/tags.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 354L; Builtins `comptags` e `comptry`: registro por nível de aninhamento (`locallevel`), filtragem com expansão de chaves e padrões, ... |
+| `crates/shell/src/bash/vm/zle/comp/computil/values.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 590L; Implementa o builtin `compvalues` (equivalente ao `_values` do zsh 5.9 em `computil.c`): parsing de definições de valores/separ... |
+| `crates/shell/src/bash/vm/zle/comp/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 386L; Módulo raiz do motor de completion ZLE (zsh 5.9): agrega os subestados globais por arquivo em `Comp`, define o tipo de continua... |
+| `crates/shell/src/bash/vm/zle/comp/tricky.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1169L; Porte de `zle_tricky.c` (parte 1): estado de completion (`State`), cálculo de opções de quoting (`quotename`), detecção de wild... |
+| `crates/shell/src/bash/vm/zle/comp/tricky/compstring.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1293L; Porte de `get_comp_string` (parte 1): executa `ZleLex` sobre a linha metafied (inserindo `x` dummy com `addx`), extrai `clwords... |
+| `crates/shell/src/bash/vm/zle/comp/tricky/expand.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 391L; Porte de `doexpansion` e driver `run` para expansões ZLE: executa `prefork`, `globlist` (com `NULL_GLOB` temporário), `filesubs... |
+| `crates/shell/src/bash/vm/zle/comp/tricky/spell.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 677L; Porte de `spckword`/`spname`/`mindist`/`spdist` do zsh 5.9 para o widget `spell-word`: coleta tabelas de funções/aliases/comand... |
+| `crates/shell/src/bash/vm/zle/comp/tricky/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 229L; Testes unitários de conformidade de `get_comp_string_in`, `parambeg`, `cmphaswilds`, `pfxlen` e `spdist` contra a semântica do ... |
+| `crates/shell/src/bash/vm/zle/comp/types.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 633L; Estruturas de dados de `comp.h` do zsh 5.9: flags `cgf`/`cmf`/`clf`/`caf`/`fc`, explicações, matches, grupos e clines gerenciad... |
+| `crates/shell/src/bash/vm/zle/deltochar.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 98L; Módulo `zsh/deltochar` (`delete-to-char` e `zap-to-char`): aguarda um caractere via `Await::Char`, apaga até ou incluindo a N-é... |
+| `crates/shell/src/bash/vm/zle/display.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 633L; Cola de exibição do ZLE (`zle_refresh.c`): coleta capacidades terminais (`TermCaps`), opções e parâmetros para `RefreshIn`, exp... |
+| `crates/shell/src/bash/vm/zle/exec.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1859L; Núcleo de execução de widgets ZLE (parte 1): define o contexto `Zw`, protocolo CPS `WResult`/`Await`/`Got`/`Cont`, pilha de tar... |
+| `crates/shell/src/bash/vm/zle/hist.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 249L; Porte de `zle_hist.c`: navegação e busca em histórico no editor (`zle_setline`, `zle_goto_hist` com `HIST_IGNORE_DUPS` e `HIST_... |
+| `crates/shell/src/bash/vm/zle/keymap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1007L; Porte de `zle_keymap.c` (parte 1): representação de keymaps (`Keymap` com tabela de 256 primeiros bytes + tabela `multi` com co... |
+| `crates/shell/src/bash/vm/zle/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 713L; Define o estado principal do editor ZLE por vproc (Zle, Editor), conversores lossless de linha UTF-8/bytes inválidos (INVALID_B... |
+| `crates/shell/src/bash/vm/zle/params.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 638L; Implementa os parâmetros especiais do ZLE (BUFFER, CURSOR, LBUFFER, RBUFFER, killring, region_highlight, registers, widgets, ke... |
+| `crates/shell/src/bash/vm/zle/reader.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1509L; Primeira metade da máquina de estados do leitor interativo (precmd, periodic, PROMPT_COMMAND, PROMPT_SP, preexec, zshaddhistory... |
+| `crates/shell/src/bash/vm/zle/refresh/line.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 956L; Implementa atualização diferencial por linha (refreshline) com inserção/deleção de caracteres por custo, movimentação otimizada... |
+| `crates/shell/src/bash/vm/zle/refresh/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1927L; Define estruturas e API pública do renderizador de tela ZLE (Display, Elem, RegionHighlight), helpers de células/multiword/larg... |
+| `crates/shell/src/bash/vm/zle/refresh/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 321L; Testes unitários de renderização byte-a-byte comparados contra saídas reais do zsh 5.9 em xterm-256color (digitação, wrap em 80... |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_L_command.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Fixture golden de saída `bindkey -L` para o keymap command do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_L_emacs.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 117L; Fixture golden de saída `bindkey -L` para o keymap emacs do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_L_isearch.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Fixture golden vazia de saída `bindkey -L` para o keymap isearch do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_L_safe.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Fixture golden de saída `bindkey -L` para o keymap imutável .safe do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_L_vicmd.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 95L; Fixture golden de saída `bindkey -L` para o keymap vicmd do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_L_viins.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 31L; Fixture golden de saída `bindkey -L` para o keymap viins do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_L_viopp.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 13L; Fixture golden de saída `bindkey -L` para o keymap viopp do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_L_visual.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 19L; Fixture golden de saída `bindkey -L` para o keymap visual do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_m_emacs.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 196L; Fixture golden de saída `bindkey -m` (com prefixos Meta) para o keymap emacs do zsh. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_sorted.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 9L; Fixture golden para ordenação de saída do comando bindkey. |
+| `crates/shell/src/bash/vm/zle/testdata/bindkey_vicmd.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 95L; Fixture golden de listagem do keymap vicmd sem flag -L. |
+| `crates/shell/src/bash/vm/zle/thingy.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 229L; Implementa a tabela de thingies e widgets do ZLE (builtins, nativos de módulos, usuário e completion), garantindo imortalidade ... |
+| `crates/shell/src/bash/vm/zle/tty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 256L; Abstrai o terminal de edição do ZLE (SHTTY ou escravo zpty), alternando modos termios raw/normal e realizando leitura/escrita n... |
+| `crates/shell/src/bash/vm/zle/undo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 484L; Implementa o sistema de undo/redo por diffs incrementais de prefixo/sufixo, suporte a UNDO_CHANGE_NO/UNDO_LIMIT_NO, mesclagem d... |
+| `crates/shell/src/bash/vm/zle/utils.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1190L; Primitivas centrais de edição de linha do ZLE (porte do zsh 5.9): estado da linha (LineState), alinhamento de caracteres combin... |
+| `crates/shell/src/bash/vm/zle/vared.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 368L; Implementa o builtin `vared` (edição interativa de parâmetros escalares, arrays e hashes via ZLE com restauração de keymaps -M/... |
+| `crates/shell/src/bash/vm/zle/widgets/args.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 221L; Widgets de argumentos numéricos prefixados do ZLE (`digit-argument`, `neg-argument`, `universal-argument`, `argument-base`), in... |
+| `crates/shell/src/bash/vm/zle/widgets/edit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 417L; Widgets de edição do ZLE: transposição estilo gosmacs, comentário/descomentário multilinha (`pound-insert`), cópia de palavra a... |
+| `crates/shell/src/bash/vm/zle/widgets/hist_search.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 814L; Widgets de busca não-incremental no histórico e recuperação de palavras (`history-search-*`, `history-beginning-search-*`, `up/... |
+| `crates/shell/src/bash/vm/zle/widgets/isearch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 826L; Busca incremental no histórico (`history-incremental-search-*` e `*-pattern-search-*`) com keymap local `isearch`, compilação d... |
+| `crates/shell/src/bash/vm/zle/widgets/misc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 619L; Widgets gerais do ZLE (`self-insert`, `delete-char`, `kill-line`, `kill-whole-line`, `kill-buffer`, `transpose-chars`, `accept-... |
+| `crates/shell/src/bash/vm/zle/widgets/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 299L; Registro central e tabela `BUILTINS` com os 193 widgets internos do ZLE na ordem e com as flags do `iwidgets.list` do zsh 5.9. |
+| `crates/shell/src/bash/vm/zle/widgets/motion.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 325L; Widgets de movimentação de cursor e manipulação de marca/região (`forward/backward-char`, `beginning/end-of-line`, `*-hist`, `*... |
+| `crates/shell/src/bash/vm/zle/widgets/named.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 784L; Leitura de nome de widget no minibuffer (`execute-named-cmd`, `where-is`) com keymap local `command`, autocompletar de widgets ... |
+| `crates/shell/src/bash/vm/zle/widgets/stack.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 147L; Widgets da pilha de buffers do ZLE (`push-line`, `push-line-or-edit`, `push-input` e `get-line`), incluindo concatenação de lin... |
+| `crates/shell/src/bash/vm/zle/widgets/textobjects.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 401L; Text objects do modo vi (`select-a/in-word`, `select-a/in-blank-word` e `select-a/in-shell-word` usando o lexer `ctxtlex_ends`)... |
+| `crates/shell/src/bash/vm/zle/widgets/vi.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 929L; Núcleo do modo vi no ZLE: gravação de mudanças (`ViChange`/`ViState`) para `vi-repeat-change`, leitura de range de operadores (... |
+| `crates/shell/src/bash/vm/zle/widgets/vi_edit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 647L; Widgets de edição vi sem leitura de range (`x`, `X`, `D`, `Y`, `r`, `J`, `~`, `vi-caps-lock-panic`, seleção de registrador `"`,... |
+| `crates/shell/src/bash/vm/zle/widgets/vi_move.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 884L; Movimentações vi no ZLE: caracteres, fins de linha e colunas, `vi-match-bracket`, movimentação em histórico preservando coluna/... |
+| `crates/shell/src/bash/vm/zle/widgets/word.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 573L; Porta os widgets emacs de palavra do zsh 5.9 (`zle_word.c`) no ZLE: classificação configurável por `$WORDCHARS`, movimentos, de... |
+| `crates/shell/src/bash/vm/zle/widgets/yank.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 421L; Porta os widgets de yank, kill-ring (`yank-pop`), operações sobre região (inclusive modo linha em vi) e bracketed paste (`\e[20... |
+| `crates/shell/src/bash/vm/zsh/arith.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 499L; Conecta o avaliador matemático (`math.rs`) ao estado do shell zsh (`Expander`, `params.rs`, módulos e `functions -M`), gerencia... |
+| `crates/shell/src/bash/vm/zsh/assoc_order.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 264L; Reproduz a ordem exata de iteração das tabelas hash de parâmetros do zsh 5.9 (`17 * 4^grown` buckets, inserção na frente da cad... |
+| `crates/shell/src/bash/vm/zsh/brace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 483L; Porta a expansão de chaves do zsh 5.9 (`glob.c`): detecção/desativação de chaves inválidas (`hasbraces`), listas `{a,b}`, sequê... |
+| `crates/shell/src/bash/vm/zsh/cond.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1353L; Define operadores condicionais do zsh e implementa a avaliação de primárias de `[[ ]]` (`cond_test`), incluindo globs condicion... |
+| `crates/shell/src/bash/vm/zsh/math.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3748L; Define tipos numéricos (`Int`/`Float`), flags de compilação, estado compartilhado `MathState`, erros/avisos fiéis ao zsh, trait... |
+| `crates/shell/src/bash/vm/zsh/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 25L; Declara os submódulos públicos do dialeto zsh na VM (`arith`, `assoc_order`, `brace`, `cond`, `math`, `modify`, `nameddir`, `pa... |
+| `crates/shell/src/bash/vm/zsh/modify.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 607L; Porta os modificadores estilo histórico (`:h`, `:t`, `:r`, `:e`, `:a`, `:A`, `:P`, `:c`, `:l`, `:u`, `:q`, `:Q`, `:s/l/r/`, `:&... |
+| `crates/shell/src/bash/vm/zsh/nameddir.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 468L; Porta o subsistema de diretórios nomeados (`~name`) do zsh 5.9 sobre `ZHash` no store, consulta ao banco de usuários via probe ... |
+| `crates/shell/src/bash/vm/zsh/params.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3987L; Inicia a camada de parâmetros zsh (`params.c`) sobre o store: flags `PmFlags`, valores `PValue`, metadados `Param` com material... |
+| `crates/shell/src/bash/vm/zsh/specials.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1997L; Definição da tabela completa de parâmetros especiais zsh (computados, ties colon-array e plain specials), suas flags PM_*, supo... |
+| `crates/shell/src/bash/vm/zsh/subscript.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 961L; Parser e resolvedor de subscritos zsh (getindex, getarg, get_strarg) com suporte a intervalos, índices negativos, chaves de ass... |
+| `crates/shell/src/bash/vm/zsh/subst.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4434L; Infraestrutura de lista de palavras, replay determinístico de efeitos colaterais/substituições (Atom, begin_pass, getoutput, ca... |
+| `crates/shell/src/bash/vm/zsh/terminfo/xterm-256color` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/bash/vm/zsh/terminfo_db.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1885L; Implementa as tabelas de capacidades ncurses terminfo/termcap, o parser de arquivos compilados (`0432` e `01036`, incluindo ext... |
+| `crates/shell/src/bash/vm/zsh/text.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1323L; Implementa utilitários de texto metaficado/tokenizado do zsh: contagem multibyte, separação/junção por `IFS`, transformação de ... |
+| `crates/shell/src/bash/vm/zsh/wcwidth.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 392L; Implementa `wcwidth` via busca binária em tabelas Unicode (`ZERO` e `WIDE`) para cálculo de largura de exibição no prompt e edi... |
+| `crates/shell/src/bash/vm/zsh/zexit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 339L; Implementa a máquina de estados dos hooks de encerramento do zsh (`zshexit`, `zshexit_functions` e hooks de módulos `zsh/zftp`/... |
+| `crates/shell/src/bash/vm/zsh/zglob.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1763L; Define os tipos de estado do glob zsh e o parser de qualificadores finais (`checkglobqual`, modos `f`, tamanhos/tempos, ordenaç... |
+| `crates/shell/src/bash/vm/zsh/zpattern.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 233L; Conecta o compilador/matcher de padrões zsh ao estado da VM (opções, `IFS`/`WORDCHARS`, cache compartilhado no `Engine` e atrib... |
+| `crates/shell/src/bash/vm/zsh/zwc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 450L; Implementa o serializador e leitor de arquivos compilados `.zwc` do zsh 5.9 (dupla endianness, validação de cabeçalho/versão, e... |
+| `crates/shell/src/bash/zshopt.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 575L; Define as 185 opções do zsh 5.9 (`ZshOpt`), defaults por modo de emulação, aliases, letras de linha de comando, sincronização c... |
+| `crates/shell/src/bin/obash/alloc_stats.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 141L; Implementa o alocador global instrumentado `Counting` (feature `alloc-stats`) e `Report` para registrar totais e pico de memóri... |
+| `crates/shell/src/bin/obash/fault.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1128L; Define a infraestrutura de injeção de falhas do `obash` (`step`, `pause`, `exec`), políticas de perda em snapshots, formato de ... |
+| `crates/shell/src/bin/obash/main.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 427L; Binário standalone `obash` (#![no_main] para preservar SIGPIPE) usado em testes diferenciais contra bash 5.3 e benchmarks, com ... |
+| `crates/shell/src/bin/obash/syntax.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 152L; Implementa os subcomandos somente-parse do `obash` (`--print` estilo `declare -f`, `--json=native\|shfmt` e benchmark `--parse-c... |
+| `crates/shell/src/cancel.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 191L; Token de cancelamento assíncrono combinando prazo (`deadline`) e sinalização explícita (`AbortToken`), com `abort_reason()` ign... |
+| `crates/shell/src/child_session.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 110L; Define a política de sessão e terminal (`DetachSession`, `TakeForeground`, `None`) para processos filhos antes do spawn, forçan... |
+| `crates/shell/src/cmd_dialect.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 243L; Detector de sintaxe cmd (`/X`) vs GNU para `find`, `sort`, `timeout` e `whoami` no Windows, delegando aos executáveis nativos d... |
+| `crates/shell/src/commands.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 458L; Suporte a comandos de sessão in-process registrados pelo host por `Shell::run`, com precedência sobre funções/aliases, leitura ... |
+| `crates/shell/src/extras.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 555L; Integra utilitários extras (`omp_builtins::extras`) como tarefas nativas da engine bash com gates `PI_DISABLE_*`, ponte de desc... |
+| `crates/shell/src/git/guard.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1728L; Núcleo do `PI_GIT_GUARD`: identifica checkouts compartilhados vs privados (`ovnfs.checkout`, linked worktree, submódulo interno... |
+| `crates/shell/src/git/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 975L; Camadas sobre o binário `git` (`PI_SMART_GIT` e `PI_GIT_GUARD`) e implementação in-process de `git worktree add` com clone copy... |
+| `crates/shell/src/host.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1054L; Implementação de `bash::Host` para shell embutido (`PiHost`): streams substituíveis por execução (`StdStreams`), ordem de resol... |
+| `crates/shell/src/host/loopback.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 140L; Decide quando invocações `sh`/`bash`/`zsh` rodam na própria VM embutida vs quando devem delegar ao shell do `PATH` (modo intera... |
+| `crates/shell/src/host/urls.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 365L; Resolve URLs `scheme://` do `omp-vfs` em `path`, `cwd`, `argv` e `env` para caminhos reais do host antes do spawn de processos ... |
+| `crates/shell/src/lib.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 83L; Raiz da crate `omp-shell` declarando módulos da engine bash, adaptador `PiHost`, extras, camadas git, minimizer e reexports par... |
+| `crates/shell/src/minimizer.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 152L; Interface pública do minimizador opt-in de saída de shell, definindo `MinimizerCtx`, `MinimizerOutput` (com `original_text` par... |
+| `crates/shell/src/minimizer/config.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 452L; Resolução de configuração do minimizador a partir de opções N-API, variável `OMP_MINIMIZER_LEGACY_FILTERS` e arquivo TOML de us... |
+| `crates/shell/src/minimizer/defs/ansible-playbook.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 37L; Filtro TOML declarativo para `ansible-playbook` removendo linhas `ok:`/`skipping:` e vazias, mantendo alterações, falhas e recap. |
+| `crates/shell/src/minimizer/defs/ansible.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 25L; Filtro TOML declarativo para `ansible`, `ansible-playbook` e `ansible-galaxy` removendo ruído de Gathering Facts/setup/ok/skipp... |
+| `crates/shell/src/minimizer/defs/apt.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 52L; Filtro TOML declarativo para `apt`/`apt-get`/`yum`/`dnf`/`apk` removendo linhas de download, progresso e desempacotamento. |
+| `crates/shell/src/minimizer/defs/biome.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 48L; Filtro TOML declarativo para `biome` preservando diagnósticos e colapsando execuções limpas para `biome: ok`. |
+| `crates/shell/src/minimizer/defs/brew-install.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 41L; Filtro TOML declarativo para `brew install\|upgrade` removendo barras de download/pouring e fazendo curto-circuito para `ok (alr... |
+| `crates/shell/src/minimizer/defs/composer-install.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 44L; Filtro TOML declarativo para `composer install\|update\|require` removendo downloads/instalações e fazendo curto-circuito quando ... |
+| `crates/shell/src/minimizer/defs/conda.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 51L; Filtro TOML declarativo para `conda` removendo progresso de download e etapas de transação, mantendo plano de pacotes e erros. |
+| `crates/shell/src/minimizer/defs/df.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 19L; Filtro TOML declarativo para `df` truncando linhas em 80 colunas e limitando a 20 linhas. |
+| `crates/shell/src/minimizer/defs/du.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 19L; Filtro TOML declarativo para `du` removendo linhas vazias e limitando largura/linhas. |
+| `crates/shell/src/minimizer/defs/fail2ban-client.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 18L; Filtro TOML declarativo para `fail2ban-client` removendo linhas em branco e limitando a 30 linhas. |
+| `crates/shell/src/minimizer/defs/fail2ban.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 23L; Filtro TOML declarativo alternativo para `fail2ban-client` removendo ANSI, linhas vazias e separadores ASCII, com `on_empty = "... |
+| `crates/shell/src/minimizer/defs/gcc.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 70L; Filtro TOML declarativo para `gcc`/`g++`/`clang`/`clang++` removendo cadeias `In file included from` e preservando erros e warn... |
+| `crates/shell/src/minimizer/defs/gcloud.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 34L; Filtro TOML declarativo para `gcloud` removendo avisos recorrentes de atualização do Cloud SDK. |
+| `crates/shell/src/minimizer/defs/hadolint.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 27L; Filtro TOML declarativo para `hadolint` removendo ANSI e linhas em branco e limitando saída de lint de Dockerfile. |
+| `crates/shell/src/minimizer/defs/helm.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 37L; Filtro TOML declarativo para `helm repo\|search\|list\|history` removendo banners de atualização e warnings glog/kubeconfig. |
+| `crates/shell/src/minimizer/defs/iptables.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 26L; Filtro TOML declarativo para `iptables`/`ip6tables` removendo headers de chains Docker/BR e compactando tabelas longas via head... |
+| `crates/shell/src/minimizer/defs/jira.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 23L; Filtro TOML declarativo para `jira` removendo ANSI, linhas vazias e separadores decorativos. |
+| `crates/shell/src/minimizer/defs/jj.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 28L; Filtro TOML declarativo para `jj` (Jujutsu) removendo linhas `Hint:` e em branco. |
+| `crates/shell/src/minimizer/defs/jq.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 37L; Filtro TOML declarativo para `jq` ativo apenas em `exit 0` (`only_on_exit = [0]`), mantendo saídas até 16 KiB intactas e limita... |
+| `crates/shell/src/minimizer/defs/just.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 23L; Filtro TOML declarativo para `just` removendo ANSI e linhas em branco com sentinela `just: ok`. |
+| `crates/shell/src/minimizer/defs/liquibase.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 51L; Filtro TOML declarativo para `liquibase` removendo banner ASCII, logs INFO/FINE e listagem de jars, mantendo versão e erros SEV... |
+| `crates/shell/src/minimizer/defs/make.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 44L; Filtro TOML declarativo para `make` removendo linhas `Entering/Leaving directory` e `Nothing to be done`. |
+| `crates/shell/src/minimizer/defs/markdownlint.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 27L; Filtro TOML declarativo para `markdownlint` removendo ANSI e linhas em branco e limitando linhas/colunas. |
+| `crates/shell/src/minimizer/defs/mise.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 38L; Filtro TOML declarativo para `mise`/`rtx` removendo hints, mensagens `already installed`, downloads e extrações. |
+| `crates/shell/src/minimizer/defs/mix-compile.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 31L; Filtro TOML declarativo para `mix compile` removendo contagens `Compiling`/`Generated` e mantendo warnings. |
+| `crates/shell/src/minimizer/defs/mix-format.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 19L; Filtro TOML declarativo para `mix format` preservando arquivos modificados e colapsando saída vazia para `mix format: ok`. |
+| `crates/shell/src/minimizer/defs/mix.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 29L; Filtro TOML declarativo genérico para `mix` removendo ruído de compilação Elixir/Erlang e resolução Hex. |
+| `crates/shell/src/minimizer/defs/npx.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 87L; Filtro catch-all para `npx` com subcomandos desconhecidos; usa complemento RE2 sem lookahead em `match_subcommand` para não som... |
+| `crates/shell/src/minimizer/defs/nx.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 70L; Filtros TOML para `nx` direto e via wrappers (`pnpm\|npx\|yarn nx`) removendo banners NX, replay de cache e rodapés. |
+| `crates/shell/src/minimizer/defs/ollama.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 49L; Filtros TOML para `ollama`: remove progresso de pull/push/etc. nos subcomandos de gestão e apenas spinners Braille em `ollama r... |
+| `crates/shell/src/minimizer/defs/oxlint.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 46L; Filtro TOML para `oxlint` removendo resumo de tempo/contagem e linhas em branco, mantendo diagnósticos. |
+| `crates/shell/src/minimizer/defs/ping.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 52L; Filtro overlay para `ping`/`ping6` (apenas `exit 0`) mantendo cabeçalho, estatísticas de perda/RTT e linhas de timeout/unreacha... |
+| `crates/shell/src/minimizer/defs/pio-run.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 44L; Filtro TOML para `pio run` removendo passos de compilação/linking do PlatformIO e preservando erros. |
+| `crates/shell/src/minimizer/defs/pio.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 46L; Filtro TOML ampliado para `pio\|platformio run` removendo cabeçalhos de plataforma, árvore de dependências e métricas de memória. |
+| `crates/shell/src/minimizer/defs/pre-commit.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 26L; Filtro TOML para `pre-commit` removendo hooks `Passed`/`Skipped` e avisos `[INFO]` de ambiente, preservando falhas. |
+| `crates/shell/src/minimizer/defs/ps.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 17L; Filtro TOML para `ps` compactando listagens longas com `head_lines = 20` e `tail_lines = 20`. |
+| `crates/shell/src/minimizer/defs/quarto-render.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 45L; Filtro TOML para `quarto render` removendo logs de validação/pandoc e curto-circuitando sucesso para `ok (output created)`. |
+| `crates/shell/src/minimizer/defs/quarto.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 32L; Filtro TOML geral para `quarto` removendo logs de kernel/pandoc e mantendo `Output created:` ou erros de renderização. |
+| `crates/shell/src/minimizer/defs/rails-migrate.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 90L; Filtro TOML para `rails\|rake db:migrate\|rollback` removendo etapas SQL e compactando linhas finais para `<Migration>`. |
+| `crates/shell/src/minimizer/defs/rails-routes.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 75L; Filtro TOML para `rails\|rake routes` removendo cabeçalho e linhas vazias e truncando colunas em 160 caracteres. |
+| `crates/shell/src/minimizer/defs/rsync.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 41L; Filtro TOML para `rsync` ativo em `exit 0` que colapsa sincronizações bem-sucedidas para `ok (synced)` exceto quando há `error\|... |
+| `crates/shell/src/minimizer/defs/rustc.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 95L; Definição TOML para `rustc` direto: mantém linhas de erro, warning, ponteiros `-->`, ICE/panics e sumários; usa `preserve_if_em... |
+| `crates/shell/src/minimizer/defs/shellcheck.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 30L; Definição TOML para `shellcheck` que remove ANSI e linhas em branco preservando indicadores de posição e limita a 50 linhas. |
+| `crates/shell/src/minimizer/defs/shopify-theme.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 38L; Definição TOML para `shopify theme` que remove linhas de progresso (Fetching/Uploading/Downloading/Synced) mantendo erros Liqui... |
+| `crates/shell/src/minimizer/defs/skopeo.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 39L; Definição TOML para `skopeo` que descarta progresso de cópia de camadas/assinaturas preservando manifestos JSON e erros `FATA`. |
+| `crates/shell/src/minimizer/defs/sops.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 27L; Definição TOML para `sops` que remove avisos de `[AGE]` e rotação de chave preservando o conteúdo descriptografado. |
+| `crates/shell/src/minimizer/defs/spring-boot.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 33L; Definição TOML para `spring-boot` que remove banner ASCII e logs INFO/DEBUG/TRACE mantendo erros e stack traces. |
+| `crates/shell/src/minimizer/defs/ssh.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 44L; Definição TOML para `ssh` que remove banners de login, MOTD, `debug1:` e encerramento de conexão mantendo linhas em branco e sa... |
+| `crates/shell/src/minimizer/defs/stat.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 47L; Definição TOML para `stat` (Linux e macOS) que remove linhas em branco, `Device:` e `Birth:`, limitando a 20 linhas. |
+| `crates/shell/src/minimizer/defs/swift-build.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 48L; Definição TOML para `swift build\|test` que remove progresso de resolução/compilação e faz curto-circuito em `Build complete!` c... |
+| `crates/shell/src/minimizer/defs/systemctl-status.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 37L; Definição TOML para `systemctl status` que remove linhas em branco e limita saída a 20 linhas. |
+| `crates/shell/src/minimizer/defs/systemctl.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 25L; Definição TOML genérica para `systemctl` que remove linhas em branco e linhas de journal com timestamp syslog. |
+| `crates/shell/src/minimizer/defs/task.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 24L; Definição TOML para `go-task` (`task`) que remove avisos `is up to date` mantendo saídas de tarefas executadas. |
+| `crates/shell/src/minimizer/defs/terraform-plan.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 39L; Definição TOML para `terraform plan` que remove locks, `Refreshing state` e linhas inalteradas mantendo o plano de mudanças. |
+| `crates/shell/src/minimizer/defs/terraform.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 44L; Definições TOML para `terraform\|tofu` (`plan\|apply\|destroy` e `init\|validate\|fmt`), truncando ruído de instalação de provedores... |
+| `crates/shell/src/minimizer/defs/tofu-fmt.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 20L; Definição TOML para `tofu fmt` que colapsa saída vazia para `tofu fmt: ok (no changes)` e preserva nomes de arquivos alterados. |
+| `crates/shell/src/minimizer/defs/tofu-init.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 42L; Definição TOML para `tofu init` que remove linhas de download/instalação de plugins mantendo mensagens de inicialização ou erros. |
+| `crates/shell/src/minimizer/defs/tofu-plan.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 39L; Definição TOML para `tofu plan` que remove locks e `Refreshing state` preservando ações planejadas. |
+| `crates/shell/src/minimizer/defs/tofu-validate.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 21L; Definição TOML para `tofu validate` com curto-circuito para `ok (valid)` em sucesso e passthrough de erros. |
+| `crates/shell/src/minimizer/defs/trunk-build.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 43L; Definição TOML para `trunk build` que remove linhas de compilação/download Rust/WASM mantendo as 10 linhas finais do sumário. |
+| `crates/shell/src/minimizer/defs/trunk.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 26L; Definição TOML para `trunk` (trunk.io check/fmt) que remove linhas de download/instalação mantendo issues e sumário. |
+| `crates/shell/src/minimizer/defs/turbo.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 34L; Definição TOML para `turbo` que remove bullets de preâmbulo e banners de cache hit/miss mantendo saídas das tarefas e totais. |
+| `crates/shell/src/minimizer/defs/ty.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 35L; Definição TOML para `ty` (type checker Astral) que faz curto-circuito em `All checks passed` (com `unless` contra error/fail) e... |
+| `crates/shell/src/minimizer/defs/uv-sync.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 41L; Definição TOML para `uv sync\|pip` que remove linhas de download/cache e faz curto-circuito em `Audited N package`. |
+| `crates/shell/src/minimizer/defs/xcodebuild.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 70L; Definição TOML para `xcodebuild` que remove ruído de grafo de build (`CompileC`, `CompileSwift`, `Ld`, `CodeSign`, etc.) manten... |
+| `crates/shell/src/minimizer/defs/yadm.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 27L; Definição TOML para `yadm` que remove linhas em branco e dicas `(use "...")` com curto-circuito para árvore limpa. |
+| `crates/shell/src/minimizer/defs/yamllint.toml` | config_ou_dado | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 28L; Definição TOML para `yamllint` que remove linhas em branco e limita tamanho e quantidade de linhas. |
+| `crates/shell/src/minimizer/detect.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 941L; Detector best-effort de `(program, subcommand)` a partir de comandos shell: tokeniza respeitando aspas/escapes até fronteiras `... |
+| `crates/shell/src/minimizer/engine.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1527L; Núcleo do pipeline do minimizer: decide `MinimizerMode` (`None`, `WholeCommand`, `SegmentedChain` com guarda contra mutadores d... |
+| `crates/shell/src/minimizer/filters/binary_tools.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 124L; Filtro para ferramentas de inspeção binária (`xxd`, `strings`, `od`) que remove ANSI e aplica corte cabeça/cauda (50 + 20 linha... |
+| `crates/shell/src/minimizer/filters/bun.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 727L; Filtro para `bun` e `bunx`: re-roteia `bun run`/`exec` conforme o script/binário invocado (testes Node, linters, ferramentas JS... |
+| `crates/shell/src/minimizer/filters/cargo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1208L; Filtros para `cargo` (`build`, `check`, `test`, `clippy`, `nextest`, `fmt`, `doc`, `bench`, `install`, `metadata`, etc.): prese... |
+| `crates/shell/src/minimizer/filters/cloud.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1831L; Filtros de CLI de cloud e dados (`aws`, `curl`, `wget`, `psql`): implementa passthrough para `aws --output`/`--query` e `s3 cp ... |
+| `crates/shell/src/minimizer/filters/cpp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 356L; Filtros para ecossistema C++ (`cmake`, `ctest`, `ninja`, binários `GoogleTest` `*_test`/`*-tests`): remove progresso de compila... |
+| `crates/shell/src/minimizer/filters/docker.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1583L; Filtros para `docker`, `kubectl` e `helm`: protege saídas machine-readable (`docker ps -q`, `--format` não-tabular, `kubectl -o... |
+| `crates/shell/src/minimizer/filters/dotnet.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 581L; Filtro para .NET CLI (build, test, restore, format) com short-circuit seguro de build/restore sem avisos ou erros, extração de ... |
+| `crates/shell/src/minimizer/filters/fixtures/glab/ci-trace.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 54L; Fixture de log bruto de CI do GitLab Runner (com `section_start`/`section_end`, códigos ANSI e falha do vitest) para testes do ... |
+| `crates/shell/src/minimizer/filters/fixtures/glab/release-list.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 13L; Fixture tabular de saída do comando `glab release list` para testes do minimizer. |
+| `crates/shell/src/minimizer/filters/fixtures/glab/release-view.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 30L; Fixture de saída do comando `glab release view` com markdown, comentários HTML, seção ASSETS/SOURCES e URL para testes do minim... |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_compile_error_slice_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 33L; Fixture de saída bruta do Maven com avisos e erro de compilação (`cannot find symbol`) para testes do filtro JVM do minimizer. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_install_slice_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 44L; Fixture de saída bruta de `mvn install` bem-sucedido (compilação, surefire, jar e install) para testes do filtro JVM. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_locale_fr_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 15L; Fixture de saída bruta do Maven em locale francês (`BUILD ÉCHEC`) para testes de internacionalização do filtro JVM. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_no_pom_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 8L; Fixture de erro bruto do Maven quando executado em diretório sem `pom.xml` (`MissingProjectException`). |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_quiet_fail_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 27L; Fixture de falha do Maven Surefire em modo `-q` com stack trace de `AssertionFailedError` para testes do filtro JVM. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_reactor_fail_slice_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 87L; Fixture de falha em build multi-módulo (Reactor) do Maven com Reactor Summary e sugestão `-rf :child-b`. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_reactor_pass_slice_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 79L; Fixture de build multi-módulo (Reactor) do Maven com sucesso (`BUILD SUCCESS`) para testes do filtro JVM. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_test_compile_fail_slice_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 29L; Fixture de falha de compilação durante execução de testes do Maven para testes do filtro JVM. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_test_fail_slice_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 46L; Fixture de falha de teste único no Maven Surefire (`RtkInducedFailTest`) para testes do filtro JVM. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_test_multifail_slice_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 70L; Fixture de múltiplas falhas e erros no Maven Surefire (`CalcTest` e `BoomTest`) para testes do filtro JVM. |
+| `crates/shell/src/minimizer/filters/fixtures/jvm/mvn_test_pass_slice_raw.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 33L; Fixture de execução de testes bem-sucedida do Maven Surefire (977 testes, 61 ignorados) para testes do filtro JVM. |
+| `crates/shell/src/minimizer/filters/generic.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 19L; Filtro genérico de fallback que remove códigos ANSI, deduplica linhas consecutivas e aplica truncamento head+tail via CapClass:... |
+| `crates/shell/src/minimizer/filters/gh.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 433L; Filtro para GitHub CLI (gh) com passthrough para modos estruturados/interativos (--json, --jq, --watch, api, pr diff, --comment... |
+| `crates/shell/src/minimizer/filters/git.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3403L; Parte 1 de git.rs: despacho principal, filter_for reutilizável por wrappers, guardas de passthrough/orçamento para diffs e form... |
+| `crates/shell/src/minimizer/filters/glab.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 710L; Filtro para GitLab CLI (glab): passthrough para flags estruturadas/interativas, remoção de marcadores de seção do GitLab CI, AN... |
+| `crates/shell/src/minimizer/filters/go.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 683L; Filtro para Go e golangci-lint (direto ou via go tool): agrega sucesso de go test (texto e -json) preservando benchmarks, extra... |
+| `crates/shell/src/minimizer/filters/gt.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 481L; Filtro para Graphite CLI (gt): passthrough em gt log short, compactação de grafo em gt log com remoção de e-mails, resumos dens... |
+| `crates/shell/src/minimizer/filters/js_tools.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 566L; Filtro para ferramentas JS (next, prettier, prisma) com resolução direta e via bun/npx/bunx/pnpm dlx: preserva tabela de rotas ... |
+| `crates/shell/src/minimizer/filters/jvm.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3411L; Parte 1 de jvm.rs: parsers de linhas Maven/Surefire, normalização de coordenadas .java:[L,C], detecção de fase Maven pulando va... |
+| `crates/shell/src/minimizer/filters/lint.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1138L; Implementação do filtro de saída para linters e type-checkers (ruff, mypy, pyright, basedpyright, rubocop, tsc, eslint, biome, ... |
+| `crates/shell/src/minimizer/filters/listing.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2276L; Implementação principal dos filtros de listagem e busca (grep/rg, ls, tree, find, cat/read, stat/du/df/wc, jq/json), incluindo ... |
+| `crates/shell/src/minimizer/filters/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1033L; Tabela de despacho central dos filtros built-in do minimizador e lógica de resolução/desempacotamento de wrappers (npx, pnpm dl... |
+| `crates/shell/src/minimizer/filters/node_tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 534L; Filtro e testes para Jest, Vitest, Playwright e Bun test: colapsa suítes aprovadas ao sumário, isola blocos de falha com contex... |
+| `crates/shell/src/minimizer/filters/pkg.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1234L; Filtro para gerenciadores de pacotes (npm, pnpm, yarn, bun, pip, uv, poetry, bundle, brew, composer) com passthrough JSON/freez... |
+| `crates/shell/src/minimizer/filters/python.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 711L; Filtros Python (pytest, ruff, mypy) com máquina de estados do pytest portada de RTK usando limites independentes para blocos `=... |
+| `crates/shell/src/minimizer/filters/ruby.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1140L; Filtros para ecossistema Ruby (rspec texto/JSON, minitest, rubocop e rake/rails não-def), preservando ordem das seções do RSpec... |
+| `crates/shell/src/minimizer/filters/rust_tools.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 195L; Filtro Tier 3a para `rustfmt` que extrai arquivos únicos de cabeçalhos `Diff in ...`, elide hunks de diff exibindo os 3 primeir... |
+| `crates/shell/src/minimizer/filters/system.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1102L; Filtros conservadores em Rust para saída de comandos de sistema (env, log, deps, summary, err, test, diff, format, pipe, ps, pi... |
+| `crates/shell/src/minimizer/pipeline.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 724L; Motor declarativo de pipelines de filtragem carregados de TOML com 10 estágios ordenados (strip_ansi, replace, match_output com... |
+| `crates/shell/src/minimizer/plan.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 623L; Análise estrutural de comandos shell usando o parser bash 5.3 da engine para classificar em Single, Piped, Chain, Compound ou U... |
+| `crates/shell/src/minimizer/primitives.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 591L; Primitivas compartilhadas de transformação de texto para filtros do minimizador: remoção de ANSI CSI, deduplicação consecutiva ... |
+| `crates/shell/src/mounts.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 717L; Tabela de mounts de URLs virtuais (Mounts) e provedor VFS MountFs que mapeia prefixos/entradas exatas de URL para caminhos do h... |
+| `crates/shell/src/output_decode.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 926L; Decodificação incremental de stdout/stderr para Unicode com fallback automático para a ANSI code page (GetACP) no Windows por s... |
+| `crates/shell/src/paths.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 26L; Abstração multiplataforma para expansão/conversão de nomes curtos 8.3 do Windows, retornando o caminho inalterado em outros sis... |
+| `crates/shell/src/process/host.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 756L; Implementação NativeHost da trait Host sobre o SO real, gerenciando spawner, stdio, sinais, umask, fallback para extras embutid... |
+| `crates/shell/src/process/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 961L; Camada de execução da engine como shell de processo (standalone ou embutida via ProcessOptions::embedded), tratando argumentos/... |
+| `crates/shell/src/process/pending_fs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 159L; Wrapper de filesystem de teste (PI_SHELL_FS=pending) que força todas as operações de Fs a retornarem Poll::Pending ao menos uma... |
+| `crates/shell/src/process/pretty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 129L; Formatação de diagnósticos de erro de sintaxe compatíveis com bash e implementação do modo --pretty-print via parser da engine. |
+| `crates/shell/src/process/signals.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 523L; Ponte de sinais OS para o barramento virtual da engine em Unix (sigaction, bitmap atômico e leitura de SigIgn em /proc/self/sta... |
+| `crates/shell/src/process/timer.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 125L; Thread única compartilhada de timers (Timers) baseada em BinaryHeap e Condvar para atender deadlines da engine (read -t, TMOUT)... |
+| `crates/shell/src/process/zsh_help.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 271L; Texto estático de ajuda (--help) do zsh 5.9 com opções e letras padrão. |
+| `crates/shell/src/process/zsh_help_sh.txt` | doc | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 233L; Texto estático de ajuda (--help) do zsh 5.9 quando SHOPTIONLETTERS está ativo (emulação sh/ksh). |
+| `crates/shell/src/proctree.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1451L; Abstração multiplataforma de referência estável de processos (Process) com proteção contra reuso de PID (pidfd+start_time no Li... |
+| `crates/shell/src/session.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2207L; Define a API pública e estruturas de estado da `Session` persistente sobre o motor de shell: configuração (`SessionConfig`, `Ru... |
+| `crates/shell/src/shell.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2306L; Camada de alto nível `Shell` sobre `Session`, oferecendo sessões persistentes e `for_process`, execução one-shot com streaming ... |
+| `crates/shell/src/shell/tests/builtins.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1982L; Testes de integração que verificam registro e despacho in-process de todos os builtins (cmp, moreutils, utilitários uutils, bui... |
+| `crates/shell/src/shell/tests/direnv.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 251L; Testes de contrato do builtin `direnv` no shell embarcado: avaliação de `.envrc` com stdlib (`source_up`, `PATH_add`, `layout`,... |
+| `crates/shell/src/shell/tests/env_cwd.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 431L; Testes de ambiente e diretório de trabalho: expansão 8.3 e caminhos MSYS no Windows, decodificação ACP, recuperação quando o cw... |
+| `crates/shell/src/shell/tests/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 580L; Infraestrutura compartilhada dos testes do shell embarcado: `TestStdio`, wrappers de execução capturada e com timeout/lock glob... |
+| `crates/shell/src/shell/tests/process_control.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1468L; Testes de controle de processos e I/O de builtins: `pgrep`/`pkill`/`pidwait`/`ps`/`top` (incluindo pidfiles com flock e cancela... |
+| `crates/shell/src/shell/tests/redirections.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 229L; Testes comparados contra Bash 5.2/5.3 garantindo que descritores fechados (`>&-`, `2>&-`, `5>&-`) permaneçam fechados em comand... |
+| `crates/shell/src/shell/tests/session.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2842L; Testes de sessão para limite de expansão de chaves, substituição de processo `<(...)`, FIFOs bloqueantes/assíncronos sem deadlo... |
+| `crates/shell/src/shell/tests/urlmap.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 206L; Testa o builtin urlmap e montagens de URL (local://, skill://), cobrindo leitura/escrita, modo somente-leitura (-r), montagem e... |
+| `crates/shell/src/suites/extras.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 691L; Suíte de testes de integração para utilitários e extras embutidos (`sort`, `env`, `xargs`, `find`, `fd`, `awk`, `ifne`, `entr`,... |
+| `crates/shell/src/suites/loopback.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 641L; Suíte de testes de loopback para invocação de subshells `sh`/`bash`/`zsh` dentro do próprio motor vs fallback para binários no ... |
+| `crates/shell/src/suites/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 7L; Declara os módulos de testes de integração da pasta `suites`. |
+| `crates/shell/src/suites/tools.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 356L; Suíte de testes de integração para `timeout`, `nohup`, `time` e `kill` sobre `Session`, verificando status GNU/bash, escaloname... |
+| `crates/shell/src/suites/vfs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 557L; Suíte de testes unitários/assíncronos de `VfsFs` com um provedor em memória (`MemFs`) atrasado por timers, verificando pendênci... |
+| `crates/shell/src/sys/cmdline.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 357L; Constrói linhas de comando UTF-16 para Windows: quoting MSVCRT (`command_line`), linha `cmd.exe` para arquivos `.bat`/`.cmd` en... |
+| `crates/shell/src/sys/console.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 761L; Adapta o console do Windows (`CONIN$`/`CONOUT$`) à interface `Terminal`/`File`/`Shtty` do shell para edição de linha (ZLE), map... |
+| `crates/shell/src/sys/fs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1748L; Implementação de `StdFs` e `StdFile` sobre `std::fs`: classificação de descritores (incluindo `/dev/null` -> `NUL` no Windows),... |
+| `crates/shell/src/sys/fs_ops.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 370L; Operações de host auxiliares para builtins/módulos zsh (`zsh/files`, `zsh/stat`, `zsh/attr`): `mkdir` preservando bits apesar d... |
+| `crates/shell/src/sys/job.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 215L; Máquina de estados `JobPause` para suspender/retomar membros de Job Objects no Windows de forma idempotente e com rollback em f... |
+| `crates/shell/src/sys/langinfo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 407L; Wrappers FFI por categoria de locale (`newlocale`/`uselocale`) para `nl_langinfo_l`, `strftime_l`, `strptime`/`strptime_l` e or... |
+| `crates/shell/src/sys/lifecycle.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 431L; Máquina de estados `Lifecycle` e coordenador `Tracker` de processos externos: aguarda saída e dreno de todos os pumps de saída,... |
+| `crates/shell/src/sys/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 74L; Raiz do módulo `omp_shell::sys`, declarando e reexportando os submódulos de sistema operacional do motor de shell e definindo `... |
+| `crates/shell/src/sys/park.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 373L; Primitiva de bloqueio `Parker` do loop do motor: usa `eventfd` + `pidfd`s em `poll(2)` no Linux (evitando threads waiter por pr... |
+| `crates/shell/src/sys/pathext.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 119L; Parser e resolvedor de `PATHEXT` do Windows (case-insensitive, fallback `.com;.exe;.bat;.cmd`) para checar executabilidade e re... |
+| `crates/shell/src/sys/pcre.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 374L; Adaptador sobre `pcre2-sys` para o módulo `zsh/pcre`, preservando flags, semântica de retornos de `pcre_exec`, códigos negativo... |
+| `crates/shell/src/sys/proc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 526L; Leitura da tabela de processos no Linux (`/proc`) e macOS (`libproc`), cálculo de instante `now()` compatível com tempo de iníc... |
+| `crates/shell/src/sys/pump.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 660L; Pumps cooperativos assíncronos (In, Out e Duplex via socketpair) em rajadas limitadas sem threads dedicadas, além de `Feed` com... |
+| `crates/shell/src/sys/pump/orphan.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 77L; Adoção de pumps de saída e relays que sobrevivem ao `ExtProc` (processos em background/órfãos), executando-os como tasks no run... |
+| `crates/shell/src/sys/pump/os.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1384L; Abstração OS de pipes e timers para pumps/relays: descritores `O_NONBLOCK` + `timerfd`/`kqueue` no Unix; named pipes overlapped... |
+| `crates/shell/src/sys/ready.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 385L; Thread global `obash-ready` para monitorar prontidão de pipes/sockets/TTYs Unix sem modificar `O_NONBLOCK`, usando `poll(2)` em... |
+| `crates/shell/src/sys/regex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 282L; Match de ERE POSIX (`[[ s =~ re ]]` / `zsh/regex`) via FFI para `regcomp`/`regexec`/`regerror` da libc com layout explícito de ... |
+| `crates/shell/src/sys/relay.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 712L; Relays de decodificação incremental por programa externo para destinos de texto (mantendo pipes/arquivos em bytes brutos), gara... |
+| `crates/shell/src/sys/rlimit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 142L; Mapeamento entre `Rlimit` do motor (`ulimit`) e constantes `RLIMIT_*` da plataforma Unix (incluindo extras Linux e exclusão de ... |
+| `crates/shell/src/sys/shebang.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 303L; Parser e resolvedor de linhas `#!` seguindo `binfmt_script` (`HEAD_LEN = 256`), com suporte a `/usr/bin/env [-S]`, despacho de ... |
+| `crates/shell/src/sys/socket.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 573L; Implementação de `Sockets` Unix/TCP via `libc` sem bloquear a thread do motor: `connect` não-bloqueante e `accept` via `ready::... |
+| `crates/shell/src/sys/spawn/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 440L; Define a API e a configuração multiplataforma do `NativeSpawner` (`SpawnConfig`, `Sessions`, `Exits`), compartilhamento de feed... |
+| `crates/shell/src/sys/spawn/unix.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1974L; Primeira parte do spawner Unix: pool de threads waiter (`IDLE`), gerenciamento de `Scope` (`Group`/`Session`/`Process`) e varre... |
+| `crates/shell/src/sys/spawn/unix/measure.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 681L; Implementa spawns medidos (`time`) no Linux usando um helper em assembly (`x86_64`/`aarch64` via `global_asm!`) empacotado em u... |
+| `crates/shell/src/sys/spawn/unix/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1585L; Primeira metade dos testes de integração Unix do spawner: fixtures (`MemFile`, `wait`, `until`) e testes cobrindo devolução de ... |
+| `crates/shell/src/sys/spawn/windows.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1340L; Primeira parte do spawner Windows: gerenciamento de Job Objects (`Job`), monitoramento IOCP para fechar ConPTY ocioso (`Watcher... |
+| `crates/shell/src/sys/spawn/windows/tests.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 595L; Testes de integração Windows cobrindo fechamento automático de ConPTY quando o job esvazia, reabertura para estágios que entram... |
+| `crates/shell/src/sys/suites/cancel_externals.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 294L; Suíte end-to-end integrando `Shell`, `FakeHost` e `NativeSpawner` no Unix para verificar cancelamento (`cancel(Signal::Term)`),... |
+| `crates/shell/src/sys/suites/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Declara o submódulo da suíte de testes de host do sistema (`cancel_externals`). |
+| `crates/shell/src/sys/tty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 920L; Primeira parte do módulo TTY: tradução completa entre `Termios` do engine e `libc::termios` (flags, `c_cc`, velocidades baud), ... |
+| `crates/shell/src/sys/uname.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 34L; Wrapper simples de `libc::uname` no Unix retornando `(sysname, release, machine)` como `BString` (ou `None` fora de Unix). |
+| `crates/shell/src/sys/user.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 156L; Lê identidade do usuário atual (`UID`, `EUID`, `GID`, `GROUPS`, `USER`/`HOME`) no Unix via syscalls e no Windows via `OpenProce... |
+| `crates/shell/src/sys/utmp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 101L; Lê entradas `USER_PROCESS` e mtime do banco `utmpx`/`utmp` (protegido por mutex global `CURSOR`) no macOS e Linux glibc para o ... |
+| `crates/shell/src/taps.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 475L; Implementa `PipeTaps` (`PipeTap`/`PipeMirror`) para espelhar estágios intermediários de pipelines em ring buffers limitados (`R... |
+| `crates/shell/src/testkit/conformance.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1606L; Define a primeira parte da suíte de conformidade `store_conformance` para implementações de `StateStore`, validando round-trip ... |
+| `crates/shell/src/testkit/fault.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 315L; Implementa o injetor de falhas (`Fault` e `Rig`) que alterna entre `PauseResume`, `Snapshot` (externalize + serialização de sto... |
+| `crates/shell/src/testkit/fixtures/events/for-loop.jsonl` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 11L; Snapshot golden JSONL de eventos estruturados do shell para execucao de um laco for simples. |
+| `crates/shell/src/testkit/fixtures/events/for-loop.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de entrada para o fixture golden de eventos de laco for. |
+| `crates/shell/src/testkit/fixtures/history/zsh_extended.hist` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 10L; Fixture de historico estendido do zsh com continuacoes de linha, UTF-8 e barras invertidas. |
+| `crates/shell/src/testkit/fixtures/skeleton/01-and-or.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 01-and-or. |
+| `crates/shell/src/testkit/fixtures/skeleton/01-and-or.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Stdout esperado para fixture skeleton 01-and-or. |
+| `crates/shell/src/testkit/fixtures/skeleton/01-and-or.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 6L; Script de teste skeleton cobrindo operadores && e \|\|. |
+| `crates/shell/src/testkit/fixtures/skeleton/01-and-or.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 01-and-or. |
+| `crates/shell/src/testkit/fixtures/skeleton/02-and-or-chain.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 02-and-or-chain. |
+| `crates/shell/src/testkit/fixtures/skeleton/02-and-or-chain.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 02-and-or-chain. |
+| `crates/shell/src/testkit/fixtures/skeleton/02-and-or-chain.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Script de teste skeleton cobrindo encadeamento de && e \|\| e status. |
+| `crates/shell/src/testkit/fixtures/skeleton/02-and-or-chain.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 02-and-or-chain. |
+| `crates/shell/src/testkit/fixtures/skeleton/03-assign-append.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 03-assign-append. |
+| `crates/shell/src/testkit/fixtures/skeleton/03-assign-append.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 03-assign-append. |
+| `crates/shell/src/testkit/fixtures/skeleton/03-assign-append.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Script de teste skeleton cobrindo atribuicao incremental +=. |
+| `crates/shell/src/testkit/fixtures/skeleton/03-assign-append.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 03-assign-append. |
+| `crates/shell/src/testkit/fixtures/skeleton/04-assign-basic.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 04-assign-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/04-assign-basic.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 04-assign-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/04-assign-basic.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Script de teste skeleton cobrindo atribuicoes basicas de variaveis. |
+| `crates/shell/src/testkit/fixtures/skeleton/04-assign-basic.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 04-assign-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/05-assign-empty.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 05-assign-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/05-assign-empty.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 05-assign-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/05-assign-empty.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo atribuicao de valor vazio. |
+| `crates/shell/src/testkit/fixtures/skeleton/05-assign-empty.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 05-assign-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/06-assign-quoted.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 06-assign-quoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/06-assign-quoted.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 06-assign-quoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/06-assign-quoted.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Script de teste skeleton cobrindo atribuicao com aspas e expansao. |
+| `crates/shell/src/testkit/fixtures/skeleton/06-assign-quoted.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 06-assign-quoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/07-assign-status.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 07-assign-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/07-assign-status.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 07-assign-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/07-assign-status.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton verificando reset de $? apos atribuicao simples. |
+| `crates/shell/src/testkit/fixtures/skeleton/07-assign-status.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 07-assign-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/08-at-quoted.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 08-at-quoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/08-at-quoted.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 08-at-quoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/08-at-quoted.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo expansao de "$@" com prefixo/sufixo. |
+| `crates/shell/src/testkit/fixtures/skeleton/08-at-quoted.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 08-at-quoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/09-bang.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 09-bang. |
+| `crates/shell/src/testkit/fixtures/skeleton/09-bang.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 09-bang. |
+| `crates/shell/src/testkit/fixtures/skeleton/09-bang.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Script de teste skeleton cobrindo negacao de pipeline com !. |
+| `crates/shell/src/testkit/fixtures/skeleton/09-bang.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 09-bang. |
+| `crates/shell/src/testkit/fixtures/skeleton/10-brace-group.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 10-brace-group. |
+| `crates/shell/src/testkit/fixtures/skeleton/10-brace-group.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 10-brace-group. |
+| `crates/shell/src/testkit/fixtures/skeleton/10-brace-group.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo grupo entre chaves { ...; }. |
+| `crates/shell/src/testkit/fixtures/skeleton/10-brace-group.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 10-brace-group. |
+| `crates/shell/src/testkit/fixtures/skeleton/11-braced-param.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 11-braced-param. |
+| `crates/shell/src/testkit/fixtures/skeleton/11-braced-param.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 11-braced-param. |
+| `crates/shell/src/testkit/fixtures/skeleton/11-braced-param.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo expansao ${var}. |
+| `crates/shell/src/testkit/fixtures/skeleton/11-braced-param.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 11-braced-param. |
+| `crates/shell/src/testkit/fixtures/skeleton/12-cmd-not-found.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stderr esperado para comando inexistente (12-cmd-not-found). |
+| `crates/shell/src/testkit/fixtures/skeleton/12-cmd-not-found.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado (s=127) para 12-cmd-not-found. |
+| `crates/shell/src/testkit/fixtures/skeleton/12-cmd-not-found.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo status 127 para comando ausente. |
+| `crates/shell/src/testkit/fixtures/skeleton/12-cmd-not-found.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 12-cmd-not-found. |
+| `crates/shell/src/testkit/fixtures/skeleton/13-cmd-not-found-loop.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stderr esperado para comando ausente em laco for. |
+| `crates/shell/src/testkit/fixtures/skeleton/13-cmd-not-found-loop.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado (s=127) para 13-cmd-not-found-loop. |
+| `crates/shell/src/testkit/fixtures/skeleton/13-cmd-not-found-loop.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo comando ausente dentro de laco for. |
+| `crates/shell/src/testkit/fixtures/skeleton/13-cmd-not-found-loop.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 13-cmd-not-found-loop. |
+| `crates/shell/src/testkit/fixtures/skeleton/14-comments.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 14-comments. |
+| `crates/shell/src/testkit/fixtures/skeleton/14-comments.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 14-comments. |
+| `crates/shell/src/testkit/fixtures/skeleton/14-comments.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Script de teste skeleton cobrindo regras de comentarios #. |
+| `crates/shell/src/testkit/fixtures/skeleton/14-comments.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 14-comments. |
+| `crates/shell/src/testkit/fixtures/skeleton/15-echo-basic.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 15-echo-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/15-echo-basic.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Stdout esperado para fixture skeleton 15-echo-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/15-echo-basic.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo uso basico de echo. |
+| `crates/shell/src/testkit/fixtures/skeleton/15-echo-basic.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 15-echo-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/16-echo-e.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 16-echo-e. |
+| `crates/shell/src/testkit/fixtures/skeleton/16-echo-e.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Stdout esperado para fixture skeleton 16-echo-e. |
+| `crates/shell/src/testkit/fixtures/skeleton/16-echo-e.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Script de teste skeleton cobrindo flags -e e -E de echo. |
+| `crates/shell/src/testkit/fixtures/skeleton/16-echo-e.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 16-echo-e. |
+| `crates/shell/src/testkit/fixtures/skeleton/17-echo-n.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 17-echo-n. |
+| `crates/shell/src/testkit/fixtures/skeleton/17-echo-n.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 17-echo-n. |
+| `crates/shell/src/testkit/fixtures/skeleton/17-echo-n.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Script de teste skeleton cobrindo flag -n de echo. |
+| `crates/shell/src/testkit/fixtures/skeleton/17-echo-n.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 17-echo-n. |
+| `crates/shell/src/testkit/fixtures/skeleton/18-echo-options-end.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 18-echo-options-end. |
+| `crates/shell/src/testkit/fixtures/skeleton/18-echo-options-end.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Stdout esperado para fixture skeleton 18-echo-options-end. |
+| `crates/shell/src/testkit/fixtures/skeleton/18-echo-options-end.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Script de teste skeleton cobrindo parsing de flags em echo. |
+| `crates/shell/src/testkit/fixtures/skeleton/18-echo-options-end.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 18-echo-options-end. |
+| `crates/shell/src/testkit/fixtures/skeleton/19-for-bad-name.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stderr esperado para identificador invalido em for. |
+| `crates/shell/src/testkit/fixtures/skeleton/19-for-bad-name.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 19-for-bad-name. |
+| `crates/shell/src/testkit/fixtures/skeleton/19-for-bad-name.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo nome de variavel invalido em for. |
+| `crates/shell/src/testkit/fixtures/skeleton/19-for-bad-name.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 19-for-bad-name. |
+| `crates/shell/src/testkit/fixtures/skeleton/20-for-basic.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 20-for-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/20-for-basic.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 20-for-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/20-for-basic.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo laco for basico. |
+| `crates/shell/src/testkit/fixtures/skeleton/20-for-basic.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 20-for-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/21-for-empty.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 21-for-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/21-for-empty.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 21-for-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/21-for-empty.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo laco for com lista vazia. |
+| `crates/shell/src/testkit/fixtures/skeleton/21-for-empty.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 21-for-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/22-for-nested.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 22-for-nested. |
+| `crates/shell/src/testkit/fixtures/skeleton/22-for-nested.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Stdout esperado para fixture skeleton 22-for-nested. |
+| `crates/shell/src/testkit/fixtures/skeleton/22-for-nested.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo lacos for aninhados. |
+| `crates/shell/src/testkit/fixtures/skeleton/22-for-nested.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 22-for-nested. |
+| `crates/shell/src/testkit/fixtures/skeleton/23-for-newlines.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 23-for-newlines. |
+| `crates/shell/src/testkit/fixtures/skeleton/23-for-newlines.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 23-for-newlines. |
+| `crates/shell/src/testkit/fixtures/skeleton/23-for-newlines.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Script de teste skeleton cobrindo laco for multilinha. |
+| `crates/shell/src/testkit/fixtures/skeleton/23-for-newlines.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 23-for-newlines. |
+| `crates/shell/src/testkit/fixtures/skeleton/24-for-positional.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 24-for-positional. |
+| `crates/shell/src/testkit/fixtures/skeleton/24-for-positional.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 24-for-positional. |
+| `crates/shell/src/testkit/fixtures/skeleton/24-for-positional.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo for implicito sobre parametros posicionais. |
+| `crates/shell/src/testkit/fixtures/skeleton/24-for-positional.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 24-for-positional. |
+| `crates/shell/src/testkit/fixtures/skeleton/25-for-positional-in.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 25-for-positional-in. |
+| `crates/shell/src/testkit/fixtures/skeleton/25-for-positional-in.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 25-for-positional-in. |
+| `crates/shell/src/testkit/fixtures/skeleton/25-for-positional-in.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo for in "$@". |
+| `crates/shell/src/testkit/fixtures/skeleton/25-for-positional-in.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 25-for-positional-in. |
+| `crates/shell/src/testkit/fixtures/skeleton/26-for-split.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 26-for-split. |
+| `crates/shell/src/testkit/fixtures/skeleton/26-for-split.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Stdout esperado para fixture skeleton 26-for-split. |
+| `crates/shell/src/testkit/fixtures/skeleton/26-for-split.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo word splitting em for vs aspas. |
+| `crates/shell/src/testkit/fixtures/skeleton/26-for-split.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 26-for-split. |
+| `crates/shell/src/testkit/fixtures/skeleton/27-for-status.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 27-for-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/27-for-status.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 27-for-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/27-for-status.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Script de teste skeleton cobrindo status de retorno de laco for. |
+| `crates/shell/src/testkit/fixtures/skeleton/27-for-status.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 27-for-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/28-for-var-persists.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 28-for-var-persists. |
+| `crates/shell/src/testkit/fixtures/skeleton/28-for-var-persists.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 28-for-var-persists. |
+| `crates/shell/src/testkit/fixtures/skeleton/28-for-var-persists.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton verificando persistencia da variavel do for apos o laco. |
+| `crates/shell/src/testkit/fixtures/skeleton/28-for-var-persists.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 28-for-var-persists. |
+| `crates/shell/src/testkit/fixtures/skeleton/29-if-basic.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 29-if-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/29-if-basic.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 29-if-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/29-if-basic.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo condicional if basico. |
+| `crates/shell/src/testkit/fixtures/skeleton/29-if-basic.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 29-if-basic. |
+| `crates/shell/src/testkit/fixtures/skeleton/30-if-elif.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 30-if-elif. |
+| `crates/shell/src/testkit/fixtures/skeleton/30-if-elif.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 30-if-elif. |
+| `crates/shell/src/testkit/fixtures/skeleton/30-if-elif.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo ramos if/elif/else. |
+| `crates/shell/src/testkit/fixtures/skeleton/30-if-elif.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 30-if-elif. |
+| `crates/shell/src/testkit/fixtures/skeleton/31-if-else.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 31-if-else. |
+| `crates/shell/src/testkit/fixtures/skeleton/31-if-else.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 31-if-else. |
+| `crates/shell/src/testkit/fixtures/skeleton/31-if-else.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo ramos if/else. |
+| `crates/shell/src/testkit/fixtures/skeleton/31-if-else.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 31-if-else. |
+| `crates/shell/src/testkit/fixtures/skeleton/32-if-multiline-cond.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 32-if-multiline-cond. |
+| `crates/shell/src/testkit/fixtures/skeleton/32-if-multiline-cond.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 32-if-multiline-cond. |
+| `crates/shell/src/testkit/fixtures/skeleton/32-if-multiline-cond.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Script de teste skeleton cobrindo condicao multilinha em if. |
+| `crates/shell/src/testkit/fixtures/skeleton/32-if-multiline-cond.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 32-if-multiline-cond. |
+| `crates/shell/src/testkit/fixtures/skeleton/33-if-nested.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 33-if-nested. |
+| `crates/shell/src/testkit/fixtures/skeleton/33-if-nested.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 33-if-nested. |
+| `crates/shell/src/testkit/fixtures/skeleton/33-if-nested.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 7L; Script de teste skeleton cobrindo condicionais if aninhados. |
+| `crates/shell/src/testkit/fixtures/skeleton/33-if-nested.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 33-if-nested. |
+| `crates/shell/src/testkit/fixtures/skeleton/34-if-status.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 34-if-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/34-if-status.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 34-if-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/34-if-status.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 6L; Script de teste skeleton cobrindo status de retorno de blocos if. |
+| `crates/shell/src/testkit/fixtures/skeleton/34-if-status.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 34-if-status. |
+| `crates/shell/src/testkit/fixtures/skeleton/35-ifs-empty.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 35-ifs-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/35-ifs-empty.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 35-ifs-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/35-ifs-empty.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo IFS vazio sem word splitting. |
+| `crates/shell/src/testkit/fixtures/skeleton/35-ifs-empty.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 35-ifs-empty. |
+| `crates/shell/src/testkit/fixtures/skeleton/36-ifs-mixed.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 36-ifs-mixed. |
+| `crates/shell/src/testkit/fixtures/skeleton/36-ifs-mixed.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 36-ifs-mixed. |
+| `crates/shell/src/testkit/fixtures/skeleton/36-ifs-mixed.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo IFS misto (espaco e :). |
+| `crates/shell/src/testkit/fixtures/skeleton/36-ifs-mixed.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 36-ifs-mixed. |
+| `crates/shell/src/testkit/fixtures/skeleton/37-ifs-split.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 37-ifs-split. |
+| `crates/shell/src/testkit/fixtures/skeleton/37-ifs-split.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Stdout esperado para fixture skeleton 37-ifs-split. |
+| `crates/shell/src/testkit/fixtures/skeleton/37-ifs-split.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo splitting com delimitadores consecutivos em IFS. |
+| `crates/shell/src/testkit/fixtures/skeleton/37-ifs-split.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 37-ifs-split. |
+| `crates/shell/src/testkit/fixtures/skeleton/38-keywords-as-args.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 38-keywords-as-args. |
+| `crates/shell/src/testkit/fixtures/skeleton/38-keywords-as-args.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 38-keywords-as-args. |
+| `crates/shell/src/testkit/fixtures/skeleton/38-keywords-as-args.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo palavras-chave usadas como argumentos. |
+| `crates/shell/src/testkit/fixtures/skeleton/38-keywords-as-args.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 38-keywords-as-args. |
+| `crates/shell/src/testkit/fixtures/skeleton/39-line-continuation.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 39-line-continuation. |
+| `crates/shell/src/testkit/fixtures/skeleton/39-line-continuation.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 39-line-continuation. |
+| `crates/shell/src/testkit/fixtures/skeleton/39-line-continuation.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Script de teste skeleton cobrindo continuacao de linha com barra invertida. |
+| `crates/shell/src/testkit/fixtures/skeleton/39-line-continuation.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 39-line-continuation. |
+| `crates/shell/src/testkit/fixtures/skeleton/40-long-loop.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 40-long-loop. |
+| `crates/shell/src/testkit/fixtures/skeleton/40-long-loop.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 40-long-loop. |
+| `crates/shell/src/testkit/fixtures/skeleton/40-long-loop.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo laco for duplo de 100 iteracoes. |
+| `crates/shell/src/testkit/fixtures/skeleton/40-long-loop.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 40-long-loop. |
+| `crates/shell/src/testkit/fixtures/skeleton/41-positional.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 41-positional. |
+| `crates/shell/src/testkit/fixtures/skeleton/41-positional.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 41-positional. |
+| `crates/shell/src/testkit/fixtures/skeleton/41-positional.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo $0, $1..$3, $# e "$*". |
+| `crates/shell/src/testkit/fixtures/skeleton/41-positional.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 41-positional. |
+| `crates/shell/src/testkit/fixtures/skeleton/42-quotes-adjacent.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 42-quotes-adjacent. |
+| `crates/shell/src/testkit/fixtures/skeleton/42-quotes-adjacent.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 42-quotes-adjacent. |
+| `crates/shell/src/testkit/fixtures/skeleton/42-quotes-adjacent.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo concatenacao de segmentos com aspas adjacentes. |
+| `crates/shell/src/testkit/fixtures/skeleton/42-quotes-adjacent.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 42-quotes-adjacent. |
+| `crates/shell/src/testkit/fixtures/skeleton/43-quotes-double.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 43-quotes-double. |
+| `crates/shell/src/testkit/fixtures/skeleton/43-quotes-double.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 43-quotes-double. |
+| `crates/shell/src/testkit/fixtures/skeleton/43-quotes-double.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo escapes e expansao em aspas duplas. |
+| `crates/shell/src/testkit/fixtures/skeleton/43-quotes-double.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 43-quotes-double. |
+| `crates/shell/src/testkit/fixtures/skeleton/44-quotes-escape.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 44-quotes-escape. |
+| `crates/shell/src/testkit/fixtures/skeleton/44-quotes-escape.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 44-quotes-escape. |
+| `crates/shell/src/testkit/fixtures/skeleton/44-quotes-escape.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo escape com barra invertida fora de aspas. |
+| `crates/shell/src/testkit/fixtures/skeleton/44-quotes-escape.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 44-quotes-escape. |
+| `crates/shell/src/testkit/fixtures/skeleton/45-quotes-single.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 45-quotes-single. |
+| `crates/shell/src/testkit/fixtures/skeleton/45-quotes-single.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 45-quotes-single. |
+| `crates/shell/src/testkit/fixtures/skeleton/45-quotes-single.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo literalidade em aspas simples. |
+| `crates/shell/src/testkit/fixtures/skeleton/45-quotes-single.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 45-quotes-single. |
+| `crates/shell/src/testkit/fixtures/skeleton/46-star-unquoted.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 46-star-unquoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/46-star-unquoted.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Stdout esperado para fixture skeleton 46-star-unquoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/46-star-unquoted.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Script de teste skeleton cobrindo expansao de $* sem aspas. |
+| `crates/shell/src/testkit/fixtures/skeleton/46-star-unquoted.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 46-star-unquoted. |
+| `crates/shell/src/testkit/fixtures/skeleton/47-syntax-eof.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stderr esperado de erro de sintaxe por EOF inesperado em if. |
+| `crates/shell/src/testkit/fixtures/skeleton/47-syntax-eof.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 47-syntax-eof. |
+| `crates/shell/src/testkit/fixtures/skeleton/47-syntax-eof.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton com bloco if nao fechado. |
+| `crates/shell/src/testkit/fixtures/skeleton/47-syntax-eof.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (2) para erro de sintaxe 47-syntax-eof. |
+| `crates/shell/src/testkit/fixtures/skeleton/48-syntax-fi.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stderr esperado de erro de sintaxe por token fi inesperado. |
+| `crates/shell/src/testkit/fixtures/skeleton/48-syntax-fi.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 48-syntax-fi. |
+| `crates/shell/src/testkit/fixtures/skeleton/48-syntax-fi.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton com token fi inesperado. |
+| `crates/shell/src/testkit/fixtures/skeleton/48-syntax-fi.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (2) para erro de sintaxe 48-syntax-fi. |
+| `crates/shell/src/testkit/fixtures/skeleton/49-syntax-quote.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stderr esperado de erro de sintaxe por aspa nao fechada. |
+| `crates/shell/src/testkit/fixtures/skeleton/49-syntax-quote.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 49-syntax-quote. |
+| `crates/shell/src/testkit/fixtures/skeleton/49-syntax-quote.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton com aspa dupla nao fechada. |
+| `crates/shell/src/testkit/fixtures/skeleton/49-syntax-quote.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (2) para erro de sintaxe 49-syntax-quote. |
+| `crates/shell/src/testkit/fixtures/skeleton/50-true-false.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 50-true-false. |
+| `crates/shell/src/testkit/fixtures/skeleton/50-true-false.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Stdout esperado para fixture skeleton 50-true-false. |
+| `crates/shell/src/testkit/fixtures/skeleton/50-true-false.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 6L; Script de teste skeleton cobrindo builtins true, false e :. |
+| `crates/shell/src/testkit/fixtures/skeleton/50-true-false.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 50-true-false. |
+| `crates/shell/src/testkit/fixtures/skeleton/51-unset-var.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 51-unset-var. |
+| `crates/shell/src/testkit/fixtures/skeleton/51-unset-var.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Stdout esperado para fixture skeleton 51-unset-var. |
+| `crates/shell/src/testkit/fixtures/skeleton/51-unset-var.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Script de teste skeleton cobrindo expansao de variavel nao definida. |
+| `crates/shell/src/testkit/fixtures/skeleton/51-unset-var.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 51-unset-var. |
+| `crates/shell/src/testkit/fixtures/skeleton/52-until-true.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 52-until-true. |
+| `crates/shell/src/testkit/fixtures/skeleton/52-until-true.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 52-until-true. |
+| `crates/shell/src/testkit/fixtures/skeleton/52-until-true.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo until true sem iteracoes. |
+| `crates/shell/src/testkit/fixtures/skeleton/52-until-true.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 52-until-true. |
+| `crates/shell/src/testkit/fixtures/skeleton/53-while-false.err` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Stderr esperado vazio para fixture skeleton 53-while-false. |
+| `crates/shell/src/testkit/fixtures/skeleton/53-while-false.out` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Stdout esperado para fixture skeleton 53-while-false. |
+| `crates/shell/src/testkit/fixtures/skeleton/53-while-false.sh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 2L; Script de teste skeleton cobrindo while false sem iteracoes. |
+| `crates/shell/src/testkit/fixtures/skeleton/53-while-false.status` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida esperado (0) para fixture skeleton 53-while-false. |
+| `crates/shell/src/testkit/fixtures/zcompile/compound.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 30L; Fixture zsh para testes de zcompile cobrindo comandos compostos (if, for, foreach, while, until, repeat, case, select, always). |
+| `crates/shell/src/testkit/fixtures/zcompile/compound.zwc` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/testkit/fixtures/zcompile/cond.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 11L; Fixture zsh para zcompile cobrindo expressoes condicionais [[ ... ]] e aritmeticas (( ... )). |
+| `crates/shell/src/testkit/fixtures/zcompile/cond.zwc` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/testkit/fixtures/zcompile/funcs.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 15L; Fixture zsh para zcompile cobrindo definicoes de funcoes, funcoes anonimas e declaracoes locais. |
+| `crates/shell/src/testkit/fixtures/zcompile/funcs.zwc` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/testkit/fixtures/zcompile/misc.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 13L; Fixture zsh para zcompile cobrindo flags de expansao de parametros, globs estendidos, aliases e emulate/setopt. |
+| `crates/shell/src/testkit/fixtures/zcompile/misc.zwc` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/testkit/fixtures/zcompile/redir.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 22L; Fixture zsh para zcompile cobrindo redirecionamentos, process substitution e heredocs. |
+| `crates/shell/src/testkit/fixtures/zcompile/redir.zwc` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/testkit/fixtures/zcompile/simple.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 10L; Fixture zsh para zcompile cobrindo comandos simples, arrays, pipelines, background e coproc. |
+| `crates/shell/src/testkit/fixtures/zcompile/simple.zwc` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/testkit/fixtures/zcompile/zcalc.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 473L; Script real zcalc do zsh usado como corpus de teste para compilacao/parsing em zcompile. |
+| `crates/shell/src/testkit/fixtures/zcompile/zcalc.zwc` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/testkit/fixtures/zcompile/zmv.zsh` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 299L; Script real zmv do zsh usado como corpus de teste para compilacao/parsing em zcompile. |
+| `crates/shell/src/testkit/fixtures/zcompile/zmv.zwc` | binario | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `crates/shell/src/testkit/golden.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 140L; Fornece utilitários para comparação golden de streams de eventos JSONL, removendo `t_ns`, zerando `dur_ns`, renumerando hashes ... |
+| `crates/shell/src/testkit/host.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 805L; Implementa o host determinístico `FakeHost` com captura de stdio (suportando write storms parciais/Pending), relógio virtual e ... |
+| `crates/shell/src/testkit/memfs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 981L; Implementa o sistema de arquivos em memória `MemFs` (arquivos, diretórios, symlinks, hardlinks, `/dev/null`) com suporte a latê... |
+| `crates/shell/src/testkit/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 32L; Módulo raiz de `omp_shell::testkit` que declara e reexporta a infraestrutura determinística de testes (`conformance`, `fault`, ... |
+| `crates/shell/src/testkit/rng.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 35L; Gerador pseudoaleatório determinístico xorshift64* usado para tornar planos de falha, write storms e latências de `MemFs` repro... |
+| `crates/shell/src/testkit/run.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 115L; Fornece o driver de execução `advance` e `advance_or_blocked` que avança o `Shell`, responde callouts do `FakeHost`, dispara ti... |
+| `crates/shell/src/testkit/suites/bang_pid.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 429L; Testa paridade com bash para `$!` e jobs externos: associação ao OS pid real para externos isolados e último estágio de pipelin... |
+| `crates/shell/src/testkit/suites/cancel_latency.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 107L; Mede latência e verifica correção de `cancel(Signal::Term)` disparado de outra thread sobre loops ocupados, funções aninhadas (... |
+| `crates/shell/src/testkit/suites/cancel_traps.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 113L; Testa cancelamento (`TERM`, `KILL`, `INT`) em múltiplos safepoints com tasks nativas e vprocs em voo, validando execução única ... |
+| `crates/shell/src/testkit/suites/control.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 244L; Testa controle e recuperação do shell: cancelamento com reutilização do shell, pause/resume, isolamento de estado de subshells ... |
+| `crates/shell/src/testkit/suites/coproc_jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 68L; Verifica comportamento compatível com bash 5.3 para coprocessos (`coproc`, variáveis array e `_PID`, limpeza ao reap), `wait -n... |
+| `crates/shell/src/testkit/suites/errexit.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 62L; Valida regras detalhadas de `set -e` (`errexit`) contra bash 5.3: supressão em condições/listas/negação/comandos compostos, dis... |
+| `crates/shell/src/testkit/suites/events.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 233L; Valida o contrato do stream de eventos de execução: golden JSONL, validade de spans/nós dentro de unidades anunciadas (inclusiv... |
+| `crates/shell/src/testkit/suites/executor.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 217L; Testa detalhes do executor (`set -k`, re-parsing de `${ ;}` com aliases e `LINENO`, `set -x`, modo POSIX, `command -v/-V`) e me... |
+| `crates/shell/src/testkit/suites/expand.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 790L; Cobre extensa bateria de regras de expansão do bash 5.3: tilde, `$*`/`$@`, namerefs e referências circulares, transformações `@... |
+| `crates/shell/src/testkit/suites/getopts.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 64L; Testa paridade do builtin `getopts` com bash 5.3: flags agrupadas, `OPTIND`/`OPTARG`, modo silencioso, mensagens com `OPTERR` e... |
+| `crates/shell/src/testkit/suites/host_hooks.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 412L; Valida hooks críticos do host embedder: espelhamento de pipes entre estágios (`PipeTap`), detecção de `exit`/`errexit` na raiz ... |
+| `crates/shell/src/testkit/suites/interactive_builtins.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 185L; Testa builtins interativos (`complete`, `compopt`, `bind`, `compgen`, `fc`, `history` com arquivos/timestamps/ignore e expansão... |
+| `crates/shell/src/testkit/suites/jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 203L; Testa controle de jobs (`set -m`): transição de estado `Stopped`/`Running`/`Done`, jobs atual/anterior (`+`/`-`), especificador... |
+| `crates/shell/src/testkit/suites/kill.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 115L; Testa resolução de especificadores de sinal por plataforma (Linux/macOS/Windows, sinais real-time `RTMIN..RTMAX`), `kill -l`, o... |
+| `crates/shell/src/testkit/suites/lineage.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 156L; Valida propagação de `Lineage` (rótulo e flag `detached`) por subshells aninhadas via `ShellApi::run_subshell_in` e seus extern... |
+| `crates/shell/src/testkit/suites/mem_fds.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 42L; Verifica que descritores de arquivo em memória (pipes entre vprocs, capturas de command substitution e here-documents) sobreviv... |
+| `crates/shell/src/testkit/suites/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 80L; Declara todos os submódulos de suítes de comportamento do `testkit` e resolve o diretório de fixtures tanto sob Cargo quanto so... |
+| `crates/shell/src/testkit/suites/modes.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 235L; Testa interoperabilidade entre dialetos bash/sh/zsh: comando `emulate`, escopo `-L`, funções sticky entre dialetos (word splitt... |
+| `crates/shell/src/testkit/suites/nested_shell.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 171L; Testa execução in-engine de shells aninhados (`bash`/`sh` via `Resolved::SelfShell` ou fallback de `ENOEXEC` para scripts sem s... |
+| `crates/shell/src/testkit/suites/orphan_jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 239L; Valida a política `EngineConfig::end_orphan_jobs`: ao sair de uma subshell, tarefas nativas, loops de shell e loops esperando e... |
+| `crates/shell/src/testkit/suites/procsub.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 26L; Verifica substituição de processos `<(...)` expondo descritores `/dev/fd/63..` respaldados por pipes em memória e consumidos po... |
+| `crates/shell/src/testkit/suites/restore_fidelity.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 44L; Testa fidelidade de estado intra-operação sob snapshots a cada safepoint: bytes parciais acumulados em `read`, prompt único de ... |
+| `crates/shell/src/testkit/suites/skeleton.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 300L; Suíte de aceitação que executa >=50 scripts golden contra bash 5.3 sob todas as modalidades do injetor de falhas (`PauseResume`... |
+| `crates/shell/src/testkit/suites/startup_vars.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 15L; Testa inicialização de `GROUPS` a partir dos dados de usuário do host (gid real primeiro) e comportamento `noassign` em tentati... |
+| `crates/shell/src/testkit/suites/stdin_script.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 65L; Valida execução de scripts lidos via `Origin::Stdin` linha a linha (permitindo que `read` consuma linhas seguintes), comandos m... |
+| `crates/shell/src/testkit/suites/test_chain_depth.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 270L; Testa avaliação de cadeias de 100.000 termos (`-a`, `-o`, `!`) em `test`/`[` dentro de uma stack de 2 MiB nos dialetos bash e z... |
+| `crates/shell/src/testkit/suites/tool_profile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 158L; Testes de isolamento de `Profile::Tool` vs `Profile::User` em bash e zsh: histórico desativado, bloqueio de módulos zle/complet... |
+| `crates/shell/src/testkit/suites/trace.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 219L; Testes do contrato de `RunTrace` sobre estados de nós da AST, contadores de execução em loops/pipelines/funções, unidades de `e... |
+| `crates/shell/src/testkit/suites/trap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 241L; Testes de sinais e handlers `trap` (`EXIT`, `ERR`, `DEBUG`, `RETURN`, `USR1`), herança `set -E/-T`, `BASH_TRAPSIG`, `BASH_COMMA... |
+| `crates/shell/src/testkit/suites/vars.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 824L; Testes de paridade com bash 5.3.20 para variáveis, escopo dinâmico, namerefs, arrays indexados/associativos, `local -`, `shopt`... |
+| `crates/shell/src/testkit/suites/windows_platform.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 132L; Testes de comportamento do motor em `Platform::Windows`: separador `;` no tie `PATH`/`path`, `OSTYPE=msys`, normalização `/` de... |
+| `crates/shell/src/testkit/suites/zsh_builtins.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 288L; Testes de paridade com zsh 5.9 para builtins centrais (`read`, `typeset`, `print`, `echo`, `printf`, `shift`, `whence`, `functi... |
+| `crates/shell/src/testkit/suites/zsh_compctl.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 172L; Testes do módulo `zsh/compctl` cobrindo definições padrão, condições `-x`, alternativas `+`, matchers globais `-M`, remoção e m... |
+| `crates/shell/src/testkit/suites/zsh_cond.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 74L; Testes de expressões condicionais zsh (`[[ ]]`, `test`/`[`, `=~` e variáveis `MATCH`/`match`/`MBEGIN`/`MEND`) e códigos/mensage... |
+| `crates/shell/src/testkit/suites/zsh_history.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 194L; Testes de histórico zsh (`!!`, modificadores, `fc`/`r`, `$history`/`HISTCMD`, round-trip de `HISTFILE` com `.LOCK` e hook `zsha... |
+| `crates/shell/src/testkit/suites/zsh_jobs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 204L; Testes de controle e builtins de jobs em zsh (`jobs`, `fg`, `bg`, `disown`, `kill`, `wait`, `suspend`, `jobstates`/`jobtexts`/`... |
+| `crates/shell/src/testkit/suites/zsh_mod_attr.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 54L; Testes do módulo `zsh/attr` (`zgetattr`, `zsetattr`, `zdelattr`, `zlistattr`) sobre `MemFs`, validando argumentos e recusa com ... |
+| `crates/shell/src/testkit/suites/zsh_mod_cap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 49L; Testes do módulo `zsh/cap` (`cap`, `getcap`, `setcap`) verificando listagem de features, contagem de argumentos e indisponibili... |
+| `crates/shell/src/testkit/suites/zsh_mod_curses.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 73L; Testes do módulo `zsh/curses` sem terminal (`FakeHost`): parâmetros readonly, validação de subcomandos antes de `zcurses init` ... |
+| `crates/shell/src/testkit/suites/zsh_mod_datetime.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 196L; Testes de `zsh/datetime` (`strftime`, `-r` reverse, `EPOCHSECONDS`, `EPOCHREALTIME`, `epochtime`) e `zsh/langinfo` (`$langinfo`). |
+| `crates/shell/src/testkit/suites/zsh_mod_example.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 146L; Testes do módulo `zsh/example` exercitando builtin, parâmetros, condições, funções matemáticas, mensagens de load/unload e wrap... |
+| `crates/shell/src/testkit/suites/zsh_mod_files.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 171L; Testes do módulo `zsh/files` sobre `MemFs` (`mkdir`, `rm`, `rmdir`, `mv`, `ln`, `chmod`, prompts `-i` e habilitação seletiva de... |
+| `crates/shell/src/testkit/suites/zsh_mod_mapfile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 88L; Testes do módulo `zsh/mapfile` sobre `MemFs`: leitura, escrita, concatenação, remoção de arquivos via `$mapfile[...]` e semânti... |
+| `crates/shell/src/testkit/suites/zsh_mod_mathfunc.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 86L; Testes do módulo `zsh/mathfunc` verificando funções trigonométricas/matemáticas, `signgam()`, erros de aridade e `rand48(s)` de... |
+| `crates/shell/src/testkit/suites/zsh_mod_net.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 72L; Testes de `zsh/net/socket` e `zsh/net/tcp` no `FakeHost`, checando erros de argumentos e recusa de sockets reais com `operation... |
+| `crates/shell/src/testkit/suites/zsh_mod_p10k.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 57L; Teste de aceitação simulando as checagens de módulos e parâmetros que powerlevel10k/gitstatus executam na inicialização. |
+| `crates/shell/src/testkit/suites/zsh_mod_pcre.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 248L; Testes de `zsh/pcre` (`pcre_compile`, `pcre_study`, `pcre_match`, `-pcre-match`, `REMATCH_PCRE`), offsets UTF-8 e erros no esti... |
+| `crates/shell/src/testkit/suites/zsh_mod_private.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 712L; Suíte extensa de `zsh/param/private` (`private`, `local -P`) baseada em `V10private.ztst` cobrindo ocultamento de escopo, funçõ... |
+| `crates/shell/src/testkit/suites/zsh_mod_regex.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 134L; Testes de `zsh/regex` (`=~`, `-regex-match`), contagem multibyte de `MBEGIN`/`MEND`, autoloading de módulo e dispatch de condiç... |
+| `crates/shell/src/testkit/suites/zsh_mod_rlimits.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 68L; Testes de parsing e erros de `limit`, `unlimit` e `ulimit` em `zsh/rlimits` além do autoloading dos builtins. |
+| `crates/shell/src/testkit/suites/zsh_mod_sched.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 79L; Testes do módulo `zsh/sched` (`sched`, `$zsh_scheduled_events`), ordenação temporal, tempos relativos e mensagens de erro. |
+| `crates/shell/src/testkit/suites/zsh_mod_stat.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 77L; Testes de `zsh/stat` (`zstat`) sobre `MemFs`, verificando formatação de campos, flags (`-A`, `-H`, `-s`, `-L`, `-g`) e erros. |
+| `crates/shell/src/testkit/suites/zsh_mod_system.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 259L; Testes de `zsh/system` (`sysread`, `syswrite`, `syserror`, `sysopen`, `sysseek`, `systell`, `zsystem`, `$errnos`, `$sysparams`)... |
+| `crates/shell/src/testkit/suites/zsh_mod_terminfo.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 323L; Testes de `zsh/terminfo` e `zsh/termcap` (`echoti`, `echotc`, `$terminfo`, `$termcap`), `tparm`/`tgetent`, fallback `dumb` e aj... |
+| `crates/shell/src/testkit/suites/zsh_mod_watch.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 113L; Testes de `zsh/watch` (`log`, `$watch`/`$WATCH`, `$WATCHFMT`) contra base sintética de sessões `Logins` no `FakeHost`. |
+| `crates/shell/src/testkit/suites/zsh_mod_zftp.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 128L; Testes de `zsh/zftp` sem rede: carregamento de módulo, parâmetros padrão `ZFTP_*`, sessões/params e falhas sem conexão/socket. |
+| `crates/shell/src/testkit/suites/zsh_mod_zmodload.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 376L; Testes do sistema de módulos `zmodload`: listagem, flags `-F`/`-a`/`-A`/`-d`/`-u`, autoloading, `$modules` e interação com parâ... |
+| `crates/shell/src/testkit/suites/zsh_mod_zprof.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 285L; Testes do profiler `zsh/zprof` comparando contagens de chamadas, callers/callees, nomes de funções anônimas e `zprof -c` com ma... |
+| `crates/shell/src/testkit/suites/zsh_mod_zpty.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 100L; Testes de `zsh/zpty` e `zsh/clone` no `FakeHost` sem PTY real, cobrindo erros de uso e recusa explícita de pseudo-terminais/clone. |
+| `crates/shell/src/testkit/suites/zsh_mod_zselect.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 76L; Testes de `zsh/zselect` sobre pipes e timeouts (`-t`, `-r`, `-a`, `-A`, `$reply`) e validação de argumentos. |
+| `crates/shell/src/testkit/suites/zsh_mod_zutil.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 660L; Testes abrangentes de `zsh/zutil`: ordenação/peso/eval de `zstyle`, parsing de opções em `zparseopts`, formatação/alinhamento e... |
+| `crates/shell/src/testkit/suites/zsh_parity.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 889L; Testes de paridade central do zsh 5.9: aliases iniciais, `source`/`ZSH_EVAL_CONTEXT`, hooks `zshexit`/`zsh_directory_name`, `gl... |
+| `crates/shell/src/testkit/suites/zsh_prompt_names.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 257L; Testes de diretórios nomeados (`hash -d`, `~name`, `$nameddirs`, `${(D)...}`), expansão de prompt (`print -P`, `${(%)...}`, atr... |
+| `crates/shell/src/testkit/suites/zsh_zcompile.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 168L; Testes de `zcompile` no `MemFs`: comparação byte a byte com dump `.zwc` do zsh 5.9, listagem `-t`, `-a` via `$fpath`, erros de ... |
+| `crates/shell/src/tools/extra.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 631L; Driver que executa subcomandos solicitados por extras multi-comando (`env`, `xargs`, `find -exec`, `awk`, `watchexec`, `entr`) ... |
+| `crates/shell/src/tools/git.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 288L; Implementa o tool `git` do shell embutido: executa camadas de guarda (`PI_GIT_GUARD`) e `git worktree add` in-process (`PI_SMAR... |
+| `crates/shell/src/tools/mod.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 739L; Coordena os callouts de host do shell (`time`, `timeout`, `nohup`, `git`, `urlmap` e extras de linha de comando): gerencia conf... |
+| `crates/shell/src/tools/nohup.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 127L; Implementa o tool `nohup` do shell: analisa opções estilo GNU (`--help`, `--version`, `--`) e inicia o comando em subshell desa... |
+| `crates/shell/src/tools/time.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 451L; Implementa o utilitário `time` com suporte a `-l` (rusage estilo macOS BSD), `-p` (POSIX) e `-v` (relatório verbose GNU), execu... |
+| `crates/shell/src/tools/timeout.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 470L; Implementa o utilitário `timeout` compatível com GNU (`-s`, `-k`, `--preserve-status`, `--foreground`, `-v`, abreviações únicas... |
+| `crates/shell/src/tools/urlmap.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 265L; Implementa o comando `urlmap` para gerenciar montagens dinâmicas de URLs em caminhos do host na sessão (`VfsFs::mounts()`), sup... |
+| `crates/shell/src/vfs.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1074L; Adapta `omp_vfs::Fs` à trait `Fs` do motor bash: roteia caminhos nativos diretamente para `StdFs` anexando `ChangeGuard` (`Trac... |
+| `crates/shell/src/windows.rs` | codigo | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 464L; Fornece utilitários Windows para o shell: descobre raízes do Git for Windows via Registro (`HKLM`) e `where git`, adiciona `cmd... |
+| `crates/shell/tests/background_job_bang.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 157L; Testes de integracao de $! (PID em background), verificando PIDs reais de SO vs in-process, fallback de PATH, visibilidade em s... |
+| `crates/shell/tests/background_job_cancel.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 33L; Testa propagacao de CancelToken para jobs em background durante wait, encerrando imediatamente ao atingir timeout. |
+| `crates/shell/tests/callout_in_function.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 122L; Testa invocacao de utilitarios (timeout, nohup, env, xargs, find, git) dentro de funcoes garantindo que operem com seus proprio... |
+| `crates/shell/tests/comp_support/comptest.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 428L; Port do harness Test/comptest do zsh 5.9 sobre PTY, dirigindo scripts .ztst e convertendo marcadores de cores/descricoes/compad... |
+| `crates/shell/tests/comp_support/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 157L; Utilitarios compartilhados dos testes PTY de completion: selecao de oraculo /bin/zsh (PI_COMP_ORACLE/PI_COMP_BLESS), descoberta... |
+| `crates/shell/tests/descriptor_limit.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 147L; Testa execucao aninhada (200 niveis) sob RLIMIT_NOFILE reduzido (128) sem vazar descritores por nivel e verificando diagnostico... |
+| `crates/shell/tests/exit_trap_fatal_status.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 183L; Testa paridade com Bash 5.2/5.3 para status de saida quando ocorre erro fatal de expansao dentro de trap EXIT (preservando stat... |
+| `crates/shell/tests/fixtures/minimizer/cargo/test-pass.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para cargo test --workspace. |
+| `crates/shell/tests/fixtures/minimizer/cargo/test-pass.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 48L; Saida bruta de cargo test --workspace com compilacao, warning e suites passando. |
+| `crates/shell/tests/fixtures/minimizer/git/log-default.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para git log. |
+| `crates/shell/tests/fixtures/minimizer/git/log-default.min` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Snapshot minimizado esperado para git log-default. |
+| `crates/shell/tests/fixtures/minimizer/git/log-default.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 15L; Saida bruta de git log usada no fixture log-default. |
+| `crates/shell/tests/fixtures/minimizer/git/log.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para git log. |
+| `crates/shell/tests/fixtures/minimizer/git/log.min` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Snapshot minimizado esperado para git log. |
+| `crates/shell/tests/fixtures/minimizer/git/log.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 13L; Saida bruta de git log de releases. |
+| `crates/shell/tests/fixtures/minimizer/git/status-long.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para git status. |
+| `crates/shell/tests/fixtures/minimizer/git/status-long.min` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 6L; Snapshot minimizado esperado para git status-long (formato curto branch + contagens). |
+| `crates/shell/tests/fixtures/minimizer/git/status-long.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 15L; Saida bruta longa de git status com staged, unstaged e untracked. |
+| `crates/shell/tests/fixtures/minimizer/git/status.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para git status. |
+| `crates/shell/tests/fixtures/minimizer/git/status.min` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 5L; Snapshot minimizado esperado para git status. |
+| `crates/shell/tests/fixtures/minimizer/git/status.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 8L; Saida bruta de git status com arquivos staged. |
+| `crates/shell/tests/fixtures/minimizer/glab/ci-trace.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para glab ci trace. |
+| `crates/shell/tests/fixtures/minimizer/glab/ci-trace.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 54L; Saida bruta de trace de CI GitLab com secoes, ANSI e falha no vitest. |
+| `crates/shell/tests/fixtures/minimizer/glab/release-list.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para glab release list. |
+| `crates/shell/tests/fixtures/minimizer/glab/release-list.min` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 11L; Snapshot minimizado esperado para glab release list. |
+| `crates/shell/tests/fixtures/minimizer/glab/release-list.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 13L; Saida bruta tabular de glab release list. |
+| `crates/shell/tests/fixtures/minimizer/glab/release-view.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para glab release view. |
+| `crates/shell/tests/fixtures/minimizer/glab/release-view.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 30L; Saida bruta de glab release view com notas markdown e links de fontes. |
+| `crates/shell/tests/fixtures/minimizer/go/test-pass.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para go test -v ./... |
+| `crates/shell/tests/fixtures/minimizer/go/test-pass.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 61L; Saida bruta de go test -v com multiplos pacotes e subtestes passando. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-build.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para ./gradlew build. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-build.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 33L; Saida bruta de build Gradle com tasks UP-TO-DATE/NO-SOURCE. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-connected.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para ./gradlew connectedAndroidTest. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-connected.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 33L; Saida bruta de testes instrumentados Android via Gradle. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-lint.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para ./gradlew lint. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-lint.exit` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida (1) para fixture gradle-lint. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-lint.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 48L; Saida bruta de falha de lint Android no Gradle. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-test.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para ./gradlew test. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-test.min` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Snapshot minimizado esperado para ./gradlew test. |
+| `crates/shell/tests/fixtures/minimizer/jvm/gradle-test.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 12L; Saida bruta de testes unitarios no Gradle. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-install-full.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para mvn install (completo). |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-install-full.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 269L; Saida bruta completa de mvn install com downloads de dependencias, testes e instalacao. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-install-slice.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para mvn install (recorte). |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-install-slice.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 44L; Saida bruta reduzida de mvn install. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-quiet-fail.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para mvn -q test com falha. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-quiet-fail.exit` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida (1) para fixture mvn-quiet-fail. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-quiet-fail.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 27L; Saida bruta de falha de teste Maven no modo -q. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-test-fail.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para mvn test com falha. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-test-fail.exit` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Codigo de saida (1) para fixture mvn-test-fail. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-test-fail.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 46L; Saida bruta de mvn test com falha JUnit e stack trace. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-test-pass-full.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para mvn test (completo). |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-test-pass-full.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 247L; Saida bruta completa de mvn test passando 977 testes apos downloads. |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-test-pass-slice.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para mvn test (recorte). |
+| `crates/shell/tests/fixtures/minimizer/jvm/mvn-test-pass-slice.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 33L; Saida bruta resumida de mvn test passando. |
+| `crates/shell/tests/fixtures/minimizer/npm/install.cmd` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1L; Comando fixture do minimizador para npm install. |
+| `crates/shell/tests/fixtures/minimizer/npm/install.raw` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 29L; Saida bruta de npm install com logs HTTP, progresso, warnings e resumo. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/ambiguous_prefix_with_listambiguous.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 11L; Snapshot PTY de completion zsh para prefixo ambiguo com listambiguous. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/ambiguous_prefix_without_autolist.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 9L; Snapshot PTY de completion zsh para prefixo ambiguo sem autolist. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/ambiguous_prefix_without_listambiguous.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 8L; Snapshot PTY de completion zsh para prefixo ambiguo sem listambiguous. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/cd_completes_directories.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 7L; Snapshot PTY de completion zsh de diretorios para cd. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/command_ambiguous_lists_then_menu.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 12L; Snapshot PTY de completion zsh listando comandos e entrando em menu. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/command_unique.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Snapshot PTY de completion zsh para comando unico. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/compadd_autoremovable_suffix.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 13L; Snapshot PTY de completion zsh para sufixo auto-removivel em compadd. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/compadd_groups_explanations_and_displays.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 36L; Snapshot PTY de completion zsh para grupos, explicacoes e displays em compadd com SGR. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/compadd_matchers.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 13L; Snapshot PTY de completion zsh para matchers de compadd. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/compadd_prefixes_and_suffixes.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 10L; Snapshot PTY de completion zsh para prefixos e sufixos em compadd. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/complete_in_double_quotes.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 7L; Snapshot PTY de completion zsh dentro de aspas duplas. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/complete_in_open_brace_expansion.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Snapshot PTY de completion zsh dentro de expansao de chaves aberta. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/compset_prefix_suffix_words_and_quotes.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 41L; Snapshot PTY de completion zsh testando compset em prefixo, sufixo, palavras e aspas. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/compstate_insert_and_list_set_by_a_widget.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 14L; Snapshot PTY de completion zsh para compstate[insert] e compstate[list] definidos por widget. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/compstate_keys_in_a_widget.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 25L; Snapshot PTY de completion zsh inspecionando chaves de compstate dentro de widget. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/delete_char_or_list_lists.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 4L; Snapshot PTY de completion zsh para widget delete-char-or-list (^D). |
+| `crates/shell/tests/fixtures/zsh_comp_pty/expand_cmd_path.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Snapshot PTY de completion zsh para expansao de caminho de comando. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/expand_or_complete_expands.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 12L; Snapshot PTY de completion zsh para expand-or-complete expandindo variaveis, globs, $(...) e ~. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/expand_or_complete_falls_back_to_files.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 7L; Snapshot PTY de completion zsh para fallback de arquivos em expand-or-complete. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/files_list_then_menu.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 12L; Snapshot PTY de completion zsh listando arquivos e ciclando em menu. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/list_colors_style.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 7L; Snapshot PTY de completion zsh para estilo zstyle list-colors com SGR. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/list_expand_and_expand_word.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 8L; Snapshot PTY de completion zsh para list-expand e expand-word. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/listmax_asks_before_listing.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 20L; Snapshot PTY de completion zsh para confirmacao de LISTMAX antes de listar candidatos. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/listprompt_scrolls_a_long_list.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 104L; Snapshot PTY de completion zsh para paginacao/scroll com LISTPROMPT em listas longas. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menu_select_accept_and_hold.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 19L; Snapshot PTY de completion zsh para accept-and-hold no menu-select. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menu_select_incremental_search.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 30L; Snapshot PTY de completion zsh para busca incremental reversa no menu-select. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menu_select_interactive_via_vi_insert.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 26L; Snapshot PTY de completion zsh para modo interativo via vi-insert no menu-select. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menu_select_navigation.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 56L; Snapshot PTY de completion zsh para navegacao por setas no menu-select com SGR. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menu_select_scrolls_with_menuprompt.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 107L; Snapshot PTY de completion zsh para scroll em menu-select com MENUPROMPT. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menu_select_send_break_restores_the_line.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 15L; Snapshot PTY de completion zsh para send-break (^G) restaurando a linha original. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menu_select_undo.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 18L; Snapshot PTY de completion zsh para undo (^_) no menu-select. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menu_select_widget_over_rows.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 70L; Snapshot PTY de completion zsh para navegacao por linhas e colunas no menu-select. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/menucomplete_cycles_and_reverse_menu_complete.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 24L; Snapshot PTY de completion zsh para menucomplete e reverse-menu-complete. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/options_and_values_of_arguments.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 20L; Snapshot PTY de completion zsh para opcoes e valores de argumentos (_arguments). |
+| `crates/shell/tests/fixtures/zsh_comp_pty/options_of_ls_ask_then_list.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 30L; Snapshot PTY de completion zsh para opcoes de ls com prompt LISTMAX e listagem. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/options_of_print_with_descriptions.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 26L; Snapshot PTY de completion zsh para opcoes do builtin print com descricoes. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/parameter_after_dollar.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 8L; Snapshot PTY de completion zsh para nomes de parametros apos $. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/parameter_in_braces.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 7L; Snapshot PTY de completion zsh para parametros dentro de ${...}. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/spell_word_corrects_a_command.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 3L; Snapshot PTY de completion zsh para correcao ortografica spell-word. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/zls_colors_parameter.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 7L; Snapshot PTY de completion zsh para parametro ZLS_COLORS com SGR. |
+| `crates/shell/tests/fixtures/zsh_comp_pty/zls_colors_types_patterns_and_selection.txt` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 28L; Snapshot PTY de completion zsh para ZLS_COLORS com tipos de arquivo, padroes e selecao. |
+| `crates/shell/tests/flock.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 180L; Testa o builtin flock (paridade com util-linux 2.42): locks por descritor, subshells, contencao (-n, -w, -s, -x, -E), propagaca... |
+| `crates/shell/tests/heredoc_cmdsubst.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 46L; Testes de regressao garantindo que heredocs citados dentro de "$(...)" nao executem backticks nem fechem a substituicao com ')'... |
+| `crates/shell/tests/minimizer_fixtures.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 242L; Harness de fixtures para o minimizador de saida (omp_shell::minimizer::apply) com gate quantitativo (<= 40% dos bytes brutos ac... |
+| `crates/shell/tests/nonutf8_env.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 97L; Testes de regressao (#8925) em processo isolado garantindo que variaveis de ambiente nao-UTF8 no host nao causem panic ao inici... |
+| `crates/shell/tests/obash.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 308L; Testes de aceitacao do binario obash cobrindo execucao, eventos golden JSONL, flags --fault/--ir/--print, fork env/cwd, FIFO em... |
+| `crates/shell/tests/obash_fault_modes.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 392L; Testa modos de injecao de falha/checkpoint do obash (step, pause, exec) e politicas Lost (skip, defer, restore), verificando re... |
+| `crates/shell/tests/obash_kill.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 24L; Testa envio de sinais (kill -0 e kill -TERM) pelo builtin kill do obash para processos reais do SO. |
+| `crates/shell/tests/obash_os_traps.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 84L; Testa entrega de sinais reais de SO para traps do obash, incluindo interrupcao de funcoes ocupadas, espera de comando em foregr... |
+| `crates/shell/tests/obash_support/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 148L; Suporte de testes para processos obash: spawn hermetico (limpa CALLER_VARS, aplica FD_CLOEXEC acima do fd 2), grupo de processo... |
+| `crates/shell/tests/process_shell.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 163L; Testa comportamento CLI e interativo do obash (como bash/sh/zsh), verificando prompts, --help/--version, paridade com /bin/zsh ... |
+| `crates/shell/tests/pty_harness.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 147L; Auto-testes do harness PTY (Screen VT, wait_raw via termios, SIGWINCH, ^C e comparacao diferencial obash-as-zsh vs /bin/zsh). |
+| `crates/shell/tests/pty_support/mod.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 744L; Harness PTY completo para testes diferenciais e interativos: ambiente hermetico, setsid/TIOCSCTTY, leitor assincrono, sincroniz... |
+| `crates/shell/tests/pty_support/vt.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 487L; Emulador VT100/xterm leve em memoria com parser de CSI/escape/UTF-8, tela alternativa, regioes de scroll, autowrap, largura CJK... |
+| `crates/shell/tests/session_commands.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 486L; Testa comandos de sessao (SessionCommands) por execucao: leitura de stdin apenas com '-', precedencia sobre PATH/funcoes/aliase... |
+| `crates/shell/tests/streaming_smoke.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 81L; Testes de contrato de streaming em pipelines garantindo entrega de chunks antes do termino e execucao sem deadlock quando bloco... |
+| `crates/shell/tests/subshell_exit_trap_frames.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 166L; Testa paridade com Bash 5.2/5.3 para traps EXIT em subshells iniciados dentro de funcoes, preservando parametros posicionais e ... |
+| `crates/shell/tests/ulimit_isolation.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 73L; Testes de regressao (#13325) garantindo que ulimit no shell embutido restrinja apenas processos filhos externos sem alterar RLI... |
+| `crates/shell/tests/vfs.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1164L; Define `DelayedFilesystem`/`DelayedFile` (com atraso assíncrono por operação) e testa execução do shell sobre URLs `virtual://`... |
+| `crates/shell/tests/zle_hist_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 432L; Testes diferenciais em PTY comparando widgets de histórico do ZLE (`obash` como `zsh -f -i` vs `/bin/zsh`): navegação com argum... |
+| `crates/shell/tests/zle_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 221L; Testes diferenciais em PTY para o loop interativo e editor de linha ZLE do `obash` vs `/bin/zsh`: renderização de `PS1`/`RPS1` ... |
+| `crates/shell/tests/zle_widgets_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 408L; Testes diferenciais em PTY para widgets não-vi do ZLE: movimentos e deleções de palavra (`WORDCHARS`, `select-word-style`), mud... |
+| `crates/shell/tests/zsh_comp_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 590L; Testes em PTY com snapshots de tela e transcrições SGR de `/bin/zsh` 5.9 (suportando `PI_COMP_ORACLE=1` e `PI_COMP_BLESS=1`) co... |
+| `crates/shell/tests/zsh_comp_y01.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 532L; Porte da suíte `Test/Y01completion.ztst` do zsh 5.9 usando `comp_support::comptest` sobre PTY (`zsh -f +Z`), verificando 27 cas... |
+| `crates/shell/tests/zsh_comp_y02.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1474L; Primeira metade do porte de `Test/Y02compmatch.ztst` (casos 1 a 34 de especificações de matching `-M` no `compadd`): erros de s... |
+| `crates/shell/tests/zsh_comp_y03.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1506L; Primeira metade do porte de `Test/Y03arguments.ztst` (`_arguments`): argumentos posicionais, opções `-`/`+`, empilhamento (`-s`... |
+| `crates/shell/tests/zsh_compctl_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 169L; Testes diferenciais em PTY para completação legada `zsh/compctl` (`zsh -f` sem `compsys`) contra `/bin/zsh`: comandos, arquivos... |
+| `crates/shell/tests/zsh_computil_args_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 1159L; Testes diferenciais em PTY contra `/bin/zsh` para os builtins `comparguments` e `compvalues` de `zsh/computil` (casos unitários... |
+| `crates/shell/tests/zsh_computil_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 341L; Testes diferenciais em PTY contra `/bin/zsh` para os demais builtins de `zsh/computil` (`comptags`, `comptry`, `compdescribe`, ... |
+| `crates/shell/tests/zsh_jobs_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 258L; Testes diferenciais em PTY de controle de jobs do `obash` como `zsh -f -i` contra `/bin/zsh`: suspensão com `^Z`, `jobs`/`jobs ... |
+| `crates/shell/tests/zsh_mod_curses.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 221L; Testes diferenciais em PTY comparando `zcurses` (`zsh/curses`) do `obash` contra `/bin/zsh` (ncurses): janelas/subjanelas, bord... |
+| `crates/shell/tests/zsh_mod_files.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 122L; Testes de integração de `zsh/files`, `zsh/stat`, `zsh/attr` e `zsh/mapfile` no filesystem real executando `obash` como `zsh -f ... |
+| `crates/shell/tests/zsh_mod_net.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 101L; Testes de integração de `zsh/net/socket` (`zsocket` Unix domain listen/accept/connect com timeout e mensagens de erro) e `zsh/n... |
+| `crates/shell/tests/zsh_mod_rlimits.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 104L; Testes de `zsh/rlimits` (`limit`, `ulimit`, `unlimit`) comparando listagens, unidades e comportamento de hard/soft limits com `... |
+| `crates/shell/tests/zsh_mod_system.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 149L; Testes de `zsh/system` no `obash` como `zsh -f -c`: `sysopen`/`sysseek`/`systell`/`sysread`/`syswrite`/`syserror`, caminhos usa... |
+| `crates/shell/tests/zsh_mod_watch.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 47L; Testes diferenciais em Unix que comparam a saída e o status do módulo `zsh/watch` (`log`, `watch`, `WATCHFMT`) entre o binário ... |
+| `crates/shell/tests/zsh_mod_zftp.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 671L; Testes de integração de `zsh/zftp` contra um servidor FTP simulado em Rust usando porta listada em `/etc/services`, cobrindo PA... |
+| `crates/shell/tests/zsh_mod_zpty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 217L; Testes do módulo `zsh/zpty` em PTY real do host, verificando leitura bloqueante e não-bloqueante (`-b`), listagem (`-L`), eco (... |
+| `crates/shell/tests/zsh_parity_pty.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 64L; Testes diferenciais em PTY interativo (`zsh -f -i`) entre `obash` e `/bin/zsh`, validando continuação `PS2` após `\|\|`/`&&` e pa... |
+| `crates/shell/tests/zsh_zcompile.rs` | teste | omp-novo | `packages/coding-agent/src/core/bash-executor.ts` | 322L; Testes diferenciais de `zcompile` comparando dumps `.zwc` (com zeragem de padding de heap) e erros contra `/bin/zsh` 5.9 sobre ... |

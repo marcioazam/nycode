@@ -9,25 +9,25 @@ O `omp` permite que `enabledModels` (`omp:packages/coding-agent/src/config/model
 
 ```ts
 function resolvePathScopedArray(setting: AnySetting, value: unknown, cwd: string): unknown[] | undefined {
-	const scope = setting.definition.pathScoped;
-	if (!scope || !Array.isArray(value)) return undefined;
+   const scope = setting.definition.pathScoped;
+   if (!scope || !Array.isArray(value)) return undefined;
 
-	const resolved: unknown[] = [];
-	if (scope.itemType === "object") {
-		resolvePathScopedObjects(value, scope.valuesKey, cwd, resolved);
-		resolved.push(...scopedListDefault(setting, value));
-		return resolved;
-	}
+   const resolved: unknown[] = [];
+   if (scope.itemType === "object") {
+      resolvePathScopedObjects(value, scope.valuesKey, cwd, resolved);
+      resolved.push(...scopedListDefault(setting, value));
+      return resolved;
+   }
 
-	for (const entry of value) {
-		if (typeof entry === "string") {
-			resolved.push(entry);
-			continue;
-		}
-		if (!isRecord(entry)) continue;
+   for (const entry of value) {
+      if (typeof entry === "string") {
+         resolved.push(entry);
+         continue;
+      }
+      if (!isRecord(entry)) continue;
 
-		const prefixes = pathScopePrefixes(entry);
-		if (prefixes.length === 0 || !prefixes.some(prefix => pathMatchesPrefix(cwd, prefix))) continue;
+      const prefixes = pathScopePrefixes(entry);
+      if (prefixes.length === 0 || !prefixes.some(prefix => pathMatchesPrefix(cwd, prefix))) continue;
 ```
 
 - **Ancestralidade Pi**: `pi0.9.4` não tinha `enabledModels`; `pibase` adicionou `enabledModels: string[]` (`pibase:packages/coding-agent/src/core/settings-schema.ts:340`). A extensão `pathScoped` é criação original do `omp`.
@@ -37,11 +37,11 @@ function resolvePathScopedArray(setting: AnySetting, value: unknown, cwd: string
 Em `packages/coding-agent/src/core/settings-schema.ts:378-382` e `packages/coding-agent/src/core/settings-manager.ts:1398-1410`, `enabledModels` aceita exclusivamente `Type.Array(Type.String())`:
 
 ```ts
-		enabledModels: Type.Optional(
-			Type.Array(Type.String(), {
-				description: "Model patterns for cycling, in the same format as the --models CLI flag.",
-			}),
-		),
+      enabledModels: Type.Optional(
+         Type.Array(Type.String(), {
+            description: "Model patterns for cycling, in the same format as the --models CLI flag.",
+         }),
+      ),
 ```
 
 Não existe escopo por prefixo de diretório no `~/.nycode/agent/settings.json` global (para subagentes existe `.nycode/subagent-routing.json`, lido por diretório confiável em `extensions/subagent/routing/policy.ts:29-37`, mas não para o catálogo/cycling principal de `enabledModels`).

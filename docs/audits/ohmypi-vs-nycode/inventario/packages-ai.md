@@ -1,1075 +1,1116 @@
 # Inventario: packages-ai
 
-Cada linha: arquivo omp (relativo a `~/source/oh-my-pi-ref`), categoria, origem em relacao ao Pi 0.9.4, dono no nycode (relativo a raiz do repositorio) ou `sem equivalente`, nota. Regras em `../inventario.md`.
+Cada linha cobre 1 arquivo rastreado em `~/source/oh-my-pi-ref` (`git ls-files`), com categoria, origem em relação ao Pi `v0.9.4`, dono equivalente no `nycode` (ou `sem equivalente`) e nota resumida verificada nos shards. Regras e totais em [../inventario.md](../inventario.md).
 
 | Arquivo | Categoria | Origem | Dono no nycode | Nota |
 |---|---|---|---|---|
-| `packages/ai/scripts/capture-factory-droid-native.ts` | codigo | omp-novo | `packages/ai/scripts` |  |
-| `packages/ai/scripts/cursor-log.py` | codigo | omp-novo | `packages/ai/scripts` |  |
-| `packages/ai/scripts/prompts/factory-droid-capture-prime.md` | prompt | omp-novo | `packages/ai/scripts` |  |
-| `packages/ai/scripts/prompts/factory-droid-capture-resume.md` | prompt | omp-novo | `packages/ai/scripts` |  |
-| `packages/ai/scripts/prompts/factory-droid-capture.md` | prompt | omp-novo | `packages/ai/scripts` |  |
-| `packages/ai/scripts/proto-extractor.py` | codigo | omp-novo | `packages/ai/scripts` |  |
-| `packages/ai/src/api-registry.ts` | codigo | omp-novo | `packages/ai/src/api` |  |
-| `packages/ai/src/auth-broker/client.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/discover.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/hybrid-store.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/protocol.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/refresher.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/remote-store.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/snapshot-cache.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-broker/wire-schemas.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/caller-options.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/clients.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/dispatch.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/http.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/routes/embeddings.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/routes/images.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/routes/rerank.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/routes/speech.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/routes/systemone.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/routes/transcriptions.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/routes/unary.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/routes/video.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/session-state.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/stdio.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-gateway/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/auth-retry.ts` | codigo | omp-novo | `packages/ai/src/utils/retry.ts` |  |
-| `packages/ai/src/auth-storage.ts` | codigo | omp-novo | `packages/coding-agent/src/core/auth-storage.ts` |  |
-| `packages/ai/src/auth/abort.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/affinity.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/blocks.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/cascade.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/health.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/oauth.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/policy.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/pool.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/rank.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/refresh.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/resets.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/rotation.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/select.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/sqlite-credential-store.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/store.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/types.ts` | codigo | omp-novo | `packages/ai/src/auth/types.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/src/auth/usage-cache.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/usage-report.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/auth/usage.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/dialect/anthropic.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/catalog.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/coercion.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/deepseek.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/demotion.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/examples.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/factory.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/fenced-thinking.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/gemini.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/gemma.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/glm.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/harmony.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/hermes.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/history.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/inventory.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/kimi.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/minimax.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/owned-stream.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/qwen-xml.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/qwen3.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/rendering.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/terminator-wait.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/thinking-fence-strip.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/thinking.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/dialect/xml.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/embeddings/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/embeddings/openai-embeddings.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/embeddings/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/env-api-key.ts` | codigo | omp-novo | `packages/ai/src/env-api-keys.ts` |  |
-| `packages/ai/src/error/abort.ts` | codigo | omp-novo | `packages/ai/src/utils/abort.ts` |  |
-| `packages/ai/src/error/auth-classify.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/auth.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/aws.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/body-error.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/classes.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/finalize.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/flags.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/format.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/gateway.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/index.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/network-cause.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/oauth.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/provider.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/rate-limit.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/retryable.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/error/validation.ts` | codigo | omp-novo | `packages/ai/src/utils/validation.ts` |  |
-| `packages/ai/src/images/factory-droid.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/images/google-antigravity.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/images/google-generative-ai.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/images/index.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/images/openai-hosted.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/images/openai-images.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/images/openrouter-images.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/images/shared.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/images/types.ts` | codigo | omp-novo | `packages/ai/src/images.ts` |  |
-| `packages/ai/src/index.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/index.ts` | mesmo caminho; existe no Pi 073b0ba; +75/-9 |
-| `packages/ai/src/judgment/chat.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/google-decisions.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/native.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/openai-decisions.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/question-file.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/systemone.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/text.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/types.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/judgment/wire.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` |  |
-| `packages/ai/src/oneshot-retry.ts` | codigo | omp-novo | `packages/ai/src/utils/retry.ts` |  |
-| `packages/ai/src/prompts/perturbation.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/prompts/thinking-probe.md` | prompt | omp-novo | sem equivalente |  |
-| `packages/ai/src/provider-details.ts` | codigo | omp-novo | `packages/ai/src/providers` |  |
-| `packages/ai/src/provider-hooks.ts` | codigo | omp-novo | `packages/ai/src/providers` |  |
-| `packages/ai/src/provider-session-state.ts` | codigo | omp-novo | `packages/ai/src/providers` |  |
-| `packages/ai/src/providers/amazon-bedrock.ts` | codigo | omp-novo | `packages/ai/src/providers/amazon-bedrock.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/src/providers/anthropic-client.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-compaction.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-headers.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-http-options.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-identity.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-images.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-messages-server-schema.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-messages-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-signature.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-slow-mode.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-state.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-threads.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-user-profiles.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic-wire.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/anthropic.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/providers/anthropic.ts` | mesmo caminho; existe no Pi 073b0ba; +7050/-427 |
-| `packages/ai/src/providers/antigravity-cli.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/antigravity-cli/binary.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/antigravity-cli/conversation-store.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/antigravity-cli/credentials.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/antigravity-cli/host.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/antigravity-cli/mcp-bridge.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/antigravity-cli/reconcile.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/antigravity-cli/step-writer.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/apple-foundation-models.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/aws-credentials.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/aws-eventstream.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/aws-sigv4.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/azure-openai-responses.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/bedrock-anthropic.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/bedrock-mantle.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/bedrock-request-metadata.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/claude-code-fingerprint.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/connect-error-detail.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/connect-frame.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/connection-prewarm.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/cowork-fetch.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/cursor-pi-args.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/cursor.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/cursor/exec-modern.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/cursor/exec-order.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/cursor/interaction-query.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/cursor/proto/agent.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/buf/validate/validate.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/cel/expr/checked.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/cel/expr/eval.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/cel/expr/explain.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/cel/expr/syntax.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/cel/expr/value.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/connectext/grpc/status/v1/status.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/errorspb/errors.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/errorspb/hintdetail.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/errorspb/markers.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/errorspb/tags.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/errorspb/testing.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/analytics_pb/analytics.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/api_server_pb/api_server.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/auth_pb/auth.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/auto_cascade_common_pb/auto_cascade_common.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/browser_preview_pb/browser_preview.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/bug_checker_pb/bug_checker.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/cascade_plugins_pb/cascade_plugins.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/chat_client_server_pb/chat_client_server.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/chat_pb/chat.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/code_edit/code_edit_pb/code_edit.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/codeium_common_pb/codeium_common.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/context_module_pb/context_module.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/cortex_pb/cortex.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/dev_pb/dev.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/diff_action_pb/diff_action.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/eval/pr_eval/datasets_pb/datasets.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/eval_pb/eval.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/extension_server_pb/extension_server.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/file_system_provider_pb/file_system_provider.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/index_pb/index.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/knowledge_base_pb/knowledge_base.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/language_server_pb/language_server.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/model_management_pb/model_management.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/opensearch_clients_pb/opensearch_clients.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/product_analytics_pb/product_analytics.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/prompt_pb/prompt.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/reactive_component_pb/reactive_component.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/seat_management_pb/seat_management.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/tokenizer_pb/tokenizer.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/trainer_pb/config.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/tree_sitter/language_data_pb/language_data.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/trust_pb/trust.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/exa/user_analytics_pb/user_analytics.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/base/api_base.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/datastore/datastore_v3.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/log/log_service.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/remote_api/remote_api.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/urlfetch/urlfetch_service.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/grpc/binlog/v1/binarylog.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/devin/proto/io/prometheus/client/metrics.proto` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/embeddings-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/error-message.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/factory-droid.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/factory-droid/gemini.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/factory-droid/tool-names.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/github-copilot-headers.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/gitlab-duo-workflow.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/gitlab-duo.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/google-auth.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/google-gemini-cli.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/google-shared.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/google-types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/google-vertex.ts` | codigo | omp-novo | `packages/ai/src/providers/google-vertex.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/src/providers/google.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/providers/google.ts` | mesmo caminho; existe no Pi 073b0ba; +43/-472 |
-| `packages/ai/src/providers/grammar.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/images-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/inference-headers.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/kimi.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/kiro/prompts/continuation.md` | prompt | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/kiro/prompts/historical-tool-description.md` | prompt | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/kiro/prompts/joined-content.md` | prompt | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/kiro/prompts/tool-result-truncated.md` | prompt | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/kiro/stream.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/kiro/transform.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/mock.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/native-finish-reason.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/ollama.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-anthropic-shim.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-chat-server-schema.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-chat-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-chat-wire.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex-attestation.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex-compaction.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex-responses.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex-state.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex-transport.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex/access-programs.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex/live-steering.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex/request-transformer.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-codex/response-handler.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-completions.ts` | codigo | pi0.9.4-modificado | sem equivalente | +3143/-321 |
-| `packages/ai/src/providers/openai-configuration-update.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-data-uri.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-reasoning-fallback.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-request-error.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-responses-server-schema.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-responses-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-responses-session.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-responses-state.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-responses-wire.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openai-responses.ts` | codigo | pi0.9.4-modificado | sem equivalente | +2170/-427 |
-| `packages/ai/src/providers/openai-shared.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/openrouter-generation.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/pi-native-client.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/pi-native-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/register-builtins.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/rerank-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/responses-websocket-connection.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/speech-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/synthetic.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/systemone-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/transcriptions-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/transform-messages.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/video-server.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/vision-guard.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/providers/xai-base-url.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/registry/amazon-bedrock.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/api-key-validation.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/aws.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/bedrock-mantle.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/build.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/cloudflare-ai-gateway.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/derived.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/engine/api-key.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/engine/common.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/engine/device-code.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/device-code.ts` |  |
-| `packages/ai/src/registry/engine/oauth-code.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/engine/refresh.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/hooks/api-key.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/hooks/custom.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/hooks/device-code.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/device-code.ts` |  |
-| `packages/ai/src/registry/hooks/env.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/hooks/index.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/hooks/oauth-code.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/hooks/types.ts` | codigo | omp-novo | `packages/ai/src/auth/types.ts` |  |
-| `packages/ai/src/registry/index.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/kiro.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/muse-code.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/alibaba-coding-plan.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/alibaba-token-plan.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/anthropic-constants.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/anthropic.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/anthropic.ts` |  |
-| `packages/ai/src/registry/oauth/antigravity-cli.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/callback-server.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/callback-server.ts` |  |
-| `packages/ai/src/registry/oauth/cloudflare-ai-gateway.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/cloudflare-workers-ai.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/coreweave.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/cursor.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/device-code.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/device-code.ts` |  |
-| `packages/ai/src/registry/oauth/devin-cli.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/devin-windsurf.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/devin.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/factory-droid.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/github-copilot.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/github-copilot.ts` |  |
-| `packages/ai/src/registry/oauth/gitlab-duo.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/google-antigravity.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/google-oauth-shared.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/index.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/kilo.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/kimi.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/kiro.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/mistral-vibe.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/muse-code.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/native-scheme-callback.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/openai-codex.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/openai-codex.ts` |  |
-| `packages/ai/src/registry/oauth/otari.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/perplexity.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/pkce.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/pkce.ts` |  |
-| `packages/ai/src/registry/oauth/prompts/kiro-login-method.md` | prompt | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/prompts/kiro-profile-select.md` | prompt | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/snowflake.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/types.ts` | codigo | omp-novo | `packages/ai/src/auth/types.ts` |  |
-| `packages/ai/src/registry/oauth/xai-oauth.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/xiaomi.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/oauth/zai.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/registry.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/snowflake.ts` | codigo | omp-novo | `packages/ai/src/auth` |  |
-| `packages/ai/src/registry/types.ts` | codigo | omp-novo | `packages/ai/src/auth/types.ts` |  |
-| `packages/ai/src/rerank/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/rerank/openrouter-rerank.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/rerank/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/speech/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/speech/openai-speech.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/speech/transport.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/speech/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/speech/xai-tts.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/stream.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/api` | +1955/-106 |
-| `packages/ai/src/thinking-probe.ts` | codigo | omp-novo | `packages/ai/src/providers` |  |
-| `packages/ai/src/transcription/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/transcription/openai-transcriptions.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/transcription/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/types.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/types.ts` | mesmo caminho; existe no Pi 073b0ba; +1765/-61 |
-| `packages/ai/src/usage.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/alibaba-token-plan.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/charm-hyper.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/claude-api.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/claude-reset.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/claude.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/cline-pass.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/commandcode.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/cursor.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/devin.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/factory-droid.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/github-copilot.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/google-antigravity.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/kimi.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/kiro.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/litellm.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/minimax-code.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/muse-code.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/ollama.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/openai-codex-base-url.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/openai-codex-reset.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/openai-codex.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/opencode-go.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/registry.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/shared.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/synthetic.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/umans.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/xai-oauth.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/usage/zai.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/utils.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/abort.ts` | codigo | omp-novo | `packages/ai/src/utils/abort.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/src/utils/anthropic-auth.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/aws-profile.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/block-symbols.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/deterministic-id.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/dsml-leak.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/empty-completion-retry.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/event-stream.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/utils/event-stream.ts` | mesmo caminho; existe no Pi 073b0ba; +212/-21 |
-| `packages/ai/src/utils/foundry.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/glyph-codec.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/google-validation.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/harmony-leak.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/http-inspector.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/idle-iterator.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/leaked-thinking-stream.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/model-headers.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/narration.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/openai-http.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/openrouter-headers.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/parse-bind.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/provider-response.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/proxy.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/reasoning-source.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/request-body.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/request-compression.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/request-debug.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/resolve-peer.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/retry-after.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/retry-wait.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/adapt.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/allowlist.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/compatibility.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/dereference.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/draft.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/equality.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/fields.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/foundation-models.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/index.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/json-schema-validator.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/meta-validator.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/normalize.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/spill.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/stamps.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/strict-tool-validation.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/types.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/typescript.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/schema/wire.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/sdk-stream-timeout.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/sse-debug.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/stream-markup-healing.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/thinking-loop.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/tool-call-arguments.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/tool-call-loop-guard.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/tool-choice.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/tool-names.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/transport-fetch.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/utils/validation.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/utils/validation.ts` | mesmo caminho; existe no Pi 073b0ba; +2269/-44 |
-| `packages/ai/src/utils/websocket.ts` | codigo | omp-novo | `packages/ai/src/utils` |  |
-| `packages/ai/src/video/index.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/video/openrouter-video.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/src/video/types.ts` | codigo | omp-novo | sem equivalente |  |
-| `packages/ai/test/abliteration-effort-aliases.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/abliteration-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/abort-source-tracker.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/abort.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/abort.test.ts` | mesmo caminho; existe no Pi 073b0ba; +145/-40 |
-| `packages/ai/test/alibaba-endpoint-selection.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/alibaba-token-plan-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/alibaba-token-plan.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-abandoned-tooluse-replay.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-alignment.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-api-version.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-block-start-thinking-signature.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-cache-control-rejection.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-client.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-connection-reuse.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-context-management-compat.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-control-state-stability.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-disable-experimental-betas.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-disabled-thinking-compat.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-empty-error-tool-result.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-error-tool-result-image.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-fable-request-shaping.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-fallback-handoff.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-fast-mode.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-haiku-thinking-off.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-head-caching.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-many-image-resize.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-message-threads.test.ts` | teste | omp-novo | `packages/ai/test/anthropic-message-threads.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/anthropic-mid-conversation-system.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-model-not-found-rotation.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-oauth.test.ts` | teste | omp-novo | `packages/ai/test/anthropic-oauth.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/anthropic-ping-keepalive.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-prefill.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-prefix-drop-replay.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-prewarm.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-prior-turn-thinking.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-server-compaction.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-server-side-fallback.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-signature-auto-mark.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-signature-drop-all-escalation.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-signature-hint.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-signature.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-slow-mode.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-stream-envelope.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-stream-timeout.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-thinking-immutability.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-thinking-max-tokens.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-thinking-only-length-truncated.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-thinking-presence.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-tool-schema.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-unsigned-thinking-replay.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-unsupported-media.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-user-profiles.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/anthropic-zenmux-checkpoint-thinking-signature.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/antigravity-cli-binary.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/antigravity-cli-conversation-store.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/antigravity-cli-credentials.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/antigravity-cli-host.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/antigravity-cli-login-cleanup.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/antigravity-cli-mcp-bridge.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/antigravity-cli-reconcile.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/api-key-validation.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/api-registry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/apple-foundation-models.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/apply-patch-freeform.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-config-discovery.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-disabled-credentials.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-local-providers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-model-policy.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-nested-config.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-oauth-extra-fields.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-refresh-backoff.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-refresher.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-remote-store.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-snapshot-cache.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-usage-probe-refresh.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-wire-schema-contract.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-broker-wire.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-anthropic-caching.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-anthropic-messages.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-anthropic-to-codex-caching.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-cache-key.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-classify-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-clients.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-cross-protocol-caching.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-embeddings.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-images.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-model-list.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-openai-chat.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-openai-prompt-cache.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-openai-responses-caching.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-openai-responses.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-pi-native.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-provider-session-state.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-reasoning-effort.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-rerank.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-response-headers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-speech.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-stdio.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-systemone.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-thinking-loop.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-transcriptions.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-gateway-video.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-hooks-registry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-account-identity.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-account-reclaim.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-anthropic-env-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-antigravity-selection.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-api-key-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-block-persistence.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-broker-no-sentinel.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-check-credentials.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-claude-fable-fallback.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-claude-reset.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-close-releases-handles.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-codex-selection.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-codex-workspace-identity.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-config-override.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-credential-disabled-event.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-credential-origin.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-credential-policy.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-email-dedupe.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-force-refresh-rotate.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-manual-code-gate.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-model-usage-health.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-noop-persistence.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-oauth-account-select.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-oauth-refresh-race.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-org-scoped-identity.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-peek.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-quarantine-salvage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-refresh-skew.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-service-tier.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-session-restriction.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-sqlite-busy.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-subscription.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-transient-refresh.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-usage-cache.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-usage-history.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-xai-oauth-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/auth-storage-zai-api-key-selection.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/aws-credentials.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/aws-eventstream.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/aws-registry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/aws-sigv4.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/azure-openai-responses-stream.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-anthropic-routes.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-caller-headers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-disable-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-haiku-thinking-off.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-incomplete-stream.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-inference-profile.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-mantle-auth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-nova-unsigned-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-on-payload.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-openai-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-prefix-binding-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-prompt-cache.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-request-metadata.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-server-compaction.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-stream-exception-status.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-system-prompt.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-tool-choice.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-tool-descriptions.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-tool-name-replay.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/bedrock-tool-result-image.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/budgeted-host.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/callback-server-dual-stack.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/callback-server-launch-route.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/callback-server-manual-input.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/callback-server-port-fallback.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/callback-server-security.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/charm-hyper-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/claude-block-healing.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/claude-ratelimit-headers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/claude-reset.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/claude-usage-endpoint.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/claude-usage-headers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/claude-usage-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cline-pass-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cline-pass-transport.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cline-pass-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cloudflare-ai-gateway.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/commandcode-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/completion-retention.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/connect-error-detail.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/connect-frame.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/connection-prewarm.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/context-overflow.test.ts` | teste | omp-novo | `packages/ai/test/context-overflow.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/coralbricks-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/coralbricks-wire-contract.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/coreweave-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/coreweave-project-header.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cowork-fetch-cancellation.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cowork-fetch-proxy.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cowork-fetch-upload-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/credential-external-reload.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-caller-headers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-checkpoint-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-conversation-rotate.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-edit-tool-call.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-effort-routing.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-exec-handlers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-exec-modern.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-external-tool-executor.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-h2-transport-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-h2-unavailable.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-http1-transport.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-interaction-query.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-mcp-tool-catalog.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-on-payload.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-pi-args.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-proxy-env.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-requested-model.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-server-records.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-streaming-args.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-system-prompt-history.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-terminal-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-todo-bridge.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-transport-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-turn-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-webfetch-interaction-query.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/cursor-wire-model-fallback.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/deepinfra-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/deepinfra-reasoning-contract.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/deepseek-reasoning-content.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-account-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-cli-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-frame-cap.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-history.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-large-request-recovery.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-router.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-streaming-args.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-trailer-evidence.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/devin-windsurf-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/dialect-thinking.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/duplicate-tool-results.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/empty-completion-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/endpoint-client-errors.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/error-aierr.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/error-body-rate-limit.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/error-id.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/error-transient-status-boundary.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/eval-language-whitespace.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/event-stream.test.ts` | teste | omp-novo | `packages/ai/test/event-stream.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/exa-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-anthropic.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-completions-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-gemini.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-images.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-native-parity.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-oauth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-responses.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-stream.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/factory-droid-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fenced-thinking.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/firepass.live.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/firepass.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fireworks-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fixtures/completion-retention.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fixtures/cursor-proxy-env.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fixtures/cursor-tls-reset.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fixtures/oauth-barrel-import.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fixtures/oauth-refresh-during-exit-child.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fixtures/oauth-sigterm-child.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/fixtures/openai-responses-server.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/flattened-array-properties.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/foundation-models-schema.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/gemini-gemma-dialect.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-anthropic-auth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-anthropic-model-rejection.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-headers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-long-context-wire.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-openai-base-url.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/github-copilot-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/gitlab-duo-cache-key.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/gitlab-duo-workflow-oauth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/gitlab-duo-workflow-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/glm-5.2-reasoning-effort.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/glm-5.3-reasoning-effort.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/glyph-codec.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-antigravity-oauth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-antigravity-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-cached-content.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-continuation.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-empty-response-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-error-body-classification.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-function-calling-matching.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-gemini-cli-3x-thinking.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-gemini-cli-429.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-gemini-cli-alignment.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-gemini-cli-claude-image-clamp.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-gemini-cli-first-event-timeout.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-gemini-cli-variant-routing.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-gemini3-unsigned-tool-call.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-gemma-thinking.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-oauth-hostname.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-oauth-validation-url.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-pre-response-timeout.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-provider-response.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-reasoning-off.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-sampling-penalty-strip.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-service-tier.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-system-prompt.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-thinking-fence-strip.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-thinking-output-cap.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-thinking-signature.test.ts` | teste | omp-novo | `packages/ai/test/google-thinking-signature.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/google-tool-choice.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/google-tool-schema.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/handoff.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test` | +71/-30 |
-| `packages/ai/test/harmony-leak.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/helpers/bedrock-stream.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/helpers/factory-droid-native.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/helpers/factory-droid.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/helpers/fetch-mock.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/helpers/index.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/http-inspector.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/image-input-validation.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/image-tool-result.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/image-tool-result.test.ts` | mesmo caminho; existe no Pi 073b0ba; +234/-72 |
-| `packages/ai/test/image-url-parts.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/inband-tools.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/inception-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-10690-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-10966-synthetic-reasoning-filter.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-10994-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-11473-orphan-output-wedge.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1203-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1207-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1227-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-12525-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-12562-custom-api-compat.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1270-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1373-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1417-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1701-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1776-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-18312-assistant-rewrite-replay.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-1838-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-19300-zero-allowance-429.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-2080-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-2123-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-2315-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-2424-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-2883-moonshot-base-url.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-2996-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-3124-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-3434-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-3528-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-3555-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-3593-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-4085-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-4593-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-4679-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-5983-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-6276-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-6510-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-6913-harmony-marker-escaping.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-814-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-8248-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-826-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-827-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-8328-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-8789-responses-interleaved-message.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-883-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-8854-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-911-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-912-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-931-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-9433-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-945-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-955-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-957-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-959-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-967-vision-guard.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-969-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/issue-976-repro.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/json-schema-typescript.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/judgment-question-file.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/judgment.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/kagi-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/kilo-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/kimi-multi-account.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/kimi-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/kiro-auth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/kiro-stream.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/kiro-transform.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/kiro-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/leaked-thinking-stream.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/litellm-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/litellm-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/max-effort-wire.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/meta-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/minimax-code-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/minimax-token-plan-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/mistral-vibe-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/mock-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/modal-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/model-cache.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/models-cost.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/models-json-no-local-endpoints.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/muse-code-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/muse-code-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/nanogpt-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/network-cause.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/novita-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/null-max-tokens-fallback.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/oauth-barrel-import.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/oauth-deepseek.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/oauth-definitive-failure.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/oauth-device-code.test.ts` | teste | omp-novo | `packages/ai/test/oauth-device-code.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/oauth-refresh-abort-no-block.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/oauth-refresh-budget-keeps-rotated-token.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/oauth.ts` | teste | omp-novo | `packages/ai/test/oauth.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/ollama-cache-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/ollama-cloud-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/ollama-no-user-turn.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/ollama-reasoning-effort-backfill.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/ollama-stream-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/ollama-thinking-disable.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/ollama-tool-call-json-parse-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/oneshot-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-array-tool-schema.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-byok-reported-cost.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-access-programs.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-call-id-length.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-include.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-live-steering.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-refresh-reason.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-reset.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-responses-lite.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-stream.test.ts` | teste | omp-novo | `packages/ai/test/openai-codex-stream.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/openai-codex-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex-zstd.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-codex.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-compat-policy.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-compat-user-agent.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-cache-affinity.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-compat.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-disable-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-error-finish-reason.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-generation-nan.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-litellm-thinking-blocks.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-on-payload.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-progress-chunk.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-reasoning-details.test.ts` | teste | omp-novo | `packages/ai/test/openai-completions-reasoning-details.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/openai-completions-reasoning-disable-dialects.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-stream-retry-budget.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-thought-signature.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-tool-result-images.test.ts` | teste | omp-novo | `packages/ai/test/openai-completions-tool-result-images.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/openai-completions-ttft.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-upstream-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-completions-xai-root-union.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-computer-contract.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-configuration-update.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-data-uri.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-daybreak-effort.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-disable-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-first-event-timeout.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-images.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-max-output-tokens-cap.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-message-phase.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-output-token-policy.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-reasoning-effort-fallback.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-cache-affinity.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-delta-input.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-developer-role.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-empty-tool-result.test.ts` | teste | omp-novo | `packages/ai/test/openai-responses-empty-tool-result.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/openai-responses-history-payload.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-malformed-function-call-replay.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-omit-max-output-tokens.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-openrouter.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-orphan-repair.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-parallel-tool-calls.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-parallel-tool-result-images.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-repaired-function-call-replay.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-resume.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-sampling-params.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-stale-encrypted-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-stateful.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-stream-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-stream-terminal.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-system-prompt.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-tool-quarantine.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-responses-websocket.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-stream-socket-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-stream-terminal-close.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openai-tool-strict-mode.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/opencode-go-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/opencode-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/opencode-session-header.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openrouter-error-metadata-raw.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openrouter-gemini-neon-tool-result-fold.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openrouter-llama-split-tool-calls.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openrouter-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openrouter-native-finish-reason.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/openrouter-oauth.test.ts` | teste | omp-novo | `packages/ai/test/openrouter-oauth.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/otari-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/overflow-utils.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/owned-stream-fabrication.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/owned-stream-native-toolcall.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/perplexity-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/pi-native-client.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/pre-response-timeout.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/prompt-perturbation.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/provider-disabled.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/provider-fetch-override.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/provider-inflight.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/provider-login-warning.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/provider-registry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/provider-response.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/provider-session-release.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/providers/google-auth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/providers/keyless-auth-header.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/providers/kimi-code-thinking.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/providers/openai-codex-error.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/proxy.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/race-with-signal.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/rate-limit-utils.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/raw-sse-sdk-capture.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/register-builtins.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/registry/oauth/muse-code.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/registry/oauth/openai-codex.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/registry/oauth/xai-oauth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/remote-auth-store.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/request-compression.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/request-debug.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/requires-effort.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/resolve-used-fraction.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/responses-websocket-connection.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/rotation-zhipu-coding-plan-reset.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/sakana-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/sambanova-reasoning-replay-wire.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/same-model-reasoning-carry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/sampling-params-model-wide.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-arktype.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-compatibility.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-defines-property.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-dereference.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-helpers.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-immutability.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-normalization.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-strict-mode.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/schema-wire.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/service-tier-cost.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/service-tier-premium-requests.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/simple-stop-and-frequency-penalty.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/snowflake-provider.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/sse-debug.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/stencil-oauth-callback.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/stream-auth-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/stream-markup-healing.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/stream-timeout-defaults.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/stream.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/stream.test.ts` | mesmo caminho; existe no Pi 073b0ba; +1521/-291 |
-| `packages/ai/test/synthetic-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/synthetic-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/thinking-loop.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/thinking-probe.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/todo-op-whitespace.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/tokens.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/tokens.test.ts` | mesmo caminho; existe no Pi 073b0ba; +204/-32 |
-| `packages/ai/test/tool-argument-coercion.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/tool-call-finalization.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/tool-call-loop-guard.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/tool-call-without-result.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/tool-call-without-result.test.ts` | mesmo caminho; existe no Pi 073b0ba; +266/-71 |
-| `packages/ai/test/tool-examples.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/tool-inventory.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/total-tokens.test.ts` | teste | omp-novo | `packages/ai/test/total-tokens.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/transcript-render.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/transform-messages-anthropic-tool-call-id.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/transform-messages-dedup.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/transform-messages-malformed-tool-calls.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/transform-messages-redact-sensitive.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/transform-messages-thinking-dialect.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/transport-fetch-gate.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/typesafe-base-url-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/umans-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/umans-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/unicode-surrogate.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/unicode-surrogate.test.ts` | mesmo caminho; existe no Pi 073b0ba; +436/-99 |
-| `packages/ai/test/usage-attribution.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/usage-credential-attribution.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/usage-report-notes-schema.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/utils-responses-id.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/vercel-gateway-attribution.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/vercel-gateway-cache-controls.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/wafer.live.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/x-should-retry.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/xai-base-url-env.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/xai-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/xai-oauth-effort-strip.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/xai-oauth-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/xhigh.test.ts` | teste | omp-novo | `packages/ai/test/xhigh.test.ts` | mesmo caminho; existe no Pi 073b0ba |
-| `packages/ai/test/xiaomi-oauth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/xiaomi-token-plan-request-host.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/xiaomi-tp-login-integration.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/yolo-auto-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/yolo-auto-thinking.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/zai-block-healing.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/zai-oauth.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/zai-usage.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/zenmux-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
-| `packages/ai/test/zhipu-coding-plan-login.test.ts` | teste | omp-novo | `packages/ai/test` |  |
+| `packages/ai/CHANGELOG.md` | doc | pi0.9.4-modificado | `packages/ai/CHANGELOG.md` | mesmo caminho; Pi 073b0ba; +2177/-7; 2185L; Historico de mudancas de @oh-my-pi/pi-ai (v18.17.0 a v19.2.1) documentando recursos e correcoes em provedores, OAuth, gateway, ... |
+| `packages/ai/LICENSE` | codigo | omp-novo | `packages/ai` | 23L; Licença MIT do pacote `@oh-my-pi/pi-ai` (Mario Zechner, Can Bölük, Stencil Labs, Inc.). |
+| `packages/ai/README.md` | doc | pi0.9.4-modificado | `packages/ai/README.md` | mesmo caminho; Pi 073b0ba; +766/-540; 1203L; Documentação principal do `@oh-my-pi/pi-ai` (parte 1): provedores suportados, quick start com `omptype`, definição e validação ... |
+| `packages/ai/package.json` | config_ou_dado | pi0.9.4-modificado | `packages/ai/package.json` | mesmo caminho; Pi 073b0ba; +152/-41; 168L; Manifesto do pacote `@oh-my-pi/pi-ai` v19.2.1 com exports granulares (`./auth-broker`, `./auth-gateway`, `./providers/*`, `./ju... |
+| `packages/ai/scripts/capture-factory-droid-native.ts` | codigo | omp-novo | `packages/ai/scripts` | 241L; Script CLI que executa o binário `droid` através de um proxy HTTP local (`Bun.serve`) reescrevendo `whoami` e `feature-flags` p... |
+| `packages/ai/scripts/cursor-log.py` | codigo | omp-novo | `packages/ai/scripts` | 277L; Utilitário Python CLI para filtrar, formatar e consolidar deltas de texto (`textDelta`) em logs JSONL de depuração do Cursor (c... |
+| `packages/ai/scripts/prompts/factory-droid-capture-prime.md` | prompt | omp-novo | `packages/ai/scripts` | 1L; Prompt usado pelo script de captura da Factory Droid para induzir raciocínio antes de ler `probe.txt` e gerar histórico com thi... |
+| `packages/ai/scripts/prompts/factory-droid-capture-resume.md` | prompt | omp-novo | `packages/ai/scripts` | 1L; Prompt mínimo (`Reply with exactly: done`) enviado ao retomar sessão na captura de paridade da Factory Droid. |
+| `packages/ai/scripts/prompts/factory-droid-capture.md` | prompt | omp-novo | `packages/ai/scripts` | 1L; Prompt padrão de captura da Factory Droid instruindo a leitura de `probe.txt` via ferramenta Read. |
+| `packages/ai/scripts/proto-extractor.py` | codigo | omp-novo | `packages/ai/scripts` | 627L; Script Python de engenharia reversa que extrai definições de mensagens, enums e serviços Protobuf (com comentários JSDoc) de bu... |
+| `packages/ai/src/api-registry.ts` | codigo | omp-novo | `packages/ai/src/api` | 118L; Registro de APIs de streaming customizadas por extensões, com validação exaustiva em compile-time dos `KnownApi` nativos (`BUIL... |
+| `packages/ai/src/auth-broker/client.ts` | codigo | omp-novo | sem equivalente | 555L; Cliente HTTP/SSE para o servidor `auth-broker` com validação por schemas `omptype`, timeout configurável, retentativa apenas em... |
+| `packages/ai/src/auth-broker/discover.ts` | codigo | omp-novo | sem equivalente | 648L; Descoberta e inicialização do `AuthStorage` com precedência env -> `config.yml`/`config.yaml` -> arquivo de token -> SQLite loc... |
+| `packages/ai/src/auth-broker/hybrid-store.ts` | codigo | omp-novo | sem equivalente | 325L; Implementação de `AuthCredentialStore` híbrida que roteia providers por origem entre o broker remoto e o SQLite local (`agent.d... |
+| `packages/ai/src/auth-broker/index.ts` | codigo | omp-novo | sem equivalente | 8L; Arquivo barrel re-exportando todos os módulos públicos de `auth-broker`. |
+| `packages/ai/src/auth-broker/protocol.ts` | codigo | omp-novo | sem equivalente | 32L; Helpers compartilhados de protocolo wire do auth-broker: parsing de `ETag`/`If-None-Match` para número de geração e ordenação c... |
+| `packages/ai/src/auth-broker/refresher.ts` | codigo | omp-novo | sem equivalente | 145L; Loop em background do servidor `auth-broker` que varre credenciais OAuth próximas da expiração (`refreshSkewMs`) e chama `AuthS... |
+| `packages/ai/src/auth-broker/remote-store.ts` | codigo | omp-novo | sem equivalente | 1930L; Primeira metade de `RemoteAuthCredentialStore`: espelhamento em memória do snapshot do broker com filtragem por pool de contas,... |
+| `packages/ai/src/auth-broker/server.ts` | codigo | omp-novo | sem equivalente | 1104L; Infraestrutura principal do servidor HTTP do auth-broker: validação de corpo via ArkType, controle de long-poll por geração (`G... |
+| `packages/ai/src/auth-broker/snapshot-cache.ts` | codigo | omp-novo | sem equivalente | 359L; Cache local em disco cifrado com AES-GCM para snapshots do auth-broker, derivando chave do bearer token e AAD da URL, com reaju... |
+| `packages/ai/src/auth-broker/types.ts` | codigo | omp-novo | sem equivalente | 196L; Tipos wire e constantes de protocolo compartilhados entre servidor e cliente do auth-broker (snapshots, eventos SSE `snapshot`/... |
+| `packages/ai/src/auth-broker/wire-schemas.ts` | codigo | omp-novo | sem equivalente | 440L; Schemas ArkType do protocolo wire do auth-broker, garantindo rejeição de campos desconhecidos em escritas, redação de `refresh`... |
+| `packages/ai/src/auth-gateway/caller-options.ts` | codigo | omp-novo | sem equivalente | 130L; Classificação exaustiva em tempo de compilação de todas as chaves de `SimpleStreamOptions` em níveis `client`, `gateway` e `ser... |
+| `packages/ai/src/auth-gateway/clients.ts` | codigo | omp-novo | sem equivalente | 322L; Gerenciamento de clientes com escopo do auth-gateway autenticados por digest SHA-256, validando arquivo JSON de configuração, r... |
+| `packages/ai/src/auth-gateway/dispatch.ts` | codigo | omp-novo | sem equivalente | 348L; Plumbing compartilhado de despacho do auth-gateway: resolução de credencial sob a sessão do cliente, construção do `ApiKeyResol... |
+| `packages/ai/src/auth-gateway/http.ts` | codigo | omp-novo | sem equivalente | 354L; Utilitários HTTP do auth-gateway: envelopes de erro padronizados, headers diagnósticos estilo LiteLLM/OpenAI, comparação em tem... |
+| `packages/ai/src/auth-gateway/index.ts` | codigo | omp-novo | sem equivalente | 7L; Barrel file que reexporta os módulos públicos do auth-gateway. |
+| `packages/ai/src/auth-gateway/routes/embeddings.ts` | codigo | omp-novo | sem equivalente | 21L; Rota `POST /v1/embeddings` do auth-gateway delegando parsing, despacho unário e codificação OpenAI-compatível a `handleUnaryGat... |
+| `packages/ai/src/auth-gateway/routes/images.ts` | codigo | omp-novo | sem equivalente | 128L; Rotas de geração e edição de imagens (JSON e multipart) do auth-gateway com validação de imagem de entrada, checagem de API sup... |
+| `packages/ai/src/auth-gateway/routes/rerank.ts` | codigo | omp-novo | sem equivalente | 27L; Rota `POST /v1/rerank` compatível com OpenRouter delegada a `handleUnaryGatewayRoute`. |
+| `packages/ai/src/auth-gateway/routes/speech.ts` | codigo | omp-novo | sem equivalente | 101L; Rota `POST /v1/audio/speech` do auth-gateway para síntese de voz, retornando áudio binário com cabeçalhos diagnósticos e tratam... |
+| `packages/ai/src/auth-gateway/routes/systemone.ts` | codigo | omp-novo | sem equivalente | 130L; Rota de julgamentos TypeSafe System One / OpenRouter Decisions (`/v1/systemone`, `/alpha/decisions`) via `NativeJudge`, validan... |
+| `packages/ai/src/auth-gateway/routes/transcriptions.ts` | codigo | omp-novo | sem equivalente | 25L; Rota `POST /v1/audio/transcriptions` do auth-gateway delegada a `handleUnaryGatewayRoute`, rejeitando modelos on-device (`local... |
+| `packages/ai/src/auth-gateway/routes/unary.ts` | codigo | omp-novo | sem equivalente | 106L; Template genérico de rota request/response síncrona do auth-gateway cobrindo abort, parsing, resolução de modelo, obtenção/rota... |
+| `packages/ai/src/auth-gateway/routes/video.ts` | codigo | omp-novo | sem equivalente | 237L; Rotas assíncronas de geração de vídeo (`/v1/videos` submit, poll e download `/content`) usando gateway job IDs stateless que co... |
+| `packages/ai/src/auth-gateway/server.ts` | codigo | omp-novo | sem equivalente | 1126L; Primeira metade do roteador de chat do auth-gateway: tradução dos formatos OpenAI Chat, Anthropic Messages, OpenAI Responses e ... |
+| `packages/ai/src/auth-gateway/session-state.ts` | codigo | omp-novo | sem equivalente | 368L; Armazenamento LRU limitado a 256 sessões para `ProviderSessionState` no gateway, com cadeia de hashes de mensagens para identif... |
+| `packages/ai/src/auth-gateway/stdio.ts` | codigo | omp-novo | sem equivalente | 132L; Adaptador de transporte JSON-lines sobre stdio para executar o roteador do auth-gateway como processo filho concorrente, codifi... |
+| `packages/ai/src/auth-gateway/types.ts` | codigo | omp-novo | sem equivalente | 178L; Definição de interfaces de módulo de formato, opções parseadas cross-provider, controle de stream e opções/handle do servidor a... |
+| `packages/ai/src/auth-retry.ts` | codigo | omp-novo | `packages/ai/src/utils/retry.ts` | 638L; Camada central da política a/b/c de retry e rotação de autenticação (`withAuth` e `withOAuthAccess`), coordenando refresh único... |
+| `packages/ai/src/auth-storage.ts` | codigo | omp-novo | `packages/coding-agent/src/core/auth-storage.ts` | 413L; Fachada `AuthStorage` compondo os submódulos de `./auth/` por namespaces sobre `AuthStorageBackend`, permitindo delegação cross... |
+| `packages/ai/src/auth/abort.ts` | codigo | omp-novo | `packages/ai/src/auth` | 22L; Helper `raceSignal` que rejeita apenas o chamador abortado com `AIError.AbortError` mantendo a promise single-flight subjacente... |
+| `packages/ai/src/auth/affinity.ts` | codigo | omp-novo | `packages/ai/src/auth` | 432L; Gestão de afinidade sticky sessão→credencial com LRU em memória, persistência throttled em cache SQLite validada por `credentia... |
+| `packages/ai/src/auth/blocks.ts` | codigo | omp-novo | `packages/ai/src/auth` | 829L; Gerencia bloqueios temporarios de credenciais por escopo (auth, refresh, policy, modelo, serviceTier, cotas) em memoria e espel... |
+| `packages/ai/src/auth/cascade.ts` | codigo | omp-novo | `packages/ai/src/auth` | 763L; Define KeyOverrides (runtime --api-key, config models.yml override/fallback e resolvedor async) e KeyCascade com precedencia es... |
+| `packages/ai/src/auth/health.ts` | codigo | omp-novo | `packages/ai/src/auth` | 442L; Implementa diagnostico de saude por modelo (CredentialHealth.model agregando contas OAuth/login em healthy/reserve/unknown/depl... |
+| `packages/ai/src/auth/oauth.ts` | codigo | omp-novo | `packages/ai/src/auth` | 393L; Gerencia fluxo de login OAuth (com aviso de risco e prompt de codigo para provedores paste-code), listagem de contas sem refres... |
+| `packages/ai/src/auth/policy.ts` | codigo | omp-novo | `packages/ai/src/auth` | 187L; Valida e consulta politicas por conta (priority, reservePct, reclaimAbovePct) associadas a seletores conjuntivos de identidade ... |
+| `packages/ai/src/auth/pool.ts` | codigo | omp-novo | `packages/ai/src/auth` | 875L; Cache em memoria de credenciais multi-conta por provedor com sincronizacao de provedores pausados, adocao de alteracoes externa... |
+| `packages/ai/src/auth/rank.ts` | codigo | omp-novo | `packages/ai/src/auth` | 179L; Define tipos e comparador deterministico de ranking multi-criterio (bloqueios, elegibilidade de plano, serviceTier, cota gasta/... |
+| `packages/ai/src/auth/refresh.ts` | codigo | omp-novo | `packages/ai/src/auth` | 1312L; Implementa infraestrutura de refresh OAuth com lease distribuida em SQLite, renovacao em background da lease, hand-back para do... |
+| `packages/ai/src/auth/resets.ts` | codigo | omp-novo | `packages/ai/src/auth` | 320L; Implementa descoberta e resgate de creditos de reset de rate-limit salvos para Anthropic Claude (sequencial com idempotency key... |
+| `packages/ai/src/auth/rotation.ts` | codigo | omp-novo | `packages/ai/src/auth` | 676L; Implementa marcacao de limites de uso (enriquecida com janela de reset do UsageReport), bloqueio/rearme de serviceTier, invalid... |
+| `packages/ai/src/auth/select.ts` | codigo | omp-novo | `packages/ai/src/auth` | 1395L; Implementa selecao de credenciais (hash por sessao vs round-robin), ranking paralelo de API keys e OAuth com timeout nao-bloque... |
+| `packages/ai/src/auth/sqlite-credential-store.ts` | codigo | omp-novo | `packages/ai/src/auth` | 2330L; Define serializacao, resolucao de chaves de identidade (incluindo JWT claims e escopo por org), regras de substituicao sem dupl... |
+| `packages/ai/src/auth/store.ts` | codigo | omp-novo | `packages/ai/src/auth` | 266L; Define os contratos componíveis de persistência consumidos por `AuthStorage`: linhas de credenciais, cache KV, bloqueios duráve... |
+| `packages/ai/src/auth/types.ts` | codigo | omp-novo | `packages/ai/src/auth/types.ts` | mesmo caminho; Pi 073b0ba; 1527L; Define os tipos centrais de autenticação multi-conta: credenciais, políticas de roteamento por conta (`priority`, `reservePct`,... |
+| `packages/ai/src/auth/usage-cache.ts` | codigo | omp-novo | `packages/ai/src/auth` | 425L; Gerencia o cache persistente de relatórios de uso (`UsageCache`): chaves estáveis por identidade de conta (evitando misses em r... |
+| `packages/ai/src/auth/usage-report.ts` | codigo | omp-novo | `packages/ai/src/auth` | 283L; Fornece utilitários puros para deduplicação de relatórios de uso por conta/organização (`orgScopedIdentity`), verificação de ex... |
+| `packages/ai/src/auth/usage.ts` | codigo | omp-novo | `packages/ai/src/auth` | 999L; Implementa a primeira parte do `UsageService`: resolução de provedores de uso (runtime > configurado > padrão), probe com refre... |
+| `packages/ai/src/dialect/anthropic.md` | doc | omp-novo | sem equivalente | 31L; Prompt de formato do dialeto Anthropic XML (`<function_calls>`, `<invoke>`, `<parameter>`, `<function_results>`) instruindo saí... |
+| `packages/ai/src/dialect/anthropic.ts` | codigo | omp-novo | sem equivalente | 586L; Scanner e renderizador do dialeto Anthropic XML: máquina de estados em streaming para `<function_calls>`/`<antml:function_calls... |
+| `packages/ai/src/dialect/catalog.ts` | codigo | omp-novo | sem equivalente | 29L; Serializa o catálogo de ferramentas em JSON Schema por linha (`toolWireSchema`) e monta o prompt de sistema in-band substituind... |
+| `packages/ai/src/dialect/coercion.ts` | codigo | omp-novo | sem equivalente | 152L; Utilitários compartilhados pelos scanners/renderizadores de dialeto: detecção de parâmetros exclusivamente string no schema, co... |
+| `packages/ai/src/dialect/deepseek.md` | doc | omp-novo | sem equivalente | 24L; Prompt de formato do dialeto DeepSeek com tokens fullwidth (`<｜tool▁calls▁begin｜>`, `<｜tool▁sep｜>`, etc.), `<think>` e regras c... |
+| `packages/ai/src/dialect/deepseek.ts` | codigo | omp-novo | sem equivalente | 988L; Primeira parte do scanner DeepSeek: suporta tokens canônicos e re-soletreados (`_` por `▁` ou barra faltante) ignorando ocorrên... |
+| `packages/ai/src/dialect/demotion.ts` | codigo | omp-novo | sem equivalente | 40L; Demove texto de raciocínio de turnos anteriores para histórico nativo em trocas cross-model/cross-provider: envia texto nu na A... |
+| `packages/ai/src/dialect/examples.ts` | codigo | omp-novo | sem equivalente | 71L; Renderiza exemplos de uso de ferramentas em sintaxe Python kwargs uniforme entre dialetos (`<examples>` ou `@example` JSDoc par... |
+| `packages/ai/src/dialect/factory.ts` | codigo | omp-novo | sem equivalente | 34L; Registro central e factory que mapeia os 11 dialetos suportados (`glm`, `hermes`, `kimi`, `xml`, `anthropic`, `deepseek`, `mini... |
+| `packages/ai/src/dialect/fenced-thinking.ts` | codigo | omp-novo | sem equivalente | 198L; Matcher de fechamento orientado a linha para blocos ` ```thinking ` que rastreia fences aninhados com language tag (evitando va... |
+| `packages/ai/src/dialect/gemini.md` | doc | omp-novo | sem equivalente | 44L; Prompt de formato do dialeto Gemini (` ```tool_code `com chamadas`default_api.fn(...)`ou lista Python`[...]`,` ```tool_out... |
+| `packages/ai/src/dialect/gemini.ts` | codigo | omp-novo | sem equivalente | 589L; Scanner e renderizador do dialeto Gemini: integra `FencedThinkingScanner` e `TerminatorWait`, faz parse completo de chamadas Py... |
+| `packages/ai/src/dialect/gemma.md` | doc | omp-novo | sem equivalente | 33L; Prompt de formato do dialeto Gemma 4 com delimitadores `<\|tool_call>call:NAME{...}<tool_call\|>`, strings `<\|"\|>...<\|"\|>`, `<\|to... |
+| `packages/ai/src/dialect/gemma.ts` | codigo | omp-novo | sem equivalente | 419L; Scanner incremental e renderizador do dialeto Gemma 4: retoma scan do closer `<tool_call\|>` via `#closeScan` pulando spans `<\|"... |
+| `packages/ai/src/dialect/glm.md` | doc | omp-novo | sem equivalente | 32L; Prompt de formato do dialeto GLM com blocos `<tool_call>nome\n<arg_key>...</arg_key><arg_value>...</arg_value></tool_call>`, `<... |
+| `packages/ai/src/dialect/glm.ts` | codigo | omp-novo | sem equivalente | 579L; Scanner e renderizador do dialeto GLM: máquina de estados em streaming com cura de fechamento de valor (`scanValueHeal`) para r... |
+| `packages/ai/src/dialect/harmony.md` | doc | omp-novo | sem equivalente | 31L; Prompt de formato do dialeto Harmony usando tokens de canal (`<\|start\|>assistant<\|channel\|>commentary to=functions.fn<\|message\|... |
+| `packages/ai/src/dialect/harmony.ts` | codigo | omp-novo | sem equivalente | 341L; Implementa o scanner e renderizador do dialeto OpenAI Harmony (<\|start\|>, <\|channel\|>, <\|message\|>, <\|call\|>, <\|end\|>) separand... |
+| `packages/ai/src/dialect/hermes.md` | doc | omp-novo | sem equivalente | 25L; Prompt de instrucoes e regras para emissao de chamadas de ferramenta no formato Hermes (<tool_call> JSON). |
+| `packages/ai/src/dialect/hermes.ts` | codigo | omp-novo | sem equivalente | 205L; Scanner de streaming e renderizador ChatML para o dialeto Hermes com tags <tool_call>, <think> opcional, reparo de JSON e Termi... |
+| `packages/ai/src/dialect/history.ts` | codigo | omp-novo | sem equivalente | 81L; Converte historico estruturado (toolCall e toolResult) em mensagens textuais renderizadas no dialeto in-band selecionado preser... |
+| `packages/ai/src/dialect/index.ts` | codigo | omp-novo | sem equivalente | 15L; Barrel de exportacao do modulo dialect reexportando explicitamente apenas renderDelimitedThinking de rendering. |
+| `packages/ai/src/dialect/inventory.ts` | codigo | omp-novo | sem equivalente | 30L; Renderiza o catalogo de ferramentas no formato namespace functions { type <name> = ... } com comentarios de descricao e exemplo... |
+| `packages/ai/src/dialect/kimi.md` | doc | omp-novo | sem equivalente | 24L; Prompt de formato e regras do dialeto Kimi (<\|tool_calls_section_begin\|> e turns <\|im_system\|>). |
+| `packages/ai/src/dialect/kimi.ts` | codigo | omp-novo | sem equivalente | 343L; Scanner e renderizador para o dialeto Kimi K2 com suporte a secoes de chamadas indexadas (functions.NAME:INDEX), <think> e Term... |
+| `packages/ai/src/dialect/minimax.md` | doc | omp-novo | sem equivalente | 31L; Prompt de formato e regras para chamadas XML do dialeto MiniMax (<minimax:tool_call>, <invoke>, <function_results>). |
+| `packages/ai/src/dialect/minimax.ts` | codigo | omp-novo | sem equivalente | 74L; Define o dialeto MiniMax reutilizando AnthropicInbandScanner com tags wrapper <minimax:tool_call> e resultados <function_results>. |
+| `packages/ai/src/dialect/owned-stream.ts` | codigo | omp-novo | sem equivalente | 512L; Projeta um fluxo AssistantMessageEventStream via scanner in-band, interrompendo fabricacao de tool_response, arbitrando canal n... |
+| `packages/ai/src/dialect/prompt-template.md` | doc | omp-novo | sem equivalente | 12L; Template base de instrucao de ferramentas in-band com placeholders {{TOOLS}} e {{DIALECT}}. |
+| `packages/ai/src/dialect/qwen-xml.ts` | codigo | omp-novo | sem equivalente | 88L; Scanner auxiliar para o formato Qwen XML auto-fechado (<tool_calls><fn arg="val"/></tool_calls>) usando TerminatorWait. |
+| `packages/ai/src/dialect/qwen3.md` | doc | omp-novo | sem equivalente | 28L; Prompt de formato e regras para chamadas <tool_call> JSON e raciocinio <think> no dialeto Qwen3. |
+| `packages/ai/src/dialect/qwen3.ts` | codigo | omp-novo | sem equivalente | 235L; Scanner e renderizador ChatML (com toolResultRole user) para o dialeto Qwen3 com suporte a <think>, reparo JSON e TerminatorWait. |
+| `packages/ai/src/dialect/rendering.ts` | codigo | omp-novo | sem equivalente | 322L; Primitivas internas de renderizacao compartilhadas pelos dialetos: literais Python (pyCall/pyValue), XML invoke/parameter, Chat... |
+| `packages/ai/src/dialect/terminator-wait.ts` | codigo | omp-novo | sem equivalente | 42L; Buffer incremental que adia concatenacao e varredura enquanto aguarda uma tag de fechamento fixa, evitando custo O(n^2) em cham... |
+| `packages/ai/src/dialect/thinking-fence-strip.ts` | codigo | omp-novo | sem equivalente | 92L; Stripper streaming linha-a-linha que remove aberturas isoladas ```thinking / ```reasoning vazadas dentro de blocos estruturados... |
+| `packages/ai/src/dialect/thinking.ts` | codigo | omp-novo | sem equivalente | 347L; Scanner multi-dialeto para curar raciocinio vazado no canal de texto visivel, ignorando tags dentro de trechos/cercas de codigo... |
+| `packages/ai/src/dialect/types.ts` | codigo | omp-novo | sem equivalente | 64L; Contratos e tipos centrais do subsistema de dialetos in-band (eventos de scan, interface de scanner e definicao de dialeto). |
+| `packages/ai/src/dialect/xml.md` | doc | omp-novo | sem equivalente | 22L; Prompt de formato e regras do dialeto XML generico (<invoke>/<parameter> lido literalmente por delimitadores). |
+| `packages/ai/src/dialect/xml.ts` | codigo | omp-novo | sem equivalente | 74L; Definicao do dialeto XML generico delegando o scanner entre AnthropicInbandScanner e DeepSeekInbandScanner conforme xmlTagset. |
+| `packages/ai/src/embeddings/index.ts` | codigo | omp-novo | sem equivalente | 17L; Ponto de entrada do modulo embeddings despachando requisicoes pelo model.api. |
+| `packages/ai/src/embeddings/openai-embeddings.ts` | codigo | omp-novo | sem equivalente | 128L; Cliente HTTP para endpoints de embeddings compativeis com OpenAI/OpenRouter usando withAuth, validacao omptype e calculo de custo. |
+| `packages/ai/src/embeddings/types.ts` | codigo | omp-novo | sem equivalente | 14L; Interfaces de requisicao e resultado de embeddings. |
+| `packages/ai/src/env-api-key.ts` | codigo | omp-novo | `packages/ai/src/env-api-keys.ts` | 80L; Resolve chaves de API de variaveis de ambiente combinando catalogo, registro de provedores e chaves legadas (search tools). |
+| `packages/ai/src/error/abort.ts` | codigo | omp-novo | `packages/ai/src/utils/abort.ts` | 30L; Define AbortError com Flag.Abort estrutural e helper callerAbortReason para extrair motivo de cancelamento do AbortSignal. |
+| `packages/ai/src/error/auth-classify.ts` | codigo | omp-novo | `packages/ai/src/utils` | 113L; Classificadores de erros de autenticacao/OAuth para decidir revogacao definitiva, renovacao de token ou rotacao de credencial. |
+| `packages/ai/src/error/auth.ts` | codigo | omp-novo | `packages/ai/src/utils` | 79L; Classes de erro de autenticacao e fluxo de login com flags estruturais (AuthFailed, Transient, Abort). |
+| `packages/ai/src/error/aws.ts` | codigo | omp-novo | `packages/ai/src/utils` | 49L; Erros tipados para resolucao de credenciais AWS (SSO, STS, container, credential_process) e frames malformados/truncados do Eve... |
+| `packages/ai/src/error/body-error.ts` | codigo | omp-novo | `packages/ai/src/utils` | 310L; Detecta falhas 429/5xx in-band dentro de corpos HTTP 200 ou frames SSE nao-JSON e converte em ProviderHttpError/ProviderRespons... |
+| `packages/ai/src/error/classes.ts` | codigo | omp-novo | `packages/ai/src/utils` | 344L; Hierarquia de erros HTTP/stream de provedores, drenagem limitada (5s/64KiB) de erro da Anthropic e rastreamento de progresso de... |
+| `packages/ai/src/error/finalize.ts` | codigo | omp-novo | `packages/ai/src/utils` | 85L; Normaliza catch blocks de provedores produzindo stopReason, status, errorId classificado e mensagem final com prioridade para a... |
+| `packages/ai/src/error/flags.ts` | codigo | omp-novo | `packages/ai/src/utils` | 1286L; Primeira metade de flags.ts: define bitmask Flag, regexes de overflow vs payload 413, transporte transitorio, politicas de cont... |
+| `packages/ai/src/error/format.ts` | codigo | omp-novo | `packages/ai/src/utils` | 49L; Formata mensagens de erro de provedor unificando retry-after, dump de requisicao e reescritas especificas para Copilot, ClinePa... |
+| `packages/ai/src/error/gateway.ts` | codigo | omp-novo | `packages/ai/src/utils` | 96L; Classifica erros arbitrarios no auth-gateway em status HTTP e tipo OpenAI/Anthropic evitando falsos positivos como rate em Gene... |
+| `packages/ai/src/error/index.ts` | codigo | omp-novo | `packages/ai/src/utils` | 16L; Barrel de exportacao de todos os modulos de erro em packages/ai/src/error. |
+| `packages/ai/src/error/network-cause.ts` | codigo | omp-novo | `packages/ai/src/utils` | 179L; Diagnosticador de falhas de rede em fetch (Bun/Node/undici) percorrendo cause/errors para classificar offline, unreachable, ref... |
+| `packages/ai/src/error/oauth.ts` | codigo | omp-novo | `packages/ai/src/utils` | 80L; Erro unificado para fluxos OAuth/device-code discriminado por estagio (kind) e veredito definitivo do provedor (Flag.OAuthExpiry). |
+| `packages/ai/src/error/provider.ts` | codigo | omp-novo | `packages/ai/src/utils` | 64L; Erros de resposta nao-HTTP (stream incompleto, corpo/saida vazia, envelope, bloqueio de conteudo) e subclasses HTTP para Devin ... |
+| `packages/ai/src/error/rate-limit.ts` | codigo | omp-novo | `packages/ai/src/utils` | 634L; Classificador detalhado de rate-limits, cotas, Google RPC RESOURCE_EXHAUSTED, billing caps 402, zero-allowance headers e frases... |
+| `packages/ai/src/error/retryable.ts` | codigo | omp-novo | `packages/ai/src/utils` | 75L; Politica de retry em nivel de provedor na mesma credencial: exclui usage limits, honra x-should-retry, bloqueia 4xx terminais (... |
+| `packages/ai/src/error/validation.ts` | codigo | omp-novo | `packages/ai/src/utils/validation.ts` | 44L; Erros tipados de validacao de entrada, configuracao e timeout de stream (com Flag.Transient e Flag.Timeout). |
+| `packages/ai/src/images/codex-format-directive.md` | doc | omp-novo | `packages/ai/src/images.ts` | 3L; Diretiva de prompt para instruir formato/dimensao/proporcao de imagem ao backend Codex Responses. |
+| `packages/ai/src/images/factory-droid-gemini-system.md` | doc | omp-novo | `packages/ai/src/images.ts` | 1L; Template de system instruction para geracao/edicao de imagem via Gemini no proxy Factory Droid. |
+| `packages/ai/src/images/factory-droid.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 211L; Cliente de geracao/edicao de imagens via proxy Factory Droid roteando entre Gemini SSE e OpenAI Images com validacao previa de ... |
+| `packages/ai/src/images/google-antigravity.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 179L; Cliente de geracao de imagens via endpoint Antigravity (Cloud Code Assist) com descoberta de modelo e fallback entre endpoints. |
+| `packages/ai/src/images/google-generative-ai.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 111L; Cliente de geracao/edicao de imagens via Gemini generateContent API e utilitarios compartilhados de montagem de partes e agrega... |
+| `packages/ai/src/images/index.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 55L; Despachante unificado de geracao e edicao de imagens por hooks de provedor, Factory Droid ou model.api. |
+| `packages/ai/src/images/openai-hosted.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 231L; Geracao/edicao de imagens via tool image_generation na OpenAI Responses e Codex Responses API (SSE + diretiva de formato). |
+| `packages/ai/src/images/openai-images.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 135L; Cliente de imagens para OpenAI (JSON /generations e multipart FormData /edits com image[] e fallback 404) e xAI (JSON /edits). |
+| `packages/ai/src/images/openrouter-images.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 33L; Cliente de geracao/edicao de imagens para o endpoint /images do OpenRouter. |
+| `packages/ai/src/images/shared.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 280L; Helpers compartilhados de transporte de imagem: postJson/postMultipart com withAuth, download de URL, sniff de MIME em 64 chars... |
+| `packages/ai/src/images/types.ts` | codigo | omp-novo | `packages/ai/src/images.ts` | 45L; Tipos do subsistema de geracao/edicao de imagens incluindo suporte a carrier e sessionId. |
+| `packages/ai/src/index.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/index.ts` | mesmo caminho; Pi 073b0ba; +75/-9; 75L; Barrel raiz de @oh-my-pi/pi-ai exportando APIs principais, midia, julgamento, uso, auth e utilitarios. |
+| `packages/ai/src/judgment/chat.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 109L; Backend TextBackend sobre modelos de chat usando maxTokens=4096 para comportar preambulos de reasoning, temperatura 0 e tool su... |
+| `packages/ai/src/judgment/google-decisions.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 147L; Dialeto wire do Gemini Decisions API (/v1beta/decisions) com mapeamento posicional q0..qN e conversao de criterios noul/choice. |
+| `packages/ai/src/judgment/index.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 5L; Barrel de exportacao do modulo judgment. |
+| `packages/ai/src/judgment/native.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 640L; Cliente unificado de julgamento nativo com chunking paralelo limitado, callback onPartialUsage, intersecao de limites de imagem... |
+| `packages/ai/src/judgment/openai-decisions-predicate.md` | doc | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 9L; Template Mustache para anexar descricoes True/False em perguntas predicate do OpenAI Decisions. |
+| `packages/ai/src/judgment/openai-decisions.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 157L; Implementa o dialeto `openaiDecisionsWire` para `/v1/decisions`, traduzindo perguntas `noul`/`choice`/`score` (rejeitando `box`... |
+| `packages/ai/src/judgment/question-file.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 90L; Carrega arquivos JSON de perguntas de julgamento inferindo o tipo (`score`, `noul`, `choice`) pela forma de `criteria` em tempo... |
+| `packages/ai/src/judgment/systemone.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 280L; Define dialetos wire para provedores System One (TypeSafe, OpenRouter Decisions, Cloudflare Workers AI Clef, Liquid AI e Nace D... |
+| `packages/ai/src/judgment/text-judge-retry.md` | doc | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 3L; Template curto de sistema anexado em retentativas de parse do `TextJudge` para reforçar resposta estrita com os rótulos esperad... |
+| `packages/ai/src/judgment/text-judge-state.md` | doc | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 5L; Template de mensagem de usuário do `TextJudge` contendo o bloco `State:` e a instrução final de formato de resposta (`<id>: <an... |
+| `packages/ai/src/judgment/text-judge.md` | doc | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 38L; Template de prompt de sistema do `TextJudge` que define a guarda contra prompt injection (`guardState`) e renderiza uma ou múlt... |
+| `packages/ai/src/judgment/text.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 328L; Bridge de julgamento por texto (`TextJudge`) independente de transporte: serializa o estado como campos XML e YAML aninhado, re... |
+| `packages/ai/src/judgment/types.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 175L; Define os tipos centrais do módulo de julgamento (`ChoiceQuestion`, `NoulQuestion`, `ScoreQuestion`, `BoxQuestion`, respostas e... |
+| `packages/ai/src/judgment/wire.ts` | codigo | omp-novo | `packages/coding-agent/src/extensions/goal/evaluator-model.ts` | 60L; Define o contrato interno `JudgmentWire` para endereçamento, codificação, capacidades de imagem/box e decodificação das APIs na... |
+| `packages/ai/src/oneshot-retry.ts` | codigo | omp-novo | `packages/ai/src/utils/retry.ts` | 243L; Implementa `retryTransientCompletion` para retentar falhas transitórias em chamadas oneshot (`AssistantMessage` com erro ou exc... |
+| `packages/ai/src/prompts/perturbation-pool.json.txt` | doc | omp-novo | sem equivalente | 33040L; Fatia 1/11 do JSON de pool de perturbação de prompts: cabeçalho do pool (`version: 1`, `deepseek-v4.1-flash`) e variantes de fr... |
+| `packages/ai/src/prompts/perturbation.ts` | codigo | omp-novo | sem equivalente | 417L; Reescrita determinística por instalação (`installId` + SHA-256) de prosa em `systemPrompt`, `tools` e `inactiveTools`, preserva... |
+| `packages/ai/src/prompts/thinking-probe.md` | prompt | omp-novo | sem equivalente | 1L; Prompt curto de sonda de raciocínio aritmético (`What is 17 times 23? Answer with only the number.`). |
+| `packages/ai/src/provider-details.ts` | codigo | omp-novo | `packages/ai/src/providers` | 90L; Coleta campos estruturados de diagnóstico do provedor ativo (`Model`, `API`, `Auth`, `Endpoint`, `Source` e detalhes de transpo... |
+| `packages/ai/src/provider-hooks.ts` | codigo | omp-novo | `packages/ai/src/providers` | 45L; Registro global de hooks por provedor para substituir `stream` e `generateImage` preservando metadados de `api`, políticas do c... |
+| `packages/ai/src/provider-session-state.ts` | codigo | omp-novo | `packages/ai/src/providers` | 59L; Limpa apenas o estado de sessão vinculado à conta (fast mode, threads Anthropic, `previous_response_id` OpenAI) em rotações de ... |
+| `packages/ai/src/providers/amazon-bedrock.ts` | codigo | omp-novo | `packages/ai/src/providers/amazon-bedrock.ts` | mesmo caminho; Pi 073b0ba; 1725L; Camada HTTP/SigV4 nativa para Amazon Bedrock (Converse Stream e `InvokeModelWithResponseStream` para compaction), resolução geo... |
+| `packages/ai/src/providers/anthropic-client.ts` | codigo | omp-novo | sem equivalente | 350L; Cliente HTTP mínimo para a API Anthropic Messages sem dependência do `@anthropic-ai/sdk`; implementa montagem de URL/headers de... |
+| `packages/ai/src/providers/anthropic-compaction.ts` | codigo | omp-novo | sem equivalente | 110L; Regras de elegibilidade para compactação server-side on-demand da Anthropic (e side-request do Bedrock Converse) por compat do ... |
+| `packages/ai/src/providers/anthropic-headers.ts` | codigo | omp-novo | sem equivalente | 418L; Construção e normalização case-insensitive de headers Anthropic (API key, OAuth Claude Code com fingerprint Stainless/betas, Cl... |
+| `packages/ai/src/providers/anthropic-http-options.ts` | codigo | omp-novo | sem equivalente | 148L; Resolução de baseUrl efetiva (Copilot, Foundry, `ANTHROPIC_BASE_URL`), opções de TLS/mTLS do Foundry com cache invalidado por `... |
+| `packages/ai/src/providers/anthropic-identity.ts` | codigo | omp-novo | sem equivalente | 167L; Derivação de `device_id` e geração/rebind de `metadata.user_id` JSON (mantendo `session_id` e trocando `account_uuid`/`device_i... |
+| `packages/ai/src/providers/anthropic-images.ts` | codigo | omp-novo | sem equivalente | 263L; Validação e redimensionamento pré-envio de imagens para o contrato Anthropic (8000px/2000px quando >20 imagens e teto de 10 MB ... |
+| `packages/ai/src/providers/anthropic-messages-server-schema.ts` | codigo | omp-novo | sem equivalente | 285L; Schemas ArkType para validação de entrada do gateway Anthropic Messages, cobrindo mensagens (`user`, `assistant`, `system` mid-... |
+| `packages/ai/src/providers/anthropic-messages-server.ts` | codigo | omp-novo | sem equivalente | 1046L; Primeira parte do adaptador servidor/gateway Anthropic Messages: traduz corpos HTTP Anthropic para `Context` interno (incluindo... |
+| `packages/ai/src/providers/anthropic-signature.ts` | codigo | omp-novo | sem equivalente | 133L; Decodificador protobuf mínimo do header em cleartext de assinaturas `thinking` da Anthropic para extrair o ID real do modelo se... |
+| `packages/ai/src/providers/anthropic-slow-mode.ts` | codigo | omp-novo | sem equivalente | 232L; Contrato wire e parser de headers para o slow mode de assinaturas Anthropic (`anthropic-usage-limit: slow`, `anthropic-ratelimi... |
+| `packages/ai/src/providers/anthropic-state.ts` | codigo | omp-novo | sem equivalente | 103L; Helpers de URL e estado de sessão do provider Anthropic: normalização de `baseUrl`, resolução de endpoint direto (Foundry/env),... |
+| `packages/ai/src/providers/anthropic-threads.ts` | codigo | omp-novo | sem equivalente | 464L; Gerenciador de Anthropic Message Threads (`message-threads-2026-08-12`): LRU de cadeias por sessão, janela de reuso de 270s, fi... |
+| `packages/ai/src/providers/anthropic-user-profiles.ts` | codigo | omp-novo | sem equivalente | 196L; Cliente REST para a API beta Anthropic User Profiles (`/v1/user_profiles`, `user-profiles-2026-09-04`), com validação ArkType d... |
+| `packages/ai/src/providers/anthropic-wire.ts` | codigo | omp-novo | sem equivalente | 517L; Definições de tipos wire da API Anthropic Messages mantidas manualmente (request, content blocks, `compaction`, `fallback`, `th... |
+| `packages/ai/src/providers/anthropic.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/providers/anthropic.ts` | mesmo caminho; Pi 073b0ba; +7050/-427; 7209L; Parte 1 do provider Anthropic: estado por sessão/cliente opaco, cálculo e injeção binária do hash de atestação `cch` (`xxHash64... |
+| `packages/ai/src/providers/antigravity-cli.ts` | codigo | omp-novo | sem equivalente | 125L; Entrypoint do provedor Antigravity CLI (antigravity-acp): prepara diretório isolado de credenciais por conta, reutiliza AgyHost... |
+| `packages/ai/src/providers/antigravity-cli/agent.md` | doc | omp-novo | sem equivalente | 9L; Definição mínima de agente ACP ("bridge") sem ferramentas nativas nem customizações herdadas para que o host forneça prompt de ... |
+| `packages/ai/src/providers/antigravity-cli/binary.ts` | codigo | omp-novo | sem equivalente | 206L; Instalador e atualizador gerenciado do binário oficial agy a partir do manifesto do Google (com lock de arquivo, detecção de mu... |
+| `packages/ai/src/providers/antigravity-cli/conversation-store.ts` | codigo | omp-novo | sem equivalente | 202L; Leitura de checkpoints em SQLite do agy com fingerprint SHA-256 de prefixo e fork WAL-safe via VACUUM INTO com truncamento tran... |
+| `packages/ai/src/providers/antigravity-cli/credentials.ts` | codigo | omp-novo | sem equivalente | 292L; Parsing, staging atômico sob lock em diretório isolado (--gemini-dir), isolamento de keychain via SSH_TTY e refresh OAuth Googl... |
+| `packages/ai/src/providers/antigravity-cli/host.ts` | codigo | omp-novo | sem equivalente | 1093L; Orquestrador de processo ACP stateful do agy: gerencia ciclo de vida do subprocesso, retomada/fork/replay de turnos, estacionam... |
+| `packages/ai/src/providers/antigravity-cli/late-tool-result.md` | doc | omp-novo | sem equivalente | 2L; Template de prompt para entregar o resultado tardio de uma ferramenta cujo turno ACP anterior foi cancelado antes do timeout do... |
+| `packages/ai/src/providers/antigravity-cli/mcp-bridge.ts` | codigo | omp-novo | sem equivalente | 195L; Servidor TCP loopback NDJSON implementando MCP (initialize, ping, tools/list, tools/call) para a ponte --ide-mcp-port do agy co... |
+| `packages/ai/src/providers/antigravity-cli/reconcile.ts` | codigo | omp-novo | sem equivalente | 212L; Reconciliação do histórico omp com o estado vivo ou checkpoints do agy via digest SHA-256 de conteúdo, gerando blocos de replay... |
+| `packages/ai/src/providers/antigravity-cli/step-writer.ts` | codigo | omp-novo | sem equivalente | 159L; Adaptador que converte eventos incrementais ACP em AssistantMessageEventStream do omp (deltas de texto/thinking, toolCall atômi... |
+| `packages/ai/src/providers/antigravity-cli/tool-result-image-reference.md` | doc | omp-novo | sem equivalente | 1L; Template curto referenciando imagens de tool_result entregues fora de banda no bloco de prompt ACP. |
+| `packages/ai/src/providers/antigravity-cli/tool-result-images.md` | doc | omp-novo | sem equivalente | 1L; Tag de abertura `<tool_result ...>` usada ao entregar imagens de resultado de ferramenta via prompt ACP. |
+| `packages/ai/src/providers/antigravity-cli/transcript.md` | doc | omp-novo | sem equivalente | 2L; Cabeçalho `<conversation-checkpoint>` instruindo o agy a tratar mensagens replayed como histórico e continuar da nova entrada. |
+| `packages/ai/src/providers/apple-foundation-models.ts` | codigo | omp-novo | sem equivalente | 426L; Provedor on-device Apple Foundation Models via bridge Swift em pi-natives: reduz o histórico para Transcript entries, atribui l... |
+| `packages/ai/src/providers/aws-credentials.ts` | codigo | omp-novo | sem equivalente | 1138L; Cadeia completa de credenciais AWS sem SDK externo: cache single-flight desacoplado de abort, leitura de env/web-identity/perfi... |
+| `packages/ai/src/providers/aws-eventstream.ts` | codigo | omp-novo | sem equivalente | 272L; Decodificador streaming zero-copy (em chunks inteiros) para `application/vnd.amazon.eventstream` com validação prévia de CRC32 ... |
+| `packages/ai/src/providers/aws-sigv4.ts` | codigo | omp-novo | sem equivalente | 223L; Assinatura AWS Signature V4 baseada apenas em WebCrypto (sem node:crypto), com canonicalização RFC 3986 de path/query (ordenand... |
+| `packages/ai/src/providers/azure-openai-responses.ts` | codigo | omp-novo | sem equivalente | 451L; Provedor Azure OpenAI Responses usando postOpenAIStream com timeouts de primeiro evento e ociosidade, fallback automático de re... |
+| `packages/ai/src/providers/bedrock-anthropic.ts` | codigo | omp-novo | sem equivalente | 30L; Adapta payloads Anthropic Messages para a API Anthropic no Bedrock removendo `tool.strict` e ajustando ou removendo `metadata.u... |
+| `packages/ai/src/providers/bedrock-mantle.ts` | codigo | omp-novo | sem equivalente | 110L; Adaptador Bedrock Mantle sobre OpenAI Responses que resolve região e assina requisições com AWS SigV4 (ou Bearer token), invali... |
+| `packages/ai/src/providers/bedrock-request-metadata.ts` | codigo | omp-novo | sem equivalente | 6L; Validador de formato e tamanho máximo (256 caracteres) para valores de request-metadata do AWS Bedrock. |
+| `packages/ai/src/providers/claude-code-fingerprint.ts` | codigo | omp-novo | sem equivalente | 82L; Constantes folha de fingerprint do Claude Code CLI (evitando ciclo de import com oauth/anthropic) e mecanismo `adoptRequiredCla... |
+| `packages/ai/src/providers/connect-error-detail.ts` | codigo | omp-novo | sem equivalente | 100L; Formatação diagnóstica de trailers de erro end-stream do protocolo Connect (incluindo `aiserver.v1.ErrorDetails` do Cursor) pre... |
+| `packages/ai/src/providers/connect-frame.ts` | codigo | omp-novo | sem equivalente | 107L; Enquadramento e decodificador incremental O(n) de frames do protocolo Connect (1 byte de flag + 4 bytes big-endian + payload) c... |
+| `packages/ai/src/providers/connection-prewarm.ts` | codigo | omp-novo | sem equivalente | 78L; Pré-aquecimento throttled (30s por origem) de sockets pooled via requisições `HEAD` sem credenciais usando o mesmo transporte (... |
+| `packages/ai/src/providers/cowork-fetch.ts` | codigo | omp-novo | sem equivalente | 350L; Transporte HTTPS HTTP/1.1 via `node:https` com perfil TLS Cowork, ordenação estável de headers, escrita chunked com `drain`, de... |
+| `packages/ai/src/providers/cursor-external-tool-handoff.md` | doc | omp-novo | sem equivalente | 1L; Mensagem sintética de handoff informando ao modelo Cursor que a execução externa assumiu a tool call e o resultado virá na próx... |
+| `packages/ai/src/providers/cursor-pi-args.ts` | codigo | omp-novo | sem equivalente | 260L; Funções puras compartilhadas entre provedor, bridge e shim legado para traduzir argumentos de frames Cursor/Pi (seletores `:raw... |
+| `packages/ai/src/providers/cursor.ts` | codigo | omp-novo | sem equivalente | 7598L; Cabeçalho e tipos centrais do provedor Cursor HTTP/2 Connect: sanitização estrita de headers HTTP/2, tabelas completas de códig... |
+| `packages/ai/src/providers/cursor/exec-modern.ts` | codigo | omp-novo | sem equivalente | 501L; Builders protobuf puros para respostas dos frames `exec` modernos (`pi_*`, `mcpStateExec`, `executeHook`) com tradução unificad... |
+| `packages/ai/src/providers/cursor/exec-order.ts` | codigo | omp-novo | sem equivalente | 65L; Fila de ordenação de frames `exec` que permite leituras concorrentes e serializa mutações exclusivas em ordem de chegada, mante... |
+| `packages/ai/src/providers/cursor/interaction-query.ts` | codigo | omp-novo | sem equivalente | 209L; Tratador de `InteractionQuery` bidirecional que aprova buscas/fetch hospedados (incluindo campos desconhecidos via `$unknown`),... |
+| `packages/ai/src/providers/cursor/proto/agent.proto` | codigo | omp-novo | sem equivalente | 4565L; Definições protobuf (enums, mensagens de `ToolCall`, `ConversationAction`, `ConversationStateStructure`, `FileState` e `ModelDe... |
+| `packages/ai/src/providers/devin.ts` | codigo | omp-novo | sem equivalente | 905L; Implementacao principal do provider devin-agent via protocolo Connect+proto sobre HTTP/1.1: autenticacao GetUserJwt, resolucao ... |
+| `packages/ai/src/providers/devin/proto/buf/validate/validate.proto` | codigo | omp-novo | sem equivalente | 468L; Schema protobuf padrao do protovalidate (buf.validate) definindo regras de validacao de campos, tipos escalares, strings, bytes... |
+| `packages/ai/src/providers/devin/proto/cel/expr/checked.proto` | codigo | omp-novo | sem equivalente | 103L; Schema protobuf padrao CEL (cel.expr) para expressoes tipadas/checadas, declaracoes de identificadores/funcoes e referencias. |
+| `packages/ai/src/providers/devin/proto/cel/expr/eval.proto` | codigo | omp-novo | sem equivalente | 38L; Schema protobuf padrao CEL (cel.expr) para estado de avaliacao de expressoes, valores resultantes, erros e desconhecidos. |
+| `packages/ai/src/providers/devin/proto/cel/expr/explain.proto` | codigo | omp-novo | sem equivalente | 15L; Schema protobuf padrao CEL (cel.expr) para passos de explicacao de avaliacao de expressoes. |
+| `packages/ai/src/providers/devin/proto/cel/expr/syntax.proto` | codigo | omp-novo | sem equivalente | 113L; Schema protobuf padrao CEL (cel.expr) para AST de expressoes parseadas, literais constantes e informacoes de codigo-fonte. |
+| `packages/ai/src/providers/devin/proto/cel/expr/value.proto` | codigo | omp-novo | sem equivalente | 41L; Schema protobuf padrao CEL (cel.expr) para representacao de valores em tempo de execucao. |
+| `packages/ai/src/providers/devin/proto/connectext/grpc/status/v1/status.proto` | codigo | omp-novo | sem equivalente | 11L; Definicao protobuf minima de grpc.status.v1.Status usada pelo Connect para detalhes de erro Any. |
+| `packages/ai/src/providers/devin/proto/errorspb/errors.proto` | codigo | omp-novo | sem equivalente | 56L; Schema protobuf cockroach.errorspb para serializacao de arvores de erro encadeadas, marcadores de tipo e payloads de errno. |
+| `packages/ai/src/providers/devin/proto/errorspb/hintdetail.proto` | codigo | omp-novo | sem equivalente | 7L; Schema protobuf cockroach.errorspb para payload de mensagem de dica (StringPayload). |
+| `packages/ai/src/providers/devin/proto/errorspb/markers.proto` | codigo | omp-novo | sem equivalente | 10L; Schema protobuf cockroach.errorspb para payload de marcadores de erro (MarkPayload). |
+| `packages/ai/src/providers/devin/proto/errorspb/tags.proto` | codigo | omp-novo | sem equivalente | 12L; Schema protobuf cockroach.errorspb para pares chave-valor de tags anexadas a erros. |
+| `packages/ai/src/providers/devin/proto/errorspb/testing.proto` | codigo | omp-novo | sem equivalente | 6L; Mensagem vazia TestError do pacote cockroach.errorspb. |
+| `packages/ai/src/providers/devin/proto/exa/analytics_pb/analytics.proto` | codigo | omp-novo | sem equivalente | 188L; Definicao protobuf de AnalyticsService da Codeium/Devin para telemetria de comandos, prompts, completions, contexto e trajetori... |
+| `packages/ai/src/providers/devin/proto/exa/api_server_pb/api_server.proto` | codigo | omp-novo | sem equivalente | 2461L; Parte 1 do schema protobuf de ApiServerService (Codeium/Devin): enums de tipo de chat/feedback, mensagens de AssignModel/Assign... |
+| `packages/ai/src/providers/devin/proto/exa/auth_pb/auth.proto` | codigo | omp-novo | sem equivalente | 19L; Definicao protobuf de AuthService/GetUserJwt usada pelo provider Devin para trocar apiKey por user_jwt e URL customizada do ser... |
+| `packages/ai/src/providers/devin/proto/exa/auto_cascade_common_pb/auto_cascade_common.proto` | codigo | omp-novo | sem equivalente | 79L; Schema protobuf de tipos comuns do Auto-Cascade (status de PR/CI no GitHub e metadados de sessoes). |
+| `packages/ai/src/providers/devin/proto/exa/browser_preview_pb/browser_preview.proto` | codigo | omp-novo | sem equivalente | 32L; Schema protobuf de BrowserPreviewService para envio de elementos DOM, screenshots e logs de console do preview. |
+| `packages/ai/src/providers/devin/proto/exa/bug_checker_pb/bug_checker.proto` | codigo | omp-novo | sem equivalente | 22L; Schema protobuf minimo para representacao de bugs detectados e patches sugeridos (Bug, Fix). |
+| `packages/ai/src/providers/devin/proto/exa/cascade_plugins_pb/cascade_plugins.proto` | codigo | omp-novo | sem equivalente | 262L; Schema protobuf de CascadePluginsService para catalogo/instalacao de plugins locais ou remotos, registro de servidores MCP e re... |
+| `packages/ai/src/providers/devin/proto/exa/chat_client_server_pb/chat_client_server.proto` | codigo | omp-novo | sem equivalente | 57L; Schema protobuf de ChatClientServerService para stream de acoes e inputs do cliente para o painel de chat/Cascade. |
+| `packages/ai/src/providers/devin/proto/exa/chat_pb/chat.proto` | codigo | omp-novo | sem equivalente | 449L; Schema protobuf de mensagens de chat, intents, metricas, DeepWiki, ChatMessagePrompt (thinking, signatures, tool_calls, imagens... |
+| `packages/ai/src/providers/devin/proto/exa/code_edit/code_edit_pb/code_edit.proto` | codigo | omp-novo | sem equivalente | 186L; Schema protobuf para mudancas de codigo com contexto semantico (CodeContextItemChange, FileChange) e avaliacao/metricas de retr... |
+| `packages/ai/src/providers/devin/proto/exa/codeium_common_pb/codeium_common.proto` | codigo | omp-novo | sem equivalente | 4157L; Parte 1 de codeium_common.proto contendo enums principais de ProviderSource, ExperimentKey, ModelAlias, Model (catalogo de IDs ... |
+| `packages/ai/src/providers/devin/proto/exa/context_module_pb/context_module.proto` | codigo | omp-novo | sem equivalente | 175L; Schema Protobuf do módulo de contexto para eventos incrementais de mudança (documento ativo, cursor, chat, nós), metadados de r... |
+| `packages/ai/src/providers/devin/proto/exa/cortex_pb/cortex.proto` | codigo | omp-novo | sem equivalente | 3268L; Schema Protobuf inicial do motor agêntico Cortex/Cascade definindo tipos e status de steps, variantes de ferramentas de edição,... |
+| `packages/ai/src/providers/devin/proto/exa/dev_pb/dev.proto` | codigo | omp-novo | sem equivalente | 26L; Schema Protobuf mínimo do DevService expondo RPCs de desenvolvimento e consulta de itens de completion LSP. |
+| `packages/ai/src/providers/devin/proto/exa/diff_action_pb/diff_action.proto` | codigo | omp-novo | sem equivalente | 75L; Schema Protobuf para representação de diffs unificados, por caractere, combinados e blocos de diff com faixa de linhas e lingua... |
+| `packages/ai/src/providers/devin/proto/exa/eval/pr_eval/datasets_pb/datasets.proto` | codigo | omp-novo | sem equivalente | 103L; Schema Protobuf de configuração de filtragem de trajetórias, cálculo de scores e geração/mesclagem de pares de preferência para... |
+| `packages/ai/src/providers/devin/proto/exa/eval_pb/eval.proto` | codigo | omp-novo | sem equivalente | 1315L; Schema Protobuf de avaliação cobrindo tipos de deleção, configurações de eval de autocomplete/chat/PR, tarefas e resultados de ... |
+| `packages/ai/src/providers/devin/proto/exa/extension_server_pb/extension_server.proto` | codigo | omp-novo | sem equivalente | 556L; Schema Protobuf do serviço gRPC ExtensionServerService usado pelo Language Server para acionar recursos da extensão IDE (termin... |
+| `packages/ai/src/providers/devin/proto/exa/file_system_provider_pb/file_system_provider.proto` | codigo | omp-novo | sem equivalente | 75L; Schema Protobuf do FileSystemProviderService provendo operações em lote de Stat, ReadDirectory e ReadFile com tipos de arquivo ... |
+| `packages/ai/src/providers/devin/proto/exa/index_pb/index.proto` | codigo | omp-novo | sem equivalente | 461L; Schema Protobuf dos serviços IndexManagementService e IndexService para gerenciamento de repositórios, status de indexação veto... |
+| `packages/ai/src/providers/devin/proto/exa/knowledge_base_pb/knowledge_base.proto` | codigo | omp-novo | sem equivalente | 144L; Schema Protobuf do KnowledgeBaseService para CRUD de itens de base de conhecimento externa, conexões OAuth com conectores e bus... |
+| `packages/ai/src/providers/devin/proto/exa/language_server_pb/language_server.proto` | codigo | omp-novo | sem equivalente | 2385L; Schema Protobuf inicial do Language Server definindo ações de IDE, requisições/respostas de streaming para comandos e Tab/Super... |
+| `packages/ai/src/providers/devin/proto/exa/model_management_pb/model_management.proto` | codigo | omp-novo | sem equivalente | 186L; Schema Protobuf de gerenciamento de modelos e servidores de inferência (adição/remoção, configuração de GPU/paralelismo/specula... |
+| `packages/ai/src/providers/devin/proto/exa/opensearch_clients_pb/opensearch_clients.proto` | codigo | omp-novo | sem equivalente | 503L; Schema Protobuf para indexação de código e base de conhecimento via OpenSearch com conectores Slack, GitHub, Google Drive e Jir... |
+| `packages/ai/src/providers/devin/proto/exa/product_analytics_pb/product_analytics.proto` | codigo | omp-novo | sem equivalente | 37L; Schema Protobuf do serviço de telemetria de eventos de produto (ProductAnalyticsService). |
+| `packages/ai/src/providers/devin/proto/exa/prompt_pb/prompt.proto` | codigo | omp-novo | sem equivalente | 92L; Schema Protobuf de composição de prompts unificados, intenção de comandos, feedback de supercomplete e multiplicadores de orçam... |
+| `packages/ai/src/providers/devin/proto/exa/reactive_component_pb/reactive_component.proto` | codigo | omp-novo | sem equivalente | 96L; Schema Protobuf para sincronização reativa incremental via diffs estruturados (MessageDiff, RepeatedDiff, MapDiff) sobre stream... |
+| `packages/ai/src/providers/devin/proto/exa/seat_management_pb/seat_management.proto` | codigo | omp-novo | sem equivalente | 2680L; Primeira parte do schema Protobuf de gestão de assentos, contas de usuário/time, pré-aprovações, assinaturas Stripe e créditos ... |
+| `packages/ai/src/providers/devin/proto/exa/tokenizer_pb/tokenizer.proto` | codigo | omp-novo | sem equivalente | 37L; Schema Protobuf mínimo para representação de tokenizadores BPE e pré-tokenizadores (GPT2, CL100K, QWEN2). |
+| `packages/ai/src/providers/devin/proto/exa/trainer_pb/config.proto` | codigo | omp-novo | sem equivalente | 647L; Schema Protobuf de configuração de treinamento e inferência de modelos (RoPE, MLA, MoE, DPO/KTO/GRPO, quantização, paralelismo ... |
+| `packages/ai/src/providers/devin/proto/exa/tree_sitter/language_data_pb/language_data.proto` | codigo | omp-novo | sem equivalente | 14L; Schema Protobuf simples descrevendo tipos de nós de bloco tree-sitter por linguagem. |
+| `packages/ai/src/providers/devin/proto/exa/trust_pb/trust.proto` | codigo | omp-novo | sem equivalente | 157L; Schema Protobuf de eventos antifraude e confiança (fanout de contas, múltiplos IPs, abuso cibernético, verificação Hunter e ver... |
+| `packages/ai/src/providers/devin/proto/exa/user_analytics_pb/user_analytics.proto` | codigo | omp-novo | sem equivalente | 519L; Schema Protobuf do serviço de analytics de uso (completions, chats, linhas Cascade, leaderboard BigQuery e consumo ACU Devin). |
+| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/base/api_base.proto` | codigo | omp-novo | sem equivalente | 28L; Tipos primitivos Protobuf (proto2) importados do pacote interno do Google App Engine. |
+| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/datastore/datastore_v3.proto` | codigo | omp-novo | sem equivalente | 484L; Definições Protobuf v3 do Datastore interno do Google App Engine (entidades, índices, cursores, transações e consultas). |
+| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/log/log_service.proto` | codigo | omp-novo | sem equivalente | 136L; Definições Protobuf do serviço de logs do Google App Engine (RequestLog, consulta e uso). |
+| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/remote_api/remote_api.proto` | codigo | omp-novo | sem equivalente | 42L; Definições Protobuf da RPC remote_api do Google App Engine. |
+| `packages/ai/src/providers/devin/proto/google.golang.org/appengine/internal/urlfetch/urlfetch_service.proto` | codigo | omp-novo | sem equivalente | 61L; Definições Protobuf do serviço URLFetch do Google App Engine. |
+| `packages/ai/src/providers/devin/proto/grpc/binlog/v1/binarylog.proto` | codigo | omp-novo | sem equivalente | 84L; Definição Protobuf padrão do gRPC Binary Logging v1. |
+| `packages/ai/src/providers/devin/proto/io/prometheus/client/metrics.proto` | codigo | omp-novo | sem equivalente | 98L; Definição Protobuf padrão do formato de exposição de métricas Prometheus (incluindo histogramas nativos). |
+| `packages/ai/src/providers/embeddings-server.ts` | codigo | omp-novo | sem equivalente | 120L; Codec HTTP server-side compatível com OpenAI/OpenRouter /v1/embeddings: lê body JSON limitado a 8 MiB, valida entrada/dimension... |
+| `packages/ai/src/providers/error-message.ts` | codigo | omp-novo | sem equivalente | 23L; Helper que constrói um objeto AssistantMessage padronizado com stopReason='error' e usage zerado a partir de um erro capturado ... |
+| `packages/ai/src/providers/factory-droid.ts` | codigo | omp-novo | sem equivalente | 815L; Implementação do provider Factory Droid multiplexando 4 protocolos (completions, responses, messages, google-generate) sobre au... |
+| `packages/ai/src/providers/factory-droid/droid-identity.md` | doc | omp-novo | sem equivalente | 1L; Frase única de identidade Droid prefixada no system prompt para o proxy Factory. |
+| `packages/ai/src/providers/factory-droid/gemini.ts` | codigo | omp-novo | sem equivalente | 642L; Cliente SSE nativo Gemini (/api/llm/g/v1/generate) para Factory Droid com replay nativo verificado por digest SHA-256, ordenaçã... |
+| `packages/ai/src/providers/factory-droid/tool-names.ts` | codigo | omp-novo | sem equivalente | 21L; Sanitização de nomes de ferramentas para [a-zA-Z0-9_-] com truncamento determinístico e sufixo SHA-256 de 8 caracteres para res... |
+| `packages/ai/src/providers/github-copilot-headers.ts` | codigo | omp-novo | sem equivalente | 387L; Lógica completa de cabeçalhos e fallback de identidade do GitHub Copilot: cache LRU de Copilot-Integration-Id por credencial/ho... |
+| `packages/ai/src/providers/gitlab-duo-workflow-chatml-note.md` | doc | omp-novo | sem equivalente | 1L; Nota de sistema instruindo o modelo a não emitir marcadores de transcrição ChatML (<\|im_start\|>, <ran NAME>, <tool_call>) como ... |
+| `packages/ai/src/providers/gitlab-duo-workflow.ts` | codigo | omp-novo | sem equivalente | 3212L; Define constantes, interfaces de protocolo WebSocket/REST e helpers iniciais do provider `gitlab-duo-agent` (ambient inline flo... |
+| `packages/ai/src/providers/gitlab-duo.ts` | codigo | omp-novo | sem equivalente | 275L; Provider HTTP proxy `gitlab-duo` que obtém e faz cache (25 min) de credenciais `direct_access` e delega streaming para `streamA... |
+| `packages/ai/src/providers/google-antigravity-forced-tool.md` | doc | omp-novo | sem equivalente | 1L; Diretiva curta injetada no transcript quando o modo de tool forçada (`ANY`) é ignorado pelo backend Gemini do Cloud Code Assist. |
+| `packages/ai/src/providers/google-auth.ts` | codigo | omp-novo | sem equivalente | 381L; Implementação direta (WebCrypto + REST, sem `google-auth-library`) de resolução de ADC do Vertex AI para service account JWT RS... |
+| `packages/ai/src/providers/google-gemini-cli.ts` | codigo | omp-novo | sem equivalente | 1463L; Transporte Cloud Code Assist / Antigravity (`google-gemini-cli`): detector/buffer de vazamento de JSON de planejamento em model... |
+| `packages/ai/src/providers/google-shared.ts` | codigo | omp-novo | sem equivalente | 1431L; Utilitários compartilhados Google/Vertex/CCA: conversão de mensagens com ordenação posicional (`FunctionCallOrder`) e buffer de... |
+| `packages/ai/src/providers/google-types.ts` | codigo | omp-novo | sem equivalente | 194L; Espelho local de tipos wire do `@google/genai` (incluindo `CONTINUATION`, `MALFORMED_RESPONSE`, `xhigh`, `cachedContent` e `ser... |
+| `packages/ai/src/providers/google-vertex.ts` | codigo | omp-novo | `packages/ai/src/providers/google-vertex.ts` | mesmo caminho; Pi 073b0ba; 137L; Provider Vertex AI usando `streamGoogleGenAI` e `getVertexAccessToken`, configurando `safetySettings` OFF padrão, header `prior... |
+| `packages/ai/src/providers/google.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/providers/google.ts` | mesmo caminho; Pi 073b0ba; +43/-472; 55L; Wrapper fino da API Google Generative AI (`streamGoogle`) usando `streamGoogleGenAI` e `applyInferenceHeaders`. |
+| `packages/ai/src/providers/grammar.ts` | codigo | omp-novo | sem equivalente | 70L; Remove comentários de linha `//` em definições de gramática Lark respeitando literais de string, regex e escapes para reduzir p... |
+| `packages/ai/src/providers/images-server.ts` | codigo | omp-novo | sem equivalente | 157L; Parser de requisições HTTP (JSON e FormData multipart para generations/edits com validação omptype e de data URL) e codificador... |
+| `packages/ai/src/providers/inference-headers.ts` | codigo | omp-novo | sem equivalente | 205L; Gerencia headers de sessão e atribuição por protocolo/backend (`X-Claude-Code-Session-Id`, Codex, `x-opencode-session` com `par... |
+| `packages/ai/src/providers/kimi.ts` | codigo | omp-novo | sem equivalente | 48L; Provider Kimi Code que roteia dinamicamente via `streamOpenAIAnthropicShim` entre as APIs OpenAI e Anthropic conforme `model.co... |
+| `packages/ai/src/providers/kiro/prompts/continuation.md` | prompt | omp-novo | sem equivalente | 1L; Template de prompt de continuação enviado ao Kiro quando o turno atual não possui conteúdo textual nem resultados de tool. |
+| `packages/ai/src/providers/kiro/prompts/historical-tool-description.md` | prompt | omp-novo | sem equivalente | 1L; Descrição placeholder usada ao declarar ferramentas aposentadas presentes no histórico do Kiro. |
+| `packages/ai/src/providers/kiro/prompts/joined-content.md` | prompt | omp-novo | sem equivalente | 3L; Template Handlebars para concatenar prefixo e conteúdo no construtor de turnos do Kiro. |
+| `packages/ai/src/providers/kiro/prompts/tool-result-truncated.md` | prompt | omp-novo | sem equivalente | 1L; Template de aviso anexado ao truncar resultados de ferramenta por orçamento UTF-8 no Kiro. |
+| `packages/ai/src/providers/kiro/stream.ts` | codigo | omp-novo | sem equivalente | 529L; Consumidor de stream AWS EventStream nativo para Kiro (`streamKiro`) com máquina de estados `KiroAttempt`, proteção de retry ap... |
+| `packages/ai/src/providers/kiro/transform.ts` | codigo | omp-novo | sem equivalente | 363L; Transformador de contexto para o formato Kiro (`transformKiroRequest`) com alternância estrita de turnos, declaração placeholde... |
+| `packages/ai/src/providers/mock.ts` | codigo | omp-novo | sem equivalente | 531L; Provider `mock` programável para testes (arrays, async generators, handlers por chamada, fila `push()`, atrasos abortáveis e si... |
+| `packages/ai/src/providers/native-finish-reason.ts` | codigo | omp-novo | sem equivalente | 13L; Mapeia valores explícitos de erro em `native_finish_reason` (`MALFORMED_RESPONSE`, `MALFORMED_FUNCTION_CALL`, `UNEXPECTED_TOOL_... |
+| `packages/ai/src/providers/ollama.ts` | codigo | omp-novo | sem equivalente | 807L; Implementa o provider nativo `/api/chat` do Ollama com streaming NDJSON, controle de prefix cache (llama.cpp), teto de `num_pre... |
+| `packages/ai/src/providers/openai-anthropic-shim.ts` | codigo | omp-novo | sem equivalente | 173L; Shim compartilhado para provedores que oferecem endpoints compatíveis tanto com OpenAI quanto com Anthropic (ex.: Kimi Code, Sy... |
+| `packages/ai/src/providers/openai-chat-server-schema.ts` | codigo | omp-novo | sem equivalente | 243L; Define schemas ArkType para validação de requisições recebidas no gateway OpenAI Chat Completions, tolerando campos desconhecid... |
+| `packages/ai/src/providers/openai-chat-server.ts` | codigo | omp-novo | sem equivalente | 861L; Implementa o parser e encoder do gateway OpenAI Chat Completions: valida payloads, converte mensagens/ferramentas/toolResults (... |
+| `packages/ai/src/providers/openai-chat-wire.ts` | codigo | omp-novo | sem equivalente | 868L; Tipos de wire da API OpenAI Chat Completions vendorizados do `openai-node` v6.42.0 para evitar dependência do SDK completo na c... |
+| `packages/ai/src/providers/openai-codex-attestation.ts` | codigo | omp-novo | sem equivalente | 19L; Define a fronteira global no processo para provedor just-in-time do cabeçalho `x-oai-attestation` exclusivo para credenciais Ch... |
+| `packages/ai/src/providers/openai-codex-compaction.ts` | codigo | omp-novo | sem equivalente | 18L; Cria o contexto tipado de requisição de compactação para o Codex anotando a implementação de wire escolhida (`responses`, `resp... |
+| `packages/ai/src/providers/openai-codex-responses.ts` | codigo | omp-novo | sem equivalente | 4765L; Define opções, constantes de timeout/retry WebSocket e SSE, estruturas de diagnóstico/estado de sessão e a síntese de identidad... |
+| `packages/ai/src/providers/openai-codex-state.ts` | codigo | omp-novo | sem equivalente | 194L; Gerencia o estado de sessão compartilhado do Codex (`ProviderSessionState`), limpeza por sessão, reset pós-compactação preserva... |
+| `packages/ai/src/providers/openai-codex-transport.ts` | codigo | omp-novo | sem equivalente | 18L; Resolve a preferência pública de uso de WebSocket no Codex seguindo precedência: variável de ambiente `PI_CODEX_WEBSOCKET`, opç... |
+| `packages/ai/src/providers/openai-codex/access-programs.ts` | codigo | omp-novo | sem equivalente | 88L; Gerencia a solicitação automática de programas de acesso cyber (`daybreak_blue`) em contas elegíveis e a remoção/memorização no... |
+| `packages/ai/src/providers/openai-codex/live-steering.ts` | codigo | omp-novo | sem equivalente | 246L; Implementa mid-turn live steering sobre WebSocket (`response.steer`): `CodexSteerPump` consome mensagens do usuário durante o s... |
+| `packages/ai/src/providers/openai-codex/request-transformer.ts` | codigo | omp-novo | sem equivalente | 586L; Transforma o payload Codex: sanitiza `call_id`, repara pares de tool calls/outputs órfãos nos dois sentidos, move `instructions... |
+| `packages/ai/src/providers/openai-codex/response-handler.ts` | codigo | omp-novo | sem equivalente | 115L; Analisa respostas HTTP de erro do backend Codex extraindo `CodexRateLimits` dos cabeçalhos `x-codex-primary/secondary-*` e gera... |
+| `packages/ai/src/providers/openai-completions.ts` | codigo | pi0.9.4-modificado | sem equivalente | +3143/-321; 3308L; Helpers iniciais do provider openai-completions: envelopes de thought_signature para Gemini/Portkey/Bifrost, acumulador de reas... |
+| `packages/ai/src/providers/openai-configuration-update.ts` | codigo | omp-novo | sem equivalente | 209L; Planejador de mudancas de reasoning.effort no meio da conversa via itens configuration_update: fixa baseEffort na primeira requ... |
+| `packages/ai/src/providers/openai-data-uri.ts` | codigo | omp-novo | sem equivalente | 51L; Decodificador de data URIs em base64 ou percent-encoded preservando bytes crus antes de converter para base64 e extrair mimeType. |
+| `packages/ai/src/providers/openai-reasoning-fallback.ts` | codigo | omp-novo | sem equivalente | 409L; Negociacao automatica e cacheavel por sessao quando servidores OpenAI/compat rejeitam reasoning_effort, reasoning.effort ou cha... |
+| `packages/ai/src/providers/openai-request-error.ts` | codigo | omp-novo | sem equivalente | 73L; Classificador de rejeicoes pre-geracao da API Responses (400/422/invalid_request_error sem evidencia de output ou tokens gerado... |
+| `packages/ai/src/providers/openai-responses-server-schema.ts` | codigo | omp-novo | sem equivalente | 420L; Schemas ArkType (@oh-my-pi/omptype) para validar payloads recebidos em POST /v1/responses do auth-gateway, cobrindo custom_tool... |
+| `packages/ai/src/providers/openai-responses-server.ts` | codigo | omp-novo | sem equivalente | 1526L; Metade inbound da ponte HTTP /v1/responses do auth-gateway: valida requisicoes, converte input items (mensagens, reasoning, fun... |
+| `packages/ai/src/providers/openai-responses-session.ts` | codigo | omp-novo | sem equivalente | 384L; Sessao e pool de conexoes WebSocket para o provider padrao openai-responses, com delta chaining por previous_response_id, retry... |
+| `packages/ai/src/providers/openai-responses-state.ts` | codigo | omp-novo | sem equivalente | 100L; Helpers de estado de sessao para openai-responses: controle de warmup para historico nativo em hosts connection-bound, politica... |
+| `packages/ai/src/providers/openai-responses-wire.ts` | codigo | omp-novo | sem equivalente | 6377L; Tipos wire da OpenAI Responses API copiados/podados de openai-node v6.42.0 (parte 1: ferramentas, EasyInputMessage e interface ... |
+| `packages/ai/src/providers/openai-responses.ts` | codigo | pi0.9.4-modificado | sem equivalente | +2170/-427; 2262L; Opções do provedor OpenAI Responses, lógica de retomada por polling após queda de stream com reasoning armazenado, estado de se... |
+| `packages/ai/src/providers/openai-shared.ts` | codigo | omp-novo | sem equivalente | 4690L; Configuração unificada de requisição OpenAI (headers, baseUrls por provedor, Copilot, auth sentinel), cálculo de custo por `ser... |
+| `packages/ai/src/providers/openrouter-generation.ts` | codigo | omp-novo | sem equivalente | 55L; Consulta ao endpoint `/generation` da OpenRouter para extrair `native_finish_reason` após respostas vazias ou inferir resposta ... |
+| `packages/ai/src/providers/pi-native-client.ts` | codigo | omp-novo | sem equivalente | 338L; Cliente do protocolo `pi-native` (`POST /v1/pi/stream`) para sidecar auth-gateway sem credenciais locais, com atribuição de uso... |
+| `packages/ai/src/providers/pi-native-server.ts` | codigo | omp-novo | sem equivalente | 217L; Lado servidor do contrato `POST /v1/pi/stream` no auth-gateway: validação mínima do `Context` canônico e emissão SSE de `Assist... |
+| `packages/ai/src/providers/register-builtins.ts` | codigo | omp-novo | sem equivalente | 339L; Carregamento sob demanda de provedores embutidos com wrapper unificado `forwardStream` que aplica watchdogs de primeiro evento/... |
+| `packages/ai/src/providers/rerank-server.ts` | codigo | omp-novo | sem equivalente | 135L; Parser/validador e codificador HTTP no padrão OpenRouter para requisições de rerank no auth-gateway com limite de corpo de 8 MiB. |
+| `packages/ai/src/providers/responses-websocket-connection.ts` | codigo | omp-novo | sem equivalente | 692L; Gerenciador de conexão WebSocket para Responses API com captura de headers de upgrade/rejeição, heartbeat ping/pong, detecção d... |
+| `packages/ai/src/providers/speech-server.ts` | codigo | omp-novo | sem equivalente | 46L; Parser e codificador de resposta de áudio TTS para endpoint do auth-gateway. |
+| `packages/ai/src/providers/synthetic.ts` | codigo | omp-novo | sem equivalente | 43L; Wrapper fino para o provedor Synthetic que roteia para API OpenAI ou Anthropic via `streamOpenAIAnthropicShim`. |
+| `packages/ai/src/providers/systemone-server.ts` | codigo | omp-novo | sem equivalente | 125L; Lado servidor do endpoint `POST /v1/systemone` no auth-gateway validando `questions`, imagens embutidas e assets inline base64 ... |
+| `packages/ai/src/providers/transcriptions-server.ts` | codigo | omp-novo | sem equivalente | 212L; Parser multipart (OpenAI) e JSON base64 (OpenRouter) com limite de 25 MB e codificador de resposta para endpoint de transcriçõe... |
+| `packages/ai/src/providers/transform-messages.ts` | codigo | omp-novo | sem equivalente | 1686L; Normalização e deduplicação de IDs de tool calls com escopo de origem (`\|` vs opaco), remoção de chamadas malformadas, regras d... |
+| `packages/ai/src/providers/video-server.ts` | codigo | omp-novo | sem equivalente | 282L; Servidor stateless de submissão e polling de geração de vídeo no padrão OpenRouter para auth-gateway, codificando roteamento do... |
+| `packages/ai/src/providers/vision-guard.ts` | codigo | omp-novo | sem equivalente | 68L; Guardas de visão para modelos OpenAI Chat Completions (e fallback OpenRouter) que filtram imagens quando `compat.stripImageInpu... |
+| `packages/ai/src/providers/xai-base-url.ts` | codigo | omp-novo | sem equivalente | 32L; Resolução de `baseUrl` para xAI que aplica `XAI_BASE_URL` apenas sobre o endpoint padrão e bloqueia redirecionamento de tokens ... |
+| `packages/ai/src/registry/amazon-bedrock.ts` | codigo | omp-novo | `packages/ai/src/auth` | 14L; Mapeamento de opções de transporte (`region`, `profile`, `bearerToken`) para o provedor Amazon Bedrock. |
+| `packages/ai/src/registry/api-key-validation.ts` | codigo | omp-novo | `packages/ai/src/auth` | 176L; Sondas HTTP com timeout de 15s para validar API keys contra endpoints OpenAI chat completions, Anthropic messages ou listagem `... |
+| `packages/ai/src/registry/aws.ts` | codigo | omp-novo | `packages/ai/src/auth` | 111L; Detecção de fontes de credenciais AWS (env, bearer Bedrock, web identity, ECS, EC2 DMI Xen/Nitro e cache de perfis INI por mtim... |
+| `packages/ai/src/registry/bedrock-mantle.ts` | codigo | omp-novo | `packages/ai/src/auth` | 31L; Adaptação de request e descoberta de modelos para Amazon Bedrock Mantle autenticada via bearer token e região AWS. |
+| `packages/ai/src/registry/build.ts` | codigo | omp-novo | `packages/ai/src/auth` | 74L; Projeta políticas de autenticação compiladas de arquivos KDL (`CompiledAuthProvider`) e transportes TypeScript em `ProviderDefi... |
+| `packages/ai/src/registry/cloudflare-ai-gateway.ts` | codigo | omp-novo | `packages/ai/src/auth` | 112L; Roteamento dinâmico de modelos (Anthropic vs OpenAI compat com cache em `WeakMap`) e injeção de `cf-aig-authorization` e placeh... |
+| `packages/ai/src/registry/derived.ts` | codigo | omp-novo | `packages/ai/src/auth` | 9L; Conjunto derivado dos IDs de provedores cujo fluxo OAuth exige colagem manual de código/URL. |
+| `packages/ai/src/registry/engine/api-key.ts` | codigo | omp-novo | `packages/ai/src/auth` | 119L; Motor declarativo de login `api-key` com suporte a normalização `strip-bearer`, `emptyFallback` e sondas de validação obrigatór... |
+| `packages/ai/src/registry/engine/common.ts` | codigo | omp-novo | `packages/ai/src/auth` | 379L; Infraestrutura compartilhada dos motores declarativos de autenticação: resolução de valores KDL/env/hooks, templating, mapeamen... |
+| `packages/ai/src/registry/engine/device-code.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/device-code.ts` | 131L; Motor declarativo RFC 8628 (`device-code`) orquestrando autorização de dispositivo, polling de token, projeção de credenciais, ... |
+| `packages/ai/src/registry/engine/oauth-code.ts` | codigo | omp-novo | `packages/ai/src/auth` | 237L; Motor declarativo `oauth-code` com PKCE, override de `redirectUri`, suporte a `pasteKey` (curto-circuito quando o usuário cola ... |
+| `packages/ai/src/registry/engine/refresh.ts` | codigo | omp-novo | `packages/ai/src/auth` | 138L; Motor declarativo de refresh OAuth com `{refresh_reason}` (`unauthorized_recovery` vs `proactive_expiry`), fallback sem `scope`... |
+| `packages/ai/src/registry/hooks/api-key.ts` | codigo | omp-novo | `packages/ai/src/auth` | 21L; Tabela lazy de hooks de headers e login para provedores baseados em API key. |
+| `packages/ai/src/registry/hooks/custom.ts` | codigo | omp-novo | `packages/ai/src/auth` | 25L; Tabela lazy de hooks de login e refresh customizados fora da gramática declarativa. |
+| `packages/ai/src/registry/hooks/device-code.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/device-code.ts` | 16L; Tabela lazy de hooks de headers, endpoints e pós-troca para fluxos `device-code`. |
+| `packages/ai/src/registry/hooks/env.ts` | codigo | omp-novo | `packages/ai/src/auth` | 39L; Resolvers computados de variáveis de ambiente para Anthropic Foundry, AWS Bedrock/Mantle e Google Vertex ADC. |
+| `packages/ai/src/registry/hooks/index.ts` | codigo | omp-novo | `packages/ai/src/auth` | 21L; Agrega todas as tabelas de hooks consultadas pelos motores declarativos de autenticação. |
+| `packages/ai/src/registry/hooks/oauth-code.ts` | codigo | omp-novo | `packages/ai/src/auth` | 19L; Tabela lazy de hooks de pós-troca e login ligados a regras `oauth-code`. |
+| `packages/ai/src/registry/hooks/types.ts` | codigo | omp-novo | `packages/ai/src/auth/types.ts` | 53L; Definições de tipos TypeScript para o contrato de hooks referenciados pelas regras KDL de auth. |
+| `packages/ai/src/registry/index.ts` | codigo | omp-novo | `packages/ai/src/auth` | 4L; Barrel de reexportação do módulo `registry`. |
+| `packages/ai/src/registry/kiro.ts` | codigo | omp-novo | `packages/ai/src/auth` | 7L; Transporte do Kiro que codifica a linha OAuth (região, perfil e login id) como `apiKey`. |
+| `packages/ai/src/registry/muse-code.ts` | codigo | omp-novo | `packages/ai/src/auth` | 23L; Transporte do Muse Code que desempacota o par conta Meta + API key do portador OAuth e injeta `x-api-version`. |
+| `packages/ai/src/registry/oauth/alibaba-coding-plan.ts` | codigo | omp-novo | `packages/ai/src/auth` | 96L; Fluxo interativo de login para Alibaba Coding Plan com escolha de região (Internacional, China, Custom) e validação da chave. |
+| `packages/ai/src/registry/oauth/alibaba-token-plan.ts` | codigo | omp-novo | `packages/ai/src/auth` | 122L; Fluxo de login do QwenCloud Token Plan com seleção regional, validação em `/models`, captura opcional de cookie para relatório ... |
+| `packages/ai/src/registry/oauth/anthropic-constants.ts` | codigo | omp-novo | `packages/ai/src/auth` | 13L; Constante de vida útil absoluta (~30 dias) da família de grant OAuth da Anthropic para aviso heurístico antes da expiração. |
+| `packages/ai/src/registry/oauth/anthropic.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/anthropic.ts` | 113L; Hook pós-troca `anthropic-identity` que consulta `/api/claude_cli/bootstrap` no login para preencher `accountId`, `email` e `or... |
+| `packages/ai/src/registry/oauth/antigravity-cli.ts` | codigo | omp-novo | `packages/ai/src/auth` | 278L; Fluxo de login via CLI `agy acp --login` em diretório isolado com parser de URL OAuth, limpeza segura de diretórios abandonados... |
+| `packages/ai/src/registry/oauth/callback-server.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/callback-server.ts` | 690L; Classe base para servidores de callback OAuth locais com bind dual-stack `127.0.0.1` + `::1`, rota `/launch` (302), suporte a e... |
+| `packages/ai/src/registry/oauth/cloudflare-ai-gateway.ts` | codigo | omp-novo | `packages/ai/src/auth` | 39L; Coleta interativa de token, `accountId` e `gatewayId` para Cloudflare AI Gateway. |
+| `packages/ai/src/registry/oauth/cloudflare-workers-ai.ts` | codigo | omp-novo | `packages/ai/src/auth` | 32L; Coleta interativa de token e `accountId` para Cloudflare Workers AI. |
+| `packages/ai/src/registry/oauth/coreweave.ts` | codigo | omp-novo | `packages/ai/src/auth` | 16L; Valida `COREWEAVE_PROJECT` e retorna cabeçalhos `OpenAI-Project` exigidos antes do login no CoreWeave. |
+| `packages/ai/src/registry/oauth/cursor.ts` | codigo | omp-novo | `packages/ai/src/auth` | 286L; Fluxo OAuth/PKCE + polling do Cursor, refresh com detecção de `shouldLogout`, busca de email via Connect RPC `DashboardService/... |
+| `packages/ai/src/registry/oauth/device-code.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/device-code.ts` | 117L; Poller genérico RFC 8628 para device-code com suporte a `slow_down`/`retryAfterMs`, timeout com diagnóstico de clock drift em W... |
+| `packages/ai/src/registry/oauth/devin-cli.ts` | codigo | omp-novo | `packages/ai/src/auth` | 83L; Adoção local de `windsurf_api_key` do arquivo `credentials.toml` da Devin CLI com verificação de hosts suportados. |
+| `packages/ai/src/registry/oauth/devin-windsurf.ts` | codigo | omp-novo | `packages/ai/src/auth` | 101L; Fluxo OAuth PKCE via Windsurf (`windsurf.com/editor/signin`) e troca protobuf Connect para obter a API key da seat Enterprise d... |
+| `packages/ai/src/registry/oauth/devin.ts` | codigo | omp-novo | `packages/ai/src/auth` | 33L; Hook pós-troca que lê `email`, `accountId` e `orgId`/`orgName` a partir do relatório de uso do Devin. |
+| `packages/ai/src/registry/oauth/factory-droid.ts` | codigo | omp-novo | `packages/ai/src/auth` | 160L; Hook pós-troca para Factory Droid que consulta `/api/cli/whoami`, resolve `orgId`, `region` e `inferenceRegion`, e executa refr... |
+| `packages/ai/src/registry/oauth/github-copilot.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/github-copilot.ts` | 409L; Fluxo device-code do GitHub Copilot usando client_id mínimo no github.com vs CLI client_id em Enterprise, descoberta de endpoin... |
+| `packages/ai/src/registry/oauth/gitlab-duo.ts` | codigo | omp-novo | `packages/ai/src/auth` | 9L; Hook pós-troca que invalida o cache de acesso direto do GitLab Duo após rotação de tokens. |
+| `packages/ai/src/registry/oauth/google-antigravity.ts` | codigo | omp-novo | `packages/ai/src/auth` | 330L; Hook pós-troca OAuth do Google Antigravity que consulta `loadCodeAssist`, valida elegibilidade free-tier, executa polling LRO d... |
+| `packages/ai/src/registry/oauth/google-oauth-shared.ts` | codigo | omp-novo | `packages/ai/src/auth` | 68L; Utilitários compartilhados de requisição HTTP para fase de provisionamento OAuth Google, combinando `AbortSignal` de cancelamen... |
+| `packages/ai/src/registry/oauth/index.ts` | codigo | omp-novo | `packages/ai/src/auth` | 272L; API de alto nível do registro OAuth: gerencia provedores customizados/built-in, pausa e retomada por regras de auth, normalizaç... |
+| `packages/ai/src/registry/oauth/kilo.ts` | codigo | omp-novo | `packages/ai/src/auth` | 107L; Implementa o fluxo device-auth da Kilo (`api.kilo.ai/api/device-auth`), solicitando código, exibindo instruções ao usuário e fa... |
+| `packages/ai/src/registry/oauth/kimi.ts` | codigo | omp-novo | `packages/ai/src/auth` | 72L; Constrói e memoriza (`once`) cabeçalhos de dispositivo e SO (`X-Msh-*`, `User-Agent`) para requisições Kimi CLI, persistindo `k... |
+| `packages/ai/src/registry/oauth/kiro.ts` | codigo | omp-novo | `packages/ai/src/auth` | 433L; Fluxos de autenticação e refresh do Kiro para AWS IAM Identity Center e Builder ID (SSO-OIDC device grant), login social Google... |
+| `packages/ai/src/registry/oauth/mistral-vibe.ts` | codigo | omp-novo | `packages/ai/src/auth` | 214L; Fluxo de sign-in via browser do Mistral Vibe com PKCE, polling de conclusão (tratando 410/429/`Retry-After` e orçamento de falh... |
+| `packages/ai/src/registry/oauth/muse-code.ts` | codigo | omp-novo | `packages/ai/src/auth` | 170L; Hook `attachMuseCodeApiKey` para Muse Code (Meta) que reutiliza chaves já emitidas em refreshes para evitar rate limit e troca ... |
+| `packages/ai/src/registry/oauth/native-scheme-callback.ts` | codigo | omp-novo | `packages/ai/src/auth` | 62L; Adaptador que conecta `AbortSignal` ao receptor nativo de callback por esquema de URL (`NativeOAuthCallback`), garantindo `disp... |
+| `packages/ai/src/registry/oauth/oauth.html` | config_ou_dado | omp-novo | `packages/ai/src/auth` | 344L; Página HTML de retorno do callback OAuth local com tema dark/light, estado inicial/sucesso/erro injetado via JSON (`#server-sta... |
+| `packages/ai/src/registry/oauth/openai-codex.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/openai-codex.ts` | 302L; Utilitários e fluxo headless (device-code) do OpenAI Codex: constrói URL OAuth, enriquece credenciais com `accountId`/`email`/`... |
+| `packages/ai/src/registry/oauth/otari.ts` | codigo | omp-novo | `packages/ai/src/auth` | 73L; Fluxo de login do Otari que seleciona região (US/EU/custom ou `OTARI_BASE_URL`), solicita API key, valida contra `${baseUrl}/mo... |
+| `packages/ai/src/registry/oauth/perplexity.ts` | codigo | omp-novo | `packages/ai/src/auth` | 375L; Login da Perplexity suportando extração de sessão legada do app macOS, browser SSO isolado via `onBrowserSession` e login HTTP ... |
+| `packages/ai/src/registry/oauth/pkce.ts` | codigo | omp-novo | `packages/ai/src/auth/oauth/pkce.ts` | 18L; Gera par PKCE (`verifier` de 96 bytes aleatórios e `challenge` SHA-256 base64url) usando Web Crypto API. |
+| `packages/ai/src/registry/oauth/prompts/kiro-login-method.md` | prompt | omp-novo | `packages/ai/src/auth` | 6L; Template Markdown de prompt interativo listando os 5 métodos de login do Kiro (Identity Center, Builder ID, API key, Google, Gi... |
+| `packages/ai/src/registry/oauth/prompts/kiro-profile-select.md` | prompt | omp-novo | `packages/ai/src/auth` | 4L; Template Handlebars para seleção numerada de perfis Kiro descobertos na conta. |
+| `packages/ai/src/registry/oauth/snowflake.ts` | codigo | omp-novo | `packages/ai/src/auth` | 183L; Fluxo OAuth PKCE via servidor loopback (`127.0.0.1`, path `/`) e refresh de tokens para contas Snowflake normalizadas, tratando... |
+| `packages/ai/src/registry/oauth/types.ts` | codigo | omp-novo | `packages/ai/src/auth/types.ts` | 156L; Tipos centrais de OAuth do `omp`, incluindo metadados estendidos de credenciais (`orgId`, `region`, `inferenceRegion`, `kiro*`,... |
+| `packages/ai/src/registry/oauth/xai-oauth.ts` | codigo | omp-novo | `packages/ai/src/auth` | 246L; Helpers OAuth/OIDC da xAI: descoberta `.well-known` com validação estrita de host `*.x.ai` e `*.grok.com`, decodificação/expira... |
+| `packages/ai/src/registry/oauth/xiaomi.ts` | codigo | omp-novo | `packages/ai/src/auth` | 165L; Login e roteamento da Xiaomi MiMo: redireciona chaves Token Plan (`tp-`/`ttp-`) do host padrão para clusters regionais e valida... |
+| `packages/ai/src/registry/oauth/zai.ts` | codigo | omp-novo | `packages/ai/src/auth` | 205L; Hook pós-troca OAuth da Z.ai que converte o token curto em biz token, busca org/projeto padrão em `getCustomerInfo`, cria/local... |
+| `packages/ai/src/registry/registry.ts` | codigo | omp-novo | `packages/ai/src/auth` | 53L; Constrói o registro único de provedores (`PROVIDER_REGISTRY`) combinando políticas KDL compiladas do `@oh-my-pi/pi-catalog` com... |
+| `packages/ai/src/registry/snowflake.ts` | codigo | omp-novo | `packages/ai/src/auth` | 149L; Normaliza identificadores e URLs Snowsight do Snowflake (rejeitando `.snowflakecomputing.cn`, links legados e hosts externos) e... |
+| `packages/ai/src/registry/types.ts` | codigo | omp-novo | `packages/ai/src/auth/types.ts` | 103L; Define `ProviderDefinition` e interfaces de hooks declarativos de auth/transporte/descoberta/login por provedor derivados das r... |
+| `packages/ai/src/rerank/index.ts` | codigo | omp-novo | sem equivalente | 13L; Ponto de entrada `rerank()` que despacha requisições de reordenação semântica para o transporte selecionado pelo modelo (`openr... |
+| `packages/ai/src/rerank/openrouter-rerank.ts` | codigo | omp-novo | sem equivalente | 141L; Cliente HTTP `/rerank` compatível com OpenRouter/Cohere usando `withAuth`, validação ArkType da resposta, extração de texto do ... |
+| `packages/ai/src/rerank/types.ts` | codigo | omp-novo | sem equivalente | 20L; Interfaces tipadas `RerankRequest`, `RerankResultItem` e `RerankResult` para o subsistema de rerank. |
+| `packages/ai/src/speech/index.ts` | codigo | omp-novo | sem equivalente | 35L; Dispatcher `synthesizeSpeech()` e guard `isSpeechApi()` roteando entre `xai-tts` e `openai-speech`. |
+| `packages/ai/src/speech/openai-speech.ts` | codigo | omp-novo | sem equivalente | 26L; Adaptador `openai-speech` que rejeita `sampleRate`/`bitRate` não suportados e envia POST para `/audio/speech`. |
+| `packages/ai/src/speech/transport.ts` | codigo | omp-novo | sem equivalente | 66L; Transporte HTTP compartilhado de TTS com timeout de 60s, `withAuth`, resolução de headers do modelo, leitura de bytes de áudio ... |
+| `packages/ai/src/speech/types.ts` | codigo | omp-novo | sem equivalente | 38L; Tipos, formatos suportados (`mp3`, `wav`, `pcm`, `opus`, `aac`, `flac`) e mapa de MIME types para síntese de fala. |
+| `packages/ai/src/speech/xai-tts.ts` | codigo | omp-novo | sem equivalente | 43L; Adaptador `xai-tts` que valida limite de 15k caracteres e formato (`mp3`/`wav`), monta `output_format` quando necessário e envi... |
+| `packages/ai/src/stream.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/api` | +1955/-106; 2050L; Primeira parte do pipeline central de streaming: limitador de concorrência local e cross-processo por provedor, cura de thinkin... |
+| `packages/ai/src/thinking-probe.ts` | codigo | omp-novo | `packages/ai/src/providers` | 352L; Sistema de sondagem em runtime (`withProbedThinking`) para modelos com thinking não verificado: testa dialetos e esforços em ba... |
+| `packages/ai/src/transcription/index.ts` | codigo | omp-novo | sem equivalente | 17L; Dispatcher `transcribeAudio()` que roteia modelos `openai-transcriptions` para o transporte multipart OpenAI. |
+| `packages/ai/src/transcription/openai-transcriptions.ts` | codigo | omp-novo | sem equivalente | 120L; Cliente multipart `/audio/transcriptions` compatível com OpenAI/OpenRouter usando `withAuth`, validação ArkType da resposta, pr... |
+| `packages/ai/src/transcription/types.ts` | codigo | omp-novo | sem equivalente | 47L; Tipos de requisição e resultado para transcrição de áudio (`json`/`verbose_json`, granularidade `word`/`segment`, segmentos e p... |
+| `packages/ai/src/types.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/types.ts` | mesmo caminho; Pi 073b0ba; +1765/-61; 1876L; Primeira parte de `types.ts`: mapa exaustivo `ApiOptionsMap`, matriz completa de `ServiceTier` por família/conta e contabilidad... |
+| `packages/ai/src/usage.ts` | codigo | omp-novo | sem equivalente | 561L; Define todo o esquema normalizado de relatórios de uso/quota (janelas, quantidades, escopos, reset credits, histórico, uso obse... |
+| `packages/ai/src/usage/alibaba-token-plan.ts` | codigo | omp-novo | sem equivalente | 295L; Implementa consulta de uso do Alibaba Token Plan (consoles China Bailian e Internacional QwenCloud) via sessão com cookie, extr... |
+| `packages/ai/src/usage/charm-hyper.ts` | codigo | omp-novo | sem equivalente | 95L; Consulta saldo pré-pago em /credits do Charm Hyper como limite shared (pool único por conta), lançando ProviderHttpError em 401... |
+| `packages/ai/src/usage/claude-api.ts` | codigo | omp-novo | sem equivalente | 66L; Normaliza URLs base da API/OAuth do Claude preservando prefixos de proxy, fornece lista de fallback para o endpoint canônico e ... |
+| `packages/ai/src/usage/claude-reset.ts` | codigo | omp-novo | sem equivalente | 695L; Implementa descoberta e resgate sem retry de créditos de reset do Claude (programas cedar_ember e juniper_tide), resolução de o... |
+| `packages/ai/src/usage/claude.ts` | codigo | omp-novo | sem equivalente | 1186L; Parte 1 do provedor de uso Claude: parsing de buckets legados, limits[] (weekly_scoped), extra_usage/spend e headers unificados... |
+| `packages/ai/src/usage/cline-pass.ts` | codigo | omp-novo | sem equivalente | 161L; Busca limites 5h/semanal/mensal do ClinePass em /users/me/plan/usage-limits e identidade em /users/me, tratando 404 "no plan hi... |
+| `packages/ai/src/usage/commandcode.ts` | codigo | omp-novo | sem equivalente | 209L; Consulta /alpha/whoami e /alpha/billing/credits no Command Code para obter saldo de créditos e janelas de 5h e 7d por usuário/o... |
+| `packages/ai/src/usage/cursor.ts` | codigo | omp-novo | sem equivalente | 650L; Combina /auth/usage, cursor.com/api/usage-summary e RPC GetPlanInfo (para assinaturas unified_*), separando trilhos Cursor Mode... |
+| `packages/ai/src/usage/devin.ts` | codigo | omp-novo | sem equivalente | 347L; Consulta SeatManagementService/GetUserStatus via Connect protobuf unário para extrair créditos mensais (prompt, flow, flex), co... |
+| `packages/ai/src/usage/factory-droid.ts` | codigo | omp-novo | sem equivalente | 226L; Consulta /api/billing/limits do Factory Droid para pools standard e core (5h, semanal, mensal) e saldo extra; normaliza janelas... |
+| `packages/ai/src/usage/github-copilot.ts` | codigo | omp-novo | sem equivalente | 478L; Busca uso do GitHub Copilot via billing API (api_key com resolução de login) e /copilot_internal/user (OAuth ou fallback), supo... |
+| `packages/ai/src/usage/google-antigravity.ts` | codigo | omp-novo | sem equivalente | 773L; Parte 1 do provedor Google Antigravity: consulta retrieveUserQuotaSummary (com fallback para fetchAvailableModels), dedup por c... |
+| `packages/ai/src/usage/kimi.ts` | codigo | omp-novo | sem equivalente | 356L; Consulta /usages do Kimi Code OAuth (pulando tokens já expirados), normaliza janelas por duração (ex.: 300m -> 5h) e cota seman... |
+| `packages/ai/src/usage/kiro.ts` | codigo | omp-novo | sem equivalente | 289L; Consulta GetUsageLimits do Kiro por região, agregando créditos mensais, bônus ativos, add-ons válidos e overage pago; no rankin... |
+| `packages/ai/src/usage/litellm.ts` | codigo | omp-novo | sem equivalente | 132L; Consulta orçamentos USD em /key/info (chaves sk-) e /v2/user/info em gateways LiteLLM com parse de datetimes ingênuos em UTC e ... |
+| `packages/ai/src/usage/minimax-code.ts` | codigo | omp-novo | sem equivalente | 278L; Consulta /v1/token_plan/remains do MiniMax Token Plan validando base_resp.status_code === 0, descartando modelos fora do plano ... |
+| `packages/ai/src/usage/muse-code.ts` | codigo | omp-novo | sem equivalente | 244L; Extrai uso de assinatura Muse Code da resposta de chave Meta, removendo api_key do raw e reconstruindo limites ociosos a partir... |
+| `packages/ai/src/usage/ollama.ts` | codigo | omp-novo | sem equivalente | 41L; Registra provedores Ollama e Ollama Cloud nas visualizações de uso com relatório vazio e nota explicando que a API reporta toke... |
+| `packages/ai/src/usage/openai-codex-base-url.ts` | codigo | omp-novo | sem equivalente | 35L; Restringe URLs base de endpoints de conta do Codex (wham/usage, rate-limit-reset-credits) às origens canônicas chatgpt.com/chat... |
+| `packages/ai/src/usage/openai-codex-reset.ts` | codigo | omp-novo | sem equivalente | 206L; Cliente para listar (GET wham/rate-limit-reset-credits), escolher por menor expiração e consumir de forma idempotente (POST ...... |
+| `packages/ai/src/usage/openai-codex.ts` | codigo | omp-novo | sem equivalente | 995L; Parte 1 do provedor OpenAI Codex: parsing de wham/usage (janelas chat, additional_rate_limits, spend_control, overage por crédi... |
+| `packages/ai/src/usage/opencode-go.ts` | codigo | omp-novo | sem equivalente | 210L; Consulta /zen/go/v1/usage do OpenCode Go enviando x-opencode-session, exigindo todas as 3 janelas (rolling-5h, weekly, monthly)... |
+| `packages/ai/src/usage/registry.ts` | codigo | omp-novo | sem equivalente | 82L; Registra todos os 22 provedores de uso padrão em ordem de probe e os 13 CredentialRankingStrategy associados no mapa padrão. |
+| `packages/ai/src/usage/shared.ts` | codigo | omp-novo | sem equivalente | 60L; Utilitários compartilhados entre provedores de uso para constantes de duração, parse de timestamps (segundos/ms e ISO), cálculo... |
+| `packages/ai/src/usage/synthetic.ts` | codigo | omp-novo | sem equivalente | 93L; Consulta /v2/quotas da Synthetic para cota semanal com regeneração incremental (resetLabel: "regen" e taxa por tick). |
+| `packages/ai/src/usage/umans.ts` | codigo | omp-novo | sem equivalente | 237L; Provedor de consulta de uso/cota para Umans (/v1/usage), separando soft cap ponderado por modelo (aviso sem exaustão), hard_cap... |
+| `packages/ai/src/usage/xai-oauth.ts` | codigo | omp-novo | sem equivalente | 478L; Provedor de uso OAuth do SuperGrok (xai-oauth) que consulta o endpoint de billing da Grok CLI suportando formato semanal legado... |
+| `packages/ai/src/usage/zai.ts` | codigo | omp-novo | sem equivalente | 413L; Provedor de uso e ranking de credenciais para Z.AI (GLM Coding Plan), consultando /api/monitor/usage/quota/limit e model-usage,... |
+| `packages/ai/src/utils.ts` | codigo | omp-novo | `packages/ai/src/utils` | 775L; Utilitários centrais de pacotes/ai: normalização de headers e system prompts (com redação), normalização de IDs da OpenAI Respo... |
+| `packages/ai/src/utils/abort.ts` | codigo | omp-novo | `packages/ai/src/utils/abort.ts` | mesmo caminho; Pi 073b0ba; 76L; Rastreador de origem de abort (createAbortSourceTracker) que garante prioridade determinística ao cancelamento pelo usuário sob... |
+| `packages/ai/src/utils/anthropic-auth.ts` | codigo | omp-novo | `packages/ai/src/utils` | 120L; Helpers para montar configuração de autenticação Anthropic (suportando Foundry e ANTHROPIC_BASE_URL, detecção sk-ant-oat) e con... |
+| `packages/ai/src/utils/aws-profile.ts` | codigo | omp-novo | `packages/ai/src/utils` | 132L; Parser de arquivos INI AWS (~/.aws/credentials e config) e resolução de região/perfil com detecção recursiva (protegida contra ... |
+| `packages/ai/src/utils/block-symbols.ts` | codigo | omp-novo | `packages/ai/src/utils` | 224L; Conjunto de Symbols em memória anexados a blocos e mensagens para rastrear JSON parcial em streaming, execução já resolvida pel... |
+| `packages/ai/src/utils/deterministic-id.ts` | codigo | omp-novo | `packages/ai/src/utils` | 20L; Gera UUID determinístico no formato 8-4-4-4-12 a partir dos primeiros 128 bits do SHA-256 de uma seed via Bun.CryptoHasher, gar... |
+| `packages/ai/src/utils/dsml-leak.ts` | codigo | omp-novo | `packages/ai/src/utils` | 324L; Detecta e remove marcação vazada de tool calls DeepSeek (DSML e tokens V3) de texto, thinking, argumentos string de tool calls ... |
+| `packages/ai/src/utils/empty-completion-retry.ts` | codigo | omp-novo | `packages/ai/src/utils` | 211L; Wrapper de retry replay-safe para streams de provedores: faz buffer de eventos pré-conteúdo até o primeiro delta real e reemite... |
+| `packages/ai/src/utils/event-stream.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/utils/event-stream.ts` | mesmo caminho; Pi 073b0ba; +212/-21; 273L; Implementação genérica de EventStream assíncrono com deque amortizado O(1) via #queueHead, suporte a fail(err), rejeição segura... |
+| `packages/ai/src/utils/foundry.ts` | codigo | omp-novo | `packages/ai/src/utils` | 8L; Helper booleano que verifica a variável de ambiente CLAUDE_CODE_USE_FOUNDRY. |
+| `packages/ai/src/utils/glyph-codec.ts` | codigo | omp-novo | `packages/ai/src/utils` | 651L; Codec na fronteira de rede para caracteres Unicode Private Use Area (PUA): codifica glifos como ⟦Uxxxx⟧ com escape ⟦E⟧ e injeta... |
+| `packages/ai/src/utils/glyph-notice.md` | doc | omp-novo | `packages/ai/src/utils` | 3L; Bloco XML <glyph-tokens> embutido no prompt explicando ao modelo como preservar e copiar tokens de glifos ⟦Uxxxx⟧ byte a byte. |
+| `packages/ai/src/utils/google-validation.ts` | codigo | omp-novo | `packages/ai/src/utils` | 25L; Extrai validation_url de respostas JSON de erro VALIDATION_REQUIRED do Google e formata mensagem de instrução ao usuário. |
+| `packages/ai/src/utils/harmony-leak.ts` | codigo | omp-novo | `packages/ai/src/utils` | 500L; Detecção de vazamento de cabeçalhos Harmony em modelos GPT-5/gpt-oss por fusão de sinais (H, M+C/G/S/B/R/T), recuperação trunca... |
+| `packages/ai/src/utils/http-inspector.ts` | codigo | omp-novo | `packages/ai/src/utils` | 369L; Inspeção e diagnóstico HTTP: persiste dumps redigidos de requisições 400/413 com poda por idade/tamanho, combina corpos complet... |
+| `packages/ai/src/utils/idle-iterator.ts` | codigo | omp-novo | `packages/ai/src/utils` | 581L; Watchdogs avançados para async iterables de streaming: timeout pré-resposta limpável, timeout de primeiro item vs idle com filt... |
+| `packages/ai/src/utils/leaked-thinking-stream.ts` | codigo | omp-novo | `packages/ai/src/utils` | 639L; Projetor central de stream que extrai ao vivo blocos de raciocínio vazados no texto visível e gramáticas de tool calls in-band ... |
+| `packages/ai/src/utils/model-headers.ts` | codigo | omp-novo | `packages/ai/src/utils` | 20L; Materializa headers dinâmicos (model.resolveHeaders) respeitando AbortSignal uma única vez por requisição antes do envio. |
+| `packages/ai/src/utils/narration.ts` | codigo | omp-novo | `packages/ai/src/utils` | 18L; Projeção somente-exibição que converte blocos thinking marcados com narration em blocos text para renderização sem alterar os b... |
+| `packages/ai/src/utils/openai-http.ts` | codigo | omp-novo | `packages/ai/src/utils` | 247L; Transporte direto fetchWithRetry + SSE para endpoints OpenAI (substituindo o SDK), com bypass de retry em rejeição de concorrên... |
+| `packages/ai/src/utils/openrouter-headers.ts` | codigo | omp-novo | `packages/ai/src/utils` | 12L; Retorna headers padrão de identificação e cache para requisições à OpenRouter. |
+| `packages/ai/src/utils/parse-bind.ts` | codigo | omp-novo | `packages/ai/src/utils` | 56L; Parser compartilhado de endereços host:port ou porta loopback (incluindo IPv6 [::1]:port) com validação estrita usado pelos ser... |
+| `packages/ai/src/utils/provider-response.ts` | codigo | omp-novo | `packages/ai/src/utils` | 30L; Normaliza status e headers lowercase da Response HTTP em ProviderResponseMetadata e notifica o callback onResponse das opções d... |
+| `packages/ai/src/utils/proxy.ts` | codigo | omp-novo | `packages/ai/src/utils` | 440L; Resolução e aplicação de proxy por provedor (PI_PROXY_*) e global (PI_PROXY), hook em globalThis.fetch para cobrir OAuth/usage,... |
+| `packages/ai/src/utils/reasoning-source.ts` | codigo | omp-novo | `packages/ai/src/utils` | 93L; Manipulação de metadados de replay de raciocínio em thinkingSignature (campos OpenAI-compat, Mistral content parts e envelopes ... |
+| `packages/ai/src/utils/request-body.ts` | codigo | omp-novo | `packages/ai/src/utils` | 52L; Utilitários de decodificação de corpo HTTP (descompressão gzip/zstd via Bun) e leitura limitada por maxBytes (readBoundedReques... |
+| `packages/ai/src/utils/request-compression.ts` | codigo | omp-novo | `packages/ai/src/utils` | 210L; Wrapper de fetch que comprime corpos >= 1 KiB com zstd ou gzip fora do event loop conforme política do catálogo, com detecção e... |
+| `packages/ai/src/utils/request-debug.ts` | codigo | omp-novo | `packages/ai/src/utils` | 343L; Sessão de debug HTTP ativada por PI_REQ_DEBUG=1 que grava requisição decodificada/redigida em rr-session-N.json e faz tee do st... |
+| `packages/ai/src/utils/resolve-peer.ts` | codigo | omp-novo | `packages/ai/src/utils` | 7L; Resolve o IP do cliente usando endereço do socket ou x-forwarded-for/x-real-ip apenas quando trustProxyHeaders está habilitado. |
+| `packages/ai/src/utils/retry-after.ts` | codigo | omp-novo | `packages/ai/src/utils` | 181L; Extrai atrasos de retry de headers (retry-after-ms, retry-after numérico/HTTP-date, x-ratelimit-reset*) e mensagens com timezon... |
+| `packages/ai/src/utils/retry-wait.ts` | codigo | omp-novo | `packages/ai/src/utils` | 19L; Helper de espera entre tentativas de retry usando hook injetável (para testes) ou scheduler.wait com suporte a AbortSignal. |
+| `packages/ai/src/utils/schema/CONSTRAINTS.md` | doc | omp-novo | `packages/ai/src/utils` | 195L; Especificação operacional de normalização e strictness de JSON Schema para OpenAI strict mode, Google Gemini/Vertex, Factory Dr... |
+| `packages/ai/src/utils/schema/adapt.ts` | codigo | omp-novo | `packages/ai/src/utils` | 36L; Ponto de entrada único para strict mode estilo OpenAI: atualiza draft-07 para 2020-12 e delega a tryEnforceStrictSchema com fal... |
+| `packages/ai/src/utils/schema/allowlist.ts` | codigo | omp-novo | `packages/ai/src/utils` | 286L; Projetor allowlist de JSON Schema para o proxy Factory Droid Gemini: copia apenas campos aceitos pelo proto, funde allOf, colap... |
+| `packages/ai/src/utils/schema/compatibility.ts` | codigo | omp-novo | `packages/ai/src/utils` | 435L; Audita schemas JSON já normalizados contra restrições de provedores (`openai-strict`, `google`, `cloud-code-assist-claude`), re... |
+| `packages/ai/src/utils/schema/dereference.ts` | codigo | omp-novo | `packages/ai/src/utils` | 131L; Expande referências locais `$ref` (`#/$defs/*`, `#/definitions/*`) inline no schema, mesclando palavras-chave irmãs (draft 2020... |
+| `packages/ai/src/utils/schema/draft.ts` | codigo | omp-novo | `packages/ai/src/utils` | 349L; Atualiza schemas draft-07/OpenAPI (`definitions`, `dependencies`, tuplas `items`/`additionalItems`, `nullable: true`) para JSON... |
+| `packages/ai/src/utils/schema/equality.ts` | codigo | omp-novo | `packages/ai/src/utils` | 97L; Comparação profunda de valores JSON e mesclagem de schemas de propriedades e enums compatíveis durante colapso de combinadores. |
+| `packages/ai/src/utils/schema/fields.ts` | codigo | omp-novo | `packages/ai/src/utils` | 246L; Define conjuntos estáticos de palavras-chave de schema suportadas, não estruturais, promovíveis para descrição ou rejeitadas po... |
+| `packages/ai/src/utils/schema/foundation-models.ts` | codigo | omp-novo | `packages/ai/src/utils` | 255L; Converte schemas de ferramentas para o dialeto `GenerationSchema` da Apple Foundation Models e decodifica argumentos emitidos c... |
+| `packages/ai/src/utils/schema/index.ts` | codigo | omp-novo | `packages/ai/src/utils` | 16L; Arquivo barrel que reexporta os módulos utilitários de schema. |
+| `packages/ai/src/utils/schema/json-schema-validator.ts` | codigo | omp-novo | `packages/ai/src/utils` | 790L; Validador JSON Schema síncrono em árvore (sem AJV), com detecção de ciclos por identidade `(ref, value)`, seleção de ramo por d... |
+| `packages/ai/src/utils/schema/meta-validator.ts` | codigo | omp-novo | `packages/ai/src/utils` | 164L; Meta-validador estrutural leve para schemas JSON draft 2020-12 que substitui AJV no caminho quente de requisições. |
+| `packages/ai/src/utils/schema/normalize.ts` | codigo | omp-novo | `packages/ai/src/utils` | 2612L; Núcleo configurável de normalização de schemas JSON: renomeação snake_case, extração de `nullable`, escalarização de arrays `ty... |
+| `packages/ai/src/utils/schema/spill.ts` | codigo | omp-novo | `packages/ai/src/utils` | 43L; Preserva palavras-chave removidas do schema (como `pattern`, `format`, `minimum`, `default`) anexando-as à `description` do nó ... |
+| `packages/ai/src/utils/schema/stamps.ts` | codigo | omp-novo | `packages/ai/src/utils` | 97L; Tabela lateral baseada em `WeakMap` para memoização por identidade de objeto (`stamp`), guarda de ciclos por época (`once`) e r... |
+| `packages/ai/src/utils/schema/strict-tool-validation.ts` | codigo | omp-novo | `packages/ai/src/utils` | 151L; Detecta contradições `enum`/`const` vs `type` e uniões na raiz de objetos (xAI) que passam validação estrutural mas causam HTTP... |
+| `packages/ai/src/utils/schema/types.ts` | codigo | omp-novo | `packages/ai/src/utils` | 10L; Guards e tipo utilitário mínimo para objetos JSON simples. |
+| `packages/ai/src/utils/schema/typescript.ts` | codigo | omp-novo | `packages/ai/src/utils` | 212L; Converte JSON Schema para representação textual em TypeScript simplificado (estilos `default` e `harmony`) para exibição em pro... |
+| `packages/ai/src/utils/schema/wire.ts` | codigo | omp-novo | `packages/ai/src/utils` | 691L; Converte parâmetros de ferramentas (ArkType, AST Ark, TypeBox/JSON Schema) para wire JSON Schema 2020-12 memoizado, converte `{... |
+| `packages/ai/src/utils/sdk-stream-timeout.ts` | codigo | omp-novo | `packages/ai/src/utils` | 43L; Mapeia `streamFirstEventTimeoutMs` para opções `timeout` e `maxRetries: 0` de SDKs (OpenAI/Anthropic) para evitar travamento pr... |
+| `packages/ai/src/utils/sse-debug.ts` | codigo | omp-novo | `packages/ai/src/utils` | 18L; Notifica observador de eventos SSE brutos de forma segura sem clonagem ou propagação de exceções. |
+| `packages/ai/src/utils/stream-markup-healing.ts` | codigo | omp-novo | `packages/ai/src/utils` | 245L; Máquina de estados de streaming que extrai marcações vazadas de tool calls (Kimi, DeepSeek DSML, Qwen XML) e blocos de raciocín... |
+| `packages/ai/src/utils/thinking-loop.ts` | codigo | omp-novo | `packages/ai/src/utils` | 754L; Guarda contra loops degenerados de raciocínio e texto em streaming combinando ciclos exatos por Z-array, clusterização de trigr... |
+| `packages/ai/src/utils/tool-call-arguments.ts` | codigo | omp-novo | `packages/ai/src/utils` | 49L; Parseia argumentos finais de tool calls com reparo JSON, limita texto bruto em diagnósticos de erro e fornece `replayableToolCa... |
+| `packages/ai/src/utils/tool-call-loop-guard.ts` | codigo | omp-novo | `packages/ai/src/utils` | 141L; Detecta repetições consecutivas idênticas de tool calls entre turnos ignorando campos de intenção e evitando que polls ociosos ... |
+| `packages/ai/src/utils/tool-choice.ts` | codigo | omp-novo | `packages/ai/src/utils` | 101L; Mapeia `ToolChoice` unificado para os formatos de OpenAI Completions, OpenAI Responses e Anthropic (no nycode cada API faz esse... |
+| `packages/ai/src/utils/tool-names.ts` | codigo | omp-novo | `packages/ai/src/utils` | 22L; Constrói mapa reverso `nomeWire -> nomeTool` e rejeita colisões quando duas ferramentas codificam para o mesmo nome no wire. |
+| `packages/ai/src/utils/transport-fetch.ts` | codigo | omp-novo | `packages/ai/src/utils` | 104L; Wrapper único e idempotente de `fetch` para requisições de inferência (User-Agent, `NODE_EXTRA_CA_CERTS`, proxy por provedor, `... |
+| `packages/ai/src/utils/validation.ts` | codigo | pi0.9.4-modificado | `packages/ai/src/utils/validation.ts` | mesmo caminho; Pi 073b0ba; +2269/-44; 2290L; Início do pipeline de validação e coerção conservadora de argumentos de tool calls (coerções numéricas/booleanas, cura de JSON ... |
+| `packages/ai/src/utils/websocket.ts` | codigo | omp-novo | `packages/ai/src/utils` | 86L; Utilitários de WebSocket: conversão de esquema HTTP->WS, normalização de headers, extração defensiva de headers de handshake no... |
+| `packages/ai/src/video/index.ts` | codigo | omp-novo | sem equivalente | 34L; Ponto de entrada da API de geração assíncrona de vídeo (`submitVideo`, `pollVideo`, `downloadVideo`), despachando para o transp... |
+| `packages/ai/src/video/openrouter-video.ts` | codigo | omp-novo | sem equivalente | 196L; Cliente HTTP autenticado para geração assíncrona de vídeo via OpenRouter (`/videos`, polling de status com validação ArkType e ... |
+| `packages/ai/src/video/types.ts` | codigo | omp-novo | sem equivalente | 72L; Definições de tipos TypeScript para requisições de geração de vídeo, referências de imagem/áudio/vídeo, status de job e stream ... |
+| `packages/ai/test/abliteration-effort-aliases.test.ts` | teste | omp-novo | `packages/ai/test` | 36L; Testa o mapeamento de aliases de esforço de raciocínio (`medium->high`, `xhigh->max`) para modelos do provedor `abliteration`. |
+| `packages/ai/test/abliteration-login.test.ts` | teste | omp-novo | `packages/ai/test` | 96L; Testa resolução de variáveis de ambiente e validação de login/API key contra `/v1/models` para o provedor `abliteration`. |
+| `packages/ai/test/abort-source-tracker.test.ts` | teste | omp-novo | `packages/ai/test` | 102L; Testa o rastreador de origem de aborto garantindo que o cancelamento do chamador sempre vença watchdogs locais independentement... |
+| `packages/ai/test/abort.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/abort.test.ts` | mesmo caminho; Pi 073b0ba; +145/-40; 213L; Testes e2e de cancelamento mid-stream e imediato com `AbortController` em múltiplos provedores (Google, OpenAI, Anthropic, Mist... |
+| `packages/ai/test/alibaba-endpoint-selection.test.ts` | teste | omp-novo | `packages/ai/test` | 225L; Testa o fluxo de seleção de endpoint (Internacional, China, customizado), validação de chave e serialização de credencial JSON ... |
+| `packages/ai/test/alibaba-token-plan-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 295L; Testa a consulta de uso/cota do QwenCloud Token Plan (internacional e gateway de Pequim) usando cookies de sessão, parseando ja... |
+| `packages/ai/test/alibaba-token-plan.test.ts` | teste | omp-novo | `packages/ai/test` | 181L; Testa o login do `alibaba-token-plan` (regiões, cookie opcional isolado da inferência, validação e ausência de fallback para `O... |
+| `packages/ai/test/anthropic-abandoned-tooluse-replay.test.ts` | teste | omp-novo | `packages/ai/test` | 244L; Testa o contrato de replay de blocos `thinking` assinados na Anthropic para turnos com `tool_use` abandonado (`stop`/`end_turn`... |
+| `packages/ai/test/anthropic-alignment.test.ts` | teste | omp-novo | `packages/ai/test` | 3570L; Testa alinhamento do cliente Anthropic: headers Stainless/Claude Code OAuth, betas permitidos (omissão de `context-1m` e `redac... |
+| `packages/ai/test/anthropic-api-version.test.ts` | teste | omp-novo | `packages/ai/test` | 97L; Testes que verificam o opt-in via PI_ANTHROPIC_API_VERSION="2026-10-21" no endpoint oficial Anthropic, alternando o header anth... |
+| `packages/ai/test/anthropic-block-start-thinking-signature.test.ts` | teste | omp-novo | `packages/ai/test` | 77L; Testes de decodificação SSE garantindo preservação da assinatura de thinking vinda em content_block_start quando não há signatu... |
+| `packages/ai/test/anthropic-cache-control-rejection.test.ts` | teste | omp-novo | `packages/ai/test` | 1167L; Parte 1 da suíte de regressão para rejeição 400 de cache_control: testa fallback em escada (retirando ttl/scope mantendo 5m cac... |
+| `packages/ai/test/anthropic-client.test.ts` | teste | omp-novo | `packages/ai/test` | 733L; Testes do transporte AnthropicMessagesClient cobrindo mapeamento de erros, extração de details.error_code, retries (retry-after... |
+| `packages/ai/test/anthropic-connection-reuse.test.ts` | teste | omp-novo | `packages/ai/test` | 117L; Testes com servidor HTTP real (Bun.serve) verificando drenagem do corpo após message_stop para reutilização de conexão keep-ali... |
+| `packages/ai/test/anthropic-context-management-compat.test.ts` | teste | omp-novo | `packages/ai/test` | 153L; Testes de compatibilidade para context_management (clear_thinking_20251015) e beta context-management-2025-06-27 em proxies com... |
+| `packages/ai/test/anthropic-control-state-stability.test.ts` | teste | omp-novo | `packages/ai/test` | 289L; Testes de estabilidade de prefixo cacheado para controles derivados do transcript (tool_removal, output_config.effort, inactive... |
+| `packages/ai/test/anthropic-disable-experimental-betas.test.ts` | teste | omp-novo | `packages/ai/test` | 309L; Testes da variável CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS suprimindo block_binding, context_management, task_budget, campos bet... |
+| `packages/ai/test/anthropic-disabled-thinking-compat.test.ts` | teste | omp-novo | `packages/ai/test` | 326L; Testes de compatibilidade para disabledThinking ("between-tools" com betweenToolsEffort, "disabled" com stripThinkingHistory) e... |
+| `packages/ai/test/anthropic-empty-error-tool-result.test.ts` | teste | omp-novo | `packages/ai/test` | 125L; Testes unitários de serialização de tool_result vazio: preenche "Tool failed with no output." quando isError=true e conteúdo só... |
+| `packages/ai/test/anthropic-error-tool-result-image.test.ts` | teste | omp-novo | `packages/ai/test` | 148L; Testes de hoisting de imagens fora de blocos tool_result com isError=true para o final da run de tool_result na mesma mensagem ... |
+| `packages/ai/test/anthropic-fable-request-shaping.test.ts` | teste | omp-novo | `packages/ai/test` | 460L; Testes de formatação de requisição para Fable/Mythos/Opus 5.5/Sonnet 5.5 e MiniMax Anthropic: block_binding, TTL 1h monotônico ... |
+| `packages/ai/test/anthropic-fallback-handoff.test.ts` | teste | omp-novo | `packages/ai/test` | 274L; Testes de handoff server-side no meio da resposta (bloco type: "fallback"): garante descarte do thinking/tool_use do modelo rec... |
+| `packages/ai/test/anthropic-fast-mode.test.ts` | teste | omp-novo | `packages/ai/test` | 193L; Testes do mapeamento serviceTier="priority" para speed="fast", escopo de fallback de sessão por endpoint e modelo, reset via cl... |
+| `packages/ai/test/anthropic-haiku-thinking-off.test.ts` | teste | omp-novo | `packages/ai/test` | 103L; Testes específicos para Claude Haiku 5.5 com thinking desligado: usa disabled por padrão e após esforço único, mas cai para ada... |
+| `packages/ai/test/anthropic-head-caching.test.ts` | teste | omp-novo | `packages/ai/test` | 791L; Parte 1 dos testes de cache breakpoints Anthropic (máx. 4): âncora em system/tools/cauda, decimação a cada 15 turnos reais (ign... |
+| `packages/ai/test/anthropic-many-image-resize.test.ts` | teste | omp-novo | `packages/ai/test` | 297L; Testes de redimensionamento/reencoding automático de imagens no provider Anthropic: downscale <=2000px acima de 20 imagens, cla... |
+| `packages/ai/test/anthropic-message-threads.test.ts` | teste | omp-novo | `packages/ai/test/anthropic-message-threads.test.ts` | mesmo caminho; Pi 073b0ba; 407L; Testes de Anthropic message threads (message-threads-2026-08-12): criação/continuação enviando apenas deltas, até 2 breakpoints... |
+| `packages/ai/test/anthropic-mid-conversation-system.test.ts` | teste | omp-novo | `packages/ai/test` | 255L; Testes de mapeamento de mensagens developer para role="system" mid-conversation em Opus 4.8/Mythos/Fable 5.1, respeitando atrib... |
+| `packages/ai/test/anthropic-model-not-found-rotation.test.ts` | teste | omp-novo | `packages/ai/test` | 416L; Testes de rotação de credenciais OAuth da Anthropic em 404 model-not-found com bloqueio escopado a model-policy:<id>, preservaç... |
+| `packages/ai/test/anthropic-oauth.test.ts` | teste | omp-novo | `packages/ai/test/anthropic-oauth.test.ts` | mesmo caminho; Pi 073b0ba; 356L; Testes do fluxo OAuth da Anthropic (login PKCE, bootstrap de identidade, refresh estilo Claude Code com retry sem scope, merge ... |
+| `packages/ai/test/anthropic-ping-keepalive.test.ts` | teste | omp-novo | `packages/ai/test` | 285L; Testes com fake timers para o teto de keepalive via eventos ping (3x idle + orçamento): encerra stream travado recebendo pings ... |
+| `packages/ai/test/anthropic-prefill.test.ts` | teste | omp-novo | `packages/ai/test` | 293L; Testes de reparo contra assistant prefill ("Continue." no fim ou entre turnos assistant consecutivos), isolamento de replay de ... |
+| `packages/ai/test/anthropic-prefix-drop-replay.test.ts` | teste | omp-novo | `packages/ai/test` | 167L; Testes garantindo que blocos thinking/redacted_thinking descartados pelo servidor via input_transformations (prefix_binding_mis... |
+| `packages/ai/test/anthropic-prewarm.test.ts` | teste | omp-novo | `packages/ai/test` | 110L; Testes da opção prewarm=true em streamAnthropic, que envia o payload final (pós-onPayload) em modo não-streaming com max_tokens... |
+| `packages/ai/test/anthropic-prior-turn-thinking.test.ts` | teste | omp-novo | `packages/ai/test` | 997L; Testa preservação e política de assinatura de blocos thinking/redacted_thinking de turnos anteriores e cross-model entre endpoi... |
+| `packages/ai/test/anthropic-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 127L; Testa classificação `isProviderRetryableError` para rate limits transitórios, falhas pré-conteúdo de envelope SSE, drops de gat... |
+| `packages/ai/test/anthropic-server-compaction.test.ts` | teste | omp-novo | `packages/ai/test` | 919L; Testa requisições e respostas de compactação server-side on-demand (`compact-2026-09-04`), roteamento de beta em Vertex/Foundry... |
+| `packages/ai/test/anthropic-server-side-fallback.test.ts` | teste | omp-novo | `packages/ai/test` | 1010L; Testa opt-in/opt-out de `server-side-fallback-2026-06-01`, promoção do modelo servido, precificação por iteração, replay condic... |
+| `packages/ai/test/anthropic-signature-auto-mark.test.ts` | teste | omp-novo | `packages/ai/test` | 429L; Testa auto-healing em runtime (#4297) quando proxy de assinatura não marcado retorna 400 (Anthropic ou `ValidationException` do... |
+| `packages/ai/test/anthropic-signature-drop-all-escalation.test.ts` | teste | omp-novo | `packages/ai/test` | 343L; Testa escalonamento de retry quando thinking assinado por outro upstream/modelo irmão continua falhando com 400 após o retry de... |
+| `packages/ai/test/anthropic-signature-hint.test.ts` | teste | omp-novo | `packages/ai/test` | 96L; Testa detecção de mensagens de erro 400 de assinatura inválida (Anthropic, ZenMux, Bedrock) separada de erros de conversation b... |
+| `packages/ai/test/anthropic-signature.test.ts` | teste | omp-novo | `packages/ai/test` | 258L; Testa parser protobuf de assinaturas Anthropic para extrair `upstreamModel` e detectar blocos `narration` em assinaturas v4, in... |
+| `packages/ai/test/anthropic-slow-mode.test.ts` | teste | omp-novo | `packages/ai/test` | 293L; Testa parsing de headers `anthropic-ratelimit-unified-slow-*` e `grace-5h/7d-utilization`, envio condicional de `anthropic-usag... |
+| `packages/ai/test/anthropic-stream-envelope.test.ts` | teste | omp-novo | `packages/ai/test` | 2898L; Testa deduplicação de `message_start` duplicado, decodificação de nomes de ferramentas built-in escapados pelo gateway Umans, d... |
+| `packages/ai/test/anthropic-stream-timeout.test.ts` | teste | omp-novo | `packages/ai/test` | 922L; Testa retry em timeout de primeiro evento (`streamFirstEventTimeoutMs`), permanência do watchdog diante de `ping`, não-ativação... |
+| `packages/ai/test/anthropic-thinking-immutability.test.ts` | teste | omp-novo | `packages/ai/test` | 98L; Testa imutabilidade de blocos `thinking` assinados (preservando substitutos malformados) enquanto normaliza texto comum, e não-... |
+| `packages/ai/test/anthropic-thinking-max-tokens.test.ts` | teste | omp-novo | `packages/ai/test` | 126L; Testa adição do orçamento de thinking ao `maxTokens` explícito em requisições com teto nos caminhos adaptativo Anthropic, budge... |
+| `packages/ai/test/anthropic-thinking-only-length-truncated.test.ts` | teste | omp-novo | `packages/ai/test` | 190L; Testa descarte em `transformMessages` de turnos do assistente contendo apenas `thinking` com `stopReason` `"length"` ou `"error... |
+| `packages/ai/test/anthropic-thinking-presence.test.ts` | teste | omp-novo | `packages/ai/test` | 214L; Testa preenchimento automático de bloco `thinking` placeholder sem assinatura em turnos sem thinking dentro da janela atual qua... |
+| `packages/ai/test/anthropic-tool-schema.test.ts` | teste | omp-novo | `packages/ai/test` | 407L; Testa `normalizeAnthropicToolSchema` para whitelist da Anthropic e paridade com `anthropic-sdk-python`: demote de keywords não ... |
+| `packages/ai/test/anthropic-unsigned-thinking-replay.test.ts` | teste | omp-novo | `packages/ai/test` | 283L; Testa preservacao de thinking sem assinatura em endpoints Anthropic-compativeis, envio de context_management (clear_thinking_20... |
+| `packages/ai/test/anthropic-unsupported-media.test.ts` | teste | omp-novo | `packages/ai/test` | 194L; Testa rejeicao pre-flight de midias nao suportadas pelo Claude (mp4, pdf, heic) no turno ativo e kickoff sintetico, enquanto de... |
+| `packages/ai/test/anthropic-user-profiles.test.ts` | teste | omp-novo | `packages/ai/test` | 228L; Testa o cliente REST de Anthropic User Profiles (criacao, paginacao, update, enrollment_url, erros) e o encaminhamento do heade... |
+| `packages/ai/test/anthropic-zenmux-checkpoint-thinking-signature.test.ts` | teste | omp-novo | `packages/ai/test` | 178L; Testa contrato para #4192 no ZenMux: classifica como endpoint assinante (replayUnsignedThinking=false) e garante que thinking c... |
+| `packages/ai/test/antigravity-cli-binary.test.ts` | teste | omp-novo | `packages/ai/test` | 124L; Testa download, verificacao SHA-512, deduplicacao concorrente, rollback de atualizacao corrompida e timeout por stall de rede (... |
+| `packages/ai/test/antigravity-cli-conversation-store.test.ts` | teste | omp-novo | `packages/ai/test` | 122L; Testa checkpoints e fork de bancos SQLite WAL da Antigravity CLI, validando marcas de indice high-water, integridade do histori... |
+| `packages/ai/test/antigravity-cli-credentials.test.ts` | teste | omp-novo | `packages/ai/test` | 418L; Testa ownership, versionamento, staging atomico com permissoes 0700/0600 e lock de arquivo, parser incremental de URL OAuth, ha... |
+| `packages/ai/test/antigravity-cli-host.test.ts` | teste | omp-novo | `packages/ai/test` | 1098L; Parte 1 dos testes stateful do AgyHost: selecao de modelo/thought_level, schemas union em tools, estacionamento serial de tool ... |
+| `packages/ai/test/antigravity-cli-login-cleanup.test.ts` | teste | omp-novo | `packages/ai/test` | 95L; Testa limpeza de diretorios antigos de login abandonados do Antigravity CLI, preservando diretorios recentes ou com token criad... |
+| `packages/ai/test/antigravity-cli-mcp-bridge.test.ts` | teste | omp-novo | `packages/ai/test` | 180L; Testa a ponte TCP JSON-RPC McpBridge do Antigravity CLI: rejeicao de tools desconhecidas com limite de tamanho, encaminhamento ... |
+| `packages/ai/test/antigravity-cli-reconcile.test.ts` | teste | omp-novo | `packages/ai/test` | 250L; Testa reconciliacao de turnos do Antigravity CLI: decisao entre resume/restore/fresh, hash canonico do transcript ignorando met... |
+| `packages/ai/test/api-key-validation.test.ts` | teste | omp-novo | `packages/ai/test` | 205L; Testa preservacao de status/headers/code em ProviderHttpError nos validadores de chave OpenAI/Anthropic/models, propagacao de e... |
+| `packages/ai/test/api-registry.test.ts` | teste | omp-novo | `packages/ai/test` | 43L; Testa registro/desregistro de APIs customizadas por sourceId e bloqueio de colisao com nomes de APIs built-in. |
+| `packages/ai/test/apple-foundation-models.test.ts` | teste | omp-novo | `packages/ai/test` | 54L; Testa mapeamento de stopReason (maximumResponseTokensExceeded, contentCompleted e fallback heuristico) no provider on-device Ap... |
+| `packages/ai/test/apply-patch-freeform.test.ts` | teste | omp-novo | `packages/ai/test` | 985L; Parte 1 dos testes de apply_patch freeform e OpenAI Responses: emissao de custom grammar tool (e bloqueio no muse-code), preser... |
+| `packages/ai/test/auth-broker-config-discovery.test.ts` | teste | omp-novo | `packages/ai/test` | 356L; Testa descoberta de configuracao do auth-broker em config.yml/config.yaml, validacao estrita de accountPolicies e usageReserveP... |
+| `packages/ai/test/auth-broker-disabled-credentials.test.ts` | teste | omp-novo | `packages/ai/test` | 226L; Testa tombstones de credenciais desabilitadas sem vazar tokens em SQLite e via /v1/credentials/disabled, revalidacao de mudanca... |
+| `packages/ai/test/auth-broker-local-providers.test.ts` | teste | omp-novo | `packages/ai/test` | 168L; Testa store hibrido (broker + agent.db local) quando o broker nao serve um provider: falha em cliente broker-only, persistencia... |
+| `packages/ai/test/auth-broker-model-policy.test.ts` | teste | omp-novo | `packages/ai/test` | 118L; Testa rotacao de credencial Anthropic apos erro 404 com bloqueio escopado por modelo (model-policy:<id>) sincronizado com o bro... |
+| `packages/ai/test/auth-broker-nested-config.test.ts` | teste | omp-novo | `packages/ai/test` | 57L; Testa resolucao de chaves YAML aninhadas auth.broker.url/token em config.yml e precedencia sobre chaves planas com ponto. |
+| `packages/ai/test/auth-broker-oauth-extra-fields.test.ts` | teste | omp-novo | `packages/ai/test` | 102L; Testa preservacao de campos extras de OAuth MCP (tokenUrl, clientId, clientSecret, resource) no upload e round-trip de snapshot... |
+| `packages/ai/test/auth-broker-refresh-backoff.test.ts` | teste | omp-novo | `packages/ai/test` | 275L; Testa janela de reuso de mint recente (5 min) e cooldown no refresh OAuth distribuido via broker/gateway, distinguindo recupera... |
+| `packages/ai/test/auth-broker-refresher.test.ts` | teste | omp-novo | `packages/ai/test` | 294L; Testa o AuthBrokerRefresher periodico: refresh dentro da janela de skew, desabilitacao em invalid_grant, nivel de log em falhas... |
+| `packages/ai/test/auth-broker-remote-store.test.ts` | teste | omp-novo | `packages/ai/test` | 883L; Parte 1 da integracao SSE e long-poll do RemoteAuthCredentialStore: snapshot/entry/removed via SSE, reinicio do broker com gera... |
+| `packages/ai/test/auth-broker-snapshot-cache.test.ts` | teste | omp-novo | `packages/ai/test` | 305L; Testa cache criptografado AES-GCM v2 de snapshots do auth-broker: permissao 0600, vinculacao autenticada de token/url/versao, r... |
+| `packages/ai/test/auth-broker-usage-probe-refresh.test.ts` | teste | omp-novo | `packages/ai/test` | 53L; Testa que um refresh falho com invalid_grant originado por usage-probe nao apaga/desabilita a credencial armazenada no broker. |
+| `packages/ai/test/auth-broker-wire-schema-contract.test.ts` | teste | omp-novo | `packages/ai/test` | 312L; Testa contrato dos 32 schemas ArkType publicos do wire protocol do auth-broker: discriminadores, campos extras forward-compatib... |
+| `packages/ai/test/auth-broker-wire.test.ts` | teste | omp-novo | `packages/ai/test` | 1156L; Parte 1 dos testes de protocolo HTTP do auth-broker: healthz, snapshot com redacao de refresh, ETag/304 long-poll, polling SQLi... |
+| `packages/ai/test/auth-gateway-anthropic-caching.test.ts` | teste | omp-novo | `packages/ai/test` | 161L; Teste E2E condicional contra auth-gateway ativo validando que cache_control ephemeral na mensagem de sistema cria cache no turn... |
+| `packages/ai/test/auth-gateway-anthropic-messages.test.ts` | teste | omp-novo | `packages/ai/test` | 1327L; Testes de parseRequest e encodeResponse do servidor Anthropic Messages no auth-gateway: mapeamento de blocos, binding de thinki... |
+| `packages/ai/test/auth-gateway-anthropic-to-codex-caching.test.ts` | teste | omp-novo | `packages/ai/test` | 170L; Teste E2E que valida a preservação de cache de prefixo em tradução cross-protocolo de /v1/messages (Anthropic) para backend Ope... |
+| `packages/ai/test/auth-gateway-cache-key.test.ts` | teste | omp-novo | `packages/ai/test` | 91L; Testes unitários de resolvePromptCacheKey verificando precedência entre campos do body, metadata (incluindo session_id em JSON ... |
+| `packages/ai/test/auth-gateway-classify-error.test.ts` | teste | omp-novo | `packages/ai/test` | 117L; Testes unitários de classifyGatewayError cobrindo status HTTP explícito ou embutido, limites de palavra contra falsos positivos... |
+| `packages/ai/test/auth-gateway-clients.test.ts` | teste | omp-novo | `packages/ai/test` | 566L; Testes de clientes escopados do auth-gateway: filtragem de headers e opções de faturamento/atribuição do chamador, isolamento d... |
+| `packages/ai/test/auth-gateway-cross-protocol-caching.test.ts` | teste | omp-novo | `packages/ai/test` | 179L; Teste E2E que verifica prompt caching automático em tradução cross-protocolo de /v1/responses (OpenAI) para backend Anthropic, ... |
+| `packages/ai/test/auth-gateway-embeddings.test.ts` | teste | omp-novo | `packages/ai/test` | 315L; Testes da rota POST /v1/embeddings do auth-gateway: encaminhamento OpenAI/OpenRouter (float/base64), registro de uso/custo, rej... |
+| `packages/ai/test/auth-gateway-images.test.ts` | teste | omp-novo | `packages/ai/test` | 368L; Testes das rotas de imagem do auth-gateway (/v1/images/generations, /edits e /v1/images) para Factory Droid, OpenAI multipart/J... |
+| `packages/ai/test/auth-gateway-model-list.test.ts` | teste | omp-novo | `packages/ai/test` | 56L; Teste do endpoint GET /v1/models verificando deduplicação e exposição de rotas qualificadas por provedor (provider/id) com meta... |
+| `packages/ai/test/auth-gateway-openai-chat.test.ts` | teste | omp-novo | `packages/ai/test` | 748L; Testes de parseRequest, encodeResponse e encodeStream para /v1/chat/completions: preservação de strict tools, assinaturas thoug... |
+| `packages/ai/test/auth-gateway-openai-prompt-cache.test.ts` | teste | omp-novo | `packages/ai/test` | 88L; Teste integrando rotas /v1/chat/completions, /v1/responses e /v1/pi/stream para garantir rejeição clara de controles crus de pr... |
+| `packages/ai/test/auth-gateway-openai-responses-caching.test.ts` | teste | omp-novo | `packages/ai/test` | 179L; Teste E2E para /v1/responses verificando caching automático de prefixo com prompt_cache_key estável e nonce por execução entre ... |
+| `packages/ai/test/auth-gateway-openai-responses.test.ts` | teste | omp-novo | `packages/ai/test` | 1667L; Testes de parseRequest do servidor OpenAI Responses: itens mistos (reasoning, phase, function_call), coerção de content:null, r... |
+| `packages/ai/test/auth-gateway-pi-native.test.ts` | teste | omp-novo | `packages/ai/test` | 636L; Testes da rota pi-native (/v1/pi/stream e /v1/pi/models): validação e filtragem de opções em parseRequest, orçamentos de retry ... |
+| `packages/ai/test/auth-gateway-provider-session-state.test.ts` | teste | omp-novo | `packages/ai/test` | 862L; Testes de retenção de providerSessionState por sessão no gateway: preservação de fallback de fast-mode entre turnos e rotas, is... |
+| `packages/ai/test/auth-gateway-reasoning-effort.test.ts` | teste | omp-novo | `packages/ai/test` | 142L; Testes de clamping e mapeamento de reasoning_effort no gateway: ajuste para o menor nível suportado da escada do modelo (ex.: m... |
+| `packages/ai/test/auth-gateway-rerank.test.ts` | teste | omp-novo | `packages/ai/test` | 280L; Testes de POST /v1/rerank e rerankOpenRouter: normalização de documentos, top_n/return_documents, headers customizados e omissã... |
+| `packages/ai/test/auth-gateway-response-headers.test.ts` | teste | omp-novo | `packages/ai/test` | 133L; Testes dos headers diagnósticos do auth-gateway (x-litellm-response-cost, x-litellm-model-id, duração, x-request-id) em respost... |
+| `packages/ai/test/auth-gateway-speech.test.ts` | teste | omp-novo | `packages/ai/test` | 182L; Testes da rota POST /v1/audio/speech traduzindo payload OpenAI para provedores OpenAI-compatible (DeepInfra) e xAI TTS, validan... |
+| `packages/ai/test/auth-gateway-stdio.test.ts` | teste | omp-novo | `packages/ai/test` | 132L; Testes do transporte stdio (JSONL) do auth-gateway validando handshake ready, roteamento de chat, provedores sem credencial (ap... |
+| `packages/ai/test/auth-gateway-systemone.test.ts` | teste | omp-novo | `packages/ai/test` | 634L; Testa a rota /v1/systemone (e /alpha/decisions) do auth-gateway: repasse com credencial do broker e cabeçalho x-omp-app, round-... |
+| `packages/ai/test/auth-gateway-thinking-loop.test.ts` | teste | omp-novo | `packages/ai/test` | 183L; Testa no auth-gateway o retry não-streaming com loopGuard para loops degenerados de thinking (3 tentativas antes de retornar 50... |
+| `packages/ai/test/auth-gateway-transcriptions.test.ts` | teste | omp-novo | `packages/ai/test` | 249L; Testa a rota /v1/audio/transcriptions do auth-gateway: encaminhamento multipart com normalização de MIME e observação de custo,... |
+| `packages/ai/test/auth-gateway-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 82L; Verifica que provedores listados em excludeProviders no auth-gateway ficam excluídos tanto de GET /v1/usage quanto de GET /v1/c... |
+| `packages/ai/test/auth-gateway-video.test.ts` | teste | omp-novo | `packages/ai/test` | 258L; Testa a geração assíncrona de vídeo em /v1/videos no auth-gateway: submissão com ID stateless codificado (provider/modelId/upst... |
+| `packages/ai/test/auth-hooks-registry.test.ts` | teste | omp-novo | `packages/ai/test` | 64L; Valida a integridade bidirecional entre as regras KDL em rules/auth/*.kdl e o registro de hooks/provedores em código: garante q... |
+| `packages/ai/test/auth-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 944L; Primeira parte da suíte de auth-retry: cobre isApiKeyResolver/resolveApiKeyOnce, classificação de isAuthRetryableError (401, 40... |
+| `packages/ai/test/auth-storage-account-identity.test.ts` | teste | omp-novo | `packages/ai/test` | 166L; Testa AuthStorage.oauth.identity (extração de accountId/email/projectId, descarte de strings vazias, acompanhamento de rotação ... |
+| `packages/ai/test/auth-storage-account-reclaim.test.ts` | teste | omp-novo | `packages/ai/test` | 299L; Testa a política reclaimAbovePct em accountPolicies: retorno de sessão aquecida (warm pin) para conta prioritária ao recuperar ... |
+| `packages/ai/test/auth-storage-anthropic-env-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 53L; Verifica que um token OAuth (sk-ant-oat-*) definido em ANTHROPIC_API_KEY é consultado em /api/oauth/usage para relatar cota Cla... |
+| `packages/ai/test/auth-storage-antigravity-selection.test.ts` | teste | omp-novo | `packages/ai/test` | 478L; Testa o ranqueamento OAuth do provedor google-antigravity: isolamento de bloqueios entre contadores Google/Claude/Argon por mod... |
+| `packages/ai/test/auth-storage-api-key-login.test.ts` | teste | omp-novo | `packages/ai/test` | 254L; Testa persistência e upsert de logins baseados em API key no SqliteAuthCredentialStore: reuso de linha para chave idêntica (kag... |
+| `packages/ai/test/auth-storage-block-persistence.test.ts` | teste | omp-novo | `packages/ai/test` | 893L; Primeira parte dos testes de persistência de bloqueios e pins em SQLite: bloqueios escopados e globais sobrevivendo a reabertur... |
+| `packages/ai/test/auth-storage-broker-no-sentinel.test.ts` | teste | omp-novo | `packages/ai/test` | 106L; Garante que credenciais com REMOTE_REFRESH_SENTINEL só são renovadas pelo hook refreshOAuthCredential do store (broker), enquan... |
+| `packages/ai/test/auth-storage-check-credentials.test.ts` | teste | omp-novo | `packages/ai/test` | 586L; Testa o contrato de AuthStorage.health.check(): retorno ok=true/false/null conforme resultado do UsageProvider, refresh prévio ... |
+| `packages/ai/test/auth-storage-claude-fable-fallback.test.ts` | teste | omp-novo | `packages/ai/test` | 438L; Testa seleção e fallback do tier Fable em contas OAuth Anthropic: ausência de bucket Fable ou resets ausentes/expirados servem ... |
+| `packages/ai/test/auth-storage-claude-reset.test.ts` | teste | omp-novo | `packages/ai/test` | 393L; Testa descoberta e resgate de créditos de reset do Claude (cedar_ember e juniper_tide): seleção segura por credentialId/orgId e... |
+| `packages/ai/test/auth-storage-close-releases-handles.test.ts` | teste | omp-novo | `packages/ai/test` | 56L; Teste de regressão garantindo que SqliteAuthCredentialStore.close() finaliza todos os prepared statements em cache (incluindo d... |
+| `packages/ai/test/auth-storage-codex-selection.test.ts` | teste | omp-novo | `packages/ai/test` | 4584L; Parte 1 de auth-storage-codex-selection.test.ts: testa ranqueamento Codex OAuth por janela semanal próxima do reset, políticas ... |
+| `packages/ai/test/auth-storage-codex-workspace-identity.test.ts` | teste | omp-novo | `packages/ai/test` | 344L; Testa identidade de credenciais Codex composta por email e workspace (orgId), coexistência de conta pessoal/enterprise e de múl... |
+| `packages/ai/test/auth-storage-config-override.test.ts` | teste | omp-novo | `packages/ai/test` | 126L; Testa overrides de API key via configuração (models.yml) acima de OAuth armazenado e abaixo de override de runtime, remoção/lim... |
+| `packages/ai/test/auth-storage-credential-disabled-event.test.ts` | teste | omp-novo | `packages/ai/test` | 436L; Testa emissão de eventos de credencial desabilitada (construtor e inscrição em runtime), não-disparo em falhas transitórias, ca... |
+| `packages/ai/test/auth-storage-credential-origin.test.ts` | teste | omp-novo | `packages/ai/test` | 106L; Testa AuthStorage.keys.source e precedência de resolução entre runtime, config, OAuth armazenado, variável de ambiente (única o... |
+| `packages/ai/test/auth-storage-credential-policy.test.ts` | teste | omp-novo | `packages/ai/test` | 28L; Testa que snapshots remotos de credenciais redigem segredos (refresh substituído por __remote__ e remoção de kiroClientSecret) ... |
+| `packages/ai/test/auth-storage-email-dedupe.test.ts` | teste | omp-novo | `packages/ai/test` | 949L; Testa deduplicação por email (incluindo JWT profile claim) para Codex e Anthropic mantendo emails distintos no mesmo workspace/... |
+| `packages/ai/test/auth-storage-force-refresh-rotate.test.ts` | teste | omp-novo | `packages/ai/test` | 1365L; Testa forceRefresh, rebinding por id após remoção concorrente, rotação em 401/usage-limit/cyber_policy, rastreamento de históri... |
+| `packages/ai/test/auth-storage-manual-code-gate.test.ts` | teste | omp-novo | `packages/ai/test` | 107L; Testa que AuthStorage.oauth.login não sintetiza onManualCodeInput padrão para provedores loopback (evitando prompt readline pen... |
+| `packages/ai/test/auth-storage-model-usage-health.test.ts` | teste | omp-novo | `packages/ai/test` | 840L; Testa prefetchUsage sem pinning/avanço de cursor, restauração de saúde cross-process após refresh OAuth, agregação de saúde do ... |
+| `packages/ai/test/auth-storage-noop-persistence.test.ts` | teste | omp-novo | `packages/ai/test` | 157L; Testa que resoluções de token inalteradas não incrementam auth_change_revision nem reescrevem auth_credentials, que lastUsedAtM... |
+| `packages/ai/test/auth-storage-oauth-account-select.test.ts` | teste | omp-novo | `packages/ai/test` | 322L; Testa listagem de contas sem refresh, fixação e herança de afinidade de sessão, failover priorizando contas não descobertas ant... |
+| `packages/ai/test/auth-storage-oauth-refresh-race.test.ts` | teste | omp-novo | `packages/ai/test` | 1683L; Testa proteção contra desabilitação em corridas de refresh OAuth entre processos: pre-check, CAS de update/disable, persistênci... |
+| `packages/ai/test/auth-storage-org-scoped-identity.test.ts` | teste | omp-novo | `packages/ai/test` | 538L; Testa identidade escopada por orgId na Anthropic (coexistência por org, promoção de chaves legadas por email/account/org-only, ... |
+| `packages/ai/test/auth-storage-peek.test.ts` | teste | omp-novo | `packages/ai/test` | 63L; Testa que keys.peek retorna deterministicamente a mesma conta não expirada sem rotacionar (para cache de descoberta de modelos)... |
+| `packages/ai/test/auth-storage-quarantine-salvage.test.ts` | teste | omp-novo | `packages/ai/test` | 211L; Testa quarentena de agent.db com cabeçalho corrompido salvando chaves ativas, credenciais desabilitadas (inclusive legadas ou c... |
+| `packages/ai/test/auth-storage-refresh-skew.test.ts` | teste | omp-novo | `packages/ai/test` | 129L; Testa refresh proativo de credencial OAuth dentro da janela de skew de 60s antes da expiração estrita e coalescência de refresh... |
+| `packages/ai/test/auth-storage-service-tier.test.ts` | teste | omp-novo | `packages/ai/test` | 294L; Testa seleção de credenciais por serviceTier (Codex ultrafast por conta e Claude priority entre assinatura fastMode e API key c... |
+| `packages/ai/test/auth-storage-session-restriction.test.ts` | teste | omp-novo | `packages/ai/test` | 157L; Testa restrição de pool de contas OAuth por sessão via lease, precedência sobre pins herdados/explícitos, falha fechada diante ... |
+| `packages/ai/test/auth-storage-sqlite-busy.test.ts` | teste | omp-novo | `packages/ai/test` | 188L; Cobre classificação de erros SQLITE_BUSY* e inicialização concorrente do SqliteAuthCredentialStore com `PRAGMA busy_timeout` an... |
+| `packages/ai/test/auth-storage-subscription.test.ts` | teste | omp-novo | `packages/ai/test` | 58L; Verifica distinção entre credenciais de assinatura (Mistral Vibe com `source: "login"` e OAuth) e chaves API avulsas ou de ambi... |
+| `packages/ai/test/auth-storage-transient-refresh.test.ts` | teste | omp-novo | `packages/ai/test` | 134L; Garante que falhas transitórias de refresh OAuth preservam a credencial e retornam erro retentável (`OAuthRefreshUnavailableErr... |
+| `packages/ai/test/auth-storage-usage-cache.test.ts` | teste | omp-novo | `packages/ai/test` | 1631L; Testa contrato do cache de uso por credencial: versionamento por adapter/override em runtime, backoff de falha fria, fallback l... |
+| `packages/ai/test/auth-storage-usage-history.test.ts` | teste | omp-novo | `packages/ai/test` | 428L; Testa histórico durável de uso no SQLite com downsampling de 1 linha/hora por série, filtragem, imunidade à limpeza de cache, g... |
+| `packages/ai/test/auth-storage-xai-oauth-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 338L; Testa seleção de credencial `XAI_OAUTH_TOKEN` vs `XAI_API_KEY` para uso SuperGrok, ranking por taxa de dreno semanal, filtragem... |
+| `packages/ai/test/auth-storage-zai-api-key-selection.test.ts` | teste | omp-novo | `packages/ai/test` | 283L; Testa ranking de múltiplas chaves API Z.AI por cota de requisições (incluindo resolução de referências), cálculo de `blockedUnt... |
+| `packages/ai/test/aws-credentials.test.ts` | teste | omp-novo | `packages/ai/test` | 769L; Testa tokenizadores POSIX/Windows CRT de `credential_process`, execução/cache/abort de helper externo, ECS container credential... |
+| `packages/ai/test/aws-eventstream.test.ts` | teste | omp-novo | `packages/ai/test` | 250L; Testa decodificador próprio de AWS EventStream binário: vetores CRC32, chunking arbitrário (inclusive byte a byte), headers de ... |
+| `packages/ai/test/aws-registry.test.ts` | teste | omp-novo | `packages/ai/test` | 273L; Verifica detecção de disponibilidade de `amazon-bedrock` e `bedrock-mantle` a partir de variáveis de ambiente, arquivos shared ... |
+| `packages/ai/test/aws-sigv4.test.ts` | teste | omp-novo | `packages/ai/test` | 122L; Valida implementação própria de assinatura AWS SigV4 contra vetores oficiais (GET/POST, ordenação de query codificada, derivati... |
+| `packages/ai/test/azure-openai-responses-stream.test.ts` | teste | omp-novo | `packages/ai/test` | 480L; Testa streaming Azure OpenAI Responses: system/developer prompts, replay de `function_call` malformado com `__rawJson`, `onPayl... |
+| `packages/ai/test/bedrock-anthropic-routes.test.ts` | teste | omp-novo | `packages/ai/test` | 274L; Testa rotas `/anthropic` da Bedrock Runtime e Mantle (incluindo FIPS, PrivateLink e templates `{region}`): remoção de `strict` ... |
+| `packages/ai/test/bedrock-caller-headers.test.ts` | teste | omp-novo | `packages/ai/test` | 156L; Garante repasse de headers do chamador/modelo com normalização case-insensitive sem duplicar headers reservados ou sobrescrever... |
+| `packages/ai/test/bedrock-disable-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` | 124L; Verifica que `disableReasoning` e `forceReasoningOff` em modelos Bedrock budget/adaptive omitem `thinking`/`reasoning` sem infl... |
+| `packages/ai/test/bedrock-haiku-thinking-off.test.ts` | teste | omp-novo | `packages/ai/test` | 58L; Verifica que Haiku 5.5 na Bedrock envia `thinking: { type: "disabled" }` e `output_config: { effort: "low" }` quando thinking e... |
+| `packages/ai/test/bedrock-incomplete-stream.test.ts` | teste | omp-novo | `packages/ai/test` | 69L; Testa falha retentável quando um stream Converse fecha antes de `messageStop` (sem finalizar tool call truncado) e sucesso quan... |
+| `packages/ai/test/bedrock-inference-profile.test.ts` | teste | omp-novo | `packages/ai/test` | 403L; Testa roteamento de região por ARN de inference profile, prefixo geográfico (`eu.`, `au.`, `jp.`, `global.`), guardrail ARN, pr... |
+| `packages/ai/test/bedrock-mantle-auth.test.ts` | teste | omp-novo | `packages/ai/test` | 246L; Testa autenticação do provedor `bedrock-mantle` (bearer token, descoberta de modelos, cadeia SigV4 com invalidação de cache em ... |
+| `packages/ai/test/bedrock-nova-unsigned-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` | 126L; Regressão para modelos Amazon Nova e ARNs opacos: rebaixa blocos `thinking` sem assinatura para texto simples em vez de reenvia... |
+| `packages/ai/test/bedrock-on-payload.test.ts` | teste | omp-novo | `packages/ai/test` | 161L; Testa substituição de corpo via `onPayload` assíncrono na Bedrock e envio/opt-out de controles `thinking.block_binding` e downg... |
+| `packages/ai/test/bedrock-openai-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` | 109L; Testa emissão de `reasoning.effort` (em vez do bloco `thinking` da Anthropic) para modelos OpenAI/Kimi via perfis de inferência... |
+| `packages/ai/test/bedrock-prefix-binding-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 244L; Testa retry único sem reasoning reenviado quando a Bedrock retorna erro 400 de prefix-binding mismatch, respeito à opção `"erro... |
+| `packages/ai/test/bedrock-prompt-cache.test.ts` | teste | omp-novo | `packages/ai/test` | 214L; Testa checkpoints de prompt cache na Bedrock: downgrade de 1h para 5m quando não suportado (inclusive em ARNs forçados), checkp... |
+| `packages/ai/test/bedrock-request-metadata.test.ts` | teste | omp-novo | `packages/ai/test` | 123L; Testa merge de `model.requestMetadata` com opção por chamada, validação/descarte de chaves e valores (>256 chars), limite de 16... |
+| `packages/ai/test/bedrock-server-compaction.test.ts` | teste | omp-novo | `packages/ai/test` | 1059L; Testa transporte nativo de compactação da Bedrock via `InvokeModelWithResponseStream`, payload/betas/efforts/taskBudget, replay... |
+| `packages/ai/test/bedrock-stream-exception-status.test.ts` | teste | omp-novo | `packages/ai/test` | 185L; Testa `bedrockStreamExceptionStatus` mapeando nomes de exceção/erro EventStream (camelCase e PascalCase) para códigos HTTP corr... |
+| `packages/ai/test/bedrock-system-prompt.test.ts` | teste | omp-novo | `packages/ai/test` | 73L; Testa normalização de `Context.systemPrompt` passado como string simples (em vez de array) no `streamBedrock` para compatibilid... |
+| `packages/ai/test/bedrock-tool-choice.test.ts` | teste | omp-novo | `packages/ai/test` | 87L; Testa downgrade de `toolChoice` forçado (`any`/`tool`) para `auto` mantendo thinking em Opus/Sonnet 5.5 (`supportsForcedToolCho... |
+| `packages/ai/test/bedrock-tool-descriptions.test.ts` | teste | omp-novo | `packages/ai/test` | 86L; Regressão que garante omissão da chave `description` em `toolSpec` da Bedrock quando a descrição da tool foi podada para `""` (... |
+| `packages/ai/test/bedrock-tool-name-replay.test.ts` | teste | omp-novo | `packages/ai/test` | 101L; Garante que o replay na Bedrock filtra chamadas/resultados de tools com nomes inválidos na Bedrock (caracteres inválidos ou >64... |
+| `packages/ai/test/bedrock-tool-result-image.test.ts` | teste | omp-novo | `packages/ai/test` | 185L; Testa posicionamento de imagens em `toolResult`: promove para blocos irmãos no user message em modelos OpenAI, customizados, AR... |
+| `packages/ai/test/budgeted-host.test.ts` | teste | omp-novo | `packages/ai/test` | 48L; Verifica detecção de hosts oficiais/orçamentados (`api.factory.ai`, `api.eu.factory.ai` e `reachesOfficialEndpoint` para demais... |
+| `packages/ai/test/callback-server-dual-stack.test.ts` | teste | omp-novo | `packages/ai/test` | 171L; Testa bind dual-stack (`127.0.0.1` + `::1`) no servidor de callback OAuth: troca de porta quando `::1` está ocupado, e preserva... |
+| `packages/ai/test/callback-server-launch-route.test.ts` | teste | omp-novo | `packages/ai/test` | 290L; Testa a rota `/launch` do servidor de callback OAuth (302 para a URL de autorização completa evitando truncamento no TUI), limp... |
+| `packages/ai/test/callback-server-manual-input.test.ts` | teste | omp-novo | `packages/ai/test` | 98L; Testa retentativas de entrada manual (`onManualCodeInput`) quando o usuário cola payload inválido ou com `state` divergente, e ... |
+| `packages/ai/test/callback-server-port-fallback.test.ts` | teste | omp-novo | `packages/ai/test` | 125L; Testa a política de fallback de porta do servidor de callback OAuth: fallback para porta aleatória por padrão vs `Configuration... |
+| `packages/ai/test/callback-server-security.test.ts` | teste | omp-novo | `packages/ai/test` | 230L; Valida sanitização contra XSS e padrões de substituição (`$&`) no HTML de callback (`#server-state`), tolerância a callbacks in... |
+| `packages/ai/test/charm-hyper-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 127L; Testa o provedor de uso `charm-hyper`: mapeamento de saldo pré-pago compartilhado sem sintetizar total, respeito a `baseUrl` de... |
+| `packages/ai/test/claude-block-healing.test.ts` | teste | omp-novo | `packages/ai/test` | 770L; Suite de testes para cura automática de bloqueios de uso (`tier:fable`, `tier:mythos`, global `""`) no `AuthStorage` via relató... |
+| `packages/ai/test/claude-ratelimit-headers.test.ts` | teste | omp-novo | `packages/ai/test` | 120L; Testa `parseClaudeRateLimitHeaders` para headers `anthropic-ratelimit-unified-*` (5h, 7d compartilhado e `7d_oi` mapeado para `... |
+| `packages/ai/test/claude-reset.test.ts` | teste | omp-novo | `packages/ai/test` | 445L; Testa descoberta e resgate de créditos de reset da Anthropic (`cedar_ember` com fallback para `juniper_tide` via `?at_wall=1`, ... |
+| `packages/ai/test/claude-usage-endpoint.test.ts` | teste | omp-novo | `packages/ai/test` | 313L; Testa fallback de endpoint `/api/oauth/usage` para URL canônica em gateways que retornam 404/501/HTML/vazio/JSON inválido (sem ... |
+| `packages/ai/test/claude-usage-headers.test.ts` | teste | omp-novo | `packages/ai/test` | 1003L; Testa headers de fingerprint Claude CLI (`user-agent`, `anthropic-beta`), parsing de limites `limits[]` (incluindo `weekly_scop... |
+| `packages/ai/test/claude-usage-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 192L; Testa contrato de retry de `claudeUsageProvider.fetchUsage`: não tenta novamente em 429/401/404, tenta novamente em 503 respeit... |
+| `packages/ai/test/cline-pass-login.test.ts` | teste | omp-novo | `packages/ai/test` | 36L; Testa o fluxo de login do provedor `cline-pass` (abertura do dashboard e validação GET da chave em `/api/v1/users/me`). |
+| `packages/ai/test/cline-pass-transport.test.ts` | teste | omp-novo | `packages/ai/test` | 371L; Testa o contrato de transporte OpenAI-compatible do `cline-pass`: headers de identidade Cline SDK, prefixação vs raw IDs gratui... |
+| `packages/ai/test/cline-pass-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 161L; Testa `clinePassUsageProvider`: normalização de janelas 5h/weekly/monthly, lookup opcional de identidade `/users/me`, `baseUrl`... |
+| `packages/ai/test/cloudflare-ai-gateway.test.ts` | teste | omp-novo | `packages/ai/test` | 305L; Testa login e persistência de metadados de roteamento do `cloudflare-ai-gateway` e `cloudflare-workers-ai`, materialização de U... |
+| `packages/ai/test/commandcode-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 272L; Testa `commandCodeUsageProvider` (`/alpha/whoami` + `/alpha/billing/credits`), classificação de status/fração, normalização de ... |
+| `packages/ai/test/completion-retention.test.ts` | teste | omp-novo | `packages/ai/test` | 28L; Executa fixture em subprocesso verificando que `complete` e `completeSimple` liberam eventos intermediários de stream antes de ... |
+| `packages/ai/test/connect-error-detail.test.ts` | teste | omp-novo | `packages/ai/test` | 78L; Testa formatação e truncamento (400 chars) de erros `end_stream` Connect RPC, inclusão condicional de campos de trailer e detec... |
+| `packages/ai/test/connect-frame.test.ts` | teste | omp-novo | `packages/ai/test` | 61L; Testa `ConnectFrameDecoder` e `frameConnectMessage` para cabeçalhos de 5 bytes divididos em múltiplos chunks, payloads fragment... |
+| `packages/ai/test/connection-prewarm.test.ts` | teste | omp-novo | `packages/ai/test` | 132L; Testa `prewarmModelConnection`: envio de `HEAD` sem credenciais com opções TLS reais da Anthropic, uso da última origem alcança... |
+| `packages/ai/test/context-overflow.test.ts` | teste | omp-novo | `packages/ai/test/context-overflow.test.ts` | mesmo caminho; Pi 073b0ba; 709L; Suite e2e de detecção de overflow de contexto (`isContextOverflow`) entre provedores (Anthropic, Copilot, OpenAI, Google, Antig... |
+| `packages/ai/test/coralbricks-login.test.ts` | teste | omp-novo | `packages/ai/test` | 50L; Testa validação da API key CoralBricks via GET `/v1/models` sem faturamento e propagação de erro 401. |
+| `packages/ai/test/coralbricks-wire-contract.test.ts` | teste | omp-novo | `packages/ai/test` | 228L; Testa o contrato de fio do provedor CoralBricks: `max_tokens` sem `store`, controle de thinking via `reasoning_effort` (clamp p... |
+| `packages/ai/test/coreweave-login.test.ts` | teste | omp-novo | `packages/ai/test` | 110L; Testa login CoreWeave Serverless Inference exigindo variável de projeto (`COREWEAVE_PROJECT` / W&B) e validando a chave com hea... |
+| `packages/ai/test/coreweave-project-header.test.ts` | teste | omp-novo | `packages/ai/test` | 120L; Testa resolução e envio do header `OpenAI-Project` para CoreWeave a partir de `COREWEAVE_PROJECT` ou `WANDB_ENTITY`/`WANDB_PROJ... |
+| `packages/ai/test/cowork-fetch-cancellation.test.ts` | teste | omp-novo | `packages/ai/test` | 162L; Testa cancelamento e fechamento prematuro em `coworkFetch`: destruição da fonte gzip ao cancelar `ReadableStream`, classificaçã... |
+| `packages/ai/test/cowork-fetch-proxy.test.ts` | teste | omp-novo | `packages/ai/test` | 60L; Testa delegação de `coworkFetch` para `globalThis.fetch` quando há `proxy`, entrada `Request` ou alvo não-HTTPS (contornando ig... |
+| `packages/ai/test/cowork-fetch-upload-error.test.ts` | teste | omp-novo | `packages/ai/test` | 118L; Testa diagnóstico de queda de conexão TLS em `coworkFetch` com `AnthropicMessagesClient`, diferenciando mensagem de erro retent... |
+| `packages/ai/test/credential-external-reload.test.ts` | teste | omp-novo | `packages/ai/test` | 229L; Testa sincronização entre processos do pool de credenciais via `pollExternalChanges`: torna visíveis credenciais adicionadas ex... |
+| `packages/ai/test/cursor-caller-headers.test.ts` | teste | omp-novo | `packages/ai/test` | 189L; Testa via servidor HTTP/2 local o encaminhamento de headers do chamador em `streamCursor`: normalização em minúsculas, filtrage... |
+| `packages/ai/test/cursor-checkpoint-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 301L; Testa retomada via `resumeAction` em `streamCursor` usando o último `conversationCheckpointUpdate` seguro após stream incomplet... |
+| `packages/ai/test/cursor-conversation-rotate.test.ts` | teste | omp-novo | `packages/ai/test` | 500L; Testa rotação automática de `conversationId` envenenado em `streamCursor` após `resource_exhausted` ou `PROVIDER_ERROR` com zer... |
+| `packages/ai/test/cursor-edit-tool-call.test.ts` | teste | omp-novo | `packages/ai/test` | 830L; Testes do editToolCall (StrReplace) do provedor Cursor: materializacao via readArgs/writeArgs sem duplicar cards read/write, le... |
+| `packages/ai/test/cursor-effort-routing.test.ts` | teste | omp-novo | `packages/ai/test` | 83L; Teste de regressao (#9246) para roteamento de thinking effort no Cursor: verifica separacao do sufixo de effort em wireModelId ... |
+| `packages/ai/test/cursor-exec-handlers.test.ts` | teste | omp-novo | `packages/ai/test` | 1994L; Testes de resolveExecHandler (pareamento de toolResult em todas as saidas incluindo MCP is_error), codificacao de system prompt... |
+| `packages/ai/test/cursor-exec-modern.test.ts` | teste | omp-novo | `packages/ai/test` | 2494L; Testes de frames exec modernos do Cursor: regras requestContext, checkpoints sem cobranca de tokens, teardown de blocos abertos... |
+| `packages/ai/test/cursor-external-tool-executor.test.ts` | teste | omp-novo | `packages/ai/test` | 1095L; Testes HTTP/2 integrados de externalToolExecutor no gateway: restricao de allowed-tools e catalogo MCP, parada em toolUse com h... |
+| `packages/ai/test/cursor-h2-transport-error.test.ts` | teste | omp-novo | `packages/ai/test` | 37L; Testes unitarios de mapH2TransportError: traduz erro opaco ERR_HTTP2_ERROR de ALPN h2 nao suportado em ProviderResponseError ac... |
+| `packages/ai/test/cursor-h2-unavailable.test.ts` | teste | omp-novo | `packages/ai/test` | 246L; Testes de fallback automatico HTTP/2 -> RunSSE/BidiAppend quando proxy ou servidor derruba o ClientHello/handshake TLS: cache s... |
+| `packages/ai/test/cursor-http1-transport.test.ts` | teste | omp-novo | `packages/ai/test` | 247L; Testes do transporte HTTP/1.1 do Cursor (transport: "http1"): streaming de frames Connect via RunSSE, envio unario application/... |
+| `packages/ai/test/cursor-interaction-query.test.ts` | teste | omp-novo | `packages/ai/test` | 225L; Testes de handshake de interactionQuery no Cursor: aprova webSearch/exaSearch/exaFetch e campo 9 nao nomeado (webFetch), rejeit... |
+| `packages/ai/test/cursor-login.test.ts` | teste | omp-novo | `packages/ai/test` | 231L; Testes de autenticacao OAuth do Cursor no AuthStorage/SqliteAuthCredentialStore: armazenamento de email via policy, enriquecime... |
+| `packages/ai/test/cursor-mcp-tool-catalog.test.ts` | teste | omp-novo | `packages/ai/test` | 285L; Testes do catalogo MCP do Cursor e sanitizeSchemaForCursor: inclusao condicional de bash para resolucao de previews (ast_edit),... |
+| `packages/ai/test/cursor-on-payload.test.ts` | teste | omp-novo | `packages/ai/test` | 117L; Testes de regressao do hook onPayload assincrono em buildGrpcRequest: substituto nao-undefined substitui ou remove campos como ... |
+| `packages/ai/test/cursor-pi-args.test.ts` | teste | omp-novo | `packages/ai/test` | 117L; Testes de helpers de argumentos do Cursor: omitUndefinedArgs para passar validacao ArkType de opcionais em bash/grep e composic... |
+| `packages/ai/test/cursor-proxy-env.test.ts` | teste | omp-novo | `packages/ai/test` | 21L; Teste de smoke em subprocesso validando que o provedor Cursor tunela conexoes via HTTPS_PROXY quando PI_PROXY nao esta definido. |
+| `packages/ai/test/cursor-requested-model.test.ts` | teste | omp-novo | `packages/ai/test` | 252L; Testes do formato wire de requestedModel e modelDetails: separacao de sufixos OpenAI (-low/-xhigh/-extra-high/-none/-fast) em p... |
+| `packages/ai/test/cursor-server-records.test.ts` | teste | omp-novo | `packages/ai/test` | 1218L; Testes de persistencia e replay via blobs KV do servidor Cursor (providerPayload tipo cursorHistory): reaproveitamento de regis... |
+| `packages/ai/test/cursor-streaming-args.test.ts` | teste | omp-novo | `packages/ai/test` | 518L; Testa decodificação de argumentos de tool calls no provedor Cursor: recusa de JSON truncado na conclusão, merge entre argumento... |
+| `packages/ai/test/cursor-system-prompt-history.test.ts` | teste | omp-novo | `packages/ai/test` | 79L; Regressão (#17059) garantindo que raízes com histórico no `buildGrpcRequest` carreguem uma entrada `<rules>` explícita com o sy... |
+| `packages/ai/test/cursor-terminal-error.test.ts` | teste | omp-novo | `packages/ai/test` | 978L; Testes de integração HTTP/2 do ciclo terminal do provedor Cursor: half-close após end frame, erros Connect/gRPC trailers pós-`t... |
+| `packages/ai/test/cursor-todo-bridge.test.ts` | teste | omp-novo | `packages/ai/test` | 816L; Testa a ponte nativa de todos do Cursor (`update_todos` e `read_todos`), validando marcação `kCursorExecResolved`, decodificaçã... |
+| `packages/ai/test/cursor-transport-error.test.ts` | teste | omp-novo | `packages/ai/test` | 24L; Executa fixture em subprocesso Bun para verificar que um reset durante o handshake TLS no provedor Cursor é exposto como erro d... |
+| `packages/ai/test/cursor-turn-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 206L; Testa contabilização de tokens por turno no Cursor (#13082): adoção dos contadores finais de `turnEnded` sobre `tokenDelta`, su... |
+| `packages/ai/test/cursor-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 1170L; Testa parsers de uso do Cursor (legado por requests/USD e individual por plano/on-demand/X Subscription), separação de pools `C... |
+| `packages/ai/test/cursor-webfetch-interaction-query.test.ts` | teste | omp-novo | `packages/ai/test` | 183L; Testa aprovação de consultas de permissão `webFetchRequestQuery` e variantes desconhecidas (`$unknown` preservando prefixo de t... |
+| `packages/ai/test/cursor-wire-model-fallback.test.ts` | teste | omp-novo | `packages/ai/test` | 495L; Testa fallback único do provedor Cursor ao receber `not_found` ou `ERROR_BAD_MODEL_NAME` para `wireModelId` descoberto, respeit... |
+| `packages/ai/test/data/red-circle.png` | binario | pi0.9.4-igual | `packages/ai/test/data/red-circle.png` | mesmo caminho; Pi 073b0ba; 0L; Binario, fonte bitmap (.bdf) ou vocabulario de tokenizador (excluido de prosa LLM) |
+| `packages/ai/test/deepinfra-login.test.ts` | teste | omp-novo | `packages/ai/test` | 68L; Testa o fluxo de login do provedor DeepInfra validando a chave colada via chamada de inferência POST em `/v1/openai/chat/comple... |
+| `packages/ai/test/deepinfra-reasoning-contract.test.ts` | teste | omp-novo | `packages/ai/test` | 255L; Testa o contrato wire do DeepSeek hospedado no DeepInfra (oh-my-pi#9522): dialeto OpenAI puro com `reasoning_effort` (`low`/`hi... |
+| `packages/ai/test/deepseek-reasoning-content.test.ts` | teste | omp-novo | `packages/ai/test` | 694L; Testa contrato completo de `reasoning_content` para DeepSeek: escada `[low, high, max]` em opencode-go/nvidia/deepseek, `allows... |
+| `packages/ai/test/devin-account-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 425L; Testa `devinUsageProvider` via `GetUserStatus` protobuf (incluindo resposta gzip, créditos prompt/flow/flex, janelas diária/sem... |
+| `packages/ai/test/devin-cli-login.test.ts` | teste | omp-novo | `packages/ai/test` | 78L; Testa leitura e resolução de caminhos multiplataforma (`XDG_DATA_HOME`, `~/.local/share`, macOS Library, `APPDATA`) para `crede... |
+| `packages/ai/test/devin-frame-cap.test.ts` | teste | omp-novo | `packages/ai/test` | 115L; Regressão (#4228) garantindo que `streamDevin` rejeite imediatamente cabeçalhos Connect anunciando payload acima de 16 MiB com ... |
+| `packages/ai/test/devin-history.test.ts` | teste | omp-novo | `packages/ai/test` | 202L; Testa conversão de histórico no `streamDevin`: limpeza de metadados estrangeiros e turnos abortados vazios, normalização de IDs... |
+| `packages/ai/test/devin-large-request-recovery.test.ts` | teste | omp-novo | `packages/ai/test` | 288L; Testa heurística de recuperação de requisições grandes no `streamDevin`: reclassifica `invalid_argument` opaco como `ContextOve... |
+| `packages/ai/test/devin-login.test.ts` | teste | omp-novo | `packages/ai/test` | 112L; Testa login OAuth PKCE do Devin CLI via `/auth/cli/token` e armazenamento de múltiplas organizações do mesmo usuário em `AuthSt... |
+| `packages/ai/test/devin-router.test.ts` | teste | omp-novo | `packages/ai/test` | 494L; Testa roteamento de modelo (`AssignModel` -> `GetChatMessage`) no `streamDevin`, chaves legadas `sk-ws-`, metering de créditos/... |
+| `packages/ai/test/devin-streaming-args.test.ts` | teste | omp-novo | `packages/ai/test` | 105L; Testa streaming de argumentos de tool calls no `streamDevin`: recusa de snapshot truncado na finalização e throttling de re-par... |
+| `packages/ai/test/devin-trailer-evidence.test.ts` | teste | omp-novo | `packages/ai/test` | 127L; Testa formatação e limite de tamanho de evidências de trailers Connect no `streamDevin`, anexando detalhes resumidos (`google.r... |
+| `packages/ai/test/devin-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 66L; Verifica que `streamDevin` inclui tokens em cache (`cacheReadTokens` e `cacheWriteTokens`) no cálculo de `totalTokens`. |
+| `packages/ai/test/devin-windsurf-login.test.ts` | teste | omp-novo | `packages/ai/test` | 90L; Testa fluxo OAuth PKCE do Windsurf (`ExchangePKCEAuthorizationCode` em protobuf), normalização de prefixo de chave (`gsk-ws-` -... |
+| `packages/ai/test/dialect-thinking.test.ts` | teste | omp-novo | `packages/ai/test` | 245L; Testa o scanner in-band multi-dialeto (`createInbandScanner`, `getDialectDefinition`) para canais de thinking e tool calls (`ge... |
+| `packages/ai/test/duplicate-tool-results.test.ts` | teste | omp-novo | `packages/ai/test` | 1690L; Testes de regressão para `transformMessages` e `convertMessages`: previne duplicação de `toolResult` em turnos com erro/aborto,... |
+| `packages/ai/test/empty-completion-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 522L; Testa o wrapper `withReplaySafeStreamRetry`: repete tentativas vazias ou com apenas 1 token EOS (exceto `pause_turn`) e erros t... |
+| `packages/ai/test/endpoint-client-errors.test.ts` | teste | omp-novo | `packages/ai/test` | 112L; Valida normalização de envelopes de erro HTTP (400/429) nos clientes `embed`, `transcribeAudio` e `pollVideo`, extraindo mensag... |
+| `packages/ai/test/error-aierr.test.ts` | teste | omp-novo | `packages/ai/test` | 238L; Testa classificação estrutural de erros em `AIError` (timeouts e conexões Anthropic, 5xx/`overloaded_error`, erros de capacidad... |
+| `packages/ai/test/error-body-rate-limit.test.ts` | teste | omp-novo | `packages/ai/test` | 321L; Testa detecção de rate-limit/overload in-band em corpos SSE HTTP 200 (JSON e HTML de proxy) no `openai-completions` e `openai-r... |
+| `packages/ai/test/error-id.test.ts` | teste | omp-novo | `packages/ai/test` | 562L; Testes detalhados para `errorId` e `classifyMessage`: valida classificação de `stream_read_error`, falhas de leitura/truncament... |
+| `packages/ai/test/error-transient-status-boundary.test.ts` | teste | omp-novo | `packages/ai/test` | 46L; Regressão garantindo que códigos HTTP no classificador transitório exijam fronteiras de token, evitando que IDs de log anexados... |
+| `packages/ai/test/eval-language-whitespace.test.ts` | teste | omp-novo | `packages/ai/test` | 29L; Teste pontual verificando que `validateToolArguments` remove quebra de linha à direita (`"js\n"` -> `"js"`) em parâmetros enum ... |
+| `packages/ai/test/event-stream.test.ts` | teste | omp-novo | `packages/ai/test/event-stream.test.ts` | mesmo caminho; Pi 073b0ba; 89L; Testa `AssistantMessageEventStream`: enfileiramento imediato de deltas adjacentes, rejeição de `result()` sem valor terminal, p... |
+| `packages/ai/test/exa-login.test.ts` | teste | omp-novo | `packages/ai/test` | 35L; Verifica o fluxo de login do provedor `exa`: abre URL do dashboard, faz trim na chave retornada e não dispara nenhuma requisiçã... |
+| `packages/ai/test/factory-droid-anthropic.test.ts` | teste | omp-novo | `packages/ai/test` | 566L; Testa o wire Anthropic do Factory Droid: omissão/ativação de `effort`, supressão de `fallbacks` em Vertex/Bedrock e entre orgs ... |
+| `packages/ai/test/factory-droid-completions-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` | 725L; Testa matriz de reasoning do Factory Droid no wire OpenAI Completions (Kimi, GLM, DeepSeek, Mistral, MiniMax): override de temp... |
+| `packages/ai/test/factory-droid-gemini.test.ts` | teste | omp-novo | `packages/ai/test` | 1291L; Primeira parte dos testes do wire Gemini no Factory Droid: replay de assinaturas `thoughtSignature` (thinking, toolCall e text ... |
+| `packages/ai/test/factory-droid-images.test.ts` | teste | omp-novo | `packages/ai/test` | 292L; Testa geração e edição de imagens no Factory Droid via rotas OpenAI (`/images/generations`, `/images/edits`) e Gemini nativo (`... |
+| `packages/ai/test/factory-droid-native-parity.test.ts` | teste | omp-novo | `packages/ai/test` | 155L; Suite de paridade wire-level comparando requisições codificadas pelo `streamFactoryDroid` (abertura, follow-up com toolResult e... |
+| `packages/ai/test/factory-droid-oauth.test.ts` | teste | omp-novo | `packages/ai/test` | 632L; Testa fluxo OAuth Device/WorkOS do Factory Droid: preservação/limpeza de escopo regional e `orgId` no refresh, consulta a `/api... |
+| `packages/ai/test/factory-droid-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 404L; Testa roteamento de provedor no Factory Droid: rotação OAuth regional/org, interseção de upstreams por região de inferência, re... |
+| `packages/ai/test/factory-droid-responses.test.ts` | teste | omp-novo | `packages/ai/test` | 203L; Testa particularidades do wire Responses no Factory Droid: header `OpenAI-Platform`, `safety_identifier`/`prompt_cache_key` der... |
+| `packages/ai/test/factory-droid-stream.test.ts` | teste | omp-novo | `packages/ai/test` | 104L; Testa flags públicas de controle de stream no Factory Droid via `streamSimple`: `forceReasoningOff`, `disableReasoning`, `hideT... |
+| `packages/ai/test/factory-droid-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 267L; Testa parser de billing/limites (`/api/billing/limits`) e estratégia de ranking por pool (`core` vs `standard`) no Factory Droi... |
+| `packages/ai/test/fenced-thinking.test.ts` | teste | omp-novo | `packages/ai/test` | 72L; Testa `FencedThinkingScanner` em 11 casos variados (blocos de código aninhados, indentação, tilde, crases inline, CRLF) iterand... |
+| `packages/ai/test/firepass.live.ts` | teste | omp-novo | `packages/ai/test` | 135L; Script manual de smoke live (fora da suíte bun) para Fire Pass (`glm-5.2-fast`, `kimi-k3-fast`), verificando tradução para endp... |
+| `packages/ai/test/firepass.test.ts` | teste | omp-novo | `packages/ai/test` | 85L; Testa tradução em tempo de requisição de IDs amigáveis do Fire Pass para endpoints `accounts/fireworks/routers/...` e validação... |
+| `packages/ai/test/fireworks-login.test.ts` | teste | omp-novo | `packages/ai/test` | 65L; Regressão (#3219) garantindo que o login da Fireworks valide a chave contra o endpoint control-plane `/v1/accounts/fireworks/mo... |
+| `packages/ai/test/fixtures/codex-0154-additional-tools.json` | teste | omp-novo | `packages/ai/test` | 59L; Fixture JSON de protocolo Codex (`openai-codex/gpt-6-astra`) definindo ferramenta customizada `exec` sob `additional_tools` (`n... |
+| `packages/ai/test/fixtures/completion-retention.ts` | teste | omp-novo | `packages/ai/test` | 84L; Fixture executado em subprocesso com `WeakRef` e `Bun.gc(true)` para provar que `complete` e `completeSimple` não retêm eventos... |
+| `packages/ai/test/fixtures/cursor-proxy-env.ts` | teste | omp-novo | `packages/ai/test` | 68L; Fixture em subprocesso com servidor TCP simulando proxy HTTP CONNECT via `HTTPS_PROXY` para provar que o transporte HTTP/2 do C... |
+| `packages/ai/test/fixtures/cursor-tls-reset.ts` | teste | omp-novo | `packages/ai/test` | 41L; Fixture em subprocesso com socket TCP fazendo `resetAndDestroy()` imediato para validar retries e evento de erro no `streamCurs... |
+| `packages/ai/test/fixtures/factory-droid-native-requests.json` | teste | omp-novo | `packages/ai/test` | 3559L; Fatia inicial (linhas 1-738 de 3559) do corpus JSON de requisições nativas capturadas do `factory-cli/1.7.1` (Kimi K3, Kimi K3.... |
+| `packages/ai/test/fixtures/harmony-leak-corpus.json` | teste | omp-novo | `packages/ai/test` | 72L; Corpus JSON de casos reais de produção e falsos positivos para testar detecção e recuperação/aborte de vazamentos de tokens Har... |
+| `packages/ai/test/fixtures/oauth-barrel-import.ts` | teste | omp-novo | `packages/ai/test` | 16L; Fixture de teste de smoke que verifica a disponibilidade dos exports públicos OAuth tanto pelo barrel `@oh-my-pi/pi-ai` quanto ... |
+| `packages/ai/test/fixtures/oauth-refresh-during-exit-child.ts` | teste | omp-novo | `packages/ai/test` | 42L; Script auxiliar em processo filho para testar que um `refreshStored` OAuth iniciado durante ou logo após a passagem de saída do... |
+| `packages/ai/test/fixtures/oauth-sigterm-child.ts` | teste | omp-novo | `packages/ai/test` | 21L; Script auxiliar em processo filho para testar durabilidade de rotação de refresh token OAuth quando o processo recebe SIGTERM a... |
+| `packages/ai/test/fixtures/openai-responses-server.ts` | teste | omp-novo | `packages/ai/test` | 167L; Servidor loopback HTTP SSE e WebSocket em `Bun.serve` para testes da OpenAI Responses API, com barreiras determinísticas (`wait... |
+| `packages/ai/test/flattened-array-properties.test.ts` | teste | omp-novo | `packages/ai/test` | 135L; Testes de regressão (#8886) para reconstrução de arrays aninhados a partir de chaves achatadas (ex: `questions[0].options[1].la... |
+| `packages/ai/test/foundation-models-schema.test.ts` | teste | omp-novo | `packages/ai/test` | 102L; Testes unitários para conversão de JSON Schema ao dialeto `GenerationSchema` do Apple Foundation Models (`title`, `x-order`, `a... |
+| `packages/ai/test/gemini-gemma-dialect.test.ts` | teste | omp-novo | `packages/ai/test` | 200L; Testes de parsing em streaming (incluindo chunking char-a-char e janelas variáveis) e round-trip de renderização para os dialet... |
+| `packages/ai/test/github-copilot-anthropic-auth.test.ts` | teste | omp-novo | `packages/ai/test` | 260L; Testes de configuração de cliente Anthropic para Copilot (Bearer auth, unwrap de credencial estruturada com `enterpriseUrl`, he... |
+| `packages/ai/test/github-copilot-anthropic-model-rejection.test.ts` | teste | omp-novo | `packages/ai/test` | 78L; Teste de regressão (#7819, #11669) garantindo que HTTP 400 `model_not_supported` no Copilot Anthropic faça 1 retry limitado com... |
+| `packages/ai/test/github-copilot-error.test.ts` | teste | omp-novo | `packages/ai/test` | 75L; Testes unitários para reescrita de erros 401 vs 403 do Copilot (mantendo corpos 400 de rejeição de modelo intactos) e isenção d... |
+| `packages/ai/test/github-copilot-headers.test.ts` | teste | omp-novo | `packages/ai/test` | 829L; Testes (parte 1/2) de inferência de `X-Initiator` (incluindo `attribution` explícita), visão, multiplicadores de premium reques... |
+| `packages/ai/test/github-copilot-login.test.ts` | teste | omp-novo | `packages/ai/test` | 503L; Testes de fluxo Device Code OAuth do GitHub Copilot: split entre client ID minimal-grant (`read:user`) e CLI Enterprise, descob... |
+| `packages/ai/test/github-copilot-long-context-wire.test.ts` | teste | omp-novo | `packages/ai/test` | 278L; Testes garantindo envio de `requestModelId` (sem sufixo `-1m`) nas 3 APIs do Copilot e degradação de `detail: "original"` para ... |
+| `packages/ai/test/github-copilot-openai-base-url.test.ts` | teste | omp-novo | `packages/ai/test` | 421L; Testes de roteamento de base URL (default, Business `apiEndpoint`, Enterprise `copilot-api.*`), omissão de `service_tier: "prio... |
+| `packages/ai/test/github-copilot-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` | 70L; Testes de construção de payload de reasoning no Copilot verificando retenção de `reasoning.encrypted_content`/effort no GPT-5.4... |
+| `packages/ai/test/github-copilot-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 239L; Testes de regressão (#13849, #17081) do provedor de uso do Copilot para unidades `AI_CREDITS` vs `REQUESTS` e classificação de ... |
+| `packages/ai/test/gitlab-duo-cache-key.test.ts` | teste | omp-novo | `packages/ai/test` | 238L; Testes do provedor `gitlab-duo` cobrindo mapeamento dos 10 aliases de catálogo para IDs/rotas KDL, encaminhamento de `disableRe... |
+| `packages/ai/test/gitlab-duo-workflow-oauth.test.ts` | teste | omp-novo | `packages/ai/test` | 95L; Testes de login OAuth PKCE S256 (com cola de URL `vscode://gitlab.gitlab-workflow/authentication`) e refresh token do provedor ... |
+| `packages/ai/test/gitlab-duo-workflow-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 5039L; Testes do protocolo GitLab Duo Workflow (parte 1/4): criação/parada de workflow, headers/URL WebSocket, ferramentas MCP com nom... |
+| `packages/ai/test/glm-5.2-reasoning-effort.test.ts` | teste | omp-novo | `packages/ai/test` | 120L; Valida o mapeamento wire de `reasoning_effort` do GLM-5.2 por host: Fireworks recebe `max`/`high`/`medium` literais e `minimal ... |
+| `packages/ai/test/glm-5.3-reasoning-effort.test.ts` | teste | omp-novo | `packages/ai/test` | 101L; Valida o contrato uniforme de esforço `low`/`high`/`max` do GLM-5.3 em Fireworks e endpoint Anthropic da Z.ai, garantindo clamp... |
+| `packages/ai/test/glyph-codec.test.ts` | teste | omp-novo | `packages/ai/test` | 383L; Testa o codec de glifos de Área de Uso Privado Unicode (`⟦Ue0a0⟧` / `⟦E⟧`), injeção de aviso `<glyph-tokens>` sem mutar históri... |
+| `packages/ai/test/google-antigravity-oauth.test.ts` | teste | omp-novo | `packages/ai/test` | 297L; Testa descoberta de projeto e onboarding OAuth do Google Antigravity (`loadCodeAssist`, reload quando `paidTier` falta, `onboar... |
+| `packages/ai/test/google-antigravity-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 648L; Testa consulta e agregação de cotas do Antigravity (resumo 5h/weekly, isolamento do bucket Argon, separação de contadores Googl... |
+| `packages/ai/test/google-cached-content.test.ts` | teste | omp-novo | `packages/ai/test` | 380L; Testa suporte a `cachedContent` gerenciado pelo chamador em Google Generative AI, Vertex e gateway `pi-native` (incluindo exclu... |
+| `packages/ai/test/google-continuation.test.ts` | teste | omp-novo | `packages/ai/test` | 231L; Testa retomada automática de geração multi-segmento via `finishReason: CONTINUATION` e `continuationToken` em Gemini API e Clou... |
+| `packages/ai/test/google-empty-response-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 760L; Testa retry de respostas `STOP` com texto vazio (sem duplicar evento `start`), classificação transitória de `MALFORMED_RESPONSE... |
+| `packages/ai/test/google-error-body-classification.test.ts` | teste | omp-novo | `packages/ai/test` | 83L; Testa diferenciação de erros HTTP 429 do Google entre teto de faturamento (`QUOTA_EXHAUSTED` -> uso esgotado terminal) e thrott... |
+| `packages/ai/test/google-function-calling-matching.test.ts` | teste | omp-novo | `packages/ai/test` | 261L; Testa correspondência de IDs/nomes entre `functionCall` e `functionResponse` (direto vs omissão no Vertex), conteúdo multimodal... |
+| `packages/ai/test/google-gemini-cli-3x-thinking.test.ts` | teste | omp-novo | `packages/ai/test` | 189L; Testa mapeamento de `thinkingLevel` vs `thinkingBudget` no `google-gemini-cli` (Gemini 3.1 Pro/Flash, 2.5 Pro, alias `gemini-3.... |
+| `packages/ai/test/google-gemini-cli-429.test.ts` | teste | omp-novo | `packages/ai/test` | 78L; Testa `extractRetryHint` para extração de atrasos de retry a partir de headers (`retry-after`, `x-ratelimit-reset-after`) e tex... |
+| `packages/ai/test/google-gemini-cli-alignment.test.ts` | teste | omp-novo | `packages/ai/test` | 1177L; Testa alinhamento do cliente Cloud Code Assist / Antigravity: parsing de credenciais OAuth legadas/enriquecidas, refresh pré-bu... |
+| `packages/ai/test/google-gemini-cli-claude-image-clamp.test.ts` | teste | omp-novo | `packages/ai/test` | 161L; Testa limites e re-encodificação de imagens para Claude via Antigravity (teto de 5 MiB base64, dimensão máxima de 8000px e teto... |
+| `packages/ai/test/google-gemini-cli-first-event-timeout.test.ts` | teste | omp-novo | `packages/ai/test` | 101L; Testa failover automático do Antigravity (daily -> sandbox) e cancelamento do stream quando os headers HTTP 200 chegam mas nenh... |
+| `packages/ai/test/google-gemini-cli-variant-routing.test.ts` | teste | omp-novo | `packages/ai/test` | 566L; Testa descoberta e colapso de variantes por nível de esforço no Antigravity (Claude 5.5, Gemini 4, Gemini 3.8 Flash, Gemini 2.5... |
+| `packages/ai/test/google-gemini3-unsigned-tool-call.test.ts` | teste | omp-novo | `packages/ai/test` | 175L; Testa política de assinatura `skip_thought_signature_validator` para tool calls sem assinatura no Gemini 3 (apenas na primeira ... |
+| `packages/ai/test/google-gemma-thinking.test.ts` | teste | omp-novo | `packages/ai/test` | 49L; Testa que modelos Gemma 4 na API Gemini alternam thinking exclusivamente via `thinkingLevel` (`HIGH` ligado, `MINIMAL` desligad... |
+| `packages/ai/test/google-oauth-hostname.test.ts` | teste | omp-novo | `packages/ai/test` | 13L; Verifica que a política OAuth do `google-antigravity` usa `127.0.0.1` como hostname de callback para evitar atrasos de IPv6/proxy. |
+| `packages/ai/test/google-oauth-validation-url.test.ts` | teste | omp-novo | `packages/ai/test` | 106L; Testa `extractGoogleValidationUrl` e a reescrita de falhas 403 `VALIDATION_REQUIRED` na descoberta de projeto Antigravity em me... |
+| `packages/ai/test/google-pre-response-timeout.test.ts` | teste | omp-novo | `packages/ai/test` | 104L; Testa desativação do timeout implícito do `fetch` do Bun (`timeout: false`) e controle próprio de prazo pré-resposta (`streamFi... |
+| `packages/ai/test/google-provider-response.test.ts` | teste | omp-novo | `packages/ai/test` | 357L; Testa o callback assíncrono `onResponse` em Google, Vertex e Gemini CLI, garantindo entrega de `ProviderResponseMetadata` após ... |
+| `packages/ai/test/google-reasoning-off.test.ts` | teste | omp-novo | `packages/ai/test` | 67L; Testa que `disableReasoning` e `forceReasoningOff` enviam explicitamente `includeThoughts: false` e `thinkingBudget: 0` em mode... |
+| `packages/ai/test/google-sampling-penalty-strip.test.ts` | teste | omp-novo | `packages/ai/test` | 96L; Testa remoção dos campos `minP` e `repetitionPenalty` não suportados pelo `generationConfig` da API Gemini/CCA, mantendo `tempe... |
+| `packages/ai/test/google-service-tier.test.ts` | teste | omp-novo | `packages/ai/test` | 122L; Testa codificação wire de `serviceTier` (`priority` no corpo da Gemini API vs header `X-Vertex-AI-LLM-Shared-Request-Type` no V... |
+| `packages/ai/test/google-system-prompt.test.ts` | teste | omp-novo | `packages/ai/test` | 191L; Testa envio de blocos de `systemPrompt` em `systemInstruction`, replay de thinking assinado e não assinado do mesmo modelo/part... |
+| `packages/ai/test/google-thinking-fence-strip.test.ts` | teste | omp-novo | `packages/ai/test` | 127L; Testa `ThinkingFenceStripper` isoladamente e integrado a `consumeGoogleStream`, removendo aberturas soltas ```` ```thinking ```... |
+| `packages/ai/test/google-thinking-output-cap.test.ts` | teste | omp-novo | `packages/ai/test` | 131L; Testa adição de folga (headroom) ao `maxOutputTokens` para acomodar thinking em Gemini (nível e budget), redução/desligamento d... |
+| `packages/ai/test/google-thinking-signature.test.ts` | teste | omp-novo | `packages/ai/test/google-thinking-signature.test.ts` | mesmo caminho; Pi 073b0ba; 35L; Testa detecção de thinking exclusivamente por `part.thought === true` (ignorando `thoughtSignature` isolado) e retenção de assi... |
+| `packages/ai/test/google-tool-choice.test.ts` | teste | omp-novo | `packages/ai/test` | 86L; Testa `mapGoogleToolChoice` (incluindo normalização de `required` -> `any` e formatos de objeto para `{ mode: "ANY", allowedFun... |
+| `packages/ai/test/google-tool-schema.test.ts` | teste | omp-novo | `packages/ai/test` | 772L; Testes de normalizacao de schemas de tools para Google Gemini e Cloud Code Assist (CCA) Claude: remocao de nullable/propertyNam... |
+| `packages/ai/test/handoff.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test` | +71/-30; 545L; Suite E2E (condicional a API keys) de handoff cross-provider verificando que Anthropic, Google, OpenAI Completions/Responses e ... |
+| `packages/ai/test/harmony-leak.test.ts` | teste | omp-novo | `packages/ai/test` | 332L; Testes unitarios e de corpus para deteccao de vazamento Harmony em modelos Codex (com gate T por limite de parse em tool_arg), ... |
+| `packages/ai/test/helpers/bedrock-stream.ts` | teste | omp-novo | `packages/ai/test` | 142L; Helper compartilhado para testes de Bedrock Converse-Stream: codificacao de frames AWS EventStream com CRC32, construcao de chu... |
+| `packages/ai/test/helpers/factory-droid-native.ts` | teste | omp-novo | `packages/ai/test` | 276L; Matriz de casos e projetor de dialeto HTTP para testes de paridade contra capturas nativas da CLI Factory Droid (removendo cont... |
+| `packages/ai/test/helpers/factory-droid.ts` | teste | omp-novo | `packages/ai/test` | 170L; Helpers de teste para provedor Factory Droid: mock fetch gravador com framing SSE automatico, gerador de JWT WorkOS fake, const... |
+| `packages/ai/test/helpers/fetch-mock.ts` | teste | omp-novo | `packages/ai/test` | 8L; Wrapper minimo que adapta uma funcao sincrona ou assincrona de resposta para o tipo FetchImpl nos testes. |
+| `packages/ai/test/helpers/index.ts` | teste | omp-novo | `packages/ai/test` | 167L; Utilitarios gerais de teste para packages/ai: isolamento temporario de Bun.env (withEnv, withOfficialAnthropicEndpoint), espera... |
+| `packages/ai/test/http-inspector.test.ts` | teste | omp-novo | `packages/ai/test` | 283L; Testes de inspecao de erros HTTP: captura de dumps 400/413 com redacao de headers auth e query strings, reescrita de erros clin... |
+| `packages/ai/test/image-input-validation.test.ts` | teste | omp-novo | `packages/ai/test` | 296L; Testes parametrizados de validacao pre-fetch de imagens de entrada (base64 invalido/vazio, MIME invalido/longo, marcador # em d... |
+| `packages/ai/test/image-tool-result.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/image-tool-result.test.ts` | mesmo caminho; Pi 073b0ba; +234/-72; 426L; Suite E2E (via API key ou OAuth) validando que resultados de ferramenta contendo apenas imagem ou texto+imagem sao transmitidos... |
+| `packages/ai/test/image-url-parts.test.ts` | teste | omp-novo | `packages/ai/test` | 182L; Testes de contrato garantindo que ImageContent com providerFile ou url trafega por referencia nativa (file_id/url/fileData/imag... |
+| `packages/ai/test/inband-tools.test.ts` | teste | omp-novo | `packages/ai/test` | 602L; Testes abrangentes do subsistema de 11 dialetos in-band de tool calling: roundtrip render/parse, streaming toolArgDelta, captur... |
+| `packages/ai/test/inception-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 73L; Testes do provedor Inception (mercury-3): serializacao de reasoning_effort (instant/high) e max_completion_tokens sem campos Op... |
+| `packages/ai/test/issue-10690-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 284L; Testes de regressao (#10690) para replay de raciocinio do DeepSeek na API Responses: injecao de placeholder nao-vazio quando th... |
+| `packages/ai/test/issue-10966-synthetic-reasoning-filter.test.ts` | teste | omp-novo | `packages/ai/test` | 98L; Testes de regressao (#10966) em OpenRouter/Responses impedindo reconstrucao falsa de raciocinio filtrado em modelos como meta/m... |
+| `packages/ai/test/issue-10994-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 69L; Teste de regressao (#10994) garantindo que modelos Anthropic adaptativos customizados com ladder incluindo Effort.Minimal fazem... |
+| `packages/ai/test/issue-11473-orphan-output-wedge.test.ts` | teste | omp-novo | `packages/ai/test` | 127L; Testes de regressao (#11473, #13083) para pareamento de chamadas omitidas de snapshots nativos em DeepSeek Responses (repairOrp... |
+| `packages/ai/test/issue-1203-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 150L; Testes de regressao (#1203) para MiniMax Coding Plan CN: parseamento de tags <think>...</think> e deduplicacao de snapshots cum... |
+| `packages/ai/test/issue-1207-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 144L; Testes de regressao (#1207) para compatibilidade DeepSeek V4 com tools: preservacao de thinking.enabled/effort sem tool_choice,... |
+| `packages/ai/test/issue-1227-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 182L; Testes de regressao (#1227) para turnos /btw (tools: [], toolChoice: 'none') em openai-completions via LiteLLM->Bedrock: omite ... |
+| `packages/ai/test/issue-12525-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 112L; Testes de regressao (#12525) garantindo que sinais de parada por repeticao (finish_reason='repetition' / stop_reason='repetitio... |
+| `packages/ai/test/issue-12562-custom-api-compat.test.ts` | teste | omp-novo | `packages/ai/test` | 103L; Testes de regressao (#12562) verificando que overrides compat sao aplicados a wrappers registrados via registerCustomApi para o... |
+| `packages/ai/test/issue-1270-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 103L; Testes de regressao (#1270) validando resolucao de host no Vertex AI para locations global (aiplatform.googleapis.com), eu/us (... |
+| `packages/ai/test/issue-1373-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 139L; Testes de regressao (#1373) para thinkingDisplay no Bedrock Claude: default display='summarized' em Opus 4.7+/Fable/Mythos 5 e ... |
+| `packages/ai/test/issue-1417-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 65L; Teste de regressao (#1417) garantindo que modelos estaticos depreciados sao podados do catalogo e do cache SQLite quando dynami... |
+| `packages/ai/test/issue-1701-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 222L; Testes de regressao (#1701) validando que toolChoice forcado nomeado ({ type: 'tool', name }) e descartado se a ferramenta esti... |
+| `packages/ai/test/issue-1776-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 107L; Testes de regressao (#1776) garantindo que argumentos de tool enviados como objeto JSON em chunks do MiniMax sao preservados se... |
+| `packages/ai/test/issue-18312-assistant-rewrite-replay.test.ts` | teste | omp-novo | `packages/ai/test` | 113L; Testes de regressao (#18312) verificando sincronizacao posicional de texto reescrito em providerPayload.items (preservando ids ... |
+| `packages/ai/test/issue-1838-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 271L; Testes de regressao (#1838) garantindo envio de thinking: { type: 'enabled', keep: 'all' } apenas em endpoints nativos Moonshot... |
+| `packages/ai/test/issue-19300-zero-allowance-429.test.ts` | teste | omp-novo | `packages/ai/test` | 66L; Testes de regressao (#19300) garantindo fail-fast na primeira tentativa para HTTP 429 com x-ratelimit-limit-req-minute: 0 como ... |
+| `packages/ai/test/issue-2080-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 243L; Testes de regressao (#2080) para chunks multi-parte em formato objeto de function.arguments (MiniMax): deduplicacao de snapshot... |
+| `packages/ai/test/issue-2123-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 108L; Testes de regressao (#2123) verificando que, quando tool_choice forcado ('any' ou named tool) remove thinking em Anthropic OAut... |
+| `packages/ai/test/issue-2315-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 141L; Testes de regressao (#2315) validando ladder [low, medium, high] para fireworks/minimax-m2.7 e gpt-oss-120b (desabilitando com ... |
+| `packages/ai/test/issue-2424-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 177L; Testes de regressao (#2424) validando overrides via GITLAB_CLIENT_ID e GITLAB_REDIRECT_URI no fluxo OAuth do gitlab-duo (author... |
+| `packages/ai/test/issue-2883-moonshot-base-url.test.ts` | teste | omp-novo | `packages/ai/test` | 82L; Testes de regressao (#2883) validando redirecionamento exclusivo do provedor moonshot (e do probe de login) para endpoint China... |
+| `packages/ai/test/issue-2996-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 124L; Teste de regressao (#2996) garantindo que deltas SSE com content: null e reasoning_content nao-vazio emitem bloco thinking e na... |
+| `packages/ai/test/issue-3124-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 217L; Testes de regressao (#3124) validando injecao da tool sentinela __no_tools__ no Bedrock para /btw com historico de ferramentas ... |
+| `packages/ai/test/issue-3434-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 305L; Testes de regressao (#3434) para thinking cross-API: preservacao semantica apenas em alvos Z.AI (com remocao de assinatura opac... |
+| `packages/ai/test/issue-3528-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 532L; Testes de regressao (#3528, #3541) para preservacao de prefixo KV-cache em servidores locais (llama.cpp, lm-studio, vllm, loopb... |
+| `packages/ai/test/issue-3555-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 57L; Teste de regressao (#3555) validando registro dos provedores ollama e ollama-cloud no resolvedor padrao de usage de AuthStorage. |
+| `packages/ai/test/issue-3593-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 182L; Testes de regressao (#3593, #6925) para hosts com tool_choice somente string (llama.cpp, lm-studio): estreitamento da lista de ... |
+| `packages/ai/test/issue-4085-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 59L; Testes de regressao (#4085) contra servidor loopback travado garantindo que oauthFetch respeita cancelamento imediato/em-voo vi... |
+| `packages/ai/test/issue-4593-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 271L; Testes de regressao (#4593) para adiamento do watchdog de idle timeout enquanto trabalho local (trackLocalWork / hasPendingLoca... |
+| `packages/ai/test/issue-4679-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 104L; Testes de regressao (#4679) garantindo desativacao de strict tools e omissao do header beta structured-outputs-2025-12-15 em ro... |
+| `packages/ai/test/issue-5983-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 76L; Testes de regressao (#5983) validando derivacao do ladder obrigatorio [low, high, max] para kimi-k3 via LiteLLM e mapeamento do... |
+| `packages/ai/test/issue-6276-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 187L; Testa envio de guardrailConfig (identifier, versão default DRAFT, trace) no Amazon Bedrock Converse via streamBedrock/streamSim... |
+| `packages/ai/test/issue-6510-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 79L; Regressão para opencode-zen com modelos Anthropic: valida autenticação via X-Api-Key sem Authorization Bearer e omissão de cont... |
+| `packages/ai/test/issue-6913-harmony-marker-escaping.test.ts` | teste | omp-novo | `packages/ai/test` | 354L; Valida escaping de marcadores reservados Harmony (<\|channel\|>analysis) na fronteira de requisição para modelos gpt-oss (mensage... |
+| `packages/ai/test/issue-814-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 106L; Regressão para proxy Anthropic da Z.AI: verifica inclusão do campo id espelhando tool_use_id em blocos tool_result para z.ai, m... |
+| `packages/ai/test/issue-8248-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 211L; Valida síntese de item reasoning (com reasoning_text) no replay de turnos assistant em DeepSeek Responses após prewalk ou compa... |
+| `packages/ai/test/issue-826-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 131L; Testa flags de compatibilidade Anthropic para proxies estilo Vertex: disableStrictTools para omitir strict:true em ferramentas ... |
+| `packages/ai/test/issue-827-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 182L; Verifica remoção de reasoning_effort/reasoning (ou envio de thinking disabled na Moonshot) quando toolChoice é forçado em model... |
+| `packages/ai/test/issue-8328-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 62L; Garante que o login da Together valide a API key via GET /v1/models em vez de testar chat/completions contra um modelo hardcode... |
+| `packages/ai/test/issue-8789-responses-interleaved-message.test.ts` | teste | omp-novo | `packages/ai/test` | 142L; Testa hoisting de bloco de texto trailing do assistente para antes do lote de function_call em buildResponsesInput, evitando me... |
+| `packages/ai/test/issue-883-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 119L; Regressão para DeepSeek V4 em openai-completions: garante reasoning_content="" em turnos tool-call sem thinking e normalização ... |
+| `packages/ai/test/issue-8854-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 107L; Garante que erros 429 de admissão por concorrência (rate_limit_type: max_parallel_requests em header ou JSON body) falhem na pr... |
+| `packages/ai/test/issue-911-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 143L; Verifica normalização de delta.content recebido como array de partes tipadas (ex. Mistral Medium 3.5) ou mistura de string e ar... |
+| `packages/ai/test/issue-912-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 106L; Testa propagação imediata de AbortSignal quando um stream SSE do GitHub Copilot trava sem enviar dados nem responder ao abort d... |
+| `packages/ai/test/issue-931-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 73L; Valida aplicação de compat.reasoningEffortMap (ex. xhigh -> max) em modelos customizados da API openai-responses antes de monta... |
+| `packages/ai/test/issue-9433-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 103L; Verifica finalização limpa ("stop" ou "toolUse") de streams openai-completions encerrados com sentinela [DONE] sem finish_reaso... |
+| `packages/ai/test/issue-945-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 79L; Testa omissão de tool_choice (mantendo tools e reasoning_effort) em payloads OpenCode Go para DeepSeek Flash/Pro e MiMo quando ... |
+| `packages/ai/test/issue-955-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 45L; Verifica que modelos minimax-code/minimax-code-cn na API openai-completions omitem campos não suportados (thinking, reasoning, ... |
+| `packages/ai/test/issue-957-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 122L; Testa refresh OAuth da Kimi subtraindo 5 minutos de skew na expiração e disparo proativo do refresh via AuthStorage dentro da j... |
+| `packages/ai/test/issue-959-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 124L; Verifica remoção de marcadores vazados de chat-template DeepSeek (<｜Assistant｜>) do texto visível em openai-completions, inclus... |
+| `packages/ai/test/issue-967-vision-guard.test.ts` | teste | omp-novo | `packages/ai/test` | 313L; Valida que todos os conversores de mensagens (OpenAI completions/responses/codex, Anthropic e Google) substituam imagens em use... |
+| `packages/ai/test/issue-969-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 77L; Garante preservação de esforço explícito xhigh em metadados de thinking customizados para modelos OpenAI-compatible sem clampin... |
+| `packages/ai/test/issue-976-repro.test.ts` | teste | omp-novo | `packages/ai/test` | 39L; Garante que buildRequest do google-gemini-cli aceite systemPrompt legado em formato string único sem falhar na construção de sy... |
+| `packages/ai/test/json-schema-typescript.test.ts` | teste | omp-novo | `packages/ai/test` | 111L; Testa conversão de JSON Schema para declarações TypeScript (inclusive estilo harmony com comentários de linha, unions, tuples, ... |
+| `packages/ai/test/judgment-question-file.test.ts` | teste | omp-novo | `packages/ai/test` | 27L; Testa helper declarativo judgeQuestions que infere automaticamente o tipo da pergunta (score, noul, choice) pela forma de crite... |
+| `packages/ai/test/judgment.test.ts` | teste | omp-novo | `packages/ai/test` | 2256L; Testa parsing de respostas de julgamento, renderização XML/YAML de estado, TextJudge (batching, retry, imagens), e NativeJudge ... |
+| `packages/ai/test/kagi-login.test.ts` | teste | omp-novo | `packages/ai/test` | 46L; Testa fluxo de login do provedor Kagi (URL de configuração de API, instruções, trim da chave e rejeição de entradas vazias ou s... |
+| `packages/ai/test/kilo-login.test.ts` | teste | omp-novo | `packages/ai/test` | 75L; Testa fluxo OAuth device-auth da Kilo (emissão de código, polling até aprovação, tratamento de 429 rate-limit e 403 negação). |
+| `packages/ai/test/kimi-multi-account.test.ts` | teste | omp-novo | `packages/ai/test` | 165L; Testa seleção multi-conta Kimi OAuth por folga nas janelas 5h/7d, bloqueio de credencial até o reset da janela esgotada e extra... |
+| `packages/ai/test/kimi-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 202L; Testa parser de uso da Kimi (janelas 5h/7d/mensal/totalQuota, propagação de resetTime de detail, normalização de durações e tra... |
+| `packages/ai/test/kiro-auth.test.ts` | teste | omp-novo | `packages/ai/test` | 325L; Testa fluxos de autenticação Kiro (Identity Center OIDC com regiões GovCloud, Builder ID, device login Social, API key regional... |
+| `packages/ai/test/kiro-stream.test.ts` | teste | omp-novo | `packages/ai/test` | 316L; Testa streaming AWS event-stream do provedor Kiro (reassembly de frames, uso/contextTokens, retry único pré-output com corpo co... |
+| `packages/ai/test/kiro-transform.test.ts` | teste | omp-novo | `packages/ai/test` | 245L; Testa transformação de contexto para Kiro (system prompt, imagens, tool IDs wire-safe, alternância user/assistant, esforços ada... |
+| `packages/ai/test/kiro-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 299L; Testa provedor de uso e ranking da Kiro (créditos do plano, bônus ativos, add-ons comprados sem dupla contagem de overageCredit... |
+| `packages/ai/test/leaked-thinking-stream.test.ts` | teste | omp-novo | `packages/ai/test` | 1370L; Testa wrapLeakedThinkingStream isoladamente: split ao vivo de fences ```thinking``` aninhadas, re-projeção de </think> implícit... |
+| `packages/ai/test/litellm-login.test.ts` | teste | omp-novo | `packages/ai/test` | 35L; Testa fluxo de login do LiteLLM verificando menção a LITELLM_BASE_URL, trim da chave e rejeição de entradas vazias. |
+| `packages/ai/test/litellm-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 140L; Testa provedor de uso do LiteLLM (consulta key/info para sk-* e v2/user/info, timestamps UTC ingênuos, sanitização de budget_du... |
+| `packages/ai/test/max-effort-wire.test.ts` | teste | omp-novo | `packages/ai/test` | 158L; Valida envio ponta a ponta do tier de reasoning "max" sem clamping em Chat Completions, Responses, Codex request-transformer e ... |
+| `packages/ai/test/meta-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 64L; Testa requisições Responses da Meta Model API (efforts xhigh/minimal e reasoning.encrypted_content) e validação de API key no l... |
+| `packages/ai/test/minimax-code-login.test.ts` | teste | omp-novo | `packages/ai/test` | 48L; Testa login do MiniMax Token Plan para plataformas internacional (minimax.io) e China (minimaxi.com), verificando URLs de auth ... |
+| `packages/ai/test/minimax-token-plan-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 366L; Testa provedor de uso MiniMax Token Plan (janelas 4h/24h/7d, normalização de baseUrl, falha fechada em base_resp != 0, buckets ... |
+| `packages/ai/test/mistral-vibe-login.test.ts` | teste | omp-novo | `packages/ai/test` | 216L; Testa login de navegador Mistral Vibe com PKCE S256, polling com backoff/Retry-After, tolerância a até 2 falhas transientes, va... |
+| `packages/ai/test/mock-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 329L; Testa o provedor mock (`createMockModel` / `streamMock`), cobrindo streaming de texto/toolCall, scripts sequenciais e via async... |
+| `packages/ai/test/modal-login.test.ts` | teste | omp-novo | `packages/ai/test` | 61L; Testa o fluxo de login do provedor Modal, validando a normalização de `/v1/models` quando `MODAL_BASE_URL` está definido (com o... |
+| `packages/ai/test/model-cache.test.ts` | teste | omp-novo | `packages/ai/test` | 141L; Testa migrações e segurança do cache SQLite de modelos: invalida e limpa linhas pré-v10 com headers, omite quaisquer headers an... |
+| `packages/ai/test/models-cost.test.ts` | teste | omp-novo | `packages/ai/test` | 215L; Testa `calculateCost` para Copilot, tokens de `orchestration` sem alterar buckets visíveis, cobrança de cache write de 1h vs 5m... |
+| `packages/ai/test/models-json-no-local-endpoints.test.ts` | teste | omp-novo | `packages/ai/test` | 65L; Teste de regressão garantindo que o catálogo empacotado não inclua provedores exclusivamente locais (`ollama`, `vllm`, `lm-stud... |
+| `packages/ai/test/muse-code-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 256L; Testa o provedor `muse-code`: desempacotamento da chave de assinatura, isolamento do pool de credenciais face ao `meta` PAYG, a... |
+| `packages/ai/test/muse-code-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 304L; Testa monitoramento de cota da assinatura `muse-code`: mapeamento de janelas de uso (300m/1w) ignorando expiração legada, remoç... |
+| `packages/ai/test/nanogpt-login.test.ts` | teste | omp-novo | `packages/ai/test` | 44L; Testa validação de API key no login do NanoGPT contra `GET https://nano-gpt.com/api/v1/models` e exposição de erro HTTP 401. |
+| `packages/ai/test/network-cause.test.ts` | teste | omp-novo | `packages/ai/test` | 218L; Testa classificação estruturada de causas de rede (`offline`, `unreachable`, `refused`, `tls`) percorrendo cadeias `cause` (com... |
+| `packages/ai/test/novita-login.test.ts` | teste | omp-novo | `packages/ai/test` | 102L; Testa login da Novita validando a chave via `POST /openai/v1/chat/completions`, aceitando chaves de papéis sem permissão de sal... |
+| `packages/ai/test/null-max-tokens-fallback.test.ts` | teste | omp-novo | `packages/ai/test` | 219L; Testa no formato de fio que modelos com `maxTokens: null` aplicam fallback finito (64000) em Anthropic Messages, OpenAI Complet... |
+| `packages/ai/test/oauth-barrel-import.test.ts` | teste | omp-novo | `packages/ai/test` | 16L; Verifica em processo filho Bun que o barrel de OAuth carrega junto com o provedor Anthropic e `AuthStorage` preservando as expo... |
+| `packages/ai/test/oauth-deepseek.test.ts` | teste | omp-novo | `packages/ai/test` | 73L; Testa validação da chave DeepSeek via `GET /v1/models`, incluindo trim, remoção de prefixo `Bearer`, rejeição de entrada vazia... |
+| `packages/ai/test/oauth-definitive-failure.test.ts` | teste | omp-novo | `packages/ai/test` | 89L; Define o contrato de `isDefinitiveOAuthFailure`: trata `invalid_grant`/revogação, `OAuthError({ definitive: true })` (inclusive... |
+| `packages/ai/test/oauth-device-code.test.ts` | teste | omp-novo | `packages/ai/test/oauth-device-code.test.ts` | mesmo caminho; Pi 073b0ba; 72L; Testa `pollOAuthDeviceCodeFlow`: retorno de sucesso, falha do provedor, sucesso após deadline, prioridade do cancelamento do ch... |
+| `packages/ai/test/oauth-refresh-abort-no-block.test.ts` | teste | omp-novo | `packages/ai/test` | 165L; Testa regressão (#19607) garantindo que refreshes OAuth abandonados durante shutdown ou cancelados pelo chamador (incluindo que... |
+| `packages/ai/test/oauth-refresh-budget-keeps-rotated-token.test.ts` | teste | omp-novo | `packages/ai/test` | 366L; Testa coordenação de orçamento e lease SQLite de refresh OAuth: persiste refresh token rotacionado quando trabalho pós-troca ex... |
+| `packages/ai/test/oauth.ts` | teste | omp-novo | `packages/ai/test/oauth.ts` | mesmo caminho; Pi 073b0ba; 101L; Helper de testes E2E (habilitados via `E2E=1`) para resolver chaves de API ou tokens OAuth em `~/.omp/agent/testauth.db`, atual... |
+| `packages/ai/test/ollama-cache-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 97L; Testa contabilidade de cache em `streamOllama`: mapeia `prompt_eval_cached_count` para `cacheRead` subtraindo-o de `input`, pre... |
+| `packages/ai/test/ollama-cloud-login.test.ts` | teste | omp-novo | `packages/ai/test` | 44L; Testa login do Ollama Cloud: abertura da página de chaves, trim da chave colada, exigência de `onPrompt` e erro para chave vazia. |
+| `packages/ai/test/ollama-no-user-turn.test.ts` | teste | omp-novo | `packages/ai/test` | 88L; Testa tratamento de contexto sem turno `user` em `streamOllama` (rebaixando o último turno `developer` atribuído ao agente para... |
+| `packages/ai/test/ollama-reasoning-effort-backfill.test.ts` | teste | omp-novo | `packages/ai/test` | 51L; Testa normalização da escada de esforço de raciocínio do Ollama (`low`/`medium`/`high`/`max`, removendo `minimal`) e serializaç... |
+| `packages/ai/test/ollama-stream-error.test.ts` | teste | omp-novo | `packages/ai/test` | 76L; Testa erros in-band no stream NDJSON do Ollama: garante erro imediato sem retry como conclusão vazia, emissão de evento termina... |
+| `packages/ai/test/ollama-thinking-disable.test.ts` | teste | omp-novo | `packages/ai/test` | 554L; Testa controles avançados do chat Ollama: `think: false`, retry de conclusões vazias só-EOS, normalização de schemas JSON para ... |
+| `packages/ai/test/ollama-tool-call-json-parse-error.test.ts` | teste | omp-novo | `packages/ai/test` | 90L; Testa falhas determinísticas de JSON em tool calls do Ollama/llama.cpp: recusa argumentos truncados preservando `__parseError`/... |
+| `packages/ai/test/oneshot-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 459L; Testa `retryTransientCompletion` para chamadas oneshot: retenta `stopReason: "error"` e erros lançados transitórios (529/429/50... |
+| `packages/ai/test/openai-array-tool-schema.test.ts` | teste | omp-novo | `packages/ai/test` | 340L; Testa reparo de schemas de array sem `items` e tuplas `prefixItems` para OpenAI/Codex Responses (`repairArrayItems`), caindo pa... |
+| `packages/ai/test/openai-byok-reported-cost.test.ts` | teste | omp-novo | `packages/ai/test` | 94L; Testa `applyProviderReportedCost` para turnos BYOK no OpenRouter: soma taxa de créditos + `upstream_inference_cost`, escala com... |
+| `packages/ai/test/openai-codex-access-programs.test.ts` | teste | omp-novo | `packages/ai/test` | 203L; Testa programas de acesso cibernético do Codex (`access_programs.cyber = "daybreak_blue"`): envio condicional por conta, remoçã... |
+| `packages/ai/test/openai-codex-call-id-length.test.ts` | teste | omp-novo | `packages/ai/test` | 238L; Testa sanitização de `call_id` no Codex (limite de 64 chars e `[a-zA-Z0-9_-]+`): remove sufixos compostos `\n`/`\|`, usa hash de... |
+| `packages/ai/test/openai-codex-include.test.ts` | teste | omp-novo | `packages/ai/test` | 25L; Verifica que `transformRequestBody` sempre inclui `reasoning.encrypted_content` no array `include` sem duplicá-lo. Já coberto n... |
+| `packages/ai/test/openai-codex-live-steering.test.ts` | teste | omp-novo | `packages/ai/test` | 720L; Testa steering ao vivo em WebSockets do Codex: envio de `response.steer`, continuação automática em `response.incomplete` (`ste... |
+| `packages/ai/test/openai-codex-refresh-reason.test.ts` | teste | omp-novo | `packages/ai/test` | 70L; Testa inclusão do parâmetro `refresh_reason` (`proactive_expiry` vs `unauthorized_recovery`) no corpo de refresh OAuth para `op... |
+| `packages/ai/test/openai-codex-reset.test.ts` | teste | omp-novo | `packages/ai/test` | 163L; Testa contrato de fio dos créditos de reset de rate limit do Codex (`GET /wham/rate-limit-reset-credits` e `POST /wham/rate-lim... |
+| `packages/ai/test/openai-codex-responses-lite.test.ts` | teste | omp-novo | `packages/ai/test` | 1333L; Primeira metade dos testes de Responses Lite e controles Codex: `reasoning.summary`/`context`/`textVerbosity`, omissão para mod... |
+| `packages/ai/test/openai-codex-stream.test.ts` | teste | omp-novo | `packages/ai/test/openai-codex-stream.test.ts` | mesmo caminho; Pi 073b0ba; 8306L; Primeira parte de `openai-codex-stream.test.ts`: recusa de JSON truncado em tool calls, normalização de baseUrl, omissão de hea... |
+| `packages/ai/test/openai-codex-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 690L; Testa o parser e estrategia de uso/quota do openai-codex: consulta a /accounts/verified_access (sem esconder uso em 5xx) e /wha... |
+| `packages/ai/test/openai-codex-zstd.test.ts` | teste | omp-novo | `packages/ai/test` | 192L; Testa compressao zstd no corpo de requisicoes SSE do Codex: ativacao por padrao com header content-encoding: zstd e magic numbe... |
+| `packages/ai/test/openai-codex.test.ts` | teste | omp-novo | `packages/ai/test` | 445L; Testa OAuth do Codex (originator consistente, escopos api.connectors.*, formatacao de erros do endpoint de token), conversao de... |
+| `packages/ai/test/openai-compat-policy.test.ts` | teste | omp-novo | `packages/ai/test` | 263L; Testa resolucao e aplicacao unificada de politicas OpenAI compat para Chat Completions e Responses: supressao de reasoning em t... |
+| `packages/ai/test/openai-compat-user-agent.test.ts` | teste | omp-novo | `packages/ai/test` | 170L; Testa precedencia e preservacao case-insensitive de headers User-Agent e headers customizados por chamada em resolveOpenAIReque... |
+| `packages/ai/test/openai-completions-cache-affinity.test.ts` | teste | omp-novo | `packages/ai/test` | 202L; Testa politica explicita de prompt cache no OpenAI Chat Completions: ausencia de campos extras quando nao configurada, roteamen... |
+| `packages/ai/test/openai-completions-compat.test.ts` | teste | omp-novo | `packages/ai/test` | 2944L; Testa compatibilidade de Chat Completions: omissao de sampling params para modelos OpenAI reasoning, serializacao de texto plan... |
+| `packages/ai/test/openai-completions-disable-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` | 377L; Testa o comportamento de disableReasoning e dos dialetos de thinking (OpenAI, Fireworks none, Azure Astra com tools, OpenRouter... |
+| `packages/ai/test/openai-completions-error-finish-reason.test.ts` | teste | omp-novo | `packages/ai/test` | 592L; Testa validação de argumentos finais de tool calls (inclusive truncamento de __rawJson), mapeamento de finish_reason (error, in... |
+| `packages/ai/test/openai-completions-generation-nan.test.ts` | teste | omp-novo | `packages/ai/test` | 76L; Testa classificação como erro transitório retentável para HTTP 400 do Fireworks relatando 'Floating point NaN (not-a-number) is... |
+| `packages/ai/test/openai-completions-litellm-thinking-blocks.test.ts` | teste | omp-novo | `packages/ai/test` | 165L; Testa captura, concatenação de assinaturas divididas em deltas e replay fiel de thinking_blocks (e espelho em provider_specific... |
+| `packages/ai/test/openai-completions-on-payload.test.ts` | teste | omp-novo | `packages/ai/test` | 89L; Testa substituição síncrona e assíncrona do corpo da requisição via retorno de onPayload (e manutenção do original quando retor... |
+| `packages/ai/test/openai-completions-progress-chunk.test.ts` | teste | omp-novo | `packages/ai/test` | 425L; Testa alargamento de streamIdleTimeoutMs/desativação de streamFirstEventTimeoutMs por compat (Z.AI, DeepSeek, Kimi, Xiaomi, Ali... |
+| `packages/ai/test/openai-completions-reasoning-details.test.ts` | teste | omp-novo | `packages/ai/test/openai-completions-reasoning-details.test.ts` | mesmo caminho; Pi 073b0ba; 633L; Testa streaming, deduplicação e replay de reasoning_details (Bifrost Gemini e OpenRouter), filtragem quando o gateway descarta ... |
+| `packages/ai/test/openai-completions-reasoning-disable-dialects.test.ts` | teste | omp-novo | `packages/ai/test` | 201L; Testa que as políticas disableReasoningOnForcedToolChoice e disableReasoningOnToolChoice desabilitam thinking no campo específi... |
+| `packages/ai/test/openai-completions-stream-retry-budget.test.ts` | teste | omp-novo | `packages/ai/test` | 64L; Testa separação entre tentativas da camada de transporte HTTP (500 com 6 POSTs sem replay duplicado) e replay externo para fram... |
+| `packages/ai/test/openai-completions-thought-signature.test.ts` | teste | omp-novo | `packages/ai/test` | 253L; Testa captura e round-trip de assinaturas de pensamento do Gemini em endpoints OpenAI-compatíveis via extra_content.{google,ver... |
+| `packages/ai/test/openai-completions-tool-result-images.test.ts` | teste | omp-novo | `packages/ai/test/openai-completions-tool-result-images.test.ts` | mesmo caminho; Pi 073b0ba; 605L; Testa serialização de imagens em user/toolResult no convertMessages, geração de fallback tool_call_id para IDs compostos vazios... |
+| `packages/ai/test/openai-completions-ttft.test.ts` | teste | omp-novo | `packages/ai/test` | 118L; Testa marcação de ttft em streams que iniciam diretamente com deltas de tool_calls sem texto e ausência de ttft quando nenhum c... |
+| `packages/ai/test/openai-completions-upstream-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 73L; Testa captura do campo chunk.provider reportado por agregadores (ex.: OpenRouter) em result.upstreamProvider e preservação como... |
+| `packages/ai/test/openai-completions-xai-root-union.test.ts` | teste | omp-novo | `packages/ai/test` | 122L; Testa achatamento de uniões exclusivas de required no xAI pago, quarentena de tools com uniões anyOf residuais na raiz apenas n... |
+| `packages/ai/test/openai-computer-contract.test.ts` | teste | omp-novo | `packages/ai/test` | 897L; Testa contrato da tool nativa computer da OpenAI Responses (gating por modelo/proxy, fallback para function tool, parsing de co... |
+| `packages/ai/test/openai-configuration-update.test.ts` | teste | omp-novo | `packages/ai/test` | 494L; Testa planejamento estável de esforço via itens configuration_update em Codex/Responses (mantendo reasoning.effort fixo para ca... |
+| `packages/ai/test/openai-data-uri.test.ts` | teste | omp-novo | `packages/ai/test` | 23L; Testa decodeDataUri para decodificação binária percent-encoded sem exigir UTF-8 válido, esquemas/marcadores case-insensitive e ... |
+| `packages/ai/test/openai-daybreak-effort.test.ts` | teste | omp-novo | `packages/ai/test` | 74L; Testa serialização de todos os níveis de effort (inclusive off -> none/low e mode) no payload de Responses para modelos GPT-5.6... |
+| `packages/ai/test/openai-disable-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` | 81L; Testa conversão de forceReasoningOff:true em streamSimple para remoção de reasoning_effort em openai-completions e envio de rea... |
+| `packages/ai/test/openai-first-event-timeout.test.ts` | teste | omp-novo | `packages/ai/test` | 965L; Testa timeouts de primeiro evento e setup (incluindo X-Stainless-Timeout, overrides por env PI_OPENAI_STREAM_IDLE_TIMEOUT_MS/PI... |
+| `packages/ai/test/openai-images.test.ts` | teste | omp-novo | `packages/ai/test` | 162L; Testa generateOpenAIImage em geração e edição JSON/multipart: omissão de response_format para modelos GPT Image, array images e... |
+| `packages/ai/test/openai-max-output-tokens-cap.test.ts` | teste | omp-novo | `packages/ai/test` | 339L; Testa política de teto de tokens de saída (OPENAI_MAX_OUTPUT_TOKENS=64k) em Completions e Responses: clamp em endpoints padrão/... |
+| `packages/ai/test/openai-message-phase.test.ts` | teste | omp-novo | `packages/ai/test` | 20L; Testa round-trip das fases de mensagem do assistente (`commentary`, `final_answer`, `partial_answer`) via `textSignature` v1 e ... |
+| `packages/ai/test/openai-output-token-policy.test.ts` | teste | omp-novo | `packages/ai/test` | 186L; Testa política centralizada de parâmetro de tokens de saída (`max_completion_tokens`/`max_tokens`/`max_output_tokens`, clamp de... |
+| `packages/ai/test/openai-reasoning-effort-fallback.test.ts` | teste | omp-novo | `packages/ai/test` | 863L; Testa retry automático com fallback de `reasoning_effort`/`reasoning.effort` em HTTP 400 (xhigh->max, CamelCase, pipe-delimited... |
+| `packages/ai/test/openai-responses-cache-affinity.test.ts` | teste | omp-novo | `packages/ai/test` | 931L; Testa política explícita de prompt cache (`prompt_cache_options`, `prompt_cache_breakpoint`, TTL 12h/30m, validação antecipada ... |
+| `packages/ai/test/openai-responses-delta-input.test.ts` | teste | omp-novo | `packages/ai/test` | 203L; Testa `buildResponsesDeltaInput`: limpeza de símbolos transitórios de streaming na comparação de prefixo, encadeamento de `cust... |
+| `packages/ai/test/openai-responses-developer-role.test.ts` | teste | omp-novo | `packages/ai/test` | 93L; Testa resolução de `compat.supportsDeveloperRole` por provedor e baseUrl (OpenAI oficial, Azure, proxies customizados, localhos... |
+| `packages/ai/test/openai-responses-empty-tool-result.test.ts` | teste | omp-novo | `packages/ai/test/openai-responses-empty-tool-result.test.ts` | mesmo caminho; Pi 073b0ba; 89L; Testa regressão de resultado de ferramenta vazio no Responses API garantindo `output: ""` em vez de placeholder de imagem, além... |
+| `packages/ai/test/openai-responses-history-payload.test.ts` | teste | omp-novo | `packages/ai/test` | 2411L; Testa replay de `providerPayload` no Responses/Codex: preservação de itens congelados (`computer_call`), remoção de metadados i... |
+| `packages/ai/test/openai-responses-malformed-function-call-replay.test.ts` | teste | omp-novo | `packages/ai/test` | 131L; Testa replay de `function_call` truncada/malformada com `{ __parseError, __rawJson }` para manter pareamento com `function_call... |
+| `packages/ai/test/openai-responses-omit-max-output-tokens.test.ts` | teste | omp-novo | `packages/ai/test` | 69L; Testa omissão de `max_output_tokens` no wire quando `model.omitMaxOutputTokens` é verdadeiro, preservando `model.maxTokens` loc... |
+| `packages/ai/test/openai-responses-openrouter.test.ts` | teste | omp-novo | `packages/ai/test` | 747L; Testa pseudo-API OpenRouter (paridade Chat/Responses, variantes, roteamento, `enabled: false`, custo reportado pelo provedor, r... |
+| `packages/ai/test/openai-responses-orphan-repair.test.ts` | teste | omp-novo | `packages/ai/test` | 87L; Testa reparo de chamadas órfãs (`function_call`/`custom_tool_call` sem resultado após elas) e outputs órfãos (convertidos em me... |
+| `packages/ai/test/openai-responses-parallel-tool-calls.test.ts` | teste | omp-novo | `packages/ai/test` | 744L; Testa roteamento de deltas paralelos em `processResponsesStream` por `output_index`, `item_id`, `call_id` e prefixo `fc_<call_i... |
+| `packages/ai/test/openai-responses-parallel-tool-result-images.test.ts` | teste | omp-novo | `packages/ai/test` | 141L; Testa codificação ordenada de resultados paralelos de ferramentas contendo imagens (`input_text` + `input_image`) tanto em `bui... |
+| `packages/ai/test/openai-responses-repaired-function-call-replay.test.ts` | teste | omp-novo | `packages/ai/test` | 157L; Testa replay de `function_call` com JSON reparado lenientemente mantendo os argumentos executados, replay de JSON irrecuperável... |
+| `packages/ai/test/openai-responses-resume.test.ts` | teste | omp-novo | `packages/ai/test` | 582L; Testa retomada após queda de socket SSE via polling em `/responses/<id>` quando `storeResponses` está ativo e nenhum texto visí... |
+| `packages/ai/test/openai-responses-sampling-params.test.ts` | teste | omp-novo | `packages/ai/test` | 79L; Testa supressão de `temperature` quando `compat.supportsSamplingParams` é falso (GPT-5 / Copilot) e envio de `reasoning: { effo... |
+| `packages/ai/test/openai-responses-stale-encrypted-reasoning.test.ts` | teste | omp-novo | `packages/ai/test` | 230L; Testa retry único sem blobs `encrypted_content` após recusa (HTTP 400 ou erro pré-saída no stream) mantendo texto e histórico d... |
+| `packages/ai/test/openai-responses-stateful.test.ts` | teste | omp-novo | `packages/ai/test` | 928L; Testa encadeamento stateful na OpenAI Responses API (previous_response_id, store: true, delta input), quebra de cadeia após san... |
+| `packages/ai/test/openai-responses-stream-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 718L; Testa retry de streams Responses em erro stream_incomplete do gateway, tool call pendente truncada pré-saída, fallback para tra... |
+| `packages/ai/test/openai-responses-stream-terminal.test.ts` | teste | omp-novo | `packages/ai/test` | 1485L; Testa contratos terminais de processResponsesStream: recusa de JSON truncado em function_call, mapeamento de response.incomplet... |
+| `packages/ai/test/openai-responses-system-prompt.test.ts` | teste | omp-novo | `packages/ai/test` | 161L; Testa roteamento de systemPrompt na OpenAI Responses API entre campo instructions (não-reasoning e proxies) e input[role=develo... |
+| `packages/ai/test/openai-responses-tool-quarantine.test.ts` | teste | omp-novo | `packages/ai/test` | 224L; Testa detecção de violações de schema strict (enum em null/array, const incompatível, uniões em xAI), quarentena isolada da fer... |
+| `packages/ai/test/openai-responses-websocket.test.ts` | teste | omp-novo | `packages/ai/test` | 1448L; Testa transporte WebSocket para OpenAI Responses contra servidor Bun real: opt-in/opt-out, fallback HTTP em rejeição de upgrade... |
+| `packages/ai/test/openai-stream-socket-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 363L; Testa retry em fechamento inesperado de socket mid-stream antes de saída comprometida nos provedores OpenAI Responses, Completi... |
+| `packages/ai/test/openai-stream-terminal-close.test.ts` | teste | omp-novo | `packages/ai/test` | 247L; Testa encerramento do stream sem fechamento da conexão nem [DONE]: resolução imediata em finish_reason+usage (ignorando placeho... |
+| `packages/ai/test/openai-tool-strict-mode.test.ts` | teste | omp-novo | `packages/ai/test` | 891L; Testa modo strict de tools em Completions (strict=true, supportsStrictMode: false, preservação de strict: false explícito, tool... |
+| `packages/ai/test/opencode-go-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 214L; Testa o provedor de uso do OpenCode Go (/zen/go/v1/usage): decodificação das janelas 5h/7d/mensal, headers de atribuição, mapea... |
+| `packages/ai/test/opencode-login.test.ts` | teste | omp-novo | `packages/ai/test` | 59L; Testa separação dos prompts e instruções de login entre OpenCode Go e OpenCode Zen apesar de compartilharem a mesma URL de cons... |
+| `packages/ai/test/opencode-session-header.test.ts` | teste | omp-novo | `packages/ai/test` | 1150L; Testa headers de sessão e User-Agent em OpenCode, OpenAI (session-id/thread-id/x-client-request-id) e LiteLLM (x-litellm-sessio... |
+| `packages/ai/test/openrouter-error-metadata-raw.test.ts` | teste | omp-novo | `packages/ai/test` | 125L; Testa exposição de error.metadata.raw junto à mensagem genérica 403 da OpenRouter em Completions e Responses; nycode já propaga... |
+| `packages/ai/test/openrouter-gemini-neon-tool-result-fold.test.ts` | teste | omp-novo | `packages/ai/test` | 97L; Testa dobra de mensagem user imediatamente posterior a toolResult para dentro de function_call_output em google/gemini-4-neon n... |
+| `packages/ai/test/openrouter-llama-split-tool-calls.test.ts` | teste | omp-novo | `packages/ai/test` | 120L; Testa intercalação individual de cada function_call antes de seu respectivo function_call_output em meta-llama/llama-3.1-8b-ins... |
+| `packages/ai/test/openrouter-login.test.ts` | teste | omp-novo | `packages/ai/test` | 84L; Testa resolução de OPENROUTER_API_KEY e validação da chave colada no login da OpenRouter contra GET /api/v1/auth/key (sucesso e... |
+| `packages/ai/test/openrouter-native-finish-reason.test.ts` | teste | omp-novo | `packages/ai/test` | 252L; Testa consulta diagnóstica a /generation?id=... na OpenRouter quando uma resposta Responses retorna vazia com tokens faturados ... |
+| `packages/ai/test/openrouter-oauth.test.ts` | teste | omp-novo | `packages/ai/test/openrouter-oauth.test.ts` | mesmo caminho; Pi 073b0ba; 104L; Testa fluxo OAuth PKCE S256 da OpenRouter (porta 54549 ou fallback, troca de código em /auth/keys e validação de chave sk-or-v1... |
+| `packages/ai/test/otari-login.test.ts` | teste | omp-novo | `packages/ai/test` | 117L; Testa login do provedor Otari com seleção de região US/EU/URL customizada, override via OTARI_BASE_URL, roteamento de baseUrl p... |
+| `packages/ai/test/overflow-utils.test.ts` | teste | omp-novo | `packages/ai/test` | 381L; Testa classificação de erros em AIError: separação entre PayloadRejected (413 por tamanho/mídia) e ContextOverflow, arbitragem ... |
+| `packages/ai/test/owned-stream-fabrication.test.ts` | teste | omp-novo | `packages/ai/test` | 97L; Testa wrapInbandToolStream ao detectar fabricação de <tool_response> após <tool_call>, abortando o provedor quando abortOnFabri... |
+| `packages/ai/test/owned-stream-native-toolcall.test.ts` | teste | omp-novo | `packages/ai/test` | 346L; Testa o projetor `wrapInbandToolStream` garantindo encaminhamento em streaming de `tool_calls` nativos (com id e `streamingPart... |
+| `packages/ai/test/perplexity-login.test.ts` | teste | omp-novo | `packages/ai/test` | 342L; Testa os fluxos de login da Perplexity por e-mail OTP (CSRF, replay de cookies NextAuth, desafio TOTP) e por sessao SSO via nav... |
+| `packages/ai/test/pi-native-client.test.ts` | teste | omp-novo | `packages/ai/test` | 608L; Testa o cliente `streamPiNative` (`/v1/pi/stream`): formato de payload e headers, sanitizacao de campos nao-wire (`apiKey`, `si... |
+| `packages/ai/test/pre-response-timeout.test.ts` | teste | omp-novo | `packages/ai/test` | 63L; Testa `armPreResponseTimeout` com fake timers, garantindo que o timer pre-resposta dispare `TimeoutError` no prazo se nao for l... |
+| `packages/ai/test/prompt-perturbation.test.ts` | teste | omp-novo | `packages/ai/test` | 161L; Testa a perturbacao deterministica de prompts por instalacao (`perturbPromptText`, `perturbContext`), validando substituicao es... |
+| `packages/ai/test/provider-disabled.test.ts` | teste | omp-novo | `packages/ai/test` | 131L; Testa o bloqueio de provedores desativados nas regras de auth (`providerDisabledReason`), cobrindo resolucao de chaves, `comple... |
+| `packages/ai/test/provider-fetch-override.test.ts` | teste | omp-novo | `packages/ai/test` | 127L; Verifica que `StreamOptions.fetch` intercepta requisicoes de `streamOpenAICompletions` e `streamOpenAIResponses` sem abrir cone... |
+| `packages/ai/test/provider-inflight.test.ts` | teste | omp-novo | `packages/ai/test` | 377L; Testa o controle de concorrencia in-flight por provedor e via slot broker: serializacao, retencao de permissao ate `[DONE]`/fim... |
+| `packages/ai/test/provider-login-warning.test.ts` | teste | omp-novo | `packages/ai/test` | 68L; Testa a confirmacao obrigatoria (`"yes"`) antes de iniciar login em provedor marcado com `login-warning` de risco de conta, can... |
+| `packages/ai/test/provider-registry.test.ts` | teste | omp-novo | `packages/ai/test` | 144L; Testa o registro unificado de provedores e auth: resolucao de variaveis de ambiente com fallback em ordem, lista de login OAuth... |
+| `packages/ai/test/provider-response.test.ts` | teste | omp-novo | `packages/ai/test` | 112L; Testa a normalizacao de metadados de resposta HTTP (`status`, headers em minusculas, `requestId`) e a propagacao do callback `o... |
+| `packages/ai/test/provider-session-release.test.ts` | teste | omp-novo | `packages/ai/test` | 101L; Testa `releaseSession` em `ProviderSessionState` no Codex sobre WebSocket, garantindo fechamento seletivo de sockets/estado de ... |
+| `packages/ai/test/providers/google-auth.test.ts` | teste | omp-novo | `packages/ai/test` | 307L; Testa resolucao de tokens ADC do Google Vertex: validacao antecipada e assinatura JWT RS256 para `impersonated_service_account`... |
+| `packages/ai/test/providers/keyless-auth-header.test.ts` | teste | omp-novo | `packages/ai/test` | 50L; Testa que `resolveOpenAIRequestSetup` omite o header `Authorization` ao receber `NO_AUTH_SENTINEL` (`auth: none`), preservando ... |
+| `packages/ai/test/providers/kimi-code-thinking.test.ts` | teste | omp-novo | `packages/ai/test` | 615L; Testa politicas de thinking, `tool_choice` forcado e afinidade de cache (`prompt_cache_key`, `metadata.user_id`, header customi... |
+| `packages/ai/test/providers/openai-codex-error.test.ts` | teste | omp-novo | `packages/ai/test` | 107L; Testa a classificacao e construcao de erros de stream do Codex (`error` vs `response.failed`), validando precedencia de `error.... |
+| `packages/ai/test/proxy.test.ts` | teste | omp-novo | `packages/ai/test` | 440L; Testa resolucao de proxy por provedor (`PI_PROXY_<PROVIDER>`, `PI_PROXY`, `HTTP(S)_PROXY`, `ALL_PROXY`), bypass de `NO_PROXY` e... |
+| `packages/ai/test/race-with-signal.test.ts` | teste | omp-novo | `packages/ai/test` | 24L; Verifica que `raceWithSignal` continua observando a promise abandonada apos aborto do sinal para nao gerar `unhandledRejection`. |
+| `packages/ai/test/rate-limit-utils.test.ts` | teste | omp-novo | `packages/ai/test` | 1200L; Parte 1 dos testes de classificacao de erros 429/4xx: distingue `QUOTA_EXHAUSTED`, `MODEL_CAPACITY_EXHAUSTED`, `RATE_LIMIT_EXCE... |
+| `packages/ai/test/raw-sse-sdk-capture.test.ts` | teste | omp-novo | `packages/ai/test` | 283L; Testa a captura de eventos SSE brutos (`onSseEvent` com `event`, `data` e `raw`) nos provedores OpenAI Responses, Chat Completi... |
+| `packages/ai/test/register-builtins.test.ts` | teste | omp-novo | `packages/ai/test` | 319L; Testa os wrappers lazy de provedores built-in (`streamBedrock`), cobrindo resolucao via `source.result()`, conversao de falhas ... |
+| `packages/ai/test/registry/oauth/muse-code.test.ts` | teste | omp-novo | `packages/ai/test` | 347L; Testa o fluxo OAuth device code do Muse Code (`auth.meta.com`) e mint da chave de assinatura (`api.meta.ai/muse-code/key`), cob... |
+| `packages/ai/test/registry/oauth/openai-codex.test.ts` | teste | omp-novo | `packages/ai/test` | 76L; Testa `openAICodexProfileHook` e `loginOpenAICodexDevice` verificando que tokens JWT com email no perfil sao aceitos mesmo sem ... |
+| `packages/ai/test/registry/oauth/xai-oauth.test.ts` | teste | omp-novo | `packages/ai/test` | 517L; Testa o provedor `xai-oauth`: validacao de expiracao JWT, pinning de hosts `*.x.ai` e `*.grok.com`, OIDC discovery, device flow... |
+| `packages/ai/test/remote-auth-store.test.ts` | teste | omp-novo | `packages/ai/test` | 2308L; Parte 1 dos testes de integracao do `RemoteAuthCredentialStore` com o broker: refresh remoto sem chamar OAuth local, protecao c... |
+| `packages/ai/test/request-compression.test.ts` | teste | omp-novo | `packages/ai/test` | 225L; Testa compressão automática de corpo HTTP (gzip para Anthropic, zstd/gzip para Copilot, zstd para Codex), bypass em proxies/cor... |
+| `packages/ai/test/request-debug.test.ts` | teste | omp-novo | `packages/ai/test` | 339L; Testa gravação de requisições e respostas HTTP/WebSocket via PI_REQ_DEBUG, incluindo redação de headers de credenciais, preserv... |
+| `packages/ai/test/requires-effort.test.ts` | teste | omp-novo | `packages/ai/test` | 175L; Testa clamping de raciocínio obrigatório (thinking.requiresEffort) para o menor esforço suportado mesmo com disableReasoning/fo... |
+| `packages/ai/test/resolve-used-fraction.test.ts` | teste | omp-novo | `packages/ai/test` | 85L; Testa a precedência e os fallbacks de resolveUsedFraction (usedFraction > used/limit > percent+used > 1 - remainingFraction), i... |
+| `packages/ai/test/responses-websocket-connection.test.ts` | teste | omp-novo | `packages/ai/test` | 297L; Testa ciclo de vida do canal físico WebSocket de Responses: abort de joiners vs owner no handshake, liberação de reader em erro... |
+| `packages/ai/test/rotation-zhipu-coding-plan-reset.test.ts` | teste | omp-novo | `packages/ai/test` | 61L; Testa o parsing de horário de Pequim (UTC+8) em erros 429 (type=1308) do Zhipu Coding Plan ao rotacionar e bloquear credenciais... |
+| `packages/ai/test/sakana-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 72L; Testa override de baseUrl do provedor Sakana via variáveis SAKANA_BASE_URL (anexando /v1) e FUGU_BASE_URL sem redirecionar outr... |
+| `packages/ai/test/sambanova-reasoning-replay-wire.test.ts` | teste | omp-novo | `packages/ai/test` | 69L; Testa o round-trip de blocos thinking com thinkingSignature igual a "reasoning" no campo wire `reasoning` (sem `reasoning_conte... |
+| `packages/ai/test/same-model-reasoning-carry.test.ts` | teste | omp-novo | `packages/ai/test` | 507L; Testa transporte nativo de raciocínio entre hosts distintos do mesmo modelo (portable-reasoning) via Completions, OpenRouter Re... |
+| `packages/ai/test/sampling-params-model-wide.test.ts` | teste | omp-novo | `packages/ai/test` | 133L; Testa o bloqueio de parâmetros de amostragem (temperature, topP, frequencyPenalty, presencePenalty) orientado por modelo (suppo... |
+| `packages/ai/test/schema-arktype.test.ts` | teste | omp-novo | `packages/ai/test` | 153L; Testa paridade de schemas ArkType com Zod na emissão fechada de wire schema, remoção de $schema, preservação de chaves extras n... |
+| `packages/ai/test/schema-compatibility.test.ts` | teste | omp-novo | `packages/ai/test` | 136L; Testa validateSchemaCompatibility e validateStrictSchemaEnforcement para perfis openai-strict, google e cloud-code-assist-claud... |
+| `packages/ai/test/schema-defines-property.test.ts` | teste | omp-novo | `packages/ai/test` | 33L; Testa regressão de memoização em schemaDefinesProperty garantindo isolamento de respostas entre grafos de schema e nomes de pro... |
+| `packages/ai/test/schema-dereference.test.ts` | teste | omp-novo | `packages/ai/test` | 267L; Testa dereferenceJsonSchema resolvendo $ref locais em $defs e definitions (incluindo aninhados e combinadores), preservando lit... |
+| `packages/ai/test/schema-helpers.test.ts` | teste | omp-novo | `packages/ai/test` | 232L; Testa utilitários base de manipulação de JSON Schema: comparação estrutural profunda (Object.is), merge de enums/propriedades, ... |
+| `packages/ai/test/schema-immutability.test.ts` | teste | omp-novo | `packages/ai/test` | 129L; Testa ausência de mutação e de stamps de travessia em schemas congelados, selados ou não extensíveis (incluindo ciclos e metada... |
+| `packages/ai/test/schema-normalization.test.ts` | teste | omp-novo | `packages/ai/test` | 1742L; Parte 1/3 da suite de normalização de schemas: cobre upgrade Draft-07 -> 2020-12, sanitização Google/CCA (coerção de booleanos,... |
+| `packages/ai/test/schema-strict-mode.test.ts` | teste | omp-novo | `packages/ai/test` | 1217L; Parte 1/2 dos testes de strict mode: resolução de $ref com percent-encoding/JSON Pointer, unravel de $ref com irmãos, inline de... |
+| `packages/ai/test/schema-wire.test.ts` | teste | omp-novo | `packages/ai/test` | 477L; Testa pipeline de wire schema: normalização de {} -> true, poda de ramos undefined em uniões ArkType, preservação da ordem decl... |
+| `packages/ai/test/service-tier-cost.test.ts` | teste | omp-novo | `packages/ai/test` | 102L; Testa faturamento de serviceTier em Responses (flex 0.5x, priority 2x, ultrafast 6x via serviceTierCost, fallback 1x), contagem... |
+| `packages/ai/test/service-tier-premium-requests.test.ts` | teste | omp-novo | `packages/ai/test` | 284L; Testa resolução de serviceTier por família de modelo, gating por capacidades descobertas por conta (accountAccess/serviceTiers)... |
+| `packages/ai/test/simple-stop-and-frequency-penalty.test.ts` | teste | omp-novo | `packages/ai/test` | 273L; Testa projeção de stopSequences e frequencyPenalty em streamSimple e no auth-gateway, validando filtragem por capacidade (model... |
+| `packages/ai/test/snowflake-provider.test.ts` | teste | omp-novo | `packages/ai/test` | 433L; Testa o provedor Snowflake Cortex: seleção de conta OAuth vs SNOWFLAKE_ACCOUNT/PAT, validação estrita de origens de conta (reje... |
+| `packages/ai/test/sse-debug.test.ts` | teste | omp-novo | `packages/ai/test` | 31L; Testa notifyRawSseEvent verificando despacho sem clonagem do array raw e isolamento de exceções lançadas pelo observer. |
+| `packages/ai/test/stencil-oauth-callback.test.ts` | teste | omp-novo | `packages/ai/test` | 16L; Testa a política OAuth do provedor stencil verificando callback loopback 127.0.0.1:54547/callback com portFallback habilitado. |
+| `packages/ai/test/stream-auth-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 1115L; Parte 1/2 dos testes de auth retry no streamSimple: cobre retry em 401 (exceção ou error event pré-conteúdo), token-refresh úni... |
+| `packages/ai/test/stream-markup-healing.test.ts` | teste | omp-novo | `packages/ai/test` | 1563L; Testa seleção de padrão de cura (kimi, dsml, thinking), recuperação de fences ```thinking em openai-completions e google-gemini... |
+| `packages/ai/test/stream-timeout-defaults.test.ts` | teste | omp-novo | `packages/ai/test` | 355L; Verifica precedência de timeouts (opção > env específico > env genérico > fallback por provedor > default 900s; 0 desativa), nã... |
+| `packages/ai/test/stream.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/stream.test.ts` | mesmo caminho; Pi 073b0ba; +1521/-291; 1959L; Define helpers de E2E (texto, tool call, streaming, thinking, imagem, multi-turn) e testa E2E Gemini e autenticação/roteamento ... |
+| `packages/ai/test/synthetic-login.test.ts` | teste | omp-novo | `packages/ai/test` | 27L; Verifica que o fluxo de login do provedor Synthetic valida a API key via GET em https://api.synthetic.new/openai/v1/models em v... |
+| `packages/ai/test/synthetic-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 139L; Testa syntheticUsageProvider para mapeamento de planWeeklyLimit em cota semanal de 7 dias (warning, exhausted, metadados regen)... |
+| `packages/ai/test/thinking-loop.test.ts` | teste | omp-novo | `packages/ai/test` | 1562L; Testa detecção unitária do ThinkingLoopDetector (trigramas, estagnação lexical com títulos bold removidos, ciclos exatos e de p... |
+| `packages/ai/test/thinking-probe.test.ts` | teste | omp-novo | `packages/ai/test` | 593L; Testa sondagem concorrente de formatos e níveis de thinking para modelos desconhecidos (OpenAI completions, OpenRouter, Anthrop... |
+| `packages/ai/test/todo-op-whitespace.test.ts` | teste | omp-novo | `packages/ai/test` | 213L; Testa normalização de whitespace/quebras de linha final antes da validação em strings de enum/const (inclusive atrás de $ref lo... |
+| `packages/ai/test/tokens.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/tokens.test.ts` | mesmo caminho; Pi 073b0ba; +204/-32; 252L; Suíte E2E opcional que aborta streams após 1000 caracteres para verificar quais provedores reportam estatísticas parciais de to... |
+| `packages/ai/test/tool-argument-coercion.test.ts` | teste | omp-novo | `packages/ai/test` | 2635L; Testa coerção de strings numéricas, stringificação de objetos/arrays para string (inclusive em uniões), preservação de chaves e... |
+| `packages/ai/test/tool-call-finalization.test.ts` | teste | omp-novo | `packages/ai/test` | 76L; Verifica que inputs JSON truncados em Bedrock (contentBlockStop/messageStop) e Apple Foundation Models preservam sentinela __pa... |
+| `packages/ai/test/tool-call-loop-guard.test.ts` | teste | omp-novo | `packages/ai/test` | 477L; Testa ToolCallLoopGuard na detecção de chamadas consecutivas idênticas (canonicalização de chaves, remoção de INTENT_FIELD, lot... |
+| `packages/ai/test/tool-call-without-result.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/tool-call-without-result.test.ts` | mesmo caminho; Pi 073b0ba; +266/-71; 279L; Testes E2E multi-provedor validando que tool calls órfãs (sem toolResult) não quebram requisições subsequentes quando filtradas... |
+| `packages/ai/test/tool-examples.test.ts` | teste | omp-novo | `packages/ai/test` | 201L; Testes unitários de renderToolExamples para formatação de exemplos de ferramentas in-band em chamadas Python, blocos triple-quo... |
+| `packages/ai/test/tool-inventory.test.ts` | teste | omp-novo | `packages/ai/test` | 76L; Testes unitários de renderToolInventory verificando a geração de declarações no namespace TypeScript Harmony `functions`, comen... |
+| `packages/ai/test/total-tokens.test.ts` | teste | omp-novo | `packages/ai/test/total-tokens.test.ts` | mesmo caminho; Pi 073b0ba; 540L; Testes E2E multi-provedor (incluindo OpenRouter, OAuth e APIs nativas) verificando que `usage.totalTokens` iguala a soma de inp... |
+| `packages/ai/test/transcript-render.test.ts` | teste | omp-novo | `packages/ai/test` | 134L; Testes de renderização de transcrições nos dialetos harmony, qwen3, glm e anthropic, incluindo unwrapping de blocos `<thinking>... |
+| `packages/ai/test/transform-messages-anthropic-tool-call-id.test.ts` | teste | omp-novo | `packages/ai/test` | 103L; Testes garantindo que transformMessages preserva IDs opacos no mesmo modelo e sanitiza IDs estrangeiros para o contrato alfanum... |
+| `packages/ai/test/transform-messages-dedup.test.ts` | teste | omp-novo | `packages/ai/test` | 158L; Testes de deduplicação de IDs repetidos (entre turnos e no mesmo turno) garantindo sufixação no segmento `callId` de IDs compos... |
+| `packages/ai/test/transform-messages-malformed-tool-calls.test.ts` | teste | omp-novo | `packages/ai/test` | 406L; Testes de sanitização em transformMessages removendo tool calls malformadas (nome/id vazios, texto de invocação, >128 chars, ch... |
+| `packages/ai/test/transform-messages-redact-sensitive.test.ts` | teste | omp-novo | `packages/ai/test` | 219L; Testes de redação configurável de credenciais em mensagens outbound (user, assistant, toolCall args, toolResult) com remoção de... |
+| `packages/ai/test/transform-messages-thinking-dialect.test.ts` | teste | omp-novo | `packages/ai/test` | 238L; Testes de demotion de blocos thinking cross-provider para blocos text no dialeto-alvo, usando prosa nua para Claude (evitando r... |
+| `packages/ai/test/transport-fetch-gate.test.ts` | teste | omp-novo | `packages/ai/test` | 36L; Teste unitário de transportFetch verificando que o gate de custo bloqueia tentativas HTTP subsequentes sem registrar despacho e... |
+| `packages/ai/test/typesafe-base-url-login.test.ts` | teste | omp-novo | `packages/ai/test` | 48L; Testes de login do provedor TypeSafe validando a preservação de `/v1/models` quando `TYPESAFE_BASE_URL` está definida ou ausente. |
+| `packages/ai/test/umans-login.test.ts` | teste | omp-novo | `packages/ai/test` | 71L; Testes do fluxo de login do provedor Umans validando a API key contra o endpoint Anthropic `/v1/messages`. |
+| `packages/ai/test/umans-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 442L; Testes do parser de quota do Umans cobrindo separação entre soft-cap ponderado e burst-ceiling bruto, fallback sem hard_cap, co... |
+| `packages/ai/test/unicode-surrogate.test.ts` | teste | pi0.9.4-modificado | `packages/ai/test/unicode-surrogate.test.ts` | mesmo caminho; Pi 073b0ba; +436/-99; 726L; Testes E2E multi-provedor validando serialização de emojis, caracteres CJK/matemáticos e sanitização de surrogates altos não pa... |
+| `packages/ai/test/usage-attribution.test.ts` | teste | omp-novo | `packages/ai/test` | 443L; Testes de contabilização de tokens cobrindo reasoning_tokens, OpenRouter cost/cache_write, Vertex cachedContentTokenCount, Deep... |
+| `packages/ai/test/usage-credential-attribution.test.ts` | teste | omp-novo | `packages/ai/test` | 273L; Testes de atribuição de `metadata.credentialId`/`credentialIds` em relatórios de uso (incluindo deduplicação de mesma conta e c... |
+| `packages/ai/test/usage-report-notes-schema.test.ts` | teste | omp-novo | `packages/ai/test` | 121L; Testes de regressão de esquema garantindo paridade entre `usageReportSchema` e `usageResponseSchema` para os campos `notes`, un... |
+| `packages/ai/test/utils-responses-id.test.ts` | teste | omp-novo | `packages/ai/test` | 69L; Testes unitários de normalizeResponsesToolCallId verificando truncamento de itemId >64 chars, prefixo `fc_` para function calls... |
+| `packages/ai/test/vercel-gateway-attribution.test.ts` | teste | omp-novo | `packages/ai/test` | 63L; Testes verificando headers de atribuição padrão (`http-referer` e `x-title`) e override pelo chamador nas rotas Anthropic e Ope... |
+| `packages/ai/test/vercel-gateway-cache-controls.test.ts` | teste | omp-novo | `packages/ai/test` | 217L; Testes de mapeamento automático de cache controls (`providerOptions.gateway`, `caching`, `cache_anchor_items`, `cache_ttl`) e r... |
+| `packages/ai/test/wafer.live.ts` | teste | omp-novo | `packages/ai/test` | 93L; Script de smoke test manual (live) para validar round-trip de streaming com o modelo `wafer-serverless/GLM-5.1` preservando ID ... |
+| `packages/ai/test/x-should-retry.test.ts` | teste | omp-novo | `packages/ai/test` | 55L; Testes garantindo que o transporte HTTP e a classificação de retry obedecem ao header `x-should-retry` (`false`/`true`) acima d... |
+| `packages/ai/test/xai-base-url-env.test.ts` | teste | omp-novo | `packages/ai/test` | 75L; Testes de redirecionamento de `XAI_BASE_URL` no setup de requisições OpenAI e geração de imagens xAI, preservando custom baseUr... |
+| `packages/ai/test/xai-login.test.ts` | teste | omp-novo | `packages/ai/test` | 136L; Testes de resolução de `XAI_API_KEY` vs `XAI_OAUTH_TOKEN` (sem vazar disponibilidade para SuperGrok) e fluxo de login `/v1/mode... |
+| `packages/ai/test/xai-oauth-effort-strip.test.ts` | teste | omp-novo | `packages/ai/test` | 169L; Testes de regressão do payload Responses para `xai`/`xai-oauth` (omissão de summary/presence_penalty, clamp minimal->low, repla... |
+| `packages/ai/test/xai-oauth-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 513L; Testes do provedor de quota `xai-oauth` cobrindo billing semanal, fallback mensal unificado, merge de créditos + cota mensal, t... |
+| `packages/ai/test/xhigh.test.ts` | teste | omp-novo | `packages/ai/test/xhigh.test.ts` | mesmo caminho; Pi 073b0ba; 70L; Testes E2E de suporte ao nível de raciocínio `xhigh` em `gpt-5.1-codex-max` e erro esperado em modelos não suportados (`gpt-5-m... |
+| `packages/ai/test/xiaomi-oauth.test.ts` | teste | omp-novo | `packages/ai/test` | 99L; Testes de validação de login Xiaomi cobrindo URLs/modelos regionais via authPolicyFor, AbortSignal independente por região e au... |
+| `packages/ai/test/xiaomi-token-plan-request-host.test.ts` | teste | omp-novo | `packages/ai/test` | 148L; Testes de roteamento em tempo de requisição para chaves Xiaomi Token Plan (`tp-`/`ttp-`) para hosts regionais (`sgp`/`ams`/`cn`... |
+| `packages/ai/test/xiaomi-tp-login-integration.test.ts` | teste | omp-novo | `packages/ai/test` | 274L; Testes de integração de ponta a ponta (login + descoberta dinâmica de modelos) para chaves `tp-`/`ttp-` da Xiaomi com fallback ... |
+| `packages/ai/test/yolo-auto-login.test.ts` | teste | omp-novo | `packages/ai/test` | 90L; Testes de wiring de login e variável de ambiente `YOLO_AUTO_API_KEY` para o provedor `yolo-auto`. |
+| `packages/ai/test/yolo-auto-thinking.test.ts` | teste | omp-novo | `packages/ai/test` | 61L; Testes validando o formato de thinking via `chat_template_kwargs` (`enable_thinking`, `reasoning_effort`) para Qwen no provedor... |
+| `packages/ai/test/zai-block-healing.test.ts` | teste | omp-novo | `packages/ai/test` | 157L; Testes de auto-cura de bloqueios (escopados e não escopados) no AuthStorage da Z.AI após probes saudáveis de uso/preflight, ign... |
+| `packages/ai/test/zai-oauth.test.ts` | teste | omp-novo | `packages/ai/test` | 521L; Testes completos do fluxo OAuth Z.AI Coding Plan usando captura nativa do esquema `zcode://`, fallback manual, login corporativ... |
+| `packages/ai/test/zai-usage.test.ts` | teste | omp-novo | `packages/ai/test` | 257L; Testes do provedor de quota Z.AI cobrindo janelas de tokens (5h/1w), zread, créditos do GLM Coding Plan, precedência entre medi... |
+| `packages/ai/test/zenmux-login.test.ts` | teste | omp-novo | `packages/ai/test` | 70L; Testes de login por API key para o provedor ZenMux validando contra `/api/v1/models` e rejeitando chaves vazias/inválidas. |
+| `packages/ai/test/zhipu-coding-plan-login.test.ts` | teste | omp-novo | `packages/ai/test` | 40L; Testes de login para `zhipu-coding-plan` validando contra o endpoint doméstico `open.bigmodel.cn` com o modelo `glm-5.1`. |
+| `packages/ai/tsconfig.json` | config_ou_dado | omp-novo | `packages/ai` | 4L; Configuração TypeScript do pacote `packages/ai` estendendo `tsconfig.workspace.json`. |
+| `packages/ai/tsconfig.publish.json` | config_ou_dado | omp-novo | `packages/ai` | 16L; Configuração TypeScript de publicação para emissão exclusiva de declarações `.d.ts` (`emitDeclarationOnly`, `noCheck`). |

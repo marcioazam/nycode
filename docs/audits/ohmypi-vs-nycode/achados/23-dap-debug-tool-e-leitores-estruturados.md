@@ -9,15 +9,15 @@
 
 ```ts
 export class DebugTool implements AgentTool<typeof debugSchema, DebugExecutionDetails> {
-	readonly name = "debug";
-	readonly approval = (args: unknown): ToolApprovalDecision => {
-		const rawAction = (args as Partial<DebugParams>).action;
-		const action = typeof rawAction === "string" ? rawAction.toLowerCase() : "";
-		return DEBUG_READONLY_ACTIONS.has(action) ? "read" : "exec";
-	};
+   readonly name = "debug";
+   readonly approval = (args: unknown): ToolApprovalDecision => {
+      const rawAction = (args as Partial<DebugParams>).action;
+      const action = typeof rawAction === "string" ? rawAction.toLowerCase() : "";
+      return DEBUG_READONLY_ACTIONS.has(action) ? "read" : "exec";
+   };
 ```
 
-2. **Leitores estruturados acoplados ao `read`** (`omp:packages/coding-agent/src/tools/read-{sqlite,json,archive,pdf}.ts`):
+1. **Leitores estruturados acoplados ao `read`** (`omp:packages/coding-agent/src/tools/read-{sqlite,json,archive,pdf}.ts`):
    - `read-sqlite.ts` (`237` LOC): inspeciona tabelas/linhas (`db.sqlite:table?where=`) usando `bun:sqlite`.
    - `read-json.ts` (`497` LOC): consultas paginadas `file.json?q=.items[0]` usando `jaq` embutido em Rust.
    - `read-archive.ts` (`441` LOC + `packages/utils/src/ar/` `11.487` LOC TS puro): lista/lê arquivos dentro de `.zip`, `.tar.gz`, `.whl`, `.docx`, `.7z`, etc.

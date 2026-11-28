@@ -8,21 +8,21 @@
 1. **Cadeias declarativas `retry.fallbackChains`** (`omp:packages/coding-agent/src/session/retry-fallback-chains.ts:445-687`, `omp:packages/coding-agent/src/session/turn-recovery.ts:2099-2661`): resolve o fallback na ordem de especificidade (modelo exato/normalizado/base -> wildcard `provider/*` mais longo -> role -> `default`), valida `contextFitsModel`, thinking ceiling e assinatura Anthropic, faz fallback inclusive em erros duros elegíveis (`isHardErrorFallbackEligible`) e reverte ao primário quando expira o cooldown (`fallbackRevertPolicy: "cooldown-expiry"`):
 
 ```ts
-	for (const key in context.chains) {
-		if (!isRetryFallbackModelKey(key) || isRetryFallbackWildcardKey(key)) continue;
-		const kind = selectorMatchKind(
-			getRetryFallbackPrimarySelector(context, key),
-			parsedCurrent,
-			parsedPlainCurrent,
-			currentModel,
-		);
-		if (kind === "exact") return key;
-		if (kind === "normalized") normalizedModelKey ??= key;
-		if (kind === "base") baseModelKey ??= key;
-	}
+   for (const key in context.chains) {
+      if (!isRetryFallbackModelKey(key) || isRetryFallbackWildcardKey(key)) continue;
+      const kind = selectorMatchKind(
+         getRetryFallbackPrimarySelector(context, key),
+         parsedCurrent,
+         parsedPlainCurrent,
+         currentModel,
+      );
+      if (kind === "exact") return key;
+      if (kind === "normalized") normalizedModelKey ??= key;
+      if (kind === "base") baseModelKey ??= key;
+   }
 ```
 
-2. **Semáforo por provedor** (`omp:packages/ai/src/stream.ts:225-270`, `omp:packages/coding-agent/src/task/provider-concurrency.ts:78-102`): `withProviderInFlightLimit` limita requisições simultâneas por provedor localmente (`acquireLocalSlot` FIFO) e via daemon (`DaemonProviderSlots`).
+1. **Semáforo por provedor** (`omp:packages/ai/src/stream.ts:225-270`, `omp:packages/coding-agent/src/task/provider-concurrency.ts:78-102`): `withProviderInFlightLimit` limita requisições simultâneas por provedor localmente (`acquireLocalSlot` FIFO) e via daemon (`DaemonProviderSlots`).
 
 - **Ancestralidade Pi**: `pi0.9.4` só escolhia no boot; `pibase` criou `retryAssistantCall` e `virtual-models.ts` (`route(request)` com `reason: "retry"`). `omp` expandiu com settings declarativos, reversão por cooldown e slot broker.
 

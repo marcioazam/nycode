@@ -10,23 +10,23 @@ Em `omp:packages/coding-agent/src/lsp/writethrough.ts:377-647`, `diagnostics.ts:
 2. **Corrida por versão do documento**: `fetchDiagnosticsWithDeferral` (`omp:packages/coding-agent/src/lsp/writethrough.ts:377-402`) verifica `minVersions` / `expectedDocumentVersions` e corre contra `INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS = 500` ms; servidores rápidos retornam em ~50–200 ms, servidores lentos continuam em background até `12s+` e entregam via canal tardio (`yieldQueue` + `lsp-late-diagnostic.md`, 84 tokens):
 
 ```ts
-	const fetchPromise = getDiagnosticsForFile(dst, cwd, servers, {
-		signal: deferred.signal,
-		minVersions,
-		expectedDocumentVersions,
-		timeoutMs: deferredWaitMs,
-	});
-	const INLINE_TIMEOUT = Symbol("inline-diagnostics-timeout");
-	const raced = await Promise.race([
-		fetchPromise,
-		Bun.sleep(INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS).then(() => INLINE_TIMEOUT),
-	]);
-	if (raced !== INLINE_TIMEOUT) {
-		return apply(raced as FileDiagnosticsResult | undefined);
-	}
+   const fetchPromise = getDiagnosticsForFile(dst, cwd, servers, {
+      signal: deferred.signal,
+      minVersions,
+      expectedDocumentVersions,
+      timeoutMs: deferredWaitMs,
+   });
+   const INLINE_TIMEOUT = Symbol("inline-diagnostics-timeout");
+   const raced = await Promise.race([
+      fetchPromise,
+      Bun.sleep(INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS).then(() => INLINE_TIMEOUT),
+   ]);
+   if (raced !== INLINE_TIMEOUT) {
+      return apply(raced as FileDiagnosticsResult | undefined);
+   }
 ```
 
-3. **Deduplicação e descoberta**: `DiagnosticsLedger` suprime diagnósticos já mostrados em escritas anteriores; `defaults.json` (`511` linhas) pré-configura 55 servidores LSP; a tool `lsp` usa `loadMode = "discoverable"` (`429` tokens em `lsp.md`) e coordenadas **1-based** por substring `symbol`.
+1. **Deduplicação e descoberta**: `DiagnosticsLedger` suprime diagnósticos já mostrados em escritas anteriores; `defaults.json` (`511` linhas) pré-configura 55 servidores LSP; a tool `lsp` usa `loadMode = "discoverable"` (`429` tokens em `lsp.md`) e coordenadas **1-based** por substring `symbol`.
 
 - **Ancestralidade Pi**: ausente em `pi0.9.4` e `pibase`. Criação original de cada fork (`omp` e `nycode` desenvolveram separadamente).
 
@@ -37,16 +37,16 @@ Em `packages/coding-agent/src/extensions/lsp/index.ts:566-604,656-764`, `post-ed
 - `lsp` escuta `tool_result` de **ambos** `edit` e `write`, exige `.nycode/lsp.json` (com trust hash) ou `~/.nycode/agent/lsp.json` sem nenhum catálogo padrão, e sempre bloqueia por um **`delay(1500)` fixo** (`extensions/lsp/index.ts:43,583-592`):
 
 ```ts
-				const text = await readTextFile(file);
-				const client = await this.getClient(match.server, match.root, file, workspace, ctx.signal);
-				const languageId = languageIdForFile(match.server, file);
-				await client.openOrChange(file, languageId, text, ctx.signal);
-				await client.didSave(file);
-				await delay(match.server.diagnosticsWaitMs ?? DEFAULT_DIAGNOSTICS_WAIT_MS, ctx.signal);
-				const entry = this.diagnostics.get(match.server.id, match.root, file);
-				// Errors only; empty when there is nothing to say.
-				const text2 = formatPostEdit(match.server.id, file, entry?.diagnostics ?? [], match.root);
-				if (text2) lines.push(text2);
+            const text = await readTextFile(file);
+            const client = await this.getClient(match.server, match.root, file, workspace, ctx.signal);
+            const languageId = languageIdForFile(match.server, file);
+            await client.openOrChange(file, languageId, text, ctx.signal);
+            await client.didSave(file);
+            await delay(match.server.diagnosticsWaitMs ?? DEFAULT_DIAGNOSTICS_WAIT_MS, ctx.signal);
+            const entry = this.diagnostics.get(match.server.id, match.root, file);
+            // Errors only; empty when there is nothing to say.
+            const text2 = formatPostEdit(match.server.id, file, entry?.diagnostics ?? [], match.root);
+            if (text2) lines.push(text2);
 ```
 
 - `post-edit.ts:17-23` acerta ao filtrar apenas `severity === 1` (`error`, teto 10 erros), mas **não deduplica** erros pré-existentes entre edições; além disso, expõe 5 tools separadas sempre ativas (`lsp_diagnostics`, `lsp_hover`, `lsp_definition`, `lsp_references`, `lsp_symbols` = **351 tokens** fixos no payload) com coordenadas **0-based** sem lookup por `symbol`.
